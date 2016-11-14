@@ -49,19 +49,6 @@ public class EveLocation extends AbstractComplexNode {
 	public String getConstellation() {
 		return constellation;
 	}
-	/**
-	 * Check if the Location has children and then add all them to the model.
-	 */
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-//		if (renderWhenEmpty()) {
-//			results.add(this);
-//		}
-//		if (isExpanded()) {
-			results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-//		}
-		return results;
-	}
 
 	public long getConstellationID() {
 		return constellationID;

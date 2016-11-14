@@ -20,9 +20,9 @@ import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.evedroid.model.ShipLocation;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.content.SharedPreferences;
@@ -35,7 +35,7 @@ public class ShipsDataSource extends SpecialDataSource {
 
 	private ArrayList<Asset>									ships							= null;
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
-	private final HashMap<Long, EveLocation>	_locations				= new HashMap<Long, EveLocation>();
+	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
 
 	//	private int																				_version					= 0;;
@@ -114,7 +114,7 @@ public class ShipsDataSource extends SpecialDataSource {
 					_dataModelRoot.addChild(node);
 				}
 			} else {
-				for (EveLocation node : _locations.values()) {
+				for (ShipLocation node : _locations.values()) {
 					_dataModelRoot.addChild(node);
 				}
 			}
@@ -137,9 +137,9 @@ public class ShipsDataSource extends SpecialDataSource {
 	 */
 	private void add2Location(final long locationid, final Asset ship) {
 		// Check if the location is already on the array.
-		EveLocation hit = _locations.get(locationid);
+		ShipLocation hit = _locations.get(locationid);
 		if (null == hit) {
-			hit = ship.getLocation();
+			hit = new ShipLocation(ship.getLocation());
 			// Add the new location to the list of locations and to the Regions
 			add2Region(hit);
 			_locations.put(locationid, hit);
@@ -147,7 +147,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		hit.addChild(ship);
 	}
 
-	private void add2Region(final EveLocation location) {
+	private void add2Region(final ShipLocation location) {
 		Region region = _regions.get(location.getID());
 		if (null == region) {
 			region = new Region(location.getRegion());
