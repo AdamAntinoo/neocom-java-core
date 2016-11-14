@@ -1,9 +1,11 @@
-//	PROJECT:        NeoCom (NEOC)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
 //	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application to get access to character data from Eve Online. Specialized on
-//									industrial management.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment.core;
 
 // - IMPORT SECTION .........................................................................................
@@ -170,7 +172,6 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	protected int																_fragmentID				= -1;
 	protected IExtendedDataSource								_datasource				= null;
 	protected DataSourceAdapter									_adapter					= null;
-	//	protected boolean													_alreadyInitialized	= false;
 	// REFACTOR Set back to private after the PagerFragment is removed
 	protected final Vector<AbstractAndroidPart>	_headerContents		= new Vector<AbstractAndroidPart>();
 

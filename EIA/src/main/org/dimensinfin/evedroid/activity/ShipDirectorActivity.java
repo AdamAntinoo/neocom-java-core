@@ -65,7 +65,7 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
 			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION), page++);
-			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS), page++);
+			//			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -76,5 +76,4 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		Log.i("NEOCOM", "<< ShipDirectorActivity.onCreate"); //$NON-NLS-1$
 	}
 }
-// - UNUSED CODE
-// ............................................................................................
+// - UNUSED CODE ............................................................................................

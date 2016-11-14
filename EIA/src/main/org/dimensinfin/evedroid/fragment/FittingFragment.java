@@ -1,9 +1,11 @@
-//	PROJECT:        EveIndustrialAssistant (EIA)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Minery and mainly on Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
 // - IMPORT SECTION .........................................................................................
@@ -11,19 +13,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.core.AbstractCorePart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.core.IPartFactory;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.FittingActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.fragment.core.PagerFragment;
+import org.dimensinfin.evedroid.datasource.DataSourceLocator;
+import org.dimensinfin.evedroid.datasource.SpecialDataSource;
+import org.dimensinfin.evedroid.factory.PartFactory;
+import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
+import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveItem;
+import org.dimensinfin.evedroid.part.APIKeyPart;
+import org.dimensinfin.evedroid.part.PilotInfoPart;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +52,9 @@ import android.widget.Toast;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
+ * This is a test implementation that will run a testing configuration. The sources for fittings maybe already
+ * fitted ships or XML fitting configuration files but there is no code now to import from such sources. <br>
+ * <br>
  * Fragment implementation that will get some input form the user to select a fitting and a count of copies to
  * calculate the item requirements to cover that request. By default fittings are matched against the GARAGE
  * function Location. The GARAGE function may not be unique. If that case the matching should be against each
@@ -44,42 +62,110 @@ import android.widget.Toast;
  * 
  * @author Adam Antinoo
  */
-public class FittingFragment extends PagerFragment {
+public class FittingFragment extends AbstractNewPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger	= Logger.getLogger("FittingFragment");
+	private static Logger logger = Logger.getLogger("FittingFragment");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	public ViewGroup getPageLayout() {
-	//		return _container;
-	//	}
-
 	/**
-	 * Creates the structures when the fragment is about to be shown. We have to check that the parent Activity
-	 * is compatible with this kind of fragment. So the fragment has to check of it has access to a valid pilot
-	 * before returning any UI element.
+	 * This code is identical on all Fragment implementations so can be moved to the super class.
 	 */
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		logger.info(">> FittingFragment.onCreateView");
-		// Create the standard structure for a page fragment.
-		View currentView = super.onCreateView(inflater, container, savedInstanceState);
-
-		// Add a header part to the header container.
-		FittingHeaderPart header = new FittingHeaderPart(null);
-		AbstractHolder holder = header.getHolder(this);
-		if (holder instanceof FittingHeaderHolder) {
-			//			((FittingHeaderHolder) holder).setView(currentView);
-			holder.initializeViews();
-			holder.updateContent();
-			_headerContainer.removeAllViews();
-			_headerContainer.addView(holder.getView());
-			_headerContainer.invalidate();
+		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
+		final View theView = super.onCreateView(inflater, container, savedInstanceState);
+		try {
+			setIdentifier(_variant.hashCode());
+			registerDataSource();
+		} catch (final RuntimeException rtex) {
+			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
+			rtex.printStackTrace();
+			stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
 		}
-		return currentView;
+		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
+		return theView;
+	}
+
+	@Override
+	public String getTitle() {
+		return "Fitting - Under Test";
+	}
+
+	@Override
+	public String getSubtitle() {
+		return "";
+	}
+
+	/**
+	 * This code is identical on all Fragment implementations so can be moved to the super class.
+	 */
+	@Override
+	public void onStart() {
+		Log.i("NEOCOM", ">> FittingFragment.onStart");
+		try {
+			// Check the datasource status and create a new one if still does not exists.
+			if (checkDSState()) {
+				registerDataSource();
+			}
+		} catch (final RuntimeException rtex) {
+			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
+			rtex.printStackTrace();
+			stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
+		}
+		super.onStart();
+		Log.i("NEOCOM", "<< FittingFragment.onStart");
+	}
+
+	/**
+	 * This is the single piece f code specific for this fragment. It should create the right class DataSource
+	 * and connect it to the Fragment for their initialization during the <b>start</b> phase. <br>
+	 * Current implementation is a test code to initialize the DataSorue with a predefined and testing fitting.
+	 */
+	private void registerDataSource() {
+		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
+		long capsuleerid = 100;
+		String fittingid = "Purifier";
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name());
+		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
+		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(_variant));
+		ds.setVariant(_variant);
+		// ds.setExtras(getExtras();
+		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), capsuleerid);
+		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingid);
+		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
+		setDataSource(ds);
+	}
+}
+
+//- CLASS IMPLEMENTATION ...................................................................................
+final class FittingPartFactory extends PartFactory implements IPartFactory {
+	// - S T A T I C - S E C T I O N ..........................................................................
+	// - F I E L D - S E C T I O N ............................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public FittingPartFactory(final EFragment _variant) {
+		super(_variant);
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * The method should create the matching part for the model received but there is no other place where we
+	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
+	 */
+	@Override
+	public IEditPart createPart(final IGEFNode node) {
+		if (node instanceof APIKey) {
+			AbstractCorePart part = new APIKeyPart((AbstractComplexNode) node).setFactory(this);
+			return part;
+		}
+		if (node instanceof EveChar) {
+			AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
+			return part;
+		}
+		return null;
 	}
 }
 
@@ -89,7 +175,7 @@ final class FittingHeaderHolder extends AbstractHolder {
 	// - F I E L D - S E C T I O N ............................................................................
 	//	private ITheme	_theme					= null;
 
-	private Spinner	fittingsSpinner	= null;
+	private Spinner fittingsSpinner = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public FittingHeaderHolder(final FittingHeaderPart target, final Activity context) {
@@ -98,6 +184,7 @@ final class FittingHeaderHolder extends AbstractHolder {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public FittingHeaderPart getPart() {
 		return (FittingHeaderPart) super.getPart();
 	}
@@ -160,7 +247,7 @@ final class FittingHeaderHolder extends AbstractHolder {
 //- CLASS IMPLEMENTATION ...................................................................................
 final class FittingHeaderPart extends EveAbstractPart {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -4642153502498052929L;
+	private static final long serialVersionUID = -4642153502498052929L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -186,10 +273,12 @@ final class FittingHeaderPart extends EveAbstractPart {
 		return fittings;
 	}
 
+	@Override
 	public long getModelID() {
 		return 0;
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		return new FittingHeaderHolder(this, _activity);
