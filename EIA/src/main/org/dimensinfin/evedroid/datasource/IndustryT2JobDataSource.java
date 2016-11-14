@@ -16,7 +16,8 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.core.AppContext;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
@@ -64,7 +65,9 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT2JobDataSource(final AppModelStore store, final int flavor) {
-		if (null != store) _store = store;
+		if (null != store) {
+			_store = store;
+		}
 		_flavor = flavor;
 	}
 
@@ -73,6 +76,7 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 	 * The hierarchy contains two levels of elements. The first level are the actions and the second level are
 	 * the tasks to complete and fulfill those actions.
 	 */
+	@Override
 	public void createContentHierarchy() {
 		Log.i("DataSource", ">> IndustryT2ManufactureDataSource.createHierarchy");
 		super.createContentHierarchy();
@@ -85,7 +89,9 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 			for (Action action : actions) {
 				ActionPart apart = new ActionPart(action);
 				apart.setBlueprintID(_bppart.getCastedModel().getAssetID());
-				if (action instanceof Skill) apart.setRenderMode(AppWideConstants.rendermodes.RENDER_SKILLACTION);
+				if (action instanceof Skill) {
+					apart.setRenderMode(AppWideConstants.rendermodes.RENDER_SKILLACTION);
+				}
 				apart.createHierarchy();
 				_bppart.addChild(apart);
 			}
@@ -93,8 +99,8 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 
 		// Depending on fragment generate the corresponding model.
 		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBHEADER) {
-			_root.add((AbstractAndroidPart) _bppart
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
+			_root.add(
+					(AbstractAndroidPart) _bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
 		}
 		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBACTIONS) {
 			// Get the module item that is going to be produced.
@@ -115,10 +121,12 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 			int productID = _bppart.getProductID();
 			ResourcePart outputResource = new ResourcePart(new Resource(productID, _bppart.getPossibleRuns()));
 			// Set the render depending on the blueprint job activity.
-			if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING)
+			if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING) {
 				outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTJOB);
-			if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION)
+			}
+			if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION) {
 				outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTBLUEPRINT);
+			}
 			output.addChild(outputResource);
 			// Now classify each resource in their Industry group.
 			classifyResources(_bppart.getChildren());
@@ -130,13 +138,16 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 		return _bppart;
 	}
 
+	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
 			//		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
 			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
+					continue;
+				}
 				result.add(node);
 				// Check if the node is expanded. Then add its children.
 				if (node.isExpanded()) {
@@ -175,15 +186,16 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 	protected void add2Group(final IItemPart action, final EIndustryGroup igroup) {
 		for (AbstractAndroidPart group : _root) {
 			if (group instanceof GroupPart) {
-				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString()))
-					group.addChild(action);
+				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
+					group.addChild((IEditPart) action);
+				}
 			}
 		}
 	}
 
-	protected void classifyResources(final Vector<IGEFNode> nodes) {
+	protected void classifyResources(final Vector<AbstractPropertyChanger> vector) {
 		// Process the actions and set each one on the matching group.
-		for (IGEFNode node : nodes) {
+		for (AbstractPropertyChanger node : vector) {
 			if (node instanceof IItemPart) {
 				IItemPart action = (IItemPart) node;
 				add2Group(action, action.getIndustryGroup());

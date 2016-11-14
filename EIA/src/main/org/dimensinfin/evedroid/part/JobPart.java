@@ -38,12 +38,12 @@ import android.view.View;
 public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionTarget, IDateTimeComparator {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static final long serialVersionUID = -216430970914075462L;
+	private static final long	serialVersionUID	= -216430970914075462L;
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
-	private boolean canBeLaunched = false;
-	private DateTime newStartTime = new DateTime(DateTimeZone.UTC);
+	private boolean						canBeLaunched			= false;
+	private DateTime					newStartTime			= new DateTime(DateTimeZone.UTC);
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -57,11 +57,11 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
-	@Override
-	public boolean expand() {
-		expanded = !expanded;
-		return expanded;
-	}
+	//	@Override
+	//	public boolean expand() {
+	//		expanded = !expanded;
+	//		return expanded;
+	//	}
 
 	public String get_jobDuration() {
 		return generateTimeString(getCastedModel().getTimeInSeconds() * 1000);
@@ -125,12 +125,10 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	}
 
 	/**
-	 * Return the real location id of the station where the job is located. On
-	 * the CCP api the information about the job location is on some fields. The
-	 * one that relates to us is the stationID. When the app creates virtual
-	 * jobs it should set the station to the station where the blueprint is
-	 * located and not the container for input or output that can be used on the
-	 * new interface.
+	 * Return the real location id of the station where the job is located. On the CCP api the information about
+	 * the job location is on some fields. The one that relates to us is the stationID. When the app creates
+	 * virtual jobs it should set the station to the station where the blueprint is located and not the
+	 * container for input or output that can be used on the new interface.
 	 * 
 	 * @return
 	 */
@@ -172,9 +170,8 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	}
 
 	/**
-	 * Deleted the job from the database. Usually because of the user request or
-	 * also can be fired when the app detects the launch of the same job in the
-	 * game data.
+	 * Deleted the job from the database. Usually because of the user request or also can be fired when the app
+	 * detects the launch of the same job in the game data.
 	 */
 	public boolean onContextItemSelected(final MenuItem item) {
 		try {
@@ -207,8 +204,7 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST)
-			return new JobRender(this, _activity);
+		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST) return new JobRender(this, _activity);
 		return new JobRender(this, _activity);
 	}
 

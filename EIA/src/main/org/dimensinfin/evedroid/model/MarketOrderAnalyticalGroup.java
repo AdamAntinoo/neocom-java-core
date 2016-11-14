@@ -7,11 +7,15 @@ package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.dimensinfin.android.mvc.core.INeoComNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -28,7 +32,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
  * 
  * @author Adam Antinoo
  */
-public class MarketOrderAnalyticalGroup extends AnalyticalGroup {
+public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long																serialVersionUID	= -6476601202625023850L;
 
@@ -68,8 +72,16 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup {
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
 			this.locations.put(newOrder.getOrderLocationID(), hit);
-		} else
+		} else {
 			hit.add(newOrder);
+		}
+	}
+
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		return results;
 	}
 
 	/**
@@ -84,13 +96,17 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup {
 	public ArrayList<AbstractGEFNode> collaborate2Model() {
 		final ArrayList<AbstractGEFNode> results = new ArrayList<AbstractGEFNode>();
 		// If the groups has no elements then check the flag to determinate if it is shown or not.
-		if (renderWhenEmpty()) results.add(this);
+		if (renderWhenEmpty()) {
+			results.add(this);
+		}
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
-		final Vector<IGEFNode> orders = aggregate(getChildren());
+		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
 		Collections.sort(orders, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		for (final IGEFNode node : orders)
-			if (node instanceof MarketOrder) results.addAll(((MarketOrder) node).collaborate2Model());
+		for (final AbstractPropertyChanger node : orders)
+			if (node instanceof MarketOrder) {
+				results.addAll(((MarketOrder) node).collaborate2Model());
+			}
 		return results;
 	}
 
@@ -117,6 +133,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup {
 	 * 
 	 * @return
 	 */
+	@Override
 	public boolean renderWhenEmpty() {
 		// Is not empty the render.
 		if (getChildren().size() > 0) return true;
@@ -132,19 +149,20 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup {
 		return buffer.toString();
 	}
 
-	private Vector<IGEFNode> aggregate(final Vector<IGEFNode> children) {
+	private Vector<AbstractPropertyChanger> aggregate(final Vector<IGEFNode> children) {
 		final HashMap<Integer, MarketOrder> datamap = new HashMap<Integer, MarketOrder>();
 		for (final IGEFNode node : children)
 			if (node instanceof MarketOrder) {
 				final MarketOrder order = (MarketOrder) node;
 				final MarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
-				if (null == hit)
+				if (null == hit) {
 					datamap.put(new Integer(order.getItemTypeID()), order);
-				else
+				} else {
 					hit.setVolEntered(hit.getVolEntered() + order.getVolEntered());
+				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
-		return new Vector<IGEFNode>(datamap.values());
+		return new Vector<AbstractPropertyChanger>(datamap.values());
 	}
 
 }

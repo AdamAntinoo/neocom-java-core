@@ -14,7 +14,7 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
@@ -27,7 +27,7 @@ import android.view.View.OnClickListener;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipPart extends AssetPart implements OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -8714502444756843667L;
+	private static final long serialVersionUID = -8714502444756843667L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -46,13 +46,14 @@ public class ShipPart extends AssetPart implements OnClickListener {
 	 * differentiation item and ordering mechanism. Maybe I should use the ship category as a prefix to order
 	 * the ships by categories but currently I will use only the asset identification.
 	 */
+	@Override
 	public String getName() {
 		return get_shipClassGroup();
-//		String userName = getCastedModel().getUserLabel();
-//		if (null == userName)
-//			return "#" + getCastedModel().getAssetID();
-//		else
-//			return userName;
+		//		String userName = getCastedModel().getUserLabel();
+		//		if (null == userName)
+		//			return "#" + getCastedModel().getAssetID();
+		//		else
+		//			return userName;
 	}
 
 	//	public boolean onLongClick(final View target) {
@@ -72,9 +73,10 @@ public class ShipPart extends AssetPart implements OnClickListener {
 	 * 
 	 * @return list of parts that are accessible for this node.
 	 */
+	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<IGEFNode> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = getChildren();
 		// Create the groups and then classify the contents of each of them.
 		GroupPart hislotGroup = (GroupPart) new GroupPart(new Separator("HISLOT"))
 				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
@@ -91,19 +93,19 @@ public class ShipPart extends AssetPart implements OnClickListener {
 		GroupPart cargoGroup = (GroupPart) new GroupPart(new Separator("CARGO HOLD"))
 				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
 		cargoGroup.setIconReference(R.drawable.cargohold);
-		for (IGEFNode node : ch) {
+		for (AbstractPropertyChanger node : ch) {
 			int flag;
 			if (node instanceof AssetPart) {
 				flag = ((AssetPart) node).getCastedModel().getFlag();
-				if ((flag > 10) && (flag < 19))
+				if ((flag > 10) && (flag < 19)) {
 					lowslotGroup.addChild(node);
-				else if ((flag > 18) && (flag < 27))
+				} else if ((flag > 18) && (flag < 27)) {
 					midslotGroup.addChild(node);
-				else if ((flag > 26) && (flag < 35))
+				} else if ((flag > 26) && (flag < 35)) {
 					hislotGroup.addChild(node);
-				else if ((flag > 91) && (flag < 100))
+				} else if ((flag > 91) && (flag < 100)) {
 					rigslotGroup.addChild(node);
-				else {
+				} else {
 					// Contents on ships do not support expansion but when added to the cargohold.
 					cargoGroup.addChild(node);
 					AbstractAndroidPart part = (AbstractAndroidPart) node;
@@ -140,12 +142,14 @@ public class ShipPart extends AssetPart implements OnClickListener {
 		return result;
 	}
 
+	@Override
 	public void onClick(final View view) {
 		// Toggle location to show its contents.
 		toggleExpanded();
 		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("ShipPart [");
 		buffer.append(get_assetName());
@@ -153,6 +157,7 @@ public class ShipPart extends AssetPart implements OnClickListener {
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		if (getRenderMode() == AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS)

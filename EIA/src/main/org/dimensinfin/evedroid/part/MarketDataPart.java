@@ -6,7 +6,7 @@
 
 package org.dimensinfin.evedroid.part;
 
-// - IMPORT SECTION .........................................................................................
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.model.EveItem;
@@ -22,6 +22,11 @@ public abstract class MarketDataPart extends EveAbstractPart {
 	protected EveItem					item							= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public MarketDataPart(final AbstractComplexNode node) {
+		super(node);
+		initialize();
+	}
+
 	public MarketDataPart(final AbstractGEFNode node) {
 		super(node);
 		initialize();

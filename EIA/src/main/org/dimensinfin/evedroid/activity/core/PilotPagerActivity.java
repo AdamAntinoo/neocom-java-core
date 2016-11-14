@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity.core;
 
 //- IMPORT SECTION .........................................................................................
@@ -29,7 +31,7 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected AppModelStore	_store	= null;
+	protected AppModelStore _store = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -42,9 +44,8 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		try {
 			// Process the parameters into the context.
 			final Bundle extras = getIntent().getExtras();
-			if (null == extras)
-				throw new RuntimeException(
-						"RT IndustryDirectorActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
+			if (null == extras) throw new RuntimeException(
+					"RT IndustryDirectorActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
 			//Instantiate the pilot from the characterID.
 			final long characterid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
 			if (characterid > 0) {
@@ -69,7 +70,9 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	protected void onPause() {
 		Log.i("NEOCOM", ">> PilotPagerActivity.onPause");
 		// Check store state and update cache on disk if it has changed.
-		if (this._store.isDirty()) this._store.save();
+		if (this._store.isDirty()) {
+			this._store.save();
+		}
 		super.onPause();
 		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
 	}

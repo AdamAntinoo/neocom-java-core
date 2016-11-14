@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.holder.SeparatorHolder;
 import org.dimensinfin.evedroid.model.Separator;
 
@@ -26,7 +26,7 @@ public class SeparatorPart extends AbstractAndroidPart {
 	//	private AbstractPilotBasedActivity	activity					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public SeparatorPart(final IGEFNode node) {
+	public SeparatorPart(final AbstractComplexNode node) {
 		super(node);
 	}
 
@@ -44,6 +44,7 @@ public class SeparatorPart extends AbstractAndroidPart {
 		return GregorianCalendar.getInstance().getTimeInMillis();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		return new SeparatorHolder(this, _activity);

@@ -24,9 +24,11 @@ import org.dimensinfin.evedroid.storage.AppModelStore;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -406,6 +408,16 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 					"R> Runtime Exception on DirectorsBoardActivity.onResume." + rtex.getMessage()));
 		}
 		logger.info("<< DirectorsBoardActivity.onResume");
+	}
+
+	@SuppressLint("Override")
+	private Drawable getDrawable(final int reference) {
+		// ContextCompat.getDrawable(getActivity(), reference);
+		return getActivity().getResources().getDrawable(reference);
+	}
+
+	private Activity getActivity() {
+		return this;
 	}
 
 	@Override

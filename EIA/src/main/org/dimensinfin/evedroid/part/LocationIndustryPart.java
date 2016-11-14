@@ -14,7 +14,7 @@ import java.util.Vector;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.INamedPart;
@@ -49,10 +49,11 @@ public class LocationIndustryPart extends LocationPart implements INamedPart, On
 	public String get_locationContentCount() {
 		int locationAssets = getChildren().size();
 		String countString = null;
-		if (locationAssets > 1)
+		if (locationAssets > 1) {
 			countString = qtyFormatter.format(locationAssets) + " Stacks";
-		else
+		} else {
 			countString = qtyFormatter.format(locationAssets) + " Stack";
+		}
 		return countString;
 	}
 
@@ -60,13 +61,37 @@ public class LocationIndustryPart extends LocationPart implements INamedPart, On
 		return containerName;
 	}
 
-	public ArrayList<AbstractAndroidPart> getPartChildren() {
+	@Override
+	public ArrayList<AbstractAndroidPart> collaborate2View() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<IGEFNode> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = getChildren();
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
 
-		for (IGEFNode node : ch) {
+		for (AbstractPropertyChanger node : ch) {
+			// Convert the node to a part.
+			AbstractAndroidPart part = (AbstractAndroidPart) node;
+			result.add(part);
+			// Check if the node is expanded. Then add its children.
+			if (part.isExpanded()) {
+				ArrayList<AbstractAndroidPart> grand = part.collaborate2View();
+				result.addAll(part.collaborate2View());
+				// Add a separator.
+				//	result.add(new TerminatorPart(new Separator("")));
+			}
+		}
+		//		result.add(new TerminatorPart(new Separator("")));
+		return result;
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getPartChildren() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		Vector<AbstractPropertyChanger> ch = getChildren();
+		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
+
+		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
 			result.add(part);
@@ -92,7 +117,8 @@ public class LocationIndustryPart extends LocationPart implements INamedPart, On
 	public void onClick(final View view) {
 		// Toggle location to show its contents.
 		toggleExpanded();
-		Log.i("EVEI", "-- " + isExpanded() + " expansion to Location " + getName() + " [" + get_locationID() + "]");
+		Log.i("EVEI",
+				"-- " + getCastedModel().isExpanded() + " expansion to Location " + getName() + " [" + get_locationID() + "]");
 		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
@@ -104,6 +130,7 @@ public class LocationIndustryPart extends LocationPart implements INamedPart, On
 		containerName = name;
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		return new Location4IndustryRender(this, _activity);
 	}

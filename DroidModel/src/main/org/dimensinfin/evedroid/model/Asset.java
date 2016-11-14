@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.model;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.INamed;
@@ -33,7 +33,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class Asset extends AbstractGEFNode implements INamed {
+public class Asset extends AbstractComplexNode implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");

@@ -7,7 +7,7 @@
 package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 
@@ -26,7 +26,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Blueprints")
-public class Blueprint extends AbstractGEFNode {
+public class Blueprint extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID		= -1284879453130050089L;
 

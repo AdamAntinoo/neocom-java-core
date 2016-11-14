@@ -37,7 +37,6 @@ import org.dimensinfin.evedroid.connector.IStorageConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Outpost;
 import org.dimensinfin.evemarket.model.TrackEntry;
 import org.dimensinfin.evemarket.parser.EVEMarketDataParser;
 import org.json.JSONArray;
@@ -48,7 +47,6 @@ import org.xml.sax.SAXException;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AndroidStorageConnector implements IStorageConnector {
@@ -121,8 +119,8 @@ public class AndroidStorageConnector implements IStorageConnector {
 			String recordFileName = DevelopmentStorageConnector.recordedXMLResponses.get(link);
 			if (null != recordFileName) {
 				// ANDROID This line cannot be changed because it is the way we get an asset on Android.
-				is = new BufferedInputStream(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets()
-						.open(recordFileName));
+				is = new BufferedInputStream(
+						EVEDroidApp.getSingletonApp().getApplicationContext().getAssets().open(recordFileName));
 				logger.info("-- Using test file downloader.");
 			}
 		}
@@ -147,15 +145,14 @@ public class AndroidStorageConnector implements IStorageConnector {
 	 * the application storage while for production may be on the Android standard place.
 	 */
 	public File getCacheStorage() {
-		if (AppWideConstants.DEVELOPMENT) {
+		if (AppWideConstants.DEVELOPMENT)
 			return accessAppStorage(AppConnector.getResourceString(R.string.cachefoldername));
-		} else {
+		else
 			return new File(EVEDroidApp.getSingletonApp().getApplicationContext().getCacheDir(),
 					AppConnector.getResourceString(R.string.cachefoldername));
-		}
 	}
 
-	private String readJsonData(int typeid) {
+	private String readJsonData(final int typeid) {
 		StringBuffer data = new StringBuffer();
 		try {
 			String str = "";
@@ -193,15 +190,17 @@ public class AndroidStorageConnector implements IStorageConnector {
 			JSONObject all = part1.getJSONObject("all");
 			JSONObject sell = part1.getJSONObject("sell");
 			JSONObject target = null;
-			if (opType == EMarketSide.SELLER)
+			if (opType == EMarketSide.SELLER) {
 				target = sell;
-			else
+			} else {
 				target = buy;
+			}
 			double price = 0.0;
-			if (opType == EMarketSide.SELLER)
+			if (opType == EMarketSide.SELLER) {
 				price = target.getDouble("min");
-			else
+			} else {
 				price = target.getDouble("max");
+			}
 			long volume = target.getLong("volume");
 			TrackEntry entry = new TrackEntry();
 			entry.setPrice(Double.valueOf(price).toString());
@@ -235,15 +234,19 @@ public class AndroidStorageConnector implements IStorageConnector {
 			reader.setContentHandler(content);
 			reader.setErrorHandler(content);
 			String URLDestination = null;
-			if (opType == EMarketSide.SELLER) URLDestination = getModuleLink(itemName, "SELL");
-			if (opType == EMarketSide.BUYER) URLDestination = getModuleLink(itemName, "BUY");
+			if (opType == EMarketSide.SELLER) {
+				URLDestination = getModuleLink(itemName, "SELL");
+			}
+			if (opType == EMarketSide.BUYER) {
+				URLDestination = getModuleLink(itemName, "BUY");
+			}
 			if (null != URLDestination) {
 				reader.parse(URLDestination);
 				marketEntries = content.getEntries();
 			}
 		} catch (SAXException saxe) {
-			logger.severe("E> Parsing exception while downloading market data for module [" + itemName + "]. "
-					+ saxe.getMessage());
+			logger.severe(
+					"E> Parsing exception while downloading market data for module [" + itemName + "]. " + saxe.getMessage());
 		} catch (IOException ioe) {
 			// TODO Auto-generated catch block
 			ioe.printStackTrace();

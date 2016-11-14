@@ -6,7 +6,8 @@
 
 package org.dimensinfin.evedroid.model;
 
-// - IMPORT SECTION .........................................................................................
+//- IMPORT SECTION .........................................................................................
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -14,7 +15,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Outposts")
-public class Outpost extends AbstractGEFNode {
+public class Outpost extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -7718648590261849585L;
 

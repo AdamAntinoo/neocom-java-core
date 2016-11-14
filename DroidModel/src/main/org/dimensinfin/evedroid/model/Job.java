@@ -9,6 +9,7 @@ package org.dimensinfin.evedroid.model;
 // - IMPORT SECTION .........................................................................................
 import java.util.Date;
 
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -18,7 +19,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Jobs")
-public class Job extends AbstractGEFNode {
+public class Job extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -6841505320348309318L;
 	private static final int			maxRuns						= 10;

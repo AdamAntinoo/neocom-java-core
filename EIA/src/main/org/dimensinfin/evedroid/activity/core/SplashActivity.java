@@ -62,6 +62,7 @@ public class SplashActivity extends Activity {
 			_activity = act;
 		}
 
+		@Override
 		protected Boolean doInBackground(final Void... entry) {
 			// Just check that the files exist and if not load the Api list and their characters.
 			updateStateLabel("Checking application database...");
@@ -218,6 +219,7 @@ public class SplashActivity extends Activity {
 			return true;
 		}
 
+		@Override
 		protected void onPostExecute(final Boolean result) {
 			// Check if we have pilots to show or we have to go to the AddAPI page.
 			if (result) {
@@ -226,8 +228,8 @@ public class SplashActivity extends Activity {
 		}
 
 		private boolean checkAppFile(final String resourceString) {
-			return AppConnector.getStorageConnector().checkStorageResource(
-					AppConnector.getStorageConnector().accessAppStorage(null), resourceString);
+			return AppConnector.getStorageConnector()
+					.checkStorageResource(AppConnector.getStorageConnector().accessAppStorage(null), resourceString);
 		}
 
 		/**
@@ -258,8 +260,12 @@ public class SplashActivity extends Activity {
 				logger.severe("E> Failed to copy resource: " + resourceName);
 			} finally {
 				try {
-					if (ostream != null) ostream.close();
-					if (istream != null) istream.close();
+					if (ostream != null) {
+						ostream.close();
+					}
+					if (istream != null) {
+						istream.close();
+					}
 				} catch (final IOException e) {
 				}
 			}
@@ -274,7 +280,9 @@ public class SplashActivity extends Activity {
 					AppConnector.getResourceString(R.string.appfoldername)
 							+ AppConnector.getResourceString(R.string.app_versionsuffix));
 			final boolean existence = sdcarddir.exists();
-			if (!sdcarddir.exists()) sdcarddir.mkdir();
+			if (!sdcarddir.exists()) {
+				sdcarddir.mkdir();
+			}
 			return !existence;
 		}
 
@@ -293,16 +301,16 @@ public class SplashActivity extends Activity {
 			logger.info(">> EveDroidInitialization.readApiKeys");
 			try {
 				// Read the contents of the character information.
-				final File characterFile = AppConnector.getStorageConnector().accessAppStorage(
-						AppConnector.getResourceString(R.string.apikeysfilename));
+				final File characterFile = AppConnector.getStorageConnector()
+						.accessAppStorage(AppConnector.getResourceString(R.string.apikeysfilename));
 				InputStream is = new BufferedInputStream(new FileInputStream(characterFile));
 				BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 				String line = br.readLine();
 				while (null != line) {
-					String[] parts = line.split(":");
-					String key = parts[0];
-					String validationcode = parts[1];
 					try {
+						String[] parts = line.split(":");
+						String key = parts[0];
+						String validationcode = parts[1];
 						int keynumber = Integer.parseInt(key);
 						logger.info("-- Inserting API key " + keynumber);
 						APIKey api = new APIKey(keynumber, validationcode);
@@ -313,7 +321,9 @@ public class SplashActivity extends Activity {
 					}
 					line = br.readLine();
 				}
-				if (null != br) br.close();
+				if (null != br) {
+					br.close();
+				}
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -335,8 +345,8 @@ public class SplashActivity extends Activity {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger			logger			= Logger.getLogger("SplashActivity");
-	protected static Typeface	daysFace		= Typeface.createFromAsset(EVEDroidApp.getSingletonApp()
-																						.getApplicationContext().getAssets(), "fonts/Days.otf");
+	protected static Typeface	daysFace		= Typeface
+			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 	// - F I E L D - S E C T I O N ............................................................................
 	private final boolean			_lock				= false;
 	private TextView					stateLabel	= null;

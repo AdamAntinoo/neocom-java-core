@@ -1,16 +1,21 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
-// - IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractGEFNode;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.dimensinfin.android.mvc.core.INeoComNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Separator extends AbstractGEFNode {
+public class Separator extends AbstractComplexNode implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7064637836405461264L;
 	//	private static Logger			logger						= Logger.getLogger("Separator");
@@ -29,6 +34,21 @@ public class Separator extends AbstractGEFNode {
 		return content;
 	}
 
+	/**
+	 * Check if the Separator has children and then add all them to the model.
+	 */
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		//		if (renderWhenEmpty()) {
+		//			results.add(this);
+		//		}
+		//		if (isExpanded()) {
+		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		//		}
+		return results;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -41,6 +61,7 @@ public class Separator extends AbstractGEFNode {
 		this.title = title;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Separator [");
 		buffer.append(title).append(" - ").append(content).append(" ");

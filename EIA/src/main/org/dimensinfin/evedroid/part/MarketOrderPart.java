@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
@@ -46,6 +47,10 @@ public class MarketOrderPart extends EveAbstractPart
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
+	public MarketOrderPart(final AbstractComplexNode node) {
+		super(node);
+	}
+
 	public MarketOrderPart(final AbstractGEFNode node) {
 		super(node);
 	}
@@ -107,24 +112,24 @@ public class MarketOrderPart extends EveAbstractPart
 		final int menuItemIndex = item.getItemId();
 		// Process the command depending on the menu and the item selected
 		switch (menuItemIndex) {
-		case R.id.deletemarketOrderActionMenuID:
-			try {
-				AppConnector.getDBConnector().getMarketOrderDAO().delete(getCastedModel());
-				// Clear the cache in memory
-				getPilot().cleanOrders();
-				// Remove from parent and clear the view to force a redraw.
-				// TODO Check if this is required. We should not manipulate the
-				// structures directly but send update signals.
-				// ((AbstractGEFNode) getParent()).removeChild(this);
-				this.invalidate();
-				// TODO Added the firing of the signal to force the update.
-				fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
-			} catch (SQLException sqle) {
-				sqle.printStackTrace();
-			}
-			break;
-		default:
-			return false;
+			case R.id.deletemarketOrderActionMenuID:
+				try {
+					AppConnector.getDBConnector().getMarketOrderDAO().delete(getCastedModel());
+					// Clear the cache in memory
+					getPilot().cleanOrders();
+					// Remove from parent and clear the view to force a redraw.
+					// TODO Check if this is required. We should not manipulate the
+					// structures directly but send update signals.
+					// ((AbstractGEFNode) getParent()).removeChild(this);
+					this.invalidate();
+					// TODO Added the firing of the signal to force the update.
+					fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+				} catch (SQLException sqle) {
+					sqle.printStackTrace();
+				}
+				break;
+			default:
+				return false;
 		}
 		return true;
 	}

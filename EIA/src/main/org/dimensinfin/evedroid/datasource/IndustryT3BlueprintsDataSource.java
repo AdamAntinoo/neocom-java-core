@@ -52,7 +52,9 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT3BlueprintsDataSource(final AppModelStore store) {
-		if (null != store) _store = store;
+		if (null != store) {
+			_store = store;
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -76,6 +78,7 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 	 * blueprints in order and then locate the proper place where to connect it. If the elements do not exist
 	 * they will be created. If the element exists the blueprint will be aggregated to a stack of the same type.
 	 */
+	@Override
 	public void createContentHierarchy() {
 		Log.i("IndustryT2Blueprints", ">> IndustryT2Blueprints.createContentHierarchy");
 		// Clear the current list of elements.
@@ -98,6 +101,7 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 		Log.i("IndustryT2Blueprints", "<< IndustryT2Blueprints.createContentHierarchy [" + _root.size() + "]");
 	}
 
+	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		logger.info(">> IndustryT2Blueprints.getPartHierarchy");
 		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
@@ -143,10 +147,11 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 					.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
 			lochit.setContainerLocation(true);
 			String containername = container.getUserLabel();
-			if (null == containername)
+			if (null == containername) {
 				lochit.setContainerName("#" + container.getAssetID());
-			else
+			} else {
 				lochit.setContainerName(containername);
+			}
 			locations.put(cid, lochit);
 			_root.add(lochit);
 		}

@@ -41,11 +41,11 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractAndroidPart node : _root) {
-			result.add(node);
+		for (AbstractAndroidPart part : _root) {
+			result.add(part);
 			// Check if the node is expanded. Then add its children.
-			if (node.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
+			if (part.isExpanded()) {
+				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
 				result.addAll(grand);
 			}
 		}
@@ -60,6 +60,7 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 		if (null != arguments) _parameters = arguments;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AbstractDataSource [");
 		buffer.append("Parts:").append(_root.size()).append(" ");

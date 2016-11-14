@@ -27,6 +27,8 @@ public interface IConnector {
 	public IStorageConnector getStorageConnector();
 
 	public boolean sdcardAvailable();
+
+	public IConnector getSingleton();
 }
 
 // - UNUSED CODE ............................................................................................

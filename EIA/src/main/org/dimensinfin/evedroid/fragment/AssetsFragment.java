@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
 // - IMPORT SECTION .........................................................................................
@@ -48,7 +50,7 @@ public class AssetsFragment extends AbstractPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int	_filter	= AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION;
+	private int _filter = AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -248,8 +250,8 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 	}
 
 	private boolean groupLocations() {
-		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(EVEDroidApp.getAppStore()
-				.getActivity());
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(EVEDroidApp.getAppStore().getActivity());
 		final String locLimitString = prefs.getString(AppWideConstants.preference.PREF_LOCATIONSLIMIT,
 				AppConnector.getResourceString(R.string.pref_numberOfLocations_default));
 		// Check for the special value of unlimited.
@@ -343,8 +345,8 @@ final class AssetsShipsDataSource extends AbstractIndustryDataSource {
 				//					if (null == hit) {
 				//						hit = new CategoryGroupPart(new Separator(asset.getName()));
 				//						categories.put(asset.getName(), hit);
-				this._root.add((AbstractAndroidPart) new ShipPart(asset)
-						.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS));
+				this._root.add(
+						(AbstractAndroidPart) new ShipPart(asset).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS));
 				//					}
 				//					hit.addChild(new Asset4CategoryPart(asset));
 			}

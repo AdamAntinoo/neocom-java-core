@@ -162,7 +162,9 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
 			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
+					continue;
+				}
 				result.add(node);
 				// Check if the node is expanded. Then add its children.
 				if (node.isExpanded()) {

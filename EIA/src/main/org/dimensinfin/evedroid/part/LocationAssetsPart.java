@@ -15,7 +15,7 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.IMenuActionTarget;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -24,6 +24,8 @@ import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.render.Location4AssetsRender;
+
+import com.j256.ormlite.dao.Dao;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -35,8 +37,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.j256.ormlite.dao.Dao;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public class LocationAssetsPart extends LocationPart implements IMenuActionTarget, OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -46,7 +46,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private HashMap<Long, AbstractAndroidPart>	containerList			= new HashMap<Long, AbstractAndroidPart>();
-	private final HashMap<Long, AssetPart>			containers				= new HashMap();														;
+	private final HashMap<Long, AssetPart>			containers				= new HashMap();;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public LocationAssetsPart(final EveLocation location) {
@@ -65,7 +65,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 	 */
 	public String get_locationContentCount() {
 		long locationAssets = 0;
-		if (isExpanded()) {
+		if (getCastedModel().isExpanded()) {
 			locationAssets = getChildren().size();
 		} else {
 			try {
@@ -154,9 +154,9 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 					} else if (asset.isContainer())
 						// Check if the ship is packaged.
 						if (asset.isPackaged()) {
-							apart = (AssetPart) new AssetPart(asset).setRenderMode(getRenderMode());
+						apart = (AssetPart) new AssetPart(asset).setRenderMode(getRenderMode());
 						} else {
-							apart = (AssetPart) new ContainerPart(asset).setRenderMode(getRenderMode());
+						apart = (AssetPart) new ContainerPart(asset).setRenderMode(getRenderMode());
 						}
 					else {
 						apart = (AssetPart) new AssetPart(asset).setRenderMode(getRenderMode());
@@ -184,7 +184,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 			}
 		}
 		// Toggle location to show its contents.
-		toggleExpanded();
+		getCastedModel().toggleExpanded();
 		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
@@ -207,8 +207,8 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 		Log.i("LocationAssetsPart", ">> LocationAssetsPart.add2Container");
 		// Locate the container if already added to the location.
 		long pcid = apart.getCastedModel().getParentContainer().getDAOID();
-		Vector<IGEFNode> childs = getChildren();
-		for (IGEFNode child : childs) {
+		Vector<AbstractPropertyChanger> childs = getChildren();
+		for (AbstractPropertyChanger child : childs) {
 			if (child instanceof AssetPart) {
 				AssetPart check = (AssetPart) child;
 				long ccid = check.getCastedModel().getDAOID();

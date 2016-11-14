@@ -1,15 +1,20 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
+import java.util.ArrayList;
 // - IMPORT SECTION .........................................................................................
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.core.INeoComNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.parser.AttributeGetters;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
@@ -17,7 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class APIKey extends APIKeyCore {
+public class APIKey extends APIKeyCore implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long								serialVersionUID		= 2600656062640799339L;
 	private static Logger										logger							= Logger.getLogger("APIKey");
@@ -37,6 +42,16 @@ public class APIKey extends APIKeyCore {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public HashMap<Long, EveChar> getCharacters() {
 		return characters;
+	}
+
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		//		results.add(this);
+		// Add the characters tied to this apikey.
+		for (EveChar character : characters.values()) {
+			results.add(character);
+		}
+		return results;
 	}
 
 	/**

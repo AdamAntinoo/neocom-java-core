@@ -6,11 +6,15 @@
 
 package org.dimensinfin.evedroid.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.dimensinfin.core.model.AbstractComplexNode;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractGEFNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveLocation extends AbstractGEFNode {
+public class EveLocation extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1522765618286937377L;
 

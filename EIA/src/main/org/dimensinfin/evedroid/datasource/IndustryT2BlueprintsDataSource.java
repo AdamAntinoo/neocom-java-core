@@ -52,7 +52,9 @@ public class IndustryT2BlueprintsDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT2BlueprintsDataSource(final AppModelStore store) {
-		if (null != store) _store = store;
+		if (null != store) {
+			_store = store;
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -114,8 +116,9 @@ public class IndustryT2BlueprintsDataSource extends AbstractDataSource {
 				Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_CARD_RATIO));
 				result.addAll(grand);
 				result.add(new TerminatorPart(new Separator("")));
-			} else
+			} else {
 				result.add(node);
+			}
 		}
 		_adapterData = result;
 		logger.info("<< IndustryT2Blueprints.getPartHierarchy");
@@ -147,10 +150,11 @@ public class IndustryT2BlueprintsDataSource extends AbstractDataSource {
 					.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
 			lochit.setContainerLocation(true);
 			String containername = container.getUserLabel();
-			if (null == containername)
+			if (null == containername) {
 				lochit.setContainerName("#" + container.getAssetID());
-			else
+			} else {
 				lochit.setContainerName(containername);
+			}
 			locations.put(cid, lochit);
 			_root.add(lochit);
 		}

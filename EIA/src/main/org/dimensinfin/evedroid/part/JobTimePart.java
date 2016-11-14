@@ -52,13 +52,13 @@ public class JobTimePart extends EveAbstractPart {
 		return runTime;
 	}
 
-	@Override
-	public boolean isExpanded() {
-		if (getChildren().size() > 0)
-			return false;
-		else
-			return false;
-	}
+	//	@Override
+	//	public boolean isExpanded() {
+	//		if (getChildren().size() > 0)
+	//			return false;
+	//		else
+	//			return false;
+	//	}
 
 	public void setActivity(final int activity) {
 		jobActivity = activity;
@@ -72,6 +72,7 @@ public class JobTimePart extends EveAbstractPart {
 		this.runTime = runTime;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("ManufactureTimePart [");
 		buffer.append("Runs: ").append(runs).append(" ");
@@ -80,6 +81,7 @@ public class JobTimePart extends EveAbstractPart {
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		return new JobTimeRender(this, _activity);
 	}

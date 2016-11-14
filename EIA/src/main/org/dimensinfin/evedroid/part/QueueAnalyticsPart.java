@@ -8,7 +8,7 @@ package org.dimensinfin.evedroid.part;
 
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.render.QueueaAnalyticsRender;
@@ -27,7 +27,7 @@ public class QueueAnalyticsPart extends EveAbstractPart {
 	private int								jobActivity				= ModelWideConstants.activities.MANUFACTURING;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public QueueAnalyticsPart(final AbstractGEFNode node) {
+	public QueueAnalyticsPart(final AbstractComplexNode node) {
 		super(node);
 	}
 
