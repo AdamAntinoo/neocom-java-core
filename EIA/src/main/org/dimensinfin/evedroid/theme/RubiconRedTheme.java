@@ -20,53 +20,64 @@ import android.graphics.drawable.Drawable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class RubiconRedTheme implements ITheme {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger		logger				= Logger.getLogger("RubiconRedTheme");
-	private static Typeface	daysFace			= Typeface.createFromAsset(EVEDroidApp.getSingletonApp()
-																						.getApplicationContext().getAssets(), "fonts/Days.otf");
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
+	private static Logger logger = Logger.getLogger("RubiconRedTheme");
+	private static Typeface daysFace = Typeface
+			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
-	// - F I E L D - S E C T I O N ............................................................................
-	private Resources				_resourceMgr	= null;
+	// - F I E L D - S E C T I O N
+	// ............................................................................
+	private Resources _resourceMgr = null;
 
-	//	private Activity				_activity			= null;
+	// private Activity _activity = null;
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	//	public RubiconRedTheme(final Activity activity) {
-	//		_activity = activity;
-	//		//		_resourceMgr = activity.getResources();
-	//	}
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
+	// public RubiconRedTheme(final Activity activity) {
+	// _activity = activity;
+	// // _resourceMgr = activity.getResources();
+	// }
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	public Drawable getThemeBackground() {
 		return getResourceManager().getDrawable(R.drawable.dimmedbackground60);
 	}
 
-	@Override
 	public Drawable getThemeDimmed(final EThemeTransparency level) {
 		Drawable draw = getResourceManager().getDrawable(R.drawable.blacktraslucent80);
-		if (level == EThemeTransparency.LOW) draw = getResourceManager().getDrawable(R.drawable.blacktraslucent40);
+		if (level == EThemeTransparency.LOW) {
+			draw = getResourceManager().getDrawable(R.drawable.blacktraslucent40);
+		}
 		return draw;
 	}
 
-	@Override
 	public Typeface getThemeTextFont() {
 		return daysFace;
 	}
 
-	@Override
 	public Drawable getThemeTransparent(final EThemeTransparency level) {
 		Drawable draw = getResourceManager().getDrawable(R.drawable.redtraslucent80);
-		if (level == EThemeTransparency.VERYLOW)
+		if (level == EThemeTransparency.VERYLOW) {
 			draw = getResourceManager().getDrawable(R.drawable.defaultgreentraslucent);
-		if (level == EThemeTransparency.LOW) draw = getResourceManager().getDrawable(R.drawable.selectedgreentraslucent);
-		if (level == EThemeTransparency.MEDIUM) draw = getResourceManager().getDrawable(R.drawable.greentraslucent40);
-		if (level == EThemeTransparency.HIGH) draw = getResourceManager().getDrawable(R.drawable.actiongreentraslucent);
+		}
+		if (level == EThemeTransparency.LOW) {
+			draw = getResourceManager().getDrawable(R.drawable.selectedgreentraslucent);
+		}
+		if (level == EThemeTransparency.MEDIUM) {
+			draw = getResourceManager().getDrawable(R.drawable.greentraslucent40);
+		}
+		if (level == EThemeTransparency.HIGH) {
+			draw = getResourceManager().getDrawable(R.drawable.actiongreentraslucent);
+		}
 		return draw;
 	}
 
 	protected Resources getResourceManager() {
-		if (null == this._resourceMgr) this._resourceMgr = getActivity().getResources();
+		if (null == this._resourceMgr) {
+			this._resourceMgr = getActivity().getResources();
+		}
 		return this._resourceMgr;
 	}
 
@@ -78,4 +89,5 @@ public class RubiconRedTheme implements ITheme {
 	}
 }
 
-// - UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

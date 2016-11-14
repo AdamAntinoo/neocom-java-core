@@ -93,6 +93,10 @@ public interface IDatabaseConnector {
 	public int searchStationType(long systemID);
 
 	public String searchTech4Blueprint(int blueprintID);
+
+	public ArrayList<Resource> searchListOfReaction(int itemID);
+
+	public int searchReactionOutputMultiplier(int itemID);
 }
 
 // - UNUSED CODE ............................................................................................

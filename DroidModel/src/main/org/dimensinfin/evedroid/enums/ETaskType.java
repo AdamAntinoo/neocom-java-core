@@ -8,7 +8,7 @@ package org.dimensinfin.evedroid.enums;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum ETaskType {
-	REQUEST, MOVE, PRODUCE, REFINE, COPY, GET, AVAILABLE, BUILD, BUY, BUYCOVERED, SELL, RESEARCH_ME, RESEARCH_PE, INVENTION, EXTRACT;
+	REACTION, REQUEST, MOVE, PRODUCE, REFINE, COPY, GET, AVAILABLE, BUILD, BUY, BUYCOVERED, SELL, RESEARCH_ME, RESEARCH_PE, INVENTION, EXTRACT;
 
 	public static ETaskType decode(final String action) {
 		if (action.equalsIgnoreCase("REQUEST")) return REQUEST;
@@ -19,6 +19,7 @@ public enum ETaskType {
 		if (action.equalsIgnoreCase("GET")) return GET;
 		if (action.equalsIgnoreCase("AVAILABLE")) return AVAILABLE;
 		if (action.equalsIgnoreCase("EXTRACT")) return EXTRACT;
+		if (action.equalsIgnoreCase("REACTION")) return REACTION;
 
 		if (action.equalsIgnoreCase("BUY")) return BUY;
 		if (action.equalsIgnoreCase("BUYCOVERED")) return BUYCOVERED;

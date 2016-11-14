@@ -35,15 +35,18 @@ import android.view.MenuItem;
 import android.view.View;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionTarget,IDateTimeComparator {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -216430970914075462L;
+public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionTarget, IDateTimeComparator {
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
+	private static final long serialVersionUID = -216430970914075462L;
 
-	// - F I E L D - S E C T I O N ............................................................................
-	private boolean						canBeLaunched			= false;
-	private DateTime					newStartTime			= new DateTime(DateTimeZone.UTC);
+	// - F I E L D - S E C T I O N
+	// ............................................................................
+	private boolean canBeLaunched = false;
+	private DateTime newStartTime = new DateTime(DateTimeZone.UTC);
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 	public JobPart(final AbstractGEFNode job) {
 		super(job);
 	}
@@ -52,7 +55,8 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 		return canBeLaunched;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	@Override
 	public boolean expand() {
 		expanded = !expanded;
@@ -72,7 +76,9 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 		EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(getCastedModel().getBlueprintLocationID());
 		String security = loc.getSecurity();
 		String secColor = securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		// Append the Region -> system
 		htmlLocation.append(loc.getRegion()).append(AppWideConstants.FLOW_ARROW_RIGHT).append(loc.getConstellation())
 				.append(AppWideConstants.FLOW_ARROW_RIGHT);
@@ -81,6 +87,7 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 		htmlLocation.append(" ").append(loc.getStation());
 		return Html.fromHtml(htmlLocation.toString());
 	}
+
 	public String get_jobModule() {
 		return getCastedModel().getModuleName();
 	}
@@ -118,10 +125,12 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	}
 
 	/**
-	 * Return the real location id of the station where the job is located. On the CCP api the information about
-	 * the job location is on some fields. The one that relates to us is the stationID. When the app creates
-	 * virtual jobs it should set the station to the station where the blueprint is located and not the
-	 * container for input or output that can be used on the new interface.
+	 * Return the real location id of the station where the job is located. On
+	 * the CCP api the information about the job location is on some fields. The
+	 * one that relates to us is the stationID. When the app creates virtual
+	 * jobs it should set the station to the station where the blueprint is
+	 * located and not the container for input or output that can be used on the
+	 * new interface.
 	 * 
 	 * @return
 	 */
@@ -163,8 +172,9 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	}
 
 	/**
-	 * Deleted the job from the database. Usually because of the user request or also can be fired when the app
-	 * detects the launch of the same job in the game data.
+	 * Deleted the job from the database. Usually because of the user request or
+	 * also can be fired when the app detects the launch of the same job in the
+	 * game data.
 	 */
 	public boolean onContextItemSelected(final MenuItem item) {
 		try {
@@ -178,12 +188,12 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 		return true;
 	}
 
-	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		Log.i("EVEI", ">> JobPart.onCreateContextMenu");
 		// Create the menu only for user generated jobs.
-		if(!getCastedModel().getJobType().equalsIgnoreCase("CCP"))
-		getActivity().getMenuInflater().inflate(R.menu.jobactions_menu, menu);
+		if (!getCastedModel().getJobType().equalsIgnoreCase("CCP")) {
+			getActivity().getMenuInflater().inflate(R.menu.jobactions_menu, menu);
+		}
 		Log.i("EVEI", "<< JobPart.onCreateContextMenu");
 	}
 
@@ -195,15 +205,17 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 		canBeLaunched = state;
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST) return new JobRender(this, _activity);
+		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST)
+			return new JobRender(this, _activity);
 		return new JobRender(this, _activity);
 	}
 
-	@Override
 	public DateTime getComparableDate() {
 		return new DateTime(getCastedModel().getEndDate());
 	}
 }
 
-// - UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

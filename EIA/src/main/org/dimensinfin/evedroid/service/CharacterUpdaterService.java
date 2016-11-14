@@ -45,36 +45,41 @@ public class CharacterUpdaterService extends IntentService {
 			if (null != pilot) {
 				// Pilot signaled for update. Locate the next data set to update because its cache has expired.
 				EDataBlock datacode = pilot.needsUpdate();
-				switch (datacode) {
-					case CHARACTERDATA:
-						pilot.updateCharacterInfo();
-						EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-						EVEDroidApp.topCounter--;
-						if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
-						break;
-					case ASSETDATA:
-					case BLUEPRINTDATA:
-						pilot.updateAssets();
-						pilot.updateBlueprints();
-						EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-						EVEDroidApp.topCounter--;
-						if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
-						break;
-					case INDUSTRYJOBS:
-						pilot.updateIndustryJobs();
-						EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-						EVEDroidApp.topCounter--;
-						if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
-						break;
-					case MARKETORDERS:
-						pilot.updateMarketOrders();
-						EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-						EVEDroidApp.topCounter--;
-						if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
-						break;
+				try {
+					Log.i("CharacterUpdaterService", ".. CharacterUpdaterService.onHandleIntent - EDataBlock to process: "
+							+ pilot.getName() + " - " + datacode);
+					switch (datacode) {
+						case CHARACTERDATA:
+							pilot.updateCharacterInfo();
+							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							EVEDroidApp.topCounter--;
+							break;
+						case ASSETDATA:
+						case BLUEPRINTDATA:
+							pilot.updateAssets();
+							pilot.updateBlueprints();
+							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							EVEDroidApp.topCounter--;
+							break;
+						case INDUSTRYJOBS:
+							pilot.updateIndustryJobs();
+							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							EVEDroidApp.topCounter--;
+							break;
+						case MARKETORDERS:
+							pilot.updateMarketOrders();
+							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							EVEDroidApp.topCounter--;
+							break;
 
-					default:
-						break;
+						default:
+							break;
+					}
+					// Clean the top counter if completed.
+					if (EVEDroidApp.topCounter < 0) {
+						EVEDroidApp.topCounter = 0;
+					}
+				} catch (RuntimeException rtex) {
 				}
 			}
 			// Relaunch more jobs if completed.

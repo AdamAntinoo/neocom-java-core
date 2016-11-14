@@ -10,27 +10,33 @@ import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.core.IWeigthedNode;
 
 /**
- * The requirements of model objects to be nodes has to review the implementation of simple nodes that only
- * have a literal or a title and more complex nodes that will have some analytical information about the
- * elements contained inside. Any node will have children and some states so this abstract class will add
- * support to that states and to the availability of analytical data.br> Additionally it will export the
- * <code>IWeigthedNode</code> interface that allows the nodes to be ordered by any application specific
- * numeric weight data.
+ * The requirements of model objects to be nodes has to review the
+ * implementation of simple nodes that only have a literal or a title and more
+ * complex nodes that will have some analytical information about the elements
+ * contained inside. Any node will have children and some states so this
+ * abstract class will add support to that states and to the availability of
+ * analytical data.br> Additionally it will export the
+ * <code>IWeigthedNode</code> interface that allows the nodes to be ordered by
+ * any application specific numeric weight data.
  * 
  * @author Adam Antinoo
  */
-//- CLASS IMPLEMENTATION ...................................................................................
+// - CLASS IMPLEMENTATION
+// ...................................................................................
 public abstract class AnalyticalGroup extends AbstractGEFNode implements IWeigthedNode {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long		serialVersionUID					= 8917539237775595255L;
-	public static final String	EVENT_EXPANDCOLLAPSENODE	= "AnalyticalGroup.EVENT_EXPANDCOLLAPSENODE";
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
+	private static final long serialVersionUID = 8917539237775595255L;
+	public static final String EVENT_EXPANDCOLLAPSENODE = "AnalyticalGroup.EVENT_EXPANDCOLLAPSENODE";
 
-	// - F I E L D - S E C T I O N ............................................................................
-	protected String						title											= "G1";
-	protected int								weight										= 10;
-	private boolean							expanded									= false;
+	// - F I E L D - S E C T I O N
+	// ............................................................................
+	protected String title = "G1";
+	protected int weight = 10;
+	private boolean expanded = false;
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 	public AnalyticalGroup() {
 		super();
 	}
@@ -40,9 +46,11 @@ public abstract class AnalyticalGroup extends AbstractGEFNode implements IWeigth
 		this.title = title;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	/**
-	 * Collapses a node from any state if had. If will collapse the node without checking the current state.
+	 * Collapses a node from any state if had. If will collapse the node without
+	 * checking the current state.
 	 * 
 	 * @return the final extend state.
 	 */
@@ -54,8 +62,9 @@ public abstract class AnalyticalGroup extends AbstractGEFNode implements IWeigth
 	}
 
 	/**
-	 * Only expands nodes that have children. This action also has to keep synchronized the recording of actions
-	 * that are used to reproduce the state of a hierarchy.
+	 * Only expands nodes that have children. This action also has to keep
+	 * synchronized the recording of actions that are used to reproduce the
+	 * state of a hierarchy.
 	 * 
 	 * @return the final extend state.
 	 */
@@ -78,7 +87,6 @@ public abstract class AnalyticalGroup extends AbstractGEFNode implements IWeigth
 		return this.title;
 	}
 
-	@Override
 	public int getWeight() {
 		return this.weight;
 	}
@@ -87,9 +95,9 @@ public abstract class AnalyticalGroup extends AbstractGEFNode implements IWeigth
 		this.title = title;
 	}
 
-	@Override
 	public void setWeight(final int weight) {
 		this.weight = weight;
 	}
 }
-//- UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

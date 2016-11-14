@@ -1,3 +1,19 @@
+-- GET THE REACTION LOM
+-- The paramteer is the output resource
+SELECT
+  invTypeReactions.reactionTypeID, invTypes.typeName, invTypeReactions.input
+, COALESCE(dgmTypeAttributes.valueInt, dgmTypeAttributes.valueFloat) * invTypeReactions.quantity AS multiplier
+FROM invTypeReactions, dgmTypeAttributes, invTypes
+WHERE
+invTypes.typeId = invTypeReactions.typeID AND
+invTypeReactions.reactionTypeID IN (
+   SELECT reactionTypeID
+   FROM invTypeReactions
+   WHERE typeID = ? ) AND
+dgmTypeAttributes.typeID = invTypeReactions.typeID
+
+
+
 -- QUERY TO REPLACE THE EVEDROID_ITEMS TABLE FROM THE USER DATABASE
 typeID typeName groupname category price volume tech
 

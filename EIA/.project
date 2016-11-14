@@ -36,4 +36,11 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>src-model</name>
+			<type>2</type>
+			<location>D:/Development/WorkStage/ProjectsEveonline/NeoCom 0.5.X/DroidModel/src/main</location>
+		</link>
+	</linkedResources>
 </projectDescription>

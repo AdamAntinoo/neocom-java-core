@@ -81,7 +81,7 @@ public class AssetsManager implements Serializable {
 	 * @return the number of assets
 	 */
 	public long getAssetTotalCount() {
-		if (totalAssets == -1) {
+		if (totalAssets == -1)
 			try {
 				accessDao();
 				totalAssets = assetDao.countOf(assetDao.queryBuilder().setCountOf(true).where()
@@ -89,24 +89,17 @@ public class AssetsManager implements Serializable {
 			} catch (SQLException sqle) {
 				Log.w("NEOCOM", "W> Proglem calculating the number of assets for " + getPilot().getName());
 			}
-		}
 		return totalAssets;
 	}
 
 	public ArrayList<Blueprint> getBlueprints() {
-		if (null == blueprintCache) {
-			updateBlueprints();
-		}
-		if (blueprintCache.size() == 0) {
-			updateBlueprints();
-		}
+		if (null == blueprintCache) updateBlueprints();
+		if (blueprintCache.size() == 0) updateBlueprints();
 		return blueprintCache;
 	}
 
 	public int getLocationCount() {
-		if (locationCount < 0) {
-			updateLocations();
-		}
+		if (locationCount < 0) updateLocations();
 		return locationCount;
 	}
 
@@ -118,12 +111,8 @@ public class AssetsManager implements Serializable {
 	 * @return
 	 */
 	public ArrayList<EveLocation> getLocations() {
-		if (null == locationsList) {
-			updateLocations();
-		}
-		if (locationsList.size() < 1) {
-			updateLocations();
-		}
+		if (null == locationsList) updateLocations();
+		if (locationsList.size() < 1) updateLocations();
 		return locationsList;
 	}
 
@@ -131,9 +120,7 @@ public class AssetsManager implements Serializable {
 	 * Returns the list of different Regions found on the list of locations.
 	 */
 	public HashSet<String> getRegions() {
-		if (null == regionNames) {
-			updateLocations();
-		}
+		if (null == regionNames) updateLocations();
 		return regionNames;
 	}
 
@@ -161,7 +148,7 @@ public class AssetsManager implements Serializable {
 		//	Select assets for the owner and with an specific category.
 		List<Asset> blueprintList = new ArrayList<Asset>();
 		blueprintList = assetsAtCategoryCache.get(category);
-		if (null == blueprintList) {
+		if (null == blueprintList)
 			try {
 				accessDao();
 				AppConnector.startChrono();
@@ -181,10 +168,9 @@ public class AssetsManager implements Serializable {
 			} catch (java.sql.SQLException sqle) {
 				sqle.printStackTrace();
 			}
-		} else {
+		else
 			Log.i("AssetsManager", "~~ Cache hit [SELECT CATEGORY=" + category + " OWNERID = " + getPilot().getCharacterID()
 					+ "]");
-		}
 
 		return (ArrayList<Asset>) blueprintList;
 	}
@@ -212,8 +198,7 @@ public class AssetsManager implements Serializable {
 		List<Asset> assetList = new ArrayList<Asset>();
 		// Check if we have already that list on the cache.
 		assetList = assetsAtLocationcache.get(location.getID());
-		if (null == assetList) {
-			// Read from database the assets on this location.
+		if (null == assetList) // Read from database the assets on this location.
 			try {
 				AppConnector.startChrono();
 				accessDao();
@@ -234,7 +219,6 @@ public class AssetsManager implements Serializable {
 			} catch (java.sql.SQLException sqle) {
 				sqle.printStackTrace();
 			}
-		}
 		return (ArrayList<Asset>) assetList;
 	}
 
@@ -278,11 +262,8 @@ public class AssetsManager implements Serializable {
 	 */
 	public ArrayList<Blueprint> searchT1Blueprints() {
 		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
-		for (Blueprint bp : getBlueprints()) {
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				blueprintList.add(bp);
-			}
-		}
+		for (Blueprint bp : getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) blueprintList.add(bp);
 		return blueprintList;
 	}
 
@@ -301,11 +282,8 @@ public class AssetsManager implements Serializable {
 	 */
 	public ArrayList<Blueprint> searchT2Blueprints() {
 		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
-		for (Blueprint bp : getBlueprints()) {
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-				blueprintList.add(bp);
-			}
-		}
+		for (Blueprint bp : getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) blueprintList.add(bp);
 		return blueprintList;
 	}
 
@@ -314,7 +292,7 @@ public class AssetsManager implements Serializable {
 		//	Select assets of type blueprint and that are of T2.
 		List<Asset> assetList = new ArrayList<Asset>();
 		assetList = assetsAtCategoryCache.get("T2Modules");
-		if (null == assetList) {
+		if (null == assetList)
 			try {
 				AppConnector.startChrono();
 				Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
@@ -334,7 +312,6 @@ public class AssetsManager implements Serializable {
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			}
-		}
 		Log.i("NEOCOM", "<< EveChar.queryT2Modules");
 		return (ArrayList<Asset>) assetList;
 	}
@@ -382,14 +359,13 @@ public class AssetsManager implements Serializable {
 	 */
 	public void storeBlueprints(final ArrayList<Blueprint> bplist) {
 		HashMap<String, Blueprint> bpStacks = new HashMap<String, Blueprint>();
-		for (Blueprint blueprint : bplist) {
+		for (Blueprint blueprint : bplist)
 			checkBPCStacking(bpStacks, blueprint);
-		}
 
 		// Extract stacks and store them into the caches.
 		blueprintCache.addAll(bpStacks.values());
 		// Update the database information.
-		for (Blueprint blueprint : blueprintCache) {
+		for (Blueprint blueprint : blueprintCache)
 			try {
 				Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
 				// Be sure the owner is reset to undefined when stored at the database.
@@ -404,8 +380,10 @@ public class AssetsManager implements Serializable {
 			} catch (final SQLException sqle) {
 				Log.e("NEOCOM", "E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
 				sqle.printStackTrace();
+			} catch (final RuntimeException rtex) {
+				Log.e("NEOCOM", "E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + rtex.getMessage());
+				rtex.printStackTrace();
 			}
-		}
 	}
 
 	@Override
@@ -414,21 +392,13 @@ public class AssetsManager implements Serializable {
 		buffer.append("owner:").append(getPilot().getName());
 		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
 		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
-		if (assetsAtCategoryCache.size() > 0) {
+		if (assetsAtCategoryCache.size() > 0)
 			buffer.append("assetsAtCategoryCache:").append(assetsAtCategoryCache.size()).append(" ");
-		}
-		if (assetsAtLocationcache.size() > 0) {
+		if (assetsAtLocationcache.size() > 0)
 			buffer.append("assetsAtLocationcache:").append(assetsAtLocationcache.size()).append(" ");
-		}
-		if (blueprintCache.size() > 0) {
-			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
-		}
-		if (null != locationsList) {
-			buffer.append("locationsList: ").append(locationsList).append(" ");
-		}
-		if (null != regionNames) {
-			buffer.append("regionNames: ").append(regionNames).append(" ");
-		}
+		if (blueprintCache.size() > 0) buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
+		if (null != locationsList) buffer.append("locationsList: ").append(locationsList).append(" ");
+		if (null != regionNames) buffer.append("regionNames: ").append(regionNames).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -438,14 +408,12 @@ public class AssetsManager implements Serializable {
 	}
 
 	private void accessDao() {
-		if (null == assetDao) {
-			try {
-				assetDao = AppConnector.getDBConnector().getAssetDAO();
-				if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
-			} catch (SQLException sqle) {
-				// Interrupt processing and signal a runtime exception.
-				throw new RuntimeException(sqle.getMessage());
-			}
+		if (null == assetDao) try {
+			assetDao = AppConnector.getDBConnector().getAssetDAO();
+			if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
+		} catch (SQLException sqle) {
+			// Interrupt processing and signal a runtime exception.
+			throw new RuntimeException(sqle.getMessage());
 		}
 	}
 
@@ -494,9 +462,7 @@ public class AssetsManager implements Serializable {
 			Duration lapse = AppConnector.timeLapse();
 			Log.i("TIME", "~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + getPilot().getCharacterID() + "] - " + lapse);
 			// Check if the list is empty. Then force a refresh download.
-			if (blueprintCache.size() < 1) {
-				getPilot().forceRefresh();
-			}
+			if (blueprintCache.size() < 1) getPilot().forceRefresh();
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

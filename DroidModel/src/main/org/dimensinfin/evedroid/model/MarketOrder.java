@@ -119,7 +119,6 @@ public class MarketOrder extends AbstractGEFNode implements INamed {
 		return this.orderID;
 	}
 
-	@Override
 	public String getOrderingName() {
 		return getItem().getName();
 	}

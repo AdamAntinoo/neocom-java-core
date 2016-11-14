@@ -26,20 +26,24 @@ import android.view.View.OnClickListener;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, OnClickListener {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -1731066477259354660L;
-	private static Logger			logger						= Logger.getLogger("PilotInfoPart");
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
+	private static final long serialVersionUID = -1731066477259354660L;
+	private static Logger logger = Logger.getLogger("PilotInfoPart");
 
-	// - F I E L D - S E C T I O N ............................................................................
-	//	private AbstractPilotBasedActivity	_activity					= null;
-	//	private Fragment										_fragment					= null;
+	// - F I E L D - S E C T I O N
+	// ............................................................................
+	// private AbstractPilotBasedActivity _activity = null;
+	// private Fragment _fragment = null;
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 	public PilotInfoPart(final AbstractGEFNode pilot) {
 		super(pilot);
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	public String get_assetsCount() {
 		final DecimalFormat formatter = new DecimalFormat("###,### Items");
 		final long assetCount = getCastedModel().getAssetCount();
@@ -62,18 +66,18 @@ public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, On
 		return 0;
 	}
 
-	@Override
 	public String getName() {
 		return getCastedModel().getName();
 	}
 
-	@Override
 	public void onClick(final View view) {
 		logger.info(">> PilotInfoPart.onClick");
-		// Set the pilot selected on the context and then go to the Director board.
+		// Set the pilot selected on the context and then go to the Director
+		// board.
 		final Object pilotPart = view.getTag();
 		if (pilotPart instanceof PilotInfoPart) {
-			// TODO This is to keep compatibility with the old data management. Pilot are expected to be at the global context
+			// TODO This is to keep compatibility with the old data management.
+			// Pilot are expected to be at the global context
 			final EveChar pilot = ((PilotInfoPart) pilotPart).getCastedModel();
 			EVEDroidApp.getAppStore().activatePilot(pilot.getCharacterID());
 			final Intent intent = new Intent(getActivity(), DirectorsBoardActivity.class);
@@ -90,4 +94,5 @@ public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, On
 	}
 }
 
-// - UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

@@ -64,6 +64,7 @@ public class ResourceRender extends EveAbstractHolder {
 		balance.setVisibility(View.VISIBLE);
 	}
 
+	@Override
 	public void updateContent() {
 		super.updateContent();
 		itemName.setText(getPart().getName());
@@ -74,9 +75,14 @@ public class ResourceRender extends EveAbstractHolder {
 			balance.setVisibility(View.GONE);
 			totalItems.setText("x1");
 		} else {
-			itemPrice.setText(generatePriceString(getPart().getSellerPrice(), true, true));
-			//			itemPrice.setTextColor(R.color.whitePrice);
-			balance.setText(generatePriceString(getPart().getBalance(), true, true));
+			// For minerals use other price
+			if (getPart().getGroup().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
+				itemPrice.setText(generatePriceString(getPart().getBuyerPrice(), true, true));
+				balance.setText(generatePriceString(getPart().getQuantity() * getPart().getBuyerPrice(), true, true));
+			} else {
+				itemPrice.setText(generatePriceString(getPart().getSellerPrice(), true, true));
+				balance.setText(generatePriceString(getPart().getQuantity() * getPart().getSellerPrice(), true, true));
+			}
 			totalItems.setText("x" + qtyFormatter.format(getPart().getQuantity()));
 		}
 

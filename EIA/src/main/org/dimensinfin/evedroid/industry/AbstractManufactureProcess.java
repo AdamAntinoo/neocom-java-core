@@ -7,6 +7,7 @@ package org.dimensinfin.evedroid.industry;
 
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
@@ -222,6 +224,10 @@ public class AbstractManufactureProcess {
 		if (null != action) {
 			// Store the action on the Task for later presentation.
 			this.currentAction.setUserAction(action.getStringValue());
+			// New code to handle reactions.
+			if (newTask.getItem().getIndustryGroup() == EIndustryGroup.REACTIONMATERIALS) {
+				processReaction(newTask);
+			}
 			if (category.equalsIgnoreCase("Planetary Commodities")) // Action is limited to PRODUCE or BUY
 				if (action.getStringValue().equalsIgnoreCase("PRODUCE")) {
 					final EveLocation planetaryLocation = this.pilot.getLocation4Role("PLANETARY PROCESSING", this.region);
@@ -268,6 +274,26 @@ public class AbstractManufactureProcess {
 		processBuy(newTask);
 	}
 
+	protected void processReaction(final EveTask newTask) {
+		Log.i("NEOCOM", "-- AbstractManufactureProcess.processReaction Processing state - " + ETaskType.BUILD);
+		final int itemID = newTask.getTypeID();
+		final int outputMultiplier = AppConnector.getDBConnector().searchReactionOutputMultiplier(itemID);
+		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfReaction(itemID);
+		for (final Resource resource : lom) {
+			logger.info("-- Processing Resource of LOM: " + resource);
+			final int runs = newTask.getQty();
+			double inputQty = (Math.ceil(runs / outputMultiplier) + 1) * resource.getQuantity();
+			resource.setQuantity(Double.valueOf(inputQty).intValue());
+			//			resource.setAdaptiveStackSize(1);
+			// Add the resource to the set of required resources.
+			addResource(resource);
+		}
+		newTask.setTaskType(ETaskType.BUILD);
+		// Change the source location to the blueprint location if found. Otherwise use the manufacture location.
+		//		newTask.setLocation(loc);
+		registerTask(450, newTask);
+	}
+
 	protected void processBuild(final EveTask newTask) {
 		Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Processing state - " + ETaskType.BUILD);
 		// Get the resources needed to manufacture this request.
@@ -283,7 +309,6 @@ public class AbstractManufactureProcess {
 			loc = bpsofType.get(0).getLocation();
 		}
 		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfMaterials(bpid);
-		//		ArrayList<Resource> lom = bundle.getResourceList(true);
 		for (final Resource resource : lom) {
 			logger.info("-- Processing Resource of LOM: " + resource);
 			final int runs = newTask.getQty();
@@ -456,15 +481,6 @@ public class AbstractManufactureProcess {
 				// Refine completed.
 				processRequest(newTask);
 				return;
-				//				newTask.setTaskType(ETaskType.EXTRACT);
-				//				// TODO The value here, really has to be changed??
-				//				newTask.setQty(mineralObtained);
-				//				newTask.setLocation(oreSelected.getLocation());
-				//				registerTask(300, newTask);
-				//
-				//				EveTask newRequest = new EveTask(ETaskType.REQUEST, newTask.getResource());
-				//				newRequest.setQty(mineralRequested - mineralObtained);
-				//				processRequest(newRequest);
 			}
 		} else {
 			processBuy(newTask);
@@ -818,7 +834,8 @@ public class AbstractManufactureProcess {
 	 * that list then this stack is scheduled for refining. Once we found a target, we refine it and finish the
 	 * action. If the resource generated is not enough we will be called again and do this action again.<br>
 	 * Tag the stack to be processed with the processing location so that location information is added to the
-	 * UI data presented to the user.
+	 * UI data presented to the user.<br>
+	 * Added the alphabetical ordering to allow for a better search for the right ore.
 	 * 
 	 * @param newTask
 	 *          the task that requests the service.
@@ -856,7 +873,8 @@ public class AbstractManufactureProcess {
 				}
 		}
 
-		// Scan each stack for the required mineral.
+		// Scan each stack for the required mineral. Order the asteroids by their ore name first.
+		Collections.sort(asteroids, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		for (final Asset asteroid : asteroids) {
 			// Filter out all ore with quantity less that the portion size (100)
 			if (asteroid.getQuantity() < 100) {

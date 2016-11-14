@@ -31,24 +31,24 @@ import android.widget.ImageView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class EveAbstractHolder extends AbstractHolder {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	protected static final long											ONEMINUTE									= 60 * 1000;
-	protected static final long											ONEHOUR										= 60 * ONEMINUTE;
-	protected static final long											ONEDAY										= 24 * ONEHOUR;
-	protected static final DecimalFormat						keyFormatter							= new DecimalFormat("0000000");
-	protected static final DateTimeFormatter				durationFormatter					= DateTimeFormat.forPattern("d HH:mm");
-	protected static final DateTimeFormatter				timePointFormatter				= DateTimeFormat
-																																								.forPattern("YYYY.MM.dd HH:mm");
-	protected static final DateTimeFormatter				jobTimeFormatter					= DateTimeFormat.forPattern("D HH:MM");
-	protected static final DecimalFormat						priceFormatter						= new DecimalFormat("###,###.00");
-	protected static final DecimalFormat						qtyFormatter							= new DecimalFormat("###,##0");
-	protected static final DecimalFormat						moduleIndexFormatter			= new DecimalFormat("000");
-	protected static final DecimalFormat						queueIndexFormatter				= new DecimalFormat("00");
-	protected static final DecimalFormat						moduleMultiplierFormatter	= new DecimalFormat("x##0.0");
-	protected static final DecimalFormat						itemCountFormatter				= new DecimalFormat("###,##0");
-	protected static final DecimalFormat						volumeFormatter						= new DecimalFormat("###,##0.0");
-	protected static final DecimalFormat						securityFormatter					= new DecimalFormat("0.0");
-	protected static final HashMap<Integer, String>	securityLevels						= new HashMap<Integer, String>();
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
+	protected static final long ONEMINUTE = 60 * 1000;
+	protected static final long ONEHOUR = 60 * ONEMINUTE;
+	protected static final long ONEDAY = 24 * ONEHOUR;
+	protected static final DecimalFormat keyFormatter = new DecimalFormat("0000000");
+	protected static final DateTimeFormatter durationFormatter = DateTimeFormat.forPattern("d HH:mm");
+	protected static final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("YYYY.MM.dd HH:mm");
+	protected static final DateTimeFormatter jobTimeFormatter = DateTimeFormat.forPattern("D HH:MM");
+	protected static final DecimalFormat priceFormatter = new DecimalFormat("###,###.00");
+	protected static final DecimalFormat qtyFormatter = new DecimalFormat("###,##0");
+	protected static final DecimalFormat moduleIndexFormatter = new DecimalFormat("000");
+	protected static final DecimalFormat queueIndexFormatter = new DecimalFormat("00");
+	protected static final DecimalFormat moduleMultiplierFormatter = new DecimalFormat("x##0.0");
+	protected static final DecimalFormat itemCountFormatter = new DecimalFormat("###,##0");
+	protected static final DecimalFormat volumeFormatter = new DecimalFormat("###,##0.0");
+	protected static final DecimalFormat securityFormatter = new DecimalFormat("0.0");
+	protected static final HashMap<Integer, String> securityLevels = new HashMap<Integer, String>();
 	static {
 		securityLevels.put(10, "#2FEFEF");
 		securityLevels.put(9, "#48F0C0");
@@ -62,21 +62,22 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		securityLevels.put(1, "#D73000");
 		securityLevels.put(0, "#F00000");
 	}
-	private static Typeface													daysFace									= Typeface.createFromAsset(EVEDroidApp
-																																								.getSingletonApp()
-																																								.getApplicationContext().getAssets(),
-																																								"fonts/Days.otf");
+	private static Typeface daysFace = Typeface
+			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
-	// - F I E L D - S E C T I O N ............................................................................
-	//		protected ITheme																_theme										= null;
+	// - F I E L D - S E C T I O N
+	// ............................................................................
+	// protected ITheme _theme = null;
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 	public EveAbstractHolder(final AbstractAndroidPart target, final Activity context) {
 		super(target, context);
-		//		_theme = EVEDroidApp.getAppContext().getTheme();
+		// _theme = EVEDroidApp.getAppContext().getTheme();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	public Typeface getThemeTextFont() {
 		return daysFace;
 	}
@@ -85,7 +86,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		final StringBuffer htmlFragment = new StringBuffer();
 		htmlFragment.append("<font color='").append(color).append("'>");
 		htmlFragment.append(data);
-		if (null != suffix) htmlFragment.append(suffix);
+		if (null != suffix) {
+			htmlFragment.append(suffix);
+		}
 		htmlFragment.append("</font>");
 		return Html.fromHtml(htmlFragment.toString());
 	}
@@ -102,9 +105,10 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	abstract protected void createView();
 
 	/**
-	 * The price of the manufacture cost on the output is not tinted with the right color. Use red for cero or
-	 * negative costs, orange for less than 10% and white for higher (or maybe green for higher). This code can
-	 * be refactored to use ever the same generation code.
+	 * The price of the manufacture cost on the output is not tinted with the
+	 * right color. Use red for cero or negative costs, orange for less than 10%
+	 * and white for higher (or maybe green for higher). This code can be
+	 * refactored to use ever the same generation code.
 	 * 
 	 * @param cost
 	 * @param price
@@ -117,8 +121,12 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		final StringBuffer htmlFragmentWithColor = new StringBuffer();
 		final String priceString = generatePriceString(cost, compress, suffix);
 		String color = "#FFFFFF";
-		if (cost >= (price * 0.9)) color = "#FFA500";
-		if (cost >= price) color = "#F00000";
+		if (cost >= (price * 0.9)) {
+			color = "#FFA500";
+		}
+		if (cost >= price) {
+			color = "#F00000";
+		}
 		htmlFragmentWithColor.append("<font color='").append(color).append("'>").append(priceString).append("</font>");
 		return Html.fromHtml(htmlFragmentWithColor.toString());
 	}
@@ -164,25 +172,33 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 
 	protected String generateDurationString2(final long millis) {
 		final DateTimeFormatterBuilder timeLeftCountdown = new DateTimeFormatterBuilder();
-		if (millis > ONEDAY) timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
-		if (millis > ONEHOUR) timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
-		if (millis > ONEMINUTE)
+		if (millis > ONEDAY) {
+			timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
+		}
+		if (millis > ONEHOUR) {
+			timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
+		}
+		if (millis > ONEMINUTE) {
 			timeLeftCountdown.appendMinuteOfHour(2).appendLiteral("M ").appendSecondOfMinute(2).appendLiteral('S');
+		}
 		return timeLeftCountdown.toFormatter().print(new Instant(millis));
 	}
 
 	protected String generatePriceString(final double price, final boolean compress, final boolean addSuffix) {
-		// Generate different formats depending on the quantity and the compress flag.
+		// Generate different formats depending on the quantity and the compress
+		// flag.
 		// Get rid of negative numbers.
 		if (compress) {
-			if (Math.abs(price) > 1200000000.0) if (addSuffix)
-				return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0) + " B ISK";
-			else
-				return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0);
-			if (Math.abs(price) > 12000000.0) if (addSuffix)
-				return priceFormatter.format(price / 1000.0 / 1000.0) + " M ISK";
-			else
-				return priceFormatter.format(price / 1000.0 / 1000.0);
+			if (Math.abs(price) > 1200000000.0)
+				if (addSuffix)
+					return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0) + " B ISK";
+				else
+					return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0);
+			if (Math.abs(price) > 12000000.0)
+				if (addSuffix)
+					return priceFormatter.format(price / 1000.0 / 1000.0) + " M ISK";
+				else
+					return priceFormatter.format(price / 1000.0 / 1000.0);
 		}
 		if (addSuffix)
 			return priceFormatter.format(price) + " ISK";
@@ -194,8 +210,12 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		final StringBuffer htmlFragmentWithColor = new StringBuffer();
 		String secColor = "#F00000";
 		// Get the color from the table.
-		if (sec < 0.0) sec = 0.0;
-		if (sec > 1.0) sec = 1.0;
+		if (sec < 0.0) {
+			sec = 0.0;
+		}
+		if (sec > 1.0) {
+			sec = 1.0;
+		}
 		final long secAdjust = Long.valueOf(Math.round(sec * 10.0)).intValue();
 		secColor = securityLevels.get(Long.valueOf(secAdjust).intValue());
 		htmlFragmentWithColor.append("<font color='").append(secColor).append("'>").append(data).append("</font>");
@@ -205,9 +225,15 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	protected String generateTimeString(final long millis) {
 		try {
 			final DateTimeFormatterBuilder timeFormatter = new DateTimeFormatterBuilder();
-			if (millis > ONEDAY) timeFormatter.appendDayOfYear(1).appendLiteral("D ");
-			if (millis > ONEHOUR) timeFormatter.appendHourOfDay(2).appendLiteral(":");
-			if (millis > ONEMINUTE) timeFormatter.appendMinuteOfHour(2).appendLiteral(":").appendSecondOfMinute(2);
+			if (millis > ONEDAY) {
+				timeFormatter.appendDayOfYear(1).appendLiteral("D ");
+			}
+			if (millis > ONEHOUR) {
+				timeFormatter.appendHourOfDay(2).appendLiteral(":");
+			}
+			if (millis > ONEMINUTE) {
+				timeFormatter.appendMinuteOfHour(2).appendLiteral(":").appendSecondOfMinute(2);
+			}
 			return timeFormatter.toFormatter().print(new Instant(millis));
 		} catch (final RuntimeException rtex) {
 			return "0:00";
@@ -219,8 +245,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	}
 
 	/**
-	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
-	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
+	 * Downloads and caches the item icon from the CCP server. The new
+	 * implementation check for special cases such as locations. Stations on
+	 * locations have an image that can be downloaded from the same place.
 	 * 
 	 * @param targetIcon
 	 * @param typeID
@@ -230,7 +257,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		if (null != targetIcon) {
 			// If the flag signals an station change the code.
 			String link = EVEDroidApp.getTheCacheConnector().getURLForItem(typeID);
-			if (station) link = EVEDroidApp.getTheCacheConnector().getURLForStation(typeID);
+			if (station) {
+				link = EVEDroidApp.getTheCacheConnector().getURLForStation(typeID);
+			}
 			final Drawable draw = EVEDroidApp.getTheCacheConnector().getCacheDrawable(link, targetIcon);
 			targetIcon.setImageDrawable(draw);
 		}
@@ -238,10 +267,13 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 
 	protected Spanned regionSystemLocation(final EveLocation loc) {
 		final StringBuffer htmlLocation = new StringBuffer();
-		//		EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(getCastedModel().getBlueprintLocationID());
+		// EveLocation loc =
+		// AppConnector.getDBConnector().searchLocationbyID(getCastedModel().getBlueprintLocationID());
 		final String security = loc.getSecurity();
 		String secColor = securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		// Append the Region -> system
 		htmlLocation.append(loc.getRegion()).append(AppWideConstants.FLOW_ARROW_RIGHT).append(loc.getConstellation())
 				.append(AppWideConstants.FLOW_ARROW_RIGHT);
@@ -251,15 +283,18 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		return Html.fromHtml(htmlLocation.toString());
 	}
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
 	@SuppressWarnings("deprecation")
 	protected void setBackgroundTransparency(final int resource) {
 		// Set the background form the Theme.
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN)
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
 			this._convertView.setBackgroundDrawable(getContext().getResources().getDrawable(resource));
-		else
-			this._convertView.setBackground(getContext().getResources().getDrawable(resource));
+			// } else {
+			// this._convertView.setBackground(getContext().getResources().getDrawable(resource));
+			// }
+		}
 	}
 }
 
-// - UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

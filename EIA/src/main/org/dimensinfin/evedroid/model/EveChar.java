@@ -32,7 +32,6 @@ import org.w3c.dom.NodeList;
 import android.util.Log;
 
 import com.beimin.eveapi.EveApi;
-import com.beimin.eveapi.character.assetlist.AssetListParser;
 import com.beimin.eveapi.character.blueprints.BlueprintListParser;
 import com.beimin.eveapi.character.industryjobs.NewIndustryJobsHistoryParser;
 import com.beimin.eveapi.character.industryjobs.NewIndustryJobsParser;
@@ -45,6 +44,7 @@ import com.beimin.eveapi.character.skill.intraining.SkillInTrainingParser;
 import com.beimin.eveapi.character.skill.intraining.SkillInTrainingResponse;
 import com.beimin.eveapi.connectors.CachingConnector;
 import com.beimin.eveapi.core.ApiAuthorization;
+import com.beimin.eveapi.corporation.assetlist.AssetListParser;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import com.beimin.eveapi.shared.assetlist.EveAsset;
@@ -261,10 +261,19 @@ public class EveChar extends EveCharCore {
 	}
 
 	public int getSkillLevel(final int skillID) {
+		// Corporation api will have all skills maxed.
+		if (isCorporation()) return 5;
 		final Set<ApiSkill> skills = this.characterSheet.getSkills();
 		for (final ApiSkill apiSkill : skills)
 			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
 		return 0;
+	}
+
+	public boolean isCorporation() {
+		if (getName().equalsIgnoreCase("Corporation"))
+			return true;
+		else
+			return false;
 	}
 
 	/**
@@ -344,16 +353,30 @@ public class EveChar extends EveCharCore {
 		try {
 			// Clear any previous record with owner -1 from database.
 			AppConnector.getDBConnector().clearInvalidRecords();
-			// Download and parse the assets.
-			//			Log.i("EveChar", "-- ");
-			final AssetListParser parser = AssetListParser.getInstance();
-			final AssetListResponse response = parser.getResponse(getAuthorization());
-			if (null != response) {
-				final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-				this.assetsCacheTime = new Instant(response.getCachedUntil());
-				// Assets may be parent of other assets so process them recursively.
-				for (final EveAsset eveAsset : assets) {
-					processAsset(eveAsset, null);
+			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
+			AssetListResponse response = null;
+			if (getName().equalsIgnoreCase("Corporation")) {
+				AssetListParser parser = com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance();
+				response = parser.getResponse(getAuthorization());
+				if (null != response) {
+					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
+					this.assetsCacheTime = new Instant(response.getCachedUntil());
+					// Assets may be parent of other assets so process them recursively.
+					for (final EveAsset eveAsset : assets) {
+						processAsset(eveAsset, null);
+					}
+				}
+			} else {
+				com.beimin.eveapi.character.assetlist.AssetListParser parser = com.beimin.eveapi.character.assetlist.AssetListParser
+						.getInstance();
+				response = parser.getResponse(getAuthorization());
+				if (null != response) {
+					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
+					this.assetsCacheTime = new Instant(response.getCachedUntil());
+					// Assets may be parent of other assets so process them recursively.
+					for (final EveAsset eveAsset : assets) {
+						processAsset(eveAsset, null);
+					}
 				}
 			}
 			AppConnector.getDBConnector().replaceAssets(getCharacterID());
@@ -391,24 +414,44 @@ public class EveChar extends EveCharCore {
 				apiCacheConnector = new CachingConnector();
 			}
 			EveApi.setConnector(apiCacheConnector);
-
-			final BlueprintListParser parser = BlueprintListParser.getInstance();
-			final BlueprintListResponse response = parser.getResponse(getAuthorization());
-			if (null != response) {
-				final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
-				final HashSet<EveBlueprint> blueprints = new HashSet<EveBlueprint>(response.getAll());
-				for (final EveBlueprint bp : blueprints) {
-					try {
-						bplist.add(convert2Blueprint(bp));
-					} catch (final RuntimeException rtex) {
-						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-						Log.w("EveChar", "W> The Blueprint " + bp.getItemID() + " has no matching asset.");
-						Log.w("EveChar", "W> " + bp.toString());
+			BlueprintListResponse response = null;
+			ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
+			if (getName().equalsIgnoreCase("Corporation")) {
+				com.beimin.eveapi.corporation.blueprints.BlueprintListParser parser = com.beimin.eveapi.corporation.blueprints.BlueprintListParser
+						.getInstance();
+				response = parser.getResponse(getAuthorization());
+				if (null != response) {
+					//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
+					final HashSet<EveBlueprint> blueprints = new HashSet<EveBlueprint>(response.getAll());
+					for (final EveBlueprint bp : blueprints) {
+						try {
+							bplist.add(convert2Blueprint(bp));
+						} catch (final RuntimeException rtex) {
+							// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
+							Log.w("EveChar", "W> The Blueprint " + bp.getItemID() + " has no matching asset.");
+							Log.w("EveChar", "W> " + bp.toString());
+						}
 					}
 				}
-				// Pack the blueprints and store them on the database.
-				getAssetsManager().storeBlueprints(bplist);
+			} else {
+				BlueprintListParser parser = BlueprintListParser.getInstance();
+				response = parser.getResponse(getAuthorization());
+				if (null != response) {
+					//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
+					final HashSet<EveBlueprint> blueprints = new HashSet<EveBlueprint>(response.getAll());
+					for (final EveBlueprint bp : blueprints) {
+						try {
+							bplist.add(convert2Blueprint(bp));
+						} catch (final RuntimeException rtex) {
+							// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
+							Log.w("EveChar", "W> The Blueprint " + bp.getItemID() + " has no matching asset.");
+							Log.w("EveChar", "W> " + bp.toString());
+						}
+					}
+				}
 			}
+			// Pack the blueprints and store them on the database.
+			getAssetsManager().storeBlueprints(bplist);
 			AppConnector.getDBConnector().replaceBlueprints(getCharacterID());
 			// Update the caching time to the time set by the eveapi.
 			this.blueprintsCacheTime = new Instant(response.getCachedUntil());
@@ -591,13 +634,15 @@ public class EveChar extends EveCharCore {
 		// Get access to the Item and update the copied fields.
 		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
-			//			newAsset.setItem(item);
-			newAsset.setName(item.getName());
-			newAsset.setCategory(item.getCategory());
-			newAsset.setGroupName(item.getGroupName());
-			newAsset.setTech(item.getTech());
-			if (item.isBlueprint()) {
-				newAsset.setBlueprintType(eveAsset.getRawQuantity());
+			try {
+				newAsset.setName(item.getName());
+				newAsset.setCategory(item.getCategory());
+				newAsset.setGroupName(item.getGroupName());
+				newAsset.setTech(item.getTech());
+				if (item.isBlueprint()) {
+					newAsset.setBlueprintType(eveAsset.getRawQuantity());
+				}
+			} catch (RuntimeException rtex) {
 			}
 		}
 		return newAsset;
@@ -693,7 +738,7 @@ public class EveChar extends EveCharCore {
 			}
 		} catch (final ApiException e) {
 			Log.w("NEOCOM", "W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
-			e.printStackTrace();
+			//			e.printStackTrace();
 		}
 		return null;
 	}
@@ -703,40 +748,44 @@ public class EveChar extends EveCharCore {
 		final String eveCharacterInfoCall = CHAR_CHARACTERSHEET + "?keyID=" + this.keyID + "&vCode="
 				+ this.verificationCode + "&characterID=" + this.characterID;
 		final Element characterDoc = AppConnector.getStorageConnector().accessDOMDocument(eveCharacterInfoCall);
-		NodeList resultNodes = characterDoc.getElementsByTagName("result");
-		Element result = (Element) resultNodes.item(0);
-		if (null != result) {
-			resultNodes = characterDoc.getElementsByTagName("name");
-			result = (Element) resultNodes.item(0);
+		if (null == characterDoc) {
+			setName("Corporation");
+		} else {
+			NodeList resultNodes = characterDoc.getElementsByTagName("result");
+			Element result = (Element) resultNodes.item(0);
 			if (null != result) {
-				final String text = result.getTextContent();
-				setName(text);
+				resultNodes = characterDoc.getElementsByTagName("name");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setName(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("balance");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setBalance(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("race");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setRace(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("cloneName");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setCloneName(text);
+				}
+				//			resultNodes = characterDoc.getElementsByTagName("cloneSkillPoints");
+				//			result = (Element) resultNodes.item(0);
+				//			if (null != result) {
+				//				final String text = result.getTextContent();
+				//				setCloneSkillPoints(text);
+				//			}
+				logger.info(".. Updated a new character <" + getName() + ">");
 			}
-			resultNodes = characterDoc.getElementsByTagName("balance");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setBalance(text);
-			}
-			resultNodes = characterDoc.getElementsByTagName("race");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setRace(text);
-			}
-			resultNodes = characterDoc.getElementsByTagName("cloneName");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setCloneName(text);
-			}
-			//			resultNodes = characterDoc.getElementsByTagName("cloneSkillPoints");
-			//			result = (Element) resultNodes.item(0);
-			//			if (null != result) {
-			//				final String text = result.getTextContent();
-			//				setCloneSkillPoints(text);
-			//			}
-			logger.info(".. Updated a new character <" + getName() + ">");
 		}
 		logger.info("<< EveChar.downloadCharacterSheet");
 	}
@@ -750,47 +799,51 @@ public class EveChar extends EveCharCore {
 		final String eveCharacterInfoCall = EVE_CHARACTERINFO + "?keyID=" + this.keyID + "&vCode=" + this.verificationCode
 				+ "&characterID=" + this.characterID;
 		final Element characterDoc = AppConnector.getStorageConnector().accessDOMDocument(eveCharacterInfoCall);
-		NodeList resultNodes = characterDoc.getElementsByTagName("result");
-		Element result = (Element) resultNodes.item(0);
-		if (null != result) {
-			resultNodes = characterDoc.getElementsByTagName("characterName");
-			result = (Element) resultNodes.item(0);
+		if (null == characterDoc) {
+			setName("Corporation");
+		} else {
+			NodeList resultNodes = characterDoc.getElementsByTagName("result");
+			Element result = (Element) resultNodes.item(0);
 			if (null != result) {
-				final String text = result.getTextContent();
-				logger.info(".. Setting name <" + text + ">");
-				setName(text);
+				resultNodes = characterDoc.getElementsByTagName("characterName");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					logger.info(".. Setting name <" + text + ">");
+					setName(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("accountBalance");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setBalance(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("shipName");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setShipName(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("shipTypeName");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setShipTypeName(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("corporation");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setCorporationName(text);
+				}
+				resultNodes = characterDoc.getElementsByTagName("lastKnownLocation");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					setLastKnownLocation(text);
+				}
+				logger.info(".. Updated a new character <" + getName() + ">");
 			}
-			resultNodes = characterDoc.getElementsByTagName("accountBalance");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setBalance(text);
-			}
-			resultNodes = characterDoc.getElementsByTagName("shipName");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setShipName(text);
-			}
-			resultNodes = characterDoc.getElementsByTagName("shipTypeName");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setShipTypeName(text);
-			}
-			resultNodes = characterDoc.getElementsByTagName("corporation");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setCorporationName(text);
-			}
-			resultNodes = characterDoc.getElementsByTagName("lastKnownLocation");
-			result = (Element) resultNodes.item(0);
-			if (null != result) {
-				final String text = result.getTextContent();
-				setLastKnownLocation(text);
-			}
-			logger.info(".. Updated a new character <" + getName() + ">");
 		}
 		logger.info("<< EveChar.downloadEveCharacterInfo");
 	}

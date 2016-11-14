@@ -34,24 +34,28 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class MarketOrderPart extends EveAbstractPart implements IMenuActionTarget, OnClickListener, IDateTimeComparator {
-	private static final long	serialVersionUID	= 5816353740185144480L;
+public class MarketOrderPart extends EveAbstractPart
+		implements IMenuActionTarget, OnClickListener, IDateTimeComparator {
+	private static final long serialVersionUID = 5816353740185144480L;
 
-	// - S T A T I C - S E C T I O N ..........................................................................
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
 
-	// - F I E L D - S E C T I O N ............................................................................
+	// - F I E L D - S E C T I O N
+	// ............................................................................
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 	public MarketOrderPart(final AbstractGEFNode node) {
 		super(node);
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	public MarketOrder getCastedModel() {
 		return (MarketOrder) getModel();
 	}
 
-	@Override
 	public DateTime getComparableDate() {
 		return new DateTime(getCastedModel().getIssuedDate());
 	}
@@ -59,6 +63,7 @@ public class MarketOrderPart extends EveAbstractPart implements IMenuActionTarge
 	public int getEntered() {
 		return getCastedModel().getVolEntered();
 	}
+
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> StackPart.onClick");
 		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
@@ -68,6 +73,7 @@ public class MarketOrderPart extends EveAbstractPart implements IMenuActionTarge
 		Log.i("EVEI", "<< StackPart.onClick");
 	}
 
+	@Override
 	public long getModelID() {
 		return getCastedModel().getOrderID();
 	}
@@ -96,40 +102,41 @@ public class MarketOrderPart extends EveAbstractPart implements IMenuActionTarge
 		return getCastedModel().getItemTypeID();
 	}
 
-	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		final int menuItemIndex = item.getItemId();
 		// Process the command depending on the menu and the item selected
 		switch (menuItemIndex) {
-			case R.id.deletemarketOrderActionMenuID:
-				try {
-					AppConnector.getDBConnector().getMarketOrderDAO().delete(getCastedModel());
-					// Clear the cache in memory
-					getPilot().cleanOrders();
-					// Remove from parent and clear the view to force a redraw.
-					// TODO Check if this is required. We should not manipulate the structures directly but send update signals.
-//					((AbstractGEFNode) getParent()).removeChild(this);
-					this.invalidate();
-					// TODO Added the firing of the signal to force the update.
-										fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
-				} catch (SQLException sqle) {
-					sqle.printStackTrace();
-				}
-				break;
-			default:
-				return false;
+		case R.id.deletemarketOrderActionMenuID:
+			try {
+				AppConnector.getDBConnector().getMarketOrderDAO().delete(getCastedModel());
+				// Clear the cache in memory
+				getPilot().cleanOrders();
+				// Remove from parent and clear the view to force a redraw.
+				// TODO Check if this is required. We should not manipulate the
+				// structures directly but send update signals.
+				// ((AbstractGEFNode) getParent()).removeChild(this);
+				this.invalidate();
+				// TODO Added the firing of the signal to force the update.
+				fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+			break;
+		default:
+			return false;
 		}
 		return true;
 	}
 
-	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		// Activate the menu only of the order is scheduled.
-		if (getOrderState() == ModelWideConstants.orderstates.SCHEDULED)
+		if (getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
 			getActivity().getMenuInflater().inflate(R.menu.marketorder_menu, menu);
+		}
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("MarketOrderPart [");
 		buffer.append(getName()).append(" ");
@@ -138,9 +145,11 @@ public class MarketOrderPart extends EveAbstractPart implements IMenuActionTarge
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		return new MarketOrderRender(this, _activity);
 	}
 }
 
-// - UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

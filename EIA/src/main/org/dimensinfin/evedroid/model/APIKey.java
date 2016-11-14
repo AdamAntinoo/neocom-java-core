@@ -50,25 +50,30 @@ public class APIKey extends APIKeyCore {
 		// Get the account new information added to the key
 		String accountAccountStatus = ACCOUNT_STATUS + "?keyID=" + keyID + "&vCode=" + verificationCode;
 		Element accountStatusDoc = AppConnector.getStorageConnector().accessDOMDocument(accountAccountStatus);
-		NodeList resultNodes = accountStatusDoc.getElementsByTagName("result");
-		Element result = (Element) resultNodes.item(0);
-		if (null != result) {
-			resultNodes = accountStatusDoc.getElementsByTagName("paidUntil");
-			result = (Element) resultNodes.item(0);
+		if (null == accountStatusDoc) {
+			setPaidUntil("2015-12-12 20:00:00");
+		} else {
+			NodeList resultNodes = accountStatusDoc.getElementsByTagName("result");
+			Element result = (Element) resultNodes.item(0);
 			if (null != result) {
-				final String text = result.getTextContent();
-				logger.info(".. Setting paidUntil <" + text + ">");
-				setPaidUntil(text);
+				resultNodes = accountStatusDoc.getElementsByTagName("paidUntil");
+				result = (Element) resultNodes.item(0);
+				if (null != result) {
+					final String text = result.getTextContent();
+					logger.info(".. Setting paidUntil <" + text + ">");
+					setPaidUntil(text);
+				}
 			}
 		}
-
 		// Download the references to the Characters referenced by this key
 		String accountCharacterCall = ACCOUNT_CHARACTERS + "?keyID=" + keyID + "&vCode=" + verificationCode;
 		// With this information go to the API and get a basic information of the Character to initialize it.
 		Element acCharacterDoc = AppConnector.getStorageConnector().accessDOMDocument(accountCharacterCall);
 		if (null != acCharacterDoc) {
 			NodeList nodes = acCharacterDoc.getElementsByTagName("row");
-			if (nodes.getLength() > 1) type = EAPIKeyTypes.MultiCharacter;
+			if (nodes.getLength() > 1) {
+				type = EAPIKeyTypes.MultiCharacter;
+			}
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Element itemElement = (Element) nodes.item(i);
 				long characterID = AttributeGetters.getLong(itemElement, "characterID");

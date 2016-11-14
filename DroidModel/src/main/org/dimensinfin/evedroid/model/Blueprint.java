@@ -77,13 +77,13 @@ public class Blueprint extends AbstractGEFNode {
 	@DatabaseField
 	private String						stackIDRefences			= "";
 	@DatabaseField
-	private int						manufactureIndex			= -1;
+	private int								manufactureIndex		= -1;
 	@DatabaseField
-	private int						inventionIndex			= -1;
+	private int								inventionIndex			= -1;
 	@DatabaseField
-	private double						jobProductionCost			= -1.0;
+	private double						jobProductionCost		= -1.0;
 	@DatabaseField
-	private int						manufacturableCount			= -1;
+	private int								manufacturableCount	= -1;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Memory operation fields not stored into the database but stored on the file store. */
@@ -210,6 +210,11 @@ public class Blueprint extends AbstractGEFNode {
 	public String getModuleGroup() {
 		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
 		return moduleItem.getGroupName();
+	}
+
+	public String getModuleCategory() {
+		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
+		return moduleItem.getCategory();
 	}
 
 	public String getModuleGroupCategory() {
@@ -357,6 +362,7 @@ public class Blueprint extends AbstractGEFNode {
 		this.typeName = typeName;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Blueprint [");
 		if (associatedAsset == null)
@@ -380,8 +386,8 @@ public class Blueprint extends AbstractGEFNode {
 			Dao<Asset, String> dao = AppConnector.getDBConnector().getAssetDAO();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
-//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");
-		//	throw new RuntimeException("W> Blueprint.<init> - Asset <" + assetID + "> not found.");
+			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");
+			//	throw new RuntimeException("W> Blueprint.<init> - Asset <" + assetID + "> not found.");
 		}
 	}
 

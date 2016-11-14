@@ -25,6 +25,8 @@ import org.dimensinfin.evedroid.render.TaskRender;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import com.j256.ormlite.dao.Dao;
+
 import android.app.DialogFragment;
 import android.text.Html;
 import android.text.Spanned;
@@ -34,21 +36,23 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.j256.ormlite.dao.Dao;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public class TaskPart extends MarketDataPart implements IMenuActionTarget {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 2556476507087279363L;
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
+	private static final long serialVersionUID = 2556476507087279363L;
 
-	// - F I E L D - S E C T I O N ............................................................................
+	// - F I E L D - S E C T I O N
+	// ............................................................................
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 	public TaskPart(final AbstractGEFNode node) {
 		super(node);
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	public MarketOrder generateOrder(final int quantity) {
 		final DateTime now = new DateTime(DateTimeZone.UTC);
 		this.item = getCastedModel().getItem();
@@ -71,10 +75,11 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 			try {
 				final Dao<MarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
 				marketOrderDao.createOrUpdate(newMarketOrder);
-				Log.i("EVEI", "-- TaskPart.generateOrder.Wrote MarketOrder to database id [" + newMarketOrder.getOrderID()
-						+ "]");
+				Log.i("EVEI", "-- TaskPart.generateOrder.Wrote MarketOrder to database id ["
+						+ newMarketOrder.getOrderID() + "]");
 			} catch (final SQLException sqle) {
-				Log.i("EVEI", "E> Unable to create the new Job [" + newMarketOrder.getOrderID() + "]. " + sqle.getMessage());
+				Log.i("EVEI",
+						"E> Unable to create the new Job [" + newMarketOrder.getOrderID() + "]. " + sqle.getMessage());
 				sqle.printStackTrace();
 			}
 		} catch (final RuntimeException rtex) {
@@ -92,7 +97,9 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 		final StringBuffer htmlLocation = new StringBuffer();
 		final String security = getCastedModel().getLocation().getSecurity();
 		String secColor = securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		htmlLocation.append("<font color='").append(secColor).append("'>")
 				.append(getCastedModel().getLocation().getSecurity()).append("</font>");
 		htmlLocation.append(" ").append(getCastedModel().getLocation().getStation());
@@ -113,7 +120,8 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	}
 
 	/**
-	 * Presents on the UI with the cost to obtain of the resources missing to manufacture the schedule count.
+	 * Presents on the UI with the cost to obtain of the resources missing to
+	 * manufacture the schedule count.
 	 */
 	public String get_budget() {
 		return generatePriceString(getSellerPrice() * getCastedModel().getQty(), true, true);
@@ -127,7 +135,8 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	}
 
 	/**
-	 * Searches for a text representation of the destination station or place where to move some asset.
+	 * Searches for a text representation of the destination station or place
+	 * where to move some asset.
 	 */
 	public String get_destination() {
 		// If the location comes from the Market then there is no station
@@ -140,7 +149,9 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 		EveLocation loc = getCastedModel().getLocation();
 		String security = loc.getSecurity();
 		String secColor = securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		htmlLocation.append("<font color='").append(secColor).append("'>")
 				.append(securityFormatter.format(loc.getSecurityValue())).append("</font>");
 		htmlLocation.append(" ").append(loc.getSystem());
@@ -149,7 +160,9 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 		loc = getCastedModel().getDestination();
 		security = loc.getSecurity();
 		secColor = securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		htmlLocation.append("<font color='").append(secColor).append("'>")
 				.append(securityFormatter.format(loc.getSecurityValue())).append("</font>");
 		htmlLocation.append(" ").append(loc.getSystem());
@@ -166,7 +179,9 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 		final EveLocation loc = getCastedModel().getLocation();
 		final String security = loc.getSecurity();
 		String secColor = securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		htmlLocation.append("<font color='").append(secColor).append("'>").append(loc.getSecurity()).append("</font>");
 		htmlLocation.append(" ").append(loc.getSystem());
 		return Html.fromHtml(htmlLocation.toString());
@@ -208,16 +223,15 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 		return getCastedModel().getLocation();
 	}
 
-	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		return false;
 	}
 
 	/**
-	 * Creates the contextual menu for the selected task if this is a BUY task only. The action should trigger
-	 * the display of the quantity request dialog to get the number to be bought.
+	 * Creates the contextual menu for the selected task if this is a BUY task
+	 * only. The action should trigger the display of the quantity request
+	 * dialog to get the number to be bought.
 	 */
-	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		Log.i("EVEI", ">> TaskPart.onCreateContextMenu");
 		// For blueprints the menu depends on the renderer selected.
@@ -258,7 +272,8 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	protected void initialize() {
 		this.item = getCastedModel().getItem();
 		if (null == this.item)
-			throw new RuntimeException("RT> TaskPart - The task item is not defined. " + getCastedModel().getItemName());
+			throw new RuntimeException(
+					"RT> TaskPart - The task item is not defined. " + getCastedModel().getItemName());
 	}
 
 	@Override
@@ -267,4 +282,5 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 		return new TaskRender(this, this._activity);
 	}
 }
-// - UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

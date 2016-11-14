@@ -9,8 +9,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="21"
+        android:targetSdkVersion="22" />
 
     <application
         android:name="org.dimensinfin.evedroid.EVEDroidApp"
@@ -64,82 +64,44 @@
         <activity
             android:name="org.dimensinfin.evedroid.activity.DirectorsBoardActivity"
             android:label="@string/title_activity_DirectorsBoard"
-            android:parentActivityName=".activity.PilotListActivity"
             android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.AssetsDirectorActivity"
-            android:label="@string/title_activity_AssetsDirector"
-            android:parentActivityName=".activity.PilotListActivity"
-             >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
+            android:label="@string/title_activity_AssetsDirector" >
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.ShipDirectorActivity"
-            android:label="Ships"
-            android:parentActivityName=".activity.PilotListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
+            android:label="Ships" >
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.IndustryDirectorActivity"
-            android:label="Industry Director"
-            android:parentActivityName=".activity.PilotListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
+            android:label="Industry Director" >
         </activity>
-         <activity
+        <activity
             android:name="org.dimensinfin.evedroid.activity.MarketDirectorActivity"
-            android:label="Market Orders"
-            android:parentActivityName=".activity.PilotListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
+            android:label="Market Orders" >
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.IndustryT2Activity"
             android:label="Industry T2 Manufacture"
-            android:parentActivityName=".activity.PilotListActivity"
             android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.ItemDetailsActivity"
             android:label="Item Details"
-            android:parentActivityName=".activity.PilotListActivity"
             android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.MiningSessionActivity"
             android:label="Item Details"
-            android:parentActivityName=".activity.PilotListActivity"
             android:screenOrientation="portrait" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
         </activity>
         <activity
             android:name="org.dimensinfin.evedroid.activity.JobDirectorActivity"
-            android:label="JOB Planned"
-            android:parentActivityName=".activity.PilotListActivity"
-          >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.PilotListActivity" />
+            android:label="JOB Planned" >
         </activity>
- 
+
         <service
             android:name="org.dimensinfin.evedroid.service.MarketUpdaterService"
             android:enabled="true" >

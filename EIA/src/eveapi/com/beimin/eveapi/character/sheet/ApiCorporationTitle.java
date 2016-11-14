@@ -1,6 +1,8 @@
 package com.beimin.eveapi.character.sheet;
 
-public class ApiCorporationTitle {
+import java.io.Serializable;
+
+public class ApiCorporationTitle implements Serializable {
 	private long titleID;
 	private String titleName;
 
@@ -8,7 +10,7 @@ public class ApiCorporationTitle {
 		return titleID;
 	}
 
-	public void setTitleID(long titleID) {
+	public void setTitleID(final long titleID) {
 		this.titleID = titleID;
 	}
 
@@ -16,7 +18,7 @@ public class ApiCorporationTitle {
 		return titleName;
 	}
 
-	public void setTitleName(String titleName) {
+	public void setTitleName(final String titleName) {
 		this.titleName = titleName;
 	}
 }

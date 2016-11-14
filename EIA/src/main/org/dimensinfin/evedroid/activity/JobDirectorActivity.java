@@ -20,17 +20,22 @@ import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class JobDirectorActivity extends PilotPagerActivity implements INeoComDirector {
-	// - S T A T I C - S E C T I O N ..........................................................................
+	// - S T A T I C - S E C T I O N
+	// ..........................................................................
 
-	// - F I E L D - S E C T I O N ............................................................................
+	// - F I E L D - S E C T I O N
+	// ............................................................................
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R - S E C T I O N
+	// ................................................................
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	/**
-	 * Checks if there are the conditions to activate this particular manager. Each one will have it different
-	 * rules to reach the activation point.<br>
-	 * The BPOManager need that there are at least one BPO on the list of assets of the pilot.
+	 * Checks if there are the conditions to activate this particular manager.
+	 * Each one will have it different rules to reach the activation point.<br>
+	 * The BPOManager need that there are at least one BPO on the list of assets
+	 * of the pilot.
 	 */
 	public boolean checkActivation(final EveChar checkPilot) {
 		if (checkPilot.getIndustryJobs().size() > 0)
@@ -47,7 +52,6 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 		return R.drawable.jobdirector;
 	}
 
-	@Override
 	public int getIconReferenceInactive() {
 		return R.drawable.jobdirectordimmed;
 	}
@@ -57,8 +61,9 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 	}
 
 	/**
-	 * Create the set of pages to manage the list of completed, running and pending jobs including the ones that
-	 * are created by the application to simulate the Industry recommendations.
+	 * Create the set of pages to manage the list of completed, running and
+	 * pending jobs including the ones that are created by the application to
+	 * simulate the Industry recommendations.
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
@@ -69,7 +74,8 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 		EVEDroidApp.getAppStore().getPilot().getIndustryJobs();
 		try {// Reset the page position.
 			int page = 0;
-			// Create the pages that form this Activity. Each page implemented by a Fragment.
+			// Create the pages that form this Activity. Each page implemented
+			// by a Fragment.
 			addPage(new JobsFragment().setActivity(ModelWideConstants.activities.MANUFACTURING), page++);
 			addPage(new JobsFragment().setActivity(ModelWideConstants.activities.INVENTION), page++);
 		} catch (final Exception rtex) {
@@ -82,4 +88,5 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 		Log.i("NEOCOM", "<< JobDirectorActivity.onCreate"); //$NON-NLS-1$
 	}
 }
-//- UNUSED CODE ............................................................................................
+// - UNUSED CODE
+// ............................................................................................

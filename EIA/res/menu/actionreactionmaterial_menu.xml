@@ -4,11 +4,11 @@
         android:id="@+id/reactionmaterialreaction"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="MATERIAL REFINE"/>
+        android:title="MOON MATERIAL REACTION"/>
     <item
         android:id="@+id/reactionmaterialbuy"
         android:orderInCategory="200"
         android:showAsAction="never"
-        android:title="MATERIAL BUY"/>
+        android:title="MOON MATERIAL BUY"/>
 
 </menu>

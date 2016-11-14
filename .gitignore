@@ -1,5 +1,10 @@
 *.diff
+*.db
+.recommenders/
 traces/*.trc
 traces/*.trace
 traces/EIA.tws
 ProjectResources/
+EIA/resources/evedroid.db
+appcompat_v7/
+Test/
