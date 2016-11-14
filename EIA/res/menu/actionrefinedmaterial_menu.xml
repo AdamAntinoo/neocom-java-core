@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/refinedmaterialrefine"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="MATERIAL REFINE"/>
+    <item
+        android:id="@+id/refinedmaterialbuy"
+        android:orderInCategory="200"
+        android:showAsAction="never"
+        android:title="MATERIAL BUY"/>
+
+</menu>

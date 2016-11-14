@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent40" >
+
+    <ImageView
+        android:id="@+id/itemIcon"
+        style="@style/ItemIconStyle.Size32" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/itemName"
+        style="@style/NameStyle.Actionable"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/totalItems"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:singleLine="false"
+        android:text="Inertia Stabilizers II or another long module name" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/totalItems"
+        style="@style/NumberStyle.XL"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="right"
+        android:text="100" />
+
+    <LinearLayout
+        android:id="@+id/bestSell"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemName"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:orientation="horizontal" >
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/bestBuyerPrice"
+            style="@style/PriceStyle.Buyer"
+            android:text="6.21 ISK" />
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/bestBuyerLocation"
+            style="@style/LocationStyle"
+            android:text="0.5 Hek - Boundles Station"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/manufactureCost"
+        style="@style/PriceStyle.Cost"
+        android:layout_below="@+id/bestSell"
+        android:layout_toLeftOf="@+id/profit"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:text="134,321.98 ISK"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/profit"
+        style="@style/NumberStyle"
+        android:layout_alignBaseline="@+id/manufactureCost"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bestSell"
+        android:layout_gravity="right"
+        android:text="+ 120 M ISK" />
+
+    <RelativeLayout
+        android:id="@+id/outputCostsBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bestSell"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/leftColumnBlock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/centralColumnBlock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/rightColumnBlock"
+            android:layout_toRightOf="@+id/leftColumnBlock"
+            android:orientation="vertical" >
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/balance"
+                style="@style/PriceStyle.Seller"
+                android:layout_gravity="right"
+                android:text="134,321.98 ISK"
+                android:visibility="visible" />
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/itemPrice"
+                style="@style/PriceStyle"
+                android:layout_gravity="right"
+                android:text="134,321.98 ISK"
+                android:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/rightColumnBlock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

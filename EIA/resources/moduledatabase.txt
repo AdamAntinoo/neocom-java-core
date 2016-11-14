@@ -1,0 +1,37 @@
+Adaptive Nano Plating II	284704.919705	1h 20m
+Damage Control II	363276.746775	2h 40m
+Expanded Cargohold II	246982.233605	1h 20m
+Inertia Stabilizers II	307000.338205	1h 20m
+Nanofiber Internal Structure II	146010.208805	1h 20m
+Overdrive Injector System II	351539.696705	1h 20m
+Gyrostabilizer II	543798.421755	2h 13m
+Warp Core Stabilizer II	348224.910305	2h 40m
+Cap Recharger II	292601.41244	1h 46m
+Tracking Enhancer II	508947.93884	2h 13m
+Ballistic Control System II	0	5h 20m
+Capacitor Power Relay II	0	5h 20m
+Medium Remote Armor Repairer II	825536.84944	2h 13m
+Mining Laser Upgrade II	324608.86909	2h 13m
+Power Diagnostic System II	462448.24984	1h 46m
+Shield Power Relay II	269808	1h 46m
+Small Tractor Beam II	1960089.46137	5h 20m
+720mm Howitzer Artillery II	1022047.36555	4h 53m
+Dual 180mm Autocannon II	654064.8	2h 13m
+1400mm Howitzer Artillery II	4132800	5h 20m
+Adaptive Invulnerability Field II	1372050.15278	5h 20m
+EM Ward Field II	1040654.4	5h 20m
+Explosive Deflection Field II	911179.2	5h 20m
+Kinetic Deflection Field II	1045927.2	5h 20m
+Thermic Dissipation Field II	942578.4	5h 20m
+Adaptive Nano Plating II	284704.919705	1h 20m
+Armor EM Hardener II	1378113.285805	5h 20m
+Armor Explosive Hardener II	1727367.662605	5h 20m
+Armor Kinetic Hardener II	1656129.091205	5h 20m
+Armor Thermic Hardener II	1500232.628905	5h 20m
+Veldspar Mining Crystal II	0	5h 20m
+Scordite Mining Crystal II	0	5h 20m
+Plagioclase Mining Crystal II	0	5h 20m
+Pyroxeres Mining Crystal II	0	5h 20m
+Omber Mining Crystal II	0	5h 20m
+Improved Cloaking Device II	2536332.15849	11h 44m
+Covert Ops Cloaking Device II	2723832.15849	11h 44m

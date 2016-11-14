@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent80" >
+
+    <LinearLayout
+        android:id="@+id/iconPadding"
+        android:layout_width="15dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="4dp"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/action"
+        style="@style/Action"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/iconPadding"
+        android:background="@drawable/orangeroundedbox"
+        android:text="MOVE" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/volume"
+        style="@style/NumberStyle"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/qtyRequired"
+        android:text="34.2 m3"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/qtyRequired"
+        style="@style/NumberStyle.Red.Big"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:gravity="right"
+        android:minWidth="70dp"
+        android:text="x31"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/itemName"
+        style="@style/NameStyle.Orange"
+        android:layout_below="@+id/action"
+        android:layout_toRightOf="@+id/iconPadding"
+        android:text="@string/default_itemname"
+        android:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/bestBuy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemName"
+        android:layout_toLeftOf="@+id/budget"
+        android:layout_toRightOf="@+id/iconPadding"
+        android:orientation="horizontal"
+        android:visibility="visible" >
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/bestBuyPrice"
+            style="@style/PriceStyle.Seller"
+            android:text="4.50 ISK" />
+
+        <org.dimensinfin.evedroid.core.Din1451TextView
+            android:id="@+id/location"
+            style="@style/LocationStyle"
+            android:singleLine="false"
+            android:text="0.5 Hek - Boundless Station and a very long name" />
+    </LinearLayout>
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/budget"
+        style="@style/NumberStyle"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/itemName"
+        android:layout_marginLeft="2dp"
+        android:gravity="right"
+        android:text="321,456.00 ISK" />
+
+    <TextView
+        android:id="@+id/fromLabel"
+        style="@style/LabelStyle.Small.TopLine"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/bestBuy"
+        android:layout_toRightOf="@+id/iconPadding"
+        android:text="FROM ► TO"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/budgetLabel"
+        style="@style/LabelStyle.Small.TopLine"
+        android:layout_width="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bestBuy"
+        android:layout_toRightOf="@+id/fromLabel"
+        android:gravity="right"
+        android:text="BUDGET"
+        android:visibility="visible" />
+
+</RelativeLayout>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#60000000" >
+
+    <ImageView
+        android:id="@+id/assetIcon"
+        android:layout_width="@dimen/itemIcon32"
+        android:layout_height="@dimen/itemIcon32"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="2dp"
+        android:contentDescription="@string/imageview_defaultcontent"
+        android:src="@drawable/defaultitemicon" />
+
+    <LinearLayout
+        android:id="@+id/asteroidSessionBlock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/assetIcon"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/asteroidName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="10dp"
+            android:layout_toRightOf="@+id/assetIcon"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="Massive Scordite"
+            android:textColor="@color/orangeText"
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/asteroidQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12,654"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/asteroidVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12,654"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+         <TextView
+            android:id="@+id/timeLeft"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="3M12S"
+            android:gravity="right"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:visibility="visible" />
+    </LinearLayout>
+
+</RelativeLayout>

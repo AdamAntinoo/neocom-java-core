@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent40" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/topgreyline" >
+
+        <ImageView
+            android:id="@+id/itemIcon"
+            style="@style/ItemIconStyle.Size32" />
+
+        <TextView
+            android:id="@+id/shipType"
+            style="@style/NameStyle"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/itemIcon"
+            android:text="@string/default_shipname" />
+
+        <TextView
+            android:id="@+id/shipName"
+            style="@style/NameStyle"
+            android:layout_below="@+id/shipType"
+            android:layout_marginTop="1dp"
+            android:layout_toRightOf="@+id/itemIcon"
+            android:paddingRight="2dp"
+            android:text="EE Oruga Syn"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/shipLocation"
+            style="@style/LocationStyle"
+            android:layout_below="@+id/shipName"
+            android:layout_marginTop="1dp"
+            android:layout_toRightOf="@+id/itemIcon"
+            android:text="0.5 Hek - Boundles Station" />
+    </RelativeLayout>
+
+</RelativeLayout>

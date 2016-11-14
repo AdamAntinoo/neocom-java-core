@@ -1,0 +1,21 @@
+Base Waste = Waste shown on a M.E. 0 BPO
+Base Material = ROUND(Material Amount on a M.E. 0 BPO / (1 + Base Waste))
+Total Material = ROUND(Base Material * (1.25 + Base Waste / (1 + M.E. Level) - Production Efficiency Skill * 0.05)) 
+
+Perfect M.E. = FLOOR(2 * Base Waste * Largest Material Amount Subject to Waste / (1 + Base Waste))
+Perfect M.E for 5% base waste BPO = FLOOR(Largest Material Amount Subject to Waste / 10.5)
+Perfect M.E for 10% base waste BPO = FLOOR(Largest Material Amount Subject to Waste / 5.5)
+
+Base Time = ROUND(Manufacturing Time on a P.E. 0 BPO / (1 + 0.25))
+Total Time = Base Time * (1 + 0.25 / (1 + P.E. Level)) * (1 - Industry Skill Level * 0.04)
+P.E. level for < 0.5 second Manufacturing Time Waste on 1 run = FLOOR(Manufacturing Time on P.E. 0 BPO / 5)
+
+Jacynth VeRouche
+East Khanid Trading
+Khanid Trade Syndicate
+Likes received: 0
+#7 Posted: 2011.12.04 23:26  |  Edited by: Jacynth VeRouche
+Tau Cabalander wrote:
+
+Base Time = ROUND(Manufacturing Time on a P.E. 0 BPO / (1 + 0.25))
+Total Time = Base Time * (1 + 0.25 / (1 + P.E. Level)) * (1 - Industry Skill Level * 0.04)

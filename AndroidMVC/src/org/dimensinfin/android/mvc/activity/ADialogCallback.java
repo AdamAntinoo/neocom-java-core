@@ -1,0 +1,23 @@
+//	PROJECT:        AndroidMVC
+//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
+//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+
+package org.dimensinfin.android.mvc.activity;
+
+// - IMPORT SECTION .........................................................................................
+import android.app.DialogFragment;
+
+// - CLASS IMPLEMENTATION ...................................................................................
+public abstract class ADialogCallback {
+	// - S T A T I C - S E C T I O N ..........................................................................
+
+	// - F I E L D - S E C T I O N ............................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public abstract void onDialogNegativeClick(DialogFragment dialog);
+
+	public abstract void onDialogPositiveClick(DialogFragment dialog);
+}
+
+// - UNUSED CODE ............................................................................................

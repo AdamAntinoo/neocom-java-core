@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/twoColumns"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black" >
+
+    <TextView
+        android:id="@+id/miningSessionLabel"
+        style="@style/AppTheme.SectionStyle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="MINING SESSION" />
+
+    <ImageView
+        android:id="@+id/itemIcon"
+        android:layout_width="@dimen/itemIcon64"
+        android:layout_height="@dimen/itemIcon64"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/miningSessionLabel"
+        android:layout_margin="2dp"
+        android:contentDescription="Item Icon"
+        android:src="@drawable/miningdirector" />
+
+    <LinearLayout
+        android:id="@+id/itemInformationBlock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/miningSessionLabel"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/cycleDataBlock"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/volumeLabel"
+                style="@style/AppTheme.EntryLabelStyle"
+                android:paddingRight="5dp"
+                android:text="Volume cycle:"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/volumeData"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:ems="7"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/white" >
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/cycleTimeLabel"
+                style="@style/AppTheme.EntryLabelStyle"
+                android:paddingRight="5dp"
+                android:text="Cycle time:"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/cycleTimeData"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:ems="7"
+                android:inputType="numberDecimal"
+                android:textColor="@android:color/white" >
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/actionsBlocks"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/startAsteroidButton"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_marginLeft="20dp"
+                android:onClick="onStartMiningAsteroid"
+                android:text="Start Mining"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

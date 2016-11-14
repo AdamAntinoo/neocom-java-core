@@ -1,0 +1,69 @@
+<eveapi version="2">
+<currentTime>2014-01-15 15:55:02</currentTime>
+<result>
+<characterID>94005555</characterID>
+<name>Activator Minmmo</name>
+<DoB>2013-09-09 19:40:09</DoB>
+<race>Amarr</race>
+<bloodLine>Ni-Kunni</bloodLine>
+<ancestry>Border Runners</ancestry>
+<gender>Male</gender>
+<corporationName>Imperial Shipment</corporationName>
+<corporationID>1000072</corporationID>
+<cloneName>Clone Grade Alpha</cloneName>
+<cloneSkillPoints>900000</cloneSkillPoints>
+<balance>234987.45</balance>
+<attributeEnhancers/>
+<attributes>
+<intelligence>20</intelligence>
+<memory>20</memory>
+<charisma>19</charisma>
+<perception>20</perception>
+<willpower>20</willpower>
+</attributes>
+<rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+<row typeID="3455" skillpoints="250" level="1" published="1"/>
+<row typeID="3450" skillpoints="8000" level="3" published="1"/>
+<row typeID="3429" skillpoints="250" level="1" published="1"/>
+<row typeID="19921" skillpoints="750" level="1" published="1"/>
+<row typeID="3394" skillpoints="2829" level="2" published="1"/>
+<row typeID="3419" skillpoints="750" level="1" published="1"/>
+<row typeID="3435" skillpoints="750" level="1" published="1"/>
+<row typeID="3300" skillpoints="1415" level="2" published="1"/>
+<row typeID="3303" skillpoints="8000" level="3" published="1"/>
+<row typeID="3327" skillpoints="8000" level="3" published="1"/>
+<row typeID="3331" skillpoints="2829" level="2" published="1"/>
+<row typeID="3386" skillpoints="1415" level="2" published="1"/>
+<row typeID="3392" skillpoints="1415" level="2" published="1"/>
+<row typeID="3402" skillpoints="8000" level="3" published="1"/>
+<row typeID="3412" skillpoints="750" level="1" published="1"/>
+<row typeID="3413" skillpoints="8000" level="3" published="1"/>
+<row typeID="3426" skillpoints="45255" level="4" published="1"/>
+<row typeID="3449" skillpoints="8000" level="3" published="1"/>
+<row typeID="3406" skillpoints="45255" level="4" published="1"/>
+<row typeID="3330" skillpoints="0" level="0" published="1"/>
+<row typeID="3328" skillpoints="0" level="0" published="1"/>
+<row typeID="32918" skillpoints="0" level="0" published="1"/>
+<row typeID="3329" skillpoints="0" level="0" published="1"/>
+<row typeID="33399" skillpoints="2829" level="2" published="1"/>
+<row typeID="3425" skillpoints="500" level="1" published="1"/>
+<row typeID="2505" skillpoints="32000" level="3" published="1"/>
+<row typeID="2495" skillpoints="32000" level="3" published="1"/>
+<row typeID="3340" skillpoints="1000" level="1" published="1"/>
+<row typeID="11579" skillpoints="1500" level="1" published="1"/>
+<row typeID="3454" skillpoints="1250" level="1" published="1"/>
+<row typeID="24242" skillpoints="8000" level="3" published="1"/>
+<row typeID="3420" skillpoints="1000" level="1" published="1"/>
+<row typeID="3424" skillpoints="16000" level="3" published="1"/>
+<row typeID="13279" skillpoints="250" level="1" published="1"/>
+<row typeID="3453" skillpoints="500" level="1" published="1"/>
+</rowset>
+<rowset name="certificates" key="certificateID" columns="certificateID"/>
+<rowset name="corporationRoles" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationTitles" key="titleID" columns="titleID,titleName"/>
+</result>
+<cachedUntil>2014-01-15 15:55:02</cachedUntil>
+</eveapi>

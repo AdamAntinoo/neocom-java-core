@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/containerBlock"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:visibility="visible" >
+
+    <ImageView
+        android:id="@+id/containerIcon"
+        android:layout_width="@dimen/itemIcon32"
+        android:layout_height="@dimen/itemIcon32"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="3dp"
+        android:contentDescription="@string/imageview_defaultcontent"
+        android:src="@drawable/defaultitemicon" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/containerName"
+        style="@style/NameStyle"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:text="ContainerName" />
+
+</LinearLayout>

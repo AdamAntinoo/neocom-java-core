@@ -1,0 +1,14 @@
+<eveapi version="2">
+<currentTime>2015-02-01 11:37:43</currentTime>
+	<result>
+	<rowset name="orders" key="orderID" columns="orderID,charID,stationID,volEntered,volRemaining,minVolume,orderState,typeID,range,accountKey,duration,escrow,price,bid,issued">
+		<row orderID="3951220000" charID="94004444" stationID="60008494" volEntered="15000" volRemaining="0" minVolume="1" orderState="2" typeID="39" range="32767" accountKey="1000" duration="0" escrow="0.00" price="401.03" bid="1" issued="2015-01-25 21:13:23"/>
+		<row orderID="3951220001" charID="94004444" stationID="60008494" volEntered="100000" volRemaining="0" minVolume="1" orderState="2" typeID="38" range="32767" accountKey="1000" duration="0" escrow="0.00" price="600.03" bid="1" issued="2015-01-26 21:13:23"/>
+		<row orderID="3951220002" charID="94004444" stationID="60008494" volEntered="3000" volRemaining="0" minVolume="1" orderState="2" typeID="40" range="32767" accountKey="1000" duration="0" escrow="0.00" price="745.00" bid="1" issued="2015-01-27 21:13:23"/>
+		<row orderID="3951220003" charID="94004444" stationID="60008494" volEntered="4" volRemaining="0" minVolume="1" orderState="2" typeID="21023" range="32767" accountKey="1000" duration="0" escrow="0.00" price="9549985.00" bid="1" issued="2015-01-28 21:13:23"/>
+
+		<row orderID="3951220004" charID="94004444" stationID="60008494" volEntered="60" volRemaining="60" minVolume="1" orderState="0" typeID="26913" range="-1" accountKey="1000" duration="7" escrow="0.00" price="1700027.00" bid="0" issued="2015-02-04 17:47:30"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-04-01 23:00:00</cachedUntil>
+</eveapi>

@@ -1,0 +1,5 @@
+*.diff
+traces/*.trc
+traces/*.trace
+traces/EIA.tws
+ProjectResources/

@@ -1,0 +1,85 @@
+<eveapi version="1">
+<currentTime>2015-02-13 13:15:39</currentTime>
+<result>
+<characterID>94004444</characterID>
+<name>Test Bunny</name>
+<homeStationID>60007702</homeStationID>
+<DoB>2015-02-09 21:18:13</DoB>
+<race>Amarr</race>
+<bloodLine>Ni-Kunni</bloodLine>
+<ancestry>Navy Veterans</ancestry>
+<gender>Male</gender>
+<corporationName>Royal Amarr Institute</corporationName>
+<corporationID>1000077</corporationID>
+<cloneTypeID>164</cloneTypeID>
+<cloneName>Clone Grade Alpha</cloneName>
+<cloneSkillPoints>0</cloneSkillPoints>
+<freeSkillPoints>0</freeSkillPoints>
+<freeRespecs>2</freeRespecs>
+<cloneJumpDate>0001-01-01 00:00:00</cloneJumpDate>
+<lastRespecDate>0001-01-01 00:00:00</lastRespecDate>
+<lastTimedRespec>0001-01-01 00:00:00</lastTimedRespec>
+<remoteStationDate>0001-01-01 00:00:00</remoteStationDate>
+<rowset name="jumpClones" key="jumpCloneID" columns="jumpCloneID,typeID,locationID,cloneName"/>
+<rowset name="jumpCloneImplants" key="jumpCloneID" columns="jumpCloneID,typeID,typeName"/>
+<jumpActivation>0001-01-01 00:00:00</jumpActivation>
+<jumpFatigue>0001-01-01 00:00:00</jumpFatigue>
+<jumpLastUpdate>0001-01-01 00:00:00</jumpLastUpdate>
+<balance>26131459.20</balance>
+<rowset name="implants" key="typeID" columns="typeID,typeName"/>
+<attributes>
+<intelligence>20</intelligence>
+<memory>20</memory>
+<charisma>19</charisma>
+<perception>20</perception>
+<willpower>20</willpower>
+</attributes>
+<rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+<row typeID="3394" skillpoints="16000" level="3" published="1"/>
+<row typeID="3436" skillpoints="8000" level="3" published="1"/>
+<row typeID="3300" skillpoints="8000" level="3" published="1"/>
+<row typeID="3303" skillpoints="8000" level="3" published="1"/>
+<row typeID="3327" skillpoints="8000" level="3" published="1"/>
+<row typeID="3331" skillpoints="16000" level="3" published="1"/>
+<row typeID="3386" skillpoints="8000" level="3" published="1"/>
+<row typeID="3392" skillpoints="8000" level="3" published="1"/>
+<row typeID="3402" skillpoints="8000" level="3" published="1"/>
+<row typeID="3412" skillpoints="750" level="1" published="1"/>
+<row typeID="3413" skillpoints="35095" level="3" published="1"/>
+<row typeID="3426" skillpoints="8000" level="3" published="1"/>
+<row typeID="3449" skillpoints="8000" level="3" published="1"/>
+<row typeID="33091" skillpoints="16000" level="3" published="1"/>
+<row typeID="3380" skillpoints="0" level="0" published="1"/>
+<row typeID="3437" skillpoints="250" level="1" published="1"/>
+<row typeID="3417" skillpoints="250" level="1" published="1"/>
+<row typeID="3452" skillpoints="1000" level="1" published="1"/>
+<row typeID="3428" skillpoints="500" level="1" published="1"/>
+<row typeID="3429" skillpoints="250" level="1" published="1"/>
+<row typeID="3416" skillpoints="250" level="1" published="1"/>
+<row typeID="3455" skillpoints="250" level="1" published="1"/>
+<row typeID="3335" skillpoints="40000" level="3" published="1"/>
+<row typeID="3306" skillpoints="750" level="1" published="1"/>
+<row typeID="3551" skillpoints="1415" level="2" published="1"/>
+<row typeID="3393" skillpoints="250" level="1" published="1"/>
+<row typeID="3435" skillpoints="0" level="0" published="1"/>
+<row typeID="3423" skillpoints="2829" level="2" published="1"/>
+<row typeID="3424" skillpoints="2829" level="2" published="1"/>
+<row typeID="3318" skillpoints="500" level="1" published="1"/>
+<row typeID="3316" skillpoints="0" level="0" published="1"/>
+<row typeID="3312" skillpoints="0" level="0" published="1"/>
+<row typeID="3310" skillpoints="0" level="0" published="1"/>
+<row typeID="3311" skillpoints="0" level="0" published="1"/>
+<row typeID="3450" skillpoints="1415" level="2" published="1"/>
+<row typeID="3453" skillpoints="0" level="0" published="1"/>
+<row typeID="32918" skillpoints="500" level="1" published="1"/>
+<row typeID="33095" skillpoints="320" level="0" published="1"/>
+</rowset>
+<rowset name="certificates" key="certificateID" columns="certificateID"/>
+<rowset name="corporationRoles" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationTitles" key="titleID" columns="titleID,titleName"/>
+</result>
+<cachedUntil>2015-04-01 23:00:00</cachedUntil>
+</eveapi>

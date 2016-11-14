@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent40" >
+
+    <ImageView
+        android:id="@+id/itemIcon"
+        style="@style/ItemIconStyle.Size32"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" />
+
+    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+        android:id="@+id/itemName"
+        style="@style/NameStyle"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:text="@string/default_itemname" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/itemPrice"
+        style="@style/PriceStyle.Seller"
+        android:layout_below="@+id/itemName"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:gravity="left"
+        android:text="@string/default_isk"
+        android:textColor="@android:color/white"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/balance"
+        style="@style/PriceStyle"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/itemName"
+        android:layout_toLeftOf="@+id/totalItems"
+        android:layout_toRightOf="@+id/itemPrice"
+        android:gravity="right"
+        android:text="@string/default_isk"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/totalItems"
+        style="@style/NumberStyle"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/itemName"
+        android:gravity="right"
+        android:text="2,250 units" />
+
+    <TextView
+        android:id="@+id/totalItemsLabel"
+        style="@style/AppTheme.LabelUpLineStyle"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/totalItems"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:gravity="right"
+        android:text="TOTAL QUANTITY REQUIRED"
+        android:visibility="gone" />
+
+</RelativeLayout>

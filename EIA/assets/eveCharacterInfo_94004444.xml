@@ -1,0 +1,32 @@
+<eveapi version="2">
+<currentTime>2014-01-15 15:34:30</currentTime>
+<result>
+<characterID>94004444</characterID>
+<characterName>Astra Buildeer</characterName>
+<race>Minmatar</race>
+<bloodline>Sebiestor</bloodline>
+<accountBalance>21717899.98</accountBalance>
+<skillPoints>21717899</skillPoints>
+<shipName>MFM Magnus</shipName>
+<shipTypeID>29248</shipTypeID>
+<shipTypeName>Magnate</shipTypeName>
+<corporationID>1000046</corporationID>
+<corporation>Sebiestor Tribe</corporation>
+<corporationDate>2013-12-11 14:37:00</corporationDate>
+<lastKnownLocation>Baviasi</lastKnownLocation>
+<securityStatus>2.83011430078989</securityStatus>
+<rowset name="employmentHistory" key="recordID" columns="recordID,corporationID,startDate">
+<row recordID="29840474" corporationID="1000046" startDate="2013-12-11 14:37:00"/>
+<row recordID="26086347" corporationID="98144459" startDate="2013-06-11 14:47:00"/>
+<row recordID="26015664" corporationID="1000046" startDate="2013-06-09 07:56:00"/>
+<row recordID="23686096" corporationID="98144459" startDate="2013-02-20 19:45:00"/>
+<row recordID="23624436" corporationID="1000046" startDate="2013-02-18 18:17:00"/>
+<row recordID="23418549" corporationID="98144459" startDate="2013-02-12 19:55:00"/>
+<row recordID="20171357" corporationID="917701062" startDate="2012-07-05 16:31:00"/>
+<row recordID="20059233" corporationID="1000046" startDate="2012-06-21 15:40:00"/>
+<row recordID="19843875" corporationID="917701062" startDate="2012-05-27 17:22:00"/>
+<row recordID="19698105" corporationID="1000172" startDate="2012-05-09 19:45:00"/>
+</rowset>
+</result>
+<cachedUntil>2015-04-01 23:00:00</cachedUntil>
+</eveapi>

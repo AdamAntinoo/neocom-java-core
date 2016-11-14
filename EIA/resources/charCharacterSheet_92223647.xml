@@ -1,0 +1,95 @@
+<eveapi version="2">
+<currentTime>2014-07-17 11:38:02</currentTime>
+<result>
+<characterID>92223647</characterID>
+<name>Beth Ripley</name>
+<DoB>2012-07-05 21:53:15</DoB>
+<race>Minmatar</race>
+<bloodLine>Brutor</bloodLine>
+<ancestry>Workers</ancestry>
+<gender>Female</gender>
+<corporationName>Brutor Tribe</corporationName>
+<corporationID>1000049</corporationID>
+<cloneName>Clone Grade Zeta</cloneName>
+<cloneSkillPoints>4800000</cloneSkillPoints>
+<balance>785321943.70</balance>
+<attributeEnhancers/>
+<attributes>
+<intelligence>20</intelligence>
+<memory>20</memory>
+<charisma>19</charisma>
+<perception>20</perception>
+<willpower>20</willpower>
+</attributes>
+<rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+<row typeID="3300" skillpoints="1415" level="2" published="1"/>
+<row typeID="3302" skillpoints="8000" level="3" published="1"/>
+<row typeID="3327" skillpoints="8000" level="3" published="1"/>
+<row typeID="3329" skillpoints="13324" level="2" published="1"/>
+<row typeID="3386" skillpoints="1415" level="2" published="1"/>
+<row typeID="3392" skillpoints="198073" level="4" published="1"/>
+<row typeID="3402" skillpoints="256000" level="5" published="1"/>
+<row typeID="3413" skillpoints="256000" level="5" published="1"/>
+<row typeID="3426" skillpoints="45255" level="4" published="1"/>
+<row typeID="3449" skillpoints="45255" level="4" published="1"/>
+<row typeID="3394" skillpoints="16000" level="3" published="1"/>
+<row typeID="3331" skillpoints="34273" level="3" published="1"/>
+<row typeID="3443" skillpoints="45255" level="4" published="1"/>
+<row typeID="3425" skillpoints="90510" level="4" published="1"/>
+<row typeID="3450" skillpoints="45255" level="4" published="1"/>
+<row typeID="3455" skillpoints="8000" level="3" published="1"/>
+<row typeID="3343" skillpoints="5666" level="2" published="1"/>
+<row typeID="2495" skillpoints="135786" level="3" published="1"/>
+<row typeID="2505" skillpoints="181020" level="4" published="1"/>
+<row typeID="24242" skillpoints="1415" level="2" published="1"/>
+<row typeID="3424" skillpoints="16000" level="3" published="1"/>
+<row typeID="3434" skillpoints="750" level="1" published="1"/>
+<row typeID="3420" skillpoints="1000" level="1" published="1"/>
+<row typeID="3446" skillpoints="16000" level="3" published="1"/>
+<row typeID="11584" skillpoints="750" level="1" published="1"/>
+<row typeID="3427" skillpoints="500" level="1" published="1"/>
+<row typeID="3406" skillpoints="256000" level="5" published="1"/>
+<row typeID="24270" skillpoints="4243" level="2" published="1"/>
+<row typeID="3444" skillpoints="2829" level="2" published="1"/>
+<row typeID="26261" skillpoints="750" level="1" published="1"/>
+<row typeID="32918" skillpoints="500" level="1" published="1"/>
+<row typeID="16597" skillpoints="4243" level="2" published="1"/>
+<row typeID="16598" skillpoints="750" level="1" published="1"/>
+<row typeID="26253" skillpoints="750" level="1" published="1"/>
+<row typeID="3387" skillpoints="2829" level="2" published="1"/>
+<row typeID="3380" skillpoints="256000" level="5" published="1"/>
+<row typeID="3432" skillpoints="16000" level="3" published="1"/>
+<row typeID="33091" skillpoints="500" level="1" published="1"/>
+<row typeID="24624" skillpoints="18514" level="2" published="1"/>
+<row typeID="11446" skillpoints="40000" level="3" published="1"/>
+<row typeID="11455" skillpoints="40000" level="3" published="1"/>
+<row typeID="11443" skillpoints="1250" level="1" published="1"/>
+<row typeID="3340" skillpoints="995245" level="4" published="1"/>
+<row typeID="33399" skillpoints="2829" level="2" published="1"/>
+<row typeID="11579" skillpoints="8486" level="2" published="1"/>
+<row typeID="3453" skillpoints="16000" level="3" published="1"/>
+<row typeID="3454" skillpoints="1250" level="1" published="1"/>
+<row typeID="26254" skillpoints="24000" level="3" published="1"/>
+<row typeID="26252" skillpoints="16000" level="3" published="1"/>
+<row typeID="21718" skillpoints="4243" level="2" published="1"/>
+<row typeID="21790" skillpoints="7072" level="2" published="1"/>
+<row typeID="3341" skillpoints="0" level="0" published="1"/>
+<row typeID="3409" skillpoints="280907" level="4" published="1"/>
+<row typeID="3388" skillpoints="678024" level="4" published="1"/>
+<row typeID="16595" skillpoints="8000" level="3" published="1"/>
+<row typeID="16622" skillpoints="135765" level="4" published="1"/>
+<row typeID="3393" skillpoints="250" level="1" published="1"/>
+<row typeID="3433" skillpoints="750" level="1" published="1"/>
+<row typeID="13279" skillpoints="1415" level="2" published="1"/>
+<row typeID="3355" skillpoints="250" level="1" published="1"/>
+<row typeID="25235" skillpoints="250" level="1" published="1"/>
+</rowset>
+<rowset name="certificates" key="certificateID" columns="certificateID"/>
+<rowset name="corporationRoles" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationTitles" key="titleID" columns="titleID,titleName"/>
+</result>
+<cachedUntil>2014-07-17 12:35:02</cachedUntil>
+</eveapi>

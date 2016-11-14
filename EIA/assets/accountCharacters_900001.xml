@@ -1,0 +1,9 @@
+<eveapi version="2">
+<currentTime>2014-01-15 14:41:40</currentTime>
+<result>
+<rowset name="characters" key="characterID" columns="name,characterID,corporationName,corporationID">
+	<row name="Test Bunny" characterID="94004444" corporationName="Imperial Shipment" corporationID="1000072" />
+</rowset>
+</result>
+<cachedUntil>2014-01-15 15:20:00</cachedUntil>
+</eveapi>

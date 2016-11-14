@@ -1,0 +1,96 @@
+RESOURCE DEPENDENCIES FROM DIRECTORS
+MARKETDIRECTORACTIVITY
+Activity	MarketDirectorActivity
+Fragment	DataSourceFragment
+Fragment	NewPagerFragment
+Identifier	AppWideConstants.fragment.FRAGMENT_MARKETORDERSDATASOURCE
+Identifier	AppWideConstants.fragment.FRAGMENT_MARKETORDERS
+DataSource	MarketOrdersDataSource
+	Part			MarketOrderAnalyticalGroupPart
+		Render		AnalyticalGroupRender
+			Layout		R.layout.analyticalgroup4marketorders
+	Part			MarketOrderPart
+	Part			Resourcepart
+		Identifier		AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL
+		Render		MarketOrderResourceRender
+			Layout		
+			
+	Part			GroupPart
+
+----------------------------------------------------------------------------------------------------
+SplashActivity		Activity
+PilotListActivity	DefaultPagerActivity		AndroidMVC.AbstractContextActivity
+AssetsDirectorActivity	DefaultPagerActivity		AndroidMVC.AbstractContextActivity
+DirectorsBoardActivity 	AndroidMVC.AbstractContextActivity
+
+
+FittingFragment		PagerFragment
+ItemDetailFragment	TitledFragment		PagerFragment
+
+
+-- NAMING CONVENTIONS AND DEPENDENCIES
+-INDUSTRY
+-IndustryDirectorActivity
+--IndustryT1BlueprintsDataSource
+---Blueprint4IndustryPart
+----Blueprint4IndustryHeaderRender
+----Blueprint4IndustryHolder
+
+FRAGMENT_INDUSTRYT2MANUFACTUREHEADER
+FRAGMENT_INDUSTRYT1MANUFACTUREHEADER
+
+FRAGMENT_INDUSTRYT2BLUEPRINTS
+FRAGMENT_INDUSTRYT1BLUEPRINTS
+
+-IndustryT1Activity
+--IndustryT2ManufactureDataSource
+
+FRAGMENT_INDUSTRYT2MANUFACTURE
+
+
+
+
+RESOURCES
+AppWideConstants.rendermodes.RENDER_RESOURCESKILLJOB
+	SkillResourceRender
+AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTJOB
+	OutputResourceRender
+AppWideConstants.rendermodes.RENDER_RESOURCEBLUEPRINTJOB
+	BlueprintResourceRender -> resource4industryresource
+AppWideConstants.rendermodes.RENDER_RESOURCECOMPONENTJOB
+	ResourceRender -> resource4industryresource
+
+
+MarketOrderPart
+	MarketOrderRender -> resource4industryresource
+
+
+
+-----------------
+0.4.10
+SOURCE DEPENDENCIES
+JobDirectorActivity
+	layout/activity_jobs
+		backgroundFrame
+		fragmentContainer
+	JobListDataSource
+	QueuesHeaderFragment
+		LinearFragment
+			layout/*
+		AppWideConstants.fragments.FRAGMENT_QUEUESHEADER
+	JobListBodyFragment
+		ScrollFragment
+			layout/*
+		AppWideConstants.fragments.FRAGMENT_JOBLISTBODY
+
+
+
+FRAGMENT CLASS HIERARCHY
+QueuesHeaderFragment*
+	LinearFragment
+		layout/fragment_limited
+			limitedContainer
+				progressBlock
+				modelContainer
+		TitledFragment
+			

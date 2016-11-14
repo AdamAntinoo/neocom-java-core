@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="country_prompt">Choose a country</string>
+
+    <string-array name="numberOfLasers">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="lasetTypes">
+        <item>XeCl Drilling Beam I</item>
+        <item>Cu Vapor Particle Bore Stream I</item>
+        <item>Miner II</item>
+        <item>Strip Miner I</item>
+        <item>Modulated Strip Miner II</item>
+    </string-array>
+
+</resources>

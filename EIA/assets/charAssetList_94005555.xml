@@ -1,0 +1,104 @@
+<eveapi version="2">
+<currentTime>2014-02-06 15:01:16</currentTime>
+<result>
+	<rowset name="assets" key="itemID" columns="itemID,locationID,typeID,quantity,flag,singleton">
+		<comment>---------- Location - Baviasi II</comment>
+		<row itemID="2011741213822" locationID="60001099" typeID="11489" quantity="1" flag="4" singleton="1" rawQuantity="-1" userName="I-Invention Reserve">
+			<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+				<row itemID="2009580431625" typeID="1404" quantity="5" flag="0" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012283194895" typeID="2604" quantity="1" flag="0" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012283194896" typeID="2604" quantity="1" flag="0" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012283194898" typeID="2604" quantity="1" flag="0" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012283194899" typeID="2604" quantity="10" flag="0" singleton="1" rawQuantity="-2"/>
+			</rowset>
+		</row>
+
+		<comment>---------- Ship</comment>
+		<row itemID="1011951700482" locationID="60001096" typeID="655" quantity="1" flag="4" singleton="1" rawQuantity="-1">
+			<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+				<row itemID="1012543485063" typeID="10998" quantity="1" flag="12" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543495572" typeID="8265" quantity="1" flag="14" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543498836" typeID="5975" quantity="1" flag="19" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543667594" typeID="11370" quantity="1" flag="27" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543846012" typeID="10998" quantity="1" flag="11" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543846637" typeID="8265" quantity="1" flag="13" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543850252" typeID="3831" quantity="1" flag="20" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543850533" typeID="3831" quantity="1" flag="21" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543860948" typeID="31360" quantity="1" flag="92" singleton="1" rawQuantity="-1"/>
+				<row itemID="1012543879689" typeID="2553" quantity="1" flag="22" singleton="1" rawQuantity="-1"/>
+			</rowset>
+		</row>
+
+		<comment>---------- Location - Baviasi XI</comment>
+		<row itemID="2010881187300" locationID="60002188" typeID="34" quantity="10000" flag="4" singleton="0" description="Mineral at Baviasi XI"/>
+		<row itemID="2010881187301" locationID="60002188" typeID="34" quantity="60000" flag="4" singleton="0" description="Mineral at Baviasi XI"/>
+		<row itemID="2011805663400" locationID="60002188" typeID="1403" quantity="10" flag="4" singleton="0"/>
+		<row itemID="2011864662755" locationID="60002188" typeID="2603" quantity="13" flag="64" singleton="0"/>
+		<row itemID="2008735294183" locationID="60002188" typeID="11399" quantity="300" flag="4" singleton="0" location="Jita"/>
+		<row itemID="2008735294184" locationID="60002188" typeID="11399" quantity="200" flag="4" singleton="0" location="Jita"/>
+		<row itemID="2008735294185" locationID="60002188" typeID="11530" quantity="400" flag="4" singleton="0" location="Jita"/>
+		<row itemID="2011798675228" locationID="60002188" typeID="3465" quantity="1" flag="4" singleton="1" rawQuantity="-1" userName="M-T2BPC">
+			<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+				<row itemID="2012748374577" typeID="1406" quantity="1" flag="4" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012748420629" typeID="1406" quantity="1" flag="4" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012748420630" typeID="1406" quantity="5" flag="4" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012279448652" typeID="2606" quantity="1" flag="0" singleton="1" rawQuantity="-2"/>
+				<row itemID="2012284598058" typeID="2606" quantity="5" flag="0" singleton="1" rawQuantity="-2"/>
+			</rowset>
+		</row>
+		<row itemID="2005271327773" locationID="60002188" typeID="38" quantity="32521" flag="4" singleton="0"/>
+		<row itemID="2012770705751" locationID="60002188" typeID="2605" quantity="50" flag="0" singleton="0"/>
+		<row itemID="2005986712681" locationID="60002188" typeID="37" quantity="294302" flag="4" singleton="0"/>
+		<row itemID="2012111151541" locationID="60002188" typeID="3689" quantity="708" flag="4" singleton="0" location="Tanoo"/>
+
+		<comment>---------- Location - Jita IV</comment>
+		<row itemID="2008735294183" locationID="60003760" typeID="11530" quantity="100" flag="4" singleton="0" location="Jita"/>
+		<row itemID="2012304819203" locationID="60003760" typeID="34" quantity="50000" flag="4" singleton="0" location="Mineral at Jita"/>
+		<row itemID="2012304819204" locationID="60003760" typeID="34" quantity="150000" flag="4" singleton="0" location="Mineral at Jita"/>
+		<row itemID="2012070173622" locationID="60003760" typeID="38" quantity="227617" flag="4" singleton="0"/>
+
+		<comment>---------- Location - Tanoo V</comment>
+		<row itemID="2012111151541" locationID="60012526" typeID="3689" quantity="6746" flag="4" singleton="0" location="Tanoo"/>
+		<row itemID="2012740642347" locationID="60012526" typeID="2399" quantity="2380" flag="4" singleton="0"/>
+		<row itemID="2012740642346" locationID="60012526" typeID="2398" quantity="7100" flag="4" singleton="0"/>
+
+		<comment>---------- Location - Nafrivik VIII</comment>
+		<row itemID="2012145330739" locationID="60008005" typeID="17463" quantity="265000" flag="64" singleton="0"/>
+		<row itemID="2012211889066" locationID="60008005" typeID="17471" quantity="384000" flag="64" singleton="0"/>
+		<row itemID="2012147221057" locationID="60008005" typeID="17464" quantity="191000" flag="64" singleton="0"/>
+		<row itemID="2011852653596" locationID="60008005" typeID="17366" quantity="1" flag="4" singleton="1" rawQuantity="-1"  userName="Minerals2Refine">
+			<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+				<row itemID="2006703035963" typeID="18" quantity="100" flag="64" singleton="0"/>
+				<row itemID="2006703046390" typeID="17455" quantity="200" flag="64" singleton="0"/>
+				<row itemID="2006740416662" typeID="17456" quantity="300" flag="64" singleton="0"/>
+				<row itemID="2006941629691" typeID="1227" quantity="400" flag="64" singleton="0"/>
+				<row itemID="2006946919731" typeID="17459" quantity="500" flag="64" singleton="0"/>
+				<row itemID="2006946968525" typeID="17460" quantity="600" flag="64" singleton="0"/>
+				<row itemID="2006947914510" typeID="17453" quantity="700" flag="64" singleton="0"/>
+				<row itemID="2007661471767" typeID="17868" quantity="800" flag="64" singleton="0"/>
+				<row itemID="2012018389652" typeID="1224" quantity="900" flag="64" singleton="0"/>
+				<row itemID="2012041894760" typeID="17452" quantity="1000" flag="64" singleton="0"/>
+				<row itemID="2012042060733" typeID="20" quantity="1100" flag="64" singleton="0"/>
+				<row itemID="2012145364822" typeID="1228" quantity="1300" flag="64" singleton="0"/>
+				<row itemID="2012211863464" typeID="17470" quantity="1500" flag="64" singleton="0"/>
+			</rowset>
+		</row>
+
+		<comment>---------- Location - Utopia VI</comment>
+		<row itemID="2011846329233" locationID="60012850" typeID="3467" quantity="1" flag="4" singleton="1" rawQuantity="-1" userName="R-BPC Copies">
+			<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+				<row itemID="2009624894241" typeID="1404" quantity="10" flag="0" singleton="1" rawQuantity="-2"/>
+				<row itemID="2008275595571" typeID="2604" quantity="8" flag="0" singleton="1" rawQuantity="-2"/>
+			</rowset>
+		</row>
+		<comment>Assets on Utopia</comment>
+		<row itemID="2008062688500" locationID="60012850" typeID="3467" quantity="1" flag="4" singleton="1" rawQuantity="-1" userName="R-BPO Ready">
+			<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+				<row itemID="2009580431625" typeID="1404" quantity="1" flag="0" singleton="1" rawQuantity="-1"/>
+				<row itemID="2008275595570" typeID="2604" quantity="1" flag="0" singleton="1" rawQuantity="-1"/>
+			</rowset>
+		</row>
+	</rowset>
+</result>
+<cachedUntil>2015-02-06 21:01:16</cachedUntil>
+</eveapi>

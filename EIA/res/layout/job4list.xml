@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent80" >
+
+    <LinearLayout
+        android:id="@+id/iconsBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/stateIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:text="►"
+            android:textColor="@color/whitePrice" />
+
+        <ImageView
+            android:id="@+id/activityIcon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:src="@drawable/manufacturing" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/itemIcon"
+        style="@style/ItemIconStyle.Size24"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/iconsBlock" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/blueprintName"
+        style="@style/NameStyle.White"
+        android:layout_width="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/jobInfoBlock"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:singleLine="false"
+        android:text="@string/default_bponame" />
+
+    <LinearLayout
+        android:id="@+id/jobInfoBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/rightArrow"
+        android:gravity="right"
+        android:orientation="vertical"
+        android:visibility="visible" >
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/jobQtys"
+            style="@style/NumberStyle"
+            android:text="19 / 24" />
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/jobCost"
+            style="@style/NumberStyle"
+            android:text="94,381 ISK" />
+    </LinearLayout>
+
+    <org.dimensinfin.evedroid.core.Din1451EngTextView
+        android:id="@+id/jobLocation"
+        style="@style/LocationStyle"
+        android:layout_width="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/iconsBlock"
+        android:textSize="12sp"
+        android:text="0.4 Hek - Boundless Station" />
+
+    <LinearLayout
+        android:id="@+id/jobTimingBlock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/jobLocation"
+        android:orientation="horizontal" >
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/jobStart"
+            style="@style/NumberStyle"
+            android:layout_width="140dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="left"
+            android:text="2014.12.05 23:32:56" />
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/jobEnd"
+            style="@style/NumberStyle"
+            android:layout_marginRight="8dp"
+            android:gravity="left"
+            android:text="2014.12.06 09:32:56" />
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/jobDuration"
+            style="@style/NumberStyle"
+            android:layout_width="fill_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:text="0d 9:00:37" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/jobTimingBlockLabels"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/jobTimingBlock"
+        android:background="@drawable/topwhiteline" >
+
+        <TextView
+            android:id="@+id/jobStartLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_width="140dp"
+            android:layout_alignParentLeft="true"
+            android:gravity="left"
+            android:text="START" />
+
+        <TextView
+            android:id="@+id/jobEndLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_width="wrap_content"
+            android:layout_marginRight="8dp"
+            android:gravity="left"
+            android:text="END" />
+
+        <TextView
+            android:id="@+id/jobDurationLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:text="DURATION" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/rightArrow"
+        style="@style/RightArrow"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:visibility="visible" />
+
+</RelativeLayout>

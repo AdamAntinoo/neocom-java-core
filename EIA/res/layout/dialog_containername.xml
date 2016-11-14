@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#FFAAAAAA"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/nameLabel"
+        style="@style/AppTheme.ItemNameStyle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/action"
+        android:text="Set the Container´s name:" />
+
+    <EditText
+        android:id="@+id/containerName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="16dp"
+        android:hint="...name..."
+        android:inputType="textCapWords" />
+
+</LinearLayout>

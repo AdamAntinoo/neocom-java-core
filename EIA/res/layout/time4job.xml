@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent40" >
+
+    <ImageView
+        android:id="@+id/rightArrow"
+        style="@style/RightArrow"
+        android:layout_gravity="right"
+        android:gravity="right"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/groupIcon"
+        style="@style/ItemIconStyle.Size24"
+        android:layout_centerVertical="true"
+        android:src="@drawable/manufacturing" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/runTime"
+        style="@style/NameStyle.White"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="40dp"
+        android:layout_toRightOf="@+id/groupIcon"
+        android:text="0D 13:45:32"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/totalTime"
+        style="@style/NameStyle.White"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/count"
+        android:gravity="right"
+        android:text="5D 13:45:32"
+        android:visibility="visible" />
+
+    <org.dimensinfin.evedroid.core.DaysTextView
+        android:id="@+id/count"
+        style="@style/NumberStyle.XL"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="right"
+        android:layout_marginLeft="40dp"
+        android:text="7"
+        android:visibility="visible" />
+
+</RelativeLayout>

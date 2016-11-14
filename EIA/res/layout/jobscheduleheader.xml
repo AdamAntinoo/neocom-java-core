@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent40" >
+
+    <TextView
+        android:id="@+id/headerTitleLabel"
+        style="@style/LabelStyle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="JOBS SCHEDULE" />
+
+    <LinearLayout
+        android:id="@+id/queueBlock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:orientation="vertical" >
+
+        <org.dimensinfin.evedroid.core.DaysTextView
+            android:id="@+id/itemName"
+            style="@style/NameStyle.Actionable"
+            android:singleLine="false"
+            android:text="Nanofiber Internal Structure II Blueprint" />
+
+        <TextView
+            android:id="@+id/itemGroupCategory"
+            style="@style/NameStyle.White"
+            android:text="Nanofiber Internal Structure" />
+
+        <RelativeLayout
+            android:id="@+id/blueprintInformationBlock"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/blueprintCount"
+                style="@style/NumberStyle"
+                android:layout_alignParentLeft="true"
+                android:text="10" />
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/blueprintRuns"
+                style="@style/NumberStyle"
+                android:layout_toLeftOf="@+id/blueprintMETE"
+                android:gravity="right"
+                android:text="[99]" />
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/blueprintMETE"
+                style="@style/NumberStyle"
+                android:layout_width="50dp"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:paddingLeft="2dp"
+                android:text="10 / 20" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/blueprintInformationLabelBlock"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/topwhiteline" >
+
+            <TextView
+                android:id="@+id/blueprintRunsLabel"
+                style="@style/LabelStyle.Small"
+                android:layout_width="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="QUANTITY" />
+
+            <TextView
+                android:id="@+id/blueprintRunsLabel"
+                style="@style/LabelStyle.Small"
+                android:layout_width="wrap_content"
+                android:layout_toLeftOf="@+id/blueprintMETELabel"
+                android:gravity="right"
+                android:text="[RUNS]" />
+
+            <TextView
+                android:id="@+id/blueprintMETELabel"
+                style="@style/LabelStyle.Small"
+                android:layout_width="50dp"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:paddingLeft="2dp"
+                android:text="ME / TE" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/blueprintEconomicBlock"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/stackRuns"
+                style="@style/NumberStyle"
+                android:layout_alignParentLeft="true"
+                android:text="8 / 8" />
+
+            <org.dimensinfin.evedroid.core.DaysTextView
+                android:id="@+id/jobs"
+                style="@style/NumberStyle"
+                android:layout_toLeftOf="@+id/meteBlock"
+                android:gravity="right"
+                android:text="1 job" />
+
+            <LinearLayout
+                android:id="@+id/meteBlock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:orientation="vertical"
+                android:paddingLeft="2dp" >
+
+                <org.dimensinfin.evedroid.core.DaysTextView
+                    android:id="@+id/budget"
+                    style="@style/NumberStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="321,456.00 ISK" />
+
+                <TextView
+                    android:id="@+id/blueprintBudgetLabel"
+                    style="@style/LabelStyle.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="right"
+                    android:text="BUDGET" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/blueprintRunsLabel"
+                style="@style/LabelStyle.Small.TopLine"
+                android:layout_width="fill_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/stackRuns"
+                android:text="RUN COUNT" />
+
+            <TextView
+                android:id="@+id/blueprintJobsLabel"
+                style="@style/LabelStyle.Small"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/jobs"
+                android:layout_toLeftOf="@+id/meteBlock"
+                android:gravity="right"
+                android:text="JOBS" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,858 @@
+-- PUBLIC ACCESS
+https://api.eveonline.com//industry/systems?systemID=60006220
+https://api.eveonline.com//industry/systems?systemID=60006220
+https://public-crest.eveonline.com/industry/facilities/
+
+
+-- ADAM ANTINOO
+976524:lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ
+92002067
+
+https://api.eveonline.com/char/CharacterSheet.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-04-06 15:51:00</currentTime>
+<result>
+<characterID>92002067</characterID>
+<name>Adam Antinoo</name>
+<homeStationID>61000219</homeStationID>
+<DoB>2012-05-09 19:45:27</DoB>
+<race>Minmatar</race>
+<bloodLine>Sebiestor</bloodLine>
+<ancestry>Traders</ancestry>
+<gender>Male</gender>
+<corporationName>Fundacion Imperio Minmatar</corporationName>
+<corporationID>98144459</corporationID>
+<allianceName/>
+<allianceID>0</allianceID>
+<factionName/>
+<factionID>0</factionID>
+<cloneTypeID>164</cloneTypeID>
+<cloneName>Clone Grade Alpha</cloneName>
+<cloneSkillPoints>0</cloneSkillPoints>
+<freeSkillPoints>0</freeSkillPoints>
+<freeRespecs>2</freeRespecs>
+<cloneJumpDate>2015-03-29 14:09:24</cloneJumpDate>
+<lastRespecDate>2013-10-29 19:53:24</lastRespecDate>
+<lastTimedRespec>2013-10-29 19:53:24</lastTimedRespec>
+<remoteStationDate>0001-01-01 00:00:00</remoteStationDate>
+<rowset name="jumpClones" key="jumpCloneID" columns="jumpCloneID,typeID,locationID,cloneName">
+<row jumpCloneID="21648454" typeID="164" locationID="60006232" cloneName=""/>
+<row jumpCloneID="20020602" typeID="164" locationID="60012238" cloneName=""/>
+<row jumpCloneID="21686135" typeID="164" locationID="60014089" cloneName=""/>
+</rowset>
+<rowset name="jumpCloneImplants" key="jumpCloneID" columns="jumpCloneID,typeID,typeName">
+<row jumpCloneID="21648454" typeID="13283" typeName="Limited Ocular Filter"/>
+<row jumpCloneID="21648454" typeID="13284" typeName="Limited Memory Augmentation"/>
+<row jumpCloneID="21648454" typeID="13286" typeName="Limited Social Adaptation Chip"/>
+<row jumpCloneID="21648454" typeID="13287" typeName="Limited Cybernetic Subprocessor"/>
+</rowset>
+<jumpActivation>0001-01-01 00:00:00</jumpActivation>
+<jumpFatigue>0001-01-01 00:00:00</jumpFatigue>
+<jumpLastUpdate>0001-01-01 00:00:00</jumpLastUpdate>
+<balance>30938360.97</balance>
+<rowset name="implants" key="typeID" columns="typeID,typeName"/>
+<attributes>
+<intelligence>19</intelligence>
+<memory>19</memory>
+<charisma>17</charisma>
+<perception>23</perception>
+<willpower>21</willpower>
+</attributes>
+<rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+<row typeID="3380" skillpoints="256000" level="5" published="1"/>
+<row typeID="12365" skillpoints="2829" level="2" published="1"/>
+<row typeID="21059" skillpoints="16000" level="3" published="1"/>
+<row typeID="22808" skillpoints="2829" level="2" published="1"/>
+<row typeID="12366" skillpoints="2829" level="2" published="1"/>
+<row typeID="22809" skillpoints="2829" level="2" published="1"/>
+<row typeID="22806" skillpoints="2829" level="2" published="1"/>
+<row typeID="3394" skillpoints="512000" level="5" published="1"/>
+<row typeID="3435" skillpoints="24000" level="3" published="1"/>
+<row typeID="26252" skillpoints="16000" level="3" published="1"/>
+<row typeID="3303" skillpoints="8000" level="3" published="1"/>
+<row typeID="3416" skillpoints="256000" level="5" published="1"/>
+<row typeID="3330" skillpoints="90510" level="4" published="1"/>
+<row typeID="3331" skillpoints="90510" level="4" published="1"/>
+<row typeID="3301" skillpoints="8000" level="3" published="1"/>
+<row typeID="3450" skillpoints="45255" level="4" published="1"/>
+<row typeID="3423" skillpoints="16000" level="3" published="1"/>
+<row typeID="3424" skillpoints="512000" level="5" published="1"/>
+<row typeID="19921" skillpoints="24000" level="3" published="1"/>
+<row typeID="3434" skillpoints="115874" level="3" published="1"/>
+<row typeID="3318" skillpoints="512000" level="5" published="1"/>
+<row typeID="21071" skillpoints="16000" level="3" published="1"/>
+<row typeID="3429" skillpoints="45255" level="4" published="1"/>
+<row typeID="3451" skillpoints="2829" level="2" published="1"/>
+<row typeID="3419" skillpoints="135765" level="4" published="1"/>
+<row typeID="3427" skillpoints="90510" level="4" published="1"/>
+<row typeID="22578" skillpoints="181020" level="4" published="1"/>
+<row typeID="12195" skillpoints="45255" level="4" published="1"/>
+<row typeID="23566" skillpoints="7072" level="2" published="1"/>
+<row typeID="12191" skillpoints="45255" level="4" published="1"/>
+<row typeID="3304" skillpoints="24000" level="3" published="1"/>
+<row typeID="24241" skillpoints="256000" level="5" published="1"/>
+<row typeID="26253" skillpoints="4243" level="2" published="1"/>
+<row typeID="24242" skillpoints="8000" level="3" published="1"/>
+<row typeID="12192" skillpoints="45255" level="4" published="1"/>
+<row typeID="26255" skillpoints="1499" level="1" published="1"/>
+<row typeID="26256" skillpoints="756" level="1" published="1"/>
+<row typeID="12193" skillpoints="45255" level="4" published="1"/>
+<row typeID="20495" skillpoints="2829" level="2" published="1"/>
+<row typeID="3350" skillpoints="2829" level="2" published="1"/>
+<row typeID="3349" skillpoints="2829" level="2" published="1"/>
+<row typeID="12187" skillpoints="90510" level="4" published="1"/>
+<row typeID="3409" skillpoints="768000" level="5" published="1"/>
+<row typeID="24270" skillpoints="10147" level="2" published="1"/>
+<row typeID="2495" skillpoints="32000" level="3" published="1"/>
+<row typeID="25739" skillpoints="11314" level="2" published="1"/>
+<row typeID="23087" skillpoints="40000" level="3" published="1"/>
+<row typeID="11207" skillpoints="48000" level="3" published="1"/>
+<row typeID="11452" skillpoints="40000" level="3" published="1"/>
+<row typeID="32918" skillpoints="910" level="1" published="1"/>
+<row typeID="24624" skillpoints="64000" level="3" published="1"/>
+<row typeID="11445" skillpoints="1250" level="1" published="1"/>
+<row typeID="16069" skillpoints="90510" level="4" published="1"/>
+<row typeID="23121" skillpoints="40000" level="3" published="1"/>
+<row typeID="21790" skillpoints="7072" level="2" published="1"/>
+<row typeID="3308" skillpoints="226275" level="4" published="1"/>
+<row typeID="11433" skillpoints="40000" level="3" published="1"/>
+<row typeID="33091" skillpoints="136197" level="4" published="1"/>
+<row typeID="33093" skillpoints="136197" level="4" published="1"/>
+<row typeID="33094" skillpoints="136197" level="4" published="1"/>
+<row typeID="33095" skillpoints="1536000" level="5" published="1"/>
+<row typeID="33096" skillpoints="1500897" level="4" published="1"/>
+<row typeID="33097" skillpoints="768000" level="4" published="1"/>
+<row typeID="33098" skillpoints="911734" level="4" published="1"/>
+<row typeID="12484" skillpoints="7072" level="2" published="1"/>
+<row typeID="12487" skillpoints="1250" level="1" published="1"/>
+<row typeID="12486" skillpoints="7072" level="2" published="1"/>
+<row typeID="12485" skillpoints="7072" level="2" published="1"/>
+<row typeID="3315" skillpoints="161541" level="3" published="1"/>
+<row typeID="3336" skillpoints="64000" level="3" published="1"/>
+<row typeID="3338" skillpoints="64000" level="3" published="1"/>
+<row typeID="3307" skillpoints="40000" level="3" published="1"/>
+<row typeID="12188" skillpoints="16000" level="3" published="1"/>
+<row typeID="12180" skillpoints="5657" level="2" published="1"/>
+<row typeID="12184" skillpoints="4243" level="2" published="1"/>
+<row typeID="12185" skillpoints="24000" level="3" published="1"/>
+<row typeID="23606" skillpoints="52187" level="4" published="1"/>
+<row typeID="3441" skillpoints="1250" level="1" published="1"/>
+<row typeID="23594" skillpoints="40000" level="3" published="1"/>
+<row typeID="22242" skillpoints="5090" level="1" published="1"/>
+<row typeID="19719" skillpoints="1500" level="1" published="1"/>
+<row typeID="4385" skillpoints="1250" level="1" published="1"/>
+<row typeID="33699" skillpoints="512000" level="5" published="1"/>
+<row typeID="12095" skillpoints="1040" level="1" published="1"/>
+<row typeID="3309" skillpoints="7072" level="2" published="1"/>
+<row typeID="3339" skillpoints="64000" level="3" published="1"/>
+<row typeID="12182" skillpoints="27074" level="2" published="1"/>
+<row typeID="12181" skillpoints="32000" level="3" published="1"/>
+<row typeID="33399" skillpoints="90510" level="4" published="1"/>
+<row typeID="3439" skillpoints="4243" level="2" published="1"/>
+<row typeID="33092" skillpoints="136197" level="4" published="1"/>
+<row typeID="12202" skillpoints="113832" level="3" published="1"/>
+<row typeID="12201" skillpoints="135765" level="4" published="1"/>
+<row typeID="3440" skillpoints="1000" level="1" published="1"/>
+<row typeID="16281" skillpoints="8000" level="3" published="1"/>
+<row typeID="11447" skillpoints="40000" level="3" published="1"/>
+<row typeID="24625" skillpoints="232220" level="3" published="1"/>
+<row typeID="16595" skillpoints="8000" level="3" published="1"/>
+<row typeID="3337" skillpoints="362039" level="4" published="1"/>
+<row typeID="11451" skillpoints="40000" level="3" published="1"/>
+<row typeID="11443" skillpoints="40000" level="3" published="1"/>
+<row typeID="12093" skillpoints="5657" level="2" published="1"/>
+<row typeID="11455" skillpoints="40000" level="3" published="1"/>
+<row typeID="11453" skillpoints="40000" level="3" published="1"/>
+<row typeID="16622" skillpoints="24000" level="3" published="1"/>
+<row typeID="21791" skillpoints="99362" level="3" published="1"/>
+<row typeID="24268" skillpoints="4243" level="2" published="1"/>
+<row typeID="3343" skillpoints="1000" level="1" published="1"/>
+<row typeID="13278" skillpoints="4243" level="2" published="1"/>
+<row typeID="11529" skillpoints="40000" level="3" published="1"/>
+<row typeID="11442" skillpoints="40000" level="3" published="1"/>
+<row typeID="2505" skillpoints="181020" level="4" published="1"/>
+<row typeID="3389" skillpoints="768000" level="5" published="1"/>
+<row typeID="3403" skillpoints="45255" level="4" published="1"/>
+<row typeID="3406" skillpoints="256000" level="5" published="1"/>
+<row typeID="26258" skillpoints="2860" level="1" published="1"/>
+<row typeID="3184" skillpoints="1000" level="1" published="1"/>
+<row typeID="3361" skillpoints="750" level="1" published="1"/>
+<row typeID="3359" skillpoints="135765" level="4" published="1"/>
+<row typeID="20494" skillpoints="2829" level="2" published="1"/>
+<row typeID="3357" skillpoints="8000" level="3" published="1"/>
+<row typeID="3324" skillpoints="4243" level="2" published="1"/>
+<row typeID="13279" skillpoints="1415" level="2" published="1"/>
+<row typeID="28164" skillpoints="4243" level="2" published="1"/>
+<row typeID="19759" skillpoints="5657" level="2" published="1"/>
+<row typeID="19760" skillpoints="4243" level="2" published="1"/>
+<row typeID="11579" skillpoints="217666" level="3" published="1"/>
+<row typeID="26261" skillpoints="4243" level="2" published="1"/>
+<row typeID="22536" skillpoints="90510" level="4" published="1"/>
+<row typeID="12190" skillpoints="16000" level="3" published="1"/>
+<row typeID="12367" skillpoints="2829" level="2" published="1"/>
+<row typeID="22807" skillpoints="2829" level="2" published="1"/>
+<row typeID="3348" skillpoints="186969" level="4" published="1"/>
+<row typeID="3446" skillpoints="16000" level="3" published="1"/>
+<row typeID="3421" skillpoints="500" level="1" published="1"/>
+<row typeID="25719" skillpoints="4243" level="2" published="1"/>
+<row typeID="3305" skillpoints="768000" level="5" published="1"/>
+<row typeID="3333" skillpoints="226275" level="4" published="1"/>
+<row typeID="3454" skillpoints="40000" level="3" published="1"/>
+<row typeID="17940" skillpoints="33815" level="3" published="1"/>
+<row typeID="3418" skillpoints="135765" level="4" published="1"/>
+<row typeID="3410" skillpoints="176175" level="4" published="1"/>
+<row typeID="3412" skillpoints="135765" level="4" published="1"/>
+<row typeID="11584" skillpoints="750" level="1" published="1"/>
+<row typeID="26257" skillpoints="4243" level="2" published="1"/>
+<row typeID="3420" skillpoints="181020" level="4" published="1"/>
+<row typeID="3341" skillpoints="5691" level="2" published="1"/>
+<row typeID="3385" skillpoints="256000" level="5" published="1"/>
+<row typeID="3437" skillpoints="256000" level="5" published="1"/>
+<row typeID="3438" skillpoints="2829" level="2" published="1"/>
+<row typeID="25863" skillpoints="24000" level="3" published="1"/>
+<row typeID="3388" skillpoints="768000" level="5" published="1"/>
+<row typeID="3444" skillpoints="2829" level="2" published="1"/>
+<row typeID="3356" skillpoints="16000" level="3" published="1"/>
+<row typeID="25235" skillpoints="1415" level="2" published="1"/>
+<row typeID="3432" skillpoints="512000" level="5" published="1"/>
+<row typeID="3436" skillpoints="256000" level="5" published="1"/>
+<row typeID="20314" skillpoints="2829" level="2" published="1"/>
+<row typeID="12441" skillpoints="2829" level="2" published="1"/>
+<row typeID="3320" skillpoints="8000" level="3" published="1"/>
+<row typeID="3319" skillpoints="8000" level="3" published="1"/>
+<row typeID="3321" skillpoints="16000" level="3" published="1"/>
+<row typeID="3551" skillpoints="8000" level="3" published="1"/>
+<row typeID="3428" skillpoints="512000" level="5" published="1"/>
+<row typeID="3425" skillpoints="121481" level="4" published="1"/>
+<row typeID="3422" skillpoints="16000" level="3" published="1"/>
+<row typeID="3452" skillpoints="496423" level="4" published="1"/>
+<row typeID="3455" skillpoints="45255" level="4" published="1"/>
+<row typeID="3316" skillpoints="2829" level="2" published="1"/>
+<row typeID="3310" skillpoints="90510" level="4" published="1"/>
+<row typeID="3443" skillpoints="45255" level="4" published="1"/>
+<row typeID="3328" skillpoints="512000" level="5" published="1"/>
+<row typeID="3393" skillpoints="45255" level="4" published="1"/>
+<row typeID="3449" skillpoints="256000" level="5" published="1"/>
+<row typeID="3426" skillpoints="256000" level="5" published="1"/>
+<row typeID="3413" skillpoints="256000" level="5" published="1"/>
+<row typeID="3402" skillpoints="256000" level="5" published="1"/>
+<row typeID="3392" skillpoints="256000" level="5" published="1"/>
+<row typeID="3386" skillpoints="256000" level="5" published="1"/>
+<row typeID="3329" skillpoints="90510" level="4" published="1"/>
+<row typeID="3327" skillpoints="256000" level="5" published="1"/>
+<row typeID="3302" skillpoints="256000" level="5" published="1"/>
+<row typeID="3300" skillpoints="256000" level="5" published="1"/>
+<row typeID="21718" skillpoints="4243" level="2" published="1"/>
+<row typeID="3322" skillpoints="750" level="1" published="1"/>
+<row typeID="3312" skillpoints="90510" level="4" published="1"/>
+<row typeID="3387" skillpoints="512000" level="5" published="1"/>
+<row typeID="3411" skillpoints="135765" level="4" published="1"/>
+<row typeID="3442" skillpoints="251057" level="4" published="1"/>
+<row typeID="3335" skillpoints="40000" level="3" published="1"/>
+<row typeID="3334" skillpoints="99970" level="3" published="1"/>
+<row typeID="3332" skillpoints="40000" level="3" published="1"/>
+<row typeID="3355" skillpoints="8000" level="3" published="1"/>
+<row typeID="3317" skillpoints="40268" level="3" published="1"/>
+<row typeID="3433" skillpoints="4243" level="2" published="1"/>
+<row typeID="3340" skillpoints="32000" level="3" published="1"/>
+<row typeID="3417" skillpoints="256000" level="5" published="1"/>
+<row typeID="26254" skillpoints="4243" level="2" published="1"/>
+<row typeID="25810" skillpoints="7072" level="2" published="1"/>
+<row typeID="3431" skillpoints="84621" level="4" published="1"/>
+<row typeID="3311" skillpoints="512000" level="5" published="1"/>
+<row typeID="11566" skillpoints="2829" level="2" published="1"/>
+<row typeID="3453" skillpoints="236247" level="4" published="1"/>
+<row typeID="12305" skillpoints="8000" level="3" published="1"/>
+<row typeID="23618" skillpoints="7072" level="2" published="1"/>
+<row typeID="12186" skillpoints="16000" level="3" published="1"/>
+<row typeID="3306" skillpoints="24000" level="3" published="1"/>
+<row typeID="20342" skillpoints="226275" level="4" published="1"/>
+<row typeID="11446" skillpoints="40000" level="3" published="1"/>
+<row typeID="12194" skillpoints="10709" level="2" published="1"/>
+<row typeID="12183" skillpoints="4243" level="2" published="1"/>
+</rowset>
+<rowset name="certificates" key="certificateID" columns="certificateID"/>
+<rowset name="corporationRoles" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName"/>
+<rowset name="corporationTitles" key="titleID" columns="titleID,titleName"/>
+</result>
+<cachedUntil>2015-04-06 16:07:53</cachedUntil>
+</eveapi>
+
+
+https://api.eveonline.com/char/AssetList.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+https://api.eveonline.com/char/Blueprints.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+https://api.eveonline.com/char/IndustryJobs.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-05-13 15:04:16</currentTime>
+<result>
+<rowset name="jobs" key="jobID" columns="jobID,installerID,installerName,facilityID,solarSystemID,solarSystemName,stationID,activityID,blueprintID,blueprintTypeID,blueprintTypeName,blueprintLocationID,outputLocationID,runs,cost,teamID,licensedRuns,probability,productTypeID,productTypeName,status,timeInSeconds,startDate,endDate,pauseDate,completedDate,completedCharacterID,successfulRuns">
+	<row jobID="264921984" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017988527092" blueprintTypeID="17322" blueprintTypeName="Thermonuclear Trigger Unit Blueprint" blueprintLocationID="1012100966063" outputLocationID="1012100966063" runs="400" cost="62246.00" teamID="0" licensedRuns="4000" probability="1" productTypeID="11691" productTypeName="Thermonuclear Trigger Unit" status="2" timeInSeconds="39576" startDate="2015-05-12 17:32:18" endDate="2015-05-13 04:31:54" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921961" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017896333275" blueprintTypeID="31797" blueprintTypeName="Medium Core Defense Field Extender II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="1" cost="247219.00" teamID="0" licensedRuns="1" probability="1" productTypeID="31796" productTypeName="Medium Core Defense Field Extender II" status="2" timeInSeconds="18427" startDate="2015-05-12 17:32:04" endDate="2015-05-12 22:39:11" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921950" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017892573550" blueprintTypeID="31797" blueprintTypeName="Medium Core Defense Field Extender II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="1" cost="247219.00" teamID="0" licensedRuns="1" probability="1" productTypeID="31796" productTypeName="Medium Core Defense Field Extender II" status="2" timeInSeconds="18427" startDate="2015-05-12 17:31:59" endDate="2015-05-12 22:39:06" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921933" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1018110847130" blueprintTypeID="1448" blueprintTypeName="Capacitor Power Relay II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="10" cost="15962.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1447" productTypeName="Capacitor Power Relay II" status="2" timeInSeconds="14373" startDate="2015-05-12 17:31:51" endDate="2015-05-12 21:31:24" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921928" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017945164241" blueprintTypeID="1448" blueprintTypeName="Capacitor Power Relay II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="10" cost="15962.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1447" productTypeName="Capacitor Power Relay II" status="2" timeInSeconds="14373" startDate="2015-05-12 17:31:46" endDate="2015-05-12 21:31:19" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921918" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017945164239" blueprintTypeID="1448" blueprintTypeName="Capacitor Power Relay II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="10" cost="15962.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1447" productTypeName="Capacitor Power Relay II" status="2" timeInSeconds="14373" startDate="2015-05-12 17:31:40" endDate="2015-05-12 21:31:13" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921850" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017945162897" blueprintTypeID="2970" blueprintTypeName="720mm Howitzer Artillery II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="10" cost="114481.00" teamID="0" licensedRuns="10" probability="1" productTypeID="2969" productTypeName="720mm Howitzer Artillery II" status="2" timeInSeconds="28745" startDate="2015-05-12 17:30:54" endDate="2015-05-13 01:29:59" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921813" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017883008624" blueprintTypeID="2970" blueprintTypeName="720mm Howitzer Artillery II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="6" cost="68689.00" teamID="0" licensedRuns="10" probability="1" productTypeID="2969" productTypeName="720mm Howitzer Artillery II" status="2" timeInSeconds="17247" startDate="2015-05-12 17:30:31" endDate="2015-05-12 22:17:58" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921800" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1017850603928" blueprintTypeID="2970" blueprintTypeName="720mm Howitzer Artillery II Blueprint" blueprintLocationID="1012100966063" outputLocationID="1017512348986" runs="6" cost="68689.00" teamID="0" licensedRuns="10" probability="1" productTypeID="2969" productTypeName="720mm Howitzer Artillery II" status="2" timeInSeconds="17247" startDate="2015-05-12 17:30:23" endDate="2015-05-12 22:17:50" pauseDate="2015-05-13 04:12:43" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921641" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1010397482738" blueprintTypeID="828" blueprintTypeName="720mm Howitzer Artillery I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1012100966063" runs="10" cost="2658.00" teamID="0" licensedRuns="100" probability="0.4335" productTypeID="2970" productTypeName="720mm Howitzer Artillery II Blueprint" status="2" timeInSeconds="262650" startDate="2015-05-12 17:28:29" endDate="2015-05-15 18:25:59" pauseDate="2015-05-13 04:19:17" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921612" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1015033991485" blueprintTypeID="13000" blueprintTypeName="Prototype Cloaking Device I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1017509825757" runs="5" cost="2955.00" teamID="0" licensedRuns="40" probability="0.425" productTypeID="12104" productTypeName="Improved Cloaking Device II Blueprint" status="2" timeInSeconds="307275" startDate="2015-05-12 17:28:11" endDate="2015-05-16 06:49:26" pauseDate="2015-05-13 04:19:17" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921589" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1012211315042" blueprintTypeID="11358" blueprintTypeName="Medium Remote Armor Repairer I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1012100966063" runs="10" cost="1626.00" teamID="0" licensedRuns="100" probability="0.4335" productTypeID="26916" productTypeName="Medium Remote Armor Repairer II Blueprint" status="2" timeInSeconds="262650" startDate="2015-05-12 17:27:54" endDate="2015-05-15 18:25:24" pauseDate="2015-05-13 04:19:17" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921575" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1008196696949" blueprintTypeID="31803" blueprintTypeName="Medium Core Defense Field Purger I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1012100966063" runs="14" cost="80355.00" teamID="0" licensedRuns="60" probability="0.425" productTypeID="31813" productTypeName="Medium Core Defense Field Purger II Blueprint" status="2" timeInSeconds="185640" startDate="2015-05-12 17:27:44" endDate="2015-05-14 21:01:44" pauseDate="2015-05-13 04:19:17" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="264921564" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1015306213684" blueprintTypeID="31791" blueprintTypeName="Medium Core Defense Field Extender I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1012100966063" runs="12" cost="68876.00" teamID="0" licensedRuns="60" probability="0.425" productTypeID="31797" productTypeName="Medium Core Defense Field Extender II Blueprint" status="2" timeInSeconds="159120" startDate="2015-05-12 17:27:31" endDate="2015-05-14 13:39:31" pauseDate="2015-05-13 04:19:17" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+</rowset>
+</result>
+<cachedUntil>2015-05-13 15:10:10</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/IndustryJobsHistory.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-02-28 11:00:50</currentTime>
+<result>
+<rowset name="jobs" key="jobID" columns="jobID,installerID,installerName,facilityID,solarSystemID,solarSystemName,stationID,activityID,blueprintID,blueprintTypeID,blueprintTypeName,blueprintLocationID,outputLocationID,runs,cost,teamID,licensedRuns,probability,productTypeID,productTypeName,status,timeInSeconds,startDate,endDate,pauseDate,completedDate,completedCharacterID,successfulRuns">
+	<row jobID="257825411" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1017411202448" blueprintTypeID="2174" blueprintTypeName="Infiltrator I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1015832488045" runs="3" cost="139.00" teamID="0" licensedRuns="300" probability="0.4335" productTypeID="2176" productTypeName="Infiltrator II Blueprint" status="1" timeInSeconds="40545" startDate="2015-02-28 01:17:04" endDate="2015-02-28 12:32:49" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257825350" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1017435330064" blueprintTypeID="2174" blueprintTypeName="Infiltrator I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1017504412043" runs="4" cost="185.00" teamID="0" licensedRuns="300" probability="0.4335" productTypeID="2176" productTypeName="Infiltrator II Blueprint" status="1" timeInSeconds="54060" startDate="2015-02-28 01:16:25" endDate="2015-02-28 16:17:25" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257814715" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1015600870085" blueprintTypeID="3830" blueprintTypeName="Medium Shield Extender I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1015832488045" runs="1" cost="33.00" teamID="0" licensedRuns="200" probability="0.425" productTypeID="3832" productTypeName="Medium Shield Extender II Blueprint" status="1" timeInSeconds="11730" startDate="2015-02-27 22:50:15" endDate="2015-02-28 02:05:45" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257814653" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1015600871765" blueprintTypeID="3840" blueprintTypeName="Large Shield Extender I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1015832488045" runs="1" cost="55.00" teamID="0" licensedRuns="100" probability="0.425" productTypeID="3842" productTypeName="Large Shield Extender II Blueprint" status="1" timeInSeconds="26265" startDate="2015-02-27 22:49:44" endDate="2015-02-28 06:07:29" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257814578" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1012225304531" blueprintTypeID="2296" blueprintTypeName="Thermic Dissipation Field I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1017504412043" runs="4" cost="472.00" teamID="0" licensedRuns="100" probability="0.425" productTypeID="2304" productTypeName="Thermic Dissipation Field II Blueprint" status="1" timeInSeconds="105060" startDate="2015-02-27 22:48:53" endDate="2015-03-01 03:59:53" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257814539" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="8" blueprintID="1012524448011" blueprintTypeID="1446" blueprintTypeName="Capacitor Power Relay I Blueprint" blueprintLocationID="1017504412043" outputLocationID="1015832488045" runs="3" cost="87.00" teamID="0" licensedRuns="200" probability="0.4335" productTypeID="1448" productTypeName="Capacitor Power Relay II Blueprint" status="1" timeInSeconds="35190" startDate="2015-02-27 22:48:18" endDate="2015-02-28 08:34:48" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257814441" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1012620693042" blueprintTypeID="26916" blueprintTypeName="Medium Remote Armor Repairer II Blueprint" blueprintLocationID="1015832488045" outputLocationID="61000219" runs="10" cost="39620.00" teamID="0" licensedRuns="10" probability="1" productTypeID="26913" productTypeName="Medium Remote Armor Repairer II" status="1" timeInSeconds="25751" startDate="2015-02-27 22:46:37" endDate="2015-02-28 05:55:48" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257813676" installerID="92002067" installerName="Adam Antinoo" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="1" blueprintID="1012076733486" blueprintTypeID="1095" blueprintTypeName="Gyrostabilizer II Blueprint" blueprintLocationID="1015832488045" outputLocationID="61000219" runs="7" cost="15823.00" teamID="0" licensedRuns="10" probability="1" productTypeID="519" productTypeName="Gyrostabilizer II" status="1" timeInSeconds="9013" startDate="2015-02-27 22:37:21" endDate="2015-02-28 01:07:34" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257810194" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015840786888" blueprintTypeID="1406" blueprintTypeName="Inertial Stabilizers II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="4346.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1405" productTypeName="Inertial Stabilizers II" status="1" timeInSeconds="14373" startDate="2015-02-27 21:52:59" endDate="2015-02-28 01:52:32" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257810170" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015756657946" blueprintTypeID="1406" blueprintTypeName="Inertial Stabilizers II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="4346.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1405" productTypeName="Inertial Stabilizers II" status="1" timeInSeconds="14373" startDate="2015-02-27 21:52:37" endDate="2015-02-28 01:52:10" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257810165" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015756656889" blueprintTypeID="1406" blueprintTypeName="Inertial Stabilizers II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="4346.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1405" productTypeName="Inertial Stabilizers II" status="1" timeInSeconds="14373" startDate="2015-02-27 21:52:25" endDate="2015-02-28 01:51:58" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257810129" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1011846405830" blueprintTypeID="28577" blueprintTypeName="Mining Laser Upgrade II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="14408.00" teamID="0" licensedRuns="10" probability="1" productTypeID="28576" productTypeName="Mining Laser Upgrade II" status="1" timeInSeconds="12876" startDate="2015-02-27 21:51:54" endDate="2015-02-28 01:26:30" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257810016" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015148102577" blueprintTypeID="1095" blueprintTypeName="Gyrostabilizer II Blueprint" blueprintLocationID="60013345" outputLocationID="1015235819997" runs="10" cost="17537.00" teamID="0" licensedRuns="10" probability="1" productTypeID="519" productTypeName="Gyrostabilizer II" status="1" timeInSeconds="12876" startDate="2015-02-27 21:51:01" endDate="2015-02-28 01:25:37" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257809988" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1012065815429" blueprintTypeID="1095" blueprintTypeName="Gyrostabilizer II Blueprint" blueprintLocationID="1010701363236" outputLocationID="60013345" runs="10" cost="17537.00" teamID="0" licensedRuns="10" probability="1" productTypeID="519" productTypeName="Gyrostabilizer II" status="1" timeInSeconds="12876" startDate="2015-02-27 21:50:41" endDate="2015-02-28 01:25:17" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257809354" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015799107260" blueprintTypeID="1448" blueprintTypeName="Capacitor Power Relay II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="4" cost="2855.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1447" productTypeName="Capacitor Power Relay II" status="1" timeInSeconds="5749" startDate="2015-02-27 21:44:21" endDate="2015-02-27 23:20:10" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257809051" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1008867024230" blueprintTypeID="1096" blueprintTypeName="Gyrostabilizer I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="10" cost="524.00" teamID="0" licensedRuns="200" probability="0.4335" productTypeID="1095" productTypeName="Gyrostabilizer II Blueprint" status="1" timeInSeconds="117300" startDate="2015-02-27 21:41:15" endDate="2015-03-01 06:16:15" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257808978" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012524447990" blueprintTypeID="1446" blueprintTypeName="Capacitor Power Relay I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="10" cost="213.00" teamID="0" licensedRuns="200" probability="0.4335" productTypeID="1448" productTypeName="Capacitor Power Relay II Blueprint" status="1" timeInSeconds="117300" startDate="2015-02-27 21:40:28" endDate="2015-03-01 06:15:28" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	<row jobID="257808915" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012225304544" blueprintTypeID="2296" blueprintTypeName="Thermic Dissipation Field I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1015089828370" runs="5" cost="431.00" teamID="0" licensedRuns="100" probability="0.425" productTypeID="2304" productTypeName="Thermic Dissipation Field II Blueprint" status="1" timeInSeconds="131325" startDate="2015-02-27 21:39:53" endDate="2015-03-01 10:08:38" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+</rowset>
+</result>
+<cachedUntil>2015-02-28 15:24:34</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/Blueprints?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067
+https://public-crest.eveonline.com/char/Blueprints?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- BETH RIPLEY
+2889577
+Mb6iDKR14m9Xjh9maGTQCGTkpjRHPjOgVUkvK6E9r6fhMtOWtipaqybp0qCzxuuw
+92223647
+
+https://api.eveonline.com/account/Characters.xml.aspx?keyID=2889577&vCode=Mb6iDKR14m9Xjh9maGTQCGTkpjRHPjOgVUkvK6E9r6fhMtOWtipaqybp0qCzxuuw&version=2
+<eveapi version="2">
+<currentTime>2015-02-27 12:56:51</currentTime>
+<result>
+<rowset name="characters" key="characterID" columns="name,characterID,corporationName,corporationID,allianceID,allianceName,factionID,factionName">
+	<row name="Beth Ripley" characterID="92223647" corporationName="Brutor Tribe" corporationID="1000049" allianceID="0" allianceName="" factionID="0" factionName=""/>
+</rowset>
+</result>
+<cachedUntil>2015-02-27 13:18:58</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/CharacterSheet.xml.aspx?keyID=2889577&vCode=Mb6iDKR14m9Xjh9maGTQCGTkpjRHPjOgVUkvK6E9r6fhMtOWtipaqybp0qCzxuuw&characterID=92223647
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-03-13 11:17:20</currentTime>
+<result>
+	<characterID>92223647</characterID>
+	<name>Beth Ripley</name>
+	<homeStationID>60012301</homeStationID>
+	<DoB>2012-07-05 21:53:15</DoB>
+	<race>Minmatar</race>
+	<bloodLine>Brutor</bloodLine>
+	<ancestry>Workers</ancestry>
+	<gender>Female</gender>
+	<corporationName>Brutor Tribe</corporationName>
+	<corporationID>1000049</corporationID>
+	<cloneTypeID>164</cloneTypeID>
+	<cloneName>Clone Grade Alpha</cloneName>
+	<cloneSkillPoints>0</cloneSkillPoints>
+	<freeSkillPoints>0</freeSkillPoints>
+	<freeRespecs>2</freeRespecs>
+	<cloneJumpDate>2015-03-11 13:57:26</cloneJumpDate>
+	<lastRespecDate>0001-01-01 00:00:00</lastRespecDate>
+	<lastTimedRespec>0001-01-01 00:00:00</lastTimedRespec>
+	<remoteStationDate>0001-01-01 00:00:00</remoteStationDate>
+	<rowset name="jumpClones" key="jumpCloneID" columns="jumpCloneID,typeID,locationID,cloneName">
+	<row jumpCloneID="21545449" typeID="164" locationID="60003760" cloneName=""/>
+	<row jumpCloneID="21501532" typeID="164" locationID="60012301" cloneName=""/>
+	<row jumpCloneID="21484653" typeID="164" locationID="60012928" cloneName=""/>
+	</rowset>
+	<rowset name="jumpCloneImplants" key="jumpCloneID" columns="jumpCloneID,typeID,typeName"/>
+	<jumpActivation>0001-01-01 00:00:00</jumpActivation>
+	<jumpFatigue>0001-01-01 00:00:00</jumpFatigue>
+	<jumpLastUpdate>0001-01-01 00:00:00</jumpLastUpdate>
+	<balance>248404552.90</balance>
+	<rowset name="implants" key="typeID" columns="typeID,typeName"/>
+	<attributes>
+	<intelligence>20</intelligence>
+	<memory>20</memory>
+	<charisma>19</charisma>
+	<perception>20</perception>
+	<willpower>20</willpower>
+	</attributes>
+	<rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+		<row typeID="3300" skillpoints="1415" level="2" published="1"/>
+		<row typeID="3302" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3327" skillpoints="45255" level="4" published="1"/>
+		<row typeID="3329" skillpoints="13324" level="2" published="1"/>
+		<row typeID="3386" skillpoints="1415" level="2" published="1"/>
+		<row typeID="3392" skillpoints="198073" level="4" published="1"/>
+		<row typeID="3402" skillpoints="256000" level="5" published="1"/>
+		<row typeID="3413" skillpoints="256000" level="5" published="1"/>
+		<row typeID="3426" skillpoints="45255" level="4" published="1"/>
+		<row typeID="3449" skillpoints="45255" level="4" published="1"/>
+		<row typeID="3443" skillpoints="45255" level="4" published="1"/>
+		<row typeID="26252" skillpoints="16000" level="3" published="1"/>
+		<row typeID="26254" skillpoints="24000" level="3" published="1"/>
+		<row typeID="3425" skillpoints="90510" level="4" published="1"/>
+		<row typeID="3450" skillpoints="45255" level="4" published="1"/>
+		<row typeID="3454" skillpoints="1250" level="1" published="1"/>
+		<row typeID="3455" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3355" skillpoints="250" level="1" published="1"/>
+		<row typeID="3343" skillpoints="5666" level="2" published="1"/>
+		<row typeID="2495" skillpoints="135786" level="3" published="1"/>
+		<row typeID="13279" skillpoints="1415" level="2" published="1"/>
+		<row typeID="24242" skillpoints="8005" level="3" published="1"/>
+		<row typeID="3424" skillpoints="16000" level="3" published="1"/>
+		<row typeID="3434" skillpoints="750" level="1" published="1"/>
+		<row typeID="3420" skillpoints="1000" level="1" published="1"/>
+		<row typeID="3433" skillpoints="750" level="1" published="1"/>
+		<row typeID="3446" skillpoints="16000" level="3" published="1"/>
+		<row typeID="11584" skillpoints="750" level="1" published="1"/>
+		<row typeID="3427" skillpoints="500" level="1" published="1"/>
+		<row typeID="3393" skillpoints="250" level="1" published="1"/>
+		<row typeID="3444" skillpoints="2829" level="2" published="1"/>
+		<row typeID="26261" skillpoints="750" level="1" published="1"/>
+		<row typeID="32918" skillpoints="500" level="1" published="1"/>
+		<row typeID="16597" skillpoints="4243" level="2" published="1"/>
+		<row typeID="26253" skillpoints="750" level="1" published="1"/>
+		<row typeID="3387" skillpoints="2829" level="2" published="1"/>
+		<row typeID="3380" skillpoints="256000" level="5" published="1"/>
+		<row typeID="3388" skillpoints="678024" level="4" published="1"/>
+		<row typeID="3432" skillpoints="16000" level="3" published="1"/>
+		<row typeID="33091" skillpoints="500" level="1" published="1"/>
+		<row typeID="24624" skillpoints="18514" level="2" published="1"/>
+		<row typeID="3409" skillpoints="280907" level="4" published="1"/>
+		<row typeID="11446" skillpoints="40000" level="3" published="1"/>
+		<row typeID="11455" skillpoints="40000" level="3" published="1"/>
+		<row typeID="11443" skillpoints="1250" level="1" published="1"/>
+		<row typeID="3341" skillpoints="0" level="0" published="1"/>
+		<row typeID="21718" skillpoints="4243" level="2" published="1"/>
+		<row typeID="3340" skillpoints="1024000" level="5" published="1"/>
+		<row typeID="19719" skillpoints="1500" level="1" published="1"/>
+		<row typeID="16594" skillpoints="750" level="1" published="1"/>
+		<row typeID="33399" skillpoints="2829" level="2" published="1"/>
+		<row typeID="21790" skillpoints="7072" level="2" published="1"/>
+		<row typeID="16598" skillpoints="4243" level="2" published="1"/>
+		<row typeID="16595" skillpoints="8000" level="3" published="1"/>
+		<row typeID="16622" skillpoints="135765" level="4" published="1"/>
+		<row typeID="24270" skillpoints="4243" level="2" published="1"/>
+		<row typeID="3406" skillpoints="256000" level="5" published="1"/>
+		<row typeID="11579" skillpoints="271530" level="4" published="1"/>
+		<row typeID="2505" skillpoints="181020" level="4" published="1"/>
+		<row typeID="3453" skillpoints="16000" level="3" published="1"/>
+		<row typeID="25235" skillpoints="250" level="1" published="1"/>
+		<row typeID="3331" skillpoints="34288" level="3" published="1"/>
+		<row typeID="3394" skillpoints="57766" level="3" published="1"/>
+	</rowset>
+	<rowset name="certificates" key="certificateID" columns="certificateID"/>
+	<rowset name="corporationRoles" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationTitles" key="titleID" columns="titleID,titleName"/>
+</result>
+<cachedUntil>2015-03-13 12:01:54</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/PlanetaryColonies.xml.aspx?keyID=2889577&vCode=Mb6iDKR14m9Xjh9maGTQCGTkpjRHPjOgVUkvK6E9r6fhMtOWtipaqybp0qCzxuuw&characterID=92223647
+<eveapi version="2">
+<currentTime>2015-03-05 08:25:57</currentTime>
+<result>
+<rowset name="colonies" key="planetID" columns="solarSystemID,solarSystemName,planetID,planetName,planetTypeID,planetTypeName,ownerID,ownerName,lastUpdate,upgradeLevel,numberOfPins">
+	<row solarSystemID="30001047" solarSystemName="Doril" planetID="40066755" planetName="Doril V" planetTypeID="2016" planetTypeName="Planet (Barren)" ownerID="92223647" ownerName="Beth Ripley" lastUpdate="2015-03-03 19:27:15" upgradeLevel="4" numberOfPins="11"/>
+	<row solarSystemID="30003283" solarSystemName="PVH8-0" planetID="40208301" planetName="PVH8-0 II" planetTypeID="2015" planetTypeName="Planet (Lava)" ownerID="92223647" ownerName="Beth Ripley" lastUpdate="2015-03-01 21:54:07" upgradeLevel="4" numberOfPins="11"/>
+	<row solarSystemID="30003283" solarSystemName="PVH8-0" planetID="40208304" planetName="PVH8-0 IV" planetTypeID="2063" planetTypeName="Planet (Plasma)" ownerID="92223647" ownerName="Beth Ripley" lastUpdate="2015-03-01 21:54:36" upgradeLevel="4" numberOfPins="11"/>
+</rowset>
+</result>
+<cachedUntil>2015-03-05 09:25:57</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/MarketOrders.xml.aspx?keyID=2889577&vCode=Mb6iDKR14m9Xjh9maGTQCGTkpjRHPjOgVUkvK6E9r6fhMtOWtipaqybp0qCzxuuw&characterID=92223647
+<eveapi version="2">
+<currentTime>2015-03-30 07:29:50</currentTime>
+<result>
+<rowset name="orders" key="orderID" columns="orderID,charID,stationID,volEntered,volRemaining,minVolume,orderState,typeID,range,accountKey,duration,escrow,price,bid,issued">
+	<row orderID="4032562303" charID="92223647" stationID="60003760" volEntered="1000" volRemaining="984" minVolume="1" orderState="0" typeID="11538" range="-1" accountKey="1000" duration="14" escrow="17571844.82" price="32128.00" bid="1" issued="2015-03-26 12:58:54"/>
+	<row orderID="4037692078" charID="92223647" stationID="60008494" volEntered="5" volRemaining="0" minVolume="1" orderState="2" typeID="11646" range="32767" accountKey="1000" duration="30" escrow="0.00" price="1444700.00" bid="0" issued="2015-03-23 23:45:24"/>
+	<row orderID="4037692456" charID="92223647" stationID="60008494" volEntered="11" volRemaining="0" minVolume="1" orderState="2" typeID="1319" range="32767" accountKey="1000" duration="30" escrow="0.00" price="275900.00" bid="0" issued="2015-03-23 23:45:38"/>
+	<row orderID="4037693125" charID="92223647" stationID="60008494" volEntered="22" volRemaining="0" minVolume="1" orderState="2" typeID="1405" range="32767" accountKey="1000" duration="30" escrow="0.00" price="359990.00" bid="0" issued="2015-03-26 18:19:20"/>
+	<row orderID="4037693554" charID="92223647" stationID="60008494" volEntered="89" volRemaining="0" minVolume="1" orderState="2" typeID="2881" range="32767" accountKey="1000" duration="30" escrow="0.00" price="542600.00" bid="0" issued="2015-03-23 23:46:31"/>
+	<row orderID="4037712511" charID="92223647" stationID="60001096" volEntered="40" volRemaining="31" minVolume="1" orderState="0" typeID="1999" range="32767" accountKey="1000" duration="30" escrow="0.00" price="649980.00" bid="0" issued="2015-03-29 10:35:17"/>
+	<row orderID="4037719185" charID="92223647" stationID="60008494" volEntered="11" volRemaining="0" minVolume="1" orderState="2" typeID="11648" range="32767" accountKey="1000" duration="30" escrow="0.00" price="1559500.00" bid="0" issued="2015-03-24 00:07:44"/>
+	<row orderID="4037719476" charID="92223647" stationID="60008494" volEntered="130" volRemaining="86" minVolume="1" orderState="0" typeID="1447" range="32767" accountKey="1000" duration="30" escrow="0.00" price="398990.00" bid="0" issued="2015-03-28 21:20:41"/>
+	<row orderID="4037719744" charID="92223647" stationID="60008494" volEntered="69" volRemaining="0" minVolume="1" orderState="2" typeID="2605" range="32767" accountKey="1000" duration="30" escrow="0.00" price="209800.00" bid="0" issued="2015-03-28 21:22:15"/>
+	<row orderID="4038865676" charID="92223647" stationID="60003760" volEntered="1000" volRemaining="0" minVolume="1" orderState="2" typeID="11558" range="-1" accountKey="1000" duration="14" escrow="0.00" price="31330.00" bid="1" issued="2015-03-26 12:59:13"/>
+	<row orderID="4038866320" charID="92223647" stationID="60003760" volEntered="1200" volRemaining="0" minVolume="1" orderState="2" typeID="11542" range="-1" accountKey="1000" duration="0" escrow="0.00" price="7349.46" bid="1" issued="2015-03-24 22:10:36"/>
+	<row orderID="4038867543" charID="92223647" stationID="60003760" volEntered="10" volRemaining="0" minVolume="1" orderState="2" typeID="25624" range="-1" accountKey="1000" duration="14" escrow="0.00" price="4102000.00" bid="1" issued="2015-03-24 22:11:32"/>
+	<row orderID="4038867981" charID="92223647" stationID="60003760" volEntered="10" volRemaining="0" minVolume="1" orderState="2" typeID="25620" range="-1" accountKey="1000" duration="14" escrow="0.00" price="332000.00" bid="1" issued="2015-03-24 22:11:52"/>
+	<row orderID="4038868262" charID="92223647" stationID="60003760" volEntered="10" volRemaining="0" minVolume="1" orderState="2" typeID="25609" range="-1" accountKey="1000" duration="14" escrow="0.00" price="511000.00" bid="1" issued="2015-03-24 22:12:09"/>
+	<row orderID="4038868863" charID="92223647" stationID="60003760" volEntered="10" volRemaining="0" minVolume="1" orderState="2" typeID="25622" range="-1" accountKey="1000" duration="14" escrow="0.00" price="1500000.00" bid="1" issued="2015-03-25 18:17:52"/>
+	<row orderID="4038869252" charID="92223647" stationID="60003760" volEntered="10" volRemaining="0" minVolume="1" orderState="2" typeID="25619" range="-1" accountKey="1000" duration="14" escrow="0.00" price="611000.00" bid="1" issued="2015-03-24 22:12:49"/>
+	<row orderID="4038869824" charID="92223647" stationID="60003760" volEntered="10" volRemaining="0" minVolume="1" orderState="2" typeID="25617" range="-1" accountKey="1000" duration="14" escrow="0.00" price="1272000.00" bid="1" issued="2015-03-24 22:13:09"/>
+	<row orderID="4038870485" charID="92223647" stationID="60003760" volEntered="2000" volRemaining="0" minVolume="1" orderState="2" typeID="11399" range="-1" accountKey="1000" duration="14" escrow="0.00" price="5720.00" bid="1" issued="2015-03-24 22:13:36"/>
+	<row orderID="4038871392" charID="92223647" stationID="60003760" volEntered="200" volRemaining="21" minVolume="1" orderState="0" typeID="12274" range="-1" accountKey="1000" duration="14" escrow="0.00" price="35021.00" bid="1" issued="2015-03-26 12:58:37"/>
+	<row orderID="4038871931" charID="92223647" stationID="60003760" volEntered="1100" volRemaining="0" minVolume="1" orderState="2" typeID="11540" range="-1" accountKey="1000" duration="0" escrow="0.00" price="56783.74" bid="1" issued="2015-03-24 22:14:31"/>
+	<row orderID="4041283548" charID="92223647" stationID="60001096" volEntered="73" volRemaining="60" minVolume="1" orderState="0" typeID="519" range="32767" accountKey="1000" duration="30" escrow="0.00" price="639990.00" bid="0" issued="2015-03-29 10:34:56"/>
+	<row orderID="4041574878" charID="92223647" stationID="60008494" volEntered="25" volRemaining="0" minVolume="1" orderState="2" typeID="1306" range="32767" accountKey="1000" duration="30" escrow="0.00" price="230000.00" bid="0" issued="2015-03-26 22:09:49"/>
+	<row orderID="4041575149" charID="92223647" stationID="60008494" volEntered="30" volRemaining="0" minVolume="1" orderState="2" typeID="2881" range="32767" accountKey="1000" duration="30" escrow="0.00" price="741560.00" bid="0" issued="2015-03-28 21:13:00"/>
+	<row orderID="4041575424" charID="92223647" stationID="60008494" volEntered="30" volRemaining="29" minVolume="1" orderState="0" typeID="26913" range="32767" accountKey="1000" duration="30" escrow="0.00" price="1733838.00" bid="0" issued="2015-03-28 21:57:20"/>
+	<row orderID="4041575760" charID="92223647" stationID="60008494" volEntered="27" volRemaining="25" minVolume="1" orderState="0" typeID="1422" range="32767" accountKey="1000" duration="30" escrow="0.00" price="527990.00" bid="0" issued="2015-03-28 21:22:33"/>
+	<row orderID="4044664335" charID="92223647" stationID="60008494" volEntered="160" volRemaining="149" minVolume="1" orderState="0" typeID="1447" range="32767" accountKey="1000" duration="30" escrow="0.00" price="398980.00" bid="0" issued="2015-03-28 21:56:05"/>
+	<row orderID="4044664723" charID="92223647" stationID="60008494" volEntered="40" volRemaining="0" minVolume="1" orderState="2" typeID="1405" range="32767" accountKey="1000" duration="30" escrow="0.00" price="369500.00" bid="0" issued="2015-03-28 21:56:20"/>
+	<row orderID="4044665127" charID="92223647" stationID="60008494" volEntered="63" volRemaining="0" minVolume="1" orderState="2" typeID="1236" range="32767" accountKey="1000" duration="30" escrow="0.00" price="513990.00" bid="0" issued="2015-03-28 21:56:37"/>
+	<row orderID="4044665551" charID="92223647" stationID="60008494" volEntered="221" volRemaining="176" minVolume="1" orderState="0" typeID="2881" range="32767" accountKey="1000" duration="30" escrow="0.00" price="741560.00" bid="0" issued="2015-03-28 21:56:53"/>
+	<row orderID="4044665958" charID="92223647" stationID="60008494" volEntered="110" volRemaining="110" minVolume="1" orderState="0" typeID="26913" range="32767" accountKey="1000" duration="30" escrow="0.00" price="1733840.00" bid="0" issued="2015-03-28 21:57:09"/>
+	<row orderID="4045482581" charID="92223647" stationID="60015029" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="650" range="-1" accountKey="1000" duration="0" escrow="0.00" price="540000.00" bid="1" issued="2015-03-29 10:57:11"/>
+	<row orderID="4045483391" charID="92223647" stationID="60015029" volEntered="3" volRemaining="3" minVolume="1" orderState="0" typeID="650" range="-1" accountKey="1000" duration="30" escrow="624375.00" price="370000.00" bid="1" issued="2015-03-29 10:58:01"/>
+</rowset>
+</result>
+<cachedUntil>2015-03-30 07:55:33</cachedUntil>
+</eveapi>
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--PERICO TUERTO
+3106761
+gltCmvVoZl5akrM8d6DbNKZn7Jm2SaukrmqjnSOyqKbvzz5CtNfknTEwdBe6IIFf
+93813310
+
+https://api.eveonline.com/char/AssetList.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+https://api.eveonline.com/char/Blueprints.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+https://api.eveonline.com/char/IndustryJobs.xml.aspx?keyID=976524&vCode=lu8GM5eBWrRZvjI07VJP1ceFolaUYQiHTxU7tNXi3z8FKpiMGMR1hc0G4L32ySwQ&characterID=92002067&version=2
+<eveapi version="2">
+<currentTime>2015-01-19 14:42:16</currentTime>
+	<result>
+	<rowset name="jobs" key="jobID" columns="jobID,installerID,installerName,facilityID,solarSystemID,solarSystemName,stationID,activityID,blueprintID,blueprintTypeID,blueprintTypeName,blueprintLocationID,outputLocationID,runs,cost,teamID,licensedRuns,probability,productTypeID,productTypeName,status,timeInSeconds,startDate,endDate,pauseDate,completedDate,completedCharacterID,successfulRuns">
+		<row jobID="237681101" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1011988177022" blueprintTypeID="1245" blueprintTypeName="Overdrive Injector System I Blueprint" blueprintLocationID="1015089828370" outputLocationID="60013345" runs="53" cost="13597.00" teamID="0" licensedRuns="200" probability="1" productTypeID="1244" productTypeName="Overdrive Injector System I" status="1" timeInSeconds="32437" startDate="2014-09-08 20:39:44" endDate="2014-09-09 05:40:21" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237681017" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015799107285" blueprintTypeID="1237" blueprintTypeName="Overdrive Injector System II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="9283.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1236" productTypeName="Overdrive Injector System II" status="1" timeInSeconds="15276" startDate="2014-09-08 20:39:09" endDate="2014-09-09 00:53:45" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237681000" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015749037277" blueprintTypeID="1237" blueprintTypeName="Overdrive Injector System II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="9283.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1236" productTypeName="Overdrive Injector System II" status="1" timeInSeconds="15276" startDate="2014-09-08 20:39:04" endDate="2014-09-09 00:53:40" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680989" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015619316165" blueprintTypeID="1237" blueprintTypeName="Overdrive Injector System II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="9283.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1236" productTypeName="Overdrive Injector System II" status="1" timeInSeconds="15276" startDate="2014-09-08 20:38:57" endDate="2014-09-09 00:53:33" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680834" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1012123227963" blueprintTypeID="1423" blueprintTypeName="Shield Power Relay II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="9623.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1422" productTypeName="Shield Power Relay II" status="1" timeInSeconds="13685" startDate="2014-09-08 20:37:45" endDate="2014-09-09 00:25:50" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680796" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1012055469049" blueprintTypeID="1423" blueprintTypeName="Shield Power Relay II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="7" cost="6736.00" teamID="0" licensedRuns="10" probability="1" productTypeID="1422" productTypeName="Shield Power Relay II" status="1" timeInSeconds="9580" startDate="2014-09-08 20:37:25" endDate="2014-09-08 23:17:05" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680699" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1012283194874" blueprintTypeID="11358" blueprintTypeName="Medium Remote Armor Repairer I Blueprint" blueprintLocationID="1015089828370" outputLocationID="60013345" runs="50" cost="7847.00" teamID="0" licensedRuns="100" probability="1" productTypeID="11357" productTypeName="Medium Remote Armor Repairer I" status="1" timeInSeconds="48961" startDate="2014-09-08 20:36:53" endDate="2014-09-09 10:12:54" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680627" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015866498153" blueprintTypeID="26916" blueprintTypeName="Medium Remote Armor Repairer II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="49570.00" teamID="0" licensedRuns="10" probability="1" productTypeID="26913" productTypeName="Medium Remote Armor Repairer II" status="1" timeInSeconds="30552" startDate="2014-09-08 20:36:30" endDate="2014-09-09 05:05:42" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680602" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="1" blueprintID="1015866499301" blueprintTypeID="26916" blueprintTypeName="Medium Remote Armor Repairer II Blueprint" blueprintLocationID="1010701363236" outputLocationID="1015235819997" runs="10" cost="49570.00" teamID="0" licensedRuns="10" probability="1" productTypeID="26913" productTypeName="Medium Remote Armor Repairer II" status="1" timeInSeconds="30552" startDate="2014-09-08 20:36:19" endDate="2014-09-09 05:05:31" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680527" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012283194924" blueprintTypeID="2604" blueprintTypeName="Nanofiber Internal Structure I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="8.00" teamID="0" licensedRuns="200" probability="0.46" productTypeID="2606" productTypeName="Nanofiber Internal Structure II Blueprint" status="1" timeInSeconds="11730" startDate="2014-09-08 20:35:52" endDate="2014-09-08 23:51:22" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680514" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1011988177014" blueprintTypeID="1245" blueprintTypeName="Overdrive Injector System I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="17.00" teamID="0" licensedRuns="200" probability="0.46" productTypeID="1245" productTypeName="Overdrive Injector System I Blueprint" status="1" timeInSeconds="11730" startDate="2014-09-08 20:35:44" endDate="2014-09-08 23:51:14" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680487" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1011816288006" blueprintTypeID="11613" blueprintTypeName="Warp Core Stabilizer I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="25.00" teamID="0" licensedRuns="200" probability="0.46" productTypeID="11613" productTypeName="Warp Core Stabilizer I Blueprint" status="1" timeInSeconds="11730" startDate="2014-09-08 20:35:31" endDate="2014-09-08 23:51:01" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680460" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012283194917" blueprintTypeID="2604" blueprintTypeName="Nanofiber Internal Structure I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="8.00" teamID="0" licensedRuns="200" probability="0.46" productTypeID="2606" productTypeName="Nanofiber Internal Structure II Blueprint" status="1" timeInSeconds="11730" startDate="2014-09-08 20:35:21" endDate="2014-09-08 23:50:51" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680403" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012451147789" blueprintTypeID="11358" blueprintTypeName="Medium Remote Armor Repairer I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="86.00" teamID="0" licensedRuns="100" probability="0.46" productTypeID="11358" productTypeName="Medium Remote Armor Repairer I Blueprint" status="1" timeInSeconds="26265" startDate="2014-09-08 20:35:05" endDate="2014-09-09 03:52:50" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680385" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012451189014" blueprintTypeID="11358" blueprintTypeName="Medium Remote Armor Repairer I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="86.00" teamID="0" licensedRuns="100" probability="0.46" productTypeID="11358" productTypeName="Medium Remote Armor Repairer I Blueprint" status="1" timeInSeconds="26265" startDate="2014-09-08 20:35:00" endDate="2014-09-09 03:52:45" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680370" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1012451189016" blueprintTypeID="11358" blueprintTypeName="Medium Remote Armor Repairer I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="86.00" teamID="0" licensedRuns="100" probability="0.46" productTypeID="11358" productTypeName="Medium Remote Armor Repairer I Blueprint" status="1" timeInSeconds="26265" startDate="2014-09-08 20:34:55" endDate="2014-09-09 03:52:40" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680327" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1015033991569" blueprintTypeID="2332" blueprintTypeName="Shield Power Relay I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="17.00" teamID="0" licensedRuns="200" probability="0.46" productTypeID="2332" productTypeName="Shield Power Relay I Blueprint" status="1" timeInSeconds="11730" startDate="2014-09-08 20:34:44" endDate="2014-09-08 23:50:14" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+		<row jobID="237680117" installerID="92002067" installerName="Adam Antinoo" facilityID="60013345" solarSystemID="30001681" solarSystemName="Teshkat" stationID="60013345" activityID="8" blueprintID="1015600870089" blueprintTypeID="3830" blueprintTypeName="Medium Shield Extender I Blueprint" blueprintLocationID="1015089828370" outputLocationID="1010701363236" runs="1" cost="20.00" teamID="0" licensedRuns="200" probability="0.456" productTypeID="3830" productTypeName="Medium Shield Extender I Blueprint" status="1" timeInSeconds="11730" startDate="2014-09-08 20:33:19" endDate="2014-09-08 23:48:49" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-01-19 14:57:16</cachedUntil>
+</eveapi>
+
+
+https://api.eveonline.com/char/CharacterSheet.xml.aspx?keyID=3106761&vCode=gltCmvVoZl5akrM8d6DbNKZn7Jm2SaukrmqjnSOyqKbvzz5CtNfknTEwdBe6IIFf&characterID=93813310
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-03-02 12:20:08</currentTime>
+<result>
+	<characterID>93813310</characterID>
+	<name>Perico Tuerto</name>
+	<homeStationID>60012301</homeStationID>
+	<DoB>2013-09-09 19:40:09</DoB>
+	<race>Amarr</race>
+	<bloodLine>Ni-Kunni</bloodLine>
+	<ancestry>Border Runners</ancestry>
+	<gender>Male</gender>
+	<corporationName>Imperial Shipment</corporationName>
+	<corporationID>1000072</corporationID>
+	<cloneTypeID>164</cloneTypeID>
+	<cloneName>Clone Grade Alpha</cloneName>
+	<cloneSkillPoints>0</cloneSkillPoints>
+	<freeSkillPoints>0</freeSkillPoints>
+	<freeRespecs>2</freeRespecs>
+	<cloneJumpDate>2015-03-01 19:42:11</cloneJumpDate>
+	<lastRespecDate>0001-01-01 00:00:00</lastRespecDate>
+	<lastTimedRespec>0001-01-01 00:00:00</lastTimedRespec>
+	<remoteStationDate>0001-01-01 00:00:00</remoteStationDate>
+	<rowset name="jumpClones" key="jumpCloneID" columns="jumpCloneID,typeID,locationID,cloneName">
+	<row jumpCloneID="17869303" typeID="164" locationID="60005152" cloneName=""/>
+	<row jumpCloneID="20158888" typeID="164" locationID="60014089" cloneName=""/>
+	<row jumpCloneID="21477352" typeID="164" locationID="61000219" cloneName=""/>
+	</rowset>
+	<rowset name="jumpCloneImplants" key="jumpCloneID" columns="jumpCloneID,typeID,typeName"/>
+	<jumpActivation>0001-01-01 00:00:00</jumpActivation>
+	<jumpFatigue>0001-01-01 00:00:00</jumpFatigue>
+	<jumpLastUpdate>0001-01-01 00:00:00</jumpLastUpdate>
+	<balance>7146430.55</balance>
+	<rowset name="implants" key="typeID" columns="typeID,typeName"/>
+	<attributes>
+	<intelligence>20</intelligence>
+	<memory>20</memory>
+	<charisma>19</charisma>
+	<perception>20</perception>
+	<willpower>20</willpower>
+	</attributes>
+	<rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+		<row typeID="3455" skillpoints="250" level="1" published="1"/>
+		<row typeID="3429" skillpoints="250" level="1" published="1"/>
+		<row typeID="19921" skillpoints="750" level="1" published="1"/>
+		<row typeID="3419" skillpoints="750" level="1" published="1"/>
+		<row typeID="3300" skillpoints="1415" level="2" published="1"/>
+		<row typeID="3303" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3327" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3331" skillpoints="2829" level="2" published="1"/>
+		<row typeID="3386" skillpoints="1415" level="2" published="1"/>
+		<row typeID="3392" skillpoints="1415" level="2" published="1"/>
+		<row typeID="3402" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3412" skillpoints="750" level="1" published="1"/>
+		<row typeID="3413" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3426" skillpoints="45255" level="4" published="1"/>
+		<row typeID="3449" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3406" skillpoints="45255" level="4" published="1"/>
+		<row typeID="3330" skillpoints="0" level="0" published="1"/>
+		<row typeID="3328" skillpoints="0" level="0" published="1"/>
+		<row typeID="32918" skillpoints="0" level="0" published="1"/>
+		<row typeID="3329" skillpoints="500" level="1" published="1"/>
+		<row typeID="33399" skillpoints="2829" level="2" published="1"/>
+		<row typeID="3425" skillpoints="500" level="1" published="1"/>
+		<row typeID="2505" skillpoints="32000" level="3" published="1"/>
+		<row typeID="2495" skillpoints="32000" level="3" published="1"/>
+		<row typeID="3340" skillpoints="1000" level="1" published="1"/>
+		<row typeID="11579" skillpoints="1500" level="1" published="1"/>
+		<row typeID="3453" skillpoints="500" level="1" published="1"/>
+		<row typeID="3380" skillpoints="250" level="1" published="1"/>
+		<row typeID="13279" skillpoints="250" level="1" published="1"/>
+		<row typeID="3424" skillpoints="16000" level="3" published="1"/>
+		<row typeID="3420" skillpoints="1000" level="1" published="1"/>
+		<row typeID="24242" skillpoints="8000" level="3" published="1"/>
+		<row typeID="3454" skillpoints="1250" level="1" published="1"/>
+		<row typeID="3435" skillpoints="750" level="1" published="1"/>
+		<row typeID="3394" skillpoints="2829" level="2" published="1"/>
+		<row typeID="3450" skillpoints="8000" level="3" published="1"/>
+	</rowset>
+	<rowset name="certificates" key="certificateID" columns="certificateID"/>
+	<rowset name="corporationRoles" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName"/>
+	<rowset name="corporationTitles" key="titleID" columns="titleID,titleName"/>
+</result>
+<cachedUntil>2015-03-02 13:17:08</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/PlanetaryColonies.xml.aspx?keyID=3106761&vCode=gltCmvVoZl5akrM8d6DbNKZn7Jm2SaukrmqjnSOyqKbvzz5CtNfknTEwdBe6IIFf&characterID=93813310
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-02-16 09:50:55</currentTime>
+<result>
+<rowset name="colonies" key="planetID" columns="solarSystemID,solarSystemName,planetID,planetName,planetTypeID,planetTypeName,ownerID,ownerName,lastUpdate,upgradeLevel,numberOfPins">
+	<row solarSystemID="30000001" solarSystemName="Tanoo" planetID="40000007" planetName="Tanoo III" planetTypeID="2016" planetTypeName="Planet (Barren)" ownerID="93813310" ownerName="Perico Tuerto" lastUpdate="2014-08-26 17:36:14" upgradeLevel="2" numberOfPins="12"/>
+	<row solarSystemID="30001045" solarSystemName="Utopia" planetID="40066678" planetName="Utopia VIII" planetTypeID="2017" planetTypeName="Planet (Storm)" ownerID="93813310" ownerName="Perico Tuerto" lastUpdate="2014-09-04 15:05:54" upgradeLevel="3" numberOfPins="11"/>
+	<row solarSystemID="30003283" solarSystemName="PVH8-0" planetID="40208351" planetName="PVH8-0 VIII" planetTypeID="13" planetTypeName="Planet (Gas)" ownerID="93813310" ownerName="Perico Tuerto" lastUpdate="2014-09-04 15:06:23" upgradeLevel="3" numberOfPins="11"/>
+	<row solarSystemID="30003283" solarSystemName="PVH8-0" planetID="40208380" planetName="PVH8-0 X" planetTypeID="2014" planetTypeName="Planet (Oceanic)" ownerID="93813310" ownerName="Perico Tuerto" lastUpdate="2014-09-04 15:07:03" upgradeLevel="3" numberOfPins="11"/>
+</rowset>
+</result>
+<cachedUntil>2015-02-16 10:50:55</cachedUntil>
+</eveapi>
+
+-- AIDA BARLEY
+https://api.eveonline.com/account/AccountStatus.xml.aspx?keyID=3954120&vCode=ISel4qHRC5l4aGqA8S7JmNuuTUrSRDN8TyruB0vc9C3wB731VjUu2MFeKt3kdSgC&version=2
+https://api.eveonline.com/account/Characters.xml.aspx?keyID=3954120&vCode=ISel4qHRC5l4aGqA8S7JmNuuTUrSRDN8TyruB0vc9C3wB731VjUu2MFeKt3kdSgC&version=2
+
+https://api.eveonline.com/char/WalletJournal.xml.aspx?keyID=3954120&vCode=ISel4qHRC5l4aGqA8S7JmNuuTUrSRDN8TyruB0vc9C3wB731VjUu2MFeKt3kdSgC&characterID=95201460&version=2
+
+-- BERTA NOLOSABE
+https://api.eveonline.com/account/Characters.xml.aspx?keyID=4058195&vCode=5ImkEYALcgt1p7FWxJvNoaMxbTpaJmqMn1GU7KLS44wZbKLRU8Ibz9hTlbuW995B
+https://api.eveonline.com/char/MarketOrders.xml.aspx?keyID=4058195&vCode=5ImkEYALcgt1p7FWxJvNoaMxbTpaJmqMn1GU7KLS44wZbKLRU8Ibz9hTlbuW995B&characterID=95314269
+<eveapi version="2">
+<currentTime>2015-02-01 11:37:43</currentTime>
+	<result>
+	<rowset name="orders" key="orderID" columns="orderID,charID,stationID,volEntered,volRemaining,minVolume,orderState,typeID,range,accountKey,duration,escrow,price,bid,issued">
+		<row orderID="3951198255" charID="95314269" stationID="60007702" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3318" range="-1" accountKey="1000" duration="0" escrow="0.00" price="80000.00" bid="1" issued="2015-01-25 20:59:45"/>
+		<row orderID="3951203042" charID="95314269" stationID="60006157" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3393" range="-1" accountKey="1000" duration="0" escrow="0.00" price="4831.00" bid="1" issued="2015-01-25 21:02:24"/>
+		<row orderID="3951221779" charID="95314269" stationID="60008494" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="9457" range="32767" accountKey="1000" duration="0" escrow="0.00" price="50001.03" bid="0" issued="2015-01-25 21:13:23"/>
+		<row orderID="3951222569" charID="95314269" stationID="60008494" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="9728" range="32767" accountKey="1000" duration="0" escrow="0.00" price="420668.00" bid="0" issued="2015-01-25 21:13:49"/>
+		<row orderID="3951226279" charID="95314269" stationID="60008494" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="7131" range="-1" accountKey="1000" duration="0" escrow="0.00" price="399999.99" bid="1" issued="2015-01-25 21:15:56"/>
+		<row orderID="3951227455" charID="95314269" stationID="60008494" volEntered="2" volRemaining="0" minVolume="1" orderState="2" typeID="7131" range="1" accountKey="1000" duration="7" escrow="0.00" price="380000.00" bid="1" issued="2015-01-25 21:16:33"/>
+		<row orderID="3953988415" charID="95314269" stationID="60007702" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3315" range="-1" accountKey="1000" duration="0" escrow="0.00" price="1000000.00" bid="1" issued="2015-01-27 18:56:34"/>
+		<row orderID="3953989803" charID="95314269" stationID="60007702" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3431" range="-1" accountKey="1000" duration="0" escrow="0.00" price="75000.00" bid="1" issued="2015-01-27 18:57:40"/>
+		<row orderID="3955437418" charID="95314269" stationID="61000221" volEntered="6" volRemaining="0" minVolume="1" orderState="2" typeID="23089" range="-1" accountKey="1000" duration="0" escrow="0.00" price="449999.98" bid="1" issued="2015-01-28 19:26:31"/>
+		<row orderID="3955442491" charID="95314269" stationID="61000221" volEntered="6" volRemaining="0" minVolume="1" orderState="2" typeID="23099" range="-1" accountKey="1000" duration="0" escrow="0.00" price="447000.00" bid="1" issued="2015-01-28 19:30:09"/>
+		<row orderID="3956813027" charID="95314269" stationID="61000221" volEntered="2" volRemaining="0" minVolume="1" orderState="2" typeID="33101" range="-1" accountKey="1000" duration="0" escrow="0.00" price="84999.99" bid="1" issued="2015-01-29 19:01:23"/>
+		<row orderID="3956813514" charID="95314269" stationID="61000221" volEntered="100" volRemaining="0" minVolume="1" orderState="2" typeID="28668" range="-1" accountKey="1000" duration="0" escrow="0.00" price="24000.00" bid="1" issued="2015-01-29 19:01:44"/>
+		<row orderID="3958515297" charID="95314269" stationID="61000221" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="4302" range="-1" accountKey="1000" duration="0" escrow="0.00" price="72500000.00" bid="1" issued="2015-01-30 22:13:15"/>
+		<row orderID="3960270717" charID="95314269" stationID="60014653" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3417" range="-1" accountKey="1000" duration="0" escrow="0.00" price="40000.00" bid="1" issued="2015-01-31 22:14:31"/>
+		<row orderID="3960271694" charID="95314269" stationID="60014653" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3309" range="-1" accountKey="1000" duration="0" escrow="0.00" price="2000000.00" bid="1" issued="2015-01-31 22:14:58"/>
+		<row orderID="3960315161" charID="95314269" stationID="60014653" volEntered="1" volRemaining="0" minVolume="1" orderState="2" typeID="3442" range="-1" accountKey="1000" duration="0" escrow="0.00" price="500000.00" bid="1" issued="2015-01-31 22:43:13"/>
+		<row orderID="3961077711" charID="95314269" stationID="60015010" volEntered="6" volRemaining="0" minVolume="1" orderState="2" typeID="23105" range="-1" accountKey="1000" duration="0" escrow="0.00" price="880800.00" bid="1" issued="2015-02-01 10:04:34"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-02-01 12:14:24</cachedUntil>
+</eveapi>
+
+
+
+-- JENNY WORMCAST
+4007283:AsFEYcswn3NhWVhDuFhkNOXAD0iBxiQcMZRz7asIZZz9mlHMOsTVuYYldS3OWi7B:Jenny Wormcast
+https://api.eveonline.com/account/Characters.xml.aspx?keyID=4007283&vCode=AsFEYcswn3NhWVhDuFhkNOXAD0iBxiQcMZRz7asIZZz9mlHMOsTVuYYldS3OWi7B
+<row name="Jenny Wormcast" characterID="95265757" corporationName="Royal Amarr Institute" corporationID="1000077" allianceID="0"
+
+https://api.eveonline.com/char/PlanetaryColonies.xml.aspx?keyID=4007283&vCode=AsFEYcswn3NhWVhDuFhkNOXAD0iBxiQcMZRz7asIZZz9mlHMOsTVuYYldS3OWi7B&characterID=95265757
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<eveapi version="2">
+<currentTime>2015-01-07 09:40:18</currentTime>
+	<result>
+	<rowset name="colonies" key="planetID" columns="solarSystemID,solarSystemName,planetID,planetName,planetTypeID,planetTypeName,ownerID,ownerName,lastUpdate,upgradeLevel,numberOfPins">
+		<row solarSystemID="30003726" solarSystemName="Y-MPWL" planetID="40236047" planetName="Y-MPWL I" planetTypeID="2015" planetTypeName="Planet (Lava)" ownerID="95265757" ownerName="Jenny Wormcast" lastUpdate="2015-01-06 21:47:56" upgradeLevel="2" numberOfPins="8"/>
+		<row solarSystemID="30003726" solarSystemName="Y-MPWL" planetID="40236050" planetName="Y-MPWL III" planetTypeID="2017" planetTypeName="Planet (Storm)" ownerID="95265757" ownerName="Jenny Wormcast" lastUpdate="2015-01-06 21:46:15" upgradeLevel="2" numberOfPins="8"/>
+		<row solarSystemID="30003726" solarSystemName="Y-MPWL" planetID="40236053" planetName="Y-MPWL IV" planetTypeID="2063" planetTypeName="Planet (Plasma)" ownerID="95265757" ownerName="Jenny Wormcast" lastUpdate="2015-01-06 21:50:41" upgradeLevel="2" numberOfPins="9"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-01-07 10:40:18</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/PlanetaryPins.xml.aspx?keyID=4007283&vCode=AsFEYcswn3NhWVhDuFhkNOXAD0iBxiQcMZRz7asIZZz9mlHMOsTVuYYldS3OWi7B&characterID=95265757&planetID=40236047
+<eveapi version="2">
+<currentTime>2015-01-08 12:13:59</currentTime>
+	<result>
+	<rowset name="pins" key="pinID" columns="pinID,typeID,typeName,schematicID,lastLaunchTime,cycleTime,quantityPerCycle,installTime,expiryTime,contentTypeID,contentTypeName,contentQuantity,longitude,latitude">
+		<row pinID="1016991981063" typeID="2549" typeName="Lava Command Center" schematicID="0" lastLaunchTime="2015-01-06 11:23:01" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="0" contentTypeName="" contentQuantity="0" longitude="-4.65922153015714" latitude="0.766163307389936"/>
+		<row pinID="1016991986446" typeID="3062" typeName="Lava Extractor Control Unit" schematicID="0" lastLaunchTime="2015-01-07 17:53:15" cycleTime="60" quantityPerCycle="4653" installTime="2015-01-07 13:53:15" expiryTime="2015-01-11 16:53:15" contentTypeID="0" contentTypeName="" contentQuantity="0" longitude="-4.64440200853895" latitude="0.772356765871249"/>
+		<row pinID="1016992006779" typeID="2469" typeName="Lava Basic Industry Facility" schematicID="129" lastLaunchTime="2015-01-07 18:29:47" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2306" contentTypeName="Non-CS Crystals" contentQuantity="3000" longitude="-4.64411083543216" latitude="0.76006752022192"/>
+		<row pinID="1016995166542" typeID="2555" typeName="Lava Launchpad" schematicID="0" lastLaunchTime="0001-01-01 00:00:00" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2272" contentTypeName="Heavy Metals" contentQuantity="44838" longitude="-4.65910543171251" latitude="0.778699400328047"/>
+		<row pinID="1016995166542" typeID="2555" typeName="Lava Launchpad" schematicID="0" lastLaunchTime="0001-01-01 00:00:00" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2306" contentTypeName="Non-CS Crystals" contentQuantity="35806" longitude="-4.65910543171251" latitude="0.778699400328047"/>
+		<row pinID="1016995166542" typeID="2555" typeName="Lava Launchpad" schematicID="0" lastLaunchTime="0001-01-01 00:00:00" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2400" contentTypeName="Toxic Metals" contentQuantity="340" longitude="-4.65910543171251" latitude="0.778699400328047"/>
+		<row pinID="1016995166542" typeID="2555" typeName="Lava Launchpad" schematicID="0" lastLaunchTime="0001-01-01 00:00:00" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2401" contentTypeName="Chiral Structures" contentQuantity="340" longitude="-4.65910543171251" latitude="0.778699400328047"/>
+		<row pinID="1016995205747" typeID="3062" typeName="Lava Extractor Control Unit" schematicID="0" lastLaunchTime="2015-01-07 17:53:15" cycleTime="60" quantityPerCycle="5918" installTime="2015-01-07 13:53:15" expiryTime="2015-01-11 16:53:15" contentTypeID="0" contentTypeName="" contentQuantity="0" longitude="-4.67430669302" latitude="0.772464811409"/>
+		<row pinID="1016996942551" typeID="2469" typeName="Lava Basic Industry Facility" schematicID="128" lastLaunchTime="2015-01-07 18:23:15" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2272" contentTypeName="Heavy Metals" contentQuantity="3000" longitude="-4.67455399243" latitude="0.760420480795"/>
+		<row pinID="1016996942552" typeID="2469" typeName="Lava Basic Industry Facility" schematicID="128" lastLaunchTime="2015-01-07 18:36:15" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2272" contentTypeName="Heavy Metals" contentQuantity="3000" longitude="-4.67359151997" latitude="0.785534517665"/>
+		<row pinID="1016996950663" typeID="2469" typeName="Lava Basic Industry Facility" schematicID="129" lastLaunchTime="2015-01-07 18:39:25" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2306" contentTypeName="Non-CS Crystals" contentQuantity="3000" longitude="-4.64391480173" latitude="0.784388295329"/>
+		<row pinID="1017005785492" typeID="2470" typeName="Lava Advanced Industry Facility" schematicID="76" lastLaunchTime="2015-01-07 18:27:48" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2400" contentTypeName="Toxic Metals" contentQuantity="40" longitude="-4.65934649867668" latitude="0.753928919251564"/>
+		<row pinID="1017005785492" typeID="2470" typeName="Lava Advanced Industry Facility" schematicID="76" lastLaunchTime="2015-01-07 18:27:48" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2401" contentTypeName="Chiral Structures" contentQuantity="40" longitude="-4.65934649867668" latitude="0.753928919251564"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-01-08 13:13:59</cachedUntil>
+</eveapi>
+
+<eveapi version="2">
+<currentTime>2015-01-07 09:48:38</currentTime>
+	<result>
+	<rowset name="pins" key="pinID" columns="pinID,typeID,typeName,schematicID,lastLaunchTime,cycleTime,quantityPerCycle,installTime,expiryTime,contentTypeID,contentTypeName,contentQuantity,longitude,latitude">
+		<row pinID="1016990295334" typeID="2551" typeName="Plasma Command Center" schematicID="0" lastLaunchTime="2015-01-06 16:15:00" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="0" contentTypeName="" contentQuantity="0" longitude="-2.03399752836838" latitude="2.08519659836629"/>
+		<row pinID="1016991228893" typeID="3064" typeName="Plasma Extractor Control Unit" schematicID="0" lastLaunchTime="0001-01-01 00:00:00" cycleTime="60" quantityPerCycle="7514" installTime="2015-01-06 21:50:41" expiryTime="2015-01-11 00:50:41" contentTypeID="0" contentTypeName="" contentQuantity="0" longitude="-2.02178301642807" latitude="2.0914744253515"/>
+		<row pinID="1016991244990" typeID="2471" typeName="Plasma Basic Industry Facility" schematicID="127" lastLaunchTime="2015-01-06 21:34:32" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2270" contentTypeName="Noble Metals" contentQuantity="3000" longitude="-2.02206400477315" latitude="2.07920573613273"/>
+		<row pinID="1016995186700" typeID="2471" typeName="Plasma Basic Industry Facility" schematicID="127" lastLaunchTime="2015-01-06 21:30:30" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2270" contentTypeName="Noble Metals" contentQuantity="3000" longitude="-2.03481260828" latitude="2.07313020503"/>
+		<row pinID="1016995186701" typeID="2471" typeName="Plasma Basic Industry Facility" schematicID="127" lastLaunchTime="2015-01-06 21:43:58" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2270" contentTypeName="Noble Metals" contentQuantity="3000" longitude="-2.04645099312" latitude="2.07961706616"/>
+		<row pinID="1016996988493" typeID="2471" typeName="Plasma Basic Industry Facility" schematicID="127" lastLaunchTime="2015-01-06 21:49:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="0" contentTypeName="" contentQuantity="0" longitude="-2.02180325462458" latitude="2.10358710912175"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2270" contentTypeName="Noble Metals" contentQuantity="19455" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2398" contentTypeName="Reactive Metals" contentQuantity="200" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2399" contentTypeName="Precious Metals" contentQuantity="760" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2400" contentTypeName="Toxic Metals" contentQuantity="200" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2401" contentTypeName="Chiral Structures" contentQuantity="200" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="3689" contentTypeName="Mechanical Parts" contentQuantity="5" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016997286901" typeID="2556" typeName="Plasma Launchpad" schematicID="0" lastLaunchTime="2015-01-06 21:54:09" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="9836" contentTypeName="Consumer Electronics" contentQuantity="5" longitude="-2.03402865493" latitude="2.09738655321"/>
+		<row pinID="1016999497274" typeID="2472" typeName="Plasma Advanced Industry Facility" schematicID="76" lastLaunchTime="2015-01-06 21:30:05" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2400" contentTypeName="Toxic Metals" contentQuantity="40" longitude="-2.04650935387" latitude="2.09214650904"/>
+		<row pinID="1016999497274" typeID="2472" typeName="Plasma Advanced Industry Facility" schematicID="76" lastLaunchTime="2015-01-06 21:30:05" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2401" contentTypeName="Chiral Structures" contentQuantity="40" longitude="-2.04650935387" latitude="2.09214650904"/>
+		<row pinID="1016999497275" typeID="2472" typeName="Plasma Advanced Industry Facility" schematicID="73" lastLaunchTime="2015-01-06 21:30:05" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2398" contentTypeName="Reactive Metals" contentQuantity="40" longitude="-2.04544341333" latitude="2.10426040738"/>
+		<row pinID="1016999497275" typeID="2472" typeName="Plasma Advanced Industry Facility" schematicID="73" lastLaunchTime="2015-01-06 21:30:05" cycleTime="0" quantityPerCycle="0" installTime="0001-01-01 00:00:00" expiryTime="0001-01-01 00:00:00" contentTypeID="2399" contentTypeName="Precious Metals" contentQuantity="40" longitude="-2.04544341333" latitude="2.10426040738"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-01-07 10:48:38</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/IndustryJobs.xml.aspx?keyID=4007283&vCode=AsFEYcswn3NhWVhDuFhkNOXAD0iBxiQcMZRz7asIZZz9mlHMOsTVuYYldS3OWi7B&characterID=95265757
+<eveapi version="2">
+<currentTime>2015-01-19 14:43:36</currentTime>
+<result>
+<rowset name="jobs" key="jobID" columns="jobID,installerID,installerName,facilityID,solarSystemID,solarSystemName,stationID,activityID,blueprintID,blueprintTypeID,blueprintTypeName,blueprintLocationID,outputLocationID,runs,cost,teamID,licensedRuns,probability,productTypeID,productTypeName,status,timeInSeconds,startDate,endDate,pauseDate,completedDate,completedCharacterID,successfulRuns"/>
+</result>
+<cachedUntil>2015-01-19 14:45:06</cachedUntil>
+</eveapi>
+
+https://api.eveonline.com/char/IndustryJobsHistory.xml.aspx?keyID=4007283&vCode=AsFEYcswn3NhWVhDuFhkNOXAD0iBxiQcMZRz7asIZZz9mlHMOsTVuYYldS3OWi7B&characterID=95265757
+<eveapi version="2">
+<currentTime>2015-01-19 14:43:52</currentTime>
+	<result>
+	<rowset name="jobs" key="jobID" columns="jobID,installerID,installerName,facilityID,solarSystemID,solarSystemName,stationID,activityID,blueprintID,blueprintTypeID,blueprintTypeName,blueprintLocationID,outputLocationID,runs,cost,teamID,licensedRuns,probability,productTypeID,productTypeName,status,timeInSeconds,startDate,endDate,pauseDate,completedDate,completedCharacterID,successfulRuns">
+		<row jobID="253423175" installerID="95265757" installerName="Jenny Wormcast" facilityID="61000890" solarSystemID="30003750" solarSystemName="8P9-BM" stationID="61000890" activityID="1" blueprintID="1017053183336" blueprintTypeID="33102" blueprintTypeName="Medium Ancillary Armor Repairer Blueprint" blueprintLocationID="61000890" outputLocationID="61000890" runs="18" cost="2196.00" teamID="0" licensedRuns="100" probability="1" productTypeID="33101" productTypeName="Medium Ancillary Armor Repairer" status="101" timeInSeconds="31104" startDate="2015-01-17 00:57:55" endDate="2015-01-17 09:36:19" pauseDate="0001-01-01 00:00:00" completedDate="2015-01-17 12:10:56" completedCharacterID="95265757" successfulRuns="18"/>
+		<row jobID="253393254" installerID="95265757" installerName="Jenny Wormcast" facilityID="61000890" solarSystemID="30003750" solarSystemName="8P9-BM" stationID="61000890" activityID="1" blueprintID="1016996715686" blueprintTypeID="33916" blueprintTypeName="Medium Micro Jump Drive Blueprint" blueprintLocationID="61000890" outputLocationID="61000890" runs="5" cost="3426.00" teamID="0" licensedRuns="100" probability="1" productTypeID="33915" productTypeName="Medium Micro Jump Drive" status="101" timeInSeconds="8640" startDate="2015-01-16 19:07:49" endDate="2015-01-16 21:31:49" pauseDate="0001-01-01 00:00:00" completedDate="2015-01-17 00:57:23" completedCharacterID="95265757" successfulRuns="5"/>
+	</rowset>
+	</result>
+<cachedUntil>2015-01-19 20:04:01</cachedUntil>
+</eveapi>
+
+-- VLADISHLAV KOWALSKI
+4111822:JAqsaemmN9uR8Sq8Tczry4hpFzqJbf4aQOPotL23DYjrKKnClNeYumYIoFTSzUhR:95359857
+https://api.eveonline.com/account/Characters.xml.aspx?keyID=4111822&vCode=JAqsaemmN9uR8Sq8Tczry4hpFzqJbf4aQOPotL23DYjrKKnClNeYumYIoFTSzUhR&version=2
+<row name="Vladishlav Kowalski" characterID="95359857" corporationName="Royal Amarr Institute" corporationID="1000077" allianceID="0"
+
+https://api.eveonline.com/char/IndustryJobs.xml.aspx?keyID=4111822&vCode=JAqsaemmN9uR8Sq8Tczry4hpFzqJbf4aQOPotL23DYjrKKnClNeYumYIoFTSzUhR&characterID=95359857
+<eveapi version="2">
+<currentTime>2015-02-24 14:37:32</currentTime>
+<result>
+<rowset name="jobs" key="jobID" columns="jobID,installerID,installerName,facilityID,solarSystemID,solarSystemName,stationID,activityID,blueprintID,blueprintTypeID,blueprintTypeName,blueprintLocationID,outputLocationID,runs,cost,teamID,licensedRuns,probability,productTypeID,productTypeName,status,timeInSeconds,startDate,endDate,pauseDate,completedDate,completedCharacterID,successfulRuns">
+	<row jobID="257062385" installerID="95359857" installerName="Vladishlav Kowalski" facilityID="61000219" solarSystemID="30003726" solarSystemName="Y-MPWL" stationID="61000219" activityID="4" blueprintID="1017368235385" blueprintTypeID="2174" blueprintTypeName="Infiltrator I Blueprint" blueprintLocationID="61000219" outputLocationID="61000219" runs="2" cost="17386.00" teamID="0" licensedRuns="300" probability="1" productTypeID="2174" productTypeName="Infiltrator I Blueprint" status="1" timeInSeconds="295043" startDate="2015-02-20 15:51:32" endDate="2015-02-24 01:48:55" pauseDate="0001-01-01 00:00:00" completedDate="0001-01-01 00:00:00" completedCharacterID="0" successfulRuns="0"/>
+</rowset>
+</result>
+<cachedUntil>2015-02-24 14:49:05</cachedUntil>
+</eveapi>
+
+	{"motd": 
+	{"dust": 
+	{"href": "http://newsfeed.eveonline.com/articles/71"}, "eve": 
+	{"href": "http://client.eveonline.com/motd/"}, "server": 
+	{"href": "http://client.eveonline.com/motd/"}}, "crestEndpoint": 
+	{"href": "https://public-crest.eveonline.com/"}, "corporationRoles": 
+	{"href": "https://public-crest.eveonline.com/corporations/roles/"}, "itemGroups": 
+	{"href": "https://public-crest.eveonline.com/inventory/groups/"}, "channels": 
+	{"href": "https://public-crest.eveonline.com/chat/channels/"}, "corporations": 
+	{"href": "https://public-crest.eveonline.com/corporations/"}, "alliances": 
+	{"href": "https://public-crest.eveonline.com/alliances/"}, "itemTypes": 
+	{"href": "https://public-crest.eveonline.com/types/"}, "decode": 
+	{"href": "https://public-crest.eveonline.com/decode/"}, "battleTheatres": 
+	{"href": "https://public-crest.eveonline.com/battles/theatres/"}, "marketPrices": 
+	{"href": "https://public-crest.eveonline.com/market/prices/"}, "itemCategories": 
+	{"href": "https://public-crest.eveonline.com/inventory/categories/"}, "regions": 
+	{"href": "https://public-crest.eveonline.com/regions/"}, "bloodlines": 
+	{"href": "https://public-crest.eveonline.com/bloodlines/"}, "marketGroups": 
+	{"href": "https://public-crest.eveonline.com/market/groups/"}, "tournaments": 
+	{"href": "https://public-crest.eveonline.com/tournaments/"}, "map": 
+	{"href": "https://public-crest.eveonline.com/map/"}, "virtualGoodStore": 
+	{"href": "https://vgs-tq.eveonline.com/"}, "serverVersion": "EVE-TRANQUILITY 8.5.853270.854570", "wars": 
+	{"href": "https://public-crest.eveonline.com/wars/"}, "incursions": 
+	{"href": "https://public-crest.eveonline.com/incursions/"}, "races": 
+	{"href": "https://public-crest.eveonline.com/races/"}, "authEndpoint": 
+	{"href": "https://login-tq.eveonline.com/oauth/token/"}, "serviceStatus": 
+	{"dust": "online", "eve": "online", "server": "online"}, "userCounts": 
+	{"dust": 1971, "dust_str": "1971", "eve": 22685, "eve_str": "22685"}, "industry": 
+	{"facilities": 
+	{"href": "https://public-crest.eveonline.com/industry/facilities/"}, "specialities": 
+	{"href": "https://public-crest.eveonline.com/industry/specialities/"}, "teamsInAuction": 
+	{"href": "https://public-crest.eveonline.com/industry/teams/auction/"}, "systems": 
+	{"href": "https://public-crest.eveonline.com/industry/systems/"}, "teams": 
+	{"href": "https://public-crest.eveonline.com/industry/teams/"}}, "clients": 
+	{"dust": 
+	{"href": "https://public-crest.eveonline.com/roots/dust/"}, "eve": 
+	{"href": "https://public-crest.eveonline.com/roots/eve/"}}, "time": 
+	{"href": "https://public-crest.eveonline.com/time/"}, "marketTypes": 
+	{"href": "https://public-crest.eveonline.com/market/types/"}, "serverName": "TRANQUILITY"}
+

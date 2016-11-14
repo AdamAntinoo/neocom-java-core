@@ -1,0 +1,260 @@
+--[Nereus, NN PlanetEarth II]
+Damage Control I
+Overdrive Injector System I
+Nanofiber Internal Structure II
+Reinforced Bulkheads II
+Power Diagnostic System I
+
+Experimental 10MN Microwarpdrive I
+Limited 'Anointed' EM Ward Field
+Medium Peroxide Capacitor Power Cell
+Medium Shield Extender II
+Medium Shield Extender II
+
+Prototype Cloaking Device I
+[empty high slot]
+
+Medium Auxiliary Thrusters I
+Medium Anti-EM Screen Reinforcer I
+Medium Core Defense Field Extender I
+
+Acolyte TD-300 x1
+Acolyte TD-300 x1
+Acolyte TD-300 x1
+
+--[Talwar, WALL Talwar Roaming]
+Ballistic Control System II
+Ballistic Control System II
+Type-D Attenuation Signal Augmentation
+
+Low Frequency Sensor Suppressor I, Targeting Range Dampening Script
+F-90 Positional Sensor Subroutines, Targeting Range Script
+Limited 1MN Microwarpdrive I
+
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+Upgraded 'Malkuth' Light Missile Launcher, Mjolnir Light Missile
+
+Small Polycarbon Engine Housing I
+Small Hydraulic Bay Thrusters I
+Small Rocket Fuel Cache Partition I
+
+--[Exequror, CTA-Armor Logistics]
+Damage Control II
+Armor Thermic Hardener II
+Armor Kinetic Hardener II
+Armor Explosive Hardener II
+Upgraded Energized Adaptive Membrane I
+800mm Reinforced Rolled Tungsten Plates I
+
+Cap Recharger II
+Cap Recharger II
+Cap Recharger II
+Experimental 10MN Afterburner I
+
+Medium Remote Armor Repairer II
+Medium Remote Armor Repairer II
+Medium Remote Armor Repairer II
+
+Medium Remote Repair Augmentor I
+Medium Trimark Armor Pump I
+Medium Capacitor Control Circuit I
+
+--[Talos, Talos Wall T1]
+Magnetic Field Stabilizer II
+Magnetic Field Stabilizer II
+Tracking Enhancer II
+Tracking Enhancer II
+Nanofiber Internal Structure II
+
+Large Shield Extender II
+Large Shield Extender II
+Warp Disruptor II
+Experimental 10MN Microwarpdrive I
+
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+Anode Mega Neutron Particle Cannon I, Antimatter Charge L
+
+Medium Anti-EM Screen Reinforcer I
+Medium Core Defense Field Extender I
+Medium Core Defense Field Extender I
+
+Caldari Navy Antimatter Charge L x2000
+Caldari Navy Thorium Charge L x2000
+
+
+--[Hurricane, HS Lvl3]
+Power Diagnostic System II
+Power Diagnostic System II
+Gyrostabilizer II
+Gyrostabilizer II
+Gyrostabilizer II
+Gyrostabilizer II
+
+Experimental 10MN Afterburner I
+Large Azeotropic Ward Salubrity I
+Large Azeotropic Ward Salubrity I
+Medium C5-L Emergency Shield Overload I
+
+720mm Howitzer Artillery II, Fusion M
+720mm Howitzer Artillery II, Fusion M
+720mm Howitzer Artillery II, Fusion M
+720mm Howitzer Artillery II, Fusion M
+720mm Howitzer Artillery II, Fusion M
+Small Tractor Beam I
+Salvager I
+
+Medium Anti-EM Screen Reinforcer I
+Medium Core Defense Field Purger I
+Medium Ancillary Current Router I
+
+Warrior I x1
+Warrior I x1
+Warrior I x1
+Warrior I x1
+Warrior I x1
+Warrior I x1
+
+
+--[Hurricane, SBH Prisas]
+Damage Control II
+Medium 'Accommodation' Vestment Reconstructer I
+Power Diagnostic System II
+Power Diagnostic System II
+Armor Explosive Hardener II
+Armor Kinetic Hardener II
+
+Experimental 10MN Microwarpdrive I
+Cap Recharger II
+Large Azeotropic Ward Salubrity I
+Medium Neutron Saturation Injector I
+
+720mm 'Scout' Artillery I, EMP M
+720mm 'Scout' Artillery I, EMP M
+720mm 'Scout' Artillery I, EMP M
+720mm 'Scout' Artillery I, EMP M
+720mm 'Scout' Artillery I, EMP M
+Limited 'Limos' Light Missile Launcher, Mjolnir Light Missile
+Limited 'Limos' Light Missile Launcher, Mjolnir Light Missile
+
+Medium Capacitor Control Circuit I
+Medium Core Defense Field Purger I
+Medium Core Defense Field Purger I
+
+Warrior I x1
+Warrior I x1
+Warrior I x1
+Warrior I x1
+Warrior I x1
+Warrior I x1
+
+
+--[Raven, From Max]
+Capacitor Flux Coil II
+Capacitor Flux Coil II
+Capacitor Flux Coil II
+Capacitor Flux Coil II
+Ballistic Control System II
+
+Adaptive Invulnerability Field II
+Cap Recharger II
+'Stalwart' Particle Field Magnifier
+'Copasetic' Particle Field Acceleration
+X-Large Shield Booster II
+Thermic Dissipation Field II
+[empty med slot]
+
+'Arbalest' Cruise Launcher I, Mjolnir Cruise Missile
+'Arbalest' Cruise Launcher I, Mjolnir Cruise Missile
+'Arbalest' Cruise Launcher I, Mjolnir Cruise Missile
+'Arbalest' Cruise Launcher I, Mjolnir Cruise Missile
+'Arbalest' Cruise Launcher I, Mjolnir Cruise Missile
+'Arbalest' Cruise Launcher I, Mjolnir Cruise Missile
+[empty high slot]
+
+Large Capacitor Control Circuit I
+Large Capacitor Control Circuit I
+Large Capacitor Control Circuit I
+
+Hammerhead II x5
+Hornet II x5
+
+
+--[Maelstrom, MSN Tormenta II]
+Damage Control II
+Gyrostabilizer II
+Gyrostabilizer II
+Tracking Enhancer II
+Drone Damage Amplifier II
+
+Large Micro Jump Drive
+EM Ward Field II
+Thermic Dissipation Field II
+Large Ancillary Shield Booster, Cap Booster 150
+Large Shield Extender II
+Large Shield Extender II
+
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+
+Large Capacitor Control Circuit I
+Large Capacitor Control Circuit I
+Large Capacitor Control Circuit I
+
+Infiltrator II x5
+Medium Shield Maintenance Bot I x5
+
+
+--[Maelstrom, MSN Tormenta I]
+Damage Control II
+Gyrostabilizer II
+Gyrostabilizer II
+Tracking Enhancer II
+Tracking Enhancer II
+
+Prototype 100MN Microwarpdrive I
+EM Ward Field II
+Thermic Dissipation Field II
+Large Clarity Ward Booster I
+Large Shield Extender II
+Large Shield Extender II
+
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+1400mm Prototype Siege Cannon, EMP L
+
+Large Capacitor Control Circuit I
+Large Capacitor Control Circuit I
+Large Capacitor Control Circuit I
+
+Valkyrie I x1
+Valkyrie I x1
+Valkyrie I x1
+Valkyrie I x1
+Valkyrie I x1
+Vespa I x1
+Vespa I x1
+Vespa I x1
+Vespa I x1
+Vespa I x1

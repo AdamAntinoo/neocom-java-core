@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/redtraslucent40" >
+
+    <ImageView
+        android:id="@+id/rightArrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/imageview_defaultcontent"
+        android:padding="-4dp"
+        android:src="@drawable/arrowleft" />
+
+    <ImageView
+        android:id="@+id/itemIcon"
+        android:layout_width="@dimen/itemIcon48"
+        android:layout_height="@dimen/itemIcon48"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="28dp"
+        android:contentDescription="ItemIcon"
+        android:src="@drawable/defaultitemicon" />
+
+    <RelativeLayout
+        android:id="@+id/dataBlock"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/itemIcon" >
+
+        <RelativeLayout
+            android:id="@+id/moduleQualityBlock"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/bottomwhiteline" >
+
+            <TextView
+                android:id="@+id/moduleIndex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:singleLine="true"
+                android:text="x10"
+                android:textColor="@android:color/white"
+                android:textSize="11sp" />
+
+            <TextView
+                android:id="@+id/moduleMultiplier"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:singleLine="true"
+                android:text="x4"
+                android:textColor="@android:color/white"
+                android:textSize="11sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/qualityLabelsBlock"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/moduleQualityBlock" >
+
+            <TextView
+                android:id="@+id/indexLabel"
+                style="@style/Theme.EveDroidRubicon.LabelStyle"
+                android:layout_alignParentLeft="true"
+                android:text="INDEX" />
+
+            <TextView
+                android:id="@+id/multiplierLabel"
+                style="@style/Theme.EveDroidRubicon.LabelStyle"
+                android:layout_alignParentRight="true"
+                android:gravity="right"
+                android:text="MULT." />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/moduleName"
+            style="@style/nameStyle"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/moduleQualityBlock"
+            android:text="Inertia Stabilizers II or another long module name"
+            android:textColor="@color/orangeText" />
+
+        <TextView
+            android:id="@+id/moduleSellLocation"
+            style="@style/locationStationStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/moduleName"
+            android:paddingRight="2dp"
+            android:text="Hek "
+            android:textSize="11sp" />
+
+        <TextView
+            android:id="@+id/slotsCountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/moduleSellLocation"
+            android:ellipsize="marquee"
+            android:gravity="left"
+            android:singleLine="true"
+            android:text="BEST TRADE LOCATION"
+            android:textColor="@android:color/white"
+            android:textSize="8sp" />
+    </RelativeLayout>
+
+</RelativeLayout>
