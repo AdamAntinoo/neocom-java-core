@@ -6,11 +6,13 @@
 
 package org.dimensinfin.evedroid.model;
 
-// - IMPORT SECTION .........................................................................................
+//- IMPORT SECTION .........................................................................................
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.AbstractGEFNode;
+
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.core.INamed;
 
@@ -19,7 +21,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "MarketOrders")
-public class MarketOrder extends AbstractGEFNode implements INamed {
+public class MarketOrder extends AbstractComplexNode implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................

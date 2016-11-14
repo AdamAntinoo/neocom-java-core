@@ -9,12 +9,13 @@ package org.dimensinfin.evedroid.model;
 // - IMPORT SECTION .........................................................................................
 import java.io.Serializable;
 
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveTask extends AbstractGEFNode implements Serializable {
+public class EveTask extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7187291497544861372L;
 

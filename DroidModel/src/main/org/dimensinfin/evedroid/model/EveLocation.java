@@ -6,11 +6,15 @@
 
 package org.dimensinfin.evedroid.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.dimensinfin.core.model.AbstractComplexNode;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractGEFNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveLocation extends AbstractGEFNode {
+public class EveLocation extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1522765618286937377L;
 
@@ -44,6 +48,19 @@ public class EveLocation extends AbstractGEFNode {
 
 	public String getConstellation() {
 		return constellation;
+	}
+	/**
+	 * Check if the Location has children and then add all them to the model.
+	 */
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+//		if (renderWhenEmpty()) {
+//			results.add(this);
+//		}
+//		if (isExpanded()) {
+			results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+//		}
+		return results;
 	}
 
 	public long getConstellationID() {

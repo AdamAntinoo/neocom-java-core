@@ -6,11 +6,8 @@
 
 package org.dimensinfin.evedroid.core;
 
-//- IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.IGEFNode;
-
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface INamedPart extends IGEFNode {
+public interface INamedPart /* extends IGEFNode */ {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String getName();
 }

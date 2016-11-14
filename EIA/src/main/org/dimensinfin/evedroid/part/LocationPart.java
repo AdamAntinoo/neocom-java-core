@@ -14,7 +14,8 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -58,8 +59,8 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 
 	public Spanned get_locationRegion() {
 		double security = getCastedModel().getSecurityValue();
-		return Html.fromHtml(generateSecurityColor(security, getCastedModel().getRegion()
-				+ AppWideConstants.FLOW_ARROW_RIGHT + getCastedModel().getConstellation()));
+		return Html.fromHtml(generateSecurityColor(security,
+				getCastedModel().getRegion() + AppWideConstants.FLOW_ARROW_RIGHT + getCastedModel().getConstellation()));
 	}
 
 	public Spanned get_locationStation() {
@@ -90,11 +91,11 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<IGEFNode> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = getChildren();
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
 
-		for (IGEFNode node : ch) {
+		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
 			result.add(part);
@@ -162,13 +163,13 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 			} else {
 				// Add a new stack for this type to the current container.
 				container.put(type, apart);
-				addChild(apart);
+				addChild((IEditPart) apart);
 			}
 		} else {
 			// There is no container also with this stack.
 			container = new HashMap<Integer, AssetPart>();
 			container.put(type, apart);
-			addChild(apart);
+			addChild((IEditPart) apart);
 			stackList.put(getCastedModel().getID(), container);
 		}
 	}

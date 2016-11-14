@@ -15,7 +15,7 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.ContainerHolder;
@@ -26,7 +26,7 @@ import android.view.View.OnClickListener;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ContainerPart extends AssetPart implements OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -2462731579059844711L;
+	private static final long serialVersionUID = -2462731579059844711L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -39,6 +39,7 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 	/**
 	 * Container may be user named so check if the user label is defined and then return that value.
 	 */
+	@Override
 	public String get_assetName() {
 		String userName = getCastedModel().getUserLabel();
 		if (null == userName)
@@ -55,16 +56,18 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 		return qtyFormatter.format(getChildren().size());
 	}
 
+	@Override
 	public String getName() {
 		return get_assetName();
 	}
 
+	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<IGEFNode> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = getChildren();
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 
-		for (IGEFNode node : ch) {
+		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
 			result.add(part);
@@ -81,6 +84,7 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 		return getCastedModel().getTypeID();
 	}
 
+	@Override
 	public void onClick(final View view) {
 		// Toggle location to show its contents.
 		toggleExpanded();
@@ -91,6 +95,7 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 		return false;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("ContainerPart [");
 		buffer.append(get_assetName());
@@ -98,6 +103,7 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		if (getRenderMode() == AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION)

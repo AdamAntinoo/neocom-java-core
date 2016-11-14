@@ -20,7 +20,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.connector.IConnector;
 import org.dimensinfin.evedroid.connector.IDatabaseConnector;
@@ -77,361 +77,337 @@ import android.widget.TextView;
 public class EVEDroidApp extends Application implements IConnector {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static Logger logger = Logger.getLogger("EVEDroidApp");
-	private static DecimalFormat pendingCounter = new DecimalFormat("0.0##");
-	private static EVEDroidApp singleton = null;
-	private static boolean firstTimeInitialization = false;
-	private static BroadcastReceiver timeTickReceiver = null;
-	public static int topCounter = 0;
-	public static int marketCounter = 0;
+	private static Logger							logger									= Logger.getLogger("EVEDroidApp");
+	private static DecimalFormat			pendingCounter					= new DecimalFormat("0.0##");
+	private static EVEDroidApp				singleton								= null;
+	private static boolean						firstTimeInitialization	= false;
+	private static BroadcastReceiver	timeTickReceiver				= null;
+	public static int									topCounter							= 0;
+	public static int									marketCounter						= 0;
 
-	private static AppModelStore appModelStore = null;
+	private static AppModelStore			appModelStore						= null;
 
 	public static boolean checkNetworkAccess() {
 		final ConnectivityManager cm = (ConnectivityManager) singleton.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
-		if ((netInfo != null) && netInfo.isConnectedOrConnecting())
-			return true;
+		if ((netInfo != null) && netInfo.isConnectedOrConnecting()) return true;
 		return false;
 	}
 
-	public static Comparator<IGEFNode> createComparator(final int code) {
-		Comparator<IGEFNode> comparator = new Comparator<IGEFNode>() {
-			public int compare(final IGEFNode left, final IGEFNode right) {
+	public static Comparator<AbstractPropertyChanger> createComparator(final int code) {
+		Comparator<AbstractPropertyChanger> comparator = new Comparator<AbstractPropertyChanger>() {
+			public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 				return 0;
 			}
 		};
 		switch (code) {
-		case AppWideConstants.comparators.COMPARATOR_NAME:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					String leftField = null;
-					String rightField = null;
-					if (left instanceof INamedPart) {
-						leftField = ((INamedPart) left).getName();
-					}
-					if (right instanceof INamedPart) {
-						rightField = ((INamedPart) right).getName();
-					}
-					if (left instanceof INamed) {
-						leftField = ((INamed) left).getOrderingName();
-					}
-					if (right instanceof INamed) {
-						rightField = ((INamed) right).getOrderingName();
-					}
+			case AppWideConstants.comparators.COMPARATOR_NAME:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						String leftField = null;
+						String rightField = null;
+						if (left instanceof INamedPart) {
+							leftField = ((INamedPart) left).getName();
+						}
+						if (right instanceof INamedPart) {
+							rightField = ((INamedPart) right).getName();
+						}
+						if (left instanceof INamed) {
+							leftField = ((INamed) left).getOrderingName();
+						}
+						if (right instanceof INamed) {
+							rightField = ((INamed) right).getOrderingName();
+						}
 
-					if (null == leftField)
-						return 1;
-					if (null == rightField)
-						return -1;
-					if ("" == leftField)
-						return 1;
-					if ("" == rightField)
-						return -1;
-					return leftField.compareTo(rightField);
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_ASSET_COUNT:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					long leftField = -1;
-					long rightField = -1;
-					if (left instanceof Asset) {
-						final Asset intermediate = (Asset) left;
-						leftField = intermediate.getQuantity();
+						if (null == leftField) return 1;
+						if (null == rightField) return -1;
+						if ("" == leftField) return 1;
+						if ("" == rightField) return -1;
+						return leftField.compareTo(rightField);
 					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_ASSET_COUNT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof Asset) {
+							final Asset intermediate = (Asset) left;
+							leftField = intermediate.getQuantity();
+						}
 
-					if (right instanceof Asset) {
-						final Asset intermediate = (Asset) right;
-						rightField = intermediate.getQuantity();
+						if (right instanceof Asset) {
+							final Asset intermediate = (Asset) right;
+							rightField = intermediate.getQuantity();
+						}
+						if (leftField < rightField) return 1;
+						if (leftField > rightField) return -1;
+						return 0;
 					}
-					if (leftField < rightField)
-						return 1;
-					if (leftField > rightField)
-						return -1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_ITEM_TYPE:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					int leftField = -1;
-					int rightField = -1;
-					// if (left instanceof BlueprintPart) leftField = 100;
-					if (left instanceof AssetPart) {
-						leftField = 0;
-					}
-					if (left instanceof ShipPart) {
-						leftField = 200;
-					}
-					if (left instanceof ContainerPart) {
-						leftField = -300;
-					}
-
-					// if (right instanceof BlueprintPart) rightField = 100;
-					if (right instanceof AssetPart) {
-						rightField = 0;
-					}
-					if (right instanceof ShipPart) {
-						rightField = 200;
-					}
-					if (right instanceof ContainerPart) {
-						rightField = -300;
-					}
-
-					if (leftField < rightField)
-						return -1;
-					if (leftField > rightField)
-						return 1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_RESOURCE_TYPE:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					int leftField = -1;
-					int rightField = -1;
-					if (left instanceof ResourcePart) {
-						final Resource resource = ((ResourcePart) left).getCastedModel();
-						leftField = 0;
-						if (resource.getCategory().equalsIgnoreCase("Material")) {
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_ITEM_TYPE:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						// if (left instanceof BlueprintPart) leftField = 100;
+						if (left instanceof AssetPart) {
+							leftField = 0;
+						}
+						if (left instanceof ShipPart) {
+							leftField = 200;
+						}
+						if (left instanceof ContainerPart) {
 							leftField = -300;
 						}
-						if (resource.getCategory().equalsIgnoreCase("Module")) {
-							leftField = -200;
-						}
-						if (resource.getCategory().equalsIgnoreCase("Blueprint")) {
-							leftField = -100;
-						}
-						if (resource.getName().contains("Datacore")) {
-							leftField = 100;
-						}
-					}
 
-					if (right instanceof ResourcePart) {
-						final Resource resource = ((ResourcePart) left).getCastedModel();
-						rightField = 0;
-						if (resource.getCategory().equalsIgnoreCase("Material")) {
+						// if (right instanceof BlueprintPart) rightField = 100;
+						if (right instanceof AssetPart) {
+							rightField = 0;
+						}
+						if (right instanceof ShipPart) {
+							rightField = 200;
+						}
+						if (right instanceof ContainerPart) {
 							rightField = -300;
 						}
-						if (resource.getCategory().equalsIgnoreCase("Module")) {
-							rightField = -200;
-						}
-						if (resource.getCategory().equalsIgnoreCase("Blueprint")) {
-							rightField = -100;
-						}
-						if (resource.getName().contains("Datacore")) {
-							rightField = 100;
-						}
-					}
 
-					if (leftField < rightField)
-						return -1;
-					if (leftField > rightField)
-						return 1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_APIID_ASC:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					long leftField = -1;
-					long rightField = -1;
-					if (left instanceof APIKeyPart) {
-						final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
-						leftField = intermediate.getKeyID();
-					}
-
-					if (right instanceof APIKeyPart) {
-						final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
-						rightField = intermediate.getKeyID();
-					}
-					if (leftField < rightField)
-						return -1;
-					if (leftField > rightField)
-						return 1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_APIID_DESC:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					long leftField = -1;
-					long rightField = -1;
-					if (left instanceof APIKeyPart) {
-						final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
-						leftField = intermediate.getKeyID();
-					}
-
-					if (right instanceof APIKeyPart) {
-						final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
-						rightField = intermediate.getKeyID();
-					}
-					if (leftField > rightField)
-						return -1;
-					if (leftField < rightField)
-						return 1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					long leftField = -1;
-					long rightField = -1;
-					if (left instanceof PendingRequestEntry) {
-						final PendingRequestEntry intermediate = (PendingRequestEntry) left;
-						leftField = intermediate.getPriority();
-					}
-
-					if (right instanceof PendingRequestEntry) {
-						final PendingRequestEntry intermediate = (PendingRequestEntry) right;
-						rightField = intermediate.getPriority();
-					}
-					if (leftField < rightField)
-						return -1;
-					if (leftField > rightField)
-						return 1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_PRIORITY:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					int leftField = -1;
-					int rightField = -1;
-					if (left instanceof PendingRequestEntry) {
-						final PendingRequestEntry intermediate = (PendingRequestEntry) left;
-						leftField = intermediate.getPriority();
-					}
-
-					if (right instanceof PendingRequestEntry) {
-						final PendingRequestEntry intermediate = (PendingRequestEntry) right;
-						rightField = intermediate.getPriority();
-					}
-					if (leftField < rightField)
-						return 1;
-					if (leftField > rightField)
-						return -1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_WEIGHT:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					int leftField = -1;
-					int rightField = -1;
-					if (left instanceof IWeigthedNode) {
-						leftField = ((IWeigthedNode) left).getWeight();
-					}
-					if (right instanceof IWeigthedNode) {
-						rightField = ((IWeigthedNode) right).getWeight();
-					}
-					if (leftField < rightField)
-						return -1;
-					if (leftField > rightField)
-						return 1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_TIMEPENDING:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					int leftField = -1;
-					int rightField = -1;
-					if (left instanceof JobQueue) {
-						leftField = ((JobQueue) left).getTimeUsed();
-					}
-					if (right instanceof JobQueue) {
-						rightField = ((JobQueue) right).getTimeUsed();
-					}
-
-					if (leftField > rightField)
-						return 1;
-					if (leftField < rightField)
-						return -1;
-					return 0;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_CARD_RATIO:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					double leftField = 0.0;
-					double rightField = 0.0;
-					// if (left instanceof ModulePart) {
-					// ModuleCard intermediate = ((ModulePart)
-					// left).getCastedModel();
-					// leftField = intermediate.getModuleIndex();
-					// }
-					if (left instanceof BlueprintPart) {
-						leftField = ((BlueprintPart) left).getProfitIndex();
-					}
-
-					// if (right instanceof ModulePart) {
-					// ModuleCard intermediate = ((ModulePart)
-					// right).getCastedModel();
-					// rightField = intermediate.getModuleIndex();
-					// }
-					if (right instanceof BlueprintPart) {
-						rightField = ((BlueprintPart) right).getProfitIndex();
-					}
-
-					if (leftField > rightField)
-						return -1;
-					else if (leftField == rightField)
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
 						return 0;
-					return 1;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					DateTime leftField = new DateTime(DateTimeZone.UTC);
-					DateTime rightField = new DateTime(DateTimeZone.UTC);
-					if (left instanceof IDateTimeComparator) {
-						leftField = ((IDateTimeComparator) left).getComparableDate();
 					}
-					if (right instanceof IDateTimeComparator) {
-						rightField = ((IDateTimeComparator) right).getComparableDate();
-					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_RESOURCE_TYPE:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof ResourcePart) {
+							final Resource resource = ((ResourcePart) left).getCastedModel();
+							leftField = 0;
+							if (resource.getCategory().equalsIgnoreCase("Material")) {
+								leftField = -300;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Module")) {
+								leftField = -200;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Blueprint")) {
+								leftField = -100;
+							}
+							if (resource.getName().contains("Datacore")) {
+								leftField = 100;
+							}
+						}
 
-					if (leftField.isAfter(rightField))
-						return -1;
-					else
-						return 1;
-				}
-			};
-			break;
-		case AppWideConstants.comparators.COMPARATOR_OLDESTDATESORT:
-			comparator = new Comparator<IGEFNode>() {
-				public int compare(final IGEFNode left, final IGEFNode right) {
-					DateTime leftField = new DateTime(DateTimeZone.UTC);
-					DateTime rightField = new DateTime(DateTimeZone.UTC);
-					if (left instanceof IDateTimeComparator) {
-						leftField = ((IDateTimeComparator) left).getComparableDate();
-					}
-					if (right instanceof IDateTimeComparator) {
-						rightField = ((IDateTimeComparator) right).getComparableDate();
-					}
+						if (right instanceof ResourcePart) {
+							final Resource resource = ((ResourcePart) left).getCastedModel();
+							rightField = 0;
+							if (resource.getCategory().equalsIgnoreCase("Material")) {
+								rightField = -300;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Module")) {
+								rightField = -200;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Blueprint")) {
+								rightField = -100;
+							}
+							if (resource.getName().contains("Datacore")) {
+								rightField = 100;
+							}
+						}
 
-					if (leftField.isAfter(rightField))
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_APIID_ASC:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof APIKeyPart) {
+							final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
+							leftField = intermediate.getKeyID();
+						}
+
+						if (right instanceof APIKeyPart) {
+							final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
+							rightField = intermediate.getKeyID();
+						}
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_APIID_DESC:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof APIKeyPart) {
+							final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
+							leftField = intermediate.getKeyID();
+						}
+
+						if (right instanceof APIKeyPart) {
+							final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
+							rightField = intermediate.getKeyID();
+						}
+						if (leftField > rightField) return -1;
+						if (leftField < rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) left;
+							leftField = intermediate.getPriority();
+						}
+
+						if (right instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) right;
+							rightField = intermediate.getPriority();
+						}
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_PRIORITY:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) left;
+							leftField = intermediate.getPriority();
+						}
+
+						if (right instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) right;
+							rightField = intermediate.getPriority();
+						}
+						if (leftField < rightField) return 1;
+						if (leftField > rightField) return -1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_WEIGHT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof IWeigthedNode) {
+							leftField = ((IWeigthedNode) left).getWeight();
+						}
+						if (right instanceof IWeigthedNode) {
+							rightField = ((IWeigthedNode) right).getWeight();
+						}
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_TIMEPENDING:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof JobQueue) {
+							leftField = ((JobQueue) left).getTimeUsed();
+						}
+						if (right instanceof JobQueue) {
+							rightField = ((JobQueue) right).getTimeUsed();
+						}
+
+						if (leftField > rightField) return 1;
+						if (leftField < rightField) return -1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_CARD_RATIO:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						double leftField = 0.0;
+						double rightField = 0.0;
+						// if (left instanceof ModulePart) {
+						// ModuleCard intermediate = ((ModulePart)
+						// left).getCastedModel();
+						// leftField = intermediate.getModuleIndex();
+						// }
+						if (left instanceof BlueprintPart) {
+							leftField = ((BlueprintPart) left).getProfitIndex();
+						}
+
+						// if (right instanceof ModulePart) {
+						// ModuleCard intermediate = ((ModulePart)
+						// right).getCastedModel();
+						// rightField = intermediate.getModuleIndex();
+						// }
+						if (right instanceof BlueprintPart) {
+							rightField = ((BlueprintPart) right).getProfitIndex();
+						}
+
+						if (leftField > rightField)
+							return -1;
+						else if (leftField == rightField) return 0;
 						return 1;
-					else
-						return -1;
-				}
-			};
-			break;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						DateTime leftField = new DateTime(DateTimeZone.UTC);
+						DateTime rightField = new DateTime(DateTimeZone.UTC);
+						if (left instanceof IDateTimeComparator) {
+							leftField = ((IDateTimeComparator) left).getComparableDate();
+						}
+						if (right instanceof IDateTimeComparator) {
+							rightField = ((IDateTimeComparator) right).getComparableDate();
+						}
+
+						if (leftField.isAfter(rightField))
+							return -1;
+						else
+							return 1;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_OLDESTDATESORT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						DateTime leftField = new DateTime(DateTimeZone.UTC);
+						DateTime rightField = new DateTime(DateTimeZone.UTC);
+						if (left instanceof IDateTimeComparator) {
+							leftField = ((IDateTimeComparator) left).getComparableDate();
+						}
+						if (right instanceof IDateTimeComparator) {
+							rightField = ((IDateTimeComparator) right).getComparableDate();
+						}
+
+						if (leftField.isAfter(rightField))
+							return 1;
+						else
+							return -1;
+					}
+				};
+				break;
 		}
 		return comparator;
 	}
@@ -445,19 +421,16 @@ public class EVEDroidApp extends Application implements IConnector {
 	// }
 
 	/**
-	 * Return the file that points to the application folder on the external
-	 * (SDCARD) storage.
+	 * Return the file that points to the application folder on the external (SDCARD) storage.
 	 */
 	public static File getAppDirectory() {
-		return new File(Environment.getExternalStorageDirectory(),
-				AppConnector.getResourceString(R.string.appfoldername));
+		return new File(Environment.getExternalStorageDirectory(), AppConnector.getResourceString(R.string.appfoldername));
 	}
 
 	/**
-	 * Gets a reference to the main app global data store. If the store is not
-	 * defined it will start the procedure to retrieve its contents, first from
-	 * the persistence storage on the sdcard and if this fails then it will
-	 * start the procedure to create a new set of data from the available keys.
+	 * Gets a reference to the main app global data store. If the store is not defined it will start the
+	 * procedure to retrieve its contents, first from the persistence storage on the sdcard and if this fails
+	 * then it will start the procedure to create a new set of data from the available keys.
 	 * 
 	 * @return
 	 */
@@ -499,8 +472,7 @@ public class EVEDroidApp extends Application implements IConnector {
 		logger.info(">> EVEDroidApp.downloadDOMDocument");
 		Element elementSingleton = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument()
 				.getDocumentElement();
-		if (null == stream)
-			return elementSingleton;
+		if (null == stream) return elementSingleton;
 		try {
 			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			final DocumentBuilder builder = factory.newDocumentBuilder();
@@ -552,11 +524,11 @@ public class EVEDroidApp extends Application implements IConnector {
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
-	private AndroidStorageConnector storage = null;
-	private AndroidDatabaseConnector dbconnector = null;
-	private AndroidCacheConnector cache = null;
+	private AndroidStorageConnector		storage			= null;
+	private AndroidDatabaseConnector	dbconnector	= null;
+	private AndroidCacheConnector			cache				= null;
 
-	private Typeface daysFace = null;
+	private Typeface									daysFace		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -581,19 +553,17 @@ public class EVEDroidApp extends Application implements IConnector {
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	/**
-	 * Checks that the current parameter timestamp is still on the frame of the
-	 * window.
+	 * Checks that the current parameter timestamp is still on the frame of the window.
 	 * 
 	 * @param timestamp
-	 *            the current and last timestamp of the object.
+	 *          the current and last timestamp of the object.
 	 * @param window
-	 *            time span window in milliseconds.
+	 *          time span window in milliseconds.
 	 */
 	public boolean checkExpiration(final long timestamp, final long window) {
 		// logger.info("-- Checking expiration for " + timestamp + ". Window " +
 		// window);
-		if (0 == timestamp)
-			return true;
+		if (0 == timestamp) return true;
 		final long now = GregorianCalendar.getInstance().getTimeInMillis();
 		final long endWindow = timestamp + window;
 		if (now < endWindow)
@@ -603,24 +573,21 @@ public class EVEDroidApp extends Application implements IConnector {
 	}
 
 	/**
-	 * Return the path to a file resource from the stand point of the
-	 * application. We have to add the folder path where the user wishes to
-	 * store the user application data. This directory is initially hardcoded
-	 * but later may be changed on the configuration settings.
+	 * Return the path to a file resource from the stand point of the application. We have to add the folder
+	 * path where the user wishes to store the user application data. This directory is initially hardcoded but
+	 * later may be changed on the configuration settings.
 	 * 
 	 * @param fileresourceid
 	 * @return
 	 */
 	public String getAppFilePath(final int fileresourceid) {
-		final String sdcarddir = getResourceString(R.string.appfoldername)
-				+ getResourceString(R.string.app_versionsuffix);
+		final String sdcarddir = getResourceString(R.string.appfoldername) + getResourceString(R.string.app_versionsuffix);
 		final String file = getResourceString(fileresourceid);
 		return sdcarddir + "/" + file;
 	}
 
 	public String getAppFilePath(final String fileresourceName) {
-		final String sdcarddir = getResourceString(R.string.appfoldername)
-				+ getResourceString(R.string.app_versionsuffix);
+		final String sdcarddir = getResourceString(R.string.appfoldername) + getResourceString(R.string.app_versionsuffix);
 		final String file = fileresourceName;
 		return sdcarddir + "/" + file;
 	}
@@ -690,17 +657,14 @@ public class EVEDroidApp extends Application implements IConnector {
 	}
 
 	/**
-	 * This method checks if the application has access to the external disk
-	 * (SDCARD) and if that access included the writing operations.<br>
-	 * This method should be called before any expected access to the filesystem
-	 * by the minor number of classes because it is a method strictly related to
-	 * the Android OS. The execution may change the state of some external
-	 * variables but taking on account that this state may change dynamically I
-	 * would prefer to call repeatedly the method than storing the initial call
-	 * results.
+	 * This method checks if the application has access to the external disk (SDCARD) and if that access
+	 * included the writing operations.<br>
+	 * This method should be called before any expected access to the filesystem by the minor number of classes
+	 * because it is a method strictly related to the Android OS. The execution may change the state of some
+	 * external variables but taking on account that this state may change dynamically I would prefer to call
+	 * repeatedly the method than storing the initial call results.
 	 * 
-	 * @return if the FS is writable. This also implies that the SDCARD is
-	 *         available.
+	 * @return if the FS is writable. This also implies that the SDCARD is available.
 	 */
 	public boolean sdcardAvailable() {
 		boolean mExternalStorageAvailable = false;
@@ -724,10 +688,9 @@ public class EVEDroidApp extends Application implements IConnector {
 	}
 
 	/**
-	 * Start the background broadcast receiver to intercept the minute tick and
-	 * process the data structures checking elements that should be updated
-	 * because they are obsolete. New updates will be launched as separate
-	 * asynch tasks.
+	 * Start the background broadcast receiver to intercept the minute tick and process the data structures
+	 * checking elements that should be updated because they are obsolete. New updates will be launched as
+	 * separate asynch tasks.
 	 */
 	public void startTimer() {
 		if (null == timeTickReceiver) {
@@ -737,8 +700,7 @@ public class EVEDroidApp extends Application implements IConnector {
 	}
 
 	/**
-	 * Gets the menu context and updates the background progress indicator with
-	 * the counters.
+	 * Gets the menu context and updates the background progress indicator with the counters.
 	 * 
 	 * @param countIndicator
 	 */
@@ -788,6 +750,10 @@ public class EVEDroidApp extends Application implements IConnector {
 			}
 			actionView.invalidate();
 		}
+	}
+
+	public IConnector getSingleton() {
+		return this.singleton;
 	}
 }
 // - UNUSED CODE

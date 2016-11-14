@@ -8,6 +8,7 @@ package org.dimensinfin.evedroid.industry;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -29,7 +30,7 @@ import org.joda.time.DateTimeZone;
  * 
  * @author Adam Antinoo
  */
-public class Resource extends AbstractGEFNode {
+public class Resource extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID					= 921961484632479376L;
 	private static Logger			logger										= Logger.getLogger("Resource");

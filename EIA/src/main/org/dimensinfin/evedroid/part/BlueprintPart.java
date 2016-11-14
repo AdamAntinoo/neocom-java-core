@@ -10,18 +10,16 @@ package org.dimensinfin.evedroid.part;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.IndustryT2Activity;
-import org.dimensinfin.evedroid.activity.JobDirectorActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.INamedPart;
-import org.dimensinfin.evedroid.dialog.JobRunsDialog;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
@@ -33,7 +31,6 @@ import org.dimensinfin.evedroid.render.Blueprint4IndustryHeaderRender;
 import org.dimensinfin.evedroid.render.Blueprint4IndustryRender;
 import org.dimensinfin.evedroid.render.Blueprint4T2InventionRender;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.text.Html;
 import android.text.Spanned;
@@ -43,34 +40,32 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Toast;
 
 public class BlueprintPart extends MarketDataPart implements INamedPart, OnClickListener, IMenuActionTarget {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static final long serialVersionUID = -274331830590300917L;
+	private static final long	serialVersionUID	= -274331830590300917L;
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
 	/**
-	 * Stores the instance to the job process responsible to perform all the
-	 * action and the job calculations.
+	 * Stores the instance to the job process responsible to perform all the action and the job calculations.
 	 */
-	private IJobProcess process = null;
+	private IJobProcess				process						= null;
 	/** The default job activity is Manufacturing. */
-	private int activity = ModelWideConstants.activities.MANUFACTURING;
+	private int								activity					= ModelWideConstants.activities.MANUFACTURING;
 	/** The number of runs that can be created with the full blueprint stack. */
-	private int runCount = 0;
+	private int								runCount					= 0;
 	// /** The number of runs that can be manufactures with the current
 	// resources. */
 	// private final int maxRunCount = -1;
 	/**
-	 * The number of jobs that can and need to be launched depending on the
-	 * number of blueprints and the quantity of resources.
+	 * The number of jobs that can and need to be launched depending on the number of blueprints and the
+	 * quantity of resources.
 	 */
 	// private int jobs = -1;
 	/** Number of blueprints on stack. */
-	private int bpccount = 0;
+	private int								bpccount					= 0;
 
 	/** Number of blueprints that are to be used for manufacture. */
 	// private int bpcmanufacturable = -1;
@@ -94,8 +89,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Returns the UI show value for the number of blueprints present on the
-	 * stack.
+	 * Returns the UI show value for the number of blueprints present on the stack.
 	 * 
 	 * @return
 	 */
@@ -121,12 +115,10 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	// }
 
 	/**
-	 * Show the number of manufacturable copies on the list of available
-	 * blueprints. Change the number of blueprints to something similar to this
-	 * text: 2 BPCs -> 2PBCs [16 copies]. If the number is 0 copies then put it
-	 * on red. If the number of copies is below the max then use the orange
-	 * color and if the number is equal or greater that the available blueprint
-	 * runs then it should be on white.
+	 * Show the number of manufacturable copies on the list of available blueprints. Change the number of
+	 * blueprints to something similar to this text: 2 BPCs -> 2PBCs [16 copies]. If the number is 0 copies then
+	 * put it on red. If the number of copies is below the max then use the orange color and if the number is
+	 * equal or greater that the available blueprint runs then it should be on white.
 	 * 
 	 * @return
 	 */
@@ -147,11 +139,10 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * The result if a pair of values that represent the number of blueprints on
-	 * the location/container and the number of blueprints that can be really
-	 * manufactured. This later number is shown on a color that depends on the
-	 * resource availability. The color codes are GREEN for all blueprints can
-	 * be manufactured to RED no blueprint can be manufactured.
+	 * The result if a pair of values that represent the number of blueprints on the location/container and the
+	 * number of blueprints that can be really manufactured. This later number is shown on a color that depends
+	 * on the resource availability. The color codes are GREEN for all blueprints can be manufactured to RED no
+	 * blueprint can be manufactured.
 	 * 
 	 * @return
 	 */
@@ -172,23 +163,19 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * The result has specific constraints for T1 blueprints. If T1 then limit
-	 * the number of runs.<br>
-	 * The method should return the number of possible runs. For T2 is the
-	 * number of blueprints multiplied by the runs of each blueprint on the
-	 * stack. For T1 this is limited to the runs of a single blueprint,
-	 * whichever that number is. For T3 the calculations are the same as for T2.
-	 * <br>
-	 * Also we include the number of real runs that can be completed with the
-	 * available resources at the blueprint location.<br>
+	 * The result has specific constraints for T1 blueprints. If T1 then limit the number of runs.<br>
+	 * The method should return the number of possible runs. For T2 is the number of blueprints multiplied by
+	 * the runs of each blueprint on the stack. For T1 this is limited to the runs of a single blueprint,
+	 * whichever that number is. For T3 the calculations are the same as for T2. <br>
+	 * Also we include the number of real runs that can be completed with the available resources at the
+	 * blueprint location.<br>
 	 * Those values are calculated before showing the results.
 	 * 
 	 * @return
 	 */
 	public String get_stackRuns() {
 		// Calculate again the max number of manufacturable runs.
-		final IJobProcess process = JobManager.generateJobProcess(getPilot(), getCastedModel(),
-				EJobClasses.MANUFACTURE);
+		final IJobProcess process = JobManager.generateJobProcess(getPilot(), getCastedModel(), EJobClasses.MANUFACTURE);
 		final int maxRuns = process.getManufacturableCount();
 		if (getCastedModel().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI))
 			return qtyFormatter.format(getCastedModel().getRuns()) + " / " + qtyFormatter.format(maxRuns);
@@ -216,20 +203,18 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Return the current value of the budget. Blueprints and skills are not
-	 * added during this calculation and prices user that the lowest seller
-	 * price found.<br>
-	 * Calculates the cost to buy all the resources required to complete the
-	 * manufacture job. For this it will get the actions associated to the
-	 * blueprint and aggregate the cost for all the BUY tasks that are resulting
-	 * from that actions.
+	 * Return the current value of the budget. Blueprints and skills are not added during this calculation and
+	 * prices user that the lowest seller price found.<br>
+	 * Calculates the cost to buy all the resources required to complete the manufacture job. For this it will
+	 * get the actions associated to the blueprint and aggregate the cost for all the BUY tasks that are
+	 * resulting from that actions.
 	 */
 	public double getBudget() {
 		// Get the Actions and the BUY tasks from them.
 		double budget = 0.0;
-		final Vector<IGEFNode> actions = getChildren();
-		for (final IGEFNode action : actions) {
-			final Vector<IGEFNode> tasks = action.getChildren();
+		Vector<AbstractPropertyChanger> actions = getChildren();
+		for (final AbstractPropertyChanger action : actions) {
+			Vector<IGEFNode> tasks = ((AbstractGEFNode) action).getChildren();
 			for (final IGEFNode node : tasks)
 				if (node instanceof TaskPart) {
 					final TaskPart task = (TaskPart) node;
@@ -293,8 +278,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public int getJobs() {
-		final IJobProcess process = JobManager.generateJobProcess(getPilot(), getCastedModel(),
-				EJobClasses.MANUFACTURE);
+		final IJobProcess process = JobManager.generateJobProcess(getPilot(), getCastedModel(), EJobClasses.MANUFACTURE);
 		final int maxRuns = process.getManufacturableCount();
 		final double intermediate = (1.0 * maxRuns) / (1.0 * getCastedModel().getRuns());
 		final int jobs = Math.min(Double.valueOf(Math.ceil(intermediate)).intValue(), this.bpccount);
@@ -306,12 +290,10 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Shows the icon for manufacture and the manufacture calculated cost for
-	 * this item if can be calculated. NOt all item types can have this value so
-	 * the display has to reflect that. If the cost of manufacture is less that
-	 * the best sell price then the price is shown in green and the sell
-	 * multiplier is added to the price. If the manufacture cost is greater than
-	 * the sell price it is shown in red.
+	 * Shows the icon for manufacture and the manufacture calculated cost for this item if can be calculated.
+	 * NOt all item types can have this value so the display has to reflect that. If the cost of manufacture is
+	 * less that the best sell price then the price is shown in green and the sell multiplier is added to the
+	 * price. If the manufacture cost is greater than the sell price it is shown in red.
 	 * 
 	 * @return
 	 */
@@ -333,9 +315,8 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Get the minimum between the max runs available on the blueprint or the
-	 * runs that can be created with the available resources. If this last value
-	 * is greater that would mean that we can generate more jobs.
+	 * Get the minimum between the max runs available on the blueprint or the runs that can be created with the
+	 * available resources. If this last value is greater that would mean that we can generate more jobs.
 	 * 
 	 * @return
 	 */
@@ -361,9 +342,8 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Calculates the total runtime for a job. The calculation implies to set
-	 * the result for the number of jobs and the number of available and
-	 * possible runs. So the job duration will be the number of runs of the job
+	 * Calculates the total runtime for a job. The calculation implies to set the result for the number of jobs
+	 * and the number of available and possible runs. So the job duration will be the number of runs of the job
 	 * or the number of possible runs by the time to complete a run.
 	 * 
 	 * @return
@@ -394,12 +374,10 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Process a click on a blueprint target. This can happen in some pages so
-	 * the action may depend on the render role that got assigned to the
-	 * blueprint part when created.<br>
-	 * For the blueprint manufacture pages jump to the IndustryT2Activity
-	 * (should be renamed) and for the invention pages activate the activity
-	 * IndustryInventionActivity.
+	 * Process a click on a blueprint target. This can happen in some pages so the action may depend on the
+	 * render role that got assigned to the blueprint part when created.<br>
+	 * For the blueprint manufacture pages jump to the IndustryT2Activity (should be renamed) and for the
+	 * invention pages activate the activity IndustryInventionActivity.
 	 */
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> BlueprintPart.onClick");
@@ -420,56 +398,61 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	/**
-	 * Creates the contextual menu for the selected blueprint. The menu depends
-	 * on multiple factors like if the blueprint is rendered on the header or on
-	 * other listings like the assets or the industry listings.
+	 * Creates the contextual menu for the selected blueprint. The menu depends on multiple factors like if the
+	 * blueprint is rendered on the header or on other listings like the assets or the industry listings.
 	 */
+	// REFACTOR Removed during the DataSource integration
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
-		Log.i("EVEI", ">> BlueprintPart.onCreateContextMenu");
-		// PagerFragment frag = (PagerFragment) getFragment();
-		// For blueprints the menu depends on the renderer selected.
-		if ((getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER)
-				|| (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINVENTIONHEADER)) {
-			final JobRunsDialog dialog = new JobRunsDialog();
-			dialog.setBlueprintPart(this);
-			final BlueprintPart self = this;
-			// PagerFragment frag = (PagerFragment) getFragment();
-			// dialog.setFragment(frag);
-			dialog.setDialogCallback(new ADialogCallback() {
-
-				@Override
-				public void onDialogNegativeClick(final DialogFragment dialog) {
-				}
-
-				@Override
-				public void onDialogPositiveClick(final DialogFragment dialog) {
-					// Get the number of runs selected by the user.
-					final int runs = ((JobRunsDialog) dialog).getRuns();
-					// Verify with the number of runs the number of blueprints
-					// used.
-					Toast.makeText(getActivity(), "Selected Runs: " + runs, Toast.LENGTH_LONG).show();
-					JobManager.launchJob(getPilot(), self, runs, getJobActivity());
-					final Intent intent = new Intent(getActivity(), JobDirectorActivity.class);
-					intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-					getActivity().startActivity(intent);
-				}
-			});
-			// getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-			dialog.show(getActivity().getFragmentManager(), "JobRunsDialog");
-		}
-		Log.i("EVEI", "<< BlueprintPart.onCreateContextMenu");
+		// Log.i("EVEI", ">> BlueprintPart.onCreateContextMenu");
+		// // PagerFragment frag = (PagerFragment) getFragment();
+		// // For blueprints the menu depends on the renderer selected.
+		// if ((getRenderMode() ==
+		// AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER)
+		// || (getRenderMode() ==
+		// AppWideConstants.rendermodes.RENDER_BLUEPRINTINVENTIONHEADER)) {
+		// final JobRunsDialog dialog = new JobRunsDialog();
+		// dialog.setBlueprintPart(this);
+		// final BlueprintPart self = this;
+		// // PagerFragment frag = (PagerFragment) getFragment();
+		// // dialog.setFragment(frag);
+		// dialog.setDialogCallback(new ADialogCallback() {
+		//
+		// @Override
+		// public void onDialogNegativeClick(final DialogFragment dialog) {
+		// }
+		//
+		// @Override
+		// public void onDialogPositiveClick(final DialogFragment dialog) {
+		// // Get the number of runs selected by the user.
+		// final int runs = ((JobRunsDialog) dialog).getRuns();
+		// // Verify with the number of runs the number of blueprints
+		// // used.
+		// Toast.makeText(getActivity(), "Selected Runs: " + runs,
+		// Toast.LENGTH_LONG).show();
+		// JobManager.launchJob(getPilot(), self, runs, getJobActivity());
+		// final Intent intent = new Intent(getActivity(),
+		// JobDirectorActivity.class);
+		// intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
+		// getPilot().getCharacterID());
+		// getActivity().startActivity(intent);
+		// }
+		// });
+		// //
+		// getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		// dialog.show(getActivity().getFragmentManager(), "JobRunsDialog");
+		// }
+		// Log.i("EVEI", "<< BlueprintPart.onCreateContextMenu");
 	}
 
 	/**
-	 * Sets the type of activity to perform with the blueprint. There are
-	 * options that will require this information to make a decision about the
-	 * progress of the action. It also will pprepare the part to generate the
-	 * output expected for the activity selected.br> The method instantiates a
-	 * new process, being it a Manufacture process or an Invention process
-	 * depending on the actility selected to perform the blueprint calculations.
+	 * Sets the type of activity to perform with the blueprint. There are options that will require this
+	 * information to make a decision about the progress of the action. It also will pprepare the part to
+	 * generate the output expected for the activity selected.br> The method instantiates a new process, being
+	 * it a Manufacture process or an Invention process depending on the actility selected to perform the
+	 * blueprint calculations.
 	 * 
 	 * @param activity
-	 *            EVE activity code.
+	 *          EVE activity code.
 	 */
 	public void setActivity(final int newActivity) {
 		this.activity = newActivity;
@@ -502,8 +485,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	protected void initialize() {
 		this.item = getCastedModel().getModuleItem();
 		if (null == this.item)
-			throw new RuntimeException(
-					"RT> BlueprintPart - The task item is not defined. " + getCastedModel().getName());
+			throw new RuntimeException("RT> BlueprintPart - The task item is not defined. " + getCastedModel().getName());
 		// getManufacturableCount();
 	}
 

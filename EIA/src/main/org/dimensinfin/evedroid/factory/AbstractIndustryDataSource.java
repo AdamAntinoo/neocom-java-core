@@ -11,7 +11,8 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.part.GroupPart;
@@ -21,15 +22,17 @@ import org.dimensinfin.evedroid.storage.AppModelStore;
 //- CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractIndustryDataSource extends AbstractDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long		serialVersionUID	= -774764072513063457L;
+	private static final long	serialVersionUID	= -774764072513063457L;
 	// - F I E L D - S E C T I O N ............................................................................
-	protected AppModelStore			_store						= null;
-	protected GroupPart	_output						= null;
+	protected AppModelStore		_store						= null;
+	protected GroupPart				_output						= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractIndustryDataSource(final AppModelStore store) {
 		super();
-		if (null != store) _store = store;
+		if (null != store) {
+			_store = store;
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -61,15 +64,16 @@ public abstract class AbstractIndustryDataSource extends AbstractDataSource {
 	protected void add2Group(final IItemPart action, final EIndustryGroup igroup) {
 		for (AbstractAndroidPart group : _root) {
 			if (group instanceof GroupPart) {
-				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString()))
-					group.addChild(action);
+				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
+					group.addChild((IEditPart) action);
+				}
 			}
 		}
 	}
 
-	protected void classifyResources(final Vector<IGEFNode> nodes) {
+	protected void classifyResources(final Vector<AbstractPropertyChanger> nodes) {
 		// Process the actions and set each one on the matching group.
-		for (IGEFNode node : nodes) {
+		for (AbstractPropertyChanger node : nodes) {
 			if (node instanceof IItemPart) {
 				IItemPart action = (IItemPart) node;
 				add2Group(action, action.getIndustryGroup());

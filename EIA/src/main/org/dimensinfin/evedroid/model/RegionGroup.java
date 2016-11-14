@@ -1,17 +1,24 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.dimensinfin.android.mvc.core.INeoComNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -28,7 +35,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
  * 
  * @author Adam Antinoo
  */
-public class RegionGroup extends AnalyticalGroup {
+public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -73,6 +80,21 @@ public class RegionGroup extends AnalyticalGroup {
 	}
 
 	/**
+	 * Check if the Region is empty and if not then add all the children to the model.
+	 */
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		if (renderWhenEmpty()) {
+			results.add(this);
+		}
+		if (isExpanded()) {
+			results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		}
+		return results;
+	}
+
+	/**
 	 * Generates the list of model elements in the right order depending on the environment and the data. This
 	 * way to generate the content leaves the knowledge in the right place of the model and not on the
 	 * implementing part. For a group the results are the children parts but ordered in a predeterminate way.
@@ -89,9 +111,9 @@ public class RegionGroup extends AnalyticalGroup {
 		}
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
-		final Vector<IGEFNode> orders = aggregate(getChildren());
+		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
 		Collections.sort(orders, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		for (final IGEFNode node : orders)
+		for (final AbstractPropertyChanger node : orders)
 			if (node instanceof MarketOrder) {
 				results.addAll(((MarketOrder) node).collaborate2Model());
 			}
@@ -121,6 +143,7 @@ public class RegionGroup extends AnalyticalGroup {
 	 * 
 	 * @return
 	 */
+	@Override
 	public boolean renderWhenEmpty() {
 		// Is not empty the render.
 		if (getChildren().size() > 0) return true;
@@ -148,7 +171,7 @@ public class RegionGroup extends AnalyticalGroup {
 		return getChildren().size();
 	}
 
-	private Vector<IGEFNode> aggregate(final Vector<IGEFNode> children) {
+	private Vector<AbstractPropertyChanger> aggregate(final Vector<IGEFNode> children) {
 		final HashMap<Integer, MarketOrder> datamap = new HashMap<Integer, MarketOrder>();
 		for (final IGEFNode node : children)
 			if (node instanceof MarketOrder) {
@@ -161,7 +184,7 @@ public class RegionGroup extends AnalyticalGroup {
 				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
-		return new Vector<IGEFNode>(datamap.values());
+		return new Vector<AbstractPropertyChanger>(datamap.values());
 	}
 
 }

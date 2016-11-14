@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.INamedPart;
@@ -62,6 +62,25 @@ public class RegionPart extends AbstractAndroidPart implements INamedPart, OnCli
 		return getCastedModel().getTitle();
 	}
 
+	@Override
+	public ArrayList<AbstractAndroidPart> collaborate2View() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		Vector<AbstractPropertyChanger> ch = getChildren();
+		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		for (AbstractPropertyChanger node : ch) {
+			// Convert the node to a part.
+			AbstractAndroidPart part = (AbstractAndroidPart) node;
+			// Add me to the output list because I am not empty
+			result.add(part);
+			// Check if the node is expanded. Then add its children.
+			if (part.isExpanded()) {
+				ArrayList<AbstractAndroidPart> grand = part.collaborate2View();
+				result.addAll(grand);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Returns the list of parts that are available for this node. If the node it is expanded then the list will
 	 * include the children and any other grand children of this one. If the node is collapsed then the only
@@ -69,11 +88,12 @@ public class RegionPart extends AbstractAndroidPart implements INamedPart, OnCli
 	 * 
 	 * @return list of parts that are accessible for this node.
 	 */
+	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<IGEFNode> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = getChildren();
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		for (IGEFNode node : ch) {
+		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
 			result.add(part);
@@ -92,6 +112,7 @@ public class RegionPart extends AbstractAndroidPart implements INamedPart, OnCli
 		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("RegionPart [");
 		buffer.append(this.getCastedModel());
@@ -99,6 +120,7 @@ public class RegionPart extends AbstractAndroidPart implements INamedPart, OnCli
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		return new RegionHolder(this, _activity);

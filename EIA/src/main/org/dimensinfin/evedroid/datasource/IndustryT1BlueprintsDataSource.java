@@ -52,7 +52,9 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT1BlueprintsDataSource(final AppModelStore store) {
-		if (null != store) this._store = store;
+		if (null != store) {
+			this._store = store;
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -90,10 +92,11 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 			final BlueprintPart bppart = new BlueprintPart(currentbpc);
 			bppart.setActivity(ModelWideConstants.activities.MANUFACTURING);
 			bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
-			if (null == parent)
+			if (null == parent) {
 				add2Location(locid, bppart);
-			else
+			} else {
 				add2Container(parent, bppart);
+			}
 		}
 		Log.i("IndustryT2Blueprints", "<< IndustryT2Blueprints.createContentHierarchy [" + this._root.size() + "]");
 	}
@@ -121,9 +124,10 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
+		}
 	}
 
 	/**
@@ -143,10 +147,11 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 					.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
 			lochit.setContainerLocation(true);
 			final String containername = container.getUserLabel();
-			if (null == containername)
+			if (null == containername) {
 				lochit.setContainerName("#" + container.getAssetID());
-			else
+			} else {
 				lochit.setContainerName(containername);
+			}
 			this.locations.put(cid, lochit);
 			this._root.add(lochit);
 		}

@@ -9,7 +9,8 @@ package org.dimensinfin.evedroid.model;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
@@ -17,14 +18,14 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class APIKeyCore extends AbstractGEFNode {
+public abstract class APIKeyCore extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1891959457883171631L;
 	private static Logger			logger						= Logger.getLogger("APIKey");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private final Instant			lastCCPAccessTime	= new Instant(0);
-	private boolean						expanded					= true;
+//	private boolean						expanded					= true;
 
 	// - P R O P E R T I E S
 	protected int							keyID							= -1;
@@ -55,25 +56,26 @@ public class APIKeyCore extends AbstractGEFNode {
 		return verificationCode;
 	}
 
-	/**
-	 * If the account is expired then return it on the collapsed state. Otherwise return the default and user
-	 * set state.
-	 * 
-	 * @return expand value.
-	 */
-	public boolean isExpanded() {
-		// Check if expired.
-		final Instant expires = getTimeLeft();
-		Instant now = new Instant();
-		if (expires.isBefore(now))
-			return false;
-		else
-			return expanded;
-	}
-
-	public void setExpanded(final boolean b) {
-		expanded = b;
-	}
+//	/**
+//	 * If the account is expired then return it on the collapsed state. Otherwise return the default and user
+//	 * set state.
+//	 * 
+//	 * @return expand value.
+//	 */
+//	public boolean isExpanded() {
+//		// Check if expired.
+//		final Instant expires = getTimeLeft();
+//		Instant now = new Instant();
+//		if (expires.isBefore(now))
+//			return false;
+//		else
+//			return expanded;
+//	}
+//
+//	public boolean setExpanded(final boolean b) {
+//		expanded = b;
+//		return expanded;
+//	}
 
 	@Override
 	public String toString() {

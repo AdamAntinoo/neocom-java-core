@@ -167,8 +167,9 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 	public boolean hasStableIds() {
 		return true;
 	}
-
-	@Override
+/**
+ * Update the Part list from the model. It should have been already updated by the detection of the structure change.
+ */
 	public void notifyDataSetChanged() {
 		setModel(_datasource.getPartHierarchy());
 		super.notifyDataSetChanged();

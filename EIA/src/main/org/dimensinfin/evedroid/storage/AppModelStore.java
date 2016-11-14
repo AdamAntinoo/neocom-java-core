@@ -17,6 +17,8 @@ import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.datasource.DataSourceManager;
+import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
 
@@ -59,6 +61,7 @@ public class AppModelStore extends AbstractModelStore {
 	private final long								lastCCPAccessTime	= 0;
 	private transient EveChar					_pilot						= null;
 	private transient Activity				_activity					= null;
+	private DataSourceManager					dsManager					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppModelStore(final IPersistentHandler storageHandler) {
@@ -140,7 +143,9 @@ public class AppModelStore extends AbstractModelStore {
 		// Iterate the list of pilots and accumulate the active ones.
 		final ArrayList<EveChar> activePilots = new ArrayList<EveChar>();
 		for (final EveChar pilot : getCharacters().values())
-			if (pilot.isActive()) activePilots.add(pilot);
+			if (pilot.isActive()) {
+				activePilots.add(pilot);
+			}
 		return activePilots;
 	}
 
@@ -161,8 +166,9 @@ public class AppModelStore extends AbstractModelStore {
 			this.charCache = new HashMap<Long, EveChar>();
 			for (final APIKey key : this.apiKeys.values()) {
 				final Collection<EveChar> chars = key.getCharacters().values();
-				for (final EveChar eveChar : chars)
+				for (final EveChar eveChar : chars) {
 					this.charCache.put(eveChar.getCharacterID(), eveChar);
+				}
 			}
 		}
 		return this.charCache;
@@ -274,6 +280,13 @@ public class AppModelStore extends AbstractModelStore {
 		//		buffer.append(" characters: ").append(characters.size());
 		buffer.append(" ]");
 		return buffer.toString();
+	}
+
+	public IDataSourceConnector getDataSourceConector() {
+		if (null == dsManager) {
+			dsManager = new DataSourceManager();
+		}
+		return dsManager;
 	}
 }
 

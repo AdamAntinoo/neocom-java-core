@@ -10,6 +10,7 @@ package org.dimensinfin.evedroid.part;
 import java.util.Date;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.model.JobQueue;
@@ -27,6 +28,10 @@ public class QueuePart extends EveAbstractPart {
 	private int								number						= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public QueuePart(final AbstractComplexNode node) {
+		super(node);
+	}
+
 	public QueuePart(final AbstractGEFNode node) {
 		super(node);
 	}
@@ -44,6 +49,7 @@ public class QueuePart extends EveAbstractPart {
 		return getCastedModel().getJob().getActivityID();
 	}
 
+	@Override
 	public long getModelID() {
 		return getCastedModel().getJob().getJobID();
 	}
@@ -74,6 +80,7 @@ public class QueuePart extends EveAbstractPart {
 		number = qnum;
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		return new QueueRender(this, _activity);
 	}

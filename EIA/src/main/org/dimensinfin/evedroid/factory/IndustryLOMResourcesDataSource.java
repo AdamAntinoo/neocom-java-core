@@ -12,6 +12,7 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.core.IEditPart;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -35,7 +36,8 @@ import android.util.Log;
  * The Data Source generates the hierarchy of resources required to produce an item. There are some kinds of
  * items. Some of them can be manufactured though a blueprint, other by refining, other come from reactions
  * and other only can be get from the market. The first action to be executed is to detect the type and then
- * the right job process to get the List Of Materials that are the information required from this DataSource.<br>
+ * the right job process to get the List Of Materials that are the information required from this DataSource.
+ * <br>
  * The hierarchy has groups by resource type as shown on the EVE UI client.
  * 
  * @author Adam Antinoo
@@ -51,7 +53,9 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryLOMResourcesDataSource(final AppModelStore store) {
-		if (null != store) _store = store;
+		if (null != store) {
+			_store = store;
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -77,10 +81,12 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 		// To the Output group add the resource part that represents the output.
 		ResourcePart outputResource = new ResourcePart(new Resource(_bppart.getProductID(), 1));
 		// Set the render depending on the blueprint job activity.
-		if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING)
+		if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING) {
 			outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTJOB);
-		if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION)
+		}
+		if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION) {
 			outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTBLUEPRINT);
+		}
 		output.addChild(outputResource);
 
 		// From the blueprint list of resources needed to perform the job.
@@ -90,22 +96,26 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 		Vector<IGEFNode> lomParts = new Vector<IGEFNode>();
 		for (Resource resource : lom) {
 			String category = resource.item.getCategory();
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 				balance += 0.0;
-			else if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill))
+			} else if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 				balance += 0.0;
-			else {
+			} else {
 				double realcost = resource.getQuantity() * resource.getItem().getLowestSellerPrice().getPrice();
 				balance += realcost;
 			}
 			// Process the actions and set each one on the matching group.
 			ResourcePart respart = new ResourcePart(resource);
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill))
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 				respart.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCESKILLJOB);
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
+			}
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 				respart.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEBLUEPRINTJOB);
+			}
 			// Now classify each resource in their Industry group.
-			if (respart instanceof IItemPart) add2Group(respart, respart.getIndustryGroup());
+			if (respart instanceof IItemPart) {
+				add2Group(respart, respart.getIndustryGroup());
+			}
 		}
 	}
 
@@ -115,7 +125,9 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 		//	Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_RESOURCE_TYPE));
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractAndroidPart node : _root) {
-			if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
+			if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
+				continue;
+			}
 			result.add(node);
 			// Check if the node is expanded. Then add its children.
 			if (node.isExpanded()) {
@@ -135,8 +147,9 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 	protected void add2Group(final IItemPart action, final EIndustryGroup igroup) {
 		for (AbstractAndroidPart group : _root) {
 			if (group instanceof GroupPart) {
-				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString()))
-					group.addChild(action);
+				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
+					group.addChild((IEditPart) action);
+				}
 			}
 		}
 	}

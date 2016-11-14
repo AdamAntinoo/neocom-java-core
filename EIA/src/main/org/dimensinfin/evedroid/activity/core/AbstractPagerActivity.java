@@ -12,6 +12,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;
+import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
 
 import com.viewpagerindicator.CirclePageIndicator;
@@ -31,14 +32,12 @@ import android.widget.ImageView;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
- * This abstract Activity will collect all the common code that is being used on
- * the new Activity pattern. Most of the new activities change minor actions on
- * some methods while sharing all the rest of the code.<br>
- * This class implements a generic Activity with a swipe gesture multi page
- * layout and Titled pages that will show names only if the number of pages is
- * more than 1. Current implementation ises a cicle indicator but will be
- * transistioned to a Titled indicator. The base code will take care of the menu
- * and the Action tool bar.
+ * This abstract Activity will collect all the common code that is being used on the new Activity pattern.
+ * Most of the new activities change minor actions on some methods while sharing all the rest of the code.<br>
+ * This class implements a generic Activity with a swipe gesture multi page layout and Titled pages that will
+ * show names only if the number of pages is more than 1. Current implementation ises a cicle indicator but
+ * will be transistioned to a Titled indicator. The base code will take care of the menu and the Action tool
+ * bar.
  * 
  * @author Adam Antinoo
  */
@@ -48,12 +47,12 @@ public abstract class AbstractPagerActivity extends Activity {
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
-	protected ActionBar _actionBar = null;
-	private ViewPager _pageContainer = null;
-	private EvePagerAdapter _pageAdapter = null;
-	private ImageView _back = null;
+	protected ActionBar					_actionBar			= null;
+	private ViewPager						_pageContainer	= null;
+	private EvePagerAdapter			_pageAdapter		= null;
+	private ImageView						_back						= null;
 	// private AppModelStore _store = null;
-	private CirclePageIndicator _indicator = null;
+	private CirclePageIndicator	_indicator			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -75,23 +74,23 @@ public abstract class AbstractPagerActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// This ID represents the Home or Up button. In the case of this
-			// activity, the Up button is shown. Use NavUtils to allow users
-			// to navigate up one level in the application structure. For
-			// more details, see the Navigation pattern on Android Design:
-			//
-			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-			//
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		case R.id.action_settings:
-			final Intent intent = new Intent(this, SettingsActivity.class);
-			startActivity(intent);
-			return false;
-		case R.id.action_fullreload:
-			startActivity(new Intent(this, SplashActivity.class));
-			return true;
+			case android.R.id.home:
+				// This ID represents the Home or Up button. In the case of this
+				// activity, the Up button is shown. Use NavUtils to allow users
+				// to navigate up one level in the application structure. For
+				// more details, see the Navigation pattern on Android Design:
+				//
+				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+				//
+				NavUtils.navigateUpFromSameTask(this);
+				return true;
+			case R.id.action_settings:
+				final Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+				return false;
+			case R.id.action_fullreload:
+				startActivity(new Intent(this, SplashActivity.class));
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -110,8 +109,7 @@ public abstract class AbstractPagerActivity extends Activity {
 				}
 
 				public void onPageSelected(final int position) {
-					AbstractPagerActivity.this._actionBar
-							.setTitle(AbstractPagerActivity.this._pageAdapter.getTitle(position));
+					AbstractPagerActivity.this._actionBar.setTitle(AbstractPagerActivity.this._pageAdapter.getTitle(position));
 					// Clear empty subtitles.
 					if ("" == AbstractPagerActivity.this._pageAdapter.getSubTitle(position)) {
 						AbstractPagerActivity.this._actionBar.setSubtitle(null);
@@ -131,8 +129,7 @@ public abstract class AbstractPagerActivity extends Activity {
 				}
 
 				public void onPageSelected(final int position) {
-					AbstractPagerActivity.this._actionBar
-							.setTitle(AbstractPagerActivity.this._pageAdapter.getTitle(position));
+					AbstractPagerActivity.this._actionBar.setTitle(AbstractPagerActivity.this._pageAdapter.getTitle(position));
 					// Clear empty subtitles.
 					if ("" == AbstractPagerActivity.this._pageAdapter.getSubTitle(position)) {
 						AbstractPagerActivity.this._actionBar.setSubtitle(null);
@@ -147,7 +144,24 @@ public abstract class AbstractPagerActivity extends Activity {
 
 	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
-		final AbstractPagerFragment frag = (AbstractPagerFragment) getFragmentManager()
+		final TitledFragment frag = (TitledFragment) getFragmentManager()
+				.findFragmentByTag(this._pageAdapter.getFragmentId(position));
+		if (null == frag) {
+			this._pageAdapter.addPage(newFrag);
+		} else {
+			this._pageAdapter.addPage(frag);
+		}
+		// Check the number of pages to activate the indicator when more the
+		// one.
+		if (_pageAdapter.getCount() > 1) {
+			activateIndicator();
+		}
+		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
+	}
+
+	protected void addPage(final AbstractNewPagerFragment newFrag, final int position) {
+		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
+		final TitledFragment frag = (TitledFragment) getFragmentManager()
 				.findFragmentByTag(this._pageAdapter.getFragmentId(position));
 		if (null == frag) {
 			this._pageAdapter.addPage(newFrag);
@@ -226,9 +240,8 @@ public abstract class AbstractPagerActivity extends Activity {
 	}
 
 	/**
-	 * For really unrecoverable or undefined exceptions the application should
-	 * go to a safe spot. That spot is defined by the application so this is
-	 * another abstract method.
+	 * For really unrecoverable or undefined exceptions the application should go to a safe spot. That spot is
+	 * defined by the application so this is another abstract method.
 	 * 
 	 * @param exception
 	 */

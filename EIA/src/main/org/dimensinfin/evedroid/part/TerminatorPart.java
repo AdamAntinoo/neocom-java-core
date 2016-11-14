@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.holder.TerminatorHolder;
 import org.dimensinfin.evedroid.model.Separator;
 
@@ -26,7 +26,7 @@ public class TerminatorPart extends AbstractAndroidPart {
 	//	private AbstractPilotBasedActivity	activity					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public TerminatorPart(final IGEFNode node) {
+	public TerminatorPart(final AbstractComplexNode node) {
 		super(node);
 	}
 
@@ -40,6 +40,7 @@ public class TerminatorPart extends AbstractAndroidPart {
 		return GregorianCalendar.getInstance().getTimeInMillis();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		return new TerminatorHolder(this, _activity);

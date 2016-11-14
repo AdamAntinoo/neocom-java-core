@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -56,10 +57,16 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 		for (final AbstractGEFNode region : regionNames) {
 			results.add(region);
 			// Now add the depending item in the order but with their own rules.
-			final Vector<IGEFNode> orders = region.getChildren();
+			Vector<AbstractPropertyChanger> orders = new Vector<AbstractPropertyChanger>();
+			Vector<IGEFNode> v = region.getChildren();
+			for (IGEFNode node : v) {
+				orders.add((AbstractPropertyChanger) node);
+			}
 			Collections.sort(orders, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-			for (final IGEFNode node : orders)
-				if (node instanceof Resource) results.addAll(((Resource) node).collaborate2Model());
+			for (final AbstractPropertyChanger node : orders)
+				if (node instanceof Resource) {
+					results.addAll(((Resource) node).collaborate2Model());
+				}
 		}
 		return results;
 	}
@@ -80,6 +87,7 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 		}
 		hitRegion.addChild(order);
 	}
+
 	/**
 	 * Adds a new element to the list of aggregated items and increments and recalculates the analytical data.
 	 * 
@@ -98,8 +106,9 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
 			this.locations.put(newOrder.getItem().getHighestBuyerPrice().getLocation().getID(), hit);
-		} else
+		} else {
 			hit.add(newOrder);
+		}
 	}
 }
 //- UNUSED CODE ............................................................................................

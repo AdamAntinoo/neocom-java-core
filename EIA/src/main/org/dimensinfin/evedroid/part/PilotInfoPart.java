@@ -8,11 +8,12 @@ package org.dimensinfin.evedroid.part;
 
 // - IMPORT SECTION .........................................................................................
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -28,8 +29,8 @@ import android.view.View.OnClickListener;
 public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, OnClickListener {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static final long serialVersionUID = -1731066477259354660L;
-	private static Logger logger = Logger.getLogger("PilotInfoPart");
+	private static final long	serialVersionUID	= -1731066477259354660L;
+	private static Logger			logger						= Logger.getLogger("PilotInfoPart");
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
@@ -38,7 +39,7 @@ public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, On
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
-	public PilotInfoPart(final AbstractGEFNode pilot) {
+	public PilotInfoPart(final AbstractComplexNode pilot) {
 		super(pilot);
 	}
 
@@ -85,6 +86,17 @@ public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, On
 			EVEDroidApp.getAppStore().getActivity().startActivity(intent);
 		}
 		logger.info("<< PilotInfoPart.onClick");
+	}
+
+	/**
+	 * The result of this method depends on the variant use but this is not already supported. For the initial
+	 * usage of this part at the Pilot List Activity we just expand to itself.
+	 */
+	@Override
+	public ArrayList<AbstractAndroidPart> collaborate2View() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		result.add(this);
+		return result;
 	}
 
 	@Override

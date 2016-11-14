@@ -8,11 +8,13 @@ package org.dimensinfin.evedroid.model;
 
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
@@ -29,7 +31,7 @@ import org.dimensinfin.evedroid.industry.Resource;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractGEFNode {
+public class Action extends AbstractComplexNode {
 	private class TaskBundle {
 		protected int			priority	= 999;
 		protected EveTask	task			= null;
@@ -227,6 +229,11 @@ public class Action extends AbstractGEFNode {
 		return resource;
 	}
 
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		return results;
+	}
 }
 
 // - UNUSED CODE ............................................................................................

@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.core.INeoComNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -28,8 +30,6 @@ import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import android.util.Log;
 
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.character.blueprints.BlueprintListParser;
@@ -63,8 +63,10 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import android.util.Log;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveChar extends EveCharCore {
+public class EveChar extends EveCharCore implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long										serialVersionUID		= -955059830168434115L;
 	private static Logger												logger							= Logger.getLogger("EveChar");
@@ -131,6 +133,16 @@ public class EveChar extends EveCharCore {
 		result.add(sellGroup);
 		result.add(finishedGroup);
 		return result;
+	}
+
+	/**
+	 * For the EveChar the contents provided to the model are empty when the variant is related to the pilot
+	 * list. Maybe in other calls the return would be another list of contents.
+	 */
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		//		if (renderWhenEmpty()) results.add(this);
+		return results;
 	}
 
 	public MarketOrderAnalyticalGroup accessModules4Sell() {
@@ -227,8 +239,8 @@ public class EveChar extends EveCharCore {
 		if (this.totalAssets == -1) {
 			try {
 				final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-				this.totalAssets = assetDao.countOf(assetDao.queryBuilder().setCountOf(true).where()
-						.eq("ownerID", getCharacterID()).prepare());
+				this.totalAssets = assetDao
+						.countOf(assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", getCharacterID()).prepare());
 			} catch (final SQLException sqle) {
 				Log.w("EVEI", "W> Proglem calculating the number of assets for " + getName());
 			}
@@ -288,8 +300,7 @@ public class EveChar extends EveCharCore {
 		if (AppConnector.checkExpiration(this.marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		if (AppConnector.checkExpiration(this.jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		if (AppConnector.checkExpiration(this.assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
-		if (AppConnector.checkExpiration(this.blueprintsCacheTime, ModelWideConstants.NOW))
-			return EDataBlock.BLUEPRINTDATA;
+		if (AppConnector.checkExpiration(this.blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
 	}
 
@@ -567,8 +578,8 @@ public class EveChar extends EveCharCore {
 					try {
 						final Dao<MarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
 						marketOrderDao.createOrUpdate(myorder);
-						logger.finest("-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID()
-								+ "]");
+						logger.finest(
+								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
 					} catch (final SQLException sqle) {
 						logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
 						sqle.printStackTrace();
@@ -745,8 +756,8 @@ public class EveChar extends EveCharCore {
 
 	private synchronized void downloadCharacterSheet() {
 		logger.info(">> EveChar.downloadCharacterSheet");
-		final String eveCharacterInfoCall = CHAR_CHARACTERSHEET + "?keyID=" + this.keyID + "&vCode="
-				+ this.verificationCode + "&characterID=" + this.characterID;
+		final String eveCharacterInfoCall = CHAR_CHARACTERSHEET + "?keyID=" + this.keyID + "&vCode=" + this.verificationCode
+				+ "&characterID=" + this.characterID;
 		final Element characterDoc = AppConnector.getStorageConnector().accessDOMDocument(eveCharacterInfoCall);
 		if (null == characterDoc) {
 			setName("Corporation");

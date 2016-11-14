@@ -10,7 +10,6 @@ package org.dimensinfin.evedroid.part;
 import java.util.GregorianCalendar;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.model.MarketOrderAnalyticalGroup;
@@ -20,28 +19,31 @@ import org.dimensinfin.evedroid.render.MarketSideRender;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class MarketOrderAnalyticalGroupPart extends EveAbstractPart {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 5929631623003721637L;
+	private static final long serialVersionUID = 5929631623003721637L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-//	private final int					priority					= 10;
-//	private final int					iconReference			= R.drawable.defaultitemicon;
+	//	private final int					priority					= 10;
+	//	private final int					iconReference			= R.drawable.defaultitemicon;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketOrderAnalyticalGroupPart(final MarketOrderAnalyticalGroup node) {
 		super(node);
-		this.expanded = true;
+		getCastedModel().setExpanded(true);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public MarketOrderAnalyticalGroup getCastedModel() {
 		return (MarketOrderAnalyticalGroup) getModel();
 	}
+
 	public double getGroupBudget() {
 		return getCastedModel().getBudget();
 	}
+
 	public int getGroupCount() {
 		return getCastedModel().getChildren().size();
 	}
+
 	public int getGroupQuantity() {
 		return getCastedModel().getQuantity();
 	}

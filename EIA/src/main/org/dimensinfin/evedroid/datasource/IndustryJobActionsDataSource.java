@@ -13,7 +13,8 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
@@ -75,8 +76,7 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 		Log.i("EVEI", ">> IndustryJobActionsDataSource.createContentHierarchy");
 		super.createContentHierarchy();
 		// Check we have received the blueprint part from the Fragment.
-		if (null == this._bppart)
-			throw new RuntimeException("Blueprint Part not defined on IndustryJobActionsDataSource.");
+		if (null == this._bppart) throw new RuntimeException("Blueprint Part not defined on IndustryJobActionsDataSource.");
 		// From the blueprint get the process to obtain the list of resources.
 		// If there are children that means we have already created the tasks. Then skip the generation.
 		if (this._bppart.getChildren().size() < 1) {
@@ -198,14 +198,14 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 		for (final AbstractAndroidPart group : this._root)
 			if (group instanceof GroupPart)
 				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
-					group.addChild(action);
+				group.addChild((IEditPart) action);
 				}
 	}
 
 	@Override
-	protected void classifyResources(final Vector<IGEFNode> nodes) {
+	protected void classifyResources(final Vector<AbstractPropertyChanger> vector) {
 		// Process the actions and set each one on the matching group.
-		for (final IGEFNode node : nodes)
+		for (final AbstractPropertyChanger node : vector)
 			if (node instanceof IItemPart) {
 				final IItemPart action = (IItemPart) node;
 				add2Group(action, action.getIndustryGroup());
@@ -243,8 +243,8 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 	//	}
 	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		result.add((AbstractAndroidPart) this._bppart
-				.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
+		result.add(
+				(AbstractAndroidPart) this._bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
 		return result;
 	}
 

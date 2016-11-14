@@ -6,6 +6,7 @@
 
 package org.dimensinfin.evedroid.model;
 
+import org.dimensinfin.core.model.AbstractComplexNode;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -16,7 +17,7 @@ import org.dimensinfin.evedroid.market.MarketDataEntry;
 import org.dimensinfin.evedroid.market.MarketDataSet;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveItem extends AbstractGEFNode {
+public class EveItem extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long					serialVersionUID	= -2548296399305221197L;
 

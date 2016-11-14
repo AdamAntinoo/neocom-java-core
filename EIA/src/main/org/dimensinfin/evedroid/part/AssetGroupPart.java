@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.part;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.core.INamedPart;
 import org.dimensinfin.evedroid.model.Asset;
@@ -21,7 +21,7 @@ import android.view.View.OnClickListener;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -7696249781992547826L;
+	private static final long serialVersionUID = -7696249781992547826L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -37,7 +37,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 
 	public String get_itemCount() {
 		int qty = 0;
-		for (IGEFNode node : getChildren()) {
+		for (AbstractPropertyChanger node : getChildren()) {
 			if (node instanceof AssetPart) {
 				qty += ((AssetPart) node).getCastedModel().getQuantity();
 			}
@@ -51,7 +51,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 
 	public String get_sellValue() {
 		double value = 0.0;
-		for (IGEFNode node : getChildren()) {
+		for (AbstractPropertyChanger node : getChildren()) {
 			if (node instanceof AssetPart) {
 				Asset ass = ((AssetPart) node).getCastedModel();
 				long count = ass.getQuantity();
@@ -64,7 +64,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 
 	public String get_volume() {
 		double volume = 0.0;
-		for (IGEFNode node : getChildren()) {
+		for (AbstractPropertyChanger node : getChildren()) {
 			if (node instanceof AssetPart) {
 				Asset ass = ((AssetPart) node).getCastedModel();
 				long count = ass.getQuantity();
@@ -94,6 +94,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AsteroidPart [");
 		buffer.append(this.getCastedModel());
@@ -101,6 +102,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		return new AssetGroupRender(this, _activity);

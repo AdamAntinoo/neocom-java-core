@@ -14,7 +14,7 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -39,7 +39,7 @@ public class GroupPart extends EveAbstractPart {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public GroupPart(final Separator node) {
 		super(node);
-		expanded = true;
+		getCastedModel().setExpanded(true);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -66,7 +66,7 @@ public class GroupPart extends EveAbstractPart {
 
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
-		Vector<IGEFNode> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = getChildren();
 		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		return super.getPartChildren();
 	}
@@ -75,13 +75,13 @@ public class GroupPart extends EveAbstractPart {
 		return getCastedModel().getTitle();
 	}
 
-	@Override
-	public boolean isExpanded() {
-		if (getChildren().size() > 0)
-			return true;
-		else
-			return true;
-	}
+	//	@Override
+	//	public boolean isExpanded() {
+	//		if (getChildren().size() > 0)
+	//			return true;
+	//		else
+	//			return true;
+	//	}
 
 	public void setIconReference(final int ref) {
 		Log.i("REMOVE", "-- GroupPart.setIconReference - " + this.toString() + " change value to: " + ref);
@@ -93,6 +93,7 @@ public class GroupPart extends EveAbstractPart {
 		return this;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("GroupPart [");
 		buffer.append(getTitle()).append(" ");
@@ -101,6 +102,7 @@ public class GroupPart extends EveAbstractPart {
 		return buffer.toString();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE)
 			return new MarketSideRender(this, _activity);

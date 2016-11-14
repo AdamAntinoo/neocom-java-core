@@ -89,6 +89,12 @@ public class AppConnector {
 		if (null == androidApp) throw new RuntimeException("Required connector is not properly defined.");
 		connection = androidApp;
 	}
+	public static IConnector getSingleton() {
+		if (null != connection)
+			return connection.getSingleton();
+		else
+			throw new RuntimeException("Application connector not defined. Functionality 'getSingleton' disabled.");
+	}
 
 	public static void startChrono() {
 		chrono = new Instant();
@@ -101,6 +107,7 @@ public class AppConnector {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppConnector() {
 	}
+
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	// - F I E L D - S E C T I O N ............................................................................

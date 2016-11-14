@@ -1,28 +1,29 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
-// - IMPORT SECTION .........................................................................................
-import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-
-import org.dimensinfin.android.mvc.constants.SystemWideConstants;
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.core.AbstractCorePart;
+import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.core.IPartFactory;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
+import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
+import org.dimensinfin.evedroid.datasource.DataSourceLocator;
+import org.dimensinfin.evedroid.datasource.PilotListDataSource;
+import org.dimensinfin.evedroid.datasource.SpecialDataSource;
+import org.dimensinfin.evedroid.factory.PartFactory;
+import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.part.APIKeyPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
-import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -31,10 +32,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PilotListFragment extends AbstractPagerFragment {
+public class PilotListFragment extends AbstractNewPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
-
-	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -44,7 +43,8 @@ public class PilotListFragment extends AbstractPagerFragment {
 		Log.i("NEOCOM", ">> PilotListFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(AppWideConstants.fragment.FRAGMENT_PILOTLIST);
+			setIdentifier(_variant.hashCode());
+			registerDataSource();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> PilotListFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -56,7 +56,7 @@ public class PilotListFragment extends AbstractPagerFragment {
 
 	@Override
 	public String getTitle() {
-		return "Select Pilot";
+		return "Select Capsuleer";
 	}
 
 	@Override
@@ -68,8 +68,9 @@ public class PilotListFragment extends AbstractPagerFragment {
 	public void onStart() {
 		Log.i("NEOCOM", ">> PilotListFragment.onStart");
 		try {
-			if (!_alreadyInitialized) {
-				setDataSource(new PilotListDataSource(EVEDroidApp.getAppStore()));
+			// Check the datasource status and create a new one if still does not exists.
+			if (checkDSState()) {
+				registerDataSource();
 			}
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> PilotListFragment.onCreateView - " + rtex.getMessage());
@@ -79,74 +80,53 @@ public class PilotListFragment extends AbstractPagerFragment {
 		super.onStart();
 		Log.i("NEOCOM", "<< PilotListFragment.onStart");
 	}
-}
 
-/**
- * Generates the list of keys and then the character authenticated for each key. By default the keys are
- * expanded but the user may choose to collapse them and that information will be stored inside the model. The
- * current version does not store the expand/collapse state at any other place.
- * 
- * @author Adam Antinoo
- */
-//- CLASS IMPLEMENTATION ...................................................................................
-final class PilotListDataSource extends AbstractDataSource {
-	//- S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 4576522670385611140L;
-
-	//- F I E L D - S E C T I O N ............................................................................
-	private AppModelStore			_store						= null;
-
-	//- C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotListDataSource(final AppModelStore store) {
-		super();
-		if (null != store) {
-			this._store = store;
-		}
-	}
-
-	//- M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public void createContentHierarchy() {
-		logger.info(">> PilotListActivity.PilotListDataSource.createContentHierarchy");
-		if (null != this._store) {
-			// Clear the current list of elements.
-			this._root.clear();
-			final HashMap<Integer, APIKey> keys = this._store.getApiKeys();
-			for (final APIKey key : keys.values()) {
-				final APIKeyPart apipart = new APIKeyPart(key);
-				// Add as children the characters for each API.
-				for (final EveChar pilot : key.getCharacters().values()) {
-					//		EveChar pilot = EVEDroidApp.getSingletonApp().getAppModel().searchCharacter(cid);
-					apipart.addChild(new PilotInfoPart(pilot));
-				}
-				this._root.add(apipart);
-			}
-		}
-		logger.info("<< PilotListActivity.PilotListDataSource.createContentHierarchy");
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_APIID_DESC));
-		for (final AbstractAndroidPart node : this._root) {
-			result.add(node);
-			// Check if the node is expanded but test the model. Then add its children.
-			if (node.isExpanded()) {
-				final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-				result.addAll(grand);
-			}
-		}
-		this._adapterData = result;
-		return result;
-	}
-
-	@Override
-	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-					event.getNewValue());
-		}
+	private void registerDataSource() {
+		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
+		// final long capsuleerid =
+		// getExtras().getLong(AppWideConstants.EExtras.CAPSULEERID.name());
+		// final long fittingid =
+		// getExtras().getLong(AppWideConstants.EExtras.FITTINGID.name());
+		// int capsuleerid = 100;
+		// String fittingid = "Purifier";
+		// Search for the datasource at the datasource manager.
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name());
+		// Register the datasource. If this same datasource is already at the
+		// manager we get it instead creating a new one.
+		SpecialDataSource ds = new PilotListDataSource(locator, new PilotListPartFactory(_variant));
+		ds.setVariant(_variant);
+		// ds.setExtras(getExtras();
+		// ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(),
+		// capsuleerid);
+		// ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(),
+		// fittingid);
+		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
+		setDataSource(ds);
 	}
 }
+
+// - CLASS IMPLEMENTATION ...................................................................................
+final class PilotListPartFactory extends PartFactory implements IPartFactory {
+	public PilotListPartFactory(final EFragment _variant) {
+		super(_variant);
+	}
+
+	/**
+	 * The method should create the matching part for the model received but there is no other place where we
+	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
+	 */
+	@Override
+	public IEditPart createPart(final IGEFNode node) {
+		if (node instanceof APIKey) {
+			AbstractCorePart part = new APIKeyPart((AbstractComplexNode) node).setFactory(this);
+			return part;
+		}
+		if (node instanceof EveChar) {
+			AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
+			return part;
+		}
+		return null;
+	}
+}
+
 // - UNUSED CODE ............................................................................................
