@@ -22,11 +22,10 @@ import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
- * This class is the specialilzation for T2 manufacturing. Even most of the code
- * is on the parent abstract class the special codification required to manage
- * T2 jobs is included inside this class. The key method is
- * <code>generateActions4Blueprint</code> that will create the model data to
- * represent at the UI the requirements for this manufacture job.
+ * This class is the specialilzation for T2 manufacturing. Even most of the code is on the parent abstract
+ * class the special codification required to manage T2 jobs is included inside this class. The key method is
+ * <code>generateActions4Blueprint</code> that will create the model data to represent at the UI the
+ * requirements for this manufacture job.
  * 
  * @author Adam Antinoo
  */
@@ -45,17 +44,14 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	/**
-	 * This method starts with a blueprint and generates the corresponding list
-	 * of actions to be executed to have all the resources to launch and
-	 * complete the job. This depends on the global generation settings because
-	 * the resources get exhausted by each of the jobs and that should be
-	 * reflected on the new action for next jobs.<br>
-	 * It uses a new <code>AssetsManager</code> because the resource processing
-	 * changes some of the resources used during the process. With a new manager
-	 * we avoid clearing the currently cached information on the Pilot assets.
-	 * <br>
-	 * It also copies the LOM because the references Resources have to be
-	 * modified to reflect the run counts.
+	 * This method starts with a blueprint and generates the corresponding list of actions to be executed to
+	 * have all the resources to launch and complete the job. This depends on the global generation settings
+	 * because the resources get exhausted by each of the jobs and that should be reflected on the new action
+	 * for next jobs.<br>
+	 * It uses a new <code>AssetsManager</code> because the resource processing changes some of the resources
+	 * used during the process. With a new manager we avoid clearing the currently cached information on the
+	 * Pilot assets. <br>
+	 * It also copies the LOM because the references Resources have to be modified to reflect the run counts.
 	 * 
 	 * @return
 	 */
@@ -76,8 +72,7 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 		for (Resource r : getLOM()) {
 			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
 		}
-		// Update the resource count depending on the sizing requirements for
-		// the job.
+		// Update the resource count depending on the sizing requirements for the job.
 		for (Resource resource : requirements) {
 			// Skills are treated differently.
 			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
@@ -91,8 +86,7 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 				resource.setStackSize(threads);
 			}
 		}
-		// Resource list completed. Dump report to the log and start action
-		// processing.
+		// Resource list completed. Dump report to the log and start action processing.
 		Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.List of requirements" + requirements);
 		pointer = -1;
 		try {
@@ -126,9 +120,8 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 	}
 
 	/**
-	 * Gets from the eve database the manufacture duration for this module and
-	 * applies the hardcoded skills that are required to perform perfect
-	 * manufacture. On next releases maybe the skills are read and used to
+	 * Gets from the eve database the manufacture duration for this module and applies the hardcoded skills that
+	 * are required to perform perfect manufacture. On next releases maybe the skills are read and used to
 	 * adjust this calculation.
 	 * 
 	 * @return the time in seconds to manufacture a copy if this module
@@ -213,22 +206,17 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 	}
 
 	/**
-	 * Gets the cost of each of the components and aggregates the result to
-	 * obtain the real cost.<br>
-	 * The calculations have to account for the extra cost of the invention of
-	 * the blueprint. being this a T2 blueprint job we have to spend some
-	 * resources (mainly expensive datacores) in the invention of the blueprint.
-	 * Those costs belong to the Invention Process and should be calculated
-	 * there.<br>
+	 * Gets the cost of each of the components and aggregates the result to obtain the real cost.<br>
+	 * The calculations have to account for the extra cost of the invention of the blueprint. being this a T2
+	 * blueprint job we have to spend some resources (mainly expensive datacores) in the invention of the
+	 * blueprint. Those costs belong to the Invention Process and should be calculated there.<br>
 	 * 
-	 * The process skips the cost of the Skill books and other elements that are
-	 * considered core manufactures costs, like the more volatile job launch
-	 * costs that are on the handling costs.<br>
+	 * The process skips the cost of the Skill books and other elements that are considered core manufactures
+	 * costs, like the more volatile job launch costs that are on the handling costs.<br>
 	 * 
-	 * The invention costs are obtained from the T1 module that is required to
-	 * obtain a T2 similar module. When scanning the resources if we found a T1
-	 * module then we can process the invention. Apart from Modules, there can
-	 * be ships and charges that also are obtained in the same way.
+	 * The invention costs are obtained from the T1 module that is required to obtain a T2 similar module. When
+	 * scanning the resources if we found a T1 module then we can process the invention. Apart from Modules,
+	 * there can be ships and charges that also are obtained in the same way.
 	 * 
 	 * @return the cost of the manufacture of a single output resource.
 	 */
@@ -265,8 +253,7 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 	 * manufactureTime in seconds * 10 = time to build a set<br>
 	 * 24 hours / time = set per day<br>
 	 * benefit * sets = index<br>
-	 * Chnage. The time to manufacture an item is no more an issue so I will
-	 * remove it from the calculations.
+	 * Chnage. The time to manufacture an item is no more an issue so I will remove it from the calculations.
 	 */
 	private void calculateIndex() {
 		// double manufactureTime = getCycleDuration() * 10.0;
@@ -287,9 +274,8 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 	}
 
 	/**
-	 * Searches on the database for blueprints that generate one or more of the
-	 * resource required to manufacture. The id found is the id of the
-	 * blueprints whose Invention process has to be accounted.
+	 * Searches on the database for blueprints that generate one or more of the resource required to
+	 * manufacture. The id found is the id of the blueprints whose Invention process has to be accounted.
 	 * 
 	 * @param resourceIDs
 	 */
