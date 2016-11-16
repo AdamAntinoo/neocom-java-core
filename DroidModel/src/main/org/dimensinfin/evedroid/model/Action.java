@@ -67,6 +67,8 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 	public Action(final Resource res) {
 		resource = res;
 		requestQty = resource.getQuantity();
+		// Default expand state on initialization is collapsed.
+		setExpanded(false);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

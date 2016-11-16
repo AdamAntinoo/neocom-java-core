@@ -146,15 +146,18 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		//		result.add(this);
-		Vector<AbstractPropertyChanger> ch = getChildren();
-		for (final AbstractPropertyChanger node : ch) {
-			// Convert the node to a part.
-			final AbstractAndroidPart part = (AbstractAndroidPart) node;
-			result.add(part);
-			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				final ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-				result.addAll(grand);
+		// Add the children only if the model is expanded.
+		if (isExpanded()) {
+			Vector<AbstractPropertyChanger> ch = getChildren();
+			for (final AbstractPropertyChanger node : ch) {
+				// Convert the node to a part.
+				final AbstractAndroidPart part = (AbstractAndroidPart) node;
+				result.add(part);
+				// Check if the node is expanded. Then add its children.
+				if (part.isExpanded()) {
+					final ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
+					result.addAll(grand);
+				}
 			}
 		}
 		return result;
@@ -179,6 +182,8 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 
 	public void onClick(final View view) {
 		if (!clickOverride) {
+			// Clean the view to force an update.
+			invalidate();
 			toggleExpanded();
 			fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 			clickOverride = false;
