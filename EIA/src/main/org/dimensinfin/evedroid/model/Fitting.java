@@ -16,6 +16,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.INodeModel;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
 import org.dimensinfin.evedroid.industry.Resource;
@@ -33,11 +34,21 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	private final Vector<Resource>	modules	= new Vector<Resource>();
 	private final Vector<Resource>	cargo		= new Vector<Resource>();
 	private final Vector<Resource>	rigs		= new Vector<Resource>();
-	private final int								runs		= 1;
+	//	private final int								runs		= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/**
+	 * Initializes a fitting. A Fitting is a complex objects that performs manufactuting actions and that should
+	 * have a reference to the current selected pilot because the resources required for manufacturing are
+	 * associated with a pilot.
+	 * 
+	 * @param manager
+	 */
 	public Fitting(final AssetsManager manager) {
 		super(manager);
+		// Copy the manager pilot to the local pilot reference.
+		pilot = manager.getPilot();
+		runs = 1;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -133,12 +144,23 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	/**
 	 * This is the method that constructs the list of actions and resources required to complete the manufacture
 	 * request. The process is a recursive and iterative process using the user item preferences for each item
-	 * proecssing and dependency management.
+	 * processing and dependency management.
 	 * 
 	 * @return
 	 */
 	private ArrayList<Action> getManufacturingResources() {
-		Vector<Resource> requirements = new Vector<Resource>(8 * 4);
+		// Initialize models.
+		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
+		// Manufacturing location set to the predefined location and defaults to current pilot location.
+		manufactureLocation = getPilot().getLocation4Role(EPropertyTypes.LOCATIONROLE.name());
+		region = manufactureLocation.getRegion();
+		actions4Item = pilot.getActions();
+		// Clear structures to be sure we have the right data.
+		requirements.clear();
+		actionsRegistered.clear();
+		// Get the resources needed for the completion of this job.
+		runs = 1;
+		threads = 1;
 
 		// Copy the fits contents to the list of requirements to start the processing.
 		// TODO This point should be optimized to reuse resources from other iterations so the models will be cached.
@@ -198,6 +220,70 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
 		return getActions();
 	}
+
+	//	private void test() {
+	//		Log.i("EVEI", ">> T2ManufactureProcess.generateActions4Blueprint.");
+	//		// Initialize global structures.
+	//		manufactureLocation = blueprint.getLocation();
+	//		region = manufactureLocation.getRegion();
+	//		actions4Item = pilot.getActions();
+	//		// Clear structures to be sure we have the right data.
+	//		requirements.clear();
+	//		actionsRegistered.clear();
+	//		// Get the resources needed for the completion of this job.
+	//		runs = blueprint.getRuns();
+	//		threads = blueprint.getQuantity();
+	//		// Copy the LOM received to not modify the original data during the job
+	//		// processing.
+	//		for (Resource r : getLOM()) {
+	//			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+	//		}
+	//		// Update the resource count depending on the sizing requirements for the job.
+	//		for (Resource resource : requirements) {
+	//			// Skills are treated differently.
+	//			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+	//				resource.setStackSize(1);
+	//			} else {
+	//				resource.setAdaptiveStackSize(runs * threads);
+	//			}
+	//			// If the resource being processed is the job blueprint reduce the
+	//			// number of runs and set the counter.
+	//			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+	//				resource.setStackSize(threads);
+	//			}
+	//		}
+	//		// Resource list completed. Dump report to the log and start action processing.
+	//		Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.List of requirements" + requirements);
+	//		pointer = -1;
+	//		try {
+	//			do {
+	//				pointer++;
+	//				Resource resource = requirements.get(pointer);
+	//				Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.Processing resource " + resource);
+	//				// Check resources that are Skills. Give them an special
+	//				// treatment.
+	//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+	//					currentAction = new Skill(resource);
+	//					registerAction(currentAction);
+	//					continue;
+	//				}
+	//				currentAction = new Action(resource);
+	//				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
+	//				newTask.setQty(resource.getQuantity());
+	//				// We register the action before to get erased on restarts.
+	//				// This has no impact on data since we use pointers to the
+	//				// global structures.
+	//				registerAction(currentAction);
+	//				processRequest(newTask);
+	//			} while (pointer < (requirements.size() - 1));
+	//		} catch (RuntimeException rtex) {
+	//			Log.e("RTEXCEPTION.CODE",
+	//					"RT> T2ManufactureProcess.generateActions4Blueprint - Unexpected code behaviour. See stacktrace.");
+	//			rtex.printStackTrace();
+	//		}
+	//		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
+	//		return getActions();
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................

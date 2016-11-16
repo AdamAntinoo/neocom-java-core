@@ -127,6 +127,10 @@ public class AssetsManager implements Serializable {
 		return locationsList;
 	}
 
+	public EveChar getPilot() {
+		return pilot;
+	}
+
 	/**
 	 * Returns the list of different Regions found on the list of locations.
 	 */
@@ -137,10 +141,6 @@ public class AssetsManager implements Serializable {
 		return regionNames;
 	}
 
-	public ArrayList<Asset> getShips() {
-		return searchAsset4Category("Ship");
-	}
-
 	//	public HashSet<String> queryT2ModuleNames() {
 	//		HashSet<String> names = new HashSet<String>();
 	//		ArrayList<Asset> modules = searchT2Modules();
@@ -149,6 +149,10 @@ public class AssetsManager implements Serializable {
 	//		}
 	//		return names;
 	//	}
+
+	public ArrayList<Asset> getShips() {
+		return searchAsset4Category("Ship");
+	}
 
 	/**
 	 * Checks if that category was requested before and it is on the cache. If found returns that list.
@@ -207,6 +211,30 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<Asset>) assetList;
 	}
 
+	//	/**
+	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
+	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
+	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
+	//	 * 
+	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
+	//	 */
+	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
+	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
+	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
+	//		EveFilter filter = new EveFilter(bps, techWhere);
+	//		return filter.getResults();
+	//	}
+
+	//	public ArrayList<Blueprint> queryT1Blueprints1() {
+	//		if (null == t1blueprints) getPilot().updateBlueprints();
+	//		return t1blueprints;
+	//	}
+	//
+	//	public ArrayList<Blueprint> queryT2Blueprints1() {
+	//		if (null == t2blueprints) getPilot().updateBlueprints();
+	//		return t2blueprints;
+	//	}
+
 	public ArrayList<Asset> searchAsset4Location(final EveLocation location) {
 		Log.i("AssetsManager", ">> AssetsManager.searchAsset4Location");
 		List<Asset> assetList = new ArrayList<Asset>();
@@ -237,30 +265,6 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<Asset>) assetList;
 	}
 
-	//	/**
-	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
-	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
-	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
-	//	 * 
-	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
-	//	 */
-	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
-	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
-	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
-	//		EveFilter filter = new EveFilter(bps, techWhere);
-	//		return filter.getResults();
-	//	}
-
-	//	public ArrayList<Blueprint> queryT1Blueprints1() {
-	//		if (null == t1blueprints) getPilot().updateBlueprints();
-	//		return t1blueprints;
-	//	}
-	//
-	//	public ArrayList<Blueprint> queryT2Blueprints1() {
-	//		if (null == t2blueprints) getPilot().updateBlueprints();
-	//		return t2blueprints;
-	//	}
-
 	public Blueprint searchBlueprintByID(final long assetid) {
 		for (Blueprint bp : getBlueprints()) {
 			String refs = bp.getStackIDRefences();
@@ -268,6 +272,13 @@ public class AssetsManager implements Serializable {
 		}
 		return null;
 	}
+
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
 
 	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
@@ -283,13 +294,6 @@ public class AssetsManager implements Serializable {
 			}
 		return blueprintList;
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
 
 	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
@@ -431,10 +435,6 @@ public class AssetsManager implements Serializable {
 		}
 		buffer.append("]");
 		return buffer.toString();
-	}
-
-	protected EveChar getPilot() {
-		return pilot;
 	}
 
 	private void accessDao() {
