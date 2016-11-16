@@ -8,11 +8,11 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
+import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.storage.AppModelStore;
@@ -42,7 +42,7 @@ public class FittingDataSource extends SpecialDataSource {
 	//	private final ArrayList<Asset>						ships							= null;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
-	public FittingDataSource(final DataSourceLocator locator, final PartFactory factory) {
+	public FittingDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		super(locator, factory);
 	}
 

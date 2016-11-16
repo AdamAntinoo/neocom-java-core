@@ -11,6 +11,7 @@ package org.dimensinfin.evedroid.fragment;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -19,7 +20,6 @@ import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.FittingDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
-import org.dimensinfin.evedroid.factory.IPartFactory;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.Action;
