@@ -42,25 +42,21 @@ import android.widget.AdapterView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ActionPart extends EveAbstractPart implements IItemPart, OnClickListener, IMenuActionTarget {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 6148259479329269362L;
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private long							blueprintID				= -1;
 	private boolean						clickOverride			= false;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ActionPart(final AbstractComplexNode node) {
 		super(node);
 		// Set the expanded state by default
 		getCastedModel().setExpanded(false);
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public void createHierarchy() {
 		clean();
 		for (final EveTask t : getCastedModel().getTasks()) {

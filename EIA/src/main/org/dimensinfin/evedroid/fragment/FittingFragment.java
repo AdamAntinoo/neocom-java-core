@@ -23,9 +23,11 @@ import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.ActionPart;
 import org.dimensinfin.evedroid.part.GroupPart;
+import org.dimensinfin.evedroid.part.TaskPart;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -144,6 +146,11 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 			ActionPart part = new ActionPart((AbstractComplexNode) node);
 			return part;
 		}
+		if (node instanceof EveTask) {
+			TaskPart part = new TaskPart((AbstractComplexNode) node);
+			return part;
+		}
+
 		return new GroupPart(new Separator("-NO data-"));
 	}
 }
