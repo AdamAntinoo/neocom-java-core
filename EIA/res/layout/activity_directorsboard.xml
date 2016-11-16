@@ -198,7 +198,7 @@
                 style="@style/NeoComLayout"
                 android:layout_width="fill_parent"
                 android:orientation="vertical"
-                android:visibility="gone" >
+                android:visibility="visible" >
 
                 <ImageView
                     android:id="@+id/fitDirectorIcon"
