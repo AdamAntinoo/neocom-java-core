@@ -15,7 +15,7 @@ import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -55,7 +55,7 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 	 * 
 	 * @return
 	 */
-	public ArrayList<Action> generateActions4Blueprint() {
+	public ArrayList<FittingAction> generateActions4Blueprint() {
 		Log.i("ManufactureProcess", ">> T2ManufactureProcess.generateActions4Blueprint.");
 		// To avoid changing the current cached assets, for this destructive
 		// action get a new Manager.
@@ -106,7 +106,7 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 				}
 				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 				}
-				currentAction = new Action(resource);
+				currentAction = new FittingAction(resource);
 				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.

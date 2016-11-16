@@ -228,12 +228,6 @@ public class Action extends AbstractComplexNode {
 	public Resource getResource() {
 		return resource;
 	}
-
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-		return results;
-	}
 }
 
 // - UNUSED CODE ............................................................................................

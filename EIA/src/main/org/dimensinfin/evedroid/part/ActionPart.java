@@ -26,7 +26,7 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
-import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.render.ActionRender;
@@ -112,13 +112,13 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 		return this.blueprintID;
 	}
 
-	public Action getCastedModel() {
+	public FittingAction getCastedModel() {
 		try {
-			return (Action) getModel();
+			return (FittingAction) getModel();
 		} catch (final RuntimeException rtex) {
 			rtex.printStackTrace();
 		}
-		return (Action) getModel();
+		return (FittingAction) getModel();
 	}
 
 	public String getCategory() {

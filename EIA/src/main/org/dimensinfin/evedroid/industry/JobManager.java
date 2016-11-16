@@ -17,7 +17,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -167,7 +167,7 @@ public class JobManager implements Serializable {
 				final IJobProcess process = JobManager.generateJobProcess(pilot, bp,
 						EJobClasses.decodeActivity(job.getActivityID()));
 				// Process the action so all used resources will be removed from the stores.
-				final ArrayList<Action> actions = process.generateActions4Blueprint();
+				final ArrayList<FittingAction> actions = process.generateActions4Blueprint();
 			}
 		}
 		Log.i("EVEI", "<< JobManager.initializeAssets");

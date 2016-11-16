@@ -90,7 +90,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		if (AppWideConstants.EFragment.valueOf(variant) == AppWideConstants.EFragment.FITTING_MANUFACTURE) {
 			// Copy the list of actions to the result.
-			for (Action node : getManufacturingResources()) {
+			for (FittingAction node : getManufacturingResources()) {
 				result.add(node);
 			}
 		}
@@ -133,9 +133,9 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	}
 
 	@Override
-	protected ArrayList<Action> getActions() {
-		final ArrayList<Action> result = new ArrayList<Action>();
-		for (final Action action : actionsRegistered.values()) {
+	protected ArrayList<FittingAction> getActions() {
+		final ArrayList<FittingAction> result = new ArrayList<FittingAction>();
+		for (final FittingAction action : actionsRegistered.values()) {
 			result.add(action);
 		}
 		return result;
@@ -148,7 +148,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	 * 
 	 * @return
 	 */
-	private ArrayList<Action> getManufacturingResources() {
+	private ArrayList<FittingAction> getManufacturingResources() {
 		// Initialize models.
 		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
 		// Manufacturing location set to the predefined location and defaults to current pilot location.
@@ -203,7 +203,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 				//					registerAction(currentAction);
 				//					continue;
 				//				}
-				currentAction = new Action(resource);
+				currentAction = new FittingAction(resource);
 				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.

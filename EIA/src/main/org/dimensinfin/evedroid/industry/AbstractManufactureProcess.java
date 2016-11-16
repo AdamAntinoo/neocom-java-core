@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveChar;
@@ -67,8 +67,8 @@ public class AbstractManufactureProcess {
 	protected EveLocation											manufactureLocation			= null;
 	protected String													region									= null;
 	protected ArrayList<Resource>							requirements						= new ArrayList<Resource>();
-	protected final HashMap<Integer, Action>	actionsRegistered				= new HashMap<Integer, Action>();
-	protected Action													currentAction						= null;
+	protected final HashMap<Integer, FittingAction>	actionsRegistered				= new HashMap<Integer, FittingAction>();
+	protected FittingAction													currentAction						= null;
 	protected int															pointer									= -1;
 	protected int															runs										= 10;
 	protected int															threads									= 1;
@@ -159,9 +159,9 @@ public class AbstractManufactureProcess {
 		return buffer.toString();
 	}
 
-	protected ArrayList<Action> getActions() {
-		final ArrayList<Action> result = new ArrayList<Action>();
-		for (final Action action : this.actionsRegistered.values()) {
+	protected ArrayList<FittingAction> getActions() {
+		final ArrayList<FittingAction> result = new ArrayList<FittingAction>();
+		for (final FittingAction action : this.actionsRegistered.values()) {
 			result.add(action);
 		}
 		return result;
@@ -586,9 +586,9 @@ public class AbstractManufactureProcess {
 		return moveAllowed;
 	}
 
-	protected void registerAction(final Action action) {
+	protected void registerAction(final FittingAction action) {
 		// Test if already an action of the same item.
-		final Action hit = this.actionsRegistered.get(action.getTypeID());
+		final FittingAction hit = this.actionsRegistered.get(action.getTypeID());
 		if (null != hit) {
 			this.currentAction = action;
 		} else {

@@ -25,7 +25,7 @@ import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.render.Blueprint4IndustryHeaderRender;
 import org.dimensinfin.evedroid.render.Blueprint4IndustryRender;
@@ -80,7 +80,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
-	public ArrayList<Action> generateActions() {
+	public ArrayList<FittingAction> generateActions() {
 		return this.process.generateActions4Blueprint();
 	}
 
