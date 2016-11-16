@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.INodeModel;
+import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
@@ -25,12 +26,14 @@ import android.util.Log;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger						logger		= Logger.getLogger("org.dimensinfin.evedroid.model");
+	private static Logger						logger	= Logger.getLogger("org.dimensinfin.evedroid.model");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Asset							hull			= null;
-	private final Vector<Resource>	contents	= new Vector<Resource>();
-	private final int								runs			= 1;
+	private Resource								hull		= null;
+	private final Vector<Resource>	modules	= new Vector<Resource>();
+	private final Vector<Resource>	cargo		= new Vector<Resource>();
+	private final Vector<Resource>	rigs		= new Vector<Resource>();
+	private final int								runs		= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Fitting(final AssetsManager manager) {
@@ -38,21 +41,119 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * Adds items to the cargo hold of the ship fitting. Tis is used for charges, ammo and other fit items like
+	 * scripts.
+	 * 
+	 * @param itemId
+	 * @param times
+	 */
+	public void addCargo(final int itemId, int times) {
+		if (times < 1) {
+			times = 1;
+		}
+		cargo.add(new Resource(itemId, times));
+	}
+
+	/**
+	 * Receives the hull item id that should match to a ship item type.
+	 * 
+	 * @param hullTypeId
+	 */
+	public void addHull(final int hullTypeId) {
+		// Translate the if to an eve type.
+		hull = new Resource(hullTypeId);
+	}
+
+	/**
+	 * Main model creation method. This should return all the elements that are below the Fitting on the data
+	 * model hierarchy. The contents of that list are the list of Resources (if the variant is the
+	 * FITTING_MODULES) of the list of manufacturing actions if the variant is the FITTING_MANUFACTURE. <br>
+	 * The list of Actions is created following the Industry Manufacture processor that will take on account the
+	 * preferred user action for each item(BUY, MANUFACTURE, INVENT,etc).
+	 * 
+	 * @param variant
+	 * @return
+	 */
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		for (Action node : getManufacturingResources()) {
-			result.add(node);
+		if (AppWideConstants.EFragment.valueOf(variant) == AppWideConstants.EFragment.FITTING_MANUFACTURE) {
+			// Copy the list of actions to the result.
+			for (Action node : getManufacturingResources()) {
+				result.add(node);
+			}
 		}
 		return result;
 	}
 
-	public ArrayList<Action> getManufacturingResources() {
+	public void fitModule(final int moduleId) {
+		this.fitModule(moduleId, 1);
+	}
+
+	/**
+	 * Adds the selected module to the fit the number of times specified. By default it add the module once.
+	 * 
+	 * @param moduleId
+	 * @param times
+	 */
+	public void fitModule(final int moduleId, int times) {
+		if (times < 1) {
+			times = 1;
+		}
+		modules.add(new Resource(moduleId, times));
+	}
+
+	/**
+	 * Just the same to fit a module. Add a resource of quantity 1 to the list of rigs.
+	 * 
+	 * @param rigTypeId
+	 */
+	public void fitRig(final int rigTypeId) {
+		rigs.add(new Resource(rigTypeId));
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("Fitting [");
+		buffer.append("Hull: ").append(hull);
+		buffer.append("Modules: ").append(modules);
+		buffer.append(super.toString()).append("]");
+		return buffer.toString();
+	}
+
+	@Override
+	protected ArrayList<Action> getActions() {
+		final ArrayList<Action> result = new ArrayList<Action>();
+		for (final Action action : actionsRegistered.values()) {
+			result.add(action);
+		}
+		return result;
+	}
+
+	/**
+	 * This is the method that constructs the list of actions and resources required to complete the manufacture
+	 * request. The process is a recursive and iterative process using the user item preferences for each item
+	 * proecssing and dependency management.
+	 * 
+	 * @return
+	 */
+	private ArrayList<Action> getManufacturingResources() {
 		Vector<Resource> requirements = new Vector<Resource>(8 * 4);
+
+		// Copy the fits contents to the list of requirements to start the processing.
+		// TODO This point should be optimized to reuse resources from other iterations so the models will be cached.
+		requirements.clear();
 		requirements.add(new Resource(hull.getTypeID(), runs));
 		// Copy the resources and do not use the original list because this is going to be changed on the process
-		for (Resource r : contents) {
+		for (Resource r : modules) {
 			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
 		}
+		for (Resource r : cargo) {
+			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+		}
+		//		for (Resource r : this.rigs) {
+		//			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+		//		}
 		// Update the resource count depending on the sizing requirements for the job.
 		for (Resource resource : requirements) {
 			// Skills are treated differently.
@@ -96,15 +197,6 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		}
 		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
 		return getActions();
-	}
-
-	@Override
-	protected ArrayList<Action> getActions() {
-		final ArrayList<Action> result = new ArrayList<Action>();
-		for (final Action action : this.actionsRegistered.values()) {
-			result.add(action);
-		}
-		return result;
 	}
 }
 

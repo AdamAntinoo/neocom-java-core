@@ -53,6 +53,16 @@ public class FittingFragment extends AbstractNewPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public String getSubtitle() {
+		return "";
+	}
+
+	@Override
+	public String getTitle() {
+		return "Fitting - Under Test";
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This code is identical on all Fragment implementations so can be moved to the super class.
@@ -71,16 +81,6 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		}
 		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
 		return theView;
-	}
-
-	@Override
-	public String getTitle() {
-		return "Fitting - Under Test";
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "";
 	}
 
 	/**
@@ -110,14 +110,14 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	 */
 	private void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
-		long capsuleerid = 100;
+		//		long capsuleerid = 100;
 		String fittingid = "Purifier";
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name());
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(_variant));
 		ds.setVariant(_variant);
 		// ds.setExtras(getExtras();
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), capsuleerid);
+		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
 		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingid);
 		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
 		setDataSource(ds);

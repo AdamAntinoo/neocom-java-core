@@ -1,0 +1,15 @@
+AbstractManufactureProcess [null runs:10 threads:1 actions:{11184=Action [Resource [[Ship] Crusader x1 stack: 1 total: 1 #11184 ] ]}  ]
+
+_dataRootNode
+AbstractAndroidNode [expand/download/renderEmpty: false/false/true]
+REQUIREMENTS
+[Resource [[Ship] Crusader x1 stack: 1 total: 1 #11184 ],
+  Resource [[Module] Small Focused Modulated Energy Beam I x4 stack: 1 total: 4 #6719 ],
+  Resource [[Module] 5MN Y-T8 Compact Microwarpdrive x1 stack: 1 total: 1 #5973 ],
+  Resource [[Module] Initiated Compact Warp Disruptor x1 stack: 1 total: 1 #5405 ],
+  Resource [[Module] IFFA Compact Damage Control x1 stack: 1 total: 1 #5839 ],
+  Resource [[Module] Extruded Compact Heat Sink x1 stack: 1 total: 1 #5849 ],
+  Resource [[Module] Micro Auxiliary Power Core I x1 stack: 1 total: 1 #11563 ],
+  Resource [[Module] Small Ancillary Armor Repairer x1 stack: 1 total: 1 #33076 ],
+  Resource [[Charge] Xray S x4 stack: 1 total: 4 #244 ],
+  Resource [[Charge] Microwave S x4 stack: 1 total: 4 #240 ]]

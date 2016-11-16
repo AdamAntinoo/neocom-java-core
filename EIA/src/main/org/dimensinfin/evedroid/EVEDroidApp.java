@@ -58,8 +58,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -593,17 +591,17 @@ public class EVEDroidApp extends Application implements IConnector {
 	}
 
 	public ICache getCacheConnector() {
-		if (null == this.cache) {
-			this.cache = new AndroidCacheConnector(this);
+		if (null == cache) {
+			cache = new AndroidCacheConnector(this);
 		}
-		return this.cache;
+		return cache;
 	}
 
 	public IDatabaseConnector getDBConnector() {
-		if (null == this.dbconnector) {
-			this.dbconnector = new AndroidDatabaseConnector(this);
+		if (null == dbconnector) {
+			dbconnector = new AndroidDatabaseConnector(this);
 		}
-		return this.dbconnector;
+		return dbconnector;
 	}
 
 	public String getResourceString(final int reference) {
@@ -611,11 +609,15 @@ public class EVEDroidApp extends Application implements IConnector {
 		return EVEDroidApp.getSingletonApp().getResources().getString(reference);
 	}
 
+	public IConnector getSingleton() {
+		return singleton;
+	}
+
 	public IStorageConnector getStorageConnector() {
-		if (null == this.storage) {
-			this.storage = new AndroidStorageConnector(this);
+		if (null == storage) {
+			storage = new AndroidStorageConnector(this);
 		}
-		return this.storage;
+		return storage;
 	}
 
 	public File getUserDataStorage() {
@@ -627,9 +629,9 @@ public class EVEDroidApp extends Application implements IConnector {
 		// Close databases
 		getDBConnector().closeDatabases();
 		singleton = this;
-		this.storage = null;
-		this.dbconnector = null;
-		this.cache = null;
+		storage = null;
+		dbconnector = null;
+		cache = null;
 		appModelStore = null;
 		// this.appContext = null;
 		// firstTimeInitialization = true;
@@ -695,7 +697,7 @@ public class EVEDroidApp extends Application implements IConnector {
 	public void startTimer() {
 		if (null == timeTickReceiver) {
 			timeTickReceiver = new TimeTickReceiver(this);
-			registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+			//			registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
 		}
 	}
 
@@ -750,10 +752,6 @@ public class EVEDroidApp extends Application implements IConnector {
 			}
 			actionView.invalidate();
 		}
-	}
-
-	public IConnector getSingleton() {
-		return this.singleton;
 	}
 }
 // - UNUSED CODE
