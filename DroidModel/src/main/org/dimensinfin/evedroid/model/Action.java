@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
@@ -31,7 +32,7 @@ import org.dimensinfin.evedroid.industry.Resource;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractComplexNode {
+public class Action extends AbstractComplexNode implements INeoComNode{
 	private class TaskBundle {
 		protected int			priority	= 999;
 		protected EveTask	task			= null;
@@ -199,6 +200,11 @@ public class Action extends AbstractComplexNode {
 				targetAsset.setQuantity(targetAsset.getQuantity() - task.getQty());
 				break;
 		}
+	}
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll(getTasks());
+		return results;
 	}
 
 	/**

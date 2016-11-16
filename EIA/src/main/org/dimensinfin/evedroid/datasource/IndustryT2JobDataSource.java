@@ -24,7 +24,7 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Skill;
@@ -85,8 +85,8 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 		// From the blueprint get the process to obtain the list of resources.
 		// If there are children that means we have already created the tasks. Then skip the generation.
 		if (_bppart.getChildren().size() < 1) {
-			ArrayList<FittingAction> actions = _bppart.generateActions();
-			for (FittingAction action : actions) {
+			ArrayList<Action> actions = _bppart.generateActions();
+			for (Action action : actions) {
 				ActionPart apart = new ActionPart(action);
 				apart.setBlueprintID(_bppart.getCastedModel().getAssetID());
 				if (action instanceof Skill) {

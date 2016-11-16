@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.evedroid.core.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class RootNode extends AbstractComplexNode implements INeoComNode {

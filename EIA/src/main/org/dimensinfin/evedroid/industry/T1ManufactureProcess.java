@@ -13,7 +13,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Skill;
@@ -38,15 +38,14 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	/**
-	 * This method starts with a blueprint and generates the corresponding list
-	 * of actions to be executed to have all the resources to launch and
-	 * complete the job. This depends on the global generation settings because
-	 * the resources get exhausted by each of the jobs and that should be
-	 * reflected on the new action for next jobs.
+	 * This method starts with a blueprint and generates the corresponding list of actions to be executed to
+	 * have all the resources to launch and complete the job. This depends on the global generation settings
+	 * because the resources get exhausted by each of the jobs and that should be reflected on the new action
+	 * for next jobs.
 	 * 
 	 * @return
 	 */
-	public ArrayList<FittingAction> generateActions4Blueprint() {
+	public ArrayList<Action> generateActions4Blueprint() {
 		Log.i("EVEI", ">> T1ManufactureProcess.generateActions4Blueprint.");
 		// Initialize global structures.
 		manufactureLocation = blueprint.getLocation();
@@ -97,7 +96,7 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 					currentAction = new Skill(resource);
 					registerAction(currentAction);
 				} else {
-					currentAction = new FittingAction(resource);
+					currentAction = new Action(resource);
 					EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
 					newTask.setQty(resource.getQuantity());
 					// We register the action before to get erased on restarts.
@@ -117,8 +116,7 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 
 	public int getCycleDuration() {
 		double duration = ModelWideConstants.HOURS24;
-		int time = AppConnector.getDBConnector().searchJobExecutionTime(bpid,
-				ModelWideConstants.activities.MANUFACTURING);
+		int time = AppConnector.getDBConnector().searchJobExecutionTime(bpid, ModelWideConstants.activities.MANUFACTURING);
 		// Adjust to the time with new industry equations.
 		double basetime = Math.round((time * (100.0 - blueprint.getTimeEfficiency())) / 100.0);
 		return Double.valueOf(basetime).intValue();
@@ -141,23 +139,9 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 		return lom;
 	}
 
-	private ArrayList<Resource> adjustRequired(final ArrayList<Resource> listofmaterials) {
-		for (Resource resource : listofmaterials) {
-			// Calculate the real amount of the resource depending on the ME of
-			// the blueprint.
-			double materialModifier = (100.0 - blueprint.getMaterialEfficiency()) / 100;
-			int adjustedQty = Double
-					.valueOf(Math.max(1, Math.ceil(Math.round(1.0 * resource.getQuantity() * materialModifier))))
-					.intValue();
-			resource.setQuantity(adjustedQty);
-		}
-		return listofmaterials;
-	}
-
 	/**
-	 * The multiplier is the number of times the market buyers will pay related
-	 * to the cost of the item. The buyers top paying price will be divided by
-	 * the manufacture cost price.
+	 * The multiplier is the number of times the market buyers will pay related to the cost of the item. The
+	 * buyers top paying price will be divided by the manufacture cost price.
 	 */
 	public double getMultiplier() {
 		double topBuyerPrice = AppConnector.getDBConnector().searchItembyID(moduleid).getHighestBuyerPrice().getPrice();
@@ -205,6 +189,18 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 		return buffer.toString();
 	}
 
+	private ArrayList<Resource> adjustRequired(final ArrayList<Resource> listofmaterials) {
+		for (Resource resource : listofmaterials) {
+			// Calculate the real amount of the resource depending on the ME of
+			// the blueprint.
+			double materialModifier = (100.0 - blueprint.getMaterialEfficiency()) / 100;
+			int adjustedQty = Double
+					.valueOf(Math.max(1, Math.ceil(Math.round(1.0 * resource.getQuantity() * materialModifier)))).intValue();
+			resource.setQuantity(adjustedQty);
+		}
+		return listofmaterials;
+	}
+
 	/**
 	 * Calculates the manufacture material costs for a single run of this item.
 	 * 
@@ -235,9 +231,8 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 	}
 
 	/**
-	 * The Index has not too much sense for T1 modules because most of them have
-	 * a very adjusted marginal profit. We can default the T1 indet to be ten
-	 * times the multiplier or to disable it altogether.
+	 * The Index has not too much sense for T1 modules because most of them have a very adjusted marginal
+	 * profit. We can default the T1 indet to be ten times the multiplier or to disable it altogether.
 	 */
 	private void calculateIndex() {
 		// double profit = ((getSellPrice() - getCost()) * runs);

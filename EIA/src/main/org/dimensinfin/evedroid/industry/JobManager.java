@@ -17,7 +17,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -27,9 +27,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 
-import android.util.Log;
-
 import com.j256.ormlite.dao.Dao;
+
+import android.util.Log;
 
 /**
  * The Job Manager will be the application element responsible to get all the structures required to create an
@@ -63,7 +63,8 @@ public class JobManager implements Serializable {
 		industryAssetsManager = null;
 	}
 
-	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target, final EJobClasses action) {
+	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target,
+			final EJobClasses action) {
 		if (null == thePilot) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		switch (action) {
@@ -167,7 +168,7 @@ public class JobManager implements Serializable {
 				final IJobProcess process = JobManager.generateJobProcess(pilot, bp,
 						EJobClasses.decodeActivity(job.getActivityID()));
 				// Process the action so all used resources will be removed from the stores.
-				final ArrayList<FittingAction> actions = process.generateActions4Blueprint();
+				final ArrayList<Action> actions = process.generateActions4Blueprint();
 			}
 		}
 		Log.i("EVEI", "<< JobManager.initializeAssets");

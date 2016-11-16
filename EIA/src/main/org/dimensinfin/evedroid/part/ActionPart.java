@@ -26,9 +26,9 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveTask;
-import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.render.ActionRender;
 import org.dimensinfin.evedroid.render.SkillRender;
 
@@ -112,13 +112,13 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 		return blueprintID;
 	}
 
-	public FittingAction getCastedModel() {
+	public Action getCastedModel() {
 		try {
-			return (FittingAction) getModel();
+			return (Action) getModel();
 		} catch (final RuntimeException rtex) {
 			rtex.printStackTrace();
 		}
-		return (FittingAction) getModel();
+		return (Action) getModel();
 	}
 
 	public String getCategory() {
@@ -149,7 +149,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		result.add(this);
+		//		result.add(this);
 		Vector<AbstractPropertyChanger> ch = getChildren();
 		for (final AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
@@ -183,7 +183,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 
 	public void onClick(final View view) {
 		if (!clickOverride) {
-			getCastedModel().toggleExpanded();
+			toggleExpanded();
 			fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 			clickOverride = false;
 		}

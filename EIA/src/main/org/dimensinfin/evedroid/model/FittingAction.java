@@ -8,12 +8,12 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -29,9 +29,10 @@ public class FittingAction extends Action implements INeoComNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		results.addAll(getTasks());
 		return results;
 	}
 }

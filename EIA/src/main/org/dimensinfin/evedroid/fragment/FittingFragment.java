@@ -22,7 +22,7 @@ import org.dimensinfin.evedroid.datasource.FittingDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.ActionPart;
 import org.dimensinfin.evedroid.part.GroupPart;
@@ -140,7 +140,7 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 	 */
 	@Override
 	public IEditPart createPart(final IGEFNode node) {
-		if (node instanceof FittingAction) {
+		if (node instanceof Action) {
 			ActionPart part = new ActionPart((AbstractComplexNode) node);
 			return part;
 		}

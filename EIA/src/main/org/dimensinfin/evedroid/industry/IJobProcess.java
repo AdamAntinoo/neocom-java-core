@@ -10,13 +10,13 @@ package org.dimensinfin.evedroid.industry;
 import java.util.ArrayList;
 
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveChar;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IJobProcess {
-	public ArrayList<FittingAction> generateActions4Blueprint();
+	public ArrayList<Action> generateActions4Blueprint();
 
 	public int getCycleDuration();
 

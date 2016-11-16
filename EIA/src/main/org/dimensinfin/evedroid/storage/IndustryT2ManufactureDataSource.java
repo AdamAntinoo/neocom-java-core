@@ -24,7 +24,7 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
@@ -98,8 +98,8 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 			// From the blueprint get the process to obtain the list of resources.
 			IJobProcess process = JobManager.generateJobProcess(_store.getPilot(), _bppart.getCastedModel(),
 					EJobClasses.MANUFACTURE);
-			ArrayList<FittingAction> actions = process.generateActions4Blueprint();
-			for (FittingAction action : actions) {
+			ArrayList<Action> actions = process.generateActions4Blueprint();
+			for (Action action : actions) {
 				ActionPart apart = new ActionPart(action);
 				if (action instanceof Skill) {
 					apart.setRenderMode(3000);

@@ -6,7 +6,7 @@
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
-package org.dimensinfin.android.mvc.core;
+package org.dimensinfin.evedroid.core;
 
 import java.util.ArrayList;
 

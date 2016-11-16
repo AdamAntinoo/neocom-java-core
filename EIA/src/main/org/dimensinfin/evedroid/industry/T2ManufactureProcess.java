@@ -13,7 +13,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Skill;
@@ -55,7 +55,7 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 	 * 
 	 * @return
 	 */
-	public ArrayList<FittingAction> generateActions4Blueprint() {
+	public ArrayList<Action> generateActions4Blueprint() {
 		Log.i("EVEI", ">> T2ManufactureProcess.generateActions4Blueprint.");
 		// Initialize global structures.
 		manufactureLocation = blueprint.getLocation();
@@ -101,7 +101,7 @@ public class T2ManufactureProcess extends AbstractManufactureProcess implements 
 					registerAction(currentAction);
 					continue;
 				}
-				currentAction = new FittingAction(resource);
+				currentAction = new Action(resource);
 				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.

@@ -12,13 +12,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.dimensinfin.android.mvc.core.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.INeoComNode;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -49,8 +49,8 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	}
 
 	public MarketOrderAnalyticalGroup(final int newWeight, final String newTitle) {
-		this.weight = newWeight;
-		this.title = newTitle;
+		weight = newWeight;
+		title = newTitle;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -64,24 +64,17 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 		super.addChild(newOrder);
 
 		// Recalculate analytical data from the order api methods.
-		this.budget += newOrder.getPrice() * newOrder.getQuantity();
-		this.volume += newOrder.getItem().getVolume() * newOrder.getQuantity();
-		this.quantity += newOrder.getQuantity();
-		Vector<AbstractGEFNode> hit = this.locations.get(newOrder.getOrderLocationID());
+		budget += newOrder.getPrice() * newOrder.getQuantity();
+		volume += newOrder.getItem().getVolume() * newOrder.getQuantity();
+		quantity += newOrder.getQuantity();
+		Vector<AbstractGEFNode> hit = locations.get(newOrder.getOrderLocationID());
 		if (null == hit) {
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
-			this.locations.put(newOrder.getOrderLocationID(), hit);
+			locations.put(newOrder.getOrderLocationID(), hit);
 		} else {
 			hit.add(newOrder);
 		}
-	}
-
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-		return results;
 	}
 
 	/**
@@ -110,8 +103,15 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 		return results;
 	}
 
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		return results;
+	}
+
 	public double getBudget() {
-		return this.budget;
+		return budget;
 	}
 
 	public Vector<IGEFNode> getOrders() {
@@ -119,11 +119,11 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	}
 
 	public int getQuantity() {
-		return this.quantity;
+		return quantity;
 	}
 
 	public double getVolume() {
-		return this.volume;
+		return volume;
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	public boolean renderWhenEmpty() {
 		// Is not empty the render.
 		if (getChildren().size() > 0) return true;
-		return this.renderIfEmpty;
+		return renderIfEmpty;
 	}
 
 	@Override

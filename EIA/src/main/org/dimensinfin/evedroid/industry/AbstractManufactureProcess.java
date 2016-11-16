@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.FittingAction;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveChar;
@@ -30,13 +30,13 @@ import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.MarketOrder;
 import org.dimensinfin.evedroid.model.Property;
 
-import android.annotation.SuppressLint;
-import android.util.Log;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+
+import android.annotation.SuppressLint;
+import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AbstractManufactureProcess {
@@ -67,8 +67,8 @@ public class AbstractManufactureProcess {
 	protected EveLocation											manufactureLocation			= null;
 	protected String													region									= null;
 	protected ArrayList<Resource>							requirements						= new ArrayList<Resource>();
-	protected final HashMap<Integer, FittingAction>	actionsRegistered				= new HashMap<Integer, FittingAction>();
-	protected FittingAction													currentAction						= null;
+	protected final HashMap<Integer, Action>	actionsRegistered				= new HashMap<Integer, Action>();
+	protected Action													currentAction						= null;
 	protected int															pointer									= -1;
 	protected int															runs										= 10;
 	protected int															threads									= 1;
@@ -77,9 +77,9 @@ public class AbstractManufactureProcess {
 	public AbstractManufactureProcess(final AssetsManager manager) {
 		super();
 		if (null == manager) {
-			this.industryAssetsManager = new AssetsManager(null);
+			industryAssetsManager = new AssetsManager(null);
 		} else {
-			this.industryAssetsManager = manager;
+			industryAssetsManager = manager;
 		}
 	}
 
@@ -94,12 +94,12 @@ public class AbstractManufactureProcess {
 	 */
 	public int getManufacturableCount() {
 		// Check for blueprints not related to assets. They are PROTO blueprints.
-		if (this.blueprint.isPrototype()) return 0;
+		if (blueprint.isPrototype()) return 0;
 		// If already calculated then do not do it again.
-		if (!this.totalcalculated) {
-			final EveLocation location = this.blueprint.getLocation();
+		if (!totalcalculated) {
+			final EveLocation location = blueprint.getLocation();
 			int count = 999999;
-			final ArrayList<Resource> resourceList = AppConnector.getDBConnector().searchListOfMaterials(this.bpid);
+			final ArrayList<Resource> resourceList = AppConnector.getDBConnector().searchListOfMaterials(bpid);
 			for (final Resource resource : resourceList) {
 				// Remove blueprints from the list of assets.
 				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
@@ -116,52 +116,58 @@ public class AbstractManufactureProcess {
 					if (asset.getLocationID() == location.getID()) {
 						resourceCount += asset.getQuantity();
 					}
-				Log.i("EVEI", "-- T2ManufactureProcess.getManufacturableCount - resource count " + resource + " ["
-						+ resourceCount + "]");
+				Log.i("EVEI",
+						"-- T2ManufactureProcess.getManufacturableCount - resource count " + resource + " [" + resourceCount + "]");
 				final int range = resourceCount / resource.getQuantity();
 				if (range < count) {
 					count = range;
 				}
 			}
-			this.totalManufacturable = count;
-			this.totalcalculated = true;
+			totalManufacturable = count;
+			totalcalculated = true;
 		}
-		return this.totalManufacturable;
+		return totalManufacturable;
 	}
 
 	public int getProductID() {
-		return this.moduleid;
+		return moduleid;
+	}
+
+	public boolean moveAllowed() {
+		// Read the flag values from the preferences.
+		boolean moveAllowed = EVEDroidApp.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
+		return moveAllowed;
 	}
 
 	public void setAssetsManager(final AssetsManager iam) {
-		this.industryAssetsManager = iam;
-		this.totalcalculated = false;
-		if (null != this.industryAssetsManager) {
-			this.industryAssetsManager.setPilot(getPilot());
+		industryAssetsManager = iam;
+		totalcalculated = false;
+		if (null != industryAssetsManager) {
+			industryAssetsManager.setPilot(getPilot());
 		} else {
-			this.industryAssetsManager = new AssetsManager(getPilot());
+			industryAssetsManager = new AssetsManager(getPilot());
 		}
 	}
 
 	public void setPilot(final EveChar pilot) {
 		this.pilot = pilot;
-		this.industryAssetsManager.setPilot(pilot);
+		industryAssetsManager.setPilot(pilot);
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("AbstractManufactureProcess [");
-		buffer.append(this.blueprint).append(" ");
-		buffer.append("runs:").append(this.runs).append(" ");
-		buffer.append("threads:").append(this.threads).append(" ");
-		buffer.append("actions:").append(this.actionsRegistered).append(" ");
+		buffer.append(blueprint).append(" ");
+		buffer.append("runs:").append(runs).append(" ");
+		buffer.append("threads:").append(threads).append(" ");
+		buffer.append("actions:").append(actionsRegistered).append(" ");
 		buffer.append(" ]");
 		return buffer.toString();
 	}
 
-	protected ArrayList<FittingAction> getActions() {
-		final ArrayList<FittingAction> result = new ArrayList<FittingAction>();
-		for (final FittingAction action : this.actionsRegistered.values()) {
+	protected ArrayList<Action> getActions() {
+		final ArrayList<Action> result = new ArrayList<Action>();
+		for (final Action action : actionsRegistered.values()) {
 			result.add(action);
 		}
 		return result;
@@ -177,16 +183,16 @@ public class AbstractManufactureProcess {
 	 * @return
 	 */
 	protected ArrayList<Asset> getAsset4Type(final int typeID) {
-		ArrayList<Asset> hit = this.industryAssetsManager.assetCache.get(Long.valueOf(typeID));
+		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(Long.valueOf(typeID));
 		if (null == hit) {
-			hit = AppConnector.getDBConnector().searchAsset4Type(this.pilot.getCharacterID(), typeID);
-			this.industryAssetsManager.assetCache.put(Long.valueOf(typeID), hit);
+			hit = AppConnector.getDBConnector().searchAsset4Type(pilot.getCharacterID(), typeID);
+			industryAssetsManager.assetCache.put(Long.valueOf(typeID), hit);
 		}
 		return hit;
 	}
 
 	protected EveChar getPilot() {
-		return this.pilot;
+		return pilot;
 	}
 
 	protected void processAction(final EveTask newTask) {
@@ -194,70 +200,70 @@ public class AbstractManufactureProcess {
 		// Check the special case for T2 BPC to transform them to default INVENTION.
 		if (newTask.getTaskType() == ETaskType.REQUEST)
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-				final String tech = newTask.getItem().getTech();
-				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-					Log.i("EVEI", "-- AbstractManufactureProcess.processRequest T2 Blueprint - request INVENTION");
-					newTask.setTaskType(ETaskType.INVENTION);
-					processRequest(newTask);
-					return;
-				}
-				// If we request a T1 blueprint then we have to check if we can create copies. This is a default
-				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-					//					ArrayList<Asset> bpcs = getAsset4Type(newTask.getItem().getTypeID());
-					//					// Search each blueprint to locate the BPO and then create the copies.
-					//					for (Asset asset : bpcs) {
-					//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetID());
-					//						if (bp.isBpo()) {
-					newTask.setTaskType(ETaskType.COPY);
-					processRequest(newTask);
-					return;
-					//						}
-					//					}
-					//					processBuy(newTask);
-					//					return;
-				}
+			final String tech = newTask.getItem().getTech();
+			if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+			Log.i("EVEI", "-- AbstractManufactureProcess.processRequest T2 Blueprint - request INVENTION");
+			newTask.setTaskType(ETaskType.INVENTION);
+			processRequest(newTask);
+			return;
+			}
+			// If we request a T1 blueprint then we have to check if we can create copies. This is a default
+			if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+			//					ArrayList<Asset> bpcs = getAsset4Type(newTask.getItem().getTypeID());
+			//					// Search each blueprint to locate the BPO and then create the copies.
+			//					for (Asset asset : bpcs) {
+			//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetID());
+			//						if (bp.isBpo()) {
+			newTask.setTaskType(ETaskType.COPY);
+			processRequest(newTask);
+			return;
+			//						}
+			//					}
+			//					processBuy(newTask);
+			//					return;
+			}
 			}
 
 		// Check if the user has an action for this type of item. This can be tested for only some categories.
 		// USER ACTIONS
-		final Property action = this.actions4Item.get(new Long(newTask.getTypeID()));
+		final Property action = actions4Item.get(new Long(newTask.getTypeID()));
 		if (null != action) {
 			// Store the action on the Task for later presentation.
-			this.currentAction.setUserAction(action.getStringValue());
+			currentAction.setUserAction(action.getStringValue());
 			// New code to handle reactions.
 			if (newTask.getItem().getIndustryGroup() == EIndustryGroup.REACTIONMATERIALS) {
 				processReaction(newTask);
 			}
 			if (category.equalsIgnoreCase("Planetary Commodities")) // Action is limited to PRODUCE or BUY
 				if (action.getStringValue().equalsIgnoreCase("PRODUCE")) {
-					final EveLocation planetaryLocation = this.pilot.getLocation4Role("PLANETARY PROCESSING", this.region);
-					newTask.setTaskType(ETaskType.PRODUCE);
-					if (null != planetaryLocation) {
-						newTask.setLocation(planetaryLocation);
-					}
-					newTask.setDestination(this.manufactureLocation);
-					registerTask(500, newTask);
-					return;
+				final EveLocation planetaryLocation = pilot.getLocation4Role("PLANETARY PROCESSING", region);
+				newTask.setTaskType(ETaskType.PRODUCE);
+				if (null != planetaryLocation) {
+				newTask.setLocation(planetaryLocation);
+				}
+				newTask.setDestination(manufactureLocation);
+				registerTask(500, newTask);
+				return;
 				}
 			if (category.equalsIgnoreCase("Material")) // Action is limited to EXTRACT or BUY
 				if (action.getStringValue().equalsIgnoreCase("MATERIAL REFINE")) {
-					processRefine(newTask);
-					return;
+				processRefine(newTask);
+				return;
 				}
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 				// There can be two types. Check the corresponding action.
 				final String tech = newTask.getItem().getTech();
 				if (tech.equalsIgnoreCase("Tech I")) {
-					final EveLocation copyLocation = this.pilot.getLocation4Role("COPY", this.region);
+					final EveLocation copyLocation = pilot.getLocation4Role("COPY", region);
 					logger.info("-- COPY location searched at " + copyLocation);
 					newTask.setTaskType(ETaskType.COPY);
 					if (null != copyLocation) {
 						newTask.setLocation(copyLocation);
 					}
-					final EveLocation inventLocation = this.pilot.getLocation4Role("INVENT", this.region);
+					final EveLocation inventLocation = pilot.getLocation4Role("INVENT", region);
 					logger.info("-- INVENT location searched at " + inventLocation);
 					if (null != inventLocation) {
-						newTask.setDestination(this.manufactureLocation);
+						newTask.setDestination(manufactureLocation);
 					}
 					registerTask(400, newTask);
 					return;
@@ -266,32 +272,12 @@ public class AbstractManufactureProcess {
 			if ((category.equalsIgnoreCase(ModelWideConstants.eveglobal.Module)) || (category.equalsIgnoreCase("Commodity"))
 					|| (category.equalsIgnoreCase("Charge"))) // Action is limited to BUILD.
 				if (action.getStringValue().equalsIgnoreCase("BUILD")) {
-					// Schedule a manufacture request.
-					processBuild(newTask);
-					return;
+				// Schedule a manufacture request.
+				processBuild(newTask);
+				return;
 				}
 		}
 		processBuy(newTask);
-	}
-
-	protected void processReaction(final EveTask newTask) {
-		Log.i("NEOCOM", "-- AbstractManufactureProcess.processReaction Processing state - " + ETaskType.BUILD);
-		final int itemID = newTask.getTypeID();
-		final int outputMultiplier = AppConnector.getDBConnector().searchReactionOutputMultiplier(itemID);
-		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfReaction(itemID);
-		for (final Resource resource : lom) {
-			logger.info("-- Processing Resource of LOM: " + resource);
-			final int runs = newTask.getQty();
-			double inputQty = (Math.ceil(runs / outputMultiplier) + 1) * resource.getQuantity();
-			resource.setQuantity(Double.valueOf(inputQty).intValue());
-			//			resource.setAdaptiveStackSize(1);
-			// Add the resource to the set of required resources.
-			addResource(resource);
-		}
-		newTask.setTaskType(ETaskType.BUILD);
-		// Change the source location to the blueprint location if found. Otherwise use the manufacture location.
-		//		newTask.setLocation(loc);
-		registerTask(450, newTask);
 	}
 
 	protected void processBuild(final EveTask newTask) {
@@ -301,9 +287,9 @@ public class AbstractManufactureProcess {
 		final int bpid = AppConnector.getDBConnector().searchBlueprint4Module(itemID);
 		// Check if there is a blueprint of this type on the belongings for this character.
 		boolean blueprintExists = false;
-		final ArrayList<Asset> bpsofType = AppConnector.getDBConnector()
-				.searchAsset4Type(getPilot().getCharacterID(), bpid);
-		EveLocation loc = this.manufactureLocation;
+		final ArrayList<Asset> bpsofType = AppConnector.getDBConnector().searchAsset4Type(getPilot().getCharacterID(),
+				bpid);
+		EveLocation loc = manufactureLocation;
 		if (bpsofType.size() > 0) {
 			blueprintExists = true;
 			loc = bpsofType.get(0).getLocation();
@@ -394,9 +380,9 @@ public class AbstractManufactureProcess {
 			final EveTask moveTask = new EveTask(ETaskType.MOVE, newTask.getResource());
 			moveTask.setQty(requestQty);
 			moveTask.setLocation(asset.getLocation());
-			moveTask.setDestination(this.manufactureLocation);
+			moveTask.setDestination(manufactureLocation);
 			// Treat the special case of assets already present on the Manufacture location.
-			if (this.manufactureLocation.getID() == loc.getID()) {
+			if (manufactureLocation.getID() == loc.getID()) {
 				// Convert the move to AVAILABLE because the locations match.
 				// If the owner is -1 than this resource comes from a reprocessing.
 				if (asset.getOwnerID() == -1) {
@@ -415,9 +401,9 @@ public class AbstractManufactureProcess {
 			final EveTask moveTask = new EveTask(ETaskType.MOVE, newTask.getResource());
 			moveTask.setQty(qty);
 			moveTask.setLocation(asset.getLocation());
-			moveTask.setDestination(this.manufactureLocation);
+			moveTask.setDestination(manufactureLocation);
 			// Treat the special case of assets already present on the Manufacture location.
-			if (this.manufactureLocation.getID() == loc.getID()) {
+			if (manufactureLocation.getID() == loc.getID()) {
 				// If the owner is -1 than this resource comes from a reprocessing.
 				if (asset.getOwnerID() == -1) {
 					moveTask.setTaskType(ETaskType.EXTRACT);
@@ -433,6 +419,26 @@ public class AbstractManufactureProcess {
 			processRequest(newRequest);
 			return;
 		}
+	}
+
+	protected void processReaction(final EveTask newTask) {
+		Log.i("NEOCOM", "-- AbstractManufactureProcess.processReaction Processing state - " + ETaskType.BUILD);
+		final int itemID = newTask.getTypeID();
+		final int outputMultiplier = AppConnector.getDBConnector().searchReactionOutputMultiplier(itemID);
+		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfReaction(itemID);
+		for (final Resource resource : lom) {
+			logger.info("-- Processing Resource of LOM: " + resource);
+			final int runs = newTask.getQty();
+			double inputQty = (Math.ceil(runs / outputMultiplier) + 1) * resource.getQuantity();
+			resource.setQuantity(Double.valueOf(inputQty).intValue());
+			//			resource.setAdaptiveStackSize(1);
+			// Add the resource to the set of required resources.
+			addResource(resource);
+		}
+		newTask.setTaskType(ETaskType.BUILD);
+		// Change the source location to the blueprint location if found. Otherwise use the manufacture location.
+		//		newTask.setLocation(loc);
+		registerTask(450, newTask);
 	}
 
 	/**
@@ -459,8 +465,8 @@ public class AbstractManufactureProcess {
 			final ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(oreSelected.getTypeID());
 			// Refine the asteroid stack and generate the new minerals.
 			for (final Resource rc : refineParameters) {
-				final double mineral = Math.floor(Math.floor(oreSelected.getQuantity() / rc.getStackSize())
-						* (rc.getBaseQuantity() * REFINING_EFFICIENCY));
+				final double mineral = Math.floor(
+						Math.floor(oreSelected.getQuantity() / rc.getStackSize()) * (rc.getBaseQuantity() * REFINING_EFFICIENCY));
 				if (rc.getTypeID() == mineralCode) {
 					mineralObtained = Double.valueOf(mineral).intValue();
 				}
@@ -509,14 +515,14 @@ public class AbstractManufactureProcess {
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
 				Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Asteroid - request COMPLETED");
 				// Complete the action and add the minerals obtained as tasks.
-				this.currentAction.setCompleted(ETaskCompletion.COMPLETED, newTask.getQty());
+				currentAction.setCompleted(ETaskCompletion.COMPLETED, newTask.getQty());
 				// Add the refine of the mineral to the tasks.
 				final ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(newTask.getTypeID());
 				for (final Resource rc : refineParameters) {
 					final double mineral = Math.floor(Math.floor(newTask.getResource().getQuantity() / rc.getStackSize())
 							* (rc.getBaseQuantity() * REFINING_EFFICIENCY));
-					final EveTask refineTask = new EveTask(ETaskType.PRODUCE, new Resource(rc.item.getItemID(), Double.valueOf(
-							mineral).intValue()));
+					final EveTask refineTask = new EveTask(ETaskType.PRODUCE,
+							new Resource(rc.item.getItemID(), Double.valueOf(mineral).intValue()));
 					refineTask.setQty(Double.valueOf(mineral).intValue());
 					refineTask.setLocation(newTask.getLocation());
 					registerTask(90, refineTask);
@@ -541,7 +547,7 @@ public class AbstractManufactureProcess {
 			}
 			// Check location on this region.
 			final EveLocation loc = asset.getLocation();
-			if (loc.toString().equalsIgnoreCase(this.manufactureLocation.toString())) {
+			if (loc.toString().equalsIgnoreCase(manufactureLocation.toString())) {
 				processMove(asset, newTask);
 				return;
 			}
@@ -558,7 +564,7 @@ public class AbstractManufactureProcess {
 				}
 				// Check location on this region.
 				final EveLocation loc = asset.getLocation();
-				if (loc.getRegion().equalsIgnoreCase(this.region)) {
+				if (loc.getRegion().equalsIgnoreCase(region)) {
 					processMove(asset, newTask);
 					return;
 				}
@@ -580,19 +586,13 @@ public class AbstractManufactureProcess {
 		processAction(newTask);
 	}
 
-	public boolean moveAllowed() {
-		// Read the flag values from the preferences.
-		boolean moveAllowed = EVEDroidApp.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
-		return moveAllowed;
-	}
-
-	protected void registerAction(final FittingAction action) {
+	protected void registerAction(final Action action) {
 		// Test if already an action of the same item.
-		final FittingAction hit = this.actionsRegistered.get(action.getTypeID());
+		final Action hit = actionsRegistered.get(action.getTypeID());
 		if (null != hit) {
-			this.currentAction = action;
+			currentAction = action;
 		} else {
-			this.actionsRegistered.put(action.getTypeID(), action);
+			actionsRegistered.put(action.getTypeID(), action);
 		}
 	}
 
@@ -629,7 +629,7 @@ public class AbstractManufactureProcess {
 	}
 
 	private void addResource(final Resource resource) {
-		for (final Resource current : this.requirements)
+		for (final Resource current : requirements)
 			if (resource.item.getItemID() == current.item.getItemID()) {
 				// Do special processing for skill. They are not added but the level maxed.
 				if (current.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
@@ -642,7 +642,7 @@ public class AbstractManufactureProcess {
 				return;
 			}
 		Log.i("EVEI", "-- AbstractManufactureProcess.addResource - Adding new resource to list. " + resource);
-		this.requirements.add(resource);
+		requirements.add(resource);
 	}
 
 	@SuppressLint("UseValueOf")
@@ -669,29 +669,29 @@ public class AbstractManufactureProcess {
 	 */
 	private ArrayList<Asset> getAsset4Category(final String category) {
 		final long hash = category.hashCode();
-		ArrayList<Asset> hit = this.industryAssetsManager.assetCache.get(hash);
+		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(hash);
 		if (null == hit) {
-			hit = searchAsset4Category(this.pilot.getCharacterID(), category);
-			this.industryAssetsManager.assetCache.put(hash, hit);
+			hit = searchAsset4Category(pilot.getCharacterID(), category);
+			industryAssetsManager.assetCache.put(hash, hit);
 		}
 		return hit;
 	}
 
 	private ArrayList<Asset> getAsset4Group(final String groupName) {
 		final long hash = groupName.hashCode();
-		ArrayList<Asset> hit = this.industryAssetsManager.assetCache.get(hash);
+		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(hash);
 		if (null == hit) {
 			hit = getPilot().getAssetsManager().searchAsset4Group(groupName);
-			this.industryAssetsManager.assetCache.put(hash, hit);
+			industryAssetsManager.assetCache.put(hash, hit);
 		}
 		return hit;
 	}
 
 	private ArrayList<Asset> getAssetsAtLocation(final EveLocation location) {
-		ArrayList<Asset> hit = this.industryAssetsManager.assetCache.get(location.getID());
+		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(location.getID());
 		if (null == hit) {
-			hit = this.industryAssetsManager.searchAsset4Location(location);
-			this.industryAssetsManager.assetCache.put(location.getID(), hit);
+			hit = industryAssetsManager.searchAsset4Location(location);
+			industryAssetsManager.assetCache.put(location.getID(), hit);
 		}
 		return hit;
 	}
@@ -732,7 +732,7 @@ public class AbstractManufactureProcess {
 	 * @param location
 	 */
 	private void registerAssetChange(final double qty, final int itemID, final long location) {
-		final ArrayList<Asset> hit = this.industryAssetsManager.assetCache.get(Long.valueOf(itemID));
+		final ArrayList<Asset> hit = industryAssetsManager.assetCache.get(Long.valueOf(itemID));
 		if (null == hit) {
 			// Force a database access and try again.
 			getAsset4Type(itemID);
@@ -762,30 +762,30 @@ public class AbstractManufactureProcess {
 	private synchronized void registerTask(final int pri, final EveTask task) {
 		// Check for completed tasks.
 		if (task.getTaskType() == ETaskType.AVAILABLE) {
-			this.currentAction.setCompleted(ETaskCompletion.COMPLETED, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.COMPLETED, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.EXTRACT) {
-			this.currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.SELL) {
-			this.currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.REFINE) {
-			this.currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.MOVE) {
-			this.currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.BUILD) {
-			this.currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.BUY) {
-			this.currentAction.setCompleted(ETaskCompletion.MARKET, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.MARKET, task.getQty());
 		}
 		if (task.getTaskType() == ETaskType.BUYCOVERED) {
-			this.currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		}
-		this.currentAction.registerTask(pri, task);
+		currentAction.registerTask(pri, task);
 	}
 
 	/**
@@ -844,32 +844,32 @@ public class AbstractManufactureProcess {
 	 */
 	private Asset searchOREAsset(final EveTask newTask) {
 		// Try to cache the list of assets related to asteroids at partiicualr locations.
-		ArrayList<Asset> asteroids = this.industryAssetsManager.asteroidCache.get(this.manufactureLocation.getID());
+		ArrayList<Asset> asteroids = industryAssetsManager.asteroidCache.get(manufactureLocation.getID());
 		final EveLocation refineLocation = getPilot().getLocation4Role(ModelWideConstants.locationroles.REFINE);
 		if (null == asteroids) if (null != refineLocation) {
-			asteroids = this.industryAssetsManager.asteroidCache.get(refineLocation.getID());
+			asteroids = industryAssetsManager.asteroidCache.get(refineLocation.getID());
 		}
 		if (null == asteroids) {
 			// Get the list of assets that are asteroids at the manufacture location.
-			ArrayList<Asset> stacks = getAssetsAtLocation(this.manufactureLocation);
+			ArrayList<Asset> stacks = getAssetsAtLocation(manufactureLocation);
 			asteroids = new ArrayList<Asset>();
 			for (final Asset asset : stacks)
 				// Filter out the non asteroid stacks
 				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
 					asteroids.add(asset);
 				}
-			this.industryAssetsManager.asteroidCache.put(this.manufactureLocation.getID(), asteroids);
+			industryAssetsManager.asteroidCache.put(manufactureLocation.getID(), asteroids);
 
 			if (asteroids.size() < 1) // If the list is empty do the same for the stacks at the refining location if exists.
 				if (null != refineLocation) {
-					stacks = getAssetsAtLocation(refineLocation);
-					asteroids = new ArrayList<Asset>();
-					for (final Asset asset : stacks)
-						// Filter out the non asteroid stacks
-						if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
-							asteroids.add(asset);
-						}
-					this.industryAssetsManager.asteroidCache.put(this.manufactureLocation.getID(), asteroids);
+				stacks = getAssetsAtLocation(refineLocation);
+				asteroids = new ArrayList<Asset>();
+				for (final Asset asset : stacks)
+				// Filter out the non asteroid stacks
+				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
+				asteroids.add(asset);
+				}
+				industryAssetsManager.asteroidCache.put(manufactureLocation.getID(), asteroids);
 				}
 		}
 
