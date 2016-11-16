@@ -58,6 +58,8 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -697,7 +699,7 @@ public class EVEDroidApp extends Application implements IConnector {
 	public void startTimer() {
 		if (null == timeTickReceiver) {
 			timeTickReceiver = new TimeTickReceiver(this);
-			//			registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+			registerReceiver(timeTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
 		}
 	}
 

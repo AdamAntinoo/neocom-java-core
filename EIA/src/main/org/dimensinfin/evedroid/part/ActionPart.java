@@ -26,9 +26,9 @@ import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
-import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveTask;
+import org.dimensinfin.evedroid.model.FittingAction;
 import org.dimensinfin.evedroid.render.ActionRender;
 import org.dimensinfin.evedroid.render.SkillRender;
 
@@ -109,7 +109,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	public long getBlueprintID() {
-		return this.blueprintID;
+		return blueprintID;
 	}
 
 	public FittingAction getCastedModel() {
@@ -149,6 +149,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		result.add(this);
 		Vector<AbstractPropertyChanger> ch = getChildren();
 		for (final AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
@@ -181,10 +182,10 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	public void onClick(final View view) {
-		if (!this.clickOverride) {
+		if (!clickOverride) {
 			getCastedModel().toggleExpanded();
 			fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
-			this.clickOverride = false;
+			clickOverride = false;
 		}
 	}
 
@@ -230,7 +231,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	 */
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		// Clear click detection.
-		this.clickOverride = false;
+		clickOverride = false;
 		// get the industry group to determine the right actions.
 		final EIndustryGroup industryGroup = getCastedModel().getItemIndustryGroup();
 		switch (industryGroup) {
@@ -271,7 +272,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 						getActivity().startActivity(intent);
 
 						// Event consumed. Override the click.
-						this.clickOverride = true;
+						clickOverride = true;
 					}
 				}
 				// final InventionJobDialog dialog = new InventionJobDialog();
@@ -314,7 +315,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	public void setBlueprintID(final long assetID) {
-		this.blueprintID = assetID;
+		blueprintID = assetID;
 	}
 
 	@Override
@@ -330,9 +331,8 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_SKILLACTION)
-			return new SkillRender(this, this._activity);
-		return new ActionRender(this, this._activity);
+		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_SKILLACTION) return new SkillRender(this, _activity);
+		return new ActionRender(this, _activity);
 	}
 }
 
