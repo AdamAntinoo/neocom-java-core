@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.core.AbstractNeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.INodeModel;
@@ -27,7 +28,7 @@ import org.dimensinfin.core.model.INodeModel;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ShipLocation implements INodeModel {
+public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger	logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
 

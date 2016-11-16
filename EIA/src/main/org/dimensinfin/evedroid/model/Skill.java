@@ -8,7 +8,7 @@ package org.dimensinfin.evedroid.model;
 import org.dimensinfin.evedroid.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Skill extends Action {
+public class Skill extends FittingAction {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	//	private static Logger	logger	= Logger.getLogger("Skill");
 
