@@ -72,6 +72,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		return this;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public void connect(final DataSourceManager dataSourceManager) {
 		_dsManager = dataSourceManager;
 	}
@@ -199,9 +200,17 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 		}
+		// THis event is when the user changes the preferred action so I have to calculate the model again.
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
+			collaborate2Model();
+			createContentHierarchy();
+			//			_bodyParts = new ArrayList<AbstractCorePart>();
+			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+					event.getNewValue());
+		}
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	//	@Deprecated
 	//	public void createPart4Node(final AbstractAndroidNode node) {
 	//		if (node instanceof ShipLocation) {

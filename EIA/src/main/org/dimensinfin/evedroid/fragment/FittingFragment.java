@@ -150,6 +150,10 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 			TaskPart part = new TaskPart((AbstractComplexNode) node);
 			return part;
 		}
+		if (node instanceof Separator) {
+			GroupPart part = new GroupPart((Separator) node);
+			return part;
+		}
 
 		return new GroupPart(new Separator("-NO data-"));
 	}

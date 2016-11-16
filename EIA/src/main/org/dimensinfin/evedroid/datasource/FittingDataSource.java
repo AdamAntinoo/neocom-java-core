@@ -8,13 +8,20 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
+import java.util.ArrayList;
+
 import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Fitting;
+import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 /**
@@ -73,7 +80,13 @@ public class FittingDataSource extends SpecialDataSource {
 			// Create the testing fit from the list of predefined modules. This shluld be replaced by the Fitting locator.
 			fit = createTestFitting(manager);
 			_dataModelRoot = new RootNode();
-			_dataModelRoot.addChildren(fit.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name()));
+
+			// Add the classification groups and the get the first level model. The model elements are added to the
+			// right group depending on their properties.
+			doGroupInit();
+			ArrayList<AbstractComplexNode> modelList = fit
+					.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name());
+			classifyModel(modelList);
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			logger.severe(
@@ -81,6 +94,31 @@ public class FittingDataSource extends SpecialDataSource {
 		}
 		logger.info("<< ShipsDatasource.collaborate2Model");
 		return _dataModelRoot;
+	}
+
+	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
+		for (IGEFNode group : _dataModelRoot.getChildren()) {
+			if (group instanceof Separator) {
+				if (((Separator) group).getTitle().equalsIgnoreCase(igroup.toString())) {
+					group.addChild(action);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Installs each of the model nodes into the corresponding group depending on the Category.
+	 * 
+	 * @param modelList
+	 * @return
+	 */
+	private void classifyModel(final ArrayList<AbstractComplexNode> modelList) {
+		for (AbstractComplexNode node : modelList) {
+			if (node instanceof Action) {
+				Action action = (Action) node;
+				add2Group(action, action.getResource().getItem().getIndustryGroup());
+			}
+		}
 	}
 
 	private Fitting createTestFitting(final AssetsManager manager) {
@@ -98,6 +136,22 @@ public class FittingDataSource extends SpecialDataSource {
 		onConstructionFit.addCargo(244, 4);
 		onConstructionFit.addCargo(240, 4);
 		return onConstructionFit;
+	}
+
+	private void doGroupInit() {
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()));
 	}
 }
 // - UNUSED CODE ............................................................................................
