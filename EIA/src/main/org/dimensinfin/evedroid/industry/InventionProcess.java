@@ -29,11 +29,11 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static final long serialVersionUID = -1284879453130050090L;
-	private final ArrayList<Resource> datacores = new ArrayList<Resource>();
+	private static final long					serialVersionUID	= -1284879453130050090L;
+	private final ArrayList<Resource>	datacores					= new ArrayList<Resource>();
 	/** New and locally used AssetsManager used to process the job requests. */
-	private final AssetsManager manager = null;
-	private int maxRuns = -2;
+	private final AssetsManager				manager						= null;
+	private int												maxRuns						= -2;
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -44,14 +44,13 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	/**
-	 * This method starts with a blueprint and generates the corresponding list
-	 * of actions to be executed to have all the resources to launch and
-	 * complete the job. This depends on the global generation settings because
-	 * the resources get exhausted by each of the jobs and that should be
-	 * reflected on the new action for next jobs.<br>
-	 * It uses a new <code>AssetsManager</code> because the resource processing
-	 * changes some of the resources used during the process. With a new manager
-	 * we avoid clearing the currently cached information on the Pilot assets.
+	 * This method starts with a blueprint and generates the corresponding list of actions to be executed to
+	 * have all the resources to launch and complete the job. This depends on the global generation settings
+	 * because the resources get exhausted by each of the jobs and that should be reflected on the new action
+	 * for next jobs.<br>
+	 * It uses a new <code>AssetsManager</code> because the resource processing changes some of the resources
+	 * used during the process. With a new manager we avoid clearing the currently cached information on the
+	 * Pilot assets.
 	 * 
 	 * @return
 	 */
@@ -123,16 +122,14 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 	}
 
 	/**
-	 * Gets from the eve database the manufacture duration for this module and
-	 * applies the hardcoded skills that are required to perform perfect
-	 * manufacture. On next releases maybe the skills are read and used to
+	 * Gets from the eve database the manufacture duration for this module and applies the hardcoded skills that
+	 * are required to perform perfect manufacture. On next releases maybe the skills are read and used to
 	 * adjust this calculation.
 	 * 
 	 * @return the time in seconds to manufacture a copy if this module
 	 */
 	public int getCycleDuration() {
-		int basetime = AppConnector.getDBConnector().searchJobExecutionTime(bpid,
-				ModelWideConstants.activities.INVENTION);
+		int basetime = AppConnector.getDBConnector().searchJobExecutionTime(bpid, ModelWideConstants.activities.INVENTION);
 		// Adjust to the time with new industry equations.
 		double time = basetime;
 		return Double.valueOf(time).intValue();
@@ -156,13 +153,11 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 	}
 
 	/**
-	 * Calculates the minimum number of blueprints that can be manufactured with
-	 * the resources stored at the blueprint location. It is supposed that the
-	 * IndustryMananger has subtracted the pending jobs resources from those at
-	 * the blueprint location prior to the calculations.<br>
-	 * If this gets run after the generate action than the result may differ
-	 * from the reality because some of the resources would have been consumed
-	 * by the processing.
+	 * Calculates the minimum number of blueprints that can be manufactured with the resources stored at the
+	 * blueprint location. It is supposed that the IndustryMananger has subtracted the pending jobs resources
+	 * from those at the blueprint location prior to the calculations.<br>
+	 * If this gets run after the generate action than the result may differ from the reality because some of
+	 * the resources would have been consumed by the processing.
 	 * 
 	 * @param itemasset
 	 * @return
@@ -192,8 +187,8 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 						if (asset.getLocationID() == location.getID()) {
 							resourceCount += asset.getQuantity();
 						}
-					Log.i("EVEI", "-- InventionProcess.getManufacturableCount - resource count " + resource + " ["
-							+ resourceCount + "]");
+					Log.i("EVEI",
+							"-- InventionProcess.getManufacturableCount - resource count " + resource + " [" + resourceCount + "]");
 					int range = resourceCount / resource.getQuantity();
 					if (range < maxRuns) {
 						maxRuns = range;
@@ -212,8 +207,7 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 	}
 
 	/**
-	 * Get the ID of the item produced by the job Invention applied to the
-	 * referenced blueprint.
+	 * Get the ID of the item produced by the job Invention applied to the referenced blueprint.
 	 */
 	@Override
 	public int getProductID() {

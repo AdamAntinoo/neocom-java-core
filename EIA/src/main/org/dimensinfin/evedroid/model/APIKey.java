@@ -8,15 +8,15 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-// - IMPORT SECTION .........................................................................................
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.parser.AttributeGetters;
 import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -39,11 +39,6 @@ public class APIKey extends APIKeyCore implements INeoComNode {
 		super(keyID, verificationCode);
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public HashMap<Long, EveChar> getCharacters() {
-		return characters;
-	}
-
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		//		results.add(this);
@@ -52,6 +47,11 @@ public class APIKey extends APIKeyCore implements INeoComNode {
 			results.add(character);
 		}
 		return results;
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public HashMap<Long, EveChar> getCharacters() {
+		return characters;
 	}
 
 	/**

@@ -9,25 +9,20 @@
 package org.dimensinfin.evedroid.datasource;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
+import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.model.ShipLocation;
 import org.dimensinfin.evedroid.storage.AppModelStore;
-
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 /**
  * This DataSource will need some inputs to create the list of actions to be performed to complete the number
@@ -46,20 +41,15 @@ import android.preference.PreferenceManager;
 //- CLASS IMPLEMENTATION ...................................................................................
 public class FittingDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID	= 7810087592108417570L;
+	private static final long	serialVersionUID	= 7810087592108417570L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Fitting														fit								= null;
+	private Fitting						fit								= null;
 
-	private final ArrayList<Asset>						ships							= null;
-	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
-	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
-	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
-
-	//	private int																				_version					= 0;;
+	//	private final ArrayList<Asset>						ships							= null;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
-	public FittingDataSource(final DataSourceLocator locator, final PartFactory factory) {
+	public FittingDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		super(locator, factory);
 	}
 
@@ -87,215 +77,81 @@ public class FittingDataSource extends SpecialDataSource {
 			AppModelStore store = EVEDroidApp.getAppStore();
 			// Get the complete list of ships. Compare it to the current list if it exists.
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
-			fit = new Fitting(manager);
+			// Create the testing fit from the list of predefined modules. This shluld be replaced by the Fitting locator.
+			fit = createTestFitting(manager);
 			_dataModelRoot = new RootNode();
-			_dataModelRoot.addChildren(fit.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name()));
+
+			// Add the classification groups and the get the first level model. The model elements are added to the
+			// right group depending on their properties.
+			doGroupInit();
+			ArrayList<AbstractComplexNode> modelList = fit
+					.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name());
+			classifyModel(modelList);
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			logger.severe(
 					"RTEX> ShipsDatasource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		setupOutputModel();
-		// [01]
 		logger.info("<< ShipsDatasource.collaborate2Model");
 		return _dataModelRoot;
 	}
 
-	/**
-	 * Sets up the model that should be connected to the model root. We can return 3 different models:
-	 * <ul>
-	 * <li>The list of Regions if the Region aggregation is activated and the variant is the Ships By Location
-	 * fragment.</li>
-	 * <li>The list of Locations also if the variant is the Ships By Location fragment.</li>
-	 * <li>The list of Categories if the variant is the Ships By Category.</li>
-	 * </ul>
-	 */
-	private void setupOutputModel() {
-		if (null == _dataModelRoot) {
-			_dataModelRoot = new RootNode();
-		} else {
-			_dataModelRoot.clean();
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-			if (ifGroupLocations()) {
-				for (Region node : _regions.values()) {
-					_dataModelRoot.addChild(node);
+	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
+		for (IGEFNode group : _dataModelRoot.getChildren()) {
+			if (group instanceof Separator) {
+				if (((Separator) group).getTitle().equalsIgnoreCase(igroup.toString())) {
+					group.addChild(action);
 				}
-			} else {
-				for (ShipLocation node : _locations.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			}
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
-			for (Separator node : _categories.values()) {
-				_dataModelRoot.addChild(node);
 			}
 		}
 	}
 
 	/**
-	 * Checks of this locations already exists on the table and if not found then creates a new LocationPart
-	 * branch and adds to it the parameter Part.
+	 * Installs each of the model nodes into the corresponding group depending on the Category.
 	 * 
-	 * @param locationid
-	 * 
-	 * @param ship
-	 *          part to be added to the locations. May be an asset or a container.
+	 * @param modelList
+	 * @return
 	 */
-	private void add2Location(final long locationid, final Asset ship) {
-		// Check if the location is already on the array.
-		ShipLocation hit = _locations.get(locationid);
-		if (null == hit) {
-			hit = new ShipLocation(ship.getLocation());
-			// Add the new location to the list of locations and to the Regions
-			add2Region(hit);
-			_locations.put(locationid, hit);
+	private void classifyModel(final ArrayList<AbstractComplexNode> modelList) {
+		for (AbstractComplexNode node : modelList) {
+			if (node instanceof Action) {
+				Action action = (Action) node;
+				add2Group(action, action.getResource().getItem().getIndustryGroup());
+			}
 		}
-		hit.addChild(ship);
 	}
 
-	private void add2Region(final ShipLocation location) {
-		Region region = _regions.get(location.getID());
-		if (null == region) {
-			region = new Region(location.getRegion());
-			_regions.put(location.getRegionID(), region);
-		}
-		region.addChild(location);
+	private Fitting createTestFitting(final AssetsManager manager) {
+		Fitting onConstructionFit = new Fitting(manager);
+		onConstructionFit.addHull(11184);
+		onConstructionFit.fitModule(6719, 4);
+		onConstructionFit.fitModule(5973);
+		onConstructionFit.fitModule(5405);
+		onConstructionFit.fitModule(5839);
+		onConstructionFit.fitModule(5849);
+		onConstructionFit.fitModule(11563);
+		onConstructionFit.fitModule(33076);
+		onConstructionFit.fitRig(26929);
+		onConstructionFit.fitRig(26929);
+		onConstructionFit.addCargo(244, 4);
+		onConstructionFit.addCargo(240, 4);
+		return onConstructionFit;
 	}
 
-	private boolean ifGroupLocations() {
-		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(EVEDroidApp.getAppStore().getActivity());
-		final String locLimitString = prefs.getString(AppWideConstants.preference.PREF_LOCATIONSLIMIT,
-				AppConnector.getResourceString(R.string.pref_numberOfLocations_default));
-		// Check for the special value of unlimited.
-		if (locLimitString.equalsIgnoreCase("Unlimited")) return false;
-		// Convert the stored preference value to a number.
-		int locLimit = 10;
-		try {
-			locLimit = Integer.parseInt(locLimitString);
-		} catch (NumberFormatException nex) {
-			locLimit = 10;
-		}
-		if (_locations.size() > locLimit)
-			return true;
-		else
-			return false;
+	private void doGroupInit() {
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()));
 	}
-
-	private void add2Category(final String category, final Asset ship) {
-		// Check if the location is already on the array.
-		Separator hit = _categories.get(category);
-		if (null == hit) {
-			hit = new Separator(category);
-			_categories.put(category, hit);
-		}
-		hit.addChild(ship);
-	}
-
-	//	@Override
-	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-	//		logger.info(">> ShipsDatasource.getPartHierarchy");
-	//		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-	//		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-	//		for (final AbstractAndroidPart node : this._root) {
-	//			result.add(node);
-	//			// Check if the node is expanded. Then add its children.
-	//			if (node.isExpanded()) {
-	//				final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-	//				result.addAll(grand);
-	//			}
-	//		}
-	//		this._adapterData = result;
-	//		logger.info("<< ShipsDatasource.getPartHierarchy");
-	//		return result;
-	//	}
-
 }
 // - UNUSED CODE ............................................................................................
-// [01]
-//		
-//		
-//		// Process the list of ships to get their locations because that is the first level of the Data model
-//		locations = getShipsLocations();
-//
-//		// The model is the list of current regtistered api keys with their characters.
-//		// Add the keys to the model root node. If the root is already on place then the model is already loaded.
-//		//		if (null == _dataModelRoot) {
-//		setDataModel(new RootNode());
-//		//		}
-//		// Add all the nodes to the new root
-//		for (APIKey key : keys.values()) {
-//			_dataModelRoot.addChild(key);
-//			logger.info("-- ShipsDatasource.collaborate2Model-Adding " + key.getKeyID() + " to the _dataModelRoot");
-//		}
-
-//	private Object getShipsLocations() {
-//		// Get the list of Locations for this Pilot.
-//		try {
-//			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
-//			// Depending on the Setting group Locations into Regions
-//			final ArrayList<Asset> assetsShips = manager.searchAsset4Category("Ship");
-//			// Depending on version add the Ships classified by category or by location
-//			for (Asset ship : assetsShips) {
-//				long locid = ship.getLocationID();
-//				String category = ship.getGroupName();
-//
-//				//				AssetPart sppart = null;
-//				//				// Check if the ship is packaged.
-//				//				if (ship.isPackaged()) {
-//				//					sppart = (AssetPart) new AssetPart(ship).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-//				//				} else {
-//				//					sppart = (AssetPart) new ShipPart(ship).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-//				//				}
-//				//				sppart.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS);
-//				if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-//					add2Location(locid, sppart);
-//				}
-//				if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
-//					add2Category(category, sppart);
-//				}
-//			}
-//		} catch (final RuntimeException sqle) {
-//			sqle.printStackTrace();
-//			logger.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
-//		}
-//	}
-
-//	@Override
-//	public void createContentHierarchy() {
-//		logger.info(">> ShipsDatasource.createHierarchy");
-//		// Clear the current list of elements.
-//		this._root.clear();
-//
-//		// Get the list of Locations for this Pilot.
-//		try {
-//			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
-//			// Depending on the Setting group Locations into Regions
-//			final ArrayList<Asset> assetsShips = manager.searchAsset4Category("Ship");
-//			// Depending on version add the Ships classified by category or by location
-//			for (Asset ship : assetsShips) {
-//				long locid = ship.getLocationID();
-//				String category = ship.getGroupName();
-//				AssetPart sppart = null;
-//				// Check if the ship is packaged.
-//				if (ship.isPackaged()) {
-//					sppart = (AssetPart) new AssetPart(ship).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-//				} else {
-//					sppart = (AssetPart) new ShipPart(ship).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-//				}
-//				sppart.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS);
-//				if (_version == AppWideConstants.fragment.FRAGMENT_SHIPSBYLOCATION) {
-//					add2Location(locid, sppart);
-//				}
-//				if (_version == AppWideConstants.fragment.FRAGMENT_SHIPSBYCLASS) {
-//					add2Category(category, sppart);
-//				}
-//			}
-//		} catch (final RuntimeException sqle) {
-//			sqle.printStackTrace();
-//			logger.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
-//		}
-//		logger.info("<< ShipsDatasource.createHierarchy [" + this._root.size() + "]");
-//	}

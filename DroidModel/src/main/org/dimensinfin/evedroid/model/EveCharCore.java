@@ -156,8 +156,9 @@ public abstract class EveCharCore extends AbstractComplexNode {
 	 * @return
 	 */
 	public EveLocation getLocation4Role(final String matchingRole) {
-		//		EveLocation preferredLocation = null;
+		if (null == locationRoles) accessLocationRoles();
 		for (Property role : locationRoles) {
+			String value = role.getPropertyType().toString();
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole))
 				return AppConnector.getDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 			//		Property currentRole = locationRoles.get(locID);

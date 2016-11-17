@@ -8,14 +8,16 @@ package org.dimensinfin.evedroid.model;
 
 // - IMPORT SECTION .........................................................................................
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveTask extends AbstractComplexNode {
+public class EveTask extends AbstractComplexNode implements INeoComNode{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7187291497544861372L;
 
@@ -120,6 +122,12 @@ public class EveTask extends AbstractComplexNode {
 		if (null != this.destination) buffer.append(" - ").append("destination").append(this.destination);
 		buffer.append(" ").append("]");
 		return buffer.toString();
+	}
+
+	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+//		results.addAll(getTasks());
+		return results;
 	}
 }
 

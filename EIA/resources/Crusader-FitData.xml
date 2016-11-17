@@ -1,0 +1,29 @@
+Crusader - Interceptor
+Fitting service
+CRUSADER
+<row itemID="1020895263377" locationID="61000796" typeID="11184" quantity="1" flag="4" singleton="1" rawQuantity="-1">
+<rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
+MODULES
+<row itemID="1020931822615" typeID="6719" quantity="1" flag="28" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931823029" typeID="6719" quantity="1" flag="30" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931822858" typeID="6719" quantity="1" flag="29" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931822334" typeID="6719" quantity="1" flag="27" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931827273" typeID="5973" quantity="1" flag="19" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931829479" typeID="5405" quantity="1" flag="20" singleton="1" rawQuantity="-1"/>
+<row itemID="1020160476231" typeID="5839" quantity="1" flag="11" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931832130" typeID="5849" quantity="1" flag="12" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931835574" typeID="11563" quantity="1" flag="13" singleton="1" rawQuantity="-1"/>
+<row itemID="1020018596812" typeID="33076" quantity="1" flag="14" singleton="1" rawQuantity="-1"/>
+RIGS
+<row itemID="1020931844788" typeID="26929" quantity="1" flag="92" singleton="1" rawQuantity="-1"/>
+<row itemID="1020931845567" typeID="26929" quantity="1" flag="93" singleton="1" rawQuantity="-1"/>
+CARGO
+<row itemID="1020931850114" typeID="244" quantity="4" flag="5" singleton="0"/>
+<row itemID="1020931850606" typeID="242" quantity="4" flag="5" singleton="0"/>
+<row itemID="1020931851179" typeID="246" quantity="1" flag="29" singleton="0"/>
+<row itemID="1020931852021" typeID="240" quantity="4" flag="5" singleton="0"/>
+<row itemID="1020931862184" typeID="246" quantity="1" flag="30" singleton="0"/>
+<row itemID="1020931862186" typeID="246" quantity="1" flag="27" singleton="0"/>
+<row itemID="1020931862188" typeID="246" quantity="1" flag="28" singleton="0"/>
+<row itemID="1020931852758" typeID="28668" quantity="42" flag="5" singleton="0"/>
+</rowset>

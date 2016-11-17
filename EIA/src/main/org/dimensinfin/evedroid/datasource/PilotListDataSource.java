@@ -10,9 +10,9 @@ package org.dimensinfin.evedroid.datasource;
 
 import java.util.HashMap;
 
+import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -29,7 +29,7 @@ public final class PilotListDataSource extends SpecialDataSource {
 	private static final long serialVersionUID = 4576522670385611140L;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotListDataSource(final DataSourceLocator locator, final PartFactory partFactory) {
+	public PilotListDataSource(final DataSourceLocator locator, final IPartFactory partFactory) {
 		super(locator, partFactory);
 	}
 
@@ -64,8 +64,6 @@ public final class PilotListDataSource extends SpecialDataSource {
 		logger.info("<< PilotListDataSource.collaborate2Model");
 		return _dataModelRoot;
 	}
-
-	
 
 	//	@Override
 	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {

@@ -11,6 +11,7 @@ package org.dimensinfin.evedroid.fragment;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -19,13 +20,14 @@ import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.FittingDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
-import org.dimensinfin.evedroid.factory.IPartFactory;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.Action;
+import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.ActionPart;
 import org.dimensinfin.evedroid.part.GroupPart;
+import org.dimensinfin.evedroid.part.TaskPart;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -53,6 +55,16 @@ public class FittingFragment extends AbstractNewPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public String getSubtitle() {
+		return "";
+	}
+
+	@Override
+	public String getTitle() {
+		return "Fitting - Under Test";
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This code is identical on all Fragment implementations so can be moved to the super class.
@@ -71,16 +83,6 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		}
 		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
 		return theView;
-	}
-
-	@Override
-	public String getTitle() {
-		return "Fitting - Under Test";
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "";
 	}
 
 	/**
@@ -110,14 +112,14 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	 */
 	private void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
-		long capsuleerid = 100;
+		//		long capsuleerid = 100;
 		String fittingid = "Purifier";
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name());
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(_variant));
 		ds.setVariant(_variant);
 		// ds.setExtras(getExtras();
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), capsuleerid);
+		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
 		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingid);
 		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
 		setDataSource(ds);
@@ -144,6 +146,15 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 			ActionPart part = new ActionPart((AbstractComplexNode) node);
 			return part;
 		}
+		if (node instanceof EveTask) {
+			TaskPart part = new TaskPart((AbstractComplexNode) node);
+			return part;
+		}
+		if (node instanceof Separator) {
+			GroupPart part = new GroupPart((Separator) node);
+			return part;
+		}
+
 		return new GroupPart(new Separator("-NO data-"));
 	}
 }

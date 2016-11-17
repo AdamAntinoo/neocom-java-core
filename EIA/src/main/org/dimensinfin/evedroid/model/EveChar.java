@@ -16,13 +16,13 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EDataBlock;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.manager.AssetsManager;
@@ -135,16 +135,6 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		return result;
 	}
 
-	/**
-	 * For the EveChar the contents provided to the model are empty when the variant is related to the pilot
-	 * list. Maybe in other calls the return would be another list of contents.
-	 */
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		//		if (renderWhenEmpty()) results.add(this);
-		return results;
-	}
-
 	public MarketOrderAnalyticalGroup accessModules4Sell() {
 		final ScheduledSellsAnalyticalGroup scheduledSellGroup = new ScheduledSellsAnalyticalGroup(20, "SCHEDULED SELLS");
 		final ArrayList<Asset> modules = getAssetsManager().searchT2Modules();
@@ -174,7 +164,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	 */
 	public int calculateInventionQueues() {
 		int queues = 1;
-		final Set<ApiSkill> skills = this.characterSheet.getSkills();
+		final Set<ApiSkill> skills = characterSheet.getSkills();
 		for (final ApiSkill apiSkill : skills) {
 			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
 				queues += apiSkill.getLevel();
@@ -194,7 +184,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	 */
 	public int calculateManufactureQueues() {
 		int queues = 1;
-		final Set<ApiSkill> skills = this.characterSheet.getSkills();
+		final Set<ApiSkill> skills = characterSheet.getSkills();
 		for (final ApiSkill apiSkill : skills) {
 			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
 				queues += apiSkill.getLevel();
@@ -208,17 +198,17 @@ public class EveChar extends EveCharCore implements INeoComNode {
 
 	@Override
 	public void clean() {
-		this.assetsManager = null;
-		this.lastCCPAccessTime = null;
-		this.assetsCacheTime = null;
-		this.blueprintsCacheTime = null;
-		this.jobsCacheTime = null;
+		assetsManager = null;
+		lastCCPAccessTime = null;
+		assetsCacheTime = null;
+		blueprintsCacheTime = null;
+		jobsCacheTime = null;
 		super.clean();
 	}
 
 	public void cleanJobs() {
-		this.jobList = null;
-		this.jobsCacheTime = new Instant();
+		jobList = null;
+		jobsCacheTime = new Instant();
 	}
 
 	/**
@@ -226,39 +216,49 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	 * time we access that list.
 	 */
 	public void cleanOrders() {
-		this.marketCacheTime = null;
+		marketCacheTime = null;
+	}
+
+	/**
+	 * For the EveChar the contents provided to the model are empty when the variant is related to the pilot
+	 * list. Maybe in other calls the return would be another list of contents.
+	 */
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		//		if (renderWhenEmpty()) results.add(this);
+		return results;
 	}
 
 	public void forceRefresh() {
 		clean();
-		this.assetsManager = new AssetsManager(this);
-		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(this.characterID);
+		assetsManager = new AssetsManager(this);
+		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(characterID);
 	}
 
 	public long getAssetCount() {
-		if (this.totalAssets == -1) {
+		if (totalAssets == -1) {
 			try {
 				final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-				this.totalAssets = assetDao
+				totalAssets = assetDao
 						.countOf(assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", getCharacterID()).prepare());
 			} catch (final SQLException sqle) {
 				Log.w("EVEI", "W> Proglem calculating the number of assets for " + getName());
 			}
 		}
-		return this.totalAssets;
+		return totalAssets;
 	}
 
 	public AssetsManager getAssetsManager() {
-		if (null == this.assetsManager) {
-			this.assetsManager = new AssetsManager(this);
+		if (null == assetsManager) {
+			assetsManager = new AssetsManager(this);
 		}
 		// Make sure the Manager is already connected to the Pilot.
-		this.assetsManager.setPilot(this);
-		return this.assetsManager;
+		assetsManager.setPilot(this);
+		return assetsManager;
 	}
 
 	public ApiAuthorization getAuthorization() {
-		return new ApiAuthorization(this.keyID, this.characterID, this.verificationCode);
+		return new ApiAuthorization(keyID, characterID, verificationCode);
 	}
 
 	public ArrayList<Job> getIndustryJobs() {
@@ -275,7 +275,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	public int getSkillLevel(final int skillID) {
 		// Corporation api will have all skills maxed.
 		if (isCorporation()) return 5;
-		final Set<ApiSkill> skills = this.characterSheet.getSkills();
+		final Set<ApiSkill> skills = characterSheet.getSkills();
 		for (final ApiSkill apiSkill : skills)
 			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
 		return 0;
@@ -295,12 +295,11 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	 * @return
 	 */
 	public EDataBlock needsUpdate() {
-		if (AppConnector.checkExpiration(this.lastCCPAccessTime, ModelWideConstants.HOURS1))
-			return EDataBlock.CHARACTERDATA;
-		if (AppConnector.checkExpiration(this.marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
-		if (AppConnector.checkExpiration(this.jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
-		if (AppConnector.checkExpiration(this.assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
-		if (AppConnector.checkExpiration(this.blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
+		if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS1)) return EDataBlock.CHARACTERDATA;
+		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
+		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
+		if (AppConnector.checkExpiration(assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
 	}
 
@@ -327,14 +326,14 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	 * @param manager
 	 */
 	public void setAssetsManager(final AssetsManager manager) {
-		this.assetsManager = manager;
+		assetsManager = manager;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveChar [");
 		buffer.append(super.toString()).append(" ");
-		buffer.append("assets:").append(this.totalAssets).append(" ");
+		buffer.append("assets:").append(totalAssets).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -371,7 +370,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 				response = parser.getResponse(getAuthorization());
 				if (null != response) {
 					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-					this.assetsCacheTime = new Instant(response.getCachedUntil());
+					assetsCacheTime = new Instant(response.getCachedUntil());
 					// Assets may be parent of other assets so process them recursively.
 					for (final EveAsset eveAsset : assets) {
 						processAsset(eveAsset, null);
@@ -383,7 +382,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 				response = parser.getResponse(getAuthorization());
 				if (null != response) {
 					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-					this.assetsCacheTime = new Instant(response.getCachedUntil());
+					assetsCacheTime = new Instant(response.getCachedUntil());
 					// Assets may be parent of other assets so process them recursively.
 					for (final EveAsset eveAsset : assets) {
 						processAsset(eveAsset, null);
@@ -393,13 +392,13 @@ public class EveChar extends EveCharCore implements INeoComNode {
 			AppConnector.getDBConnector().replaceAssets(getCharacterID());
 
 			// Update the caching time to the time set by the eveapi.
-			this.assetsCacheTime = new Instant(response.getCachedUntil());
+			assetsCacheTime = new Instant(response.getCachedUntil());
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
 		// Clean all user structures invalid after the reload of the assets.
-		this.assetsManager = null;
-		this.totalAssets = -1;
+		assetsManager = null;
+		totalAssets = -1;
 		//		clearTimers();
 		JobManager.clearCache();
 		setDirty(true);
@@ -465,7 +464,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 			getAssetsManager().storeBlueprints(bplist);
 			AppConnector.getDBConnector().replaceBlueprints(getCharacterID());
 			// Update the caching time to the time set by the eveapi.
-			this.blueprintsCacheTime = new Instant(response.getCachedUntil());
+			blueprintsCacheTime = new Instant(response.getCachedUntil());
 			// Update the dirty state to signal modification of store structures.
 			setDirty(true);
 		} catch (final ApiException apie) {
@@ -485,16 +484,16 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	public synchronized void updateCharacterInfo() {
 		// TODO Verify that the data is stale before attempting to read it again.
 		try {
-			if (AppConnector.checkExpiration(this.lastCCPAccessTime, ModelWideConstants.HOURS1)) {
+			if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS1)) {
 				downloadEveCharacterInfo();
 				downloadCharacterSheet();
 				// Get access to the character sheet data.
 				final CharacterSheetParser parser = CharacterSheetParser.getInstance();
 				final CharacterSheetResponse response = parser.getResponse(getAuthorization());
 				if (null != response) {
-					this.characterSheet = response;
+					characterSheet = response;
 				}
-				this.lastCCPAccessTime = new Instant(response.getCachedUntil());
+				lastCCPAccessTime = new Instant(response.getCachedUntil());
 				setDirty(true);
 			}
 		} catch (final RuntimeException rtex) {
@@ -521,7 +520,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 			final NewIndustryJobsHistoryResponse responsehist = parserhist.getResponse(getAuthorization());
 			if (null != responsehist) {
 				final HashSet<ApiNewIndustryJob> jobs = new HashSet<ApiNewIndustryJob>(responsehist.getAll());
-				this.jobsCacheTime = new Instant(responsehist.getCachedUntil());
+				jobsCacheTime = new Instant(responsehist.getCachedUntil());
 				for (final ApiNewIndustryJob evejob : jobs) {
 					final Job myjob = convert2Job(evejob);
 					// Set the owner my there is not job cleanup.
@@ -542,7 +541,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 			final NewIndustryJobsResponse response = parser.getResponse(getAuthorization());
 			if (null != response) {
 				final HashSet<ApiNewIndustryJob> jobs = new HashSet<ApiNewIndustryJob>(response.getAll());
-				this.jobsCacheTime = new Instant(response.getCachedUntil());
+				jobsCacheTime = new Instant(response.getCachedUntil());
 				for (final ApiNewIndustryJob evejob : jobs) {
 					final Job myjob = convert2Job(evejob);
 					// Set the owner my there is not job cleanup.
@@ -585,7 +584,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 						sqle.printStackTrace();
 					}
 				}
-				this.marketCacheTime = new Instant(response.getCachedUntil());
+				marketCacheTime = new Instant(response.getCachedUntil());
 			}
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
@@ -614,11 +613,11 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	}
 
 	private void clearTimers() {
-		this.lastCCPAccessTime = null;
-		this.assetsCacheTime = null;
-		this.blueprintsCacheTime = null;
-		this.jobsCacheTime = null;
-		this.marketCacheTime = null;
+		lastCCPAccessTime = null;
+		assetsCacheTime = null;
+		blueprintsCacheTime = null;
+		jobsCacheTime = null;
+		marketCacheTime = null;
 		//		skillsCacheTime = null;
 	}
 
@@ -756,8 +755,8 @@ public class EveChar extends EveCharCore implements INeoComNode {
 
 	private synchronized void downloadCharacterSheet() {
 		logger.info(">> EveChar.downloadCharacterSheet");
-		final String eveCharacterInfoCall = CHAR_CHARACTERSHEET + "?keyID=" + this.keyID + "&vCode=" + this.verificationCode
-				+ "&characterID=" + this.characterID;
+		final String eveCharacterInfoCall = CHAR_CHARACTERSHEET + "?keyID=" + keyID + "&vCode=" + verificationCode
+				+ "&characterID=" + characterID;
 		final Element characterDoc = AppConnector.getStorageConnector().accessDOMDocument(eveCharacterInfoCall);
 		if (null == characterDoc) {
 			setName("Corporation");
@@ -807,8 +806,8 @@ public class EveChar extends EveCharCore implements INeoComNode {
 
 	private synchronized void downloadEveCharacterInfo() {
 		logger.info(">> EveChar.downloadEveCharacterInfo");
-		final String eveCharacterInfoCall = EVE_CHARACTERINFO + "?keyID=" + this.keyID + "&vCode=" + this.verificationCode
-				+ "&characterID=" + this.characterID;
+		final String eveCharacterInfoCall = EVE_CHARACTERINFO + "?keyID=" + keyID + "&vCode=" + verificationCode
+				+ "&characterID=" + characterID;
 		final Element characterDoc = AppConnector.getStorageConnector().accessDOMDocument(eveCharacterInfoCall);
 		if (null == characterDoc) {
 			setName("Corporation");
@@ -864,7 +863,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		//		final ApiAuthorization auth = new ApiAuthorization(keyID, characterID, verificationCode);
 		final SkillInTrainingResponse response;
 		try {
-			this.skillInTraining = parser.getResponse(getAuthorization());
+			skillInTraining = parser.getResponse(getAuthorization());
 		} catch (final ApiException e) {
 			e.printStackTrace();
 		}
@@ -890,10 +889,10 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	}
 
 	private Instant getAssetsCacheTime() {
-		if (null == this.assetsCacheTime) {
-			this.assetsCacheTime = new Instant(0);
+		if (null == assetsCacheTime) {
+			assetsCacheTime = new Instant(0);
 		}
-		return this.assetsCacheTime;
+		return assetsCacheTime;
 	}
 
 	/**

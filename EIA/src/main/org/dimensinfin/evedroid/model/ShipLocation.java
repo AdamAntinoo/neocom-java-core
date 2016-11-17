@@ -40,6 +40,21 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 		locationDelegate = delegate;
 	}
 
+	@Override
+	public void addChild(final IGEFNode child) {
+		locationDelegate.addChild(child);
+	}
+
+	@Override
+	public void addPropertyChangeListener(final PropertyChangeListener newListener) {
+		locationDelegate.addPropertyChangeListener(newListener);
+	}
+
+	@Override
+	public void clean() {
+		locationDelegate.clean();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Ship locations collaborate to the model by adding all their children because we store there the items
@@ -53,32 +68,12 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 	}
 
 	@Override
-	public void addChild(final IGEFNode child) {
-		locationDelegate.addChild(child);
-	}
-
-	@Override
-	public void addPropertyChangeListener(final PropertyChangeListener newListener) {
-		locationDelegate.addPropertyChangeListener(newListener);
+	public boolean collapse() {
+		return locationDelegate.collapse();
 	}
 
 	public boolean equals(final EveLocation obj) {
 		return locationDelegate.equals(obj);
-	}
-
-	@Override
-	public void clean() {
-		locationDelegate.clean();
-	}
-
-	@Override
-	public IGEFNode getParent() {
-		return locationDelegate.getParent();
-	}
-
-	@Override
-	public boolean collapse() {
-		return locationDelegate.collapse();
 	}
 
 	@Override
@@ -87,13 +82,33 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 	}
 
 	@Override
-	public Vector<IGEFNode> getChildren() {
-		return locationDelegate.getChildren();
+	public boolean expand() {
+		return locationDelegate.expand();
 	}
 
 	@Override
 	public void firePropertyChange(final PropertyChangeEvent event) {
 		locationDelegate.firePropertyChange(event);
+	}
+
+	@Override
+	public void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue) {
+		locationDelegate.firePropertyChange(propertyName, oldValue, newValue);
+	}
+
+	@Override
+	public void fireStructureChange(final PropertyChangeEvent event) {
+		locationDelegate.fireStructureChange(event);
+	}
+
+	@Override
+	public void fireStructureChange(final String propertyName, final Object oldState, final Object newState) {
+		locationDelegate.fireStructureChange(propertyName, oldState, newState);
+	}
+
+	@Override
+	public Vector<IGEFNode> getChildren() {
+		return locationDelegate.getChildren();
 	}
 
 	public String getConstellation() {
@@ -112,18 +127,13 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 		return locationDelegate.getID();
 	}
 
-	@Override
-	public void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue) {
-		locationDelegate.firePropertyChange(propertyName, oldValue, newValue);
-	}
-
 	public String getName() {
 		return locationDelegate.getName();
 	}
 
 	@Override
-	public void fireStructureChange(final String propertyName, final Object oldState, final Object newState) {
-		locationDelegate.fireStructureChange(propertyName, oldState, newState);
+	public IGEFNode getParent() {
+		return locationDelegate.getParent();
 	}
 
 	public String getRegion() {
@@ -142,18 +152,8 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 		return locationDelegate.getSecurityValue();
 	}
 
-	@Override
-	public void fireStructureChange(final PropertyChangeEvent event) {
-		locationDelegate.fireStructureChange(event);
-	}
-
 	public String getStation() {
 		return locationDelegate.getStation();
-	}
-
-	@Override
-	public boolean expand() {
-		return locationDelegate.expand();
 	}
 
 	public long getStationID() {
@@ -171,6 +171,21 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 	@Override
 	public int hashCode() {
 		return locationDelegate.hashCode();
+	}
+
+	@Override
+	public boolean hasListeners(final String propertyName) {
+		return locationDelegate.hasListeners(propertyName);
+	}
+
+	@Override
+	public boolean isDownloaded() {
+		return locationDelegate.isDownloaded();
+	}
+
+	@Override
+	public boolean isExpanded() {
+		return locationDelegate.isExpanded();
 	}
 
 	@Override
@@ -194,65 +209,8 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 	}
 
 	@Override
-	public void setDirty(final boolean dirtyState) {
-		locationDelegate.setDirty(dirtyState);
-	}
-
-	@Override
-	public void setParent(final IGEFNode newParent) {
-		locationDelegate.setParent(newParent);
-	}
-
-	public void setConstellation(final String constellation) {
-		locationDelegate.setConstellation(constellation);
-	}
-
-	@Override
-	public boolean hasListeners(final String propertyName) {
-		return locationDelegate.hasListeners(propertyName);
-	}
-
-	public void setConstellationID(final long constellationID) {
-		locationDelegate.setConstellationID(constellationID);
-	}
-
-	@Override
 	public void removePropertyChangeListener(final PropertyChangeListener listener) {
 		locationDelegate.removePropertyChangeListener(listener);
-	}
-
-	public void setLocationID(final long stationID) {
-		locationDelegate.setLocationID(stationID);
-	}
-
-	public void setRegion(final String region) {
-		locationDelegate.setRegion(region);
-	}
-
-	public void setRegionID(final long regionID) {
-		locationDelegate.setRegionID(regionID);
-	}
-
-	public void setSecurity(final String security) {
-		locationDelegate.setSecurity(security);
-	}
-
-	public void setStation(final String station) {
-		locationDelegate.setStation(station);
-	}
-
-	@Override
-	public boolean isDownloaded() {
-		return locationDelegate.isDownloaded();
-	}
-
-	@Override
-	public boolean isExpanded() {
-		return locationDelegate.isExpanded();
-	}
-
-	public void setSystem(final String system) {
-		locationDelegate.setSystem(system);
 	}
 
 	@Override
@@ -260,17 +218,17 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 		return locationDelegate.renderWhenEmpty();
 	}
 
-	public void setSystemID(final long systemID) {
-		locationDelegate.setSystemID(systemID);
+	public void setConstellation(final String constellation) {
+		locationDelegate.setConstellation(constellation);
 	}
 
-	public void setTypeID(final int typeID) {
-		locationDelegate.setTypeID(typeID);
+	public void setConstellationID(final long constellationID) {
+		locationDelegate.setConstellationID(constellationID);
 	}
 
 	@Override
-	public String toString() {
-		return locationDelegate.toString();
+	public void setDirty(final boolean dirtyState) {
+		locationDelegate.setDirty(dirtyState);
 	}
 
 	@Override
@@ -283,14 +241,56 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 		return locationDelegate.setExpanded(newState);
 	}
 
+	public void setLocationID(final long stationID) {
+		locationDelegate.setLocationID(stationID);
+	}
+
+	@Override
+	public void setParent(final IGEFNode newParent) {
+		locationDelegate.setParent(newParent);
+	}
+
+	public void setRegion(final String region) {
+		locationDelegate.setRegion(region);
+	}
+
+	public void setRegionID(final long regionID) {
+		locationDelegate.setRegionID(regionID);
+	}
+
 	@Override
 	public void setRenderWhenEmpty(final boolean renderWhenEmpty) {
 		locationDelegate.setRenderWhenEmpty(renderWhenEmpty);
 	}
 
+	public void setSecurity(final String security) {
+		locationDelegate.setSecurity(security);
+	}
+
+	public void setStation(final String station) {
+		locationDelegate.setStation(station);
+	}
+
+	public void setSystem(final String system) {
+		locationDelegate.setSystem(system);
+	}
+
+	public void setSystemID(final long systemID) {
+		locationDelegate.setSystemID(systemID);
+	}
+
+	public void setTypeID(final int typeID) {
+		locationDelegate.setTypeID(typeID);
+	}
+
 	@Override
 	public void toggleExpanded() {
 		locationDelegate.toggleExpanded();
+	}
+
+	@Override
+	public String toString() {
+		return locationDelegate.toString();
 	}
 }
 

@@ -20,7 +20,6 @@ import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
-import org.dimensinfin.evedroid.factory.PartFactory;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -50,55 +49,81 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	private DataSourceManager							_dsManager;
 
-	protected PartFactory									_partFactory			= null;
+	protected IPartFactory								_partFactory			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public SpecialDataSource(final DataSourceLocator locator, final PartFactory factory) {
+	public SpecialDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		_locator = locator;
 		_partFactory = factory;
 	}
 
+	public SpecialDataSource addParameter(final String name, final int value) {
+		_parameters.put(name, Integer.valueOf(value));
+		return this;
+	}
+
+	public SpecialDataSource addParameter(final String name, final long value) {
+		_parameters.put(name, Long.valueOf(value));
+		return this;
+	}
+
+	public SpecialDataSource addParameter(final String name, final String value) {
+		_parameters.put(name, value);
+		return this;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	@Deprecated
-	//	public void createPart4Node(final AbstractAndroidNode node) {
-	//		if (node instanceof ShipLocation) {
-	//			LocationIndustryPart locpart = new LocationIndustryPart(node);
-	//			locpart.setContainerLocation(false);
-	//			_bodyParts.add(locpart);
-	//			return;
-	//		}
-	//		if (node instanceof Separator) {
-	//			TerminatorPart gp = new TerminatorPart(node);
-	//			gp.setRenderMode(getVersion());
-	//			_bodyParts.add(gp);
-	//			return;
-	//		}
-	//	}
-	public void setDataModel(final RootNode root) {
-		_dataModelRoot = root;
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getHeaderParts() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _headParts) {
-			result.add((AbstractAndroidPart) node);
-		}
-		return result;
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getBodyParts() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts) {
-			result.add((AbstractAndroidPart) node);
-		}
-		return result;
-	}
-
 	public void connect(final DataSourceManager dataSourceManager) {
-		this._dsManager = dataSourceManager;
+		_dsManager = dataSourceManager;
 	}
+
+	/**
+	 * After the model is created we have to transform it into the Part list expected by the DataSourceAdapter.
+	 * <br>
+	 * The Part creation is performed by the corresponding PartFactory we got at the DataSource creation.<br>
+	 * We transform the model recursively and keeping the already available Part elements. We create a
+	 * duplicated of the resulting Part model and we move already parts from the current model to the new model
+	 * or create new part and finally remove what is left and unused.
+	 */
+	@Override
+	public void createContentHierarchy() {
+		try {
+			logger.info(">> PilotListActivity.PilotListDataSource.createContentHierarchy");
+			// Check if we have already a Part model.
+			if (null == _partModelRoot) {
+				_partModelRoot = new RootPart(_dataModelRoot, _partFactory);
+			}
+			logger.info(
+					"-- PilotListActivity.PilotListDataSource.createContentHierarchy-Initiating the refreshChildren() for the _partModelRoot");
+			// Intercept any exception on the creation of the model but do not cut the progress of the already added items
+			try {
+				_partModelRoot.refreshChildren();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			// Get the list of Parts that will be used for the ListView
+			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			logger.info("<< PilotListActivity.PilotListDataSource.createContentHierarchy");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	//	public AppModelStore getStore() {
+	//		return _store;
+	//	}
+
+	//	public int getVersion() {
+	//		return _version;
+	//	}
+
+	//	/**
+	//	 * Sets the initial values for this datasource. This should be done only the first time the datasource is
+	//	 * used because after that the model gets populated from the already seeded elements.<br>
+	//	 * The initial list in empty because there can be locations or categories.
+	//	 */
+	//	public abstract void initModel();
 
 	/**
 	 * This is the method to initialize the copy of the model structures on the datasource. Every time this
@@ -126,33 +151,87 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	//			createPart4Node(node);
 	//	}
 
-	//	public AppModelStore getStore() {
-	//		return _store;
-	//	}
-
-	//	public int getVersion() {
-	//		return _version;
-	//	}
-
-	//	/**
-	//	 * Sets the initial values for this datasource. This should be done only the first time the datasource is
-	//	 * used because after that the model gets populated from the already seeded elements.<br>
-	//	 * The initial list in empty because there can be locations or categories.
-	//	 */
-	//	public abstract void initModel();
-
-	public SpecialDataSource addParameter(final String name, final int value) {
-		_parameters.put(name, Integer.valueOf(value));
-		return this;
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		for (AbstractCorePart node : _bodyParts) {
+			result.add((AbstractAndroidPart) node);
+		}
+		return result;
 	}
 
-	public SpecialDataSource addParameter(final String name, final long value) {
-		_parameters.put(name, Long.valueOf(value));
-		return this;
+	@Override
+	public DataSourceLocator getDataSourceLocator() {
+		return _locator;
 	}
 
-	public SpecialDataSource addParameter(final String name, final String value) {
-		_parameters.put(name, value);
+	@Override
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		for (AbstractCorePart node : _headParts) {
+			result.add((AbstractAndroidPart) node);
+		}
+		return result;
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		for (AbstractCorePart node : _bodyParts) {
+			result.add((AbstractAndroidPart) node);
+		}
+		return result;
+	}
+
+	public EFragment getVariant() {
+		return _variant;
+	}
+
+	/**
+	 * This method is called whenever there is an event on any Part related to this DataSource. We just process
+	 * structure changes that need the DataSource to reconstruct the Part model from the new Model state. Wrong.
+	 * The model does not change but the result from the collaborate2View transformation does.
+	 */
+	@Override
+	public void propertyChange(final PropertyChangeEvent event) {
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
+			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+					event.getNewValue());
+		}
+		// THis event is when the user changes the preferred action so I have to calculate the model again.
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
+			collaborate2Model();
+			createContentHierarchy();
+			//			_bodyParts = new ArrayList<AbstractCorePart>();
+			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+					event.getNewValue());
+		}
+	}
+
+	//	@Deprecated
+	//	public void createPart4Node(final AbstractAndroidNode node) {
+	//		if (node instanceof ShipLocation) {
+	//			LocationIndustryPart locpart = new LocationIndustryPart(node);
+	//			locpart.setContainerLocation(false);
+	//			_bodyParts.add(locpart);
+	//			return;
+	//		}
+	//		if (node instanceof Separator) {
+	//			TerminatorPart gp = new TerminatorPart(node);
+	//			gp.setRenderMode(getVersion());
+	//			_bodyParts.add(gp);
+	//			return;
+	//		}
+	//	}
+	public void setDataModel(final RootNode root) {
+		_dataModelRoot = root;
+	}
+
+	public SpecialDataSource setVariant(final EFragment variant) {
+		_variant = variant;
 		return this;
 	}
 
@@ -172,77 +251,6 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		Object param = _parameters.get(name);
 		if (null != param) if (param instanceof String) return (String) param;
 		return "";
-	}
-
-	@Override
-	public DataSourceLocator getDataSourceLocator() {
-		return _locator;
-	}
-
-	public EFragment getVariant() {
-		return _variant;
-	}
-
-	public SpecialDataSource setVariant(final EFragment variant) {
-		this._variant = variant;
-		return this;
-	}
-
-	/**
-	 * After the model is created we have to transform it into the Part list expected by the DataSourceAdapter.
-	 * <br>
-	 * The Part creation is performed by the corresponding PartFactory we got at the DataSource creation.<br>
-	 * We transform the model recursively and keeping the already available Part elements. We create a
-	 * duplicated of the resulting Part model and we move already parts from the current model to the new model
-	 * or create new part and finally remove what is left and unused.
-	 */
-	@Override
-	public void createContentHierarchy() {
-		try {
-			logger.info(">> PilotListActivity.PilotListDataSource.createContentHierarchy");
-			// Check if we have already a Part model.
-			if (null == _partModelRoot) {
-				_partModelRoot = new RootPart(_dataModelRoot, (IPartFactory) this._partFactory);
-			}
-			logger.info(
-					"-- PilotListActivity.PilotListDataSource.createContentHierarchy-Initiating the refreshChildren() for the _partModelRoot");
-			// Intercept any exception on the creation of the model but do not cut the progress of the already added items
-			try {
-				_partModelRoot.refreshChildren();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			// Get the list of Parts that will be used for the ListView
-			_bodyParts = new ArrayList<AbstractCorePart>();
-			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			logger.info("<< PilotListActivity.PilotListDataSource.createContentHierarchy");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts) {
-			result.add((AbstractAndroidPart) node);
-		}
-		return result;
-	}
-
-	/**
-	 * This method is called whenever there is an event on any Part related to this DataSource. We just process
-	 * structure changes that need the DataSource to reconstruct the Part model from the new Model state. Wrong.
-	 * The model does not change but the result from the collaborate2View transformation does.
-	 */
-	@Override
-	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			_bodyParts = new ArrayList<AbstractCorePart>();
-			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-					event.getNewValue());
-		}
 	}
 }
 

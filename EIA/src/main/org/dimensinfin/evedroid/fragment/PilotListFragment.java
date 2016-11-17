@@ -37,6 +37,16 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public String getSubtitle() {
+		return "";
+	}
+
+	@Override
+	public String getTitle() {
+		return "Select Capsuleer";
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
@@ -52,16 +62,6 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 		}
 		Log.i("NEOCOM", "<< PilotListFragment.onCreateView");
 		return theView;
-	}
-
-	@Override
-	public String getTitle() {
-		return "Select Capsuleer";
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "";
 	}
 
 	@Override

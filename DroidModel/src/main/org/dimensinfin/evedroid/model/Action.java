@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
@@ -31,7 +32,7 @@ import org.dimensinfin.evedroid.industry.Resource;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractComplexNode {
+public class Action extends AbstractComplexNode implements INeoComNode{
 	private class TaskBundle {
 		protected int			priority	= 999;
 		protected EveTask	task			= null;
@@ -66,6 +67,8 @@ public class Action extends AbstractComplexNode {
 	public Action(final Resource res) {
 		resource = res;
 		requestQty = resource.getQuantity();
+		// Default expand state on initialization is collapsed.
+		setExpanded(false);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -200,6 +203,11 @@ public class Action extends AbstractComplexNode {
 				break;
 		}
 	}
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll(getTasks());
+		return results;
+	}
 
 	/**
 	 * Get the resources used to complete totally or partially the request and add all them to the list of tasks
@@ -227,12 +235,6 @@ public class Action extends AbstractComplexNode {
 
 	public Resource getResource() {
 		return resource;
-	}
-
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-		return results;
 	}
 }
 

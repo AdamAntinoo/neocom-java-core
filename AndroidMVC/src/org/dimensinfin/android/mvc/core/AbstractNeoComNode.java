@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.core.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractNeoComNode extends AbstractComplexNode implements INeoComNode {

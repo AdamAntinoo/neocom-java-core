@@ -1,10 +1,10 @@
 *.diff
 *.db
 *.log
+*.trace
 .recommenders/
 
 traces/*.trc
-traces/*.trace
 traces/EIA.tws
 ProjectResources/
 EIA/resources/evedroid.db

@@ -27,9 +27,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 
-import android.util.Log;
-
 import com.j256.ormlite.dao.Dao;
+
+import android.util.Log;
 
 /**
  * The Job Manager will be the application element responsible to get all the structures required to create an
@@ -63,7 +63,8 @@ public class JobManager implements Serializable {
 		industryAssetsManager = null;
 	}
 
-	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target, final EJobClasses action) {
+	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target,
+			final EJobClasses action) {
 		if (null == thePilot) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		switch (action) {

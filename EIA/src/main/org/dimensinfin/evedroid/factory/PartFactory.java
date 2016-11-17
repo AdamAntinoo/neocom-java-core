@@ -12,6 +12,7 @@ package org.dimensinfin.evedroid.factory;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 

@@ -42,25 +42,21 @@ import android.widget.AdapterView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ActionPart extends EveAbstractPart implements IItemPart, OnClickListener, IMenuActionTarget {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 6148259479329269362L;
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private long							blueprintID				= -1;
 	private boolean						clickOverride			= false;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ActionPart(final AbstractComplexNode node) {
 		super(node);
 		// Set the expanded state by default
 		getCastedModel().setExpanded(false);
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public void createHierarchy() {
 		clean();
 		for (final EveTask t : getCastedModel().getTasks()) {
@@ -109,7 +105,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	public long getBlueprintID() {
-		return this.blueprintID;
+		return blueprintID;
 	}
 
 	public Action getCastedModel() {
@@ -149,15 +145,19 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<AbstractPropertyChanger> ch = getChildren();
-		for (final AbstractPropertyChanger node : ch) {
-			// Convert the node to a part.
-			final AbstractAndroidPart part = (AbstractAndroidPart) node;
-			result.add(part);
-			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				final ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-				result.addAll(grand);
+		//		result.add(this);
+		// Add the children only if the model is expanded.
+		if (isExpanded()) {
+			Vector<AbstractPropertyChanger> ch = getChildren();
+			for (final AbstractPropertyChanger node : ch) {
+				// Convert the node to a part.
+				final AbstractAndroidPart part = (AbstractAndroidPart) node;
+				result.add(part);
+				// Check if the node is expanded. Then add its children.
+				if (part.isExpanded()) {
+					final ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
+					result.addAll(grand);
+				}
 			}
 		}
 		return result;
@@ -181,10 +181,12 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	public void onClick(final View view) {
-		if (!this.clickOverride) {
-			getCastedModel().toggleExpanded();
+		if (!clickOverride) {
+			// Clean the view to force an update.
+			invalidate();
+			toggleExpanded();
 			fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
-			this.clickOverride = false;
+			clickOverride = false;
 		}
 	}
 
@@ -230,7 +232,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	 */
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		// Clear click detection.
-		this.clickOverride = false;
+		clickOverride = false;
 		// get the industry group to determine the right actions.
 		final EIndustryGroup industryGroup = getCastedModel().getItemIndustryGroup();
 		switch (industryGroup) {
@@ -271,7 +273,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 						getActivity().startActivity(intent);
 
 						// Event consumed. Override the click.
-						this.clickOverride = true;
+						clickOverride = true;
 					}
 				}
 				// final InventionJobDialog dialog = new InventionJobDialog();
@@ -314,7 +316,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	public void setBlueprintID(final long assetID) {
-		this.blueprintID = assetID;
+		blueprintID = assetID;
 	}
 
 	@Override
@@ -330,9 +332,8 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_SKILLACTION)
-			return new SkillRender(this, this._activity);
-		return new ActionRender(this, this._activity);
+		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_SKILLACTION) return new SkillRender(this, _activity);
+		return new ActionRender(this, _activity);
 	}
 }
 

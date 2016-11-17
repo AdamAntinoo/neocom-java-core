@@ -8,11 +8,12 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.dimensinfin.android.mvc.core.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.core.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Separator extends AbstractComplexNode implements INeoComNode {
@@ -29,11 +30,6 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 		this.title = title;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public String getContent() {
-		return content;
-	}
-
 	/**
 	 * Check if the Separator has children and then add all them to the model.
 	 */
@@ -47,6 +43,11 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
 		//		}
 		return results;
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public String getContent() {
+		return content;
 	}
 
 	public String getTitle() {

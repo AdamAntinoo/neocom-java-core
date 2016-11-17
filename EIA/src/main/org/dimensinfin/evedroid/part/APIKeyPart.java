@@ -40,6 +40,15 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 		getCastedModel().setExpanded(true);
 	}
 
+	/**
+	 * This method should get the visible elements on the chain hierarchy. We depend on the children list as the
+	 * source for the initial hierarchy to be run for visible pieces.
+	 */
+	@Override
+	public ArrayList<AbstractAndroidPart> collaborate2View() {
+		return getPartChildren();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_key() {
 		return keyFormatter.format(getCastedModel().getKeyID());
@@ -59,15 +68,6 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 	}
 
 	/**
-	 * This method should get the visible elements on the chain hierarchy. We depend on the children list as the
-	 * source for the initial hierarchy to be run for visible pieces.
-	 */
-	@Override
-	public ArrayList<AbstractAndroidPart> collaborate2View() {
-		return getPartChildren();
-	}
-
-	/**
 	 * Returns the list of parts that are available for this node. If the node it is expanded then the list will
 	 * include the children and any other grandchildren of this one. If the node is collapsed then the only
 	 * result will be the node itself.
@@ -77,7 +77,7 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		result.add(this);
+		//		result.add(this);
 		// Check if expanded. Then add the list of children and their collaboration to the list.
 		if (getCastedModel().isExpanded()) {
 			Vector<AbstractPropertyChanger> ch = getChildren();

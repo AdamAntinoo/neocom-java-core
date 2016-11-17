@@ -76,54 +76,54 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 		Log.i("EVEI", ">> IndustryJobActionsDataSource.createContentHierarchy");
 		super.createContentHierarchy();
 		// Check we have received the blueprint part from the Fragment.
-		if (null == this._bppart) throw new RuntimeException("Blueprint Part not defined on IndustryJobActionsDataSource.");
+		if (null == _bppart) throw new RuntimeException("Blueprint Part not defined on IndustryJobActionsDataSource.");
 		// From the blueprint get the process to obtain the list of resources.
 		// If there are children that means we have already created the tasks. Then skip the generation.
-		if (this._bppart.getChildren().size() < 1) {
-			final ArrayList<Action> actions = this._bppart.generateActions();
+		if (_bppart.getChildren().size() < 1) {
+			final ArrayList<Action> actions = _bppart.generateActions();
 			for (final Action action : actions) {
 				final ActionPart apart = new ActionPart(action);
-				apart.setBlueprintID(this._bppart.getCastedModel().getAssetID());
+				apart.setBlueprintID(_bppart.getCastedModel().getAssetID());
 				if (action instanceof Skill) {
 					apart.setRenderMode(AppWideConstants.rendermodes.RENDER_SKILLACTION);
 				}
 				apart.createHierarchy();
-				this._bppart.addChild(apart);
+				_bppart.addChild(apart);
 			}
 		}
 
 		// Depending on fragment generate the corresponding model.
 		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBACTIONS) {
 		// Get the module item that is going to be produced.
-		final Blueprint blueprint = this._bppart.getCastedModel();
+		final Blueprint blueprint = _bppart.getCastedModel();
 		// Add the manufacture time section.
 		final JobTimePart time = new JobTimePart(new Separator(""));
-		time.setRunTime(this._bppart.getCycleTime());
-		time.setRunCount(this._bppart.getPossibleRuns());
-		time.setActivity(this._bppart.getJobActivity());
-		this._root.add(time);
+		time.setRunTime(_bppart.getCycleTime());
+		time.setRunCount(_bppart.getPossibleRuns());
+		time.setActivity(_bppart.getJobActivity());
+		_root.add(time);
 
 		// Add The classification groups with their weights.
 		final GroupPart output = (GroupPart) new GroupPart(new Separator(EIndustryGroup.OUTPUT.toString()))
 				.setPriority(100);
-		this._root.add(output);
+		_root.add(output);
 		// Add the rest of the groups.
 		doGroupInit();
 		// To the Output group add the resource part that represents the output.
-		final int productID = this._bppart.getProductID();
-		final ResourcePart outputResource = new ResourcePart(new Resource(productID, this._bppart.getPossibleRuns()));
+		final int productID = _bppart.getProductID();
+		final ResourcePart outputResource = new ResourcePart(new Resource(productID, _bppart.getPossibleRuns()));
 		// Set the render depending on the blueprint job activity.
-		if (this._bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING) {
+		if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING) {
 			outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTJOB);
 		}
-		if (this._bppart.getJobActivity() == ModelWideConstants.activities.INVENTION) {
+		if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION) {
 			outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTBLUEPRINT);
 		}
 		output.addChild(outputResource);
 		// Now classify each resource in their Industry group.
-		classifyResources(this._bppart.getChildren());
+		classifyResources(_bppart.getChildren());
 		//		}
-		Log.i("EVEI", "<< IndustryJobActionsDataSource.createContentHierarchy [" + this._root.size() + "]");
+		Log.i("EVEI", "<< IndustryJobActionsDataSource.createContentHierarchy [" + _root.size() + "]");
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 	}
 
 	public BlueprintPart getBPPart() {
-		return this._bppart;
+		return _bppart;
 	}
 
 	//	@Override
@@ -144,13 +144,38 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 	//		return result;
 	//	}
 
+	//	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
+	//		//		createHeaderContents();
+	//		//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		int productID = _bppart.getProductID();
+	//		EveItem productItem = AppConnector.getDBConnector().searchItembyID(productID);
+	//		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		result.add(new ItemHeader4IndustryPart(productItem));
+	//		return result;
+	//		//		return result;
+	//
+	//	
+	//	}
+	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
+		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		result
+				.add((AbstractAndroidPart) _bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
+		return result;
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getHeaderPartsHierarchy(final int panelMarketordersbody) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
 			//		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
-			for (final AbstractAndroidPart node : this._root) {
+			for (final AbstractAndroidPart node : _root) {
 				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
 					continue;
 				}
@@ -163,7 +188,7 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 			}
 		} catch (final RuntimeException rtex) {
 		}
-		this._adapterData = result;
+		_adapterData = result;
 		logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
 		return result;
 	}
@@ -180,9 +205,9 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 		}
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
 			// Clean all asset managers before restarting the action list.
-			this._bppart.clean();
-			JobManager.initializeAssets(this._store.getPilot());
-			this._bppart.setActivity(this._bppart.getJobActivity());
+			_bppart.clean();
+			JobManager.initializeAssets(_store.getPilot());
+			_bppart.setActivity(_bppart.getJobActivity());
 			createContentHierarchy();
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
@@ -190,12 +215,12 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 	}
 
 	public void setBlueprint(final BlueprintPart blueprintPart) {
-		this._bppart = blueprintPart;
+		_bppart = blueprintPart;
 	}
 
 	@Override
 	protected void add2Group(final IItemPart action, final EIndustryGroup igroup) {
-		for (final AbstractAndroidPart group : this._root)
+		for (final AbstractAndroidPart group : _root)
 			if (group instanceof GroupPart)
 				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
 				group.addChild((IEditPart) action);
@@ -213,45 +238,20 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 	}
 
 	private void doGroupInit() {
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.SKILL.toString())).setPriority(200));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.BLUEPRINT.toString())).setPriority(300));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.REFINEDMATERIAL.toString())).setPriority(400));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.SALVAGEDMATERIAL.toString())).setPriority(400));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.COMPONENTS.toString())).setPriority(500));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.DATACORES.toString())).setPriority(600));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.DATAINTERFACES.toString())).setPriority(600));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.DECRIPTORS.toString())).setPriority(600));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.MINERAL.toString())).setPriority(700));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.ITEMS.toString())).setPriority(800));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.PLANETARYMATERIALS.toString())).setPriority(900));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.REACTIONMATERIALS.toString())).setPriority(900));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.OREMATERIALS.toString())).setPriority(400));
-		this._root.add(new GroupPart(new Separator(EIndustryGroup.UNDEFINED.toString())).setPriority(999));
-	}
-
-	//	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
-	//		//		createHeaderContents();
-	//		//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-	//		int productID = _bppart.getProductID();
-	//		EveItem productItem = AppConnector.getDBConnector().searchItembyID(productID);
-	//		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-	//		result.add(new ItemHeader4IndustryPart(productItem));
-	//		return result;
-	//		//		return result;
-	//
-	//	
-	//	}
-	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
-		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		result.add(
-				(AbstractAndroidPart) this._bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
-		return result;
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getHeaderPartsHierarchy(final int panelMarketordersbody) {
-		// TODO Auto-generated method stub
-		return null;
+		_root.add(new GroupPart(new Separator(EIndustryGroup.SKILL.toString())).setPriority(200));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.BLUEPRINT.toString())).setPriority(300));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.REFINEDMATERIAL.toString())).setPriority(400));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.SALVAGEDMATERIAL.toString())).setPriority(400));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.COMPONENTS.toString())).setPriority(500));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.DATACORES.toString())).setPriority(600));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.DATAINTERFACES.toString())).setPriority(600));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.DECRIPTORS.toString())).setPriority(600));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.MINERAL.toString())).setPriority(700));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.ITEMS.toString())).setPriority(800));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.PLANETARYMATERIALS.toString())).setPriority(900));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.REACTIONMATERIALS.toString())).setPriority(900));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.OREMATERIALS.toString())).setPriority(400));
+		_root.add(new GroupPart(new Separator(EIndustryGroup.UNDEFINED.toString())).setPriority(999));
 	}
 }
 // - UNUSED CODE ............................................................................................
