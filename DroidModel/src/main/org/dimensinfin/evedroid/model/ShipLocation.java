@@ -15,10 +15,10 @@ import java.util.Collection;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractNeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.INodeModel;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 
 /**
  * This class encapsulates the core Eve Online model into the adapter for the Android MVC implementation. This
