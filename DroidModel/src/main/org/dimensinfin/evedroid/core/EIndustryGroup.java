@@ -10,13 +10,15 @@ package org.dimensinfin.evedroid.core;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum EIndustryGroup {
-	UNDEFINED, OUTPUT, SKILL, BLUEPRINT, COMPONENTS, DATACORES, DATAINTERFACES, DECRIPTORS, ITEMS, MINERAL, PLANETARYMATERIALS, REACTIONMATERIALS, REFINEDMATERIAL, SALVAGEDMATERIAL, OREMATERIALS;
+	UNDEFINED, OUTPUT, SKILL, BLUEPRINT, COMPONENTS, HULL,CHARGE,DATACORES, DATAINTERFACES, DECRIPTORS, ITEMS, MINERAL, PLANETARYMATERIALS, REACTIONMATERIALS, REFINEDMATERIAL, SALVAGEDMATERIAL, OREMATERIALS;
 	public static EIndustryGroup decode(final String code) {
 		if (code.equalsIgnoreCase("UNDEFINED")) return EIndustryGroup.UNDEFINED;
 		if (code.equalsIgnoreCase("OUTPUT")) return EIndustryGroup.OUTPUT;
 		if (code.equalsIgnoreCase("SKILL")) return EIndustryGroup.SKILL;
 		if (code.equalsIgnoreCase("BLUEPRINT")) return EIndustryGroup.BLUEPRINT;
 		if (code.equalsIgnoreCase("COMPONENTS")) return EIndustryGroup.COMPONENTS;
+		if (code.equalsIgnoreCase("HULL")) return EIndustryGroup.HULL;
+		if (code.equalsIgnoreCase("CHARGE")) return EIndustryGroup.CHARGE;
 		if (code.equalsIgnoreCase("DATACORES")) return EIndustryGroup.DATACORES;
 		if (code.equalsIgnoreCase("DATAINTERFACES")) return EIndustryGroup.DATAINTERFACES;
 		if (code.equalsIgnoreCase("DECRIPTORS")) return EIndustryGroup.DECRIPTORS;

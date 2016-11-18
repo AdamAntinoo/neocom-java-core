@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.core.INeoComNode;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Separator extends AbstractComplexNode implements INeoComNode {
+public class Separator extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7064637836405461264L;
 	//	private static Logger			logger						= Logger.getLogger("Separator");
@@ -30,6 +30,7 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 		this.title = title;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Check if the Separator has children and then add all them to the model.
 	 */
@@ -45,7 +46,6 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public String getContent() {
 		return content;
 	}

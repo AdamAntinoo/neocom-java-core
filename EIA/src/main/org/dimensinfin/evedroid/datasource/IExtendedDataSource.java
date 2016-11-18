@@ -12,23 +12,23 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.core.model.AbstractGEFNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IExtendedDataSource extends IDataSource {
+	public AbstractGEFNode collaborate2Model();
+
+	public void connect(DataSourceManager dataSourceManager);
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void createContentHierarchy();
 
-	public ArrayList<AbstractAndroidPart> getHeaderParts();
-
 	public ArrayList<AbstractAndroidPart> getBodyParts();
-
-	public AbstractGEFNode collaborate2Model();
 
 	public DataSourceLocator getDataSourceLocator();
 
-	public void connect(DataSourceManager dataSourceManager);
+	public ArrayList<AbstractAndroidPart> getHeaderParts();
 }
 
 // - UNUSED CODE ............................................................................................

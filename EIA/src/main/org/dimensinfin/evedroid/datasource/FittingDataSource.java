@@ -10,8 +10,8 @@ package org.dimensinfin.evedroid.datasource;
 
 import java.util.ArrayList;
 
-import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -139,19 +139,24 @@ public class FittingDataSource extends SpecialDataSource {
 	}
 
 	private void doGroupInit() {
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()));
+		boolean renderEmptyState = true;
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.HULL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.CHARGE.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot
+				.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot
+				.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()).setRenderWhenEmpty(renderEmptyState));
 	}
 }
 // - UNUSED CODE ............................................................................................

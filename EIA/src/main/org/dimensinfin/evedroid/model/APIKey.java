@@ -16,13 +16,12 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.parser.AttributeGetters;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class APIKey extends APIKeyCore implements INeoComNode {
+public class APIKey extends APIKeyCore {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long								serialVersionUID		= 2600656062640799339L;
 	private static Logger										logger							= Logger.getLogger("APIKey");
@@ -39,6 +38,7 @@ public class APIKey extends APIKeyCore implements INeoComNode {
 		super(keyID, verificationCode);
 	}
 
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		//		results.add(this);

@@ -12,8 +12,8 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
-import org.dimensinfin.android.mvc.core.IDataSource;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 
 import android.app.DialogFragment;
 import android.app.Fragment;

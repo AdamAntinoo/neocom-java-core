@@ -14,7 +14,7 @@ import java.util.Vector;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
@@ -84,34 +84,6 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 			countString = qtyFormatter.format(locationAssets) + " item";
 		}
 		return countString;
-	}
-
-	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
-		Log.i("NEOCOM", ">> LocationAssetsPart.onCreateContextMenu"); //$NON-NLS-1$
-		//		String _contextMenuTitle = "Select Location Role";
-		//		String[] _contextMenu = EVEDroidApp.getSingletonApp().getResources().getStringArray(R.array.locationFunctions);
-		menu.setHeaderTitle(_contextMenuTitle);
-		for (int i = 0; i < _contextMenu.length; i++) {
-			menu.add(Menu.NONE, i, i, _contextMenu[i]);
-		}
-		Log.i("NEOCOM", "<< LocationAssetsPart.onCreateContextMenu"); //$NON-NLS-1$
-	}
-
-	public boolean onContextItemSelected(final MenuItem item) {
-		Log.i("NEOCOM", ">> LocationAssetsPart.onContextItemSelected"); //$NON-NLS-1$
-		final int menuItemIndex = item.getItemId();
-		final String menuItemName = _contextMenu[menuItemIndex];
-		final EveLocation theSelectedLocation = getCastedModel();
-		// Check for the role clearing.
-		if (menuItemName.equalsIgnoreCase("-CLEAR-")) {
-			getPilot().clearLocationRoles(theSelectedLocation);
-		} else {
-			getPilot().addLocationRole(theSelectedLocation, menuItemName);
-		}
-		invalidate();
-		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
-		Log.i("NEOCOM", "<< LocationAssetsPart.onContextItemSelected"); //$NON-NLS-1$
-		return true;
 	}
 
 	public double getItemsValoration() {
@@ -186,6 +158,34 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 		// Toggle location to show its contents.
 		getCastedModel().toggleExpanded();
 		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+	}
+
+	public boolean onContextItemSelected(final MenuItem item) {
+		Log.i("NEOCOM", ">> LocationAssetsPart.onContextItemSelected"); //$NON-NLS-1$
+		final int menuItemIndex = item.getItemId();
+		final String menuItemName = _contextMenu[menuItemIndex];
+		final EveLocation theSelectedLocation = getCastedModel();
+		// Check for the role clearing.
+		if (menuItemName.equalsIgnoreCase("-CLEAR-")) {
+			getPilot().clearLocationRoles(theSelectedLocation);
+		} else {
+			getPilot().addLocationRole(theSelectedLocation, menuItemName);
+		}
+		invalidate();
+		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+		Log.i("NEOCOM", "<< LocationAssetsPart.onContextItemSelected"); //$NON-NLS-1$
+		return true;
+	}
+
+	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
+		Log.i("NEOCOM", ">> LocationAssetsPart.onCreateContextMenu"); //$NON-NLS-1$
+		//		String _contextMenuTitle = "Select Location Role";
+		//		String[] _contextMenu = EVEDroidApp.getSingletonApp().getResources().getStringArray(R.array.locationFunctions);
+		menu.setHeaderTitle(_contextMenuTitle);
+		for (int i = 0; i < _contextMenu.length; i++) {
+			menu.add(Menu.NONE, i, i, _contextMenu[i]);
+		}
+		Log.i("NEOCOM", "<< LocationAssetsPart.onCreateContextMenu"); //$NON-NLS-1$
 	}
 
 	@Override

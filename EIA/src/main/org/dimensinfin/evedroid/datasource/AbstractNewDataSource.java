@@ -14,8 +14,8 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
-import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
+import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 // - CLASS IMPLEMENTATION ...................................................................................

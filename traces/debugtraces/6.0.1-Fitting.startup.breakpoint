@@ -15,24 +15,35 @@ REQUIREMENTS
   Resource [[Charge] Microwave S x4 stack: 1 total: 4 #240 ]]
 
 ACTIONSREGISTERED
-{240=Action [Resource [[Charge] Microwave S x4 stack: 1 total: 4 #240 ] 
+{240=Action [Resource [[Charge] Microwave S x4 stack: 1 total: 4 #240 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#240 Microwave S] quantity: 3 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ], TaskManager.TaskBundle [[300] EveTask [BUY [#240 Microwave S] quantity: 1 locationLocation [#30000142 [The Forge] system: Jita station: Jita ] ] ]]
-], 244=Action [Resource [[Charge] Xray S x4 stack: 1 total: 4 #244 ] 
+], 244=Action [Resource [[Charge] Xray S x4 stack: 1 total: 4 #244 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#244 Xray S] quantity: 3 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ], TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#244 Xray S] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ]]
-], 6719=Action [Resource [[Module] Small Focused Modulated Energy Beam I x4 stack: 1 total: 4 #6719 ] 
+], 6719=Action [Resource [[Module] Small Focused Modulated Energy Beam I x4 stack: 1 total: 4 #6719 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#6719 Small Focused Modulated Energy Beam I] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ], TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#6719 Small Focused Modulated Energy Beam I] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ], TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#6719 Small Focused Modulated Energy Beam I] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ], TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#6719 Small Focused Modulated Energy Beam I] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ]]
-], 5839=Action [Resource [[Module] IFFA Compact Damage Control x1 stack: 1 total: 1 #5839 ] 
+], 5839=Action [Resource [[Module] IFFA Compact Damage Control x1 stack: 1 total: 1 #5839 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#5839 IFFA Compact Damage Control] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ]]
-], 11563=Action [Resource [[Module] Micro Auxiliary Power Core I x1 stack: 1 total: 1 #11563 ] 
+], 11563=Action [Resource [[Module] Micro Auxiliary Power Core I x1 stack: 1 total: 1 #11563 ]
 	[TaskManager.TaskBundle [[300] EveTask [BUY [#11563 Micro Auxiliary Power Core I] quantity: 1 locationLocation [#30000142 [The Forge] system: Jita station: Jita ] ] ]]
-], 33076=Action [Resource [[Module] Small Ancillary Armor Repairer x1 stack: 1 total: 1 #33076 ] 
+], 33076=Action [Resource [[Module] Small Ancillary Armor Repairer x1 stack: 1 total: 1 #33076 ]
 	[TaskManager.TaskBundle [[300] EveTask [BUY [#33076 Small Ancillary Armor Repairer] quantity: 1 locationLocation [#30002187 [Domain] system: Amarr station: Amarr ] ] ]]
-], 5405=Action [Resource [[Module] Initiated Compact Warp Disruptor x1 stack: 1 total: 1 #5405 ] 
+], 5405=Action [Resource [[Module] Initiated Compact Warp Disruptor x1 stack: 1 total: 1 #5405 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#5405 Initiated Compact Warp Disruptor] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ]]
-], 5973=Action [Resource [[Module] 5MN Y-T8 Compact Microwarpdrive x1 stack: 1 total: 1 #5973 ] 
+], 5973=Action [Resource [[Module] 5MN Y-T8 Compact Microwarpdrive x1 stack: 1 total: 1 #5973 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#5973 5MN Y-T8 Compact Microwarpdrive] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ]]
-], 11184=Action [Resource [[Ship] Crusader x1 stack: 1 total: 1 #11184 ] 
+], 11184=Action [Resource [[Ship] Crusader x1 stack: 1 total: 1 #11184 ]
 	[TaskManager.TaskBundle [[300] EveTask [BUY [#11184 Crusader] quantity: 1 locationLocation [#30000142 [The Forge] system: Jita station: Jita ] ] ]]
-], 5849=Action [Resource [[Module] Extruded Compact Heat Sink x1 stack: 1 total: 1 #5849 ] 
+], 5849=Action [Resource [[Module] Extruded Compact Heat Sink x1 stack: 1 total: 1 #5849 ]
 	[TaskManager.TaskBundle [[90] EveTask [AVAILABLE [#5849 Extruded Compact Heat Sink] quantity: 1 locationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] - destinationLocation [#61000796 [Providence] system: H-GKI6 station: H-GKI6 VI - Basilica of Maxentius ] ] ]]
 ]}
+
+[ActionPart [null State: MARKET Item: Microwave S ],
+ ActionPart [null State: COMPLETED Item: Xray S ],
+ ActionPart [null State: COMPLETED Item: Small Focused Modulated Energy Beam I ],
+ ActionPart [null State: COMPLETED Item: IFFA Compact Damage Control ],
+ ActionPart [null State: MARKET Item: Micro Auxiliary Power Core I ],
+ ActionPart [null State: MARKET Item: Small Ancillary Armor Repairer ],
+ ActionPart [null State: COMPLETED Item: Initiated Compact Warp Disruptor ],
+ ActionPart [null State: COMPLETED Item: 5MN Y-T8 Compact Microwarpdrive ],
+ ActionPart [null State: MARKET Item: Crusader ],
+ ActionPart [null State: COMPLETED Item: Extruded Compact Heat Sink ]]

@@ -15,9 +15,9 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractCorePart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
-import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.core.RootPart;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 
@@ -151,7 +151,6 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	//			createPart4Node(node);
 	//	}
 
-	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractCorePart node : _bodyParts) {
@@ -160,12 +159,10 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		return result;
 	}
 
-	@Override
 	public DataSourceLocator getDataSourceLocator() {
 		return _locator;
 	}
 
-	@Override
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractCorePart node : _headParts) {

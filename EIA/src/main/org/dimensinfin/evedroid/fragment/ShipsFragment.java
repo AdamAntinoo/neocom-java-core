@@ -10,8 +10,8 @@ package org.dimensinfin.evedroid.fragment;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractCorePart;
-import org.dimensinfin.android.mvc.core.IEditPart;
-import org.dimensinfin.android.mvc.core.IPartFactory;
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -43,6 +43,23 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public String getSubtitle() {
+		String st = "";
+		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
+			st = "Ships - by Location";
+		}
+		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
+			st = "Ships - by Class";
+		}
+		return st;
+	}
+
+	@Override
+	public String getTitle() {
+		return getPilotName();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Creates the structures when the fragment is about to be shown. It will inflate the layout where the
@@ -65,33 +82,6 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	}
 
 	@Override
-	public String getTitle() {
-		return getPilotName();
-	}
-
-	@Override
-	public String getSubtitle() {
-		String st = "";
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-			st = "Ships - by Location";
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
-			st = "Ships - by Class";
-		}
-		return st;
-	}
-
-	private void registerDataSource() {
-		Log.i("NEOCOM", ">> ShipsFragment.registerDataSource");
-		DataSourceLocator locator = new DataSourceLocator().addIdentifier(getPilotName()).addIdentifier(_variant.name());
-		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(_variant));
-		ds.setVariant(_variant);
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
-		setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
-		Log.i("NEOCOM", "<< ShipsFragment.registerDataSource");
-	}
-
-	@Override
 	public void onStart() {
 		Log.i("NEOCOM", ">> ShipsFragment.onStart");
 		try {
@@ -106,6 +96,16 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< ShipsFragment.onStart");
+	}
+
+	private void registerDataSource() {
+		Log.i("NEOCOM", ">> ShipsFragment.registerDataSource");
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(getPilotName()).addIdentifier(_variant.name());
+		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(_variant));
+		ds.setVariant(_variant);
+		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
+		setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
+		Log.i("NEOCOM", "<< ShipsFragment.registerDataSource");
 	}
 }
 

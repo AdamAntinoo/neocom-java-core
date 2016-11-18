@@ -19,10 +19,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.core.INeoComNode;
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 /**
  * The baseline implementation for the {@link IEditPart} interface.

@@ -12,14 +12,14 @@ import java.util.Date;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.core.IDateTimeComparator;
-import org.dimensinfin.evedroid.core.INamedPart;
+import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
+import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
 import org.dimensinfin.evedroid.render.JobRender;
@@ -102,6 +102,10 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 
 	public Job getCastedModel() {
 		return (Job) getModel();
+	}
+
+	public DateTime getComparableDate() {
+		return new DateTime(getCastedModel().getEndDate());
 	}
 
 	public Date getEndDate() {
@@ -206,10 +210,6 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	protected AbstractHolder selectHolder() {
 		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST) return new JobRender(this, _activity);
 		return new JobRender(this, _activity);
-	}
-
-	public DateTime getComparableDate() {
-		return new DateTime(getCastedModel().getEndDate());
 	}
 }
 

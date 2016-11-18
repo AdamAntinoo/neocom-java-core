@@ -14,7 +14,7 @@ import java.util.Vector;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.R;
@@ -24,8 +24,8 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
+import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveTask;
@@ -237,6 +237,8 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 		final EIndustryGroup industryGroup = getCastedModel().getItemIndustryGroup();
 		switch (industryGroup) {
 			case COMPONENTS:
+			case HULL:
+			case CHARGE:
 			case ITEMS:
 				getActivity().getMenuInflater().inflate(R.menu.actioncomponent_menu, menu);
 				break;

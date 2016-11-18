@@ -184,6 +184,9 @@ public class EveItem extends AbstractComplexNode {
 		if ((groupname.equalsIgnoreCase("Mining Crystal")) && (category.equalsIgnoreCase("Charge"))) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
+		if (category.equalsIgnoreCase("Charge")) {
+			industryGroup = EIndustryGroup.CHARGE;
+		}
 		if (groupname.equalsIgnoreCase("Tool")) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
@@ -212,6 +215,9 @@ public class EveItem extends AbstractComplexNode {
 			industryGroup = EIndustryGroup.DATACORES;
 		}
 		if (groupname.equalsIgnoreCase("Salvaged Materials")) industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
+		if (category.equalsIgnoreCase("Ship")) {
+			industryGroup = EIndustryGroup.HULL;
+		}
 	}
 
 	private MarketDataSet getBuyerMarketData() {

@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -55,31 +55,30 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	// ..........................................................................
 	public MarketOrder generateOrder(final int quantity) {
 		final DateTime now = new DateTime(DateTimeZone.UTC);
-		this.item = getCastedModel().getItem();
+		item = getCastedModel().getItem();
 		final MarketOrder newMarketOrder = new MarketOrder(now.getMillis());
 		try {
 			newMarketOrder.setOwnerID(getPilot().getCharacterID());
-			newMarketOrder.setStationID(this.item.getLowestSellerPrice().getLocation().getID());
+			newMarketOrder.setStationID(item.getLowestSellerPrice().getLocation().getID());
 			newMarketOrder.setVolEntered(quantity);
 			newMarketOrder.setVolRemaining(0);
 			newMarketOrder.setMinVolume(1);
 			newMarketOrder.setOrderState(10);
-			newMarketOrder.setTypeID(this.item.getTypeID());
+			newMarketOrder.setTypeID(item.getTypeID());
 			newMarketOrder.setRange(1);
 			newMarketOrder.setAccountKey(1000);
 			newMarketOrder.setDuration(14);
 			newMarketOrder.setEscrow(0);
-			newMarketOrder.setPrice(this.item.getLowestSellerPrice().getPrice());
+			newMarketOrder.setPrice(item.getLowestSellerPrice().getPrice());
 			newMarketOrder.setBid(0);
 			newMarketOrder.setIssuedDate(now.toDate());
 			try {
 				final Dao<MarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
 				marketOrderDao.createOrUpdate(newMarketOrder);
-				Log.i("EVEI", "-- TaskPart.generateOrder.Wrote MarketOrder to database id ["
-						+ newMarketOrder.getOrderID() + "]");
-			} catch (final SQLException sqle) {
 				Log.i("EVEI",
-						"E> Unable to create the new Job [" + newMarketOrder.getOrderID() + "]. " + sqle.getMessage());
+						"-- TaskPart.generateOrder.Wrote MarketOrder to database id [" + newMarketOrder.getOrderID() + "]");
+			} catch (final SQLException sqle) {
+				Log.i("EVEI", "E> Unable to create the new Job [" + newMarketOrder.getOrderID() + "]. " + sqle.getMessage());
 				sqle.printStackTrace();
 			}
 		} catch (final RuntimeException rtex) {
@@ -120,8 +119,7 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	}
 
 	/**
-	 * Presents on the UI with the cost to obtain of the resources missing to
-	 * manufacture the schedule count.
+	 * Presents on the UI with the cost to obtain of the resources missing to manufacture the schedule count.
 	 */
 	public String get_budget() {
 		return generatePriceString(getSellerPrice() * getCastedModel().getQty(), true, true);
@@ -135,8 +133,7 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	}
 
 	/**
-	 * Searches for a text representation of the destination station or place
-	 * where to move some asset.
+	 * Searches for a text representation of the destination station or place where to move some asset.
 	 */
 	public String get_destination() {
 		// If the location comes from the Market then there is no station
@@ -228,9 +225,8 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	}
 
 	/**
-	 * Creates the contextual menu for the selected task if this is a BUY task
-	 * only. The action should trigger the display of the quantity request
-	 * dialog to get the number to be bought.
+	 * Creates the contextual menu for the selected task if this is a BUY task only. The action should trigger
+	 * the display of the quantity request dialog to get the number to be bought.
 	 */
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		Log.i("EVEI", ">> TaskPart.onCreateContextMenu");
@@ -270,16 +266,15 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 
 	@Override
 	protected void initialize() {
-		this.item = getCastedModel().getItem();
-		if (null == this.item)
-			throw new RuntimeException(
-					"RT> TaskPart - The task item is not defined. " + getCastedModel().getItemName());
+		item = getCastedModel().getItem();
+		if (null == item)
+			throw new RuntimeException("RT> TaskPart - The task item is not defined. " + getCastedModel().getItemName());
 	}
 
 	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
-		return new TaskRender(this, this._activity);
+		return new TaskRender(this, _activity);
 	}
 }
 // - UNUSED CODE

@@ -15,9 +15,9 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.INamedPart;
 import org.dimensinfin.evedroid.holder.Asset4CategoryHolder;
 import org.dimensinfin.evedroid.holder.AssetHolder;
+import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.render.AssetLineRender;
 

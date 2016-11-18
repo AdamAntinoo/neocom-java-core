@@ -2,7 +2,7 @@
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
 //	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
 
-package org.dimensinfin.android.mvc.core;
+package org.dimensinfin.android.mvc.interfaces;
 
 //- IMPORT SECTION .........................................................................................
 import android.view.ContextMenu;

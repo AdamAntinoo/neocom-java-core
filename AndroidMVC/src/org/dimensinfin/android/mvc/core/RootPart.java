@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class RootPart extends AbstractEditPart {
@@ -51,11 +54,13 @@ public class RootPart extends AbstractEditPart {
 		for (AbstractAndroidPart child : childrenParts)
 			if (child instanceof AbstractAndroidPart) {
 				AbstractAndroidPart node = child;
-				result.add(child);
+				// Add this node only if not empty or if empty but marked as viewable.
+				IGEFNode partModel = node.getModel();
+				if (partModel instanceof INeoComNode) {
+					INeoComNode model = (INeoComNode) partModel;
+					if (model.renderWhenEmpty()) result.add(child);
+				}
 				result.addAll(node.collaborate2View());
-				//				for (AbstractPropertyChanger candidate : node.collaborate2View()) {
-				//					result.add((AbstractAndroidPart) candidate);
-				//				}
 			}
 		return result;
 	}

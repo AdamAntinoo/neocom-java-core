@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 
 import android.os.Bundle;

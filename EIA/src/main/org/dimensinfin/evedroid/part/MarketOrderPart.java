@@ -10,7 +10,7 @@ package org.dimensinfin.evedroid.part;
 import java.sql.SQLException;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.R;
@@ -19,7 +19,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.core.IDateTimeComparator;
+import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.MarketOrder;
 import org.dimensinfin.evedroid.render.MarketOrderRender;
@@ -69,15 +69,6 @@ public class MarketOrderPart extends EveAbstractPart
 		return getCastedModel().getVolEntered();
 	}
 
-	public void onClick(final View target) {
-		Log.i("EVEI", ">> StackPart.onClick");
-		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getItemTypeID());
-		getActivity().startActivity(intent);
-		Log.i("EVEI", "<< StackPart.onClick");
-	}
-
 	@Override
 	public long getModelID() {
 		return getCastedModel().getOrderID();
@@ -105,6 +96,15 @@ public class MarketOrderPart extends EveAbstractPart
 
 	public int getTypeID() {
 		return getCastedModel().getItemTypeID();
+	}
+
+	public void onClick(final View target) {
+		Log.i("EVEI", ">> StackPart.onClick");
+		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
+		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
+		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getItemTypeID());
+		getActivity().startActivity(intent);
+		Log.i("EVEI", "<< StackPart.onClick");
 	}
 
 	public boolean onContextItemSelected(final MenuItem item) {

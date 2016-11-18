@@ -12,9 +12,13 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.android.mvc.interfaces.IViewSupportPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -24,24 +28,23 @@ import android.view.View;
 // REFACTOR Change the class dependency to simplify once the code is stable.
 /**
  * Core code for any Android Part. Will have enough code to deal with the model transformation, the model/view
- * access and the notifications and events mechanisms.
+ * access and the notifications and events mechanisms. <br>
+ * This class also has all the methods required for the Android development and depend then on Android classes
+ * and features. This class differentiates from the core classes.
  * 
  * @author Adam Antinoo
  */
-public abstract class AbstractAndroidPart extends AbstractCorePart {
+public abstract class AbstractAndroidPart extends AbstractCorePart implements IViewSupportPart {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7467855028114565679L;
 	private static Logger			logger						= Logger.getLogger("AbstractAndroidPart");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	//	private IGEFNode					_model						= null;
-	//	protected boolean					expanded					= false;
 	protected boolean					downloaded				= false;
 	protected int							renderMode				= 1000;
 	protected Activity				_activity					= null;
 	protected Fragment				_fragment					= null;
 	private View							_view							= null;
-	//	protected AbstractRender	_render						= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractAndroidPart() {
@@ -53,22 +56,10 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * Collapses a node from any state if had.
-	 * 
-	 * @return the final expend state.
-	 */
-	//	public boolean collapse() {
-	//		expanded = false;
-	//		return expanded;
-	//	}
 	public void addChild(final AbstractAndroidPart child) {
 		children.add(child);
 	}
 
-	//	public void addChild(final IGEFNode child) {
-	//		children.add((AbstractPropertyChanger) child);
-	//	}
 	public void addChild(final IEditPart child) {
 		children.add((AbstractPropertyChanger) child);
 	}
@@ -77,23 +68,15 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 		children.clear();
 	}
 
+	/**
+	 * By default until all parts are reviewed this method calls the original and now deprecated
+	 * <code>getPartChildren</code> to it gets collected the part that conform the model. On the new design this
+	 * comes from the model while in the old comes from the design structures but both are compatible.
+	 */
 	public ArrayList<AbstractAndroidPart> collaborate2View() {
 		return getPartChildren();
 	}
 
-	/**
-	 * Only expand nodes that have children. This action also has to keep synchronized the recording of actions
-	 * that are used to reproduce the state of a hierarchy.
-	 * 
-	 * @return the final expend state.
-	 */
-	//	public boolean expand() {
-	//		if (getChildren().size() > 0)
-	//			expanded = true;
-	//		else
-	//			expanded = false;
-	//		return expanded;
-	//	}
 	/**
 	 * On the new design the activity is present but not the Fragment. Check that.
 	 * 
@@ -105,16 +88,6 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 		else
 			return getFragment().getActivity();
 	}
-	//	public Activity getActivity() {
-	//		if (null != _activity)
-	//			return _activity;
-	//		else
-	//			throw new RuntimeException("Activity object not available on access on a Part.");
-	//	}
-
-	//	public AbstractComplexNode getAndroidModel() {
-	//		return (AbstractComplexNode) getModel();
-	//	}
 
 	public Fragment getFragment() {
 		if (null != _fragment)
@@ -127,9 +100,6 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 		_activity = activity;
 		return selectHolder();
 	}
-	//	public AbstractAndroidNode getCastedModel() {
-	//		return (AbstractAndroidNode) getModel();
-	//	}
 
 	@Deprecated
 	public AbstractHolder getHolder(final Fragment fragment) {
@@ -137,10 +107,6 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 		_activity = fragment.getActivity();
 		return selectHolder();
 	}
-
-	//	public IGEFNode getModel() {
-	//		return _model;
-	//	}
 
 	/**
 	 * Returns a numeric identifier for this part model item that should be unique from all other system wide
@@ -154,17 +120,25 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 	/**
 	 * Returns the list of parts that are available for this node. If the node it is expanded then the list will
 	 * include the children and any other grandchildren of this one. If the node is collapsed then the only
-	 * result will be the node itself.
+	 * result will be the node itself. <br>
+	 * This method is being deprecated and replaced with the <code>collaborate2View</code>. The first change is
+	 * to aff myself only if not empty and the
 	 * 
-	 * @return list of parts that are accesible for this node.
+	 * @return list of parts that are accessible for this node.
 	 */
+	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		Vector<AbstractPropertyChanger> ch = getChildren();
-		for (Object node : ch) {
+		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
-			result.add(part);
+			IGEFNode model = part.getModel();
+			if (model instanceof AbstractNeoComNode) {
+				AbstractNeoComNode neocomModel = (AbstractNeoComNode) model;
+				if (neocomModel.renderWhenEmpty()) result.add(part);
+			} else
+				result.add(part);
 			// Check if the node is expanded. Then add its children.
 			if (part.isExpanded()) {
 				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
@@ -177,14 +151,6 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 	public int getRenderMode() {
 		return renderMode;
 	}
-	//	public AbstractRender getRenderer(final Fragment fragment) {
-	//		//REFACTOR This has to be updated to AbstractPager once the PagerFragment is completely deprecated.
-	//		_fragment = fragment;
-	//		// Save the render at the Part. This guarantees that this action is always performed.
-	//		_render = (AbstractRender) selectHolder();
-	//		//		_activity = fragment.getActivity();
-	//		return _render;
-	//	}
 
 	public View getView() {
 		return _view;
@@ -215,33 +181,11 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 		downloaded = true;
 	}
 
-	//	public boolean isExpanded() {
-	//		return getModel().is;
-	//	}
-
 	public AbstractPropertyChanger setRenderMode(final int renderMode) {
 		this.renderMode = renderMode;
 		needsRedraw();
 		return this;
 	}
-
-	//	/**
-	//	 * Sets the expand to the value shown on the parameter. This may not toggle the real expand state. On nodes
-	//	 * with no children has no impact because the node will fall back again to the collapsed state.
-	//	 * 
-	//	 * @param newExpanded
-	//	 */
-	//	public void setExpanded(final boolean newExpanded) {
-	//		if (newExpanded)
-	//			expand();
-	//		else
-	//			collapse();
-	//	}
-
-	//	public void setModel(final IGEFNode model) {
-	//		_model = model;
-	//		needsRedraw();
-	//	}
 
 	public void setView(final View convertView) {
 		_view = convertView;
@@ -252,20 +196,6 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 			((AbstractComplexNode) getModel()).toggleExpanded();
 		}
 	}
-
-	//	/**
-	//	 * Tries to invert the expansion state of the node. Only expands nodes that have children and is not
-	//	 * operative on the other nodes.<br>
-	//	 * Since the addition of the view cache every change on the part content or model should trigger a change on
-	//	 * the view. This can be achieved by removing the view from the cache.
-	//	 */
-	//	public void toggleExpanded() {
-	//		if (!expanded)
-	//			expand();
-	//		else
-	//			collapse();
-	//		needsRedraw();
-	//	}
 
 	/**
 	 * Create the Part for the model object received. We have then to have access to the Factory from the root

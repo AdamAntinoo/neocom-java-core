@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.INodeModel;
+import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
@@ -21,6 +22,11 @@ import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.manager.AssetsManager;
+
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 import android.util.Log;
 
@@ -141,6 +147,44 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		return result;
 	}
 
+	private ArrayList<Property> accessLocationRoles() {
+		ArrayList<Property> roleList = new ArrayList<Property>();
+		try {
+			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
+			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
+			Where<Property, String> where = queryBuilder.where();
+			where.eq("ownerID", getPilot().getCharacterID());
+			where.and();
+			where.eq("propertyType", EPropertyTypes.LOCATIONROLE);
+			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
+			roleList = new ArrayList<Property>(propertyDao.query(preparedQuery));
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return roleList;
+	}
+
+	/**
+	 * THis function will replace the Character one on a near future. For this instance I will improve it to get
+	 * the right Location role type.
+	 */
+	private EveLocation getLocation4Role(final EPropertyTypes matchingRole, final String locationType) {
+		ArrayList<Property> locationRoles = accessLocationRoles();
+		for (Property role : locationRoles) {
+			//			String value = role.getPropertyType().name();
+			if (role.getPropertyType() == matchingRole) {
+				// Search for the location type we need. This is the FITTING place
+				if (role.getPropertyValue().equalsIgnoreCase(locationType))
+					return AppConnector.getDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
+			}
+			//				return AppConnector.getDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
+			//		Property currentRole = locationRoles.get(locID);
+			//			if (matchingRole.equalsIgnoreCase(currentRole.getStringValue()))
+			//				return AppConnector.getDBConnector().searchLocationbyID(locID);
+		}
+		return null;
+	}
+
 	/**
 	 * This is the method that constructs the list of actions and resources required to complete the manufacture
 	 * request. The process is a recursive and iterative process using the user item preferences for each item
@@ -152,7 +196,10 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		// Initialize models.
 		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
 		// Manufacturing location set to the predefined location and defaults to current pilot location.
-		manufactureLocation = getPilot().getLocation4Role(EPropertyTypes.LOCATIONROLE.name());
+		manufactureLocation = getLocation4Role(EPropertyTypes.LOCATIONROLE, "FITTING");
+		if (null == manufactureLocation) {
+			manufactureLocation = pilot.getDefaultLocation();
+		}
 		region = manufactureLocation.getRegion();
 		actions4Item = pilot.getActions();
 		// Clear structures to be sure we have the right data.

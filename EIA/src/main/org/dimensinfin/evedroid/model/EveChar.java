@@ -22,9 +22,9 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EDataBlock;
-import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -259,6 +259,16 @@ public class EveChar extends EveCharCore implements INeoComNode {
 
 	public ApiAuthorization getAuthorization() {
 		return new ApiAuthorization(keyID, characterID, verificationCode);
+	}
+
+	/**
+	 * Returns a non null default location so any Industry action has a location to be used as reference. Any
+	 * location is valid.
+	 * 
+	 * @return
+	 */
+	public EveLocation getDefaultLocation() {
+		return getAssetsManager().getLocations().get(1);
 	}
 
 	public ArrayList<Job> getIndustryJobs() {

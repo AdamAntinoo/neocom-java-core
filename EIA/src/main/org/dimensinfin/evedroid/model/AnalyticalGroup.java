@@ -9,7 +9,7 @@
 package org.dimensinfin.evedroid.model;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.core.IWeigthedNode;
+import org.dimensinfin.evedroid.interfaces.IWeigthedNode;
 
 /**
  * The requirements of model objects to be nodes has to review the implementation of simple nodes that only

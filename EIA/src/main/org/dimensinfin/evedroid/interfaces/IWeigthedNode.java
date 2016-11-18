@@ -3,7 +3,7 @@
 //	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-package org.dimensinfin.evedroid.core;
+package org.dimensinfin.evedroid.interfaces;
 
 // - IMPORT SECTION .........................................................................................
 
