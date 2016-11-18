@@ -139,19 +139,21 @@ public class FittingDataSource extends SpecialDataSource {
 	}
 
 	private void doGroupInit() {
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.HULL.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.CHARGE.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()).setRenderWhenEmpty(false));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()).setRenderWhenEmpty(false));
 	}
 }
 // - UNUSED CODE ............................................................................................

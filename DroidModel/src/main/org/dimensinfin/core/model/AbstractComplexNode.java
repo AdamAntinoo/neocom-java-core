@@ -106,8 +106,9 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 		return expanded;
 	}
 
-	public void setRenderWhenEmpty(final boolean renderWhenEmpty) {
+	public AbstractComplexNode setRenderWhenEmpty(final boolean renderWhenEmpty) {
 		this.renderWhenEmpty = renderWhenEmpty;
+		return this;
 	}
 
 	/**

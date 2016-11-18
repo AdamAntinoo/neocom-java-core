@@ -30,6 +30,7 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 		this.title = title;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Check if the Separator has children and then add all them to the model.
 	 */
@@ -45,7 +46,6 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public String getContent() {
 		return content;
 	}

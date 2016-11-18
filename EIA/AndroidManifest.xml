@@ -16,14 +16,14 @@
         android:name="org.dimensinfin.evedroid.EVEDroidApp"
         android:allowBackup="true"
         android:icon="@drawable/evei4"
-        android:label="EVEI 0.6.Fitting"
+        android:label="EVEI 0.6.1-Fitting"
         android:largeHeap="true"
         android:logo="@drawable/evei4"
         android:theme="@style/AppTheme" >
         <activity
             android:name="org.dimensinfin.evedroid.activity.core.SplashActivity"
             android:icon="@drawable/splash_icon"
-            android:label="EVEI 0.6.Fitting"
+            android:label="EVEI 0.6.1-Fitting"
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:stateNotNeeded="true" >

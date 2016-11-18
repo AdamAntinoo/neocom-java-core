@@ -154,17 +154,24 @@ public abstract class AbstractAndroidPart extends AbstractCorePart {
 	/**
 	 * Returns the list of parts that are available for this node. If the node it is expanded then the list will
 	 * include the children and any other grandchildren of this one. If the node is collapsed then the only
-	 * result will be the node itself.
+	 * result will be the node itself. <br>
+	 * This method is being deprecated and replaced with the <code>collaborate2View</code>. The first change is
+	 * to aff myself only if not empty and the
 	 * 
 	 * @return list of parts that are accesible for this node.
 	 */
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		Vector<AbstractPropertyChanger> ch = getChildren();
-		for (Object node : ch) {
+		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
-			result.add(part);
+			IGEFNode model = part.getModel();
+			if (model instanceof AbstractNeoComNode) {
+				AbstractNeoComNode neocomModel = (AbstractNeoComNode) model;
+				if (neocomModel.renderWhenEmpty()) result.add(part);
+			} else
+				result.add(part);
 			// Check if the node is expanded. Then add its children.
 			if (part.isExpanded()) {
 				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();

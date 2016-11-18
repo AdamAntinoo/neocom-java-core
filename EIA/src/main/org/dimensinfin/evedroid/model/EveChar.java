@@ -261,6 +261,16 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		return new ApiAuthorization(keyID, characterID, verificationCode);
 	}
 
+	/**
+	 * Returns a non null default location so any Industry action has a location to be used as reference. Any
+	 * location is valid.
+	 * 
+	 * @return
+	 */
+	public EveLocation getDefaultLocation() {
+		return getAssetsManager().getLocations().get(1);
+	}
+
 	public ArrayList<Job> getIndustryJobs() {
 		if (null == jobList) {
 			jobList = searchIndustryJobs();

@@ -42,6 +42,16 @@ public class GroupPart extends EveAbstractPart {
 		getCastedModel().setExpanded(true);
 	}
 
+	/**
+	 * This is the new view generation method that replaces the <code>getPartChildren</code>.
+	 */
+	@Override
+	public ArrayList<AbstractAndroidPart> collaborate2View() {
+		Vector<AbstractPropertyChanger> ch = getChildren();
+		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		return super.getPartChildren();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_counter() {
 		return qtyFormatter.format(getChildren().size());
@@ -64,6 +74,7 @@ public class GroupPart extends EveAbstractPart {
 		return GregorianCalendar.getInstance().getTimeInMillis();
 	}
 
+	@Deprecated
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		Vector<AbstractPropertyChanger> ch = getChildren();
@@ -74,14 +85,6 @@ public class GroupPart extends EveAbstractPart {
 	public String getTitle() {
 		return getCastedModel().getTitle();
 	}
-
-	//	@Override
-	//	public boolean isExpanded() {
-	//		if (getChildren().size() > 0)
-	//			return true;
-	//		else
-	//			return true;
-	//	}
 
 	public void setIconReference(final int ref) {
 		Log.i("REMOVE", "-- GroupPart.setIconReference - " + this.toString() + " change value to: " + ref);

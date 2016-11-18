@@ -26,7 +26,7 @@ public class Property implements Serializable {
 	@DatabaseField(generatedId = true, index = true)
 	private long						id											= -2;
 	@DatabaseField
-	private String					propertyType						= EPropertyTypes.UNDEFINED.toString();
+	private String					propertyType						= EPropertyTypes.UNDEFINED.name();
 	@DatabaseField
 	private String					stringValue							= "";
 	@DatabaseField
@@ -147,6 +147,10 @@ public class Property implements Serializable {
 		buffer.append("Type:").append(propertyType).append(" ");
 		buffer.append("]");
 		return buffer.toString();
+	}
+
+	public String getPropertyValue() {
+		return this.stringValue;
 	}
 
 }

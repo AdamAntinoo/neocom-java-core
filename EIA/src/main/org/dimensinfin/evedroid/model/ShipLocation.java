@@ -259,8 +259,8 @@ public class ShipLocation extends AbstractNeoComNode implements INodeModel {
 	}
 
 	@Override
-	public void setRenderWhenEmpty(final boolean renderWhenEmpty) {
-		locationDelegate.setRenderWhenEmpty(renderWhenEmpty);
+	public AbstractComplexNode setRenderWhenEmpty(final boolean renderWhenEmpty) {
+		return locationDelegate.setRenderWhenEmpty(renderWhenEmpty);
 	}
 
 	public void setSecurity(final String security) {

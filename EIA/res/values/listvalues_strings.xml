@@ -11,9 +11,10 @@
         <item>-CLEAR-</item>
     </string-array>
     <string-array name="locationFunctions">
+        <item>HOME</item>
         <item>COPY</item>
         <item>GARAGE</item>
-        <item>HOME</item>
+        <item>FITTING</item>
         <item>INVENTION</item>
         <item>MANUFACTURE</item>
         <item>MINING</item>
