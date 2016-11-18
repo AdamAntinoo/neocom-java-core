@@ -193,6 +193,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	 * @return
 	 */
 	private ArrayList<Action> getManufacturingResources() {
+		logger.info(">> Fitting.getManufacturingResources");
 		// Initialize models.
 		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
 		// Manufacturing location set to the predefined location and defaults to current pilot location.
@@ -237,13 +238,13 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 			//	}
 		}
 		// Resource list completed. Dump report to the log and start action processing.
-		Log.i("EVEI", "-- Fitting.getManufacturingResources.List of requirements" + requirements);
+		Log.i("EVEI", "-- [Fitting.getManufacturingResources]-List of requirements > " + requirements);
 		pointer = -1;
 		try {
 			do {
 				pointer++;
 				Resource resource = requirements.get(pointer);
-				Log.i("EVEI", "-- Fitting.getManufacturingResources.Processing resource " + resource);
+				Log.i("EVEI", "-- [Fitting.getManufacturingResources]-Processing > " + resource);
 				// Check resources that are Skills. Give them an special treatment.
 				//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 				//					currentAction = new Skill(resource);

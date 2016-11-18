@@ -196,6 +196,7 @@ public class AbstractManufactureProcess {
 	}
 
 	protected void processAction(final EveTask newTask) {
+		logger.info(">> [AbstractManufactureProcess.processAction] > " + newTask);
 		final String category = newTask.getItem().getCategory();
 		// Check the special case for T2 BPC to transform them to default INVENTION.
 		if (newTask.getTaskType() == ETaskType.REQUEST)
@@ -508,12 +509,13 @@ public class AbstractManufactureProcess {
 
 		// Check the special case for Asteroids
 		if (newTask.getTaskType() == ETaskType.REQUEST) {
-			Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Processing state - " + ETaskType.REQUEST + " ["
+			Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Processing state - " + ETaskType.REQUEST + " [x"
 					+ requestQty + "]");
 			final String category = newTask.getItem().getCategory();
+			logger.info("-- [AbstractManufactureProcess.processRequest]-Checking special case of Asteroids > " + category);
 			// If the resource is an asteroid then we can Refine it.
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
-				Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Asteroid - request COMPLETED");
+				Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Asteroid - request COMPLETED");
 				// Complete the action and add the minerals obtained as tasks.
 				currentAction.setCompleted(ETaskCompletion.COMPLETED, newTask.getQty());
 				// Add the refine of the mineral to the tasks.
@@ -537,7 +539,7 @@ public class AbstractManufactureProcess {
 		}
 		// Get the Assets that match the current type id.
 		final ArrayList<Asset> available = getAsset4Type(newTask.resource.item.getItemID());
-		Log.i("EVEI", "-- AbstractManufactureProcess.processRequest availabel assets:" + available);
+		Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Available assets: " + available);
 		// See if there are assets of this type on the manufacture location before moving assets.
 		// MOVE - manufacture location
 		for (final Asset asset : available) {
@@ -553,8 +555,8 @@ public class AbstractManufactureProcess {
 			}
 		}
 		// Check the MOVE flag to control if the user allows to search for assets at other locations
+		logger.info("-- [AbstractManufactureProcess.processRequest]-Checking Move Allowed flag > " + moveAllowed());
 		if (moveAllowed()) {
-
 			// See if we have that resource elsewhere ready for transportation.
 			// MOVE - manufacture region
 			for (final Asset asset : available) {
@@ -583,6 +585,7 @@ public class AbstractManufactureProcess {
 
 		// If we reach this point we are sure that all other intents have been processed.
 		// Continue processing a BUY request or its decomposition.
+		logger.info("-- [AbstractManufactureProcess.processRequest]-Delegating processing to [processAction]");
 		processAction(newTask);
 	}
 
