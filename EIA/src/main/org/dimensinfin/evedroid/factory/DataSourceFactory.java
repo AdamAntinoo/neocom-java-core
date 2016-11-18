@@ -15,7 +15,7 @@ import java.util.HashMap;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
-import org.dimensinfin.android.mvc.core.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
@@ -109,15 +109,15 @@ final class AssetsByLocationDataSource extends AbstractDataSource {
 	public void createContentHierarchy() {
 		logger.info(">> AssetsByLocationDataSource.createHierarchy");
 		// Clear the current list of elements.
-		this._root.clear();
+		_root.clear();
 
 		try {
 			// Get the list of Locations for this Pilot.
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
 			final ArrayList<EveLocation> locations = manager.getLocations();
-			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(EVEDroidApp.getAppStore()
-					.getActivity());
+			final SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(EVEDroidApp.getAppStore().getActivity());
 			final String locLimitString = prefs.getString(AppWideConstants.preference.PREF_LOCATIONSLIMIT, "10");
 			final int locLimit = 10;
 
@@ -126,13 +126,13 @@ final class AssetsByLocationDataSource extends AbstractDataSource {
 					final EveAbstractPart part = (EveAbstractPart) new LocationAssetsPart(location)
 							.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
 					final String regionName = location.getRegion();
-					AbstractAndroidPart hitRegion = this.regions.get(regionName);
+					AbstractAndroidPart hitRegion = regions.get(regionName);
 					if (null == hitRegion) {
 						hitRegion = (AbstractAndroidPart) new RegionPart(new Separator(regionName))
 								.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-						this.regions.put(regionName, hitRegion);
+						regions.put(regionName, hitRegion);
 						hitRegion.addChild(part);
-						this._root.add(hitRegion);
+						_root.add(hitRegion);
 					} else {
 						hitRegion.addChild(part);
 					}
@@ -140,7 +140,7 @@ final class AssetsByLocationDataSource extends AbstractDataSource {
 			} else {
 				// The number of locations is not enough to group them. Use the locations as the first level.
 				for (final EveLocation location : locations) {
-					this._root.add((AbstractAndroidPart) new LocationAssetsPart(location)
+					_root.add((AbstractAndroidPart) new LocationAssetsPart(location)
 							.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION));
 				}
 			}
@@ -148,13 +148,13 @@ final class AssetsByLocationDataSource extends AbstractDataSource {
 			rte.printStackTrace();
 			logger.severe("E> There is a problem at: AssetsByLocationDataSource.createHierarchy.");
 		}
-		logger.info("<< AssetsByLocationDataSource.createHierarchy [" + this._root.size() + "]");
+		logger.info("<< AssetsByLocationDataSource.createHierarchy [" + _root.size() + "]");
 	}
 
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		logger.info(">> AssetsDirectorActivity.AssetsByLocationDataSource.getPartHierarchy");
-		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		logger.info("<< AssetsDirectorActivity.AssetsByLocationDataSource.getPartHierarchy");
 		return super.getPartHierarchy();
 	}
@@ -317,7 +317,7 @@ final class AssetsByLocationDataSource extends AbstractDataSource {
 //- CLASS IMPLEMENTATION ...................................................................................
 final class EmptyDataSource extends AbstractDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 6229760677978724144L;
+	private static final long serialVersionUID = 6229760677978724144L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	//	private final HashMap<String, CategoryGroupPart>	names							= new HashMap<String, CategoryGroupPart>();
@@ -327,8 +327,8 @@ final class EmptyDataSource extends AbstractDataSource {
 	public void createContentHierarchy() {
 		logger.info(">> EmptyDataSource.createHierarchy");
 		// Clear the current list of elements.
-		this._root.clear();
-		this._root.add(new TerminatorPart(new Separator("NO-DATASOURCE")));
+		_root.clear();
+		_root.add(new TerminatorPart(new Separator("NO-DATASOURCE")));
 		logger.info("<< EmptyDataSource.createHierarchy");
 	}
 }
@@ -661,15 +661,15 @@ final class EmptyDataSource extends AbstractDataSource {
 //- CLASS IMPLEMENTATION ...................................................................................
 final class PilotInfoDataSource extends AbstractDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -1934794359407599783L;
+	private static final long serialVersionUID = -1934794359407599783L;
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public void createContentHierarchy() {
 		logger.info(">> PilotInfoDataSource.createHierarchy");
 		// Clear the current list of elements.
-		this._root.clear();
-		this._root.add(new PilotInfoPart(EVEDroidApp.getAppStore().getPilot()));
+		_root.clear();
+		_root.add(new PilotInfoPart(EVEDroidApp.getAppStore().getPilot()));
 		logger.info("<< PilotInfoDataSource.createHierarchy");
 	}
 }
@@ -724,27 +724,27 @@ final class PilotInfoDataSource extends AbstractDataSource {
 //- CLASS IMPLEMENTATION ...................................................................................
 final class ShipsDataSource extends AbstractDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -1934794359407599783L;
+	private static final long serialVersionUID = -1934794359407599783L;
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public void createContentHierarchy() {
 		logger.info(">> DirectorsBoardActivity.ShipsDataSource.createContentHierarchy");
 		// Clear the current list of elements.
-		this._root.clear();
+		_root.clear();
 		// Add the list of assets of ship category
 		final ArrayList<Asset> ships = DataSourceFactory.getPilot().getShips();
 		for (final Asset asset : ships) {
 			final ShipPart spart = (ShipPart) new ShipPart(asset)
 					.setRenderMode(AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS);
-			this._root.add(spart);
+			_root.add(spart);
 		}
 		logger.info("<< DirectorsBoardActivity.ShipsDataSource.createContentHierarchy");
 	}
 
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		return super.getPartHierarchy();
 	}
 }

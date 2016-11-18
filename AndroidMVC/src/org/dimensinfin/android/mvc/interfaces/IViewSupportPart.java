@@ -6,28 +6,16 @@
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
-package org.dimensinfin.android.mvc.core;
+package org.dimensinfin.android.mvc.interfaces;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.core.INeoComNode;
+import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AbstractNeoComNode extends AbstractComplexNode implements INeoComNode {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -1735276692612402194L;
-	private static Logger			logger						= Logger.getLogger("org.dimensinfin.android.mvc.core");
-
-	// - F I E L D - S E C T I O N ............................................................................
-
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractNeoComNode() {
-	}
-
+public interface IViewSupportPart {
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public abstract ArrayList<AbstractComplexNode> collaborate2Model(final String variant);
+	public ArrayList<AbstractAndroidPart> collaborate2View();
 }
 
 // - UNUSED CODE ............................................................................................

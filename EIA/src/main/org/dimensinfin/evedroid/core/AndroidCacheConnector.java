@@ -21,6 +21,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.core.SimpleDiskCache.BitmapEntry;
+import org.dimensinfin.evedroid.interfaces.ICache;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.service.PendingRequestEntry;
 

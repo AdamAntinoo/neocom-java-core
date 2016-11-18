@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.dimensinfin.android.mvc.core;
+package org.dimensinfin.android.mvc.interfaces;
 
 import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Vector;
 
+import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 

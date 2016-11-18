@@ -12,14 +12,14 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
-import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
-import org.dimensinfin.evedroid.core.IItemPart;
 import org.dimensinfin.evedroid.industry.Resource;
+import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
@@ -119,6 +119,14 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 		}
 	}
 
+	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
+		int productID = _bppart.getProductID();
+		EveItem productItem = AppConnector.getDBConnector().searchItembyID(productID);
+		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		result.add(new ItemHeader4IndustryPart(productItem));
+		return result;
+	}
+
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		logger.info(">> IndustryManufactureResourcesDataSource.getPartHierarchy");
@@ -168,14 +176,6 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 		_root.add(new GroupPart(new Separator(EIndustryGroup.PLANETARYMATERIALS.toString())).setPriority(900));
 		_root.add(new GroupPart(new Separator(EIndustryGroup.REACTIONMATERIALS.toString())).setPriority(900));
 		_root.add(new GroupPart(new Separator(EIndustryGroup.UNDEFINED.toString())).setPriority(999));
-	}
-
-	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
-		int productID = _bppart.getProductID();
-		EveItem productItem = AppConnector.getDBConnector().searchItembyID(productID);
-		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		result.add(new ItemHeader4IndustryPart(productItem));
-		return result;
 	}
 }
 // - UNUSED CODE ............................................................................................

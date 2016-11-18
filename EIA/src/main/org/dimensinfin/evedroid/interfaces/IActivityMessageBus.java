@@ -4,7 +4,7 @@
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
 
-package org.dimensinfin.evedroid.core;
+package org.dimensinfin.evedroid.interfaces;
 
 //- IMPORT SECTION .........................................................................................
 import java.beans.PropertyChangeListener;

@@ -4,7 +4,9 @@
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Minery and mainly on Manufacture.
 
-package org.dimensinfin.evedroid.core;
+package org.dimensinfin.evedroid.interfaces;
+
+import org.dimensinfin.evedroid.core.EIndustryGroup;
 
 //- IMPORT SECTION .........................................................................................
 

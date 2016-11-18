@@ -14,8 +14,8 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
-import org.dimensinfin.android.mvc.core.IDataSource;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.evedroid.EVEDroidApp;
 
 import android.app.Fragment;
@@ -38,7 +38,7 @@ public class AbstractPagerFragment extends TitledFragment {
 	private class InitializeDataSourceTask extends AsyncTask<Fragment, Void, Void> {
 
 		// - F I E L D - S E C T I O N ............................................................................
-		private final Fragment	fragment;
+		private final Fragment fragment;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public InitializeDataSourceTask(final Fragment fragment) {
@@ -58,15 +58,15 @@ public class AbstractPagerFragment extends TitledFragment {
 			Log.i("NEOCOM", ">> InitializeDataSourceTask.doInBackground");
 			try {
 				// Create the hierarchy structure to be used on the Adapter.
-				if (null != AbstractPagerFragment.this._datasource) {
-					if (!AbstractPagerFragment.this._alreadyInitialized) {
-						AbstractPagerFragment.this._datasource.createContentHierarchy();
+				if (null != _datasource) {
+					if (!_alreadyInitialized) {
+						_datasource.createContentHierarchy();
 					}
-					AbstractPagerFragment.this._alreadyInitialized = true;
+					_alreadyInitialized = true;
 				}
 			} catch (final RuntimeException rtex) {
 				rtex.printStackTrace();
-				AbstractPagerFragment.this._alreadyInitialized = false;
+				_alreadyInitialized = false;
 			}
 			Log.i("NEOCOM", "<< InitializeDataSourceTask.doInBackground");
 			return null;
@@ -75,14 +75,13 @@ public class AbstractPagerFragment extends TitledFragment {
 		@Override
 		protected void onPostExecute(final Void result) {
 			Log.i("NEOCOM", ">> InitializeDataSourceTask.onPostExecute");
-			if (null != AbstractPagerFragment.this._datasource) {
-				AbstractPagerFragment.this._adapter = new DataSourceAdapter(this.fragment,
-						AbstractPagerFragment.this._datasource);
-				AbstractPagerFragment.this._modelContainer.setAdapter(AbstractPagerFragment.this._adapter);
+			if (null != _datasource) {
+				_adapter = new DataSourceAdapter(fragment, _datasource);
+				_modelContainer.setAdapter(_adapter);
 
-				AbstractPagerFragment.this._progressLayout.setVisibility(View.GONE);
-				AbstractPagerFragment.this._modelContainer.setVisibility(View.VISIBLE);
-				AbstractPagerFragment.this._container.invalidate();
+				_progressLayout.setVisibility(View.GONE);
+				_modelContainer.setVisibility(View.VISIBLE);
+				_container.invalidate();
 			}
 			super.onPostExecute(result);
 			Log.i("NEOCOM", "<< InitializeDataSourceTask.onPostExecute");
@@ -114,12 +113,12 @@ public class AbstractPagerFragment extends TitledFragment {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addtoHeader(final AbstractAndroidPart target) {
 		Log.i("NEOCOM", ">> PageFragment.addtoHeader");
-		this._headerContents.add(target);
+		_headerContents.add(target);
 		Log.i("NEOCOM", "<< PageFragment.addtoHeader");
 	}
 
 	public void clearHeader() {
-		this._headerContents.clear();
+		_headerContents.clear();
 	}
 
 	/**
@@ -128,8 +127,8 @@ public class AbstractPagerFragment extends TitledFragment {
 	 * XML.
 	 */
 	public int getIdentifier() {
-		if (this._fragmentID > 0)
-			return this._fragmentID;
+		if (_fragmentID > 0)
+			return _fragmentID;
 		else
 			return getId();
 	}
@@ -139,8 +138,8 @@ public class AbstractPagerFragment extends TitledFragment {
 	}
 
 	public void notifyDataSetChanged() {
-		if (null != this._adapter) {
-			this._adapter.notifyDataSetChanged();
+		if (null != _adapter) {
+			_adapter.notifyDataSetChanged();
 		}
 	}
 
@@ -163,14 +162,14 @@ public class AbstractPagerFragment extends TitledFragment {
 		// have not to be the same
 		super.onCreateContextMenu(menu, view, menuInfo);
 		// Check parameters to detect the item selected for menu target.
-		if (view == this._headerContainer) {
+		if (view == _headerContainer) {
 			//			 Check if this fragment has the callback configured
-			final AbstractAndroidPart part = this._headerContents.firstElement();
+			final AbstractAndroidPart part = _headerContents.firstElement();
 			if (part instanceof IMenuActionTarget) {
 				((IMenuActionTarget) part).onCreateContextMenu(menu, view, menuInfo);
 			}
 		}
-		if (view == this._modelContainer) {
+		if (view == _modelContainer) {
 			// Get the tag assigned to the selected view and if implements the callback interface send it the message.
 			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			// Check if the se4lected item is suitable for menu and select it depending on item part class.
@@ -194,20 +193,20 @@ public class AbstractPagerFragment extends TitledFragment {
 		//		processParameters();
 		try {
 			//			if (!this._alreadyInitialized)
-			this._container = (ViewGroup) inflater.inflate(R.layout.fragment_base, container, false);
-			this._headerContainer = (ViewGroup) this._container.findViewById(R.id.headerContainer);
-			this._modelContainer = (ListView) this._container.findViewById(R.id.listContainer);
-			this._progressLayout = (ViewGroup) this._container.findViewById(R.id.progressLayout);
+			_container = (ViewGroup) inflater.inflate(R.layout.fragment_base, container, false);
+			_headerContainer = (ViewGroup) _container.findViewById(R.id.headerContainer);
+			_modelContainer = (ListView) _container.findViewById(R.id.listContainer);
+			_progressLayout = (ViewGroup) _container.findViewById(R.id.progressLayout);
 			// Prepare the structures for the context menu.
-			registerForContextMenu(this._headerContainer);
-			registerForContextMenu(this._modelContainer);
+			registerForContextMenu(_headerContainer);
+			registerForContextMenu(_modelContainer);
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
 			stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< AbstractPageFragment.onCreateView");
-		return this._container;
+		return _container;
 	}
 
 	/**
@@ -223,7 +222,7 @@ public class AbstractPagerFragment extends TitledFragment {
 		super.onStart();
 		try {
 			// Check the validity of the data source.
-			if (null == this._datasource) throw new RuntimeException("Datasource not defined.");
+			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
 			Log.i("NEOCOM", "-- AbstractPageFragment.onStart - Launching InitializeDataSourceTask");
 			new InitializeDataSourceTask(this).execute();
 		} catch (final Exception rtex) {
@@ -234,9 +233,9 @@ public class AbstractPagerFragment extends TitledFragment {
 		// Update the spinner counter on the actionbar.
 		getActivity().invalidateOptionsMenu();
 		// Add the header parts once the display is initialized.
-		if (this._headerContents.size() > 0) {
-			this._headerContainer.removeAllViews();
-			for (final AbstractAndroidPart part : this._headerContents) {
+		if (_headerContents.size() > 0) {
+			_headerContainer.removeAllViews();
+			for (final AbstractAndroidPart part : _headerContents) {
 				addViewtoHeader(part);
 			}
 		}
@@ -246,17 +245,17 @@ public class AbstractPagerFragment extends TitledFragment {
 	public void setDataSource(final IDataSource dataSource) {
 		Log.i("RESTART", "-- AbstractPagerFragment.setDataSource. Validation checkpoint [" + dataSource.toString() + "]");
 		if (null != dataSource) {
-			this._datasource = dataSource;
+			_datasource = dataSource;
 		}
 	}
 
 	public void setIdentifier(final int id) {
-		this._fragmentID = id;
+		_fragmentID = id;
 	}
 
 	public void setListCallback(final IMenuActionTarget callback) {
 		if (null != callback) {
-			this._listCallback = callback;
+			_listCallback = callback;
 		}
 	}
 
@@ -292,8 +291,8 @@ public class AbstractPagerFragment extends TitledFragment {
 			holder.updateContent();
 			final View hv = holder.getView();
 			//	_headerContainer.removeAllViews();
-			this._headerContainer.addView(hv);
-			this._headerContainer.setVisibility(View.VISIBLE);
+			_headerContainer.addView(hv);
+			_headerContainer.setVisibility(View.VISIBLE);
 		} catch (final RuntimeException rtex) {
 			Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
 			rtex.printStackTrace();

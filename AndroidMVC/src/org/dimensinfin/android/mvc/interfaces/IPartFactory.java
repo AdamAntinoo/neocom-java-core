@@ -5,7 +5,7 @@
 //	DESCRIPTION:		Application to get access to character data from Eve Online. Specialized on
 //									industrial management.
 
-package org.dimensinfin.android.mvc.core;
+package org.dimensinfin.android.mvc.interfaces;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.IGEFNode;

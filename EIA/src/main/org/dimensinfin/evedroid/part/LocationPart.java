@@ -14,14 +14,14 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.core.INamedPart;
+import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;

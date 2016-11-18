@@ -8,6 +8,8 @@ package org.dimensinfin.android.mvc.core;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.R;
+import org.dimensinfin.android.mvc.interfaces.IActivityCallback;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
 
 import android.app.Fragment;
 import android.os.Bundle;

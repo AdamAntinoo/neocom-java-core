@@ -8,12 +8,11 @@ package org.dimensinfin.evedroid.fragment.core;
 import java.util.Vector;
 
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
-import org.dimensinfin.android.mvc.activity.SafeStopActivity;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
-import org.dimensinfin.android.mvc.core.IDataSource;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.SplashActivity;
 
@@ -38,7 +37,7 @@ public class LinearFragment extends Fragment {
 	private class InitializeDataSourceTask extends AsyncTask<Fragment, Void, Void> {
 
 		// - F I E L D - S E C T I O N ............................................................................
-		private final Fragment	fragment;
+		private final Fragment fragment;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public InitializeDataSourceTask(final Fragment fragment) {
@@ -53,6 +52,7 @@ public class LinearFragment extends Fragment {
 		 * expected and valid parameters. This helps to isolate all data structures from App and global data
 		 * dependencies.
 		 */
+		@Override
 		protected Void doInBackground(final Fragment... arg0) {
 			try {
 				// Create the hierarchy structure to be used on the Adapter.
@@ -140,9 +140,12 @@ public class LinearFragment extends Fragment {
 	}
 
 	public void notifyDataSetChanged() {
-		if (null != _adapter) _adapter.notifyDataSetChanged();
+		if (null != _adapter) {
+			_adapter.notifyDataSetChanged();
+		}
 	}
 
+	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		//		logger.info(">> ManufactureContextFragment.onContextItemSelected"); //$NON-NLS-1$
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
@@ -154,6 +157,7 @@ public class LinearFragment extends Fragment {
 			return true;
 	}
 
+	@Override
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		Log.i("EVEI", ">> PageFragment.onCreateContextMenu"); //$NON-NLS-1$
 		// REFACTOR If we call the super then the fragment's parent activity gets called. So the listcallback and the Activity
@@ -169,7 +173,9 @@ public class LinearFragment extends Fragment {
 		}
 		if (view == _modelContainer) {
 			// Check if this fragment has the callback configured
-			if (null != _listCallback) _listCallback.onCreateContextMenu(menu, view, menuInfo);
+			if (null != _listCallback) {
+				_listCallback.onCreateContextMenu(menu, view, menuInfo);
+			}
 		}
 		Log.i("EVEI", "<< PageFragment.onCreateContextMenu"); //$NON-NLS-1$
 	}
@@ -183,7 +189,9 @@ public class LinearFragment extends Fragment {
 		Log.i("EVEI", ">> LinearFragment.onCreateView");
 		View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			if (!_alreadyInitialized) _container = (ViewGroup) inflater.inflate(_fragmentLayout, container, false);
+			if (!_alreadyInitialized) {
+				_container = (ViewGroup) inflater.inflate(_fragmentLayout, container, false);
+			}
 			//			_headerContainer = (ViewGroup) _container.findViewById(R.id.headerContainer);
 			_modelContainer = (ListView) _container.findViewById(R.id.modelContainer);
 			_progressLayout = (ViewGroup) _container.findViewById(R.id.progressLayout);
@@ -200,11 +208,15 @@ public class LinearFragment extends Fragment {
 	}
 
 	public void onDialogNegativeClick(final DialogFragment dialog) {
-		if (null != _dialogCallback) _dialogCallback.onDialogNegativeClick(dialog);
+		if (null != _dialogCallback) {
+			_dialogCallback.onDialogNegativeClick(dialog);
+		}
 	}
 
 	public void onDialogPositiveClick(final DialogFragment dialog) {
-		if (null != _dialogCallback) _dialogCallback.onDialogPositiveClick(dialog);
+		if (null != _dialogCallback) {
+			_dialogCallback.onDialogPositiveClick(dialog);
+		}
 	}
 
 	/**
@@ -221,7 +233,9 @@ public class LinearFragment extends Fragment {
 		try {
 			// Check the validity of the data source.
 			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
-			if (!_alreadyInitialized) new InitializeDataSourceTask(this).execute();
+			if (!_alreadyInitialized) {
+				new InitializeDataSourceTask(this).execute();
+			}
 		} catch (Exception rtex) {
 			Log.e("PageFragment", "R> Runtime Exception on PageFragment.onStart." + rtex.getMessage());
 			rtex.printStackTrace();
@@ -240,11 +254,15 @@ public class LinearFragment extends Fragment {
 
 	public void setDataSource(final IDataSource dataSource) {
 		Log.i("RESTART", "-- PagerFragment.setDataSource. Validation checkpoint [" + dataSource + "]");
-		if (null != dataSource) _datasource = dataSource;
+		if (null != dataSource) {
+			_datasource = dataSource;
+		}
 	}
 
 	public void setDialogCallback(final ADialogCallback callback) {
-		if (null != callback) _dialogCallback = callback;
+		if (null != callback) {
+			_dialogCallback = callback;
+		}
 	}
 
 	public void setIdentifier(final int id) {
@@ -256,7 +274,9 @@ public class LinearFragment extends Fragment {
 	}
 
 	public void setListCallback(final IMenuActionTarget callback) {
-		if (null != callback) _listCallback = callback;
+		if (null != callback) {
+			_listCallback = callback;
+		}
 	}
 
 	public void setSubtitle(final String subtitle) {

@@ -10,6 +10,8 @@ package org.dimensinfin.android.mvc.core;
 
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 
@@ -28,42 +30,17 @@ public abstract class AbstractCorePart extends AbstractEditPart {
 	// - F I E L D - S E C T I O N ............................................................................
 	private IPartFactory				_factory					= null;
 	private AbstractDataSource	_dataSource				= null;
-	//	private boolean expanded = false;
 
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractCorePart() {
 		super();
 	}
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractCorePart(AbstractGEFNode model) {
 		super(model);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//		/**
-	//	 * Collapses a node from any state if had.
-	//	 * 
-	//	 * @return the final expend state.
-	//	 */
-	//	public boolean collapse() {
-	//		expanded = false;
-	//		return expanded;
-	//	}
-	//	/**
-	//	 * Only expand nodes that have children. This action also has to keep
-	//	 * synchronized the recording of actions that are used to reproduce the
-	//	 * state of a hierarchy.
-	//	 * 
-	//	 * @return the final expend state.
-	//	 */
-	//	public boolean expand() {
-	//		if (getChildren().size() > 0) {
-	//			expanded = true;
-	//		} else {
-	//			expanded = false;
-	//		}
-	//		return expanded;
-	//	}
 	/**
 	 * Returns a numeric identifier for this part model item that should be unique from all other system wide
 	 * parts to allow for easy management of the corresponding parts and views.
@@ -74,24 +51,6 @@ public abstract class AbstractCorePart extends AbstractEditPart {
 
 	abstract public void invalidate();
 
-	//	 /**
-	//	 * Tries to invert the expansion state of the node. Only expands nodes
-	//	 that have children and is not
-	//	 * operative on the other nodes.<br>
-	//	 * Since the addition of the view cache every change on the part content
-	//	 or model should trigger a change on
-	//	 * the view. This can be achieved by removing the view from the cache.
-	//	 */
-	//	 public void toggleExpanded() {
-	//	 if (!expanded)
-	//	 expand();
-	//	 else
-	//	 collapse();
-	//	 }
-	//
-	//	public boolean isExpanded() {
-	//		return expanded;
-	//	}
 	abstract public void needsRedraw();
 
 	public AbstractCorePart setDataStore(final AbstractDataSource ds) {

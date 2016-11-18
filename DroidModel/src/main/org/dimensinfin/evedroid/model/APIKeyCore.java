@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
@@ -18,7 +19,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class APIKeyCore extends AbstractComplexNode {
+public abstract class APIKeyCore extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1891959457883171631L;
 	private static Logger			logger						= Logger.getLogger("APIKey");

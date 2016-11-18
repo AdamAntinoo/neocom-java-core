@@ -10,8 +10,8 @@ package org.dimensinfin.evedroid.datasource;
 
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.IPartFactory;
 import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;

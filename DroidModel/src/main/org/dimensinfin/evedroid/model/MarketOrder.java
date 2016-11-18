@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.core.INamed;
+import org.dimensinfin.evedroid.interfaces.INamed;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

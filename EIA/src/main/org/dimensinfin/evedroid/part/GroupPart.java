@@ -101,6 +101,7 @@ public class GroupPart extends EveAbstractPart {
 		StringBuffer buffer = new StringBuffer("GroupPart [");
 		buffer.append(getTitle()).append(" ");
 		buffer.append(priority).append(" ");
+		buffer.append("chCount: ").append(getChildren().size()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}

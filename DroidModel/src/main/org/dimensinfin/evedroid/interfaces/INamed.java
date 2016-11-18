@@ -4,7 +4,7 @@
 //	ENVIRONMENT:		JRE 1.7.
 //	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
 
-package org.dimensinfin.evedroid.core;
+package org.dimensinfin.evedroid.interfaces;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.IGEFNode;

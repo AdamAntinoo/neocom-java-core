@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
-import org.dimensinfin.android.mvc.core.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.SplashActivity;
@@ -36,7 +36,7 @@ public class ExpandableFragment extends Fragment {
 	private class InitializeDataSource extends AsyncTask<Fragment, Void, Void> {
 
 		// - F I E L D - S E C T I O N ............................................................................
-		private final Fragment	fragment;
+		private final Fragment fragment;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public InitializeDataSource(final Fragment fragment) {
@@ -71,8 +71,8 @@ public class ExpandableFragment extends Fragment {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	public static Logger					logger							= Logger.getLogger("ExpandableFragment");
-	protected static Typeface			daysFace						= Typeface.createFromAsset(EVEDroidApp.getSingletonApp()
-																												.getApplicationContext().getAssets(), "fonts/Days.otf");
+	protected static Typeface			daysFace						= Typeface
+			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 	private static DecimalFormat	contentCounter			= new DecimalFormat("0");
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -113,12 +113,14 @@ public class ExpandableFragment extends Fragment {
 	 * the progress elements that show the number of elements on the fragment or the spinning image and the
 	 * right arrow that shows the expanded/collapsed state.
 	 */
+	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		logger.info(">> ExpandableFragment.onCreateView");
 		View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			if (!_alreadyInitialized)
+			if (!_alreadyInitialized) {
 				_container = (ViewGroup) inflater.inflate(R.layout.fragment_expandable, container, false);
+			}
 			_fragmentList = (ListView) _container.findViewById(R.id.fragmentList);
 			_progress = (ProgressBar) _container.findViewById(R.id.progress);
 
@@ -167,7 +169,9 @@ public class ExpandableFragment extends Fragment {
 		try {
 			// Check the validity of the data source.
 			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
-			if (!_alreadyInitialized) new InitializeDataSource(this).execute();
+			if (!_alreadyInitialized) {
+				new InitializeDataSource(this).execute();
+			}
 		} catch (Exception rtex) {
 			logger.severe("R> ExpandableFragment.onStart RuntimeException. " + rtex.getMessage());
 			rtex.printStackTrace();

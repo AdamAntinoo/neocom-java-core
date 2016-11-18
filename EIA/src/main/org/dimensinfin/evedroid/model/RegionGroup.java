@@ -21,7 +21,7 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.INeoComNode;
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

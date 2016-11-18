@@ -17,8 +17,8 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.INamedPart;
 import org.dimensinfin.evedroid.holder.PilotInfoHolder;
+import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.EveChar;
 
 import android.content.Intent;
