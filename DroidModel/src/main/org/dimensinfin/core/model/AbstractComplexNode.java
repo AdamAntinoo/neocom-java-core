@@ -91,7 +91,7 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 	 * @return
 	 */
 	public boolean renderWhenEmpty() {
-		if (this.renderWhenEmpty)
+		if (!this.renderWhenEmpty)
 				if (getChildren().size() > 0) return true;
 				else return false;
 		else return this.renderWhenEmpty;
