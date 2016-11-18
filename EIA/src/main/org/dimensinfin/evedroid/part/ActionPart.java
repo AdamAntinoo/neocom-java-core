@@ -237,6 +237,8 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 		final EIndustryGroup industryGroup = getCastedModel().getItemIndustryGroup();
 		switch (industryGroup) {
 			case COMPONENTS:
+			case HULL:
+			case CHARGE:
 			case ITEMS:
 				getActivity().getMenuInflater().inflate(R.menu.actioncomponent_menu, menu);
 				break;

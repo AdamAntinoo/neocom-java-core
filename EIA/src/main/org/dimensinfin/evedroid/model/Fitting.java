@@ -172,7 +172,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		ArrayList<Property> locationRoles = accessLocationRoles();
 		for (Property role : locationRoles) {
 			//			String value = role.getPropertyType().name();
-			if (matchingRole == EPropertyTypes.LOCATIONROLE) {
+			if (role.getPropertyType() == matchingRole) {
 				// Search for the location type we need. This is the FITTING place
 				if (role.getPropertyValue().equalsIgnoreCase(locationType))
 					return AppConnector.getDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
