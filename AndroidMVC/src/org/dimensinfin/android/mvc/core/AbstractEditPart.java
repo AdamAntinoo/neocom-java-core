@@ -197,7 +197,12 @@ public abstract class AbstractEditPart extends AbstractPropertyChanger implement
 			model = modelObjects.get(i);
 
 			// Do a quick check to see if editPart[i] == model[i]
-			if ((i < children.size()) && (((IEditPart) children.get(i)).getModel() == model)) continue;
+			if ((i < children.size()) && (((IEditPart) children.get(i)).getModel() == model)) {
+				// But in any case try to update all the children
+				editPart = (AbstractEditPart) modelToEditPart.get(model);
+				editPart.refreshChildren();
+				continue;
+			}
 
 			// Look to see if the EditPart is already around but in the wrong location
 			editPart = (AbstractEditPart) modelToEditPart.get(model);

@@ -196,7 +196,7 @@ public class AbstractManufactureProcess {
 	}
 
 	protected void processAction(final EveTask newTask) {
-		logger.info(">> [AbstractManufactureProcess.processAction] > " + newTask);
+		logger.info(">> [AbstractManufactureProcess.processAction]> " + newTask);
 		final String category = newTask.getItem().getCategory();
 		// Check the special case for T2 BPC to transform them to default INVENTION.
 		if (newTask.getTaskType() == ETaskType.REQUEST)
@@ -277,12 +277,18 @@ public class AbstractManufactureProcess {
 				processBuild(newTask);
 				return;
 				}
+			if (category.equalsIgnoreCase("Ship")) // Action is limited to BUILD.
+				if (action.getStringValue().equalsIgnoreCase("BUILD")) {
+				// Schedule a manufacture request.
+				processBuild(newTask);
+				return;
+				}
 		}
 		processBuy(newTask);
 	}
 
 	protected void processBuild(final EveTask newTask) {
-		Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Processing state - " + ETaskType.BUILD);
+		Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]> Processing state - " + ETaskType.BUILD);
 		// Get the resources needed to manufacture this request.
 		final int itemID = newTask.getTypeID();
 		final int bpid = AppConnector.getDBConnector().searchBlueprint4Module(itemID);
@@ -297,11 +303,11 @@ public class AbstractManufactureProcess {
 		}
 		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfMaterials(bpid);
 		for (final Resource resource : lom) {
-			logger.info("-- Processing Resource of LOM: " + resource);
+			logger.info("-- [AbstractManufactureProcess.processRequest]> Processing Resource of LOM: " + resource);
 			final int runs = newTask.getQty();
 			resource.setQuantity(resource.getQuantity());
 			resource.setAdaptiveStackSize(runs);
-			// Add the resource to the set of required resources.
+			// Add the resource to the set of required resources. This is the original list.
 			addResource(resource);
 		}
 		newTask.setTaskType(ETaskType.BUILD);
@@ -509,13 +515,13 @@ public class AbstractManufactureProcess {
 
 		// Check the special case for Asteroids
 		if (newTask.getTaskType() == ETaskType.REQUEST) {
-			Log.i("EVEI", "-- AbstractManufactureProcess.processRequest Processing state - " + ETaskType.REQUEST + " [x"
+			Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Processing state> " + ETaskType.REQUEST + " [x"
 					+ requestQty + "]");
 			final String category = newTask.getItem().getCategory();
 			logger.info("-- [AbstractManufactureProcess.processRequest]-Checking special case of Asteroids > " + category);
 			// If the resource is an asteroid then we can Refine it.
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
-				Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Asteroid - request COMPLETED");
+				//				Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Asteroid - request COMPLETED");
 				// Complete the action and add the minerals obtained as tasks.
 				currentAction.setCompleted(ETaskCompletion.COMPLETED, newTask.getQty());
 				// Add the refine of the mineral to the tasks.

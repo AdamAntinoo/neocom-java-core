@@ -94,7 +94,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 				_partModelRoot = new RootPart(_dataModelRoot, _partFactory);
 			}
 			logger.info(
-					"-- PilotListActivity.PilotListDataSource.createContentHierarchy-Initiating the refreshChildren() for the _partModelRoot");
+					"-- [SpecialDataSource.createContentHierarchy]> Initiating the refreshChildren() for the _partModelRoot");
 			// Intercept any exception on the creation of the model but do not cut the progress of the already added items
 			try {
 				_partModelRoot.refreshChildren();

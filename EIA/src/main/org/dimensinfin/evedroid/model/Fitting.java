@@ -246,17 +246,16 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 				Resource resource = requirements.get(pointer);
 				Log.i("EVEI", "-- [Fitting.getManufacturingResources]-Processing > " + resource);
 				// Check resources that are Skills. Give them an special treatment.
-				//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-				//					currentAction = new Skill(resource);
-				//					registerAction(currentAction);
-				//					continue;
-				//				}
+				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+					currentAction = new Skill(resource);
+					registerAction(currentAction);
+					continue;
+				}
 				currentAction = new Action(resource);
 				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.
-				// This has no impact on data since we use pointers to the
-				// global structures.
+				// This has no impact on data since we use pointers to the global structures.
 				registerAction(currentAction);
 				processRequest(newTask);
 			} while (pointer < (requirements.size() - 1));
