@@ -42,9 +42,8 @@ public class RootPart extends AbstractEditPart {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
-	// REFACTOR Some lines were commented out to compile the unit. Pending work.
 	public ArrayList<AbstractAndroidPart> collaborate2View() {
+		logger.info(">> [RootPart.collaborate2View]");
 		ArrayList<AbstractAndroidPart> childrenParts = new ArrayList<AbstractAndroidPart>();
 		Vector<AbstractPropertyChanger> v = getChildren();
 		for (AbstractPropertyChanger node : v) {
@@ -59,7 +58,8 @@ public class RootPart extends AbstractEditPart {
 				if (partModel instanceof INeoComNode) {
 					INeoComNode model = (INeoComNode) partModel;
 					if (model.renderWhenEmpty()) result.add(child);
-				}
+				} else
+					logger.warning("WW [RootPart.collaborate2View]> Part not implementing INeoComNode");
 				result.addAll(node.collaborate2View());
 			}
 		return result;

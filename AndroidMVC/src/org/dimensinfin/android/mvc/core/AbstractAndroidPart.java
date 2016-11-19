@@ -159,7 +159,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	@Override
 	public void invalidate() {
 		if (null != _view) {
-			_view.invalidate();
+			//			_view.invalidate();
 			needsRedraw();
 		}
 	}

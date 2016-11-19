@@ -8,7 +8,9 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
@@ -42,6 +44,7 @@ import org.dimensinfin.evedroid.storage.AppModelStore;
 public class FittingDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7810087592108417570L;
+	private static Logger			logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Fitting						fit								= null;
@@ -72,7 +75,7 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	public RootNode collaborate2Model() {
-		logger.info(">> FittingDataSource.collaborate2Model");
+		logger.info(">> [FittingDataSource.collaborate2Model]");
 		try {
 			AppModelStore store = EVEDroidApp.getAppStore();
 			// Get the complete list of ships. Compare it to the current list if it exists.
@@ -90,9 +93,9 @@ public class FittingDataSource extends SpecialDataSource {
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			logger.severe(
-					"RTEX> ShipsDatasource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+					"RTEX> FittingDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		logger.info("<< ShipsDatasource.collaborate2Model");
+		logger.info("<< [FittingDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
 
@@ -113,12 +116,14 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	private void classifyModel(final ArrayList<AbstractComplexNode> modelList) {
+		logger.info(">> [FittingDataSource.classifyModel]");
 		for (AbstractComplexNode node : modelList) {
 			if (node instanceof Action) {
 				Action action = (Action) node;
 				add2Group(action, action.getResource().getItem().getIndustryGroup());
 			}
 		}
+		logger.info("<< [FittingDataSource.classifyModel]");
 	}
 
 	private Fitting createTestFitting(final AssetsManager manager) {

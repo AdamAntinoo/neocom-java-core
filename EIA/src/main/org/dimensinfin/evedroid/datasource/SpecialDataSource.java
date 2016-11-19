@@ -1,15 +1,18 @@
-//	PROJECT:        NeoCom (NEOC)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application to get access to character data from Eve Online. Specialized on
-//									industrial management.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
 //- IMPORT SECTION .........................................................................................
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
@@ -32,6 +35,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 public abstract class SpecialDataSource extends AbstractDataSource implements IExtendedDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long							serialVersionUID	= -9083587546700227219L;
+	public static Logger									logger						= Logger.getLogger("SpecialDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private DataSourceLocator							_locator					= null;
@@ -88,11 +92,15 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Override
 	public void createContentHierarchy() {
 		try {
-			logger.info(">> PilotListActivity.PilotListDataSource.createContentHierarchy");
+			logger.info(">> [SpecialDataSource.createContentHierarchy]");
 			// Check if we have already a Part model.
+			// But do not forget to associate the new Data model even of the old exists.
 			if (null == _partModelRoot) {
 				_partModelRoot = new RootPart(_dataModelRoot, _partFactory);
+			} else {
+				_partModelRoot.setModel(_dataModelRoot);
 			}
+
 			logger.info(
 					"-- [SpecialDataSource.createContentHierarchy]> Initiating the refreshChildren() for the _partModelRoot");
 			// Intercept any exception on the creation of the model but do not cut the progress of the already added items
@@ -104,7 +112,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			// Get the list of Parts that will be used for the ListView
 			_bodyParts = new ArrayList<AbstractCorePart>();
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			logger.info("<< PilotListActivity.PilotListDataSource.createContentHierarchy");
+			logger.info("<< [SpecialDataSource.createContentHierarchy]");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
