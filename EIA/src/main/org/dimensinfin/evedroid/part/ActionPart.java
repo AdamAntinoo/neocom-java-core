@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.part;
 
 // - IMPORT SECTION .........................................................................................
@@ -57,6 +59,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Deprecated
 	public void createHierarchy() {
 		clean();
 		for (final EveTask t : getCastedModel().getTasks()) {
@@ -142,6 +145,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 		return getCastedModel().getItemName();
 	}
 
+	@Deprecated
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
@@ -227,7 +231,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	/**
 	 * This method is activated when the user makes a long click on any list element. There are two solutions,
 	 * or to use a contextual menu or to activate a long click listener (performed by implementing the
-	 * corresponding interface). The contextual menu allows for a better control os the interaction because
+	 * corresponding interface). The contextual menu allows for a better control of the interaction because
 	 * allows to create a selection menu or a dialog.
 	 */
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {

@@ -1,14 +1,17 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.part;
 
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
@@ -21,19 +24,28 @@ import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
 import org.dimensinfin.evedroid.holder.Ship4PilotInfoHolder;
 import org.dimensinfin.evedroid.model.Separator;
 
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipPart extends AssetPart implements OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = -8714502444756843667L;
+	private static final long	serialVersionUID	= -8714502444756843667L;
+	private static Logger			logger						= Logger.getLogger("ShipPart");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	/** This field if to remove the click after a long click. */
+	private boolean						clickOverride			= false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ShipPart(final AbstractGEFNode node) {
 		super(node);
+		// Set the expanded state by default
+		getCastedModel().setExpanded(false);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -56,23 +68,24 @@ public class ShipPart extends AssetPart implements OnClickListener {
 		//			return userName;
 	}
 
-	//	public boolean onLongClick(final View target) {
-	//		Log.i("EVEI", ">> ShipPart.onClick");
-	//		Asset asset = getCastedModel();
-	//		EVEDroidApp.getAppContext().setItem(asset.getItem());
-	//		//TODO This should open another detailes ship page
-	//		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
-	//		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getAssetID());
-	//		Log.i("EVEI", "<< ShipPart.onClick");
-	//		return false;
-	//	}
+	//		public boolean onLongClick(final View target) {
+	//			Log.i("EVEI", ">> ShipPart.onClick");
+	//			Asset asset = getCastedModel();
+	//			EVEDroidApp.getAppContext().setItem(asset.getItem());
+	//			//TODO This should open another detailes ship page
+	//			Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
+	//			intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getAssetID());
+	//			Log.i("EVEI", "<< ShipPart.onClick");
+	//			return false;
+	//		}
 	/**
-	 * Retunr the items conteined on this ship. There are some grouping for that contents. Use the group
+	 * Return the items contained on this ship. There are some grouping for that contents. Use the group
 	 * containers to aggregate them into that block to simplify the UI presentation and separate fitted items
 	 * from stored items..
 	 * 
 	 * @return list of parts that are accessible for this node.
 	 */
+	@Deprecated
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
@@ -144,9 +157,48 @@ public class ShipPart extends AssetPart implements OnClickListener {
 
 	@Override
 	public void onClick(final View view) {
-		// Toggle location to show its contents.
-		toggleExpanded();
-		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+		if (!clickOverride) {
+			// Clean the view to force an update.
+			invalidate();
+			toggleExpanded();
+			fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+			clickOverride = false;
+		}
+	}
+
+	/**
+	 * This is the method called when the user select one item on the context menu.
+	 */
+	public boolean onContextItemSelected(final MenuItem item) {
+		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		final int menuItemIndex = item.getItemId();
+		// Process the command depending on the menu and the item selected
+		switch (menuItemIndex) {
+			case R.id.addshipasfitting:
+				// Add this ship as a fitting.
+				//				getPilot().putAction4Item(getCastedModel().getTypeID(), "REACTION");
+				break;
+
+			default:
+				break;
+		}
+		invalidate();
+		// REFACTOR The event fires a EVENTSTRUCTURE_NEEDSREFRESH that is not
+		// processed by the different event managers.
+		fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+		return true;
+	}
+
+	/**
+	 * If the user stays for some time on this view element then we should open a context menu that allows to
+	 * select an action to add this ship as a fitting blueprint to be used in Industry jobs. The contextual menu
+	 * allows for a better control of the interaction because allows to create a selection menu or a dialog.
+	 */
+	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
+		// Clear click detection.
+		clickOverride = false;
+		// Show the menu to add this ship configuration as a Fitting.
+		getActivity().getMenuInflater().inflate(R.menu.addshipasfitting_menu, menu);
 	}
 
 	@Override
