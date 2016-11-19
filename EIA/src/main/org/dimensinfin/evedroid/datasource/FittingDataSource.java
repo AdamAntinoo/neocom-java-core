@@ -144,14 +144,15 @@ public class FittingDataSource extends SpecialDataSource {
 	}
 
 	private void doGroupInit() {
-		boolean renderEmptyState = true;
+		boolean renderEmptyState = false;
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.HULL.name()).setRenderWhenEmpty(renderEmptyState));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.CHARGE.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMMODITY.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()).setRenderWhenEmpty(renderEmptyState));
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()).setRenderWhenEmpty(renderEmptyState));

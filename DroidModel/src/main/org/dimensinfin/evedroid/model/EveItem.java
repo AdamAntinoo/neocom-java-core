@@ -7,8 +7,6 @@
 package org.dimensinfin.evedroid.model;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-// - IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
@@ -191,7 +189,7 @@ public class EveItem extends AbstractComplexNode {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
 		if (category.equalsIgnoreCase("Commodity")) {
-			industryGroup = EIndustryGroup.COMPONENTS;
+			industryGroup = EIndustryGroup.COMMODITY;
 		}
 		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			industryGroup = EIndustryGroup.BLUEPRINT;
