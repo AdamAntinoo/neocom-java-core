@@ -22,6 +22,7 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
 import org.dimensinfin.evedroid.holder.Ship4PilotInfoHolder;
+import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
 
 import android.view.ContextMenu;
@@ -176,7 +177,26 @@ public class ShipPart extends AssetPart implements OnClickListener {
 		switch (menuItemIndex) {
 			case R.id.addshipasfitting:
 				// Add this ship as a fitting.
-				//				getPilot().putAction4Item(getCastedModel().getTypeID(), "REACTION");
+				Fitting fit = new Fitting(getPilot().getAssetsManager());
+				// Add part children as Fitting content.
+				for (AbstractPropertyChanger node : children) {
+					if (node instanceof AssetPart) {
+						int flag = ((AssetPart) node).getCastedModel().getFlag();
+						if ((flag > 10) && (flag < 19)) {
+							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
+						} else if ((flag > 18) && (flag < 27)) {
+							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
+						} else if ((flag > 26) && (flag < 35)) {
+							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
+						} else if ((flag > 91) && (flag < 100)) {
+							fit.fitRig(((AssetPart) node).getCastedModel().getTypeID());
+						} else {
+							// Contents on ships go to the cargohold.
+							fit.addCargo(((AssetPart) node).getCastedModel().getTypeID(),
+									((AssetPart) node).getCastedModel().getQuantity());
+						}
+					}
+				}
 				break;
 
 			default:
