@@ -16,15 +16,20 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
+import org.dimensinfin.evedroid.activity.FittingActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
 import org.dimensinfin.evedroid.holder.Ship4PilotInfoHolder;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
+import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
@@ -33,7 +38,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ShipPart extends AssetPart implements OnClickListener {
+public class ShipPart extends AssetPart implements OnClickListener, IMenuActionTarget {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -8714502444756843667L;
 	private static Logger			logger						= Logger.getLogger("ShipPart");
@@ -171,6 +176,7 @@ public class ShipPart extends AssetPart implements OnClickListener {
 	 * This is the method called when the user select one item on the context menu.
 	 */
 	public boolean onContextItemSelected(final MenuItem item) {
+		logger.info(">> [ShipPart.onContextItemSelected]");
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		final int menuItemIndex = item.getItemId();
 		// Process the command depending on the menu and the item selected
@@ -178,6 +184,8 @@ public class ShipPart extends AssetPart implements OnClickListener {
 			case R.id.addshipasfitting:
 				// Add this ship as a fitting.
 				Fitting fit = new Fitting(getPilot().getAssetsManager());
+				logger.info("-- [ShipPart.onContextItemSelected]> New for for hull: " + this.getCastedModel());
+				fit.addHull(this.getCastedModel().getTypeID());
 				// Add part children as Fitting content.
 				for (AbstractPropertyChanger node : children) {
 					if (node instanceof AssetPart) {
@@ -197,6 +205,19 @@ public class ShipPart extends AssetPart implements OnClickListener {
 						}
 					}
 				}
+				// Activate the fitting Activity with this fit as reference. And the pilot
+				AppModelStore store = EVEDroidApp.getAppStore();
+				String label = this.getCastedModel().getUserLabel();
+				if (null == label) {
+					label = getCastedModel().getItemName();
+				}
+				store.addFitting(fit, label);
+
+				// Open the Fitting Activity
+				final Intent intent = new Intent(getActivity(), FittingActivity.class);
+				intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
+				intent.putExtra(AppWideConstants.EExtras.FITTINGID.name(), label);
+				getActivity().startActivity(intent);
 				break;
 
 			default:
@@ -206,6 +227,7 @@ public class ShipPart extends AssetPart implements OnClickListener {
 		// REFACTOR The event fires a EVENTSTRUCTURE_NEEDSREFRESH that is not
 		// processed by the different event managers.
 		fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+		logger.info("<< [ShipPart.onContextItemSelected]");
 		return true;
 	}
 

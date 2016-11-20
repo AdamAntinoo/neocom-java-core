@@ -112,9 +112,15 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	 */
 	private void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
-		//		long capsuleerid = 100;
-		String fittingid = "Purifier";
-		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name());
+		Bundle extras = getExtras();
+		long capsuleerid = 0;
+		String fittingLabel = "Purifier";
+		if (null != extras) {
+			capsuleerid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
+			fittingLabel = extras.getString(AppWideConstants.EExtras.FITTINGID.name());
+		}
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name()).addIdentifier(capsuleerid)
+				.addIdentifier(fittingLabel);
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(_variant));
 		ds.setVariant(_variant);

@@ -10,16 +10,6 @@ package org.dimensinfin.evedroid.constant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AppWideConstants {
-	// - E X T R A S   M E S S A G E S
-	public enum EExtras {
-		CAPSULEERID, FITTINGID
-	}
-
-	// - F R A G M E N T   I D E N T I F I E R S
-	public enum EFragment {
-		UNDEFINED_FRAGMENT, CAPSULEER_LIST, FITTING_MODULES, FITTING_MANUFACTURE, FRAGMENT_SHIPSBYLOCATION, FRAGMENT_SHIPSBYCLASS
-	}
-
 	// - C O M P A R A T O R S
 	public static final class comparators {
 		public static final int	COMPARATOR_NAME							= 100;
@@ -37,6 +27,16 @@ public class AppWideConstants {
 		// public static final int COMPARATOR_CREATIONDATE = COMPARATOR_NAME +
 		// 9;
 		public static final int	COMPARATOR_TIMEPENDING			= COMPARATOR_NAME + 10;
+	}
+
+	// - E X T R A S   M E S S A G E S
+	public enum EExtras {
+		CAPSULEERID, FITTINGID
+	}
+
+	// - F R A G M E N T   I D E N T I F I E R S
+	public enum EFragment {
+		UNDEFINED_FRAGMENT, CAPSULEER_LIST, FITTING_MODULES, FITTING_MANUFACTURE, FRAGMENT_SHIPSBYLOCATION, FRAGMENT_SHIPSBYCLASS
 	}
 
 	// - F I R E D E V E N T S

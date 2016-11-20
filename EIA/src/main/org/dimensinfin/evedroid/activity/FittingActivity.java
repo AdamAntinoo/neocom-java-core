@@ -60,8 +60,15 @@ public class FittingActivity extends PilotPagerActivity implements INeoComDirect
 		super.onCreate(savedInstanceState);
 		try {// Reset the page position.
 			int page = 0;
-			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE), page++);
+			// Get the parameters from the bundle. If not defined then use the demo.
+			final Bundle extras = getIntent().getExtras();
+			if (null != extras) {
+				// Create the pages that form this Activity. Each page implemented by a Fragment.
+				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE).setExtras(extras),
+						page++);
+			} else {
+				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE), page++);
+			}
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> FittingActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

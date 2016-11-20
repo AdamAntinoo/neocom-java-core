@@ -47,7 +47,7 @@ public class FittingDataSource extends SpecialDataSource {
 	private static Logger			logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Fitting						fit								= null;
+	private final Fitting			fit								= null;
 
 	//	private final ArrayList<Asset>						ships							= null;
 
@@ -80,7 +80,8 @@ public class FittingDataSource extends SpecialDataSource {
 			AppModelStore store = EVEDroidApp.getAppStore();
 			// Get the complete list of ships. Compare it to the current list if it exists.
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
-			// Create the testing fit from the list of predefined modules. This shluld be replaced by the Fitting locator.
+			// Create the testing fit from the list of predefined modules. This should be replaced by the Fitting locator.
+			// If the pilot is 0 hen use the demo
 			fit = createTestFitting(manager);
 			_dataModelRoot = new RootNode();
 

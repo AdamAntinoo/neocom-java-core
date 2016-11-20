@@ -21,6 +21,7 @@ import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.Fitting;
 
 import android.app.Activity;
 import android.util.Log;
@@ -51,17 +52,18 @@ import android.view.Menu;
 public class AppModelStore extends AbstractModelStore {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long					serialVersionUID	= 8777607802616543118L;
-	private static Logger							logger						= Logger.getLogger("AppModelStore");
+	private static final long								serialVersionUID	= 8777607802616543118L;
+	private static Logger										logger						= Logger.getLogger("AppModelStore");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Menu											_appMenu					= null;
-	private HashMap<Integer, APIKey>	apiKeys						= new HashMap<Integer, APIKey>();
-	private HashMap<Long, EveChar>		charCache					= null;
-	private final long								lastCCPAccessTime	= 0;
-	private transient EveChar					_pilot						= null;
-	private transient Activity				_activity					= null;
-	private DataSourceManager					dsManager					= null;
+	private Menu														_appMenu					= null;
+	private HashMap<Integer, APIKey>				apiKeys						= new HashMap<Integer, APIKey>();
+	private HashMap<Long, EveChar>					charCache					= null;
+	private final long											lastCCPAccessTime	= 0;
+	private transient EveChar								_pilot						= null;
+	private transient Activity							_activity					= null;
+	private DataSourceManager								dsManager					= null;
+	private final HashMap<String, Fitting>	fittings					= new HashMap<String, Fitting>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppModelStore(final IPersistentHandler storageHandler) {
@@ -83,7 +85,7 @@ public class AppModelStore extends AbstractModelStore {
 	 * @param currentActivity
 	 */
 	public void activateActivity(final Activity currentActivity) {
-		this._activity = currentActivity;
+		_activity = currentActivity;
 		//		// REFACTOR Remove this after we have completed the transformation
 		//		EVEDroidApp.getAppContext().setCurrentActivity(currentActivity);
 	}
@@ -99,11 +101,11 @@ public class AppModelStore extends AbstractModelStore {
 		//		if (null == _userdata)
 		//			throw new RuntimeException(
 		//					"RT CharacterStore.activatePilot - The UserData is not defined. Problem of initialization.");
-		this._pilot = searchCharacter(characterid);
-		if (null == this._pilot)
+		_pilot = searchCharacter(characterid);
+		if (null == _pilot)
 			throw new RuntimeException("RT AppModelStore.activatePilot - Pilot not located. Problem of initialization.");
 		// Link the pilot to the store for dirty processing.
-		this._pilot.setParent(this);
+		_pilot.setParent(this);
 	}
 
 	/**
@@ -117,10 +119,14 @@ public class AppModelStore extends AbstractModelStore {
 			newKey.setParent(this);
 			// First update the key to avoid adding invalid keys.
 			newKey.update();
-			this.apiKeys.put(newKey.getKeyID(), newKey);
+			apiKeys.put(newKey.getKeyID(), newKey);
 			//		fireStructureChange(BundlesAndMessages.events.EVENTSTR_APIKEY, oldState, apiKeys);
 			setDirty(true);
 		}
+	}
+
+	public void addFitting(final Fitting fit, final String label) {
+		fittings.put(label, fit);
 	}
 
 	public boolean checkStorage() {
@@ -129,7 +135,7 @@ public class AppModelStore extends AbstractModelStore {
 
 	@Override
 	public void clean() {
-		this.apiKeys = new HashMap<Integer, APIKey>();
+		apiKeys = new HashMap<Integer, APIKey>();
 		//		characters = new HashMap<Long, EveChar>();
 	}
 
@@ -150,34 +156,41 @@ public class AppModelStore extends AbstractModelStore {
 	}
 
 	public Activity getActivity() {
-		return this._activity;
+		return _activity;
 	}
 
 	public HashMap<Integer, APIKey> getApiKeys() {
-		return this.apiKeys;
+		return apiKeys;
 	}
 
 	public Menu getAppMenu() {
-		return this._appMenu;
+		return _appMenu;
 	}
 
 	public HashMap<Long, EveChar> getCharacters() {
-		if (null == this.charCache) {
-			this.charCache = new HashMap<Long, EveChar>();
-			for (final APIKey key : this.apiKeys.values()) {
+		if (null == charCache) {
+			charCache = new HashMap<Long, EveChar>();
+			for (final APIKey key : apiKeys.values()) {
 				final Collection<EveChar> chars = key.getCharacters().values();
 				for (final EveChar eveChar : chars) {
-					this.charCache.put(eveChar.getCharacterID(), eveChar);
+					charCache.put(eveChar.getCharacterID(), eveChar);
 				}
 			}
 		}
-		return this.charCache;
+		return charCache;
+	}
+
+	public IDataSourceConnector getDataSourceConector() {
+		if (null == dsManager) {
+			dsManager = new DataSourceManager();
+		}
+		return dsManager;
 	}
 
 	public EveChar getPilot() {
-		if (null == this._pilot)
+		if (null == _pilot)
 			throw new RuntimeException("RT CharacterStore - Pilot access cannot be completed. Pilot is NULL");
-		return this._pilot;
+		return _pilot;
 	}
 
 	/**
@@ -186,7 +199,7 @@ public class AppModelStore extends AbstractModelStore {
 	 * @return true is we have to read the data because the containers are empty.
 	 */
 	public boolean needsRestore() {
-		if (this.apiKeys.size() < 1) return true;
+		if (apiKeys.size() < 1) return true;
 		return false;
 	}
 
@@ -196,12 +209,12 @@ public class AppModelStore extends AbstractModelStore {
 	 * @return
 	 */
 	public boolean needsUpdate() {
-		return AppConnector.checkExpiration(this.lastCCPAccessTime, ModelWideConstants.HOURS3);
+		return AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS3);
 	}
 
 	public String printReport() {
 		final StringBuffer buffer = new StringBuffer("[UserModelStore (");
-		buffer.append("keys: ").append(this.apiKeys).append(" ");
+		buffer.append("keys: ").append(apiKeys).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -258,10 +271,10 @@ public class AppModelStore extends AbstractModelStore {
 	}
 
 	public void setApiKeys(final HashMap<Integer, APIKey> newkeys) {
-		this.apiKeys = newkeys;
+		apiKeys = newkeys;
 		// we have to reparent the new data because this is not stored on the serialization.
 		// Also reinitialize transient fields that are not saved
-		final Iterator<APIKey> eit = this.apiKeys.values().iterator();
+		final Iterator<APIKey> eit = apiKeys.values().iterator();
 		while (eit.hasNext()) {
 			final APIKey apiKey = eit.next();
 			apiKey.setParent(this);
@@ -270,23 +283,16 @@ public class AppModelStore extends AbstractModelStore {
 	}
 
 	public void setAppMenu(final Menu appMenu) {
-		this._appMenu = appMenu;
+		_appMenu = appMenu;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("[AppModelStore");
-		buffer.append(" apiKeys(").append(this.apiKeys.size()).append("): ").append(this.apiKeys);
+		buffer.append(" apiKeys(").append(apiKeys.size()).append("): ").append(apiKeys);
 		//		buffer.append(" characters: ").append(characters.size());
 		buffer.append(" ]");
 		return buffer.toString();
-	}
-
-	public IDataSourceConnector getDataSourceConector() {
-		if (null == dsManager) {
-			dsManager = new DataSourceManager();
-		}
-		return dsManager;
 	}
 }
 
