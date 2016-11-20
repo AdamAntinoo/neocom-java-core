@@ -240,19 +240,19 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		return this;
 	}
 
-	private int getParameterInteger(final String name) {
+	protected int getParameterInteger(final String name) {
 		Object param = _parameters.get(name);
 		if (null != param) if (param instanceof Integer) return ((Integer) param).intValue();
 		return 0;
 	}
 
-	private long getParameterLong(final String name) {
+	protected long getParameterLong(final String name) {
 		Object param = _parameters.get(name);
 		if (null != param) if (param instanceof Long) return ((Long) param).longValue();
 		return 0;
 	}
 
-	private String getParameterString(final String name) {
+	protected String getParameterString(final String name) {
 		Object param = _parameters.get(name);
 		if (null != param) if (param instanceof String) return (String) param;
 		return "";

@@ -126,7 +126,7 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		ds.setVariant(_variant);
 		// ds.setExtras(getExtras();
 		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
-		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingid);
+		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
 		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
 		setDataSource(ds);
 	}

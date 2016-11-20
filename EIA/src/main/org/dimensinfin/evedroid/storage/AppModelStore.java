@@ -52,18 +52,18 @@ import android.view.Menu;
 public class AppModelStore extends AbstractModelStore {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long								serialVersionUID	= 8777607802616543118L;
-	private static Logger										logger						= Logger.getLogger("AppModelStore");
+	private static final long									serialVersionUID	= 8777607802616543118L;
+	private static Logger											logger						= Logger.getLogger("AppModelStore");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Menu														_appMenu					= null;
-	private HashMap<Integer, APIKey>				apiKeys						= new HashMap<Integer, APIKey>();
-	private HashMap<Long, EveChar>					charCache					= null;
-	private final long											lastCCPAccessTime	= 0;
-	private transient EveChar								_pilot						= null;
-	private transient Activity							_activity					= null;
-	private DataSourceManager								dsManager					= null;
-	private final HashMap<String, Fitting>	fittings					= new HashMap<String, Fitting>();
+	private transient Menu										_appMenu					= null;
+	private HashMap<Integer, APIKey>					apiKeys						= new HashMap<Integer, APIKey>();
+	private transient HashMap<Long, EveChar>	charCache					= null;
+	private final long												lastCCPAccessTime	= 0;
+	private transient EveChar									_pilot						= null;
+	private transient Activity								_activity					= null;
+	private transient DataSourceManager				dsManager					= null;
+	private final HashMap<String, Fitting>		fittings					= new HashMap<String, Fitting>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppModelStore(final IPersistentHandler storageHandler) {
@@ -127,6 +127,7 @@ public class AppModelStore extends AbstractModelStore {
 
 	public void addFitting(final Fitting fit, final String label) {
 		fittings.put(label, fit);
+		setDirty(true);
 	}
 
 	public boolean checkStorage() {
@@ -268,6 +269,10 @@ public class AppModelStore extends AbstractModelStore {
 	 */
 	public EveChar searchCharacter(final long characterID) {
 		return getCharacters().get(characterID);
+	}
+
+	public Fitting searchFitting(final String fittingLabel) {
+		return fittings.get(fittingLabel);
 	}
 
 	public void setApiKeys(final HashMap<Integer, APIKey> newkeys) {

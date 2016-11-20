@@ -19,7 +19,6 @@ import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EIndustryGroup;
-import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Fitting;
@@ -47,7 +46,7 @@ public class FittingDataSource extends SpecialDataSource {
 	private static Logger			logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Fitting			fit								= null;
+	private Fitting						fit								= null;
 
 	//	private final ArrayList<Asset>						ships							= null;
 
@@ -78,15 +77,25 @@ public class FittingDataSource extends SpecialDataSource {
 		logger.info(">> [FittingDataSource.collaborate2Model]");
 		try {
 			AppModelStore store = EVEDroidApp.getAppStore();
+			// Get the parameters to check if demo or coming from a ship0.
+			long capsuleerId = getParameterLong(AppWideConstants.EExtras.CAPSULEERID.name());
+			String fittingLabel = getParameterString(AppWideConstants.EExtras.FITTINGID.name());
 			// Get the complete list of ships. Compare it to the current list if it exists.
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			final AssetsManager manager = store.getPilot().getAssetsManager();
 			// Create the testing fit from the list of predefined modules. This should be replaced by the Fitting locator.
-			// If the pilot is 0 hen use the demo
-			fit = createTestFitting(manager);
-			_dataModelRoot = new RootNode();
+			// If the pilot is 0 then use the demo
+			if (capsuleerId == 0) {
+				fit = createTestFitting(manager);
+			} else {
+				fit = store.searchFitting(fittingLabel);
+			}
+			if (null == fit) {
+				fit = createTestFitting(manager);
+			}
 
 			// Add the classification groups and the get the first level model. The model elements are added to the
 			// right group depending on their properties.
+			_dataModelRoot = new RootNode();
 			doGroupInit();
 			ArrayList<AbstractComplexNode> modelList = fit
 					.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name());
