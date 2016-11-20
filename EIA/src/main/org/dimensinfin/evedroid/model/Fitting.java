@@ -33,13 +33,14 @@ import android.util.Log;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger						logger	= Logger.getLogger("Fitting");
+	private static final long				serialVersionUID	= 6740483226926234807L;
+	private static Logger						logger						= Logger.getLogger("Fitting");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Resource								hull		= null;
-	private final Vector<Resource>	modules	= new Vector<Resource>();
-	private final Vector<Resource>	cargo		= new Vector<Resource>();
-	private final Vector<Resource>	rigs		= new Vector<Resource>();
+	private Resource								hull							= null;
+	private final Vector<Resource>	modules						= new Vector<Resource>();
+	private final Vector<Resource>	cargo							= new Vector<Resource>();
+	private final Vector<Resource>	rigs							= new Vector<Resource>();
 	//	private final int								runs		= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................

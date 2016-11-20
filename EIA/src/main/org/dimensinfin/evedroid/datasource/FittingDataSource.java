@@ -109,6 +109,17 @@ public class FittingDataSource extends SpecialDataSource {
 		return _dataModelRoot;
 	}
 
+	/**
+	 * Returns the header root element that contains the header elements to show on the Activity.<br>
+	 * For this imeplementation we just return the fitting that is the only element to include on the head.
+	 */
+	@Override
+	public RootNode getHeaderModel() {
+		RootNode root = new RootNode();
+		root.addChild(fit);
+		return root;
+	}
+
 	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
 		for (IGEFNode group : _dataModelRoot.getChildren()) {
 			if (group instanceof Separator) {

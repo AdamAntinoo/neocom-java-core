@@ -63,7 +63,7 @@ public class AppModelStore extends AbstractModelStore {
 	private transient EveChar									_pilot						= null;
 	private transient Activity								_activity					= null;
 	private transient DataSourceManager				dsManager					= null;
-	private final HashMap<String, Fitting>		fittings					= new HashMap<String, Fitting>();
+	private HashMap<String, Fitting>					fittings					= new HashMap<String, Fitting>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppModelStore(final IPersistentHandler storageHandler) {
@@ -137,6 +137,7 @@ public class AppModelStore extends AbstractModelStore {
 	@Override
 	public void clean() {
 		apiKeys = new HashMap<Integer, APIKey>();
+		fittings = new HashMap<String, Fitting>();
 		//		characters = new HashMap<Long, EveChar>();
 	}
 
@@ -186,6 +187,10 @@ public class AppModelStore extends AbstractModelStore {
 			dsManager = new DataSourceManager();
 		}
 		return dsManager;
+	}
+
+	public HashMap<String, Fitting> getFittings() {
+		return fittings;
 	}
 
 	public EveChar getPilot() {
@@ -289,6 +294,10 @@ public class AppModelStore extends AbstractModelStore {
 
 	public void setAppMenu(final Menu appMenu) {
 		_appMenu = appMenu;
+	}
+
+	public void setFittings(final HashMap<String, Fitting> readObject) {
+		fittings = readObject;
 	}
 
 	@Override

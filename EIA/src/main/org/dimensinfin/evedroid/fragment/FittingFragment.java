@@ -10,22 +10,28 @@ package org.dimensinfin.evedroid.fragment;
 
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
+import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.FittingDataSource;
+import org.dimensinfin.evedroid.datasource.IExtendedDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.EveTask;
+import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.ActionPart;
+import org.dimensinfin.evedroid.part.FittingPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.TaskPart;
 
@@ -49,12 +55,14 @@ import android.view.ViewGroup;
  */
 public class FittingFragment extends AbstractNewPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("FittingFragment");
+	private static Logger				logger	= Logger.getLogger("FittingFragment");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private FittingPartFactory	factory	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public String getSubtitle() {
 		return "";
@@ -65,7 +73,6 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		return "Fitting - Under Test";
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This code is identical on all Fragment implementations so can be moved to the super class.
 	 */
@@ -92,10 +99,9 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	public void onStart() {
 		Log.i("NEOCOM", ">> FittingFragment.onStart");
 		try {
-			// Check the datasource status and create a new one if still does not exists.
-			if (checkDSState()) {
-				registerDataSource();
-			}
+			registerDataSource();
+			// This fragment has a header. Populate it with the datasource header contents.
+			setHeaderContents();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -103,6 +109,24 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< FittingFragment.onStart");
+	}
+
+	private AbstractAndroidPart createPart(final AbstractGEFNode model) {
+		IPartFactory factory = getFactory();
+		IEditPart part = factory.createPart(model);
+		part.setParent(null);
+		return (AbstractAndroidPart) part;
+	}
+
+	private IExtendedDataSource getDataSource() {
+		return _datasource;
+	}
+
+	private IPartFactory getFactory() {
+		if (null == factory) {
+			factory = new FittingPartFactory(_variant);
+		}
+		return factory;
 	}
 
 	/**
@@ -124,11 +148,17 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(_variant));
 		ds.setVariant(_variant);
-		// ds.setExtras(getExtras();
 		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
 		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
 		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
 		setDataSource(ds);
+	}
+
+	private void setHeaderContents() {
+		RootNode headModel = getDataSource().getHeaderModel();
+		for (AbstractComplexNode model : headModel.collaborate2Model(_variant.name())) {
+			addtoHeader(createPart(model));
+		}
 	}
 }
 
@@ -160,7 +190,11 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 			GroupPart part = new GroupPart((Separator) node);
 			return part;
 		}
-
+		// This is the part element for the Fitting that goin in the head.
+		if (node instanceof Fitting) {
+			FittingPart part = new FittingPart((Separator) node);
+			return part;
+		}
 		return new GroupPart(new Separator("-NO data-"));
 	}
 }

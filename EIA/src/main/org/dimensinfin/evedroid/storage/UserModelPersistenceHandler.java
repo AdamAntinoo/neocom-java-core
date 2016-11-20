@@ -17,12 +17,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.Fitting;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class UserModelPersistenceHandler implements IPersistentHandler {
@@ -83,8 +86,9 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
-				//				getStore().setApiKeys((HashMap<Integer, APIKey>) input.readObject());
-				setStore(input.readObject());
+				getStore().setApiKeys((HashMap<Integer, APIKey>) input.readObject());
+				getStore().setFittings((HashMap<String, Fitting>) input.readObject());
+				//				setStore(input.readObject());
 				logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
 				return true;
 			} finally {
@@ -115,10 +119,11 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
-				//				output.writeObject(getStore().getApiKeys());
-				output.writeObject(getStore());
-				output.flush();
+				output.writeObject(getStore().getApiKeys());
 				//				output.writeObject(getStore().getCharacters());
+				output.writeObject(getStore().getFittings());
+				//				output.writeObject(getStore());
+				output.flush();
 				logger.info("<< UserModelPersistenceHandler.save [true]"); //$NON-NLS-1$
 				return true;
 			} finally {

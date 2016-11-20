@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -39,10 +40,10 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AbstractManufactureProcess {
-
+public class AbstractManufactureProcess extends AbstractGEFNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger											logger									= Logger.getLogger("T2ManufactureProcess");
+	private static final long									serialVersionUID				= 1220739885623391915L;
+	private static Logger											logger									= Logger.getLogger("AbstractManufactureProcess");
 	private static long												GENERATED_ASSETCOUNTER	= 30001;
 	private static final double								T2PE_LEVEL							= -4.0;
 	private static final double								REFINING_EFFICIENCY			= 0.52;
