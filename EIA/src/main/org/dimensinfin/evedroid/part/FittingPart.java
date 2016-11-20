@@ -13,13 +13,15 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
+import org.dimensinfin.evedroid.activity.FittingActivity;
 import org.dimensinfin.evedroid.activity.JobDirectorActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.dialog.JobRunsDialog;
+import org.dimensinfin.evedroid.dialog.FittingRunsDialog;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -58,18 +60,15 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 	 */
 	// REFACTOR Removed during the DataSource integration
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
-		Log.i("EVEI", ">> BlueprintPart.onCreateContextMenu");
-		// PagerFragment frag = (PagerFragment) getFragment();
-		// For blueprints the menu depends on the renderer selected.
-		if ((getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER)
-				|| (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINVENTIONHEADER)) {
-			final JobRunsDialog dialog = new JobRunsDialog();
-			dialog.setBlueprintPart(this);
-			final BlueprintPart self = this;
+		logger.info(">> [FittingPart.onCreateContextMenu]");
+		// Check the renderer to see if I have to show the dialog or not. Only valid if in a header.
+		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_FITTINGHEADER) {
+			final FittingRunsDialog dialog = new FittingRunsDialog();
+			dialog.setFittingPart(this);
+			//			final BlueprintPart self = this;
 			// PagerFragment frag = (PagerFragment) getFragment();
 			// dialog.setFragment(frag);
 			dialog.setDialogCallback(new ADialogCallback() {
-
 				@Override
 				public void onDialogNegativeClick(final DialogFragment dialog) {
 				}
@@ -77,7 +76,14 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 				@Override
 				public void onDialogPositiveClick(final DialogFragment dialog) {
 					// Get the number of runs selected by the user.
-					final int runs = ((JobRunsDialog) dialog).getRuns();
+					final int runs = ((FittingRunsDialog) dialog).getRuns();
+
+					// Open the Fitting Activity
+					final Intent intent = new Intent(getActivity(), FittingActivity.class);
+					intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
+					intent.putExtra(AppWideConstants.EExtras.FITTINGID.name(), label);
+					getActivity().startActivity(intent);
+
 					// Verify with the number of runs the number of blueprints
 					// used.
 					Toast.makeText(getActivity(), "Selected Runs: " + runs, Toast.LENGTH_LONG).show();
@@ -91,7 +97,7 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 			getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 			dialog.show(getActivity().getFragmentManager(), "JobRunsDialog");
 		}
-		Log.i("EVEI", "<< BlueprintPart.onCreateContextMenu");
+		logger.info("<< [FittingPart.onCreateContextMenu]");
 	}
 
 	@Override
