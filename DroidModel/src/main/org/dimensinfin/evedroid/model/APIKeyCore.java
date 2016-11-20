@@ -10,12 +10,13 @@ package org.dimensinfin.evedroid.model;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import com.beimin.eveapi.model.account.ApiKeyInfo;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class APIKeyCore extends AbstractComplexNode {
@@ -24,8 +25,10 @@ public abstract class APIKeyCore extends AbstractComplexNode {
 	private static Logger			logger						= Logger.getLogger("APIKey");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private ApiKeyInfo				coreKeyInfo				= null;
+
 	private final Instant			lastCCPAccessTime	= new Instant(0);
-//	private boolean						expanded					= true;
+	//	private boolean						expanded					= true;
 
 	// - P R O P E R T I E S
 	protected int							keyID							= -1;
@@ -56,26 +59,26 @@ public abstract class APIKeyCore extends AbstractComplexNode {
 		return verificationCode;
 	}
 
-//	/**
-//	 * If the account is expired then return it on the collapsed state. Otherwise return the default and user
-//	 * set state.
-//	 * 
-//	 * @return expand value.
-//	 */
-//	public boolean isExpanded() {
-//		// Check if expired.
-//		final Instant expires = getTimeLeft();
-//		Instant now = new Instant();
-//		if (expires.isBefore(now))
-//			return false;
-//		else
-//			return expanded;
-//	}
-//
-//	public boolean setExpanded(final boolean b) {
-//		expanded = b;
-//		return expanded;
-//	}
+	//	/**
+	//	 * If the account is expired then return it on the collapsed state. Otherwise return the default and user
+	//	 * set state.
+	//	 * 
+	//	 * @return expand value.
+	//	 */
+	//	public boolean isExpanded() {
+	//		// Check if expired.
+	//		final Instant expires = getTimeLeft();
+	//		Instant now = new Instant();
+	//		if (expires.isBefore(now))
+	//			return false;
+	//		else
+	//			return expanded;
+	//	}
+	//
+	//	public boolean setExpanded(final boolean b) {
+	//		expanded = b;
+	//		return expanded;
+	//	}
 
 	@Override
 	public String toString() {

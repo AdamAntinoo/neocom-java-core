@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -27,7 +28,15 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.EveCharCore;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+
+import com.beimin.eveapi.parser.ApiAuthorization;
+import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
+import com.beimin.eveapi.parser.account.CharactersParser;
+import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
+import com.beimin.eveapi.response.account.CharactersResponse;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -297,6 +306,36 @@ public class SplashActivity extends Activity {
 			alternatedir.mkdir();
 		}
 
+		private void instantiateKey() {
+			// Get the complete api information for CCP through the eveapi.
+			ApiAuthorization authorization = new ApiAuthorization(apiKey.getKeyID(), apiKey.getVerificationCode());
+			ApiKeyInfoParser parser = new ApiKeyInfoParser();
+			ApiKeyInfoResponse response = parser.getResponse(authorization);
+			if (null != response) {
+				apiKey.updateAllParameters(response);
+				// Get access to all the pilots and update the information on the ApiKey.
+				final CharactersParser pilotParser = new CharactersParser();
+				final CharactersResponse pilotResponse = pilotParser.getResponse(authorization);
+				if (null != pilotResponse) {
+					//			 HashSet<Character> characterList = new HashSet<Character>();
+					Set<Character> characterList = pilotResponse.getAll();
+					for (final Character evechar : characterList) {
+						EveCharCore newChar = processCharacter(evechar);
+						//Add the credentials
+						//	newChar.setApiKeyID(2889577);
+						newChar.setKeyID(apiKey.getKeyID());
+						newChar.setVerificationCode(apiKey.getVerificationCode());
+						// Add more information to the character using mode CCP calls.
+						// CharacterInfo
+						//				updateCharacterInfo(newChar);
+						apiKey.addCharacter(newChar);
+					}
+				}
+				_modelRoot.add(apiKey);
+			}
+
+		}
+
 		private void readApiKeys() {
 			logger.info(">> EveDroidInitialization.readApiKeys");
 			try {
@@ -313,7 +352,8 @@ public class SplashActivity extends Activity {
 						String validationcode = parts[1];
 						int keynumber = Integer.parseInt(key);
 						logger.info("-- Inserting API key " + keynumber);
-						APIKey api = new APIKey(keynumber, validationcode);
+						//						APIKey api = new APIKey(keynumber, validationcode);
+						APIKey api = NeoComApiKey.build(keynumber, validationcode);
 						EVEDroidApp.getAppStore().addApiKey(api);
 					} catch (NumberFormatException nfex) {
 					} catch (Exception ex) {
