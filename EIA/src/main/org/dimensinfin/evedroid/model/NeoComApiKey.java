@@ -9,6 +9,7 @@
 package org.dimensinfin.evedroid.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -16,8 +17,9 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.handler.ApiError;
 import com.beimin.eveapi.model.account.ApiKeyInfo;
+import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.model.shared.KeyType;
 import com.beimin.eveapi.parser.ApiAuthorization;
 import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
@@ -52,7 +54,7 @@ public class NeoComApiKey extends AbstractNeoComNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private ApiKeyInfoResponse delegatedApiKey = null;
+	private ApiKeyInfo delegatedApiKey = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private NeoComApiKey() {
@@ -61,36 +63,38 @@ public class NeoComApiKey extends AbstractNeoComNode {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
-	public ApiKeyInfo getApiKeyInfo() {
-		return delegatedApiKey.getApiKeyInfo();
+	public long getAccessMask() {
+		return delegatedApiKey.getAccessMask();
 	}
 
-	public Date getCachedUntil() {
-		return delegatedApiKey.getCachedUntil();
+	public Collection<Character> getEveCharacters() {
+		return delegatedApiKey.getEveCharacters();
 	}
 
-	public Date getCurrentTime() {
-		return delegatedApiKey.getCurrentTime();
+	public Date getExpires() {
+		return delegatedApiKey.getExpires();
 	}
 
-	public ApiError getError() {
-		return delegatedApiKey.getError();
+	public KeyType getType() {
+		return delegatedApiKey.getType();
 	}
 
-	public int getVersion() {
-		return delegatedApiKey.getVersion();
+	public boolean isAccountKey() {
+		return delegatedApiKey.isAccountKey();
 	}
 
-	public boolean hasError() {
-		return delegatedApiKey.hasError();
+	public boolean isCharacterKey() {
+		return delegatedApiKey.isCharacterKey();
+	}
+
+	public boolean isCorporationKey() {
+		return delegatedApiKey.isCorporationKey();
 	}
 
 	public void setDelegate(final ApiKeyInfoResponse response) {
-		delegatedApiKey = response;
+		delegatedApiKey = response.getApiKeyInfo();
 	}
 }
 
