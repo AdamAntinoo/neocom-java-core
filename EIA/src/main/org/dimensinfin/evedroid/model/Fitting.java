@@ -37,6 +37,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	private static Logger						logger						= Logger.getLogger("Fitting");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private String									name							= "-FIT-";
 	private Resource								hull							= null;
 	private final Vector<Resource>	modules						= new Vector<Resource>();
 	private final Vector<Resource>	cargo							= new Vector<Resource>();
@@ -128,6 +129,14 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	 */
 	public void fitRig(final int rigTypeId) {
 		rigs.add(new Resource(rigTypeId));
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String newName) {
+		name = newName;
 	}
 
 	@Override

@@ -190,9 +190,9 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 			GroupPart part = new GroupPart((Separator) node);
 			return part;
 		}
-		// This is the part element for the Fitting that goin in the head.
+		// This is the part element for the Fitting that going in the head.
 		if (node instanceof Fitting) {
-			FittingPart part = new FittingPart((Separator) node);
+			FittingPart part = new FittingPart((Fitting) node);
 			return part;
 		}
 		return new GroupPart(new Separator("-NO data-"));

@@ -13,26 +13,21 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.evedroid.activity.FittingActivity;
-import org.dimensinfin.evedroid.activity.JobDirectorActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.dialog.FittingRunsDialog;
-import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
+import org.dimensinfin.evedroid.model.Fitting;
 
 import android.app.DialogFragment;
-import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class FittingPart extends EveAbstractPart implements INamedPart, OnClickListener, IMenuActionTarget {
+public class FittingPart extends EveAbstractPart implements INamedPart, IMenuActionTarget {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1956908168853667475L;
 	private static Logger			logger						= Logger.getLogger("org.dimensinfin.evedroid.part");
@@ -40,7 +35,8 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public FittingPart() {
+	public FittingPart(final Fitting model) {
+		super(model);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -48,6 +44,15 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 	public long getModelID() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public String getName() {
+		return getCastedModel().getName();
+	}
+
+	public int getRuns() {
+		return getCastedModel().getRuns();
 	}
 
 	public boolean onContextItemSelected(final MenuItem item) {
@@ -77,20 +82,8 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 				public void onDialogPositiveClick(final DialogFragment dialog) {
 					// Get the number of runs selected by the user.
 					final int runs = ((FittingRunsDialog) dialog).getRuns();
-
-					// Open the Fitting Activity
-					final Intent intent = new Intent(getActivity(), FittingActivity.class);
-					intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-					intent.putExtra(AppWideConstants.EExtras.FITTINGID.name(), label);
-					getActivity().startActivity(intent);
-
-					// Verify with the number of runs the number of blueprints
-					// used.
-					Toast.makeText(getActivity(), "Selected Runs: " + runs, Toast.LENGTH_LONG).show();
-					JobManager.launchJob(getPilot(), self, runs, getJobActivity());
-					final Intent intent = new Intent(getActivity(), JobDirectorActivity.class);
-					intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-					getActivity().startActivity(intent);
+					// Update the model with the new runs value
+					getCastedModel().setRuns(runs);
 				}
 			});
 			//
@@ -104,6 +97,10 @@ public class FittingPart extends EveAbstractPart implements INamedPart, OnClickL
 	protected AbstractHolder selectHolder() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private Fitting getCastedModel() {
+		return (Fitting) getModel();
 	}
 
 }

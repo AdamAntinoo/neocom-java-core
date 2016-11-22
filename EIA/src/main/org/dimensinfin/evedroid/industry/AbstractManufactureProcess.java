@@ -134,6 +134,10 @@ public class AbstractManufactureProcess extends AbstractGEFNode {
 		return moduleid;
 	}
 
+	public int getRuns() {
+		return runs;
+	}
+
 	public boolean moveAllowed() {
 		// Read the flag values from the preferences.
 		boolean moveAllowed = EVEDroidApp.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
@@ -153,6 +157,10 @@ public class AbstractManufactureProcess extends AbstractGEFNode {
 	public void setPilot(final EveChar pilot) {
 		this.pilot = pilot;
 		industryAssetsManager.setPilot(pilot);
+	}
+
+	public void setRuns(final int runs) {
+		this.runs = runs;
 	}
 
 	@Override

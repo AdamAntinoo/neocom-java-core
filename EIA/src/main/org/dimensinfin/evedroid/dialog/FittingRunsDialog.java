@@ -17,11 +17,13 @@ import org.dimensinfin.evedroid.part.FittingPart;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class FittingRunsDialog extends DialogFragment {
@@ -41,13 +43,17 @@ public class FittingRunsDialog extends DialogFragment {
 	private TextView				_errorMessage			= null;
 
 	// - W O R K   V A R I A B L E S
-	private final int				_runs							= 0;
+	private int							_runs							= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public FittingRunsDialog() {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public int getRuns() {
+		return _runs;
+	}
+
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		// Create the dialog and all its elements.
@@ -59,6 +65,27 @@ public class FittingRunsDialog extends DialogFragment {
 		initializeViews();
 		setupContents();
 
+		final FittingRunsDialog self = this;
+		// Add action buttons
+		if (null != _dialogCallback) {
+			builder.setView(_dialogContainer).setPositiveButton(R.string.setJobRuns, new DialogInterface.OnClickListener() {
+				public void onClick(final DialogInterface dialog, final int id) {
+					try {
+						if (null != _runsCount) {
+							_runs = Integer.parseInt(_runsCount.getEditableText().toString());
+							Toast.makeText(getActivity(), "Selected Runs: " + _runs, Toast.LENGTH_LONG);
+							_dialogCallback.onDialogPositiveClick(self);
+						}
+					} catch (RuntimeException rtex) {
+					}
+				}
+			}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				public void onClick(final DialogInterface dialog, final int id) {
+					FittingRunsDialog.this.getDialog().cancel();
+				}
+			});
+		}
+		return builder.create();
 	}
 
 	public void setDialogCallback(final ADialogCallback callback) {
@@ -86,6 +113,8 @@ public class FittingRunsDialog extends DialogFragment {
 	private void setupContents() {
 		// Set the text of the informative fields from the blueprint part.
 		_fittingName.setText(_fittingPart.getName());
+		_runs = _fittingPart.getRuns();
+		_runsCount.setText(_runs);
 		//		_blueprintCount.setText(_blueprintPart.get_blueprintCount());
 		//		_blueprintRuns.setText("[" + _blueprintPart.getRuns() + "]");
 		//		_blueprintMETE.setText(_blueprintPart.get_blueprintMETE());
