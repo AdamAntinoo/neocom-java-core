@@ -211,6 +211,7 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 				if (null == label) {
 					label = getCastedModel().getItemName();
 				}
+				fit.setName(label);
 				store.addFitting(fit, label);
 
 				// Open the Fitting Activity

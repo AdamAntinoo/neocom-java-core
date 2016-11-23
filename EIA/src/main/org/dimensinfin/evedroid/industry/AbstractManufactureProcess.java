@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -161,6 +162,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 	public void setRuns(final int runs) {
 		this.runs = runs;
+		firePropertyChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, this, this);
 	}
 
 	@Override

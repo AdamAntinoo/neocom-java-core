@@ -60,7 +60,7 @@ public class FittingRunsDialog extends DialogFragment {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		// Inflate and set the layout for the dialog
 		LayoutInflater inflater = getActivity().getLayoutInflater();
-		_dialogContainer = inflater.inflate(R.layout.dialog_jobruns, null);
+		_dialogContainer = inflater.inflate(R.layout.dialog_fittingruns, null);
 
 		initializeViews();
 		setupContents();
@@ -114,7 +114,7 @@ public class FittingRunsDialog extends DialogFragment {
 		// Set the text of the informative fields from the blueprint part.
 		_fittingName.setText(_fittingPart.getName());
 		_runs = _fittingPart.getRuns();
-		_runsCount.setText(_runs);
+		_runsCount.setText(Integer.valueOf(_runs).toString());
 		//		_blueprintCount.setText(_blueprintPart.get_blueprintCount());
 		//		_blueprintRuns.setText("[" + _blueprintPart.getRuns() + "]");
 		//		_blueprintMETE.setText(_blueprintPart.get_blueprintMETE());

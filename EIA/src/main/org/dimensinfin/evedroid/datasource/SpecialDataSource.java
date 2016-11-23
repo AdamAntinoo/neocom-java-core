@@ -205,6 +205,13 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 		}
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES)) {
+			// Just activate the refresh because some  refresh.
+			//			_bodyParts = new ArrayList<AbstractCorePart>();
+			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+					event.getNewValue());
+		}
 		// THis event is when the user changes the preferred action so I have to calculate the model again.
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
 			collaborate2Model();

@@ -93,13 +93,13 @@
                 android:layout_alignParentLeft="true"
                 android:text="QUANTITY" />
 
-            <TextView
-                android:id="@+id/blueprintRunsLabel"
-                style="@style/LabelStyle.Small"
-                android:layout_width="wrap_content"
-                android:layout_toLeftOf="@+id/blueprintMETELabel"
-                android:gravity="right"
-                android:text="[RUNS]" />
+<!--             <TextView -->
+<!--                 android:id="@+id/blueprintRunsLabel" -->
+<!--                 style="@style/LabelStyle.Small" -->
+<!--                 android:layout_width="wrap_content" -->
+<!--                 android:layout_toLeftOf="@+id/blueprintMETELabel" -->
+<!--                 android:gravity="right" -->
+<!--                 android:text="[RUNS]" /> -->
 
             <TextView
                 android:id="@+id/blueprintMETELabel"
