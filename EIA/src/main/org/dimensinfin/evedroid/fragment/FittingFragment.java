@@ -192,7 +192,8 @@ final class FittingPartFactory extends PartFactory implements IPartFactory {
 		}
 		// This is the part element for the Fitting that going in the head.
 		if (node instanceof Fitting) {
-			FittingPart part = new FittingPart((Fitting) node);
+			FittingPart part = (FittingPart) new FittingPart((Fitting) node)
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_FITTINGHEADER);
 			return part;
 		}
 		return new GroupPart(new Separator("-NO data-"));

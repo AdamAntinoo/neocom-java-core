@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -40,7 +40,7 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AbstractManufactureProcess extends AbstractGEFNode {
+public class AbstractManufactureProcess extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID				= 1220739885623391915L;
 	private static Logger											logger									= Logger.getLogger("AbstractManufactureProcess");
