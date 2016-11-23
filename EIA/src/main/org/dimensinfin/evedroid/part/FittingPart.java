@@ -18,6 +18,7 @@ import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.dialog.FittingRunsDialog;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.Fitting;
+import org.dimensinfin.evedroid.render.FittingHeaderRender;
 
 import android.app.DialogFragment;
 import android.view.ContextMenu;
@@ -114,8 +115,7 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		// TODO Auto-generated method stub
-		return null;
+		return new FittingHeaderRender(this, _activity);
 	}
 
 	private Fitting getCastedModel() {
