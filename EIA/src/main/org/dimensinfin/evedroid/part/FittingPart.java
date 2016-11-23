@@ -39,11 +39,26 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 		super(model);
 	}
 
+	public CharSequence get_fittingRunsCount() {
+		return Integer.valueOf(getCastedModel().getRuns()).toString();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public String getHullGroup() {
+		return getCastedModel().getHull().getItem().getGroupName();
+	}
+
+	public String getHullName() {
+		return getCastedModel().getHull().getItem().getName();
+	}
+
+	public int getHullTypeID() {
+		return getCastedModel().getHull().getItem().getTypeID();
+	}
+
 	@Override
 	public long getModelID() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getCastedModel().getName().hashCode();
 	}
 
 	@Override
@@ -53,6 +68,10 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 
 	public int getRuns() {
 		return getCastedModel().getRuns();
+	}
+
+	public String getSlotsInfo() {
+		return "8 / 3 / 6";
 	}
 
 	public boolean onContextItemSelected(final MenuItem item) {

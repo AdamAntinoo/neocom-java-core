@@ -155,7 +155,7 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	}
 
 	private void setHeaderContents() {
-		RootNode headModel = getDataSource().getHeaderModel();
+		RootNode headModel = ((FittingDataSource) getDataSource()).getHeaderModel();
 		for (AbstractComplexNode model : headModel.collaborate2Model(_variant.name())) {
 			addtoHeader(createPart(model));
 		}

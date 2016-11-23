@@ -29,7 +29,7 @@ public interface IExtendedDataSource extends IDataSource {
 
 	public DataSourceLocator getDataSourceLocator();
 
-	public RootNode getHeaderModel();
+	//	public RootNode getHeaderModel();
 
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getHeaderParts();

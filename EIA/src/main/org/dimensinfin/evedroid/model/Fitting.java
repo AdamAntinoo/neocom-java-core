@@ -131,6 +131,10 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		rigs.add(new Resource(rigTypeId));
 	}
 
+	public Resource getHull() {
+		return hull;
+	}
+
 	public String getName() {
 		return name;
 	}

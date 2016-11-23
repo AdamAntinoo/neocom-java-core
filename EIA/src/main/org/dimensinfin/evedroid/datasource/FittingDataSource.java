@@ -111,9 +111,8 @@ public class FittingDataSource extends SpecialDataSource {
 
 	/**
 	 * Returns the header root element that contains the header elements to show on the Activity.<br>
-	 * For this imeplementation we just return the fitting that is the only element to include on the head.
+	 * For this implementation we just return the fitting that is the only element to include on the head.
 	 */
-	@Override
 	public RootNode getHeaderModel() {
 		RootNode root = new RootNode();
 		root.addChild(fit);
