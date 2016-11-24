@@ -221,7 +221,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		requirements.clear();
 		actionsRegistered.clear();
 		// Get the resources needed for the completion of this job.
-		runs = 1;
+		//		runs = 1;
 		threads = 1;
 
 		// Copy the fits contents to the list of requirements to start the processing.

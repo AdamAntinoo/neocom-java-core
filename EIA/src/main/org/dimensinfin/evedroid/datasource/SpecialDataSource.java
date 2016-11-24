@@ -206,6 +206,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 					event.getNewValue());
 		}
 		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES)) {
+			// The DataSourceAdapter will call getPartHierarchy() and this will return the list of parts on the body. So update the list.
+			// But we have changes a key value, so recalculate the model
 			// Just activate the refresh because some  refresh.
 			//			_bodyParts = new ArrayList<AbstractCorePart>();
 			//			_bodyParts.addAll(_partModelRoot.collaborate2View());

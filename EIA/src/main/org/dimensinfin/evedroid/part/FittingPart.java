@@ -105,6 +105,7 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 					// Update the model with the new runs value
 					getCastedModel().setRuns(runs);
 					invalidate();
+					firePropertyChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
 				}
 			});
 			//
