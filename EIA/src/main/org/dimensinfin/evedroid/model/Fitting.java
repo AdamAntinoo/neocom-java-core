@@ -42,7 +42,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	private final Vector<Resource>	modules						= new Vector<Resource>();
 	private final Vector<Resource>	cargo							= new Vector<Resource>();
 	private final Vector<Resource>	rigs							= new Vector<Resource>();
-	//	private final int								runs		= 1;
+	private final Vector<Resource>	drones						= new Vector<Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -227,7 +227,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		// Copy the fits contents to the list of requirements to start the processing.
 		// TODO This point should be optimized to reuse resources from other iterations so the models will be cached.
 		requirements.clear();
-		requirements.add(new Resource(hull.getTypeID(), runs));
+		requirements.add(new Resource(hull.getTypeID()));
 		// Copy the resources and do not use the original list because this is going to be changed on the process
 		for (Resource r : modules) {
 			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
@@ -235,9 +235,12 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		for (Resource r : cargo) {
 			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
 		}
-		//		for (Resource r : this.rigs) {
-		//			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
-		//		}
+		for (Resource r : rigs) {
+			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+		}
+		for (Resource r : drones) {
+			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+		}
 		// Update the resource count depending on the sizing requirements for the job.
 		for (Resource resource : requirements) {
 			// Skills are treated differently.
