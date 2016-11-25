@@ -42,12 +42,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class BlueprintPart extends MarketDataPart implements INamedPart, OnClickListener, IMenuActionTarget {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -274331830590300917L;
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	/**
 	 * Stores the instance to the job process responsible to perform all the action and the job calculations.
 	 */
@@ -70,16 +68,14 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	/** Number of blueprints that are to be used for manufacture. */
 	// private int bpcmanufacturable = -1;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public BlueprintPart(final AbstractGEFNode node) {
 		super(node);
 		bpccount = getCastedModel().getQuantity();
 		runCount = bpccount * getCastedModel().getRuns();
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public ArrayList<Action> generateActions() {
 		return process.generateActions4Blueprint();
 	}

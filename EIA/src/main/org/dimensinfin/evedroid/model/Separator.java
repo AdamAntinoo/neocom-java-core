@@ -65,8 +65,11 @@ public class Separator extends AbstractNeoComNode {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Separator [");
-		buffer.append(title).append(" - ").append(content).append(" ");
-		buffer.append("]");
+		buffer.append(title).append("\n");
+		//		buffer.append(title).append(" - ").append(content).append(" ");
+		// Add the contents temporarily
+		buffer.append(getChildren());
+		buffer.append(" ]");
 		return buffer.toString();
 	}
 }

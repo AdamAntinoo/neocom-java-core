@@ -189,9 +189,9 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addtoHeader(final AbstractAndroidPart target) {
-		Log.i("NEOCOM", ">> PageFragment.addtoHeader");
+		Log.i("NEOCOM", ">> AbstractNewPagerFragment.addtoHeader");
 		_headerContents.add(target);
-		Log.i("NEOCOM", "<< PageFragment.addtoHeader");
+		Log.i("NEOCOM", "<< AbstractNewPagerFragment.addtoHeader");
 	}
 
 	public void clearHeader() {

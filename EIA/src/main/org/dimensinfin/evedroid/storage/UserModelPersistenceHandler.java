@@ -25,6 +25,7 @@ import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.Fitting;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class UserModelPersistenceHandler implements IPersistentHandler {
@@ -78,15 +79,16 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 	 */
 	public synchronized boolean restore() {
 		logger.info(">> UserModelPersistenceHandler.restore");
-		File modelStoreFile = AppConnector.getStorageConnector().accessAppStorage(
-				AppConnector.getResourceString(R.string.userdatamodelfilename));
+		File modelStoreFile = AppConnector.getStorageConnector()
+				.accessAppStorage(AppConnector.getResourceString(R.string.userdatamodelfilename));
 		try {
 			// Read the contents of the character information.
 			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
 				getStore().setApiKeys((HashMap<Integer, APIKey>) input.readObject());
-				//				getStore().setCharacters((HashMap<Long, EveChar>) input.readObject());
+				getStore().setFittings((HashMap<String, Fitting>) input.readObject());
+				//				setStore(input.readObject());
 				logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
 				return true;
 			} finally {
@@ -111,15 +113,17 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 	public synchronized boolean save() {
 		logger.info(">> UserModelPersistenceHandler.save"); //$NON-NLS-1$
 		try {
-			File modelStoreFile = AppConnector.getStorageConnector().accessAppStorage(
-					AppConnector.getResourceString(R.string.userdatamodelfilename));
+			File modelStoreFile = AppConnector.getStorageConnector()
+					.accessAppStorage(AppConnector.getResourceString(R.string.userdatamodelfilename));
 			final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(modelStoreFile));
 
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
 				output.writeObject(getStore().getApiKeys());
-				output.flush();
 				//				output.writeObject(getStore().getCharacters());
+				output.writeObject(getStore().getFittings());
+				//				output.writeObject(getStore());
+				output.flush();
 				logger.info("<< UserModelPersistenceHandler.save [true]"); //$NON-NLS-1$
 				return true;
 			} finally {
@@ -137,7 +141,13 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 	}
 
 	public void setStore(final IModelStore newStore) {
-		if (null != newStore) store = (AppModelStore) newStore;
+		if (null != newStore) {
+			store = (AppModelStore) newStore;
+		}
+	}
+
+	private void setStore(final Object readObject) {
+		store = (AppModelStore) readObject;
 	}
 }
 

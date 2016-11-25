@@ -1,0 +1,129 @@
+11-07 13:16:47.823: I/EVEDroidApp(28388): >> EVEDroidApp.<init>
+11-07 13:16:47.823: I/EVEDroidApp(28388): .. First Time Initialization.
+11-07 13:16:47.823: I/EVEDroidApp(28388): << EVEDroidApp.<init>
+11-07 13:16:47.823: I/EVEDroidApp(28388): >> EVEDroidApp.onCreate
+11-07 13:16:47.823: I/EVEDroidApp(28388): << EVEDroidApp.onCreate
+11-07 13:16:47.833: I/IndustryT2Activity(28388): >> IndustryT2Activity.onCreate
+11-07 13:16:47.833: I/DefaultPagerActivity(28388): >> DefaultPagerActivity.onCreate
+11-07 13:16:47.843: I/dalvikvm(28388): TRACE STARTED: '/storage/emulated/legacy/EVEI.trace' 8192KB
+11-07 13:16:47.863: D/dalvikvm(28388): +++ active profiler count now 1
+11-07 13:16:48.184: E/DefaultPagerActivity(28388): R> Runtime Exception on DefaultPagerActivity.onCreate.Bad initialization and theme usage. App activity lost or not defined.
+11-07 13:16:48.184: W/System.err(28388): java.lang.RuntimeException: Bad initialization and theme usage. App activity lost or not defined.
+11-07 13:16:48.184: W/System.err(28388): 	at org.dimensinfin.evedroid.theme.DefaultTheme.getActivity(DefaultTheme.java:71)
+11-07 13:16:48.184: W/System.err(28388): 	at org.dimensinfin.evedroid.theme.DefaultTheme.getResourceManager(DefaultTheme.java:64)
+11-07 13:16:48.184: W/System.err(28388): 	at org.dimensinfin.evedroid.theme.DefaultTheme.getThemeBackground(DefaultTheme.java:41)
+11-07 13:16:48.184: W/System.err(28388): 	at org.dimensinfin.evedroid.activity.core.DefaultNewPagerActivity.onCreate(DefaultNewPagerActivity.java:124)
+11-07 13:16:48.184: W/System.err(28388): 	at org.dimensinfin.evedroid.activity.IndustryT2Activity.onCreate(IndustryT2Activity.java:54)
+11-07 13:16:48.184: W/System.err(28388): 	at android.app.Activity.performCreate(Activity.java:5133)
+11-07 13:16:48.194: W/System.err(28388): 	at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1087)
+11-07 13:16:48.194: W/System.err(28388): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2230)
+11-07 13:16:48.194: W/System.err(28388): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2316)
+11-07 13:16:48.194: W/System.err(28388): 	at android.app.ActivityThread.access$600(ActivityThread.java:150)
+11-07 13:16:48.194: W/System.err(28388): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1298)
+11-07 13:16:48.194: W/System.err(28388): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+11-07 13:16:48.194: W/System.err(28388): 	at android.os.Looper.loop(Looper.java:213)
+11-07 13:16:48.194: W/System.err(28388): 	at android.app.ActivityThread.main(ActivityThread.java:5225)
+11-07 13:16:48.194: W/System.err(28388): 	at java.lang.reflect.Method.invokeNative(Native Method)
+11-07 13:16:48.194: W/System.err(28388): 	at java.lang.reflect.Method.invoke(Method.java:525)
+11-07 13:16:48.194: W/System.err(28388): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:741)
+11-07 13:16:48.194: W/System.err(28388): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:557)
+11-07 13:16:48.194: W/System.err(28388): 	at dalvik.system.NativeStart.main(Native Method)
+11-07 13:16:48.204: I/DefaultPagerActivity(28388): << DefaultPagerActivity.onCreate
+11-07 13:16:48.204: D/dalvikvm(28388): +++ active profiler count now 0
+11-07 13:16:48.204: I/ActivityManager(771): START u0 {cmp=org.dimensinfin.evedroid/.activity.PilotListActivity (has extras)} from pid 28388
+11-07 13:16:48.214: W/qdhwcomposer(319): Excessive delay reading vsync: took 100 ms
+11-07 13:16:48.464: I/dalvikvm(28388): TRACE STOPPED: writing 41551 records
+11-07 13:16:48.644: I/DefaultPagerActivity(28388): keys: [EXTRA_T2BLUEPRINTID, EXTRA_EVECHARACTERID]
+11-07 13:16:48.654: I/ModelPersistenceHandler(28388): >> UserModelPersistenceHandler.restore
+11-07 13:16:48.704: W/ActivityManager(771): Activity pause timeout for ActivityRecord{41977ab0 u0 org.dimensinfin.evedroid/.activity.IndustryT2Activity}
+11-07 13:16:48.724: W/qdhwcomposer(319): Excessive delay reading vsync: took 500 ms
+11-07 13:16:49.054: I/ModelPersistenceHandler(28388): << UserModelPersistencehandler.restore [true]
+11-07 13:16:49.054: I/PageFragment(28388): >> PageFragment.addtoHeader
+11-07 13:16:49.064: I/PageFragment(28388): << PageFragment.addtoHeader
+11-07 13:16:49.064: I/IndustryManufactureActivity(28388): << IndustryT2Activity.onCreate
+11-07 13:16:49.064: I/PageFragment(28388): >> PageFragment.onCreateView
+11-07 13:16:49.094: I/PageFragment(28388): << PageFragment.onCreateView
+11-07 13:16:49.094: I/PageFragment(28388): >> PageFragment.onStart
+11-07 13:16:49.094: E/PageFragment(28388): R> Runtime Exception on PageFragment.onStart.Datasource not defined.
+11-07 13:16:49.094: W/System.err(28388): java.lang.RuntimeException: Datasource not defined.
+11-07 13:16:49.094: W/System.err(28388): 	at org.dimensinfin.evedroid.fragment.core.PagerFragment.onStart(PagerFragment.java:174)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.Fragment.performStart(Fragment.java:1723)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:917)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:1061)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:1043)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.FragmentManagerImpl.dispatchStart(FragmentManager.java:1853)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.Activity.performStart(Activity.java:5149)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2239)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2316)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.ActivityThread.access$600(ActivityThread.java:150)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1298)
+11-07 13:16:49.094: W/System.err(28388): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+11-07 13:16:49.094: W/System.err(28388): 	at android.os.Looper.loop(Looper.java:213)
+11-07 13:16:49.094: W/System.err(28388): 	at android.app.ActivityThread.main(ActivityThread.java:5225)
+11-07 13:16:49.094: W/System.err(28388): 	at java.lang.reflect.Method.invokeNative(Native Method)
+11-07 13:16:49.094: W/System.err(28388): 	at java.lang.reflect.Method.invoke(Method.java:525)
+11-07 13:16:49.094: W/System.err(28388): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:741)
+11-07 13:16:49.105: W/System.err(28388): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:557)
+11-07 13:16:49.105: W/System.err(28388): 	at dalvik.system.NativeStart.main(Native Method)
+11-07 13:16:49.105: D/AndroidRuntime(28388): Shutting down VM
+11-07 13:16:49.105: W/dalvikvm(28388): threadid=1: thread exiting with uncaught exception (group=0x415c48b0)
+11-07 13:16:49.105: E/AndroidRuntime(28388): FATAL EXCEPTION: main
+11-07 13:16:49.105: E/AndroidRuntime(28388): java.lang.RuntimeException: Unable to start activity ComponentInfo{org.dimensinfin.evedroid/org.dimensinfin.evedroid.activity.IndustryT2Activity}: java.lang.NullPointerException
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2266)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:2316)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.ActivityThread.access$600(ActivityThread.java:150)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1298)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.os.Looper.loop(Looper.java:213)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.ActivityThread.main(ActivityThread.java:5225)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at java.lang.reflect.Method.invokeNative(Native Method)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at java.lang.reflect.Method.invoke(Method.java:525)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:741)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:557)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at dalvik.system.NativeStart.main(Native Method)
+11-07 13:16:49.105: E/AndroidRuntime(28388): Caused by: java.lang.NullPointerException
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at org.dimensinfin.evedroid.core.AndroidDatabaseConnector.closeDatabases(AndroidDatabaseConnector.java:87)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at org.dimensinfin.evedroid.EVEDroidApp.init(EVEDroidApp.java:725)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at org.dimensinfin.evedroid.fragment.core.PagerFragment.stopActivity(PagerFragment.java:218)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at org.dimensinfin.evedroid.fragment.core.PagerFragment.onStart(PagerFragment.java:179)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.Fragment.performStart(Fragment.java:1723)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:917)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:1061)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.FragmentManagerImpl.moveToState(FragmentManager.java:1043)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.FragmentManagerImpl.dispatchStart(FragmentManager.java:1853)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.Activity.performStart(Activity.java:5149)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2239)
+11-07 13:16:49.105: E/AndroidRuntime(28388): 	... 11 more
+11-07 13:16:49.115: W/ActivityManager(771):   Force finishing activity org.dimensinfin.evedroid/.activity.PilotListActivity
+11-07 13:16:49.415: I/WindowManager(771): Screenshot max retries 4 of Token{43dd6f28 ActivityRecord{42251a58 u0 org.dimensinfin.evedroid/.activity.PilotListActivity}} appWin=Window{43daf568 u0 Starting org.dimensinfin.evedroid} drawState=4
+11-07 13:16:49.415: W/WindowManager(771): Screenshot failure taking screenshot for (1080x1920) to layer 21050
+11-07 13:16:49.415: W/ActivityManager(771):   Force finishing activity org.dimensinfin.evedroid/.activity.IndustryT2Activity
+11-07 13:16:49.685: D/dalvikvm(771): GC_FOR_ALLOC freed 8419K, 28% free 73728K/102292K, paused 234ms, total 238ms
+11-07 13:16:49.695: W/CursorWrapperInner(771): Cursor finalized without prior close()
+11-07 13:16:49.715: W/qdhwcomposer(319): Excessive delay reading vsync: took 983 ms
+11-07 13:16:49.735: I/CrashMonitor(26931): CrashMonitorServiceBroadcastReceiver: Forwarding intent: android.intent.action.DROPBOX_ENTRY_ADDED tag: data_app_crash
+11-07 13:16:49.745: I/CrashMonitor(26931): CrashMonitorService: Service started...
+11-07 13:16:49.755: I/CrashMonitor(26931): CrashMonitorService: action: android.intent.action.DROPBOX_ENTRY_ADDED
+11-07 13:16:49.915: W/ActivityManager(771): Activity pause timeout for ActivityRecord{42251a58 u0 org.dimensinfin.evedroid/.activity.PilotListActivity}
+11-07 13:16:49.935: I/CrashMonitor(26931): CrashMonitorService: Service stopped...
+11-07 13:16:50.726: W/qdhwcomposer(319): Excessive delay reading vsync: took 416 ms
+11-07 13:16:50.746: D/alsa_ucm(307): snd_use_case_set(): uc_mgr 0xb8c6d5b0 identifier _verb value Inactive
+11-07 13:16:50.746: D/alsa_ucm(307): Set mixer controls for HiFi Lowlatency enable 0
+11-07 13:16:50.746: D/alsa_ucm(307): Setting mixer control: SLIMBUS_0_RX Audio Mixer MultiMedia5, value: 0
+11-07 13:16:50.746: D/alsa_ucm(307): snd_use_case_set(): uc_mgr 0xb8c6d5b0 identifier _disdev value DMIC Endfire
+11-07 13:16:50.746: D/alsa_ucm(307): disdev: device DMIC Endfire not enabled, no need to disable
+11-07 13:16:50.746: D/alsa_ucm(307): snd_use_case_set(): uc_mgr 0xb8c6d5b0 identifier _disdev value xLoud Speaker
+11-07 13:16:50.746: D/alsa_ucm(307): Set mixer controls for xLoud Speaker enable 0
+11-07 13:16:50.746: D/alsa_ucm(307): Setting mixer control: RX3 MIX1 INP1, value: ZERO
+11-07 13:16:50.746: D/alsa_ucm(307): Setting mixer control: RX3 MIX1 INP2, value: ZERO
+11-07 13:16:50.756: D/alsa_ucm(307): Setting mixer control: LINEOUT1 Volume, value: 0
+11-07 13:16:50.756: D/alsa_ucm(307): Setting mixer control: SLIM TX3 MUX, value: ZERO
+11-07 13:16:50.756: D/alsa_ucm(307): Setting mixer control: SLIM TX5 MUX, value: ZERO
+11-07 13:16:50.806: W/qdhwcomposer(319): Excessive delay reading vsync: took 66 ms
+11-07 13:16:50.846: D/dalvikvm(13271): GC_CONCURRENT freed 435K, 77% free 2662K/11244K, paused 1ms+1ms, total 13ms
+11-07 13:16:50.926: W/qdhwcomposer(319): Excessive delay reading vsync: took 100 ms
+11-07 13:16:51.987: W/qdhwcomposer(319): Excessive delay reading vsync: took 750 ms
+11-07 13:16:54.330: W/qdhwcomposer(319): Excessive delay reading vsync: took 2167 ms
+11-07 13:16:57.603: W/ActivityManager(771): Launch timeout has expired, giving up wake lock!
+11-07 13:16:57.723: W/ActivityManager(771): Activity idle timeout for ActivityRecord{41977ab0 u0 org.dimensinfin.evedroid/.activity.IndustryT2Activity}
+11-07 13:16:58.404: W/qdhwcomposer(319): Excessive delay reading vsync: took 4001 ms

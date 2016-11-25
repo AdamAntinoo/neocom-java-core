@@ -10,16 +10,6 @@ package org.dimensinfin.evedroid.constant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AppWideConstants {
-	// - E X T R A S   M E S S A G E S
-	public enum EExtras {
-		CAPSULEERID, FITTINGID
-	}
-
-	// - F R A G M E N T   I D E N T I F I E R S
-	public enum EFragment {
-		UNDEFINED_FRAGMENT, CAPSULEER_LIST, FITTING_MODULES, FITTING_MANUFACTURE, FRAGMENT_SHIPSBYLOCATION, FRAGMENT_SHIPSBYCLASS
-	}
-
 	// - C O M P A R A T O R S
 	public static final class comparators {
 		public static final int	COMPARATOR_NAME							= 100;
@@ -39,7 +29,22 @@ public class AppWideConstants {
 		public static final int	COMPARATOR_TIMEPENDING			= COMPARATOR_NAME + 10;
 	}
 
-	// - F I R E D E V E N T S
+	// - E X T R A S   M E S S A G E S
+	public enum EExtras {
+		CAPSULEERID, FITTINGID
+	}
+
+	// - F R A G M E N T   I D E N T I F I E R S
+	public enum EFragment {
+		UNDEFINED_FRAGMENT, CAPSULEER_LIST, FITTING_MODULES, FITTING_MANUFACTURE, FRAGMENT_SHIPSBYLOCATION, FRAGMENT_SHIPSBYCLASS
+	}
+
+	// - R E N D E R   M O D E S
+	public enum ERenders {
+		RENDER_FITTINGHEADER
+	}
+
+	// - F I R E D   E V E N T S
 	public static final class events {
 		public static final String	EVENTSTRUCTURE_NEEDSREFRESH						= "EVENTSTRUCTURE_NEEDSREFRESH";
 		public static final String	EVENTSTRUCTURE_RECALCULATE						= "EVENTSTRUCTURE_RECALCULATE";
@@ -59,7 +64,7 @@ public class AppWideConstants {
 		public static final String	EVENTSTRUCTURE_EVECHARACTER_ASSETS		= "EVENTSTRUCTURE_EVECHARACTER_ASSETS";
 	}
 
-	// - E X T R A S M E S S A G E S
+	// - E X T R A S   M E S S A G E S
 	public static final class extras {
 		public static final String	EXTRA_EXCEPTIONMESSAGE				= "EXTRA_EXCEPTIONMESSAGE";
 		public static final String	EXTRA_MODULEMARKETCARD_SIDE		= "EXTRA_MODULEMARKETCARD_SIDE";
@@ -72,7 +77,7 @@ public class AppWideConstants {
 		public static final String	EXTRA_BLUEPRINTACTIVITY				= "EXTRA_BLUEPRINTACTIVITY";
 	}
 
-	// - F R A G M E N T I D E N T I F I E R S
+	// - F R A G M E N T   I D E N T I F I E R S
 	public static final class fragment {
 		public static final int	FRAGMENT_DEFAULTID_EMPTY							= 0;
 		public static final int	FRAGMENT_PILOTLIST										= 100;
@@ -141,7 +146,7 @@ public class AppWideConstants {
 		public static final int	DEFAULT_T2PE							= -4;
 	}
 
-	// - P A N E L S I D E N T I F I E R S
+	// - P A N E L S   I D E N T I F I E R S
 	public static final class panel {
 		public static final int	PANEL_EMPTY								= 20000;
 		public static final int	PANEL_MARKETORDERSBODY		= PANEL_EMPTY + 10;
@@ -158,7 +163,6 @@ public class AppWideConstants {
 		public static final String	PREF_BLOCKDOWNLOAD				= "prefkey_BlockDownloads";
 	}
 
-	// - R E N D E R M O D E S
 	public static final class rendermodes {
 		public static final int	NORMALRENDER										= 1000;
 		public static final int	RENDER_RESOURCECOMPONENTJOB			= NORMALRENDER + 2;
@@ -185,9 +189,10 @@ public class AppWideConstants {
 		public static final int	RENDER_SHIP4ASSETSBYLOCATION		= NORMALRENDER + 70;
 		public static final int	RENDER_MARKETORDER							= NORMALRENDER + 80;
 		public static final int	RENDER_MARKETORDERSCHEDULEDSELL	= NORMALRENDER + 81;
+		public static final int	RENDER_FITTINGHEADER						= NORMALRENDER + 101;
 	}
 
-	// - E X P I R A T I O N T I M E S
+	// - E X P I R A T I O N   T I M E S
 	public static final class times {
 		public static final long	HOURS2	= 2 * HOURS1;
 		public static final long	HOURS12	= 12 * HOURS1;

@@ -33,14 +33,16 @@ import android.util.Log;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger						logger	= Logger.getLogger("org.dimensinfin.evedroid.model");
+	private static final long				serialVersionUID	= 6740483226926234807L;
+	private static Logger						logger						= Logger.getLogger("Fitting");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Resource								hull		= null;
-	private final Vector<Resource>	modules	= new Vector<Resource>();
-	private final Vector<Resource>	cargo		= new Vector<Resource>();
-	private final Vector<Resource>	rigs		= new Vector<Resource>();
-	//	private final int								runs		= 1;
+	private String									name							= "-FIT-";
+	private Resource								hull							= null;
+	private final Vector<Resource>	modules						= new Vector<Resource>();
+	private final Vector<Resource>	cargo							= new Vector<Resource>();
+	private final Vector<Resource>	rigs							= new Vector<Resource>();
+	private final Vector<Resource>	drones						= new Vector<Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -129,6 +131,18 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		rigs.add(new Resource(rigTypeId));
 	}
 
+	public Resource getHull() {
+		return hull;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(final String newName) {
+		name = newName;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Fitting [");
@@ -193,6 +207,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	 * @return
 	 */
 	private ArrayList<Action> getManufacturingResources() {
+		logger.info(">> Fitting.getManufacturingResources");
 		// Initialize models.
 		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
 		// Manufacturing location set to the predefined location and defaults to current pilot location.
@@ -206,13 +221,13 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		requirements.clear();
 		actionsRegistered.clear();
 		// Get the resources needed for the completion of this job.
-		runs = 1;
+		//		runs = 1;
 		threads = 1;
 
 		// Copy the fits contents to the list of requirements to start the processing.
 		// TODO This point should be optimized to reuse resources from other iterations so the models will be cached.
 		requirements.clear();
-		requirements.add(new Resource(hull.getTypeID(), runs));
+		requirements.add(new Resource(hull.getTypeID()));
 		// Copy the resources and do not use the original list because this is going to be changed on the process
 		for (Resource r : modules) {
 			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
@@ -220,9 +235,12 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		for (Resource r : cargo) {
 			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
 		}
-		//		for (Resource r : this.rigs) {
-		//			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
-		//		}
+		for (Resource r : rigs) {
+			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+		}
+		for (Resource r : drones) {
+			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+		}
 		// Update the resource count depending on the sizing requirements for the job.
 		for (Resource resource : requirements) {
 			// Skills are treated differently.
@@ -237,25 +255,24 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 			//	}
 		}
 		// Resource list completed. Dump report to the log and start action processing.
-		Log.i("EVEI", "-- Fitting.getManufacturingResources.List of requirements" + requirements);
+		Log.i("EVEI", "-- [Fitting.getManufacturingResources]-List of requirements > " + requirements);
 		pointer = -1;
 		try {
 			do {
 				pointer++;
 				Resource resource = requirements.get(pointer);
-				Log.i("EVEI", "-- Fitting.getManufacturingResources.Processing resource " + resource);
+				Log.i("EVEI", "-- [Fitting.getManufacturingResources]-Processing > " + resource);
 				// Check resources that are Skills. Give them an special treatment.
-				//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-				//					currentAction = new Skill(resource);
-				//					registerAction(currentAction);
-				//					continue;
-				//				}
+				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+					currentAction = new Skill(resource);
+					registerAction(currentAction);
+					continue;
+				}
 				currentAction = new Action(resource);
 				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.
-				// This has no impact on data since we use pointers to the
-				// global structures.
+				// This has no impact on data since we use pointers to the global structures.
 				registerAction(currentAction);
 				processRequest(newTask);
 			} while (pointer < (requirements.size() - 1));

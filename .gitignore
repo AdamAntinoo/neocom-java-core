@@ -1,7 +1,6 @@
 *.diff
 *.db
 *.log
-*.trace
 .recommenders/
 
 traces/*.trc
