@@ -17,8 +17,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
@@ -28,6 +33,9 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -41,6 +49,9 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import net.nikr.eve.jeveasset.data.Citadel;
+import net.nikr.eve.jeveasset.data.CitadelSettings;
+import net.nikr.eve.jeveasset.data.MyLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SplashActivity extends Activity {
@@ -52,10 +63,10 @@ public class SplashActivity extends Activity {
 	 */
 	//- CLASS IMPLEMENTATION ...................................................................................
 	private class EveDroidInitialization extends AsyncTask<Void, Void, Boolean> {
-		private static final boolean	showProgress	= false;
+		private static final boolean	showProgress		= false;
 		// - F I E L D - S E C T I O N ............................................................................
-		//		private EVEDroidApp						app						= null;
-		private Activity							_activity			= null;
+		private Activity							_activity				= null;
+		private final CitadelSettings	citadelSettings	= new CitadelSettings();
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public EveDroidInitialization(final Activity act) {
@@ -65,6 +76,7 @@ public class SplashActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(final Void... entry) {
 			// Just check that the files exist and if not load the Api list and their characters.
+			logger.info(">> EveDroidInitialization.doInBackground.Entry");
 			updateStateLabel("Checking application database...");
 			// STEP 03. Check required files availability on app directory.
 			createAppDir();
@@ -73,6 +85,7 @@ public class SplashActivity extends Activity {
 			// STEP 04. Check existence of required files.
 			if (!checkAppFile(AppConnector.getResourceString(R.string.ccpdatabasefilename))) {
 				// Initial item database is not on place. Copy one from the assets.
+				// TODO The CCP database is not distributed with the application. If not available then close the App
 				copyFromAssets(R.string.ccpdatabasefilename);
 			}
 			if (AppWideConstants.DEVELOPMENT) if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
@@ -97,78 +110,14 @@ public class SplashActivity extends Activity {
 			updateStateLabel("Downloading data from CCP...");
 			// STEP 09. Refresh data from CCP.	
 			readApiKeys();
+			// STEP 10. Load and cache the citadels
+			updateCitadels();
 			logger.info(">> EveDroidInitialization.STEP 09. API list refreshed");
 			EVEDroidApp.getSingletonApp().startTimer();
+			logger.info("<< EveDroidInitialization.doInBackground.Exit");
 			return true;
 		}
-
-		protected Boolean doInBackgroundOld(final Void... entry) {
-			logger.info(">> EveDroidInitialization.doInBackground");
-			// Be sure the application is created and connected to the App adapter.
-			//			app = EVEDroidApp.getSingletonApp();
-
-			// STEP 01. Check if this is a first time initialization of the startup was already executed before.
-			if (!EVEDroidApp.isFirstTimeInit()) {
-				// The app was initialized before. We can skip that until we found code that need to be executed every time.
-				// But anyway check the state of the SDCARD later.
-				logger.info(">> EveDroidInitialization.STEP 01. FirstTimeInit FALSE");
-				// If menu forced update active.
-				if (true) {
-					logger.info(">> EveDroidInitialization.STEP 01. Fullreload requested. Updating API Keys");
-					updateStateLabel("Downloading data from CCP...");
-					//					EVEDroidApp.setFullReload(false);
-					readApiKeys();
-				}
-				//					return true;
-				//				} else
-				//					return true;
-			}
-			logger.info(">> EveDroidInitialization.STEP 01. FirstTimeInit TRUE");
-
-			// STEP 02. Check SDCARD access. If no access to SDCARD then app cannot go.
-			if (!AppConnector.sdcardAvailable()) {
-				// Stop on a safe point until the storage is available again.
-				//				app.startTimer();
-				startActivity(new Intent(_activity, StopNOSDActivity.class));
-				//				return false;
-			}
-			logger.info(">> EveDroidInitialization.STEP 02. SDCARD available");
-			// STEP 03. Check required files availability on app directory.
-			//		updateStateLabel("Creating configuration files...");
-			createAppDir();
-			createCacheDirectories();
-			logger.info(">> EveDroidInitialization.STEP 03. App Directories created");
-
-			// STEP 04. Check existence of required files.
-			if (!checkAppFile(AppConnector.getResourceString(R.string.ccpdatabasefilename))) {
-				// Initial item database is not on place. Copy one from the assets.
-				copyFromAssets(R.string.ccpdatabasefilename);
-			}
-			if (!checkAppFile(AppConnector.getResourceString(R.string.appdatabasefilename))) {
-				// Initial item database is not on place. Copy one from the assets.
-				copyFromAssets(R.string.appdatabasefilename);
-			}
-			if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
-				// Initial item database is not on place. Copy one from the assets.
-				copyFromAssets(R.string.apikeysfilename);
-			}
-			logger.info(">> EveDroidInitialization.STEP 04. Required files on place");
-
-			//			// STEP 05. Check user database version. To be implemented
-			//			AppConnector.getDBConnector().openCCPDataBase();
-			//			AppConnector.getDBConnector().openAppDataBase();
-			//			AppConnector.getDBConnector().openDAO();
-			//			logger.info(">> EveDroidInitialization.STEP 05. Databases open");
-			updateStateLabel("Loading user data...");
-			doInitStepB();
-
-			//			// TODO After proper initialization clean this code. Clear caches and user data copies.
-			//			JobManager.clearCache();
-			//			ArrayList<EveChar> chars = EVEDroidApp.getAppModel().getActiveCharacters();
-			//			for (EveChar eveChar : chars)
-			//				eveChar.clean();
-			return true;
-		}
+		//[01]
 
 		protected boolean doInitStepB() {
 			// STEP 06. Check user data information and storage file.
@@ -333,6 +282,70 @@ public class SplashActivity extends Activity {
 			}
 		}
 
+		/**
+		 * Save the Citadel information into the Application database at the Locations table.
+		 * 
+		 * @param locationId
+		 * @param citadel
+		 */
+		private void saveCitadel(final Long locationId, final Citadel citadel) {
+			// Create a NeoComLocation and add to it all the Citadel data.
+			//			loc=new NeoComLocation(
+			MyLocation loc = citadel.getLocation(locationId);
+		}
+
+		private void updateCitadels() {
+			logger.info(">> [SplashActivity.updateCitadels]> Citadels updating");
+			if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
+				//				if (updateTask != null) {
+				//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+				//				}
+				logger.info("	Citadels failed to update (NOT ALLOWED YET)");
+				return;
+			}
+			// Update citadel
+			InputStream in = null;
+			try { //Update from API
+				ObjectMapper mapper = new ObjectMapper(); //create once, reuse
+				URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
+				HttpURLConnection con = (HttpURLConnection) url.openConnection();
+				con.setRequestProperty("Accept-Encoding", "gzip");
+
+				long contentLength = con.getContentLength();
+				String contentEncoding = con.getContentEncoding();
+				InputStream inputStream = con.getInputStream();
+				if ("gzip".equals(contentEncoding)) {
+					in = new GZIPInputStream(inputStream);
+				} else {
+					in = inputStream;
+				}
+				Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
+				});
+				if (results != null) { //Updated OK
+					for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+						citadelSettings.put(entry.getKey(), entry.getValue());
+						saveCitadel(entry.getKey(), entry.getValue());
+					}
+				}
+				citadelSettings.setNextUpdate();
+				//				saveCitadel(citadelSettings);
+				logger.info("	Updated citadels for jEveAssets");
+			} catch (IOException ex) {
+				//				if (updateTask != null) {
+				//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+				//				}
+				//				logger.("	Citadels failed to update", ex);
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException ex) {
+						//No problem...
+					}
+				}
+			}
+		}
+
 		private void updateStateLabel(final String newLabel) {
 			runOnUiThread(new Runnable() {
 				public void run() {
@@ -417,5 +430,74 @@ public class SplashActivity extends Activity {
 		logoEve.startAnimation(animation);
 		logger.info("<< Exiting SplashActivity.performLogoAnimations");
 	}
+
 }
 //- UNUSED CODE ............................................................................................
+//[01]
+//protected Boolean doInBackgroundOld(final Void... entry) {
+//logger.info(">> EveDroidInitialization.doInBackground");
+//// Be sure the application is created and connected to the App adapter.
+////			app = EVEDroidApp.getSingletonApp();
+//
+//// STEP 01. Check if this is a first time initialization of the startup was already executed before.
+//if (!EVEDroidApp.isFirstTimeInit()) {
+//// The app was initialized before. We can skip that until we found code that need to be executed every time.
+//// But anyway check the state of the SDCARD later.
+//logger.info(">> EveDroidInitialization.STEP 01. FirstTimeInit FALSE");
+//// If menu forced update active.
+//if (true) {
+//	logger.info(">> EveDroidInitialization.STEP 01. Fullreload requested. Updating API Keys");
+//	updateStateLabel("Downloading data from CCP...");
+//	//					EVEDroidApp.setFullReload(false);
+//	readApiKeys();
+//}
+////					return true;
+////				} else
+////					return true;
+//}
+//logger.info(">> EveDroidInitialization.STEP 01. FirstTimeInit TRUE");
+//
+//// STEP 02. Check SDCARD access. If no access to SDCARD then app cannot go.
+//if (!AppConnector.sdcardAvailable()) {
+//// Stop on a safe point until the storage is available again.
+////				app.startTimer();
+//startActivity(new Intent(_activity, StopNOSDActivity.class));
+////				return false;
+//}
+//logger.info(">> EveDroidInitialization.STEP 02. SDCARD available");
+//// STEP 03. Check required files availability on app directory.
+////		updateStateLabel("Creating configuration files...");
+//createAppDir();
+//createCacheDirectories();
+//logger.info(">> EveDroidInitialization.STEP 03. App Directories created");
+//
+//// STEP 04. Check existence of required files.
+//if (!checkAppFile(AppConnector.getResourceString(R.string.ccpdatabasefilename))) {
+//// Initial item database is not on place. Copy one from the assets.
+//copyFromAssets(R.string.ccpdatabasefilename);
+//}
+//if (!checkAppFile(AppConnector.getResourceString(R.string.appdatabasefilename))) {
+//// Initial item database is not on place. Copy one from the assets.
+//copyFromAssets(R.string.appdatabasefilename);
+//}
+//if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
+//// Initial item database is not on place. Copy one from the assets.
+//copyFromAssets(R.string.apikeysfilename);
+//}
+//logger.info(">> EveDroidInitialization.STEP 04. Required files on place");
+//
+////			// STEP 05. Check user database version. To be implemented
+////			AppConnector.getDBConnector().openCCPDataBase();
+////			AppConnector.getDBConnector().openAppDataBase();
+////			AppConnector.getDBConnector().openDAO();
+////			logger.info(">> EveDroidInitialization.STEP 05. Databases open");
+//updateStateLabel("Loading user data...");
+//doInitStepB();
+//
+////			// TODO After proper initialization clean this code. Clear caches and user data copies.
+////			JobManager.clearCache();
+////			ArrayList<EveChar> chars = EVEDroidApp.getAppModel().getActiveCharacters();
+////			for (EveChar eveChar : chars)
+////				eveChar.clean();
+//return true;
+//}
