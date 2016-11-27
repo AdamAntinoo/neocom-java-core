@@ -1,9 +1,11 @@
-//	PROJECT:        EveIndustrialAssistant (EIA)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Minery and mainly on Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity.core;
 
 // - IMPORT SECTION .........................................................................................
@@ -17,25 +19,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.storage.AppModelStore;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -50,7 +45,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import net.nikr.eve.jeveasset.data.Citadel;
-import net.nikr.eve.jeveasset.data.CitadelSettings;
 import net.nikr.eve.jeveasset.data.MyLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -63,10 +57,9 @@ public class SplashActivity extends Activity {
 	 */
 	//- CLASS IMPLEMENTATION ...................................................................................
 	private class EveDroidInitialization extends AsyncTask<Void, Void, Boolean> {
-		private static final boolean	showProgress		= false;
+		private static final boolean	showProgress	= false;
 		// - F I E L D - S E C T I O N ............................................................................
-		private Activity							_activity				= null;
-		private final CitadelSettings	citadelSettings	= new CitadelSettings();
+		private Activity							_activity			= null;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public EveDroidInitialization(final Activity act) {
@@ -111,7 +104,7 @@ public class SplashActivity extends Activity {
 			// STEP 09. Refresh data from CCP.	
 			readApiKeys();
 			// STEP 10. Load and cache the citadels
-			updateCitadels();
+			postUpdateCitadels();
 			logger.info(">> EveDroidInitialization.STEP 09. API list refreshed");
 			EVEDroidApp.getSingletonApp().startTimer();
 			logger.info("<< EveDroidInitialization.doInBackground.Exit");
@@ -246,6 +239,18 @@ public class SplashActivity extends Activity {
 			alternatedir.mkdir();
 		}
 
+		/**
+		 * This method will reginter into the updater queue the need to read and update the Citadel location and
+		 * the Outposts. During the initialization then we should read in background that data and update the
+		 * Location table on the NeoCom database.
+		 */
+		private void postUpdateCitadels() {
+			logger.info(">> [SplashActivity.postUpdateCitadels]");
+			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
+			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+			logger.info("<< [SplashActivity.postUpdateCitadels]");
+		}
+
 		private void readApiKeys() {
 			logger.info(">> EveDroidInitialization.readApiKeys");
 			try {
@@ -292,58 +297,6 @@ public class SplashActivity extends Activity {
 			// Create a NeoComLocation and add to it all the Citadel data.
 			//			loc=new NeoComLocation(
 			MyLocation loc = citadel.getLocation(locationId);
-		}
-
-		private void updateCitadels() {
-			logger.info(">> [SplashActivity.updateCitadels]> Citadels updating");
-			if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
-				//				if (updateTask != null) {
-				//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
-				//				}
-				logger.info("	Citadels failed to update (NOT ALLOWED YET)");
-				return;
-			}
-			// Update citadel
-			InputStream in = null;
-			try { //Update from API
-				ObjectMapper mapper = new ObjectMapper(); //create once, reuse
-				URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
-				HttpURLConnection con = (HttpURLConnection) url.openConnection();
-				con.setRequestProperty("Accept-Encoding", "gzip");
-
-				long contentLength = con.getContentLength();
-				String contentEncoding = con.getContentEncoding();
-				InputStream inputStream = con.getInputStream();
-				if ("gzip".equals(contentEncoding)) {
-					in = new GZIPInputStream(inputStream);
-				} else {
-					in = inputStream;
-				}
-				Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
-				});
-				if (results != null) { //Updated OK
-					for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
-						citadelSettings.put(entry.getKey(), entry.getValue());
-						saveCitadel(entry.getKey(), entry.getValue());
-					}
-				}
-				citadelSettings.setNextUpdate();
-				//				saveCitadel(citadelSettings);
-				logger.info("	Updated citadels for jEveAssets");
-			} catch (IOException ex) {
-				//				if (updateTask != null) {
-				//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
-				//				}
-				//				logger.("	Citadels failed to update", ex);
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException ex) {
-						//No problem...
-					}
-				}
-			}
 		}
 
 		private void updateStateLabel(final String newLabel) {

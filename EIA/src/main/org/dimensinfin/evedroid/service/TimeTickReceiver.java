@@ -1,22 +1,42 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.service;
 
-// - IMPORT SECTION .........................................................................................
+import java.io.BufferedReader;
+//- IMPORT SECTION .........................................................................................
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
+import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EDataBlock;
 import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.ERequestState;
 import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.EveLocation;
+import org.dimensinfin.evedroid.model.Outpost;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -25,6 +45,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import net.nikr.eve.jeveasset.data.Citadel;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -38,6 +59,7 @@ import android.util.Log;
  */
 public class TimeTickReceiver extends BroadcastReceiver {
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static Logger		logger					= Logger.getLogger("TimeTickReceiver");
 	private static boolean	BLOCKED_STATUS	= false;
 	private static int			LAUNCH_LIMIT		= 30;
 
@@ -74,17 +96,27 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		Vector<PendingRequestEntry> requests = EVEDroidApp.getTheCacheConnector().getPendingRequests();
 		synchronized (requests) {
 			// Get the pending requests and order them by the priority.
-			Collections
-					.sort(requests, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY));
+			Collections.sort(requests,
+					EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY));
 
 			// Process request by priority. Additions to queue are limited.
 			limit = 0;
 			for (PendingRequestEntry entry : requests) {
 				if (entry.state == ERequestState.PENDING) {
 					// Filter only MARKETDATA requests.
-					if (entry.reqClass == ERequestClass.MARKETDATA) if (limit <= LAUNCH_LIMIT) launchMarketUpdate(entry);
+					if (entry.reqClass == ERequestClass.MARKETDATA) if (limit <= LAUNCH_LIMIT) {
+						launchMarketUpdate(entry);
+					}
 					// Filter the rest of the character data to be updated
-					if (entry.reqClass == ERequestClass.CHARACTERUPDATE) launchCharacterDataUpdate(entry);
+					if (entry.reqClass == ERequestClass.CHARACTERUPDATE) {
+						launchCharacterDataUpdate(entry);
+					}
+					if (entry.reqClass == ERequestClass.CITADELUPDATE) {
+						citadelLocationUpdate();
+					}
+					if (entry.reqClass == ERequestClass.OUTPOSTUPDATE) {
+						outpostLocationUpdate();
+					}
 				}
 			}
 		}
@@ -94,8 +126,8 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		for (EveChar eveChar : characters) {
 			EDataBlock updateCode = eveChar.needsUpdate();
 			if (updateCode != EDataBlock.READY) {
-				Log.i("EVEI Service", ".. TimeTickReceiver.onReceive.EDataBlock to update: " + eveChar.getName() + " - "
-						+ updateCode);
+				Log.i("EVEI Service",
+						".. TimeTickReceiver.onReceive.EDataBlock to update: " + eveChar.getName() + " - " + updateCode);
 				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(eveChar.getCharacterID());
 			}
 		}
@@ -118,13 +150,70 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		return blockDownload;
 	}
 
+	private void citadelLocationUpdate() {
+		logger.info(">> [TimeTicketReceiver.citadelLocationUpdate]> Citadels updating");
+		//		 CitadelSettings	citadelSettings	= new CitadelSettings();
+		//		if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
+		//			//				if (updateTask != null) {
+		//			//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+		//			//				}
+		//			logger.info("	Citadels failed to update (NOT ALLOWED YET)");
+		//			return;
+		//		}
+		// Update citadel
+		InputStream in = null;
+		try { //Update from API
+			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
+			URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestProperty("Accept-Encoding", "gzip");
+
+			long contentLength = con.getContentLength();
+			String contentEncoding = con.getContentEncoding();
+			InputStream inputStream = con.getInputStream();
+			if ("gzip".equals(contentEncoding)) {
+				in = new GZIPInputStream(inputStream);
+			} else {
+				in = inputStream;
+			}
+			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
+			});
+			if (results != null) { //Updated OK
+				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+					// Convert each Citadel to a new Location and update the database if needed.
+					EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
+					//					citadelSettings.put(entry.getKey(), entry.getValue());
+					//					saveCitadel(entry.getKey(), entry.getValue());
+				}
+			}
+			//			citadelSettings.setNextUpdate();
+			//				saveCitadel(citadelSettings);
+			logger.info("	Updated citadels for jEveAssets");
+		} catch (IOException ex) {
+			//				if (updateTask != null) {
+			//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+			//				}
+			//				logger.("	Citadels failed to update", ex);
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ex) {
+					//No problem...
+				}
+			}
+		}
+	}
+
 	private void launchCharacterDataUpdate(final PendingRequestEntry entry) {
-		Log.i("EVEI Service", ".. TimeTickReceiver.launchCharacterDataUpdate Character Update Request Class ["
-				+ entry.reqClass + "]");
+		Log.i("EVEI Service",
+				".. TimeTickReceiver.launchCharacterDataUpdate Character Update Request Class [" + entry.reqClass + "]");
 		Intent serialService = new Intent(_context, CharacterUpdaterService.class);
 		Number content = entry.getContent();
 		serialService.putExtra(AppWideConstants.extras.EXTRA_CHARACTER_LOCALIZER, content.longValue());
-		if (null != _context) _context.startService(serialService);
+		if (null != _context) {
+			_context.startService(serialService);
+		}
 		entry.state = ERequestState.ON_PROGRESS;
 		// Increment the counter.
 		EVEDroidApp.topCounter++;
@@ -143,6 +232,75 @@ public class TimeTickReceiver extends BroadcastReceiver {
 			EVEDroidApp.marketCounter++;
 			limit++;
 		}
+	}
+
+	private void outpostLocationUpdate() {
+		// Check if the outpotst already loaded.
+		//	if ((null == outpostsCache) || (outpostsCache.size() < 1)) {
+		// Making a request to url and getting response
+		String jsonStr = readJsonData();
+		try {
+			JSONObject jsonObj = new JSONObject(jsonStr);
+			// Getting JSON Array node
+			JSONArray outposts = jsonObj.getJSONArray("items");
+			// Looping through all outposts
+			int counter = 1;
+			for (int i = 0; i < outposts.length(); i++) {
+				Outpost o = new Outpost();
+				JSONObject post = outposts.getJSONObject(i);
+				int id = post.getInt("facilityID");
+				o.setFacilityID(id);
+				JSONObject intermediate = post.getJSONObject("solarSystem");
+				o.setSolarSystem(intermediate.getLong("id"));
+				o.setName(post.getString("name"));
+				intermediate = post.getJSONObject("region");
+				o.setRegion(intermediate.getLong("id"));
+				intermediate = post.getJSONObject("owner");
+				o.setOwner(intermediate.getLong("id"));
+				intermediate = post.getJSONObject("type");
+				o.setType(intermediate.getLong("id"));
+
+				// Create the part with the Outpost
+				EveLocation loc = new EveLocation(o);
+				Log.i("DataSource", ".. Part counter " + counter++);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		//		}
+		// Search for the item
+		//		Outpost hit = outpostsCache.get(Long.valueOf(locationID).intValue());
+		//		EveLocation location = new EveLocation(locationID);
+		//		if (null != hit) {
+		//			EveLocation systemLocation = searchLocationbyID(hit.getSolarSystem());
+		//			location.setStation(hit.getName());
+		//			location.setSystemID(hit.getSolarSystem());
+		//			location.setSystem(systemLocation.getSystem());
+		//			location.setConstellationID(systemLocation.getConstellationID());
+		//			location.setConstellation(systemLocation.getConstellation());
+		//			location.setRegionID(systemLocation.getRegionID());
+		//			location.setRegion(systemLocation.getRegion());
+		//			location.setSecurity(systemLocation.getSecurity());
+		//		}
+		//		return location;
+	}
+
+	private String readJsonData() {
+		StringBuffer data = new StringBuffer();
+		try {
+			String str = "";
+			InputStream is = AppConnector.getStorageConnector().accessInternalStorage("outposts.json");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			if (is != null) {
+				while ((str = reader.readLine()) != null) {
+					data.append(str);
+				}
+			}
+			is.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return data.toString();
 	}
 }
 

@@ -13,12 +13,10 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
 import org.dimensinfin.evedroid.model.MarketOrder;
 import org.dimensinfin.evedroid.model.Property;
-
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
@@ -26,19 +24,17 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger							logger						= Logger.getLogger("EveDroidDBHelper");
-	private static final String				DATABASE_NAME			= AppConnector
-																													.getStorageConnector()
-																													.accessAppStorage(
-																															AppConnector
-																																	.getResourceString(R.string.appdatabasefilename))
-																													.getAbsolutePath();
+	private static final String				DATABASE_NAME			= AppConnector.getStorageConnector()
+			.accessAppStorage(AppConnector.getResourceString(R.string.appdatabasefilename)).getAbsolutePath();
 	private static final int					DATABASE_VERSION	= new Integer(
-																													AppConnector.getResourceString(R.string.databaseversion))
-																													.intValue();
+			AppConnector.getResourceString(R.string.databaseversion)).intValue();
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Dao<Asset, String>				assetDao					= null;
@@ -46,6 +42,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 	private Dao<Job, String>					jobDao						= null;
 	private Dao<MarketOrder, String>	marketOrderDao		= null;
 	private Dao<Property, String>			propertyDao				= null;
+	private Dao<EveLocation, String>	locationDao				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveDroidDBHelper(final Context context) {
@@ -84,6 +81,13 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		return jobDao;
 	}
 
+	public Dao<EveLocation, String> getLocationDAO() throws java.sql.SQLException {
+		if (null == locationDao) {
+			locationDao = DaoManager.createDao(this.getConnectionSource(), EveLocation.class);
+		}
+		return locationDao;
+	}
+
 	public Dao<MarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
 		if (null == marketOrderDao) {
 			marketOrderDao = DaoManager.createDao(this.getConnectionSource(), MarketOrder.class);
@@ -107,6 +111,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTableIfNotExists(databaseConnection, Job.class);
 			TableUtils.createTableIfNotExists(databaseConnection, MarketOrder.class);
 			TableUtils.createTableIfNotExists(databaseConnection, Property.class);
+			TableUtils.createTableIfNotExists(databaseConnection, EveLocation.class);
 		} catch (SQLException sqle) {
 			logger.severe("E> Error creating the initial table on the app database.");
 			sqle.printStackTrace();
@@ -283,6 +288,17 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		if (oldVersion < 53) {
 			try {
 				TableUtils.dropTable(databaseConnection, Property.class, true);
+			} catch (RuntimeException rtex) {
+				logger.severe("E> Error dropping table on Database new version.");
+				rtex.printStackTrace();
+			} catch (SQLException sqle) {
+				logger.severe("E> Error dropping table on Database new version.");
+				sqle.printStackTrace();
+			}
+		}
+		if (oldVersion < 64) {
+			try {
+				TableUtils.createTableIfNotExists(databaseConnection, EveLocation.class);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();

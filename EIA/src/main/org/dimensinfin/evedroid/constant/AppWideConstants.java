@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.constant;
 
 // - IMPORT SECTION .........................................................................................
@@ -44,6 +46,14 @@ public class AppWideConstants {
 		RENDER_FITTINGHEADER
 	}
 
+	// - B A C K G R O U N D   U P D A T E   R E Q U E S T
+	//	public enum ERequest {
+	//		CITADEL, OUTPOST, CHARACTER, CORPORATION, MARKET
+	//	}
+	//	public enum ERequestClass {
+	//		UNDEFINED, MARKETDATA, ASSETSDOWNLOAD, CHARACTERUPDATE, CITADELUPDATE, OUTPOSTUPDATE
+	//	}
+	//
 	// - F I R E D   E V E N T S
 	public static final class events {
 		public static final String	EVENTSTRUCTURE_NEEDSREFRESH						= "EVENTSTRUCTURE_NEEDSREFRESH";
@@ -233,6 +243,7 @@ public class AppWideConstants {
 	public static final long		HOURS1											= 1 * 60 * MINUTES1;
 	public static final long		HOURS3											= 3 * HOURS1;
 	public static final long		HOURS24											= 24 * HOURS1;
+
 }
 
 // - UNUSED CODE
