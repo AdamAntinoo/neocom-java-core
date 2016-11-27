@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,10 +52,29 @@ public class CheckersApplication {
 		//		}
 		// Update citadel
 		InputStream in = null;
+		//    String https_url = "https://www.google.com/";
+		//    URL url;
+		//    try {
+		//
+		//     url = new URL(https_url);
+		//     HttpsURLConnection con = (HttpsURLConnection)url.openConnection();
+		//
+		//     //dumpl all cert info
+		//     print_https_cert(con);
+		//
+		//     //dump all the content
+		//     print_content(con);
+		//
+		//    } catch (MalformedURLException e) {
+		//     e.printStackTrace();
+		//    } catch (IOException e) {
+		//     e.printStackTrace();
+		//    }
+
 		try { //Update from API
 			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
 			URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
 
 			long contentLength = con.getContentLength();
