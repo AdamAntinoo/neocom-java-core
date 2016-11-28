@@ -1,11 +1,14 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API11.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
+//- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
@@ -21,9 +24,9 @@ import net.nikr.eve.jeveasset.data.Citadel;
 /**
  * This class encapsulates the concept of Eve Location. There are different types of locations and the new CCP
  * release is adding even more. The first concept is Region. This is when the constellation and system are not
- * defined. The second level is constelllation, then system and inside a system we can find some more
- * elements. <br>
- * Obce we have the system id we have to check if the Location is a point in space, a NPC station (in the CCP
+ * defined. The second level is constellation, then system and inside a system we can find some more elements.
+ * <br>
+ * Once we have the system id we have to check if the Location is a point in space, a NPC station (in the CCP
  * database catalog), a corporation Outpost (in the list of outposts) or it can be a Player Structure. Now we
  * have to differentiate the player structures and also this can change because POS are going to be replaced
  * by Citadels. I have a reference to get the list of Citadels until that API entry point is available on the
@@ -66,6 +69,21 @@ public class EveLocation extends AbstractComplexNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
+	}
+
+	public EveLocation(ApiStation station) {
+		try {
+			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+			// Calculate the locationID from the source item and update the rest of the fields.
+			updateFromSystem(station.getSolarSystemID());
+			id = station.getStationID();
+			setStation(station.getStationName());
+			// Try to create the pair. It fails then  it was already created.
+			locationDao.create(this);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+			setDirty(true);
+		}
 	}
 
 	public EveLocation(final long locationID) {
