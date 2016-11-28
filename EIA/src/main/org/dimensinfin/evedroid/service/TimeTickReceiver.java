@@ -13,14 +13,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -152,22 +160,40 @@ public class TimeTickReceiver extends BroadcastReceiver {
 
 	private void citadelLocationUpdate() {
 		logger.info(">> [TimeTicketReceiver.citadelLocationUpdate]> Citadels updating");
-		//		 CitadelSettings	citadelSettings	= new CitadelSettings();
-		//		if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
-		//			//				if (updateTask != null) {
-		//			//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
-		//			//				}
-		//			logger.info("	Citadels failed to update (NOT ALLOWED YET)");
-		//			return;
-		//		}
-		// Update citadel
-		InputStream in = null;
-		try { //Update from API
-			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
-			URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			con.setRequestProperty("Accept-Encoding", "gzip");
+		String destination = "https://stop.hammerti.me.uk/api/citadel/all";
+		// Create a trust manager that does not validate certificate chains
+		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+			}
 
+			public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+			}
+
+			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+				return null;
+			}
+		} };
+		// Install the all-trusting trust manager
+		SSLContext sc;
+		InputStream in = null;
+		try {
+			sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			// Create all-trusting host name verifier
+			HostnameVerifier allHostsValid = new HostnameVerifier() {
+				public boolean verify(final String hostname, final SSLSession session) {
+					return true;
+				}
+			};
+
+			// Install the all-trusting host verifier
+			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+
+			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
+			URL url = new URL(destination);
+			URLConnection con = url.openConnection();
+			con.setRequestProperty("Accept-Encoding", "gzip");
 			long contentLength = con.getContentLength();
 			String contentEncoding = con.getContentEncoding();
 			InputStream inputStream = con.getInputStream();
@@ -186,23 +212,79 @@ public class TimeTickReceiver extends BroadcastReceiver {
 					//					saveCitadel(entry.getKey(), entry.getValue());
 				}
 			}
-			//			citadelSettings.setNextUpdate();
-			//				saveCitadel(citadelSettings);
-			logger.info("	Updated citadels for jEveAssets");
-		} catch (IOException ex) {
-			//				if (updateTask != null) {
-			//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
-			//				}
-			//				logger.("	Citadels failed to update", ex);
+
+			//			final Reader reader = new InputStreamReader(con.getInputStream());
+			//			final BufferedReader br = new BufferedReader(reader);
+			//			String line = "";
+			//			while ((line = br.readLine()) != null) {
+			//				System.out.println(line);
+			//			}
+			//			br.close();
+		} catch (Exception ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException ex) {
+					ex.printStackTrace();
 					//No problem...
 				}
 			}
 		}
+
+		//		 CitadelSettings	citadelSettings	= new CitadelSettings();
+		//		if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
+		//			//				if (updateTask != null) {
+		//			//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+		//			//				}
+		//			logger.info("	Citadels failed to update (NOT ALLOWED YET)");
+		//			return;
+		//		}
+		// Update citadel
+		//		InputStream in = null;
+		//		try { //Update from API
+		//			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
+		//			URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
+		//			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+		//			con.setRequestProperty("Accept-Encoding", "gzip");
+		//
+		//			long contentLength = con.getContentLength();
+		//			String contentEncoding = con.getContentEncoding();
+		//			InputStream inputStream = con.getInputStream();
+		//			if ("gzip".equals(contentEncoding)) {
+		//				in = new GZIPInputStream(inputStream);
+		//			} else {
+		//				in = inputStream;
+		//			}
+		//			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
+		//			});
+		//			if (results != null) { //Updated OK
+		//				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+		//					// Convert each Citadel to a new Location and update the database if needed.
+		//					EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
+		//					//					citadelSettings.put(entry.getKey(), entry.getValue());
+		//					//					saveCitadel(entry.getKey(), entry.getValue());
+		//				}
+		//			}
+		//			//			citadelSettings.setNextUpdate();
+		//			//				saveCitadel(citadelSettings);
+		//			logger.info("	Updated citadels for jEveAssets");
+		//		} catch (IOException ex) {
+		//			//				if (updateTask != null) {
+		//			//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+		//			//				}
+		//			//				logger.("	Citadels failed to update", ex);
+		//		} finally {
+		//			if (in != null) {
+		//				try {
+		//					in.close();
+		//				} catch (IOException ex) {
+		//					//No problem...
+		//				}
+		//			}
+		//		}
 	}
 
 	private void launchCharacterDataUpdate(final PendingRequestEntry entry) {
