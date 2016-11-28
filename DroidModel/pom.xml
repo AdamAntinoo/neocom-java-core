@@ -28,11 +28,11 @@
 			<artifactId>ormlite-core</artifactId>
 			<version>4.48</version>
 		</dependency>
-		<dependency>
-			<groupId>com.beimin</groupId>
-			<artifactId>eveapi</artifactId>
-			<version>6.0.4</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.beimin</groupId> -->
+<!-- 			<artifactId>eveapi</artifactId> -->
+<!-- 			<version>6.0.4</version> -->
+<!-- 		</dependency> -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.htmlparser</groupId> -->
 		<!-- <artifactId>htmlparser</artifactId> -->

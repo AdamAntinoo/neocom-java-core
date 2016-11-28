@@ -6,9 +6,10 @@ import java.util.Date;
 import com.beimin.eveapi.utils.DateUtils;
 
 public class ApiError implements Serializable {
-	private int			code;
-	private String	error;
-	private Date		retryAfterDate	= null;
+	private static final long	serialVersionUID	= 4489368041494473663L;
+	private int								code;
+	private String						error;
+	private Date							retryAfterDate		= null;
 
 	public int getCode() {
 		return code;

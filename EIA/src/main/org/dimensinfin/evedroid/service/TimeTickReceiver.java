@@ -51,6 +51,7 @@ import org.json.JSONObject;
 import com.beimin.eveapi.core.ApiAuth;
 import com.beimin.eveapi.core.ApiAuthorization;
 import com.beimin.eveapi.corporation.assetlist.AssetListParser;
+import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import com.beimin.eveapi.eve.conquerablestationlist.ConquerableStationListParser;
 import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import com.beimin.eveapi.exception.ApiException;
@@ -205,7 +206,7 @@ final class Verifier implements HostnameVerifier {
 						.getInstance();
 					response = parser.getResponse();
 				if (null != response) {
-					Map<Integer, ApiStation> stations = response.getStations();
+					 Map<Integer, ApiStation> stations = response.getStations();
 						for (Integer stationid : stations.keySet()) {
 						// Convert the station to an EveLocation
 							EveLocation loc = new EveLocation(stations.get(stationid));
@@ -213,6 +214,9 @@ final class Verifier implements HostnameVerifier {
 				}
 		} catch (final RuntimeException rtex) {
 			rtex.printStackTrace();
+		} catch (ApiException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
 		}
 		logger.info("<< [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]");
 		return null;

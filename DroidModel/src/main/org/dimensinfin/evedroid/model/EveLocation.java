@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 
+import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

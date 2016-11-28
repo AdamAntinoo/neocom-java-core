@@ -5,6 +5,8 @@
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="src/myeveapi"/>
+	<classpathentry excluding="com/beimin/eveapi/misc/ImageProvider.java" kind="src" path="src/eveapi"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
