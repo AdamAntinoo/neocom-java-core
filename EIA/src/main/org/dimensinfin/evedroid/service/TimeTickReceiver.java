@@ -58,6 +58,7 @@ import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.shared.assetlist.AssetListResponse;
 import com.beimin.eveapi.shared.assetlist.EveAsset;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.app.Activity;
@@ -141,10 +142,11 @@ final class Verifier implements HostnameVerifier {
 				HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
 
 				ObjectMapper mapper = new ObjectMapper(); //create once, reuse
+				mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				URL url = new URL(destination);
 				URLConnection con = url.openConnection();
 				con.setRequestProperty("Accept-Encoding", "gzip");
-				long contentLength = con.getContentLength();
+//				long contentLength = con.getContentLength();
 				String contentEncoding = con.getContentEncoding();
 				InputStream inputStream = con.getInputStream();
 				if ("gzip".equals(contentEncoding)) {
@@ -158,6 +160,7 @@ final class Verifier implements HostnameVerifier {
 					for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
 						// Convert each Citadel to a new Location and update the database if needed.
 						EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
+						logger.info("-- [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]> Created location: "+loc);
 					}
 				}
 			} catch (Exception ex) {
