@@ -603,6 +603,27 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		Log.i("EveChar", "<< EveChar.updateMarketOrders");
 	}
 
+	private double calculateAssetValue(final Asset asset) {
+		// Skip blueprints from the value calculations
+		double assetValueISK = 0.0;
+		if (null != asset) {
+			EveItem item = asset.getItem();
+			if (null != item) {
+				String category = item.getCategory();
+				String group = item.getGroupName();
+				if (null != category) {
+					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+						// Add the value and volume of the stack to the global result.
+						long quantity = asset.getQuantity();
+						double price = asset.getItem().getHighestBuyerPrice().getPrice();
+						assetValueISK = price * quantity;
+					}
+				}
+			}
+		}
+		return assetValueISK;
+	}
+
 	/**
 	 * Checks if the database is empty of a set of records so it may require a forced request to update their
 	 * data from CCP databases. If no records then it will reset the cache timers.
@@ -632,7 +653,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	}
 
 	/**
-	 * Creates an extended app asset from the asset created by the eveapi on the downlod of CCP information.
+	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
 	 * 
 	 * @param eveAsset
 	 * @return
@@ -644,6 +665,12 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		newAsset.setTypeID(eveAsset.getTypeID());
 		// Children locations have a null on this field. Set it to their parents
 		final Long assetloc = eveAsset.getLocationID();
+		// DEBUG Add a conditional breakpoint for an specific asset.
+		//		Long test = new Long(1021037093228L);
+		if (eveAsset.getTypeID() == 8625) {
+			@SuppressWarnings("unused")
+			int i = 1; // stop point
+		}
 		if (null != assetloc) {
 			newAsset.setLocationID(eveAsset.getLocationID());
 		}
@@ -665,6 +692,8 @@ public class EveChar extends EveCharCore implements INeoComNode {
 			} catch (RuntimeException rtex) {
 			}
 		}
+		// Add the asset value to the database.
+		newAsset.setIskvalue(calculateAssetValue(newAsset));
 		return newAsset;
 	}
 

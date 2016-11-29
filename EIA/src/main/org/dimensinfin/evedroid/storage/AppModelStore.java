@@ -235,7 +235,7 @@ public class AppModelStore extends AbstractModelStore {
 		AppConnector.startChrono();
 		final boolean state = super.restore();
 		// REFACTOR - Optimize the outpost by forcing a read at this point.
-		AppConnector.getDBConnector().searchLocationbyID(61000890);
+		//		AppConnector.getDBConnector().searchLocationbyID(61000890);
 		if (state) {
 			Log.i("AppModelStore", "~~ Time lapse for APPSTORE[RESTORE] - " + AppConnector.timeLapse());
 			return state;

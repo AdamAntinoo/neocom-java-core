@@ -97,6 +97,8 @@ public interface IDatabaseConnector {
 	public ArrayList<Resource> searchListOfReaction(int itemID);
 
 	public int searchReactionOutputMultiplier(int itemID);
+
+	public Dao<EveLocation, String> getLocationDAO()throws java.sql.SQLException;
 }
 
 // - UNUSED CODE ............................................................................................

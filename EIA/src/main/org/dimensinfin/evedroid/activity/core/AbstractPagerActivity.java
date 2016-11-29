@@ -67,10 +67,6 @@ public abstract class AbstractPagerActivity extends Activity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	protected EvePagerAdapter getPageAdapter() {
-		return _pageAdapter;
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
@@ -97,10 +93,10 @@ public abstract class AbstractPagerActivity extends Activity {
 
 	protected void activateIndicator() {
 		// If the Indicator is active then set the listener.
-		if (null != this._indicator) {
-			this._indicator.setVisibility(View.VISIBLE);
-			this._indicator.setViewPager(this._pageContainer);
-			this._indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+		if (null != _indicator) {
+			_indicator.setVisibility(View.VISIBLE);
+			_indicator.setViewPager(_pageContainer);
+			_indicator.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
 				public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
 				}
@@ -109,18 +105,17 @@ public abstract class AbstractPagerActivity extends Activity {
 				}
 
 				public void onPageSelected(final int position) {
-					AbstractPagerActivity.this._actionBar.setTitle(AbstractPagerActivity.this._pageAdapter.getTitle(position));
+					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == AbstractPagerActivity.this._pageAdapter.getSubTitle(position)) {
-						AbstractPagerActivity.this._actionBar.setSubtitle(null);
+					if ("" == _pageAdapter.getSubTitle(position)) {
+						_actionBar.setSubtitle(null);
 					} else {
-						AbstractPagerActivity.this._actionBar
-								.setSubtitle(AbstractPagerActivity.this._pageAdapter.getSubTitle(position));
+						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
 					}
 				}
 			});
 		} else {
-			this._pageContainer.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+			_pageContainer.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
 				public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
 				}
@@ -129,27 +124,26 @@ public abstract class AbstractPagerActivity extends Activity {
 				}
 
 				public void onPageSelected(final int position) {
-					AbstractPagerActivity.this._actionBar.setTitle(AbstractPagerActivity.this._pageAdapter.getTitle(position));
+					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == AbstractPagerActivity.this._pageAdapter.getSubTitle(position)) {
-						AbstractPagerActivity.this._actionBar.setSubtitle(null);
+					if ("" == _pageAdapter.getSubTitle(position)) {
+						_actionBar.setSubtitle(null);
 					} else {
-						AbstractPagerActivity.this._actionBar
-								.setSubtitle(AbstractPagerActivity.this._pageAdapter.getSubTitle(position));
+						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
 					}
 				}
 			});
 		}
 	}
 
-	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
+	protected void addPage(final AbstractNewPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
 		final TitledFragment frag = (TitledFragment) getFragmentManager()
-				.findFragmentByTag(this._pageAdapter.getFragmentId(position));
+				.findFragmentByTag(_pageAdapter.getFragmentId(position));
 		if (null == frag) {
-			this._pageAdapter.addPage(newFrag);
+			_pageAdapter.addPage(newFrag);
 		} else {
-			this._pageAdapter.addPage(frag);
+			_pageAdapter.addPage(frag);
 		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
@@ -159,14 +153,14 @@ public abstract class AbstractPagerActivity extends Activity {
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
-	protected void addPage(final AbstractNewPagerFragment newFrag, final int position) {
+	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
 		final TitledFragment frag = (TitledFragment) getFragmentManager()
-				.findFragmentByTag(this._pageAdapter.getFragmentId(position));
+				.findFragmentByTag(_pageAdapter.getFragmentId(position));
 		if (null == frag) {
-			this._pageAdapter.addPage(newFrag);
+			_pageAdapter.addPage(newFrag);
 		} else {
-			this._pageAdapter.addPage(frag);
+			_pageAdapter.addPage(frag);
 		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
@@ -177,9 +171,13 @@ public abstract class AbstractPagerActivity extends Activity {
 	}
 
 	protected void disableIndicator() {
-		if (null != this._indicator) {
-			this._indicator.setVisibility(View.GONE);
+		if (null != _indicator) {
+			_indicator.setVisibility(View.GONE);
 		}
+	}
+
+	protected EvePagerAdapter getPageAdapter() {
+		return _pageAdapter;
 	}
 
 	@Override
@@ -189,25 +187,25 @@ public abstract class AbstractPagerActivity extends Activity {
 		setContentView(R.layout.activity_pager);
 		try {
 			// Gets the activity's default ActionBar
-			this._actionBar = getActionBar();
-			this._actionBar.show();
-			this._actionBar.setDisplayHomeAsUpEnabled(true);
+			_actionBar = getActionBar();
+			_actionBar.show();
+			_actionBar.setDisplayHomeAsUpEnabled(true);
 
 			// Locate the elements of the page and store in global data.
-			this._pageContainer = (ViewPager) findViewById(R.id.pager);
-			this._back = (ImageView) findViewById(R.id.backgroundFrame);
-			this._indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+			_pageContainer = (ViewPager) findViewById(R.id.pager);
+			_back = (ImageView) findViewById(R.id.backgroundFrame);
+			_indicator = (CirclePageIndicator) findViewById(R.id.indicator);
 			// Check page structure.
-			if (null == this._pageContainer) {
+			if (null == _pageContainer) {
 				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 			}
-			if (null == this._back) {
+			if (null == _back) {
 				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 			}
 
 			// Add the adapter for the page switching.
-			this._pageAdapter = new EvePagerAdapter(getFragmentManager(), this._pageContainer.getId());
-			this._pageContainer.setAdapter(this._pageAdapter);
+			_pageAdapter = new EvePagerAdapter(getFragmentManager(), _pageContainer.getId());
+			_pageContainer.setAdapter(_pageAdapter);
 			disableIndicator();
 
 			// // Process the parameters into the context.
@@ -240,6 +238,18 @@ public abstract class AbstractPagerActivity extends Activity {
 	}
 
 	/**
+	 * This is a test to try to close the databases when the activity is closed to see if this affects to the
+	 * data availability at the local database. This is a test and can cause later access problems to the
+	 * database data.
+	 */
+	@Override
+	protected void onStop() {
+		Log.i("EVEI", ">> AbstractPagerActivity.onStop"); //$NON-NLS-1$
+		EVEDroidApp.getSingletonApp().closeDB();
+		super.onStop();
+	}
+
+	/**
 	 * For really unrecoverable or undefined exceptions the application should go to a safe spot. That spot is
 	 * defined by the application so this is another abstract method.
 	 * 
@@ -254,8 +264,8 @@ public abstract class AbstractPagerActivity extends Activity {
 
 	protected void updateInitialTitle() {
 		TitledFragment firstFragment = (TitledFragment) getPageAdapter().getInitialPage();
-		this._actionBar.setTitle(firstFragment.getTitle());
-		this._actionBar.setSubtitle(firstFragment.getSubtitle());
+		_actionBar.setTitle(firstFragment.getTitle());
+		_actionBar.setSubtitle(firstFragment.getSubtitle());
 	}
 }
 // - UNUSED CODE
