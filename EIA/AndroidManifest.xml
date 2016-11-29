@@ -16,7 +16,7 @@
         android:name="org.dimensinfin.evedroid.EVEDroidApp"
         android:allowBackup="true"
         android:icon="@drawable/evei4"
-        android:label="Neocom 0.6.4-Locations"
+        android:label="NeoCom 0.6.4-Locations"
         android:largeHeap="true"
         android:logo="@drawable/evei4"
         android:theme="@style/AppTheme" >

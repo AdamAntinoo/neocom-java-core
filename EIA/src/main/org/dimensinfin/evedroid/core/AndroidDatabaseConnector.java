@@ -192,7 +192,15 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	public void closeDatabases() {
-		appDatabaseHelper.close();
+		//		appDatabaseHelper.close();
+		if (null != staticDatabase) {
+			staticDatabase.close();
+		}
+		if (null != ccpDatabase) {
+			ccpDatabase.close();
+		}
+		staticDatabase = null;
+		ccpDatabase = null;
 	}
 
 	public Dao<Asset, String> getAssetDAO() throws java.sql.SQLException {

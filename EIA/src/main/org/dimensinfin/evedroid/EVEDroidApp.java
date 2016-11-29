@@ -572,6 +572,10 @@ public class EVEDroidApp extends Application implements IConnector {
 			return true;
 	}
 
+	public void closeDB() {
+		getDBConnector().closeDatabases();
+	}
+
 	/**
 	 * Return the path to a file resource from the stand point of the application. We have to add the folder
 	 * path where the user wishes to store the user application data. This directory is initially hardcoded but
