@@ -42,7 +42,7 @@ public class EveLocation extends AbstractComplexNode {
 	private static final long	serialVersionUID	= 1522765618286937377L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(index = true)
+	@DatabaseField(id = true, index = true)
 	private long							id								= -2;
 	private transient String	location					= "<LOCATION-UNDEFINED>";
 	@DatabaseField
@@ -80,7 +80,7 @@ public class EveLocation extends AbstractComplexNode {
 			id = station.getStationID();
 			setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.
-			locationDao.create(this);
+			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			setDirty(true);
@@ -92,14 +92,14 @@ public class EveLocation extends AbstractComplexNode {
 	}
 
 	//		public EveLocation(Citadel citadel) {
-	public EveLocation(long id, Citadel cit) {
+	public EveLocation(long citadelid, Citadel cit) {
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
-			// calculate the ocationID fron the soure item and update the rest of the fields.
-			updateFromCitadel(id, cit);
-			updateLocationID();
+			// calculate the ocationID from the sure item and update the rest of the fields.
+			updateFromCitadel(citadelid, cit);
+			id = citadelid;
 			// Try to create the pair. It fails then  it was already created.
-			locationDao.create(this);
+			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			setDirty(true);
@@ -114,7 +114,7 @@ public class EveLocation extends AbstractComplexNode {
 			id = out.getFacilityID();
 			setStation(out.getName());
 			// Try to create the pair. It fails then  it was already created.
-			locationDao.create(this);
+			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			setDirty(true);
@@ -286,6 +286,7 @@ public class EveLocation extends AbstractComplexNode {
 		// Copy the data from the citadel location.
 		stationID = id;
 		station = cit.name;
+		systemID = cit.systemId;
 		this.citadel = true;
 	}
 

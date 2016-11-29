@@ -814,7 +814,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 			// Check list contents. If found we have the location. Else then check if Office
 			if (locationList.size() < 1) {
-				logger.info("-- [searchLocationbyID]> Location: "+locationID+" not found on cache.");
+				logger.info("-- [searchLocationbyID]> Location: " + locationID + " not found on cache.");
 				// Offices
 				long fixedLocationID = locationID;
 				if (fixedLocationID >= 66000000) {
@@ -831,6 +831,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 					if (null != cursor) {
 						boolean detected = false;
 						if (cursor.moveToFirst()) {
+							logger.info("-- [searchLocationbyID]> Location: " + locationID + " Obtained from CCP data.");
 							detected = true;
 							// Check returned values when doing the assignments.
 							long fragmentID = cursor.getLong(cursor.getColumnIndex("systemID"));
@@ -856,10 +857,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 							hit.setSecurity(cursor.getString(cursor.getColumnIndex("security")));
 							cursor.close();
 						}
-													if (!detected) {
-														logger.info("-- [searchLocationbyID]> Location: "+locationID+" not found on CCP data.");
-														hit.setSystem("ID>"+Long.valueOf(locationID).toString());
-													}
+						if (!detected) {
+							logger.info("-- [searchLocationbyID]> Location: " + locationID + " not found on CCP data.");
+							hit.setSystem("ID>" + Long.valueOf(locationID).toString());
+						}
 					}
 				} catch (final Exception ex) {
 					logger.warning(

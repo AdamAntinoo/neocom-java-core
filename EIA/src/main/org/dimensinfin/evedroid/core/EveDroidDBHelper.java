@@ -307,6 +307,18 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 				sqle.printStackTrace();
 			}
 		}
+		if (oldVersion < 65) {
+			try {
+				TableUtils.dropTable(databaseConnection, Asset.class, true);
+				TableUtils.dropTable(databaseConnection, EveLocation.class, true);
+			} catch (RuntimeException rtex) {
+				logger.severe("E> Error dropping table on Database new version.");
+				rtex.printStackTrace();
+			} catch (SQLException sqle) {
+				logger.severe("E> Error dropping table on Database new version.");
+				sqle.printStackTrace();
+			}
+		}
 		onCreate(database, databaseConnection);
 	}
 }
