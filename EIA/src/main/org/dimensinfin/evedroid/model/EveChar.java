@@ -616,7 +616,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 						// Add the value and volume of the stack to the global result.
 						long quantity = asset.getQuantity();
 						double price = asset.getItem().getHighestBuyerPrice().getPrice();
-						assetValueISK += price * quantity;
+						assetValueISK = price * quantity;
 					}
 				}
 			}

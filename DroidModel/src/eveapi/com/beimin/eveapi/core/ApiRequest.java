@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 public class ApiRequest implements Comparable<ApiRequest>, Serializable {
 	private static final long					serialVersionUID	= 1L;
 	private final ApiPath							path;
-	private final ApiPage							page;
+	public final ApiPage							page;
 	private final int									version;
 	private final ApiAuth<?>					auth;
 	private final Map<String, String>	params;
@@ -28,7 +28,7 @@ public class ApiRequest implements Comparable<ApiRequest>, Serializable {
 		this.auth = auth;
 		this.params = params;
 		// Add the new flat parameter to get Citadel data
-		this.params.put("flat", "1");
+		//		this.params.put("flat", "1");
 	}
 
 	public ApiRequest(ApiPath path, ApiPage page, int version, Map<String, String> params) {
