@@ -8,6 +8,11 @@
 	<description>Application to get access to CCP api information and help manage industrial activities for characters and corporations at Eve Online. The set is composed of some projects with implementation for Android and for an AngularJS web interface based on REST services on Sprint Boot Cloud.</description>
 	<dependencies>
 		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.8.3</version>
+		</dependency>
+		<dependency>
 			<groupId>org.htmlparser</groupId>
 			<artifactId>htmlparser</artifactId>
 			<version>2.1</version>

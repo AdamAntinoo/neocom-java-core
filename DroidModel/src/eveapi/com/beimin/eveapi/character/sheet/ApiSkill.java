@@ -3,10 +3,11 @@ package com.beimin.eveapi.character.sheet;
 import java.io.Serializable;
 
 public class ApiSkill implements Serializable {
-	private int			typeID;
-	private int			level				= 0;
-	private int			skillpoints	= 0;
-	private boolean	unpublished	= false;
+	private static final long	serialVersionUID	= -5476846990164733253L;
+	private int								typeID;
+	private int								level							= 0;
+	private int								skillpoints				= 0;
+	private boolean						unpublished				= false;
 
 	public int getLevel() {
 		return level;

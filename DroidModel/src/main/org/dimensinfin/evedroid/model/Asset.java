@@ -81,6 +81,8 @@ public class Asset extends AbstractComplexNode implements INamed {
 	private boolean								shipFlag					= false;
 	@DatabaseField
 	private boolean								containerFlag			= false;
+	@DatabaseField
+	private double								iskvalue					= 0.0;
 
 	// - C A C H E D   F I E L D S
 	private transient Asset				parentAssetCache	= null;
@@ -114,6 +116,10 @@ public class Asset extends AbstractComplexNode implements INamed {
 
 	public String getGroupName() {
 		return groupName;
+	}
+
+	public double getIskvalue() {
+		return iskvalue;
 	}
 
 	/**
@@ -237,6 +243,10 @@ public class Asset extends AbstractComplexNode implements INamed {
 
 	public void setGroupName(final String name) {
 		groupName = name;
+	}
+
+	public void setIskvalue(double iskvalue) {
+		this.iskvalue = iskvalue;
 	}
 
 	public void setLocationID(final long location) {

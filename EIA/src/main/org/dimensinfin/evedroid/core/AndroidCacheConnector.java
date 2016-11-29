@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.core;
 
 // - IMPORT SECTION .........................................................................................
@@ -41,16 +43,16 @@ public class AndroidCacheConnector implements ICache {
 	private class DrawableCache extends Statisticscache {
 		// - F I E L D - S E C T I O N
 		// ............................................................................
-		private SimpleDiskCache cacheDrawables = null;
-		private volatile int loads = 0;
-		private final CompressFormat mCompressFormat = CompressFormat.PNG;
-		private final int mCompressQuality = 90;
+		private SimpleDiskCache				cacheDrawables		= null;
+		private volatile int					loads							= 0;
+		private final CompressFormat	mCompressFormat		= CompressFormat.PNG;
+		private final int							mCompressQuality	= 90;
 
 		public DrawableCache() {
 			final File cacheFolder = new File(AppConnector.getStorageConnector().getCacheStorage(),
 					AppConnector.getResourceString(R.string.drawablecachefoldername));
 			try {
-				this.cacheDrawables = SimpleDiskCache.open(cacheFolder, 1, 100 * 1024 * 1024);
+				cacheDrawables = SimpleDiskCache.open(cacheFolder, 1, 100 * 1024 * 1024);
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
@@ -67,11 +69,10 @@ public class AndroidCacheConnector implements ICache {
 		public synchronized Drawable getByURL(final String url) {
 			final String hash = new Integer(Math.abs(new Integer(url.hashCode()))).toString();
 			try {
-				final BitmapEntry bit = this.cacheDrawables.getBitmap(hash);
-				if (null == bit)
-					return null;
-				final Drawable draw = new BitmapDrawable(
-						EVEDroidApp.getSingletonApp().getApplicationContext().getResources(), bit.getBitmap());
+				final BitmapEntry bit = cacheDrawables.getBitmap(hash);
+				if (null == bit) return null;
+				final Drawable draw = new BitmapDrawable(EVEDroidApp.getSingletonApp().getApplicationContext().getResources(),
+						bit.getBitmap());
 				return draw;
 			} catch (final IOException e) {
 				// TODO Auto-generated catch block
@@ -81,7 +82,7 @@ public class AndroidCacheConnector implements ICache {
 		}
 
 		public void loads() {
-			this.loads++;
+			loads++;
 		}
 
 		@Override
@@ -97,8 +98,8 @@ public class AndroidCacheConnector implements ICache {
 				final String hash = new Integer(Math.abs(new Integer(urlname.hashCode()))).toString();
 				if (data instanceof BitmapDrawable) {
 					final Bitmap bit = ((BitmapDrawable) data).getBitmap();
-					out = this.cacheDrawables.openStream(hash, null);
-					bit.compress(this.mCompressFormat, this.mCompressQuality, out);
+					out = cacheDrawables.openStream(hash, null);
+					bit.compress(mCompressFormat, mCompressQuality, out);
 				}
 				logger.info("<< NewCacheStorage.writeDrawableToDisk [true]"); //$NON-NLS-1$
 				return;
@@ -121,14 +122,14 @@ public class AndroidCacheConnector implements ICache {
 	private class DrawableDownloaderTask extends AsyncTask<String, Void, Drawable> {
 		// - F I E L D - S E C T I O N
 		// ............................................................................
-		private ImageView targetImage = null;
-		private Drawable source = null;
+		private ImageView	targetImage	= null;
+		private Drawable	source			= null;
 
 		// - M E T H O D - S E C T I O N
 		// ..........................................................................
 		public void setImageTarget(final ImageView target) {
 			// TODO Auto-generated method stub
-			this.targetImage = target;
+			targetImage = target;
 		}
 
 		@Override
@@ -138,9 +139,9 @@ public class AndroidCacheConnector implements ICache {
 			try {
 				urlConn = new URL(reference[0]).openConnection();
 				is = urlConn.getInputStream();
-				this.source = Drawable.createFromStream(is, "src");
-				EVEDroidApp.getTheCacheConnector().addDrawableToCache(reference[0], this.source);
-				return this.source;
+				source = Drawable.createFromStream(is, "src");
+				EVEDroidApp.getTheCacheConnector().addDrawableToCache(reference[0], source);
+				return source;
 			} catch (final Exception ex) {
 			} finally {
 				try {
@@ -156,22 +157,19 @@ public class AndroidCacheConnector implements ICache {
 		@Override
 		protected void onPostExecute(final Drawable result) {
 			// Invalidate the view to force a refresh.
-			if (null != result)
-				if (null != this.targetImage) {
-					this.targetImage.setImageDrawable(this.source);
-					this.targetImage.invalidate();
-					super.onPostExecute(result);
-				}
+			if (null != result) if (null != targetImage) {
+				targetImage.setImageDrawable(source);
+				targetImage.invalidate();
+				super.onPostExecute(result);
+			}
 		}
 	}
 
 	/**
-	 * Stores the cache data for all the items accessed. A put of another item
-	 * into the cache will add its reference to both lists, the one accessed by
-	 * ID and the one accessed by Name.<br>
-	 * The class also keeps track of the access statistics counting the hits,
-	 * misses and faults. For the later the class stores the references that
-	 * where not found for later reporting.
+	 * Stores the cache data for all the items accessed. A put of another item into the cache will add its
+	 * reference to both lists, the one accessed by ID and the one accessed by Name.<br>
+	 * The class also keeps track of the access statistics counting the hits, misses and faults. For the later
+	 * the class stores the references that where not found for later reporting.
 	 */
 	private class EveItemCache extends Statisticscache {
 
@@ -181,9 +179,9 @@ public class AndroidCacheConnector implements ICache {
 		// private volatile int hit = 0;
 		// private volatile int miss = 0;
 		// private volatile int fault = 0;
-		private final HashMap<Integer, EveItem> eveItemCachebyID = new HashMap<Integer, EveItem>();
-		private final HashMap<String, EveItem> eveItemCachebyName = new HashMap<String, EveItem>();
-		private final Vector<String> itemFaults = new Vector<String>();
+		private final HashMap<Integer, EveItem>	eveItemCachebyID		= new HashMap<Integer, EveItem>();
+		private final HashMap<String, EveItem>	eveItemCachebyName	= new HashMap<String, EveItem>();
+		private final Vector<String>						itemFaults					= new Vector<String>();
 
 		// - M E T H O D - S E C T I O N
 		// ..........................................................................
@@ -196,8 +194,8 @@ public class AndroidCacheConnector implements ICache {
 			final int id = item.getItemID();
 			final String name = item.getName();
 			logger.info("-- Storing EveItem instance [" + id + "] " + name);
-			this.eveItemCachebyID.put(id, item);
-			this.eveItemCachebyName.put(name, item);
+			eveItemCachebyID.put(id, item);
+			eveItemCachebyName.put(name, item);
 		}
 
 		// public synchronized void fault(final String reference) {
@@ -207,12 +205,12 @@ public class AndroidCacheConnector implements ICache {
 		// }
 
 		public synchronized EveItem getByID(final int typeID) {
-			return this.eveItemCachebyID.get(typeID);
+			return eveItemCachebyID.get(typeID);
 		}
 
 		public synchronized EveItem getByName(final String name) {
 			if (null != name)
-				return this.eveItemCachebyName.get(name);
+				return eveItemCachebyName.get(name);
 			else
 				return null;
 		}
@@ -240,70 +238,62 @@ public class AndroidCacheConnector implements ICache {
 	private abstract class Statisticscache {
 		// - F I E L D - S E C T I O N
 		// ............................................................................
-		private volatile int access = 0;
-		private volatile int hit = 0;
-		private volatile int miss = 0;
-		private volatile int fault = 0;
-		private final Vector<String> itemFaults = new Vector<String>();
+		private volatile int					access			= 0;
+		private volatile int					hit					= 0;
+		private volatile int					miss				= 0;
+		private volatile int					fault				= 0;
+		private final Vector<String>	itemFaults	= new Vector<String>();
 
 		// - M E T H O D - S E C T I O N
 		// ..........................................................................
 		public synchronized void access() {
-			this.access++;
-			this.hit++;
+			access++;
+			hit++;
 		}
 
 		public synchronized void fault(final String reference) {
-			this.fault++;
-			this.hit--;
-			this.itemFaults.add(reference);
+			fault++;
+			hit--;
+			itemFaults.add(reference);
 		}
 
 		public synchronized void miss() {
-			this.miss++;
-			this.hit--;
+			miss++;
+			hit--;
 		}
 
 		@Override
 		public String toString() {
 			final StringBuffer buffer = new StringBuffer("NewCacheStorage.Statisticscache [");
-			buffer.append("access=").append(this.access).append(" hits=").append(this.hit).append(" miss=")
-					.append(this.miss);
-			buffer.append(" faults=").append(this.fault);
-			if (this.fault > 0) {
-				buffer.append("\n").append("Fault Refs [").append(this.itemFaults).append("]");
+			buffer.append("access=").append(access).append(" hits=").append(hit).append(" miss=").append(miss);
+			buffer.append(" faults=").append(fault);
+			if (fault > 0) {
+				buffer.append("\n").append("Fault Refs [").append(itemFaults).append("]");
 			}
 			buffer.append(" ]");
 			return buffer.toString();
 		}
 	}
 
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
-	private static Logger logger = Logger.getLogger("AndroidCacheConnector");
+	// - S T A T I C - S E C T I O N ..........................................................................
+	private static Logger													logger						= Logger.getLogger("AndroidCacheConnector");
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
-	private Context _context = null;
-	private final EveItemCache _eveItemCache = new EveItemCache();
-	private DrawableCache _cacheDrawables = null;
+	// - F I E L D - S E C T I O N ............................................................................
+	private Context																_context					= null;
+	private final EveItemCache										_eveItemCache			= new EveItemCache();
+	private DrawableCache													_cacheDrawables		= null;
 	// private final HashMap<String, CacheEntry> _pendingDrawableDownloads = new
 	// HashMap<String, CacheEntry>();
-	private HashMap<PendingRequestEntry, Integer> _pendingRequests = new HashMap<PendingRequestEntry, Integer>();
+	private HashMap<PendingRequestEntry, Integer>	_pendingRequests	= new HashMap<PendingRequestEntry, Integer>();
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AndroidCacheConnector(final Context app) {
-		this._context = app;
+		_context = app;
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
 	/**
-	 * Adds a new request to download character information. The information to
-	 * download depends on the timing for the different blocks of data. Each
-	 * block has a different refresh time. When a blocks finishes it may trigger
-	 * the update of another block.
+	 * Add a new request to download and update the database of locations. This is an special request that it is
+	 * initialized at startup and probably in some other conditions.
 	 */
 	public synchronized void addCharacterUpdateRequest(final long localizer) {
 		Log.i("AndroidCacheConnector", ">> AndroidCacheConnector.addCharacterUpdateRequest");
@@ -314,12 +304,11 @@ public class AndroidCacheConnector implements ICache {
 
 		// Check for duplicates before adding the new element.
 		final String requestid = request.getIdentifier();
-		for (final PendingRequestEntry entry : this._pendingRequests.keySet()) {
+		for (final PendingRequestEntry entry : _pendingRequests.keySet()) {
 			final String entryid = entry.getIdentifier();
-			if (entryid.equalsIgnoreCase(requestid))
-				return;
+			if (entryid.equalsIgnoreCase(requestid)) return;
 		}
-		this._pendingRequests.put(request, priority);
+		_pendingRequests.put(request, priority);
 		Log.i("AndroidCacheConnector", "<< AndroidCacheConnector.addCharacterUpdateRequest");
 	}
 
@@ -329,14 +318,37 @@ public class AndroidCacheConnector implements ICache {
 		getCache().loads();
 	}
 
+	// - M E T H O D - S E C T I O N
+	// ..........................................................................
 	/**
-	 * Queues a new request to download Market Data for an Item. We only
-	 * register the ID of the item because the side will not be used. On the
-	 * download phase we will download both sides. Using the ID as key will
-	 * avoid requesting the same item multiple times. <br>
+	 * Adds a new request to download character information. The information to download depends on the timing
+	 * for the different blocks of data. Each block has a different refresh time. When a blocks finishes it may
+	 * trigger the update of another block.
+	 */
+	public synchronized void addLocationUpdateRequest(final ERequestClass locationClass) {
+		logger.info(">> [AndroidCacheConnector.addCharacterUpdateRequest]");
+		final PendingRequestEntry request = new PendingRequestEntry(locationClass.name().hashCode());
+		request.reqClass = locationClass;
+		final int priority = 20;
+		request.setPriority(priority);
+
+		// Check for duplicates before adding the new element.
+		final String requestid = request.getIdentifier();
+		for (final PendingRequestEntry entry : _pendingRequests.keySet()) {
+			final String entryid = entry.getIdentifier();
+			if (entryid.equalsIgnoreCase(requestid)) return;
+		}
+		_pendingRequests.put(request, priority);
+		logger.info("<< [AndroidCacheConnector.addCharacterUpdateRequest]");
+	}
+
+	/**
+	 * Queues a new request to download Market Data for an Item. We only register the ID of the item because the
+	 * side will not be used. On the download phase we will download both sides. Using the ID as key will avoid
+	 * requesting the same item multiple times. <br>
 	 * 
 	 * @param localizer
-	 *            identifier of the item related to the data to download.
+	 *          identifier of the item related to the data to download.
 	 */
 	public synchronized void addMarketDataRequest(final long localizer) {
 		// Log.i("AndroidCacheConnector", ">>
@@ -366,19 +378,18 @@ public class AndroidCacheConnector implements ICache {
 
 		// Check for duplicates before adding the new element.
 		final String requestid = request.getIdentifier();
-		for (final PendingRequestEntry entry : this._pendingRequests.keySet()) {
+		for (final PendingRequestEntry entry : _pendingRequests.keySet()) {
 			final String entryid = entry.getIdentifier();
-			if (entryid.equalsIgnoreCase(requestid))
-				return;
+			if (entryid.equalsIgnoreCase(requestid)) return;
 		}
-		this._pendingRequests.put(request, priority);
+		_pendingRequests.put(request, priority);
 		// incrementMarketCounter();
 		// Log.i("AndroidCacheConnector", "<<
 		// AndroidCacheConnector.addMarketDataRequest");
 	}
 
 	public synchronized void clearPendingRequest(final String localizer) {
-		for (final PendingRequestEntry entry : this._pendingRequests.keySet()) {
+		for (final PendingRequestEntry entry : _pendingRequests.keySet()) {
 			final String entryid = entry.getIdentifier();
 			if (entryid.equalsIgnoreCase(localizer)) {
 				entry.state = ERequestState.COMPLETED;
@@ -388,22 +399,18 @@ public class AndroidCacheConnector implements ICache {
 	}
 
 	/**
-	 * Gets a drawable by its URL. Most of the Eve icons can be reached though
-	 * an URL and also this is valid for the pilot avatar. The process checks if
-	 * the image is available at the cache. If the image is not there then it
-	 * will try to locate it on the cache filesystem. If not found there then it
-	 * will open a request to get it form the internet location once the network
-	 * is available.
+	 * Gets a drawable by its URL. Most of the Eve icons can be reached though an URL and also this is valid for
+	 * the pilot avatar. The process checks if the image is available at the cache. If the image is not there
+	 * then it will try to locate it on the cache filesystem. If not found there then it will open a request to
+	 * get it form the internet location once the network is available.
 	 * 
 	 * @param urlString
-	 *            the location of the resource. This is already developed by the
-	 *            caller and it is treated as a black box name.
+	 *          the location of the resource. This is already developed by the caller and it is treated as a
+	 *          black box name.
 	 * @param target
-	 *            the UI object where we have to write the drawable once we get
-	 *            it to replace the dummy image that will be shown while we
-	 *            retrieve the not cache image. This will be kept on a list
-	 *            because there may be more that one pending call for the same
-	 *            image resource.
+	 *          the UI object where we have to write the drawable once we get it to replace the dummy image that
+	 *          will be shown while we retrieve the not cache image. This will be kept on a list because there
+	 *          may be more that one pending call for the same image resource.
 	 * @return the cached image or a dummy is still not available.
 	 */
 	public synchronized Drawable getCacheDrawable(final String urlString, final ImageView target) {
@@ -441,17 +448,17 @@ public class AndroidCacheConnector implements ICache {
 	}
 
 	public synchronized Vector<PendingRequestEntry> getPendingRequests() {
-		if (null == this._pendingRequests) {
-			this._pendingRequests = new HashMap<PendingRequestEntry, Integer>();
+		if (null == _pendingRequests) {
+			_pendingRequests = new HashMap<PendingRequestEntry, Integer>();
 		}
 		// Clean up all completed requests.
 		final HashMap<PendingRequestEntry, Integer> openRequests = new HashMap<PendingRequestEntry, Integer>();
-		for (final PendingRequestEntry entry : this._pendingRequests.keySet())
+		for (final PendingRequestEntry entry : _pendingRequests.keySet())
 			if (entry.state != ERequestState.COMPLETED) {
-				openRequests.put(entry, this._pendingRequests.get(entry));
+				openRequests.put(entry, _pendingRequests.get(entry));
 			}
-		this._pendingRequests = openRequests;
-		return new Vector<PendingRequestEntry>(this._pendingRequests.keySet());
+		_pendingRequests = openRequests;
+		return new Vector<PendingRequestEntry>(_pendingRequests.keySet());
 	}
 
 	public String getURLForItem(final int typeID) {
@@ -576,10 +583,10 @@ public class AndroidCacheConnector implements ICache {
 	}
 
 	private DrawableCache getCache() {
-		if (null == this._cacheDrawables) {
-			this._cacheDrawables = new DrawableCache();
+		if (null == _cacheDrawables) {
+			_cacheDrawables = new DrawableCache();
 		}
-		return this._cacheDrawables;
+		return _cacheDrawables;
 	}
 
 	// private void incrementMarketCounter() {
@@ -595,18 +602,16 @@ public class AndroidCacheConnector implements ICache {
 	// }
 
 	/**
-	 * Keeps track of the requests to download data that are pending and of all
-	 * the images that are waiting to replace their content by the new
-	 * downloaded content. The real download process is done on an asych task as
-	 * the writing on disk of the downloaded data for later accesses.<br>
-	 * The tasks will kept the request list updated with the downloaded data and
-	 * theirs download states.
+	 * Keeps track of the requests to download data that are pending and of all the images that are waiting to
+	 * replace their content by the new downloaded content. The real download process is done on an asych task
+	 * as the writing on disk of the downloaded data for later accesses.<br>
+	 * The tasks will kept the request list updated with the downloaded data and theirs download states.
 	 * 
 	 * @param urlString
-	 *            url of the resource to access.
+	 *          url of the resource to access.
 	 * @param target
-	 *            UI image that is waiting for this drawable to replace the
-	 *            dummy we have set while we download the data.
+	 *          UI image that is waiting for this drawable to replace the dummy we have set while we download
+	 *          the data.
 	 */
 	private void postDrawableRequest(final String urlString, final ImageView target) {
 		// TODO Check if already on pending list.

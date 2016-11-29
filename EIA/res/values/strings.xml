@@ -3,7 +3,9 @@
 
     <string name="app_nameold">EIA 0.5</string>
     <string name="app_versionsuffix">05</string>
-    <string name="databaseversion">53</string>
+    <string name="databaseversion">65</string>
+    <string name="databasechangeversioncomment_v065">v065 - New column on Asset to store the asset estimated value.</string>
+    <string name="databasechangeversioncomment_v064">v064 - Added a nre table for the locations.</string>
     <string name="databasechangeversioncomment_v053">v053 - Changed the way Property IDs are generated. Clearing the table to create it back.</string>
     <string name="databasechangeversioncomment_v052">v052 - Added more calculated fields to the Blueprints.</string>
     <string name="databasechangeversioncomment_v051">v051 - Added more calculated fields to the Blueprints.</string>
