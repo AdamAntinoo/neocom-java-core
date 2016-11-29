@@ -665,6 +665,12 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		newAsset.setTypeID(eveAsset.getTypeID());
 		// Children locations have a null on this field. Set it to their parents
 		final Long assetloc = eveAsset.getLocationID();
+		// DEBUG Add a conditional breakpoint for an specific asset.
+		//		Long test = new Long(1021037093228L);
+		if (eveAsset.getTypeID() == 8625) {
+			@SuppressWarnings("unused")
+			int i = 1; // stop point
+		}
 		if (null != assetloc) {
 			newAsset.setLocationID(eveAsset.getLocationID());
 		}
