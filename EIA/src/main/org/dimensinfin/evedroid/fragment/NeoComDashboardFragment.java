@@ -15,16 +15,19 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
+import org.dimensinfin.evedroid.activity.AssetsDirectorActivity;
+import org.dimensinfin.evedroid.activity.FittingActivity;
+import org.dimensinfin.evedroid.activity.ShipDirectorActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
+import org.dimensinfin.evedroid.model.Director;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.DirectorPart;
@@ -38,12 +41,13 @@ import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComDashboardFragment extends AbstractNewPagerFragment {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("NeoComDashboardFragment");
 	static enum EDirectorCode {
 		ASSETDIRECTOR, SHIPDIRECTOR, INDUSTRYDIRECTOR, MARKETDIRECTOR, JOBDIRECTOR, MININGDIRECTOR, FITDIRECTOR
 	}
-	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
+
+	// - S T A T I C - S E C T I O N ..........................................................................
+	private static Logger									logger					= Logger.getLogger("NeoComDashboardFragment");
+	private static final EDirectorCode[]	activeDirectors	= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
 			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.JOBDIRECTOR, EDirectorCode.MARKETDIRECTOR,
 			EDirectorCode.FITDIRECTOR };
 
@@ -133,221 +137,33 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 	 * This method add the icon and button of each director to the lateral menu implemented as a list.
 	 */
 	private void setDirectors() {
-					for (final EDirectorCode directorCode : activeDirectors) {
-						//						ImageView activator = null;
-						switch (directorCode) {
-							case ASSETDIRECTOR:
-								// Create the part, configure it and add to the layout.
-								DirectorPart dirPart = new DirectorPart(new Director(new AssetsDirectorActivity()));
-dirPart.addPropertyChangeListener(this);
-								addtoHeader(dirPart);
-
-								
-								final IDirector adirector = new AssetsDirectorActivity();
-								if (adirector.checkActivation(this._store.getPilot())) {
-									logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-									activator = (ImageView) findViewById(R.id.assetsDirectorIcon);
-									activator.setImageDrawable(getDrawable(R.drawable.assetsdirector));
-									activator.setClickable(true);
-									activator.setOnClickListener(new View.OnClickListener() {
-										public void onClick(final View view) {
-											Log.i("DirectorsBoardActivity", ">> DirectorsBoardActivity.ASSETDIRECTOR.onClick");
-											// Activate the manager.
-											final Intent intent = new Intent(parentActivity, adirector.getClass());
-											// Send the pilot id and transfer it to the next
-											// Activity
-											intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-													DirectorsBoardActivity.this._store.getPilot().getCharacterID());
-											startActivity(intent);
-											Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
-										}
-									});
-									final TextView label = (TextView) findViewById(R.id.assetsDirectorLabel);
-									label.setTypeface(daysFace);
-									activator.invalidate();
-								}
-							case SHIPDIRECTOR:
-								final IDirector sdirector = new ShipDirectorActivity();
-								if (sdirector.checkActivation(this._store.getPilot())) {
-									logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-									activator = (ImageView) findViewById(R.id.shipsDirectorIcon);
-									activator.setImageDrawable(getDrawable(R.drawable.shipsdirector));
-									activator.setClickable(true);
-									activator.setOnClickListener(new View.OnClickListener() {
-										public void onClick(final View view) {
-											Log.i("DirectorsBoardActivity", ">> DirectorsBoardActivity.SHIPDIRECTOR.onClick");
-											// Activate the manager.
-											final Intent intent = new Intent(parentActivity, sdirector.getClass());
-											// Send the pilot id and transfer it to the next
-											// Activity
-											intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-													DirectorsBoardActivity.this._store.getPilot().getCharacterID());
-											startActivity(intent);
-											Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
-										}
-									});
-									final TextView label = (TextView) findViewById(R.id.shipsDirectorLabel);
-									label.setTypeface(daysFace);
-									activator.invalidate();
-								}
-							case INDUSTRYDIRECTOR:
-								final IDirector thedirector = new IndustryDirectorActivity();
-								if (thedirector.checkActivation(this._store.getPilot())) {
-									logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-									activator = (ImageView) findViewById(R.id.industryDirectorIcon);
-									activator.setImageDrawable(getDrawable(R.drawable.industrydirector));
-									activator.setClickable(true);
-									activator.setOnClickListener(new View.OnClickListener() {
-										public void onClick(final View view) {
-											Log.i("DirectorsBoardActivity", ">> DirectorsBoardActivity.INDUSTRYDIRECTOR.onClick");
-											// Activate the manager.
-											final Intent intent = new Intent(parentActivity, thedirector.getClass());
-											// Send the pilot id and transfer it to the next
-											// Activity
-											intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-													DirectorsBoardActivity.this._store.getPilot().getCharacterID());
-											startActivity(intent);
-											Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.INDUSTRYDIRECTOR.onClick");
-										}
-									});
-									final TextView label = (TextView) findViewById(R.id.industryDirectorLabel);
-									label.setTypeface(daysFace);
-									activator.invalidate();
-								}
-								break;
-							case JOBDIRECTOR:
-								final IDirector jdirector = new FittingActivity();
-								if (jdirector.checkActivation(this._store.getPilot())) {
-									logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-									activator = (ImageView) findViewById(R.id.jobDirectorIcon);
-									activator.setImageDrawable(getDrawable(R.drawable.jobdirector));
-									activator.setClickable(true);
-									activator.setOnClickListener(new View.OnClickListener() {
-										public void onClick(final View view) {
-											// Activate the manager.
-											final Intent intent = new Intent(parentActivity, jdirector.getClass());
-											// Send the pilot id and transfer it to the next
-											// Activity
-											intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-													DirectorsBoardActivity.this._store.getPilot().getCharacterID());
-											startActivity(intent);
-										}
-									});
-									activator.invalidate();
-								}
-								break;
-							case MARKETDIRECTOR:
-								final IDirector director = new MarketDirectorActivity();
-								if (director.checkActivation(this._store.getPilot())) {
-									logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-									activator = (ImageView) findViewById(R.id.marketDirectorIcon);
-									activator.setImageDrawable(getDrawable(R.drawable.marketdirector));
-									activator.setClickable(true);
-									activator.setOnClickListener(new View.OnClickListener() {
-										public void onClick(final View view) {
-											// Activate the manager.
-											final Intent intent = new Intent(parentActivity, director.getClass());
-											// Send the pilot id and transfer it to the next
-											// Activity
-											intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-													DirectorsBoardActivity.this._store.getPilot().getCharacterID());
-											startActivity(intent);
-										}
-									});
-									activator.invalidate();
-								}
-								break;
-							case FITDIRECTOR:
-								final IDirector fdirector = new FittingActivity();
-								if (fdirector.checkActivation(this._store.getPilot())) {
-									logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-									activator = (ImageView) findViewById(R.id.marketDirectorIcon);
-									activator.setImageDrawable(getDrawable(R.drawable.fitsdirector));
-									activator.setClickable(true);
-									activator.setOnClickListener(new View.OnClickListener() {
-										public void onClick(final View view) {
-											// Activate the manager.
-											final Intent intent = new Intent(parentActivity, fdirector.getClass());
-											// Send the pilot id and transfer it to the next
-											// Activity
-											intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-													DirectorsBoardActivity.this._store.getPilot().getCharacterID());
-											startActivity(intent);
-										}
-									});
-									activator.invalidate();
-								}
-								break;
-							// case MININGDIRECTOR:
-							// final IDirector mdirector = new MiningSessionActivity();
-							// if (mdirector.checkActivation(getPilot())) {
-							// logger.info("-- DirectorsBoardActivity.onResume - activated "
-							// + directorCode);
-							// activator = (ImageView)
-							// findViewById(R.id.miningDirectorIcon);
-							// activator.setImageDrawable(getDrawable(R.drawable.miningdirector));
-							// activator.setClickable(true);
-							// activator.setOnClickListener(new View.OnClickListener() {
-							// public void onClick(final View view) {
-							// // Activate the manager.
-							// final Intent intent = new Intent(parentActivity,
-							// mdirector.getClass());
-							// // Send the pilot id and transfer it to the next Activity
-							// intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-							// parentActivity.getPilot()
-							// .getCharacterID());
-							// startActivity(intent);
-							// }
-							// });
-							// activator.invalidate();
-							// }
-							// break;
-							// case TASKDIRECTOR:
-							// final IDirector tdirector = new TasksDirectorActivity();
-							// if (tdirector.checkActivation(getPilot())) {
-							// logger.info("-- DirectorsBoardActivity.onResume - activated "
-							// + directorCode);
-							// activator = (ImageView) findViewById(R.id.taskDirectorIcon);
-							// activator.setImageDrawable(getDrawable(R.drawable.taskdirector));
-							// activator.setClickable(true);
-							// activator.setOnClickListener(new View.OnClickListener() {
-							// public void onClick(final View view) {
-							// // Activate the manager.
-							// final Intent intent = new Intent(parentActivity,
-							// tdirector.getClass());
-							// // Send the pilot id and transfer it to the next Activity
-							// intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-							// parentActivity.getPilot()
-							// .getCharacterID());
-							// startActivity(intent);
-							// }
-							// });
-							// }
-							// break;
-							// case FITDIRECTOR:
-							// // final IDirector fdirector = new FitsActivity();
-							// // if (fdirector.checkActivation(getPilot())) {
-							// // logger.info("-- DirectorsBoardActivity.onResume -
-							// activated " + directorCode);
-							// activator = (ImageView) findViewById(R.id.fitDirectorIcon);
-							// activator.setImageDrawable(getDrawable(R.drawable.fitsdirector));
-							// activator.setClickable(true);
-							// activator.setOnClickListener(new View.OnClickListener() {
-							// public void onClick(final View view) {
-							// // Activate the manager.
-							// final Intent intent = new Intent(parentActivity,
-							// FittingActivity.class);
-							// // Send the pilot id and transfer it to the next Activity
-							// intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-							// _store.getPilot().getCharacterID());
-							// startActivity(intent);
-							// }
-							// });
-							// // }
-							// break;
-							// [01]
-						}
-					}
+		for (final EDirectorCode directorCode : activeDirectors) {
+			AbstractAndroidPart dirPart = null;
+			switch (directorCode) {
+				case ASSETDIRECTOR:
+					// Create the part, configure it and add to the layout.
+					dirPart = new DirectorPart(new Director(new AssetsDirectorActivity()));
+					dirPart.setPilot(getPilot());
+					addtoHeader(dirPart);
+					break;
+				case SHIPDIRECTOR:
+					// Create the part, configure it and add to the layout.
+					dirPart = new DirectorPart(new Director(new ShipDirectorActivity()));
+					addtoHeader(dirPart);
+					break;
+				//							case INDUSTRYDIRECTOR:
+				//								final IDirector thedirector = new IndustryDirectorActivity();
+				//							case JOBDIRECTOR:
+				//								final IDirector jdirector = new FittingActivity();
+				//							case MARKETDIRECTOR:
+				//								final IDirector director = new MarketDirectorActivity();
+				case FITDIRECTOR:
+					// Create the part, configure it and add to the layout.
+					dirPart = new DirectorPart(new Director(new FittingActivity()));
+					addtoHeader(dirPart);
+					break;
+			}
+		}
 	}
 
 	//	private void setHeaderContents() {

@@ -6,16 +6,23 @@
 
 package org.dimensinfin.evedroid.interfaces;
 
+import android.content.Context;
+import android.content.Intent;
+
 // - IMPORT SECTION .........................................................................................
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComDirector extends IDirector {
+
+	public abstract Context getActivity();
 
 	public abstract int getIconReferenceActive();
 
 	public abstract int getIconReferenceInactive();
 
 	public abstract String getName();
+
+	public abstract void startActivity(Intent intent);
 }
 
 // - UNUSED CODE ............................................................................................

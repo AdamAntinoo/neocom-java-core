@@ -9,44 +9,62 @@
 package org.dimensinfin.evedroid.model;
 
 import java.util.ArrayList;
-// - IMPORT SECTION .........................................................................................
-import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
+import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
+
+import android.content.Intent;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
  * This class will adapt an Activity to a node to relay some field data to the Part.
+ * 
  * @author Adam Antinoo
  */
 public class Director extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("Director");
+	private static Logger					logger	= Logger.getLogger("Director");
 	// - F I E L D - S E C T I O N ............................................................................
-	private INeoComDirector targetActivity;
-
+	private final INeoComDirector	targetActivity;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Director(INeoComDirector target) {
-		targetActivity=target;
+	public Director(final INeoComDirector target) {
+		targetActivity = target;
+	}
+
+	public boolean checkActivation(final EveChar pilot) {
+		return targetActivity.checkActivation(pilot);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int getActiveIcon() {
+		return targetActivity.getIconReferenceActive();
+	}
+
+	public int getDimmedIcon() {
+		return targetActivity.getIconReferenceInactive();
 	}
 
 	public String getName() {
 		return targetActivity.getName();
 	}
 
+	// TODO the targetActivity should be really replaced bu the Director activity. Just checking if this works
+	public void launchActivity(final EveChar pilot) {
+		final Intent intent = new Intent(targetActivity.getActivity(), targetActivity.getClass());
+		// Send the pilot id and transfer it to the next Activity
+		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, pilot.getCharacterID());
+		targetActivity.startActivity(intent);
+	}
 }
 
 // - UNUSED CODE ............................................................................................
