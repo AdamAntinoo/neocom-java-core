@@ -283,6 +283,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	 * onCreateViewSuper method.
 	 * 
 	 */
+	// REFACTOR This code chall be changed to be the same code at any view and tthat it can change the layout or not
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		Log.i("NEOCOM", ">> FittingFragment.onCreateView");

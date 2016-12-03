@@ -71,7 +71,7 @@ public class DirectorsBoardActivity extends PilotPagerActivity {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
-	 * Return the name of this activity
+	 * Return the display name of this activity. Also used for the label on the NeoCom menu.
 	 * 
 	 * @return
 	 */
@@ -80,78 +80,43 @@ public class DirectorsBoardActivity extends PilotPagerActivity {
 	}
 
 	/**
-	 * On the Activity create phase we will set the layout, then create the action bar and all other UI elements
-	 * and finally creates and sets the fragments. This is to avoid the multiple creation and addition of more
-	 * fragments when the activity is put again on the foreground.
+	 * Create the test page to show the list of Manufacture actions. The real fitting Activity may have more
+	 * pages than this test page..
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		logger.info(">> [DirectorsBoardActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
-		//		setContentView(R.layout.activity_directorsboard);
-		// Disable go home for this activity since this is home.
-		_actionBar.setDisplayHomeAsUpEnabled(false);
 		try {
-			// Process the parameters into the context.
-			final Bundle extras = getIntent().getExtras();
-			if (null == extras) throw new RuntimeException(
-					"RT DirectorsBoardActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
-			// Instantiate the pilot from the characterID.
-			final long characterid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
-			Log.i("DirectorsBoardActivity", "-- DirectorsBoardActivity.onCreate -- Detected "
-					+ AppWideConstants.extras.EXTRA_EVECHARACTERID + "=" + characterid);
-			// Create the pages that form this Activity. Each page implemented by a Fragment.
+			// Reset the page position.
 			int page = 0;
-			// Register this Activity as the current active Activity.
-			EVEDroidApp.getAppStore().activateActivity(this);
-			addPage(new NeoComDashboardFragment().setVariant(AppWideConstants.EFragment.NEOCOM_DASHBOARD), page++);
+			// Get the parameters from the bundle. If not defined then use the demo.
+			final Bundle extras = getIntent().getExtras();
+			// Create the pages that form this Activity. Each page implemented by a Fragment.
+			addPage(new NeoComDashboardFragment().setVariant(AppWideConstants.EFragment.NEOCOM_DASHBOARD).setExtras(extras),
+					page++);
 		} catch (final Exception rtex) {
-			Log.e("EVEI", "RTEX> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
+			Log.e("NEOCOM", "RTEX> DirectorsBoardActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(rtex);
+			stopActivity(new RuntimeException("RTEX> DirectorsBoardActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
 		updateInitialTitle();
 		logger.info("<< [DirectorsBoardActivity.onCreate]"); //$NON-NLS-1$
 	}
 
-	//	@Override
-	//	public boolean onCreateOptionsMenu(final Menu menu) {
-	//		final MenuInflater inflater = getMenuInflater();
-	//		inflater.inflate(R.menu.eiabasemenu, menu);
-	//		EVEDroidApp.getAppStore().setAppMenu(menu);
-	//		return super.onCreateOptionsMenu(menu);
-	//	}
-
-	//	@Override
-	//	public boolean onOptionsItemSelected(final MenuItem item) {
-	//		switch (item.getItemId()) {
-	//			case android.R.id.home:
-	//				// This ID represents the Home or Up button. In the case of this
-	//				// activity, the Up button is shown. Use NavUtils to allow users
-	//				// to navigate up one level in the application structure. For
-	//				// more details, see the Navigation pattern on Android Design:
-	//				//
-	//				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-	//				//
-	//				NavUtils.navigateUpFromSameTask(this);
-	//				return true;
-	//			case R.id.action_settings:
-	//				startActivity(new Intent(this, SettingsActivity.class));
-	//				return true;
-	//			case R.id.action_fullreload:
-	//				// EVEDroidApp.setFullReload(true);
-	//				startActivity(new Intent(this, SplashActivity.class));
-	//				return true;
-	//		}
-	//		return super.onOptionsItemSelected(item);
-	//	}
-
+	//	/**
+	//	 * On the Activity create phase we will set the layout, then create the action bar and all other UI elements
+	//	 * and finally creates and sets the fragments. This is to avoid the multiple creation and addition of more
+	//	 * fragments when the activity is put again on the foreground.
+	//	 */
 	//	@Override
 	//	protected void onCreate(final Bundle savedInstanceState) {
-	//		logger.info(">> DirectorsBoardActivity.onCreate");
+	//		logger.info(">> [DirectorsBoardActivity.onCreate]"); //$NON-NLS-1$
 	//		super.onCreate(savedInstanceState);
-	//		setContentView(R.layout.activity_directorsboard);
+	//		//		setContentView(R.layout.activity_directorsboard);
+	//		// Disable go home for this activity since this is home.
+	//		_actionBar.setDisplayHomeAsUpEnabled(false);
 	//		try {
 	//			// Process the parameters into the context.
 	//			final Bundle extras = getIntent().getExtras();
@@ -161,57 +126,21 @@ public class DirectorsBoardActivity extends PilotPagerActivity {
 	//			final long characterid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
 	//			Log.i("DirectorsBoardActivity", "-- DirectorsBoardActivity.onCreate -- Detected "
 	//					+ AppWideConstants.extras.EXTRA_EVECHARACTERID + "=" + characterid);
-	//			if (characterid > 0) {
-	//				this._store = EVEDroidApp.getAppStore();
-	//				this._store.activatePilot(characterid);
-	//				this._store.activateActivity(this);
-	//			} else
-	//				throw new RuntimeException(
-	//						"RT DirectorsBoardActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
-	//
-	//			// Gets the activity's default ActionBar
-	//			this._actionBar = getActionBar();
-	//			this._actionBar.show();
-	//			this._actionBar.setDisplayHomeAsUpEnabled(true);
-	//
-	//			// Change the title and the background of the activity.
-	//			this._actionBar.setTitle(this._store.getPilot().getName());
-	//
-	//			// Locate the elements of the page and store in global data.
-	//			this._directorContainer = (ViewGroup) findViewById(R.id.neocomContainer);
-	//			this._fragmentContainer = (ViewGroup) findViewById(R.id.fragmentContainer);
-	//			this._back = (ImageView) findViewById(R.id.backgroundFrame);
-	//			// Check page structure.
-	//			if (null == this._directorContainer) {
-	//				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-	//			}
-	//			if (null == this._fragmentContainer) {
-	//				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-	//			}
-	//			if (null == this._back) {
-	//				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-	//			}
+	//			// Create the pages that form this Activity. Each page implemented by a Fragment.
+	//			int page = 0;
+	//			// Register this Activity as the current active Activity.
+	//			EVEDroidApp.getAppStore().activateActivity(this);
+	//			addPage(new NeoComDashboardFragment().setVariant(AppWideConstants.EFragment.NEOCOM_DASHBOARD), page++);
 	//		} catch (final Exception rtex) {
-	//			logger.severe("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
+	//			Log.e("EVEI", "RTEX> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
 	//			rtex.printStackTrace();
 	//			stopActivity(rtex);
 	//		}
-	//
-	//		// Compose the page adding the fragments.
-	//		try {
-	//			// Add the fragments to the fragment container if they are not
-	//			// already there.
-	//			addFragment("PilotInformation", AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO);
-	//
-	//			// final FragmentManager manager = getFragmentManager();
-	//		} catch (final Exception rtex) {
-	//			logger.severe("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
-	//			rtex.printStackTrace();
-	//			stopActivity(
-	//					new RuntimeException("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage()));
-	//		}
-	//		logger.info("<< DirectorsBoardActivity.onCreate");
+	//		// Reinitialize the tile and subtitle from the first page.
+	//		updateInitialTitle();
+	//		logger.info("<< [DirectorsBoardActivity.onCreate]"); //$NON-NLS-1$
 	//	}
+	//[01]
 
 	/**
 	 * Save the store to their persistent file before releasing the control to another activity that will then
@@ -593,5 +522,102 @@ public class DirectorsBoardActivity extends PilotPagerActivity {
 	// }
 }
 
-// - UNUSED CODE
-// ............................................................................................
+// - UNUSED CODE ............................................................................................
+//`[01]
+//	@Override
+//	public boolean onCreateOptionsMenu(final Menu menu) {
+//		final MenuInflater inflater = getMenuInflater();
+//		inflater.inflate(R.menu.eiabasemenu, menu);
+//		EVEDroidApp.getAppStore().setAppMenu(menu);
+//		return super.onCreateOptionsMenu(menu);
+//	}
+
+//	@Override
+//	public boolean onOptionsItemSelected(final MenuItem item) {
+//		switch (item.getItemId()) {
+//			case android.R.id.home:
+//				// This ID represents the Home or Up button. In the case of this
+//				// activity, the Up button is shown. Use NavUtils to allow users
+//				// to navigate up one level in the application structure. For
+//				// more details, see the Navigation pattern on Android Design:
+//				//
+//				// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+//				//
+//				NavUtils.navigateUpFromSameTask(this);
+//				return true;
+//			case R.id.action_settings:
+//				startActivity(new Intent(this, SettingsActivity.class));
+//				return true;
+//			case R.id.action_fullreload:
+//				// EVEDroidApp.setFullReload(true);
+//				startActivity(new Intent(this, SplashActivity.class));
+//				return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
+
+//	@Override
+//	protected void onCreate(final Bundle savedInstanceState) {
+//		logger.info(">> DirectorsBoardActivity.onCreate");
+//		super.onCreate(savedInstanceState);
+//		setContentView(R.layout.activity_directorsboard);
+//		try {
+//			// Process the parameters into the context.
+//			final Bundle extras = getIntent().getExtras();
+//			if (null == extras) throw new RuntimeException(
+//					"RT DirectorsBoardActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
+//			// Instantiate the pilot from the characterID.
+//			final long characterid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
+//			Log.i("DirectorsBoardActivity", "-- DirectorsBoardActivity.onCreate -- Detected "
+//					+ AppWideConstants.extras.EXTRA_EVECHARACTERID + "=" + characterid);
+//			if (characterid > 0) {
+//				this._store = EVEDroidApp.getAppStore();
+//				this._store.activatePilot(characterid);
+//				this._store.activateActivity(this);
+//			} else
+//				throw new RuntimeException(
+//						"RT DirectorsBoardActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
+//
+//			// Gets the activity's default ActionBar
+//			this._actionBar = getActionBar();
+//			this._actionBar.show();
+//			this._actionBar.setDisplayHomeAsUpEnabled(true);
+//
+//			// Change the title and the background of the activity.
+//			this._actionBar.setTitle(this._store.getPilot().getName());
+//
+//			// Locate the elements of the page and store in global data.
+//			this._directorContainer = (ViewGroup) findViewById(R.id.neocomContainer);
+//			this._fragmentContainer = (ViewGroup) findViewById(R.id.fragmentContainer);
+//			this._back = (ImageView) findViewById(R.id.backgroundFrame);
+//			// Check page structure.
+//			if (null == this._directorContainer) {
+//				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+//			}
+//			if (null == this._fragmentContainer) {
+//				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+//			}
+//			if (null == this._back) {
+//				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+//			}
+//		} catch (final Exception rtex) {
+//			logger.severe("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
+//			rtex.printStackTrace();
+//			stopActivity(rtex);
+//		}
+//
+//		// Compose the page adding the fragments.
+//		try {
+//			// Add the fragments to the fragment container if they are not
+//			// already there.
+//			addFragment("PilotInformation", AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO);
+//
+//			// final FragmentManager manager = getFragmentManager();
+//		} catch (final Exception rtex) {
+//			logger.severe("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
+//			rtex.printStackTrace();
+//			stopActivity(
+//					new RuntimeException("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage()));
+//		}
+//		logger.info("<< DirectorsBoardActivity.onCreate");
+//	}

@@ -10,7 +10,6 @@ package org.dimensinfin.evedroid.interfaces;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComDirector extends IDirector {
-	//	public abstract boolean checkActivation(EveChar pilot);
 
 	public abstract int getIconReferenceActive();
 

@@ -10,6 +10,7 @@ package org.dimensinfin.evedroid.activity.core;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.EVEDroidApp;
+import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -36,6 +37,10 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+//	public abstract String getName() ;
+//	public abstract int getIconReferenceActive();
+//
+//	public abstract int getIconReferenceInactive() ;
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i("EVEI", ">> PilotPagerActivity.onCreate"); //$NON-NLS-1$

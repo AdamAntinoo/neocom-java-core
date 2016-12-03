@@ -56,6 +56,7 @@ public class FittingDataSource extends SpecialDataSource {
 		// Get access to the fit as soon as possible
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public RootNode collaborate2Model() {
 		logger.info(">> [FittingDataSource.collaborate2Model]");
 		try {
@@ -170,7 +171,6 @@ public class FittingDataSource extends SpecialDataSource {
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()).setRenderWhenEmpty(renderEmptyState));
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The data model exported by this method can have two or three levels. If the region grouping is off then
 	 * we return the list of locations that contain ships. If the Region grouping is on then we return the list
