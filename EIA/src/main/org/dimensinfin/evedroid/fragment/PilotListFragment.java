@@ -25,11 +25,7 @@ import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.part.APIKeyPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotListFragment extends AbstractNewPagerFragment {
@@ -45,23 +41,6 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 	@Override
 	public String getTitle() {
 		return "Select Capsuleer";
-	}
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> PilotListFragment.onCreateView");
-		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-		try {
-			setIdentifier(_variant.hashCode());
-			registerDataSource();
-		} catch (final RuntimeException rtex) {
-			Log.e("EVEI", "RTEX> PilotListFragment.onCreateView - " + rtex.getMessage());
-			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> PilotListFragment.onCreateView - " + rtex.getMessage()));
-		}
-		Log.i("NEOCOM", "<< PilotListFragment.onCreateView");
-		return theView;
 	}
 
 	@Override
@@ -81,7 +60,8 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", "<< PilotListFragment.onStart");
 	}
 
-	private void registerDataSource() {
+	@Override
+	protected void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
 		// final long capsuleerid =
 		// getExtras().getLong(AppWideConstants.EExtras.CAPSULEERID.name());

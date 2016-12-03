@@ -46,10 +46,10 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	@Override
 	public String getSubtitle() {
 		String st = "";
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
+		if (getVariant() == AppWideConstants.EFragment.SHIPS_BYLOCATION) {
 			st = "Ships - by Location";
 		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
+		if (getVariant() == AppWideConstants.EFragment.SHIPS_BYCLASS) {
 			st = "Ships - by Class";
 		}
 		return st;
@@ -98,7 +98,8 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", "<< ShipsFragment.onStart");
 	}
 
-	private void registerDataSource() {
+	@Override
+	protected void registerDataSource() {
 		Log.i("NEOCOM", ">> ShipsFragment.registerDataSource");
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(getPilotName()).addIdentifier(_variant.name());
 		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(_variant));

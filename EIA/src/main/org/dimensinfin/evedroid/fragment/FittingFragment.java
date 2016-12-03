@@ -8,6 +8,7 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
@@ -22,7 +23,6 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.FittingDataSource;
-import org.dimensinfin.evedroid.datasource.IExtendedDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
@@ -37,9 +37,6 @@ import org.dimensinfin.evedroid.part.TaskPart;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -77,25 +74,6 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	 * This code is identical on all Fragment implementations so can be moved to the super class.
 	 */
 	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
-		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-		try {
-			setIdentifier(_variant.hashCode());
-			registerDataSource();
-		} catch (final RuntimeException rtex) {
-			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
-			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
-		}
-		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
-		return theView;
-	}
-
-	/**
-	 * This code is identical on all Fragment implementations so can be moved to the super class.
-	 */
-	@Override
 	public void onStart() {
 		Log.i("NEOCOM", ">> FittingFragment.onStart");
 		try {
@@ -111,30 +89,13 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", "<< FittingFragment.onStart");
 	}
 
-	private AbstractAndroidPart createPart(final AbstractGEFNode model) {
-		IPartFactory factory = getFactory();
-		IEditPart part = factory.createPart(model);
-		part.setParent(null);
-		return (AbstractAndroidPart) part;
-	}
-
-	private IExtendedDataSource getDataSource() {
-		return _datasource;
-	}
-
-	private IPartFactory getFactory() {
-		if (null == factory) {
-			factory = new FittingPartFactory(_variant);
-		}
-		return factory;
-	}
-
 	/**
 	 * This is the single piece f code specific for this fragment. It should create the right class DataSource
 	 * and connect it to the Fragment for their initialization during the <b>start</b> phase. <br>
 	 * Current implementation is a test code to initialize the DataSorue with a predefined and testing fitting.
 	 */
-	private void registerDataSource() {
+	@Override
+	protected void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
 		Bundle extras = getExtras();
 		long capsuleerid = 0;
@@ -152,6 +113,20 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
 		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
 		setDataSource(ds);
+	}
+
+	private AbstractAndroidPart createPart(final AbstractGEFNode model) {
+		IPartFactory factory = getFactory();
+		IEditPart part = factory.createPart(model);
+		part.setParent(null);
+		return (AbstractAndroidPart) part;
+	}
+
+	private IPartFactory getFactory() {
+		if (null == factory) {
+			factory = new FittingPartFactory(_variant);
+		}
+		return factory;
 	}
 
 	private void setHeaderContents() {

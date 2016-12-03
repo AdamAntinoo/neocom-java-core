@@ -18,220 +18,71 @@
         android:layout_height="match_parent" >
 
         <LinearLayout
-            android:id="@+id/neocomContainer"
-            android:layout_width="50dp"
+            android:id="@+id/genericFragmentBody"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/neocomMenuContainer"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/headerContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible" >
+            </LinearLayout>
+
+            <include
+                android:id="@+id/progressLayout"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                layout="@layout/actionbar_indeterminateprogress"
+                android:padding="2dp"
+                android:visibility="visible" />
+
+            <ListView
+                android:id="@+id/listContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:dividerHeight="1dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/neocomMenuHead"
+            android:layout_width="40dip"
+            android:layout_height="46dip"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+            android:orientation="vertical" >
+
+            <!-- <RelativeLayout -->
+            <!-- android:layout_width="fill_parent" -->
+            <!-- android:layout_height="46dp" -->
+            <!-- android:background="#FF303030" > -->
+
+            <ImageView
+                android:id="@+id/neoMenuIcon"
+                style="@style/NeoComIconStyle"
+                android:layout_width="@dimen/menuIconWidth"
+                android:layout_height="@dimen/menuIconHeight"
+                android:layout_centerInParent="true"
+                android:src="@drawable/neomenu" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/neocomMenuContainer"
+            android:layout_width="40dip"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/neocomMenuHead"
             android:animateLayoutChanges="true"
             android:dividerHeight="2dp"
             android:orientation="vertical" >
-
-            <RelativeLayout
-                android:id="@+id/neocomMenu"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="48dp"
-                    android:background="#FF202020" >
-
-                    <ImageView
-                        android:id="@+id/neoMenuIcon"
-                        style="@style/NeoComIconStyle"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/neomenu" />
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/neoMenuLabel"
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Assets"
-                    android:visibility="gone" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/assetsDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/assetsDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:background="#FF202020"
-                    android:src="@drawable/assetsdirectordimmed" />
-
-                <TextView
-                    android:id="@+id/assetsDirectorLabel"
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Assets" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/shipsDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/shipsDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:background="#FF202020"
-                    android:src="@drawable/shipsdirectordimmed" />
-
-                <TextView
-                    android:id="@+id/shipsDirectorLabel"
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Ships" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/industryDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/industryDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/industrydirector" />
-
-                <TextView
-                    android:id="@+id/industryDirectorLabel"
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Industry" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/marketDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/marketDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/marketdirectordimmed" />
-
-                <TextView
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Market" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/jobDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/jobDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/jobdirectordimmed" />
-
-                <TextView
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Job Plan" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/miningDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <ImageView
-                    android:id="@+id/miningDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/miningdirectordimmed" />
-
-                <TextView
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Mining" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/taskDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <ImageView
-                    android:id="@+id/taskDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/taskdirectordimmed" />
-
-                <TextView
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Tasks" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/fitDirector"
-                style="@style/NeoComLayout"
-                android:layout_width="fill_parent"
-                android:orientation="vertical"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/fitDirectorIcon"
-                    style="@style/NeoComIconStyle"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/fitdirectordimmed" />
-
-                <TextView
-                    style="@style/LabelStyle.Small.NeoComLabel"
-                    android:text="Fitting" />
-            </RelativeLayout>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/pilotSectionLabel"
-            style="@style/sectionStyle"
-            android:layout_width="fill_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/neocomContainer"
-            android:background="@drawable/bottomwhiteline"
-            android:text="PILOT INFORMATION" />
-
-        <LinearLayout
-            android:id="@+id/fragmentContainer"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/pilotSectionLabel"
-            android:layout_toRightOf="@+id/neocomContainer"
-            android:orientation="vertical" />
     </RelativeLayout>
 
 </FrameLayout>

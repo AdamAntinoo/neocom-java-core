@@ -108,7 +108,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		} else {
 			_dataModelRoot.clean();
 		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
+		if (getVariant() == AppWideConstants.EFragment.SHIPS_BYLOCATION) {
 			if (ifGroupLocations()) {
 				for (Region node : _regions.values()) {
 					_dataModelRoot.addChild(node);
@@ -119,7 +119,7 @@ public class ShipsDataSource extends SpecialDataSource {
 				}
 			}
 		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
+		if (getVariant() == AppWideConstants.EFragment.SHIPS_BYCLASS) {
 			for (Separator node : _categories.values()) {
 				_dataModelRoot.addChild(node);
 			}

@@ -10,5 +10,7 @@
     <dimen name="itemIcon48">48dp</dimen>
     <dimen name="itemIcon32">32dp</dimen>
     <dimen name="itemIcon24">24dp</dimen>
-
+    <dimen name="menuIconWidth">32dip</dimen>
+    <dimen name="menuIconHeight">32dip</dimen>
+    
 </resources>

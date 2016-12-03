@@ -278,17 +278,39 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	/**
+	 * This is the code common to all fragments. Only setups the identifier and registers the DataSource. In the
+	 * case there are no associated DataSource then we can supersede it calling the core code at the
+	 * onCreateViewSuper method.
+	 * 
+	 */
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
+		final View theView = this.onCreateViewSuper(R.layout.fragment_base, inflater, container, savedInstanceState);
+		try {
+			setIdentifier(_variant.hashCode());
+			registerDataSource();
+		} catch (final RuntimeException rtex) {
+			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
+			rtex.printStackTrace();
+			stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
+		}
+		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
+		return theView;
+	}
+
+	/**
 	 * Creates the structures when the fragment is about to be shown. We have to check that the parent Activity
 	 * is compatible with this kind of fragment. So the fragment has to check of it has access to a valid pilot
 	 * before returning any UI element.
 	 */
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	public View onCreateViewSuper(final int layout, final LayoutInflater inflater, final ViewGroup container,
+			final Bundle savedInstanceState) {
 		Log.i("NEOCOM", ">> AbstractPageFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
 			//			if (!this._alreadyInitialized)
-			_container = (ViewGroup) inflater.inflate(R.layout.fragment_base, container, false);
+			_container = (ViewGroup) inflater.inflate(layout, container, false);
 			_headerContainer = (ViewGroup) _container.findViewById(R.id.headerContainer);
 			_modelContainer = (ListView) _container.findViewById(R.id.listContainer);
 			_progressLayout = (ViewGroup) _container.findViewById(R.id.progressLayout);
@@ -392,9 +414,15 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		}
 	}
 
+	protected IExtendedDataSource getDataSource() {
+		return _datasource;
+	}
+
 	protected EFragment getVariant() {
 		return _variant;
 	}
+
+	protected abstract void registerDataSource();
 
 	/**
 	 * For really unrecoverable or undefined exceptions the application should go to a safe spot. That spot is
