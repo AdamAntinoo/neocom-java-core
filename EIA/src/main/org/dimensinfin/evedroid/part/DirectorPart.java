@@ -33,6 +33,7 @@ public class DirectorPart extends AbstractAndroidPart implements OnClickListener
 		super(node);
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkActivation() {
 		return getCastedModel().checkActivation(targetPilot);
 	}
@@ -45,7 +46,6 @@ public class DirectorPart extends AbstractAndroidPart implements OnClickListener
 		return getCastedModel().getDimmedIcon();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public long getModelID() {
 		return getCastedModel().getName().hashCode();

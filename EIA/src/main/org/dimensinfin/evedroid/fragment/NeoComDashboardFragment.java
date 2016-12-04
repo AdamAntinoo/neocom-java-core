@@ -28,6 +28,7 @@ import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.Director;
+import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.DirectorPart;
@@ -143,7 +144,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 				case ASSETDIRECTOR:
 					// Create the part, configure it and add to the layout.
 					dirPart = new DirectorPart(new Director(new AssetsDirectorActivity()));
-					dirPart.setPilot(getPilot());
+					((DirectorPart) dirPart).setPilot((EveChar) getPilot());
 					addtoHeader(dirPart);
 					break;
 				case SHIPDIRECTOR:

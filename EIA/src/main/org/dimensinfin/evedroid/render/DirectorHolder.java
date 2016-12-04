@@ -12,8 +12,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.activity.AssetsDirectorActivity;
-import org.dimensinfin.evedroid.interfaces.IDirector;
+import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.part.DirectorPart;
 
 import android.app.Activity;
@@ -63,6 +62,8 @@ public class DirectorHolder extends AbstractHolder {
 			menuIcon.setClickable(false);
 		}
 		menuLabel.setText(getPart().getName());
+		menuLabel.setTypeface(EveAbstractHolder.daysFace);
+		menuIcon.invalidate();
 	}
 
 	@Override
@@ -70,19 +71,6 @@ public class DirectorHolder extends AbstractHolder {
 		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		_convertView = mInflater.inflate(R.layout.menu_neocomitem, null);
 		_convertView.setTag(this);
-	}
-
-	private void n() {
-		final IDirector adirector = new AssetsDirectorActivity();
-		if (adirector.checkActivation(_store.getPilot())) {
-			logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-			activator = (ImageView) findViewById(R.id.assetsDirectorIcon);
-			activator.setImageDrawable(getDrawable(R.drawable.assetsdirector));
-			final TextView label = (TextView) findViewById(R.id.assetsDirectorLabel);
-			label.setTypeface(daysFace);
-			activator.invalidate();
-		}
-
 	}
 }
 

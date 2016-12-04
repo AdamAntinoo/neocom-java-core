@@ -35,11 +35,11 @@ public class Director extends AbstractNeoComNode {
 		targetActivity = target;
 	}
 
-	public boolean checkActivation(final EveChar pilot) {
-		return targetActivity.checkActivation(pilot);
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public boolean checkActivation(final EveChar targetPilot) {
+		return targetActivity.checkActivation(targetPilot);
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		// TODO Auto-generated method stub
@@ -59,10 +59,10 @@ public class Director extends AbstractNeoComNode {
 	}
 
 	// TODO the targetActivity should be really replaced bu the Director activity. Just checking if this works
-	public void launchActivity(final EveChar pilot) {
+	public void launchActivity(final EveChar targetPilot) {
 		final Intent intent = new Intent(targetActivity.getActivity(), targetActivity.getClass());
 		// Send the pilot id and transfer it to the next Activity
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, pilot.getCharacterID());
+		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, targetPilot.getCharacterID());
 		targetActivity.startActivity(intent);
 	}
 }

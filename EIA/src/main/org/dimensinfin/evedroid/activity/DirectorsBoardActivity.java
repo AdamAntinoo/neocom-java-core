@@ -23,7 +23,6 @@ import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -507,10 +506,10 @@ public class DirectorsBoardActivity extends PilotPagerActivity {
 	//		startActivity(intent);
 	//	}
 
-	private Activity getActivity() {
-		return this;
-	}
-
+	//	private Activity getActivity() {
+	//		return this;
+	//	}
+	//
 	@SuppressLint("Override")
 	private Drawable getDrawable(final int reference) {
 		// ContextCompat.getDrawable(getActivity(), reference);

@@ -42,11 +42,9 @@ import android.widget.ImageView;
  * @author Adam Antinoo
  */
 public abstract class AbstractPagerActivity extends Activity {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	protected ActionBar					_actionBar			= null;
 	private ViewPager						_pageContainer	= null;
 	private EvePagerAdapter			_pageAdapter		= null;
@@ -54,11 +52,13 @@ public abstract class AbstractPagerActivity extends Activity {
 	// private AppModelStore _store = null;
 	private CirclePageIndicator	_indicator			= null;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public Activity getActivity() {
+		return this;
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();
