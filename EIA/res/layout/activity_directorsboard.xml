@@ -24,14 +24,6 @@
             android:layout_toLeftOf="@+id/neocomMenuContainer"
             android:orientation="vertical" >
 
-            <LinearLayout
-                android:id="@+id/headerContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible" >
-            </LinearLayout>
-
             <include
                 android:id="@+id/progressLayout"
                 android:layout_width="32dp"
@@ -59,11 +51,6 @@
             android:layout_alignParentTop="true"
             android:orientation="vertical" >
 
-            <!-- <RelativeLayout -->
-            <!-- android:layout_width="fill_parent" -->
-            <!-- android:layout_height="46dp" -->
-            <!-- android:background="#FF303030" > -->
-
             <ImageView
                 android:id="@+id/neoMenuIcon"
                 style="@style/NeoComIconStyle"
@@ -74,7 +61,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/neocomMenuContainer"
+            android:id="@+id/headerContainer"
             android:layout_width="40dip"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

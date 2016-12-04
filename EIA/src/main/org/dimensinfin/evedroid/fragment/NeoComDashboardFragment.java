@@ -83,6 +83,8 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 		try {
 			setIdentifier(_variant.hashCode());
 			registerDataSource();
+			setHeaderContents();
+			setDirectors();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> NeoComDashboardFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -165,6 +167,12 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 					break;
 			}
 		}
+	}
+
+	/**
+	 * This Fragment does not have anything to add to the header.
+	 */
+	private void setHeaderContents() {
 	}
 
 	//	private void setHeaderContents() {
