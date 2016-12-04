@@ -27,10 +27,9 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
-	 * Checks if there are the conditions to activate this particular manager.
-	 * Each one will have it different rules to reach the activation point.<br>
-	 * The BPOManager need that there are at least one BPO on the list of assets
-	 * of the pilot.
+	 * Checks if there are the conditions to activate this particular manager. Each one will have it different
+	 * rules to reach the activation point.<br>
+	 * The BPOManager need that there are at least one BPO on the list of assets of the pilot.
 	 */
 	public boolean checkActivation(final EveChar checkPilot) {
 		if (checkPilot.getAssetCount() > 0)
@@ -40,11 +39,15 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.assetsdirector;
+		return R.drawable.assets;
 	}
 
 	public int getIconReferenceInactive() {
 		return R.drawable.assetsdirectordimmed;
+	}
+
+	public String getName() {
+		return "Assets";
 	}
 
 	@Override
@@ -66,10 +69,6 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 		// Reinitialize the tile and subtitle from the first page.
 		updateInitialTitle();
 		Log.i("NEOCOM", "<< AssetsDirectorActivity.onCreate"); //$NON-NLS-1$
-	}
-
-	public String getName() {
-		return "Assets";
 	}
 }
 // - UNUSED CODE

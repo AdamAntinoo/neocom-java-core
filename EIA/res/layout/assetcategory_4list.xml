@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="2dp"
         android:contentDescription="@string/imageview_defaultcontent"
-        android:src="@drawable/assetsdirectordimmed" />
+        android:src="@drawable/assetsdimmed" />
 
     <TextView
         android:id="@+id/assetName"
@@ -73,7 +73,7 @@
         android:textSize="10sp" />
 
     <TextView
-        android:id="@+id/countLabel"
+        android:id="@+id/valueLabel"
         style="@style/AppTheme.LabelUpLineStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
