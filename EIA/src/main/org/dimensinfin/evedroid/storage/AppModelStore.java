@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
@@ -56,14 +57,19 @@ public class AppModelStore extends AbstractModelStore {
 	private static Logger											logger						= Logger.getLogger("AppModelStore");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	/** Reference to the application menu to make it accessible to any level. */
 	private transient Menu										_appMenu					= null;
+	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
+	private transient Activity								_activity					= null;
+	private transient EveChar									_pilot						= null;
+
+	/** List of registered DataSources. This data is not stored on switch or termination. */
+	private transient DataSourceManager				dsManager					= null;
 	private HashMap<Integer, APIKey>					apiKeys						= new HashMap<Integer, APIKey>();
+	/** List of fittings by name. This is the source for the Fittings DataSource. */
+	private HashMap<String, Fitting>					fittings					= new HashMap<String, Fitting>();
 	private transient HashMap<Long, EveChar>	charCache					= null;
 	private final long												lastCCPAccessTime	= 0;
-	private transient EveChar									_pilot						= null;
-	private transient Activity								_activity					= null;
-	private transient DataSourceManager				dsManager					= null;
-	private HashMap<String, Fitting>					fittings					= new HashMap<String, Fitting>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppModelStore(final IPersistentHandler storageHandler) {
@@ -72,6 +78,25 @@ public class AppModelStore extends AbstractModelStore {
 		try {
 			setPersistentStorage(storageHandler);
 			setAutomaticUpdate(true);
+
+			if (AppWideConstants.DEVELOPMENT) {
+				// Create demo fittings to test the save/restore and continue the development.
+				Fitting onConstructionFit = new Fitting();
+				onConstructionFit.setName("Testing - Crusader");
+				onConstructionFit.addHull(11184);
+				onConstructionFit.fitModule(6719, 4);
+				onConstructionFit.fitModule(5973);
+				onConstructionFit.fitModule(5405);
+				onConstructionFit.fitModule(5839);
+				onConstructionFit.fitModule(5849);
+				onConstructionFit.fitModule(11563);
+				onConstructionFit.fitModule(33076);
+				onConstructionFit.fitRig(26929);
+				onConstructionFit.fitRig(26929);
+				onConstructionFit.addCargo(244, 4);
+				onConstructionFit.addCargo(240, 4);
+				fittings.put(onConstructionFit.getName(), onConstructionFit);
+			}
 		} catch (final Exception ex) {
 			// TODO This is a quite serious error because invalidates any storage of the model data
 			ex.printStackTrace();

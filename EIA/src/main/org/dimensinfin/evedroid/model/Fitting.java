@@ -46,6 +46,15 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
+	 * This constructor just creates the data structures. If should not be used but for testing because a
+	 * Fitting requires an asset manager to be able to perform the Industry activities.
+	 */
+	// TODO The Fitting should not have the dependency on the industry until the moment the model need to get generated.
+	@Deprecated
+	public Fitting() {
+	}
+
+	/**
 	 * Initializes a fitting. A Fitting is a complex objects that performs manufactuting actions and that should
 	 * have a reference to the current selected pilot because the resources required for manufacturing are
 	 * associated with a pilot.

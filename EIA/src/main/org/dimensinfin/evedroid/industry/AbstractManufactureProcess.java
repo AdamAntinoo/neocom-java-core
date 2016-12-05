@@ -75,6 +75,11 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	protected int															threads									= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/** Test only constructor. NOt to be used */
+	@Deprecated
+	public AbstractManufactureProcess() {
+	}
+
 	public AbstractManufactureProcess(final AssetsManager manager) {
 		super();
 		if (null == manager) {
