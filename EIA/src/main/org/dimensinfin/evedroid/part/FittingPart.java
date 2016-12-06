@@ -31,7 +31,7 @@ import android.view.WindowManager;
 public class FittingPart extends EveAbstractPart implements INamedPart, IMenuActionTarget {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1956908168853667475L;
-	private static Logger			logger						= Logger.getLogger("org.dimensinfin.evedroid.part");
+	private static Logger			logger						= Logger.getLogger("FittingPart");
 
 	// - F I E L D - S E C T I O N ............................................................................
 

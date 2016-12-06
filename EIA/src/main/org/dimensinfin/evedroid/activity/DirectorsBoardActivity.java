@@ -192,7 +192,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	 * present.
 	 */
 	@SuppressLint("NewApi")
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onResume() {
@@ -437,7 +437,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	 */
 	@Override
 	@SuppressLint("NewApi")
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@SuppressWarnings("deprecation")
 	protected void onStart() {
 		logger.info(">> DirectorsBoardActivity.onStart");

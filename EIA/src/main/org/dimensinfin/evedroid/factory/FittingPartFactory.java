@@ -56,6 +56,10 @@ public class FittingPartFactory implements IPartFactory {
 				GroupPart part = new GroupPart((Separator) node);
 				return part;
 			}
+			if (node instanceof Fitting) {
+				FittingPart part = new FittingPart((Fitting) node);
+				return part;
+			}
 		}
 		// Set of Parts for the Manufacture Page for a selected fragment.
 		if (variant == AppWideConstants.EFragment.FITTING_MANUFACTURE) {

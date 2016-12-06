@@ -33,22 +33,23 @@ import android.widget.ImageView;
 public abstract class EveAbstractHolder extends AbstractHolder {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	protected static final long ONEMINUTE = 60 * 1000;
-	protected static final long ONEHOUR = 60 * ONEMINUTE;
-	protected static final long ONEDAY = 24 * ONEHOUR;
-	protected static final DecimalFormat keyFormatter = new DecimalFormat("0000000");
-	protected static final DateTimeFormatter durationFormatter = DateTimeFormat.forPattern("d HH:mm");
-	protected static final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("YYYY.MM.dd HH:mm");
-	protected static final DateTimeFormatter jobTimeFormatter = DateTimeFormat.forPattern("D HH:MM");
-	protected static final DecimalFormat priceFormatter = new DecimalFormat("###,###.00");
-	protected static final DecimalFormat qtyFormatter = new DecimalFormat("###,##0");
-	protected static final DecimalFormat moduleIndexFormatter = new DecimalFormat("000");
-	protected static final DecimalFormat queueIndexFormatter = new DecimalFormat("00");
-	protected static final DecimalFormat moduleMultiplierFormatter = new DecimalFormat("x##0.0");
-	protected static final DecimalFormat itemCountFormatter = new DecimalFormat("###,##0");
-	protected static final DecimalFormat volumeFormatter = new DecimalFormat("###,##0.0");
-	protected static final DecimalFormat securityFormatter = new DecimalFormat("0.0");
-	protected static final HashMap<Integer, String> securityLevels = new HashMap<Integer, String>();
+	protected static final long											ONEMINUTE									= 60 * 1000;
+	protected static final long											ONEHOUR										= 60 * ONEMINUTE;
+	protected static final long											ONEDAY										= 24 * ONEHOUR;
+	protected static final DecimalFormat						keyFormatter							= new DecimalFormat("0000000");
+	protected static final DateTimeFormatter				durationFormatter					= DateTimeFormat.forPattern("d HH:mm");
+	protected static final DateTimeFormatter				timePointFormatter				= DateTimeFormat
+			.forPattern("YYYY.MM.dd HH:mm");
+	protected static final DateTimeFormatter				jobTimeFormatter					= DateTimeFormat.forPattern("D HH:MM");
+	protected static final DecimalFormat						priceFormatter						= new DecimalFormat("###,###.00");
+	protected static final DecimalFormat						qtyFormatter							= new DecimalFormat("###,##0");
+	protected static final DecimalFormat						moduleIndexFormatter			= new DecimalFormat("000");
+	protected static final DecimalFormat						queueIndexFormatter				= new DecimalFormat("00");
+	protected static final DecimalFormat						moduleMultiplierFormatter	= new DecimalFormat("x##0.0");
+	protected static final DecimalFormat						itemCountFormatter				= new DecimalFormat("###,##0");
+	protected static final DecimalFormat						volumeFormatter						= new DecimalFormat("###,##0.0");
+	protected static final DecimalFormat						securityFormatter					= new DecimalFormat("0.0");
+	protected static final HashMap<Integer, String>	securityLevels						= new HashMap<Integer, String>();
 	static {
 		securityLevels.put(10, "#2FEFEF");
 		securityLevels.put(9, "#48F0C0");
@@ -105,10 +106,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	abstract protected void createView();
 
 	/**
-	 * The price of the manufacture cost on the output is not tinted with the
-	 * right color. Use red for cero or negative costs, orange for less than 10%
-	 * and white for higher (or maybe green for higher). This code can be
-	 * refactored to use ever the same generation code.
+	 * The price of the manufacture cost on the output is not tinted with the right color. Use red for cero or
+	 * negative costs, orange for less than 10% and white for higher (or maybe green for higher). This code can
+	 * be refactored to use ever the same generation code.
 	 * 
 	 * @param cost
 	 * @param price
@@ -189,16 +189,14 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		// flag.
 		// Get rid of negative numbers.
 		if (compress) {
-			if (Math.abs(price) > 1200000000.0)
-				if (addSuffix)
-					return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0) + " B ISK";
-				else
-					return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0);
-			if (Math.abs(price) > 12000000.0)
-				if (addSuffix)
-					return priceFormatter.format(price / 1000.0 / 1000.0) + " M ISK";
-				else
-					return priceFormatter.format(price / 1000.0 / 1000.0);
+			if (Math.abs(price) > 1200000000.0) if (addSuffix)
+				return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0) + " B ISK";
+			else
+				return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0);
+			if (Math.abs(price) > 12000000.0) if (addSuffix)
+				return priceFormatter.format(price / 1000.0 / 1000.0) + " M ISK";
+			else
+				return priceFormatter.format(price / 1000.0 / 1000.0);
 		}
 		if (addSuffix)
 			return priceFormatter.format(price) + " ISK";
@@ -245,9 +243,8 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	}
 
 	/**
-	 * Downloads and caches the item icon from the CCP server. The new
-	 * implementation check for special cases such as locations. Stations on
-	 * locations have an image that can be downloaded from the same place.
+	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
+	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
 	 * 
 	 * @param targetIcon
 	 * @param typeID
@@ -283,12 +280,12 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		return Html.fromHtml(htmlLocation.toString());
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@SuppressWarnings("deprecation")
 	protected void setBackgroundTransparency(final int resource) {
 		// Set the background form the Theme.
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-			this._convertView.setBackgroundDrawable(getContext().getResources().getDrawable(resource));
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+			_convertView.setBackgroundDrawable(getContext().getResources().getDrawable(resource));
 			// } else {
 			// this._convertView.setBackground(getContext().getResources().getDrawable(resource));
 			// }

@@ -24,16 +24,16 @@ import android.widget.TextView;
 public class ContainerHolder extends EveAbstractHolder {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static Logger logger = Logger.getLogger("ContainerHolder");
+	private static Logger	logger						= Logger.getLogger("ContainerHolder");
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
-	public TextView name = null;
-	public TextView containerCategory = null;
-	public TextView count = null;
+	public TextView				name							= null;
+	public TextView				containerCategory	= null;
+	public TextView				count							= null;
 
-	public TextView titleLabel = null;
-	public TextView countLabel = null;
+	public TextView				titleLabel				= null;
+	public TextView				countLabel				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -51,31 +51,30 @@ public class ContainerHolder extends EveAbstractHolder {
 	@Override
 	public void initializeViews() {
 		super.initializeViews();
-		this.name = (TextView) this._convertView.findViewById(R.id.assetName);
-		this.count = (TextView) this._convertView.findViewById(R.id.count);
-		this.containerCategory = (TextView) this._convertView.findViewById(R.id.containerCategory);
+		name = (TextView) _convertView.findViewById(R.id.assetName);
+		count = (TextView) _convertView.findViewById(R.id.count);
+		containerCategory = (TextView) _convertView.findViewById(R.id.containerCategory);
 
-		this.name.setTypeface(getThemeTextFont());
-		this.count.setTypeface(getThemeTextFont());
+		name.setTypeface(getThemeTextFont());
+		count.setTypeface(getThemeTextFont());
 	}
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		this.name.setText(getPart().get_assetName());
-		this.count.setText(getPart().get_contentCount());
-		this.containerCategory.setText(getPart().get_containerCategory());
-		loadEveIcon((ImageView) this._convertView.findViewById(R.id.assetIcon), getPart().getTypeID());
+		name.setText(getPart().get_assetName());
+		count.setText(getPart().get_contentCount());
+		containerCategory.setText(getPart().get_containerCategory());
+		loadEveIcon((ImageView) _convertView.findViewById(R.id.assetIcon), getPart().getTypeID());
 		setBackgroundTransparency(R.drawable.bluetraslucent40);
 	}
 
 	@Override
 	protected void createView() {
-		final LayoutInflater mInflater = (LayoutInflater) getContext()
-				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-		this._convertView = mInflater.inflate(R.layout.container4asset, null);
-		this._convertView.setTag(this);
+		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		_convertView = mInflater.inflate(R.layout.container4asset, null);
+		_convertView.setTag(this);
 	}
 }
 
