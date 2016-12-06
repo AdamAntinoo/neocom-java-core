@@ -183,7 +183,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	protected ViewGroup													_progressLayout		= null;
 	protected IMenuActionTarget									_listCallback			= null;
 	private Bundle															_extras						= new Bundle();
-	protected EFragment													_variant					= AppWideConstants.EFragment.UNDEFINED_FRAGMENT;
+	protected EFragment													_variant					= AppWideConstants.EFragment.DEFAULT_VARIANT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 

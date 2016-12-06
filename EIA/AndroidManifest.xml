@@ -105,6 +105,10 @@
             android:name="org.dimensinfin.evedroid.activity.FittingActivity"
             android:label="JOB Planned" >
         </activity>
+        <activity
+            android:name="org.dimensinfin.evedroid.activity.FittingListActivity"
+            android:label="Fitting List" >
+        </activity>
 
         <service
             android:name="org.dimensinfin.evedroid.service.MarketUpdaterService"
