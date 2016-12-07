@@ -1,9 +1,12 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.connector;
 
 // - IMPORT SECTION .........................................................................................
@@ -12,12 +15,13 @@ import org.joda.time.Instant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
- * This class is to allow coding the model outside from application of other external dependencies such as
+ * This class role is to allow the Model to use external environment funtions that can change depeding on the final
+ * imeplementing platforma like Android or Sprint Boot. Allows the coding of the model outside from application of
+* other external dependencies such as
  * file systems or file locations. This is a proxy that will send the messages to the real connector supplied
- * by the application on runtime.
+ * by the application at runtime.
  * 
  * @author Adam Antinoo
- * 
  */
 public class AppConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -109,8 +113,8 @@ public class AppConnector {
 	}
 
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	// - F I E L D - S E C T I O N ............................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 }
 
 // - UNUSED CODE ............................................................................................
