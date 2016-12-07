@@ -39,6 +39,7 @@ public class APIKey extends APIKeyCore implements INeoComNode {
 		super(keyID, verificationCode);
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		//		results.add(this);
@@ -49,7 +50,6 @@ public class APIKey extends APIKeyCore implements INeoComNode {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public HashMap<Long, EveChar> getCharacters() {
 		return characters;
 	}
