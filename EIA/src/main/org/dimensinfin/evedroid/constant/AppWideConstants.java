@@ -171,6 +171,7 @@ public class AppWideConstants {
 		public static final String	PREF_ALLOWMOVEREQUESTS		= "prefkey_AllowMoveRequests";
 		public static final String	PREF_CALCULATEASSETVALUE	= "prefkey_AssetValueCalculation";
 		public static final String	PREF_BLOCKDOWNLOAD				= "prefkey_BlockDownloads";
+		public static final String	PREF_BLOCKMARKET					= "prefkey_BlockMarket";
 	}
 
 	public static final class rendermodes {

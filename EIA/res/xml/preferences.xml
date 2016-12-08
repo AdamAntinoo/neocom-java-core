@@ -5,6 +5,15 @@
         android:title="@string/pref_category_Development" >
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="prefkey_BlockMarket"
+            android:summary="Block the download of market data. Use to remove debug clutter"
+            android:title="Block Market" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="category_Development"
+        android:title="@string/pref_category_Development" >
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="prefkey_BlockDownloads"
             android:summary="Block the download of character data updates and market data. Use to remove debug clutter"
             android:title="Block Downloads" />

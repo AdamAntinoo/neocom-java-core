@@ -263,7 +263,11 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				if (entry.state == ERequestState.PENDING) {
 					// Filter only MARKETDATA requests.
 					if (entry.reqClass == ERequestClass.MARKETDATA) if (limit <= LAUNCH_LIMIT) {
-						launchMarketUpdate(entry);
+						if (blockedMarket())
+							return;
+						else {
+							launchMarketUpdate(entry);
+						}
 					}
 					// Filter the rest of the character data to be updated
 					if (entry.reqClass == ERequestClass.CHARACTERUPDATE) {
@@ -309,6 +313,13 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		// Read the flag values from the preferences.
 		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
 		boolean blockDownload = sharedPrefs.getBoolean(AppWideConstants.preference.PREF_BLOCKDOWNLOAD, false);
+		return blockDownload;
+	}
+
+	private boolean blockedMarket() {
+		// Read the flag values from the preferences.
+		SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_context);
+		boolean blockDownload = sharedPrefs.getBoolean(AppWideConstants.preference.PREF_BLOCKMARKET, false);
 		return blockDownload;
 	}
 

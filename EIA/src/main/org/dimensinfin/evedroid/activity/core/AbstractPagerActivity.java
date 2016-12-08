@@ -11,6 +11,7 @@ import org.dimensinfin.android.mvc.activity.TitledFragment;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
@@ -86,6 +87,11 @@ public abstract class AbstractPagerActivity extends Activity {
 				return false;
 			case R.id.action_fullreload:
 				startActivity(new Intent(this, SplashActivity.class));
+				return true;
+			case R.id.action_downloadlocations:
+				// Insert into the download queue the action to download the locations.
+				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
+				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
 				return true;
 		}
 		return super.onOptionsItemSelected(item);

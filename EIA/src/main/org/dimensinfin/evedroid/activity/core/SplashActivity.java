@@ -27,7 +27,6 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.storage.AppModelStore;
@@ -246,8 +245,8 @@ public class SplashActivity extends Activity {
 		 */
 		private void postUpdateCitadels() {
 			logger.info(">> [SplashActivity.postUpdateCitadels]");
-			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
-			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+			//			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
+			//			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
 			logger.info("<< [SplashActivity.postUpdateCitadels]");
 		}
 

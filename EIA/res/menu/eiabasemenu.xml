@@ -18,5 +18,10 @@
         android:orderInCategory="300"
         android:showAsAction="collapseActionView"
         android:title="Reload"/>
-
+    <item
+        android:id="@+id/action_downloadlocations"
+        android:orderInCategory="400"
+        android:showAsAction="collapseActionView"
+        android:title="Download Locations"/>
+    
 </menu>
