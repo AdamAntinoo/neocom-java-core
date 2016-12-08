@@ -35,7 +35,7 @@ import org.dimensinfin.evedroid.core.INamed;
 import org.dimensinfin.evedroid.core.INamedPart;
 import org.dimensinfin.evedroid.core.IWeigthedNode;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.JobQueue;
 import org.dimensinfin.evedroid.part.APIKeyPart;
@@ -231,12 +231,12 @@ public class EVEDroidApp extends Application implements IConnector {
 						long leftField = -1;
 						long rightField = -1;
 						if (left instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
+							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
 							leftField = intermediate.getKeyID();
 						}
 
 						if (right instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
+							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
 							rightField = intermediate.getKeyID();
 						}
 						if (leftField < rightField) return -1;
@@ -251,12 +251,12 @@ public class EVEDroidApp extends Application implements IConnector {
 						long leftField = -1;
 						long rightField = -1;
 						if (left instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
+							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
 							leftField = intermediate.getKeyID();
 						}
 
 						if (right instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
+							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
 							rightField = intermediate.getKeyID();
 						}
 						if (leftField > rightField) return -1;

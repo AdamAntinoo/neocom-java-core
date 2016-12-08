@@ -24,7 +24,7 @@ import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class UserModelPersistenceHandler implements IPersistentHandler {
@@ -85,7 +85,7 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
-				getStore().setApiKeys((HashMap<Integer, APIKey>) input.readObject());
+				getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
 				//				getStore().setCharacters((HashMap<Long, EveChar>) input.readObject());
 				logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
 				return true;

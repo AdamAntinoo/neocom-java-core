@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.datasource.PilotListDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.part.APIKeyPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
@@ -121,7 +121,7 @@ final class PilotListPartFactory extends PartFactory implements IPartFactory {
 	 */
 	@Override
 	public IEditPart createPart(final IGEFNode node) {
-		if (node instanceof APIKey) {
+		if (node instanceof NeoComApiKey) {
 			AbstractCorePart part = new APIKeyPart((AbstractComplexNode) node).setFactory(this);
 			return part;
 		}

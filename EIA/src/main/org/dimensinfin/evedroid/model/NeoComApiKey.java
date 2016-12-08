@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class APIKey extends APIKeyCore implements INeoComNode {
+public class NeoComApiKey extends APIKeyCore implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long								serialVersionUID		= 2600656062640799339L;
 	private static Logger										logger							= Logger.getLogger("APIKey");
@@ -35,7 +35,7 @@ public class APIKey extends APIKeyCore implements INeoComNode {
 	// - P R O P E R T I E S
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public APIKey(final int keyID, final String verificationCode) {
+	public NeoComApiKey(final int keyID, final String verificationCode) {
 		super(keyID, verificationCode);
 	}
 

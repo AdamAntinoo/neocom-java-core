@@ -20,7 +20,7 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.render.APIKeyRender;
 
 import android.view.View;
@@ -58,8 +58,8 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 		return getCastedModel().getType();
 	}
 
-	public APIKey getCastedModel() {
-		return (APIKey) getModel();
+	public NeoComApiKey getCastedModel() {
+		return (NeoComApiKey) getModel();
 	}
 
 	@Override

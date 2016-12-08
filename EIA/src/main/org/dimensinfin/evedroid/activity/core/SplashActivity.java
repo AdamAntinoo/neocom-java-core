@@ -26,7 +26,7 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveCharCore;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
@@ -353,7 +353,7 @@ public class SplashActivity extends Activity {
 						int keynumber = Integer.parseInt(key);
 						logger.info("-- Inserting API key " + keynumber);
 						//						APIKey api = new APIKey(keynumber, validationcode);
-						APIKey api = NeoComApiKey.build(keynumber, validationcode);
+						NeoComApiKey api = NeoComApiKey.build(keynumber, validationcode);
 						EVEDroidApp.getAppStore().addApiKey(api);
 					} catch (NumberFormatException nfex) {
 					} catch (Exception ex) {

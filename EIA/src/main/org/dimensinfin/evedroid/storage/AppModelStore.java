@@ -19,7 +19,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.model.EveChar;
 
 import android.app.Activity;
@@ -56,7 +56,7 @@ public class AppModelStore extends AbstractModelStore {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Menu											_appMenu					= null;
-	private HashMap<Integer, APIKey>	apiKeys						= new HashMap<Integer, APIKey>();
+	private HashMap<Integer, NeoComApiKey>	apiKeys						= new HashMap<Integer, NeoComApiKey>();
 	private HashMap<Long, EveChar>		charCache					= null;
 	private final long								lastCCPAccessTime	= 0;
 	private transient EveChar					_pilot						= null;
@@ -111,7 +111,7 @@ public class AppModelStore extends AbstractModelStore {
 	 * 
 	 * @param newKey
 	 */
-	public void addApiKey(final APIKey newKey) {
+	public void addApiKey(final NeoComApiKey newKey) {
 		if (null != newKey) {
 			//			HashMap<Integer, APIKey> oldState = (HashMap<Integer, APIKey>) apiKeys.clone();
 			newKey.setParent(this);
@@ -129,7 +129,7 @@ public class AppModelStore extends AbstractModelStore {
 
 	@Override
 	public void clean() {
-		this.apiKeys = new HashMap<Integer, APIKey>();
+		this.apiKeys = new HashMap<Integer, NeoComApiKey>();
 		//		characters = new HashMap<Long, EveChar>();
 	}
 
@@ -153,7 +153,7 @@ public class AppModelStore extends AbstractModelStore {
 		return this._activity;
 	}
 
-	public HashMap<Integer, APIKey> getApiKeys() {
+	public HashMap<Integer, NeoComApiKey> getApiKeys() {
 		return this.apiKeys;
 	}
 
@@ -164,7 +164,7 @@ public class AppModelStore extends AbstractModelStore {
 	public HashMap<Long, EveChar> getCharacters() {
 		if (null == this.charCache) {
 			this.charCache = new HashMap<Long, EveChar>();
-			for (final APIKey key : this.apiKeys.values()) {
+			for (final NeoComApiKey key : this.apiKeys.values()) {
 				final Collection<EveChar> chars = key.getCharacters().values();
 				for (final EveChar eveChar : chars) {
 					this.charCache.put(eveChar.getCharacterID(), eveChar);
@@ -257,13 +257,13 @@ public class AppModelStore extends AbstractModelStore {
 		return getCharacters().get(characterID);
 	}
 
-	public void setApiKeys(final HashMap<Integer, APIKey> newkeys) {
+	public void setApiKeys(final HashMap<Integer, NeoComApiKey> newkeys) {
 		this.apiKeys = newkeys;
 		// we have to reparent the new data because this is not stored on the serialization.
 		// Also reinitialize transient fields that are not saved
-		final Iterator<APIKey> eit = this.apiKeys.values().iterator();
+		final Iterator<NeoComApiKey> eit = this.apiKeys.values().iterator();
 		while (eit.hasNext()) {
-			final APIKey apiKey = eit.next();
+			final NeoComApiKey apiKey = eit.next();
 			apiKey.setParent(this);
 			//			apiKey.initialize();
 		}
