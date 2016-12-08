@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -32,32 +31,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.beimin.eveapi.EveApi;
-import com.beimin.eveapi.character.blueprints.BlueprintListParser;
-import com.beimin.eveapi.character.industryjobs.NewIndustryJobsHistoryParser;
-import com.beimin.eveapi.character.industryjobs.NewIndustryJobsParser;
-import com.beimin.eveapi.character.locations.LocationsParser;
-import com.beimin.eveapi.character.marketorders.MarketOrdersParser;
-import com.beimin.eveapi.character.sheet.ApiSkill;
-import com.beimin.eveapi.character.sheet.CharacterSheetParser;
-import com.beimin.eveapi.character.sheet.CharacterSheetResponse;
-import com.beimin.eveapi.character.skill.intraining.SkillInTrainingParser;
-import com.beimin.eveapi.character.skill.intraining.SkillInTrainingResponse;
 import com.beimin.eveapi.connectors.CachingConnector;
-import com.beimin.eveapi.core.ApiAuthorization;
-import com.beimin.eveapi.corporation.assetlist.AssetListParser;
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.shared.assetlist.AssetListResponse;
-import com.beimin.eveapi.shared.assetlist.EveAsset;
-import com.beimin.eveapi.shared.blueprints.BlueprintListResponse;
-import com.beimin.eveapi.shared.blueprints.EveBlueprint;
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
-import com.beimin.eveapi.shared.industryjobs.ApiNewIndustryJob;
-import com.beimin.eveapi.shared.industryjobs.NewIndustryJobsHistoryResponse;
-import com.beimin.eveapi.shared.industryjobs.NewIndustryJobsResponse;
-import com.beimin.eveapi.shared.locations.ApiLocation;
-import com.beimin.eveapi.shared.locations.LocationsResponse;
-import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
-import com.beimin.eveapi.shared.marketorders.MarketOrdersResponse;
+import com.beimin.eveapi.parser.corporation.AssetListParser;
+import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
+import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
+import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
+import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
+import com.beimin.eveapi.response.shared.AssetListResponse;
+import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -66,25 +49,25 @@ import com.j256.ormlite.stmt.Where;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveChar extends EveCharCore implements INeoComNode {
+public class EveChar extends NeoComCharacter implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long										serialVersionUID		= -955059830168434115L;
-	private static Logger												logger							= Logger.getLogger("EveChar");
-	private static transient CachingConnector		apiCacheConnector		= null;
+	private static final long									serialVersionUID		= -955059830168434115L;
+	private static Logger											logger							= Logger.getLogger("EveChar");
+	private static transient CachingConnector	apiCacheConnector		= null;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private transient Instant										assetsCacheTime			= null;
-	private transient Instant										blueprintsCacheTime	= null;
-	private transient Instant										jobsCacheTime				= null;
-	private transient Instant										marketCacheTime			= null;
+	private transient Instant									assetsCacheTime			= null;
+	private transient Instant									blueprintsCacheTime	= null;
+	private transient Instant									jobsCacheTime				= null;
+	private transient Instant									marketCacheTime			= null;
 
 	// - D E P E N D A N T   P R O P E R T I E S
-	private long																totalAssets					= -1;
-	private CharacterSheetResponse							characterSheet			= null;
-	private transient AssetsManager							assetsManager				= null;
-	private transient SkillInTrainingResponse		skillInTraining			= null;
-	private transient ArrayList<ApiIndustryJob>	industryJobs				= null;
-	private transient ArrayList<Job>						jobList							= null;
+	private long															totalAssets					= -1;
+	//	private CharacterSheetResponse						characterSheet			= null;
+	private transient AssetsManager						assetsManager				= null;
+	//	private transient SkillInTrainingResponse	skillInTraining			= null;
+	//	private transient ArrayList<ApiIndustryJob>	industryJobs				= null;
+	private transient ArrayList<Job>					jobList							= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveChar(final Integer key, final String validation, final long characterID) {
@@ -156,45 +139,45 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		return scheduledSellGroup;
 	}
 
-	/**
-	 * Returns the number of invention jobs that can be launched simultaneously. This will depend on the skills
-	 * <code>Laboratory Operation</code> and <code>Advanced Laboratory Operation</code>.
-	 * 
-	 * @return
-	 */
-	public int calculateInventionQueues() {
-		int queues = 1;
-		final Set<ApiSkill> skills = characterSheet.getSkills();
-		for (final ApiSkill apiSkill : skills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
-				queues += apiSkill.getLevel();
-			}
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
-				queues += apiSkill.getLevel();
-			}
-		}
-		return queues;
-	}
+	//	/**
+	//	 * Returns the number of invention jobs that can be launched simultaneously. This will depend on the skills
+	//	 * <code>Laboratory Operation</code> and <code>Advanced Laboratory Operation</code>.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public int calculateInventionQueues() {
+	//		int queues = 1;
+	//		final Set<ApiSkill> skills = characterSheet.getSkills();
+	//		for (final ApiSkill apiSkill : skills) {
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//		}
+	//		return queues;
+	//	}
 
-	/**
-	 * Returns the number of manufacture jobs that can be launched simultaneously. This will depend on the
-	 * skills <code>Mass Production</code> and <code>Advanced Mass Production</code>.
-	 * 
-	 * @return
-	 */
-	public int calculateManufactureQueues() {
-		int queues = 1;
-		final Set<ApiSkill> skills = characterSheet.getSkills();
-		for (final ApiSkill apiSkill : skills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
-				queues += apiSkill.getLevel();
-			}
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
-				queues += apiSkill.getLevel();
-			}
-		}
-		return queues;
-	}
+	//	/**
+	//	 * Returns the number of manufacture jobs that can be launched simultaneously. This will depend on the
+	//	 * skills <code>Mass Production</code> and <code>Advanced Mass Production</code>.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public int calculateManufactureQueues() {
+	//		int queues = 1;
+	//		final Set<ApiSkill> skills = characterSheet.getSkills();
+	//		for (final ApiSkill apiSkill : skills) {
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//		}
+	//		return queues;
+	//	}
 
 	@Override
 	public void clean() {
@@ -223,6 +206,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	 * For the EveChar the contents provided to the model are empty when the variant is related to the pilot
 	 * list. Maybe in other calls the return would be another list of contents.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		//		if (renderWhenEmpty()) results.add(this);
@@ -232,7 +216,7 @@ public class EveChar extends EveCharCore implements INeoComNode {
 	public void forceRefresh() {
 		clean();
 		assetsManager = new AssetsManager(this);
-		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(characterID);
+		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
 	}
 
 	public long getAssetCount() {
@@ -257,9 +241,9 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		return assetsManager;
 	}
 
-	public ApiAuthorization getAuthorization() {
-		return new ApiAuthorization(keyID, characterID, verificationCode);
-	}
+	//	public ApiAuthorization getAuthorization() {
+	//		return new ApiAuthorization(keyID, characterID, verificationCode);
+	//	}
 
 	public ArrayList<Job> getIndustryJobs() {
 		if (null == jobList) {
@@ -272,14 +256,14 @@ public class EveChar extends EveCharCore implements INeoComNode {
 		return searchMarketOrders();
 	}
 
-	public int getSkillLevel(final int skillID) {
-		// Corporation api will have all skills maxed.
-		if (isCorporation()) return 5;
-		final Set<ApiSkill> skills = characterSheet.getSkills();
-		for (final ApiSkill apiSkill : skills)
-			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
-		return 0;
-	}
+	//	public int getSkillLevel(final int skillID) {
+	//		// Corporation api will have all skills maxed.
+	//		if (isCorporation()) return 5;
+	//		final Set<ApiSkill> skills = characterSheet.getSkills();
+	//		for (final ApiSkill apiSkill : skills)
+	//			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
+	//		return 0;
+	//	}
 
 	public boolean isCorporation() {
 		if (getName().equalsIgnoreCase("Corporation"))

@@ -9,6 +9,7 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.model;
 
+//- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,11 +24,18 @@ import org.dimensinfin.evedroid.enums.EPropertyTypes;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.model.pilot.SkillQueueItem;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.KeyType;
 import com.beimin.eveapi.parser.ApiAuthorization;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
+import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
+import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
+import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
+import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
+import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
+import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -57,6 +65,24 @@ public class NeoComCharacter extends AbstractComplexNode implements INeoComNode 
 		if (null != balanceresponse) {
 			Set<EveAccountBalance> balance = balanceresponse.getAll();
 			if (balance.size() > 0) newchar.setAccountBalance(balance.iterator().next().getBalance());
+		}
+		// Character sheet information
+		CharacterSheetParser sheetparser = new CharacterSheetParser();
+				CharacterSheetResponse sheetresponse=sheetparser.getResponse(apikey.getAuthorization());
+				if (null != sheetresponse) {
+					newchar.setCharacterSheet( sheetresponse);
+				}
+		// Skill list
+		SkillQueueParser skillparser = new SkillQueueParser();
+		SkillQueueResponse skillresponse = skillparser.getResponse(apikey.getAuthorization());
+		if (null != skillresponse) {
+			newchar.setSkillQueue( skillresponse.getAll());
+		}
+		// Skill in training
+		 SkillInTrainingParser trainingparser = new SkillInTrainingParser();
+		 SkillInTrainingResponse trainingresponse = trainingparser.getResponse(apikey.getAuthorization());
+		if (null != skillresponse) {
+			newchar.setSkillInTraining( trainingresponse);
 		}
 		return newchar;
 	}
@@ -94,6 +120,14 @@ public class NeoComCharacter extends AbstractComplexNode implements INeoComNode 
 	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getName() {
+		return delegatedCharacter.getName();
+	}
+
+	public long getCharacterID() {
+		return delegatedCharacter.getCharacterID();
 	}
 
 	protected void setApiKey(NeoComApiKey apikey) {
