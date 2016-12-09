@@ -14,11 +14,11 @@ import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
+import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.PilotListDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.EveChar;
@@ -106,12 +106,14 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 }
 
 // - CLASS IMPLEMENTATION ...................................................................................
-final class PilotListPartFactory extends PartFactory implements IPartFactory {
+final class PilotListPartFactory implements IPartFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	// - F I E L D - S E C T I O N ............................................................................
+	private EFragment variant = AppWideConstants.EFragment.DEFAULT_VARIANT;
+
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotListPartFactory(final EFragment _variant) {
-		super(_variant);
+	public PilotListPartFactory(final EFragment variantSelected) {
+		variant = variantSelected;
 	}
 
 	//- M E T H O D - S E C T I O N ..........................................................................
@@ -130,6 +132,10 @@ final class PilotListPartFactory extends PartFactory implements IPartFactory {
 			return part;
 		}
 		return null;
+	}
+
+	public String getVariant() {
+		return variant.name();
 	}
 }
 

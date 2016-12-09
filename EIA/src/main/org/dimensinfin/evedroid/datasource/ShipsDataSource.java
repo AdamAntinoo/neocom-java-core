@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Region;
@@ -41,7 +41,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	//	private int																				_version					= 0;;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
-	public ShipsDataSource(final DataSourceLocator locator, final PartFactory factory) {
+	public ShipsDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		super(locator, factory);
 	}
 
@@ -73,7 +73,7 @@ public class ShipsDataSource extends SpecialDataSource {
 			final ArrayList<Asset> assetsShips = manager.searchAsset4Category("Ship");
 			if (null == ships) {
 				// Transform the list of assets into a list of ships.
-				this.ships = assetsShips;
+				ships = assetsShips;
 				// Process the list into the classifiers.
 				for (Asset ship : assetsShips) {
 					long locid = ship.getLocationID();
@@ -93,37 +93,14 @@ public class ShipsDataSource extends SpecialDataSource {
 		return _dataModelRoot;
 	}
 
-	/**
-	 * Sets up the model that should be connected to the model root. We can return 3 different models:
-	 * <ul>
-	 * <li>The list of Regions if the Region aggregation is activated and the variant is the Ships By Location
-	 * fragment.</li>
-	 * <li>The list of Locations also if the variant is the Ships By Location fragment.</li>
-	 * <li>The list of Categories if the variant is the Ships By Category.</li>
-	 * </ul>
-	 */
-	private void setupOutputModel() {
-		if (null == _dataModelRoot) {
-			_dataModelRoot = new RootNode();
-		} else {
-			_dataModelRoot.clean();
+	private void add2Category(final String category, final Asset ship) {
+		// Check if the location is already on the array.
+		Separator hit = _categories.get(category);
+		if (null == hit) {
+			hit = new Separator(category);
+			_categories.put(category, hit);
 		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-			if (ifGroupLocations()) {
-				for (Region node : _regions.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			} else {
-				for (ShipLocation node : _locations.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			}
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
-			for (Separator node : _categories.values()) {
-				_dataModelRoot.addChild(node);
-			}
-		}
+		hit.addChild(ship);
 	}
 
 	/**
@@ -176,14 +153,37 @@ public class ShipsDataSource extends SpecialDataSource {
 			return false;
 	}
 
-	private void add2Category(final String category, final Asset ship) {
-		// Check if the location is already on the array.
-		Separator hit = _categories.get(category);
-		if (null == hit) {
-			hit = new Separator(category);
-			_categories.put(category, hit);
+	/**
+	 * Sets up the model that should be connected to the model root. We can return 3 different models:
+	 * <ul>
+	 * <li>The list of Regions if the Region aggregation is activated and the variant is the Ships By Location
+	 * fragment.</li>
+	 * <li>The list of Locations also if the variant is the Ships By Location fragment.</li>
+	 * <li>The list of Categories if the variant is the Ships By Category.</li>
+	 * </ul>
+	 */
+	private void setupOutputModel() {
+		if (null == _dataModelRoot) {
+			_dataModelRoot = new RootNode();
+		} else {
+			_dataModelRoot.clean();
 		}
-		hit.addChild(ship);
+		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
+			if (ifGroupLocations()) {
+				for (Region node : _regions.values()) {
+					_dataModelRoot.addChild(node);
+				}
+			} else {
+				for (ShipLocation node : _locations.values()) {
+					_dataModelRoot.addChild(node);
+				}
+			}
+		}
+		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
+			for (Separator node : _categories.values()) {
+				_dataModelRoot.addChild(node);
+			}
+		}
 	}
 
 	//	@Override

@@ -86,6 +86,10 @@ public class FittingPartFactory implements IPartFactory {
 		// If no part is trapped then result a NOT FOUND mark
 		return new GroupPart(new Separator("-NO data-[" + node.getClass().getName() + "]-"));
 	}
+
+	public String getVariant() {
+		return variant.name();
+	}
 }
 
 // - UNUSED CODE ............................................................................................

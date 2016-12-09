@@ -13,10 +13,9 @@ import org.dimensinfin.core.model.IGEFNode;
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IPartFactory {
 	// - M E T H O D - S E C T I O N ..........................................................................
-//	public AbstractCorePart createPart(AbstractDataSource context, IGEFNode node);
-//
-//public IEditPart createPart(AbstractCorePart abstractCorePart, IGEFNode model);
-public IEditPart createPart(IGEFNode model);
+	public IEditPart createPart(IGEFNode model);
+
+	public String getVariant();
 }
 
 // - UNUSED CODE ............................................................................................

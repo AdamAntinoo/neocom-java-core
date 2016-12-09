@@ -11,19 +11,14 @@
 package org.dimensinfin.android.mvc.core;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IEditPart;
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 /**
  * The baseline implementation for the {@link IEditPart} interface.
@@ -158,90 +153,90 @@ public abstract class AbstractEditPart extends AbstractPropertyChanger implement
 	public void propertyChange(PropertyChangeEvent evt) {
 	}
 
-	/**
-	 * Updates the set of children EditParts so that it is in sync with the model children. This method is
-	 * called from {@link #refresh()}, and may also be called in response to notification from the model. This
-	 * method requires linear time to complete. Clients should call this method as few times as possible.
-	 * Consider also calling {@link #removeChild(IEditPart)} and {@link #addChild(IEditPart, int)} which run in
-	 * constant time.
-	 * <P>
-	 * The update is performed by comparing the existing EditParts with the set of model children returned from
-	 * {@link #getModelChildren()}. EditParts whose models no longer exist are {@link #removeChild(IEditPart)
-	 * removed}. New models have their EditParts {@link #createChild(Object) created}.
-	 * <P>
-	 * This method should <em>not</em> be overridden.
-	 * 
-	 * @see #getModelChildren()
-	 */
-	public void refreshChildren() {
-		logger.info(">> [AbstractEditPart.refreshChildren]");
-		int i;
-		//		AbstractEditPart editPart;
-		Object model;
-
-		// Get the list of children for this Part.
-		List selfChildren = getChildren();
-		int size = selfChildren.size();
-		// This field has the list of Parts pointed by their corresponding model.
-		Map modelToEditPart = Collections.EMPTY_MAP;
-		if (size > 0) {
-			modelToEditPart = new HashMap(size);
-			for (i = 0; i < size; i++) {
-				AbstractEditPart editPart = (AbstractEditPart) selfChildren.get(i);
-				modelToEditPart.put(editPart.getModel(), editPart);
-			}
-		}
-
-		// Get the list of model elements that collaborate to the Part model. This is the complex-simple model transformation.
-		INeoComNode partModel = (INeoComNode) getModel();
-		logger.info("-- [AbstractEditPart.refreshChildren]> partModel: " + partModel);
-		ArrayList<AbstractComplexNode> modelObjects = partModel.collaborate2Model("DEFAULT");
-		logger.info("-- [AbstractEditPart.refreshChildren]> modelObjects: " + modelObjects);
-
-		// Process the list of model children for this Part.
-		for (i = 0; i < modelObjects.size(); i++) {
-			model = modelObjects.get(i);
-
-			// Do a quick check to see if editPart[i] == model[i]
-			AbstractEditPart editPart = (AbstractEditPart) modelToEditPart.get(model);
-			if ((i < selfChildren.size()) && (((IEditPart) selfChildren.get(i)).getModel() == model)) {
-				// But in any case try to update all the children
-				//				editPart = (AbstractEditPart) modelToEditPart.get(model);
-				logger.info("-- [AbstractEditPart.refreshChildren]> model matches. Refreshing children.");
-				if (editPart != null) editPart.refreshChildren();
-				continue;
-			}
-
-			// Look to see if the EditPart is already around but in the wrong location
-			//			editPart = (AbstractEditPart) modelToEditPart.get(model);
-
-			if (editPart != null) {
-				logger.info("-- [AbstractEditPart.refreshChildren]> model found but out of order.");
-				reorderChild(editPart, i);
-			} else {
-				// An EditPart for this model doesn't exist yet. Create and insert one.
-				editPart = (AbstractEditPart) createChild(model);
-				logger.info("-- [AbstractEditPart.refreshChildren]> New Part: " + editPart);
-				// If the factory is unable to create the Part then skip this element or wait to be replaced by a dummy
-				if (null != editPart) {
-					addChild(editPart, i);
-					editPart.refreshChildren();
-				}
-			}
-		}
-
-		// Remove the remaining EditParts
-		size = selfChildren.size();
-		if (i < size) {
-			List trash = new ArrayList(size - i);
-			for (; i < size; i++)
-				trash.add(selfChildren.get(i));
-			for (i = 0; i < trash.size(); i++) {
-				IEditPart ep = (IEditPart) trash.get(i);
-				removeChild(ep);
-			}
-		}
-	}
+	//	/**
+	//	 * Updates the set of children EditParts so that it is in sync with the model children. This method is
+	//	 * called from {@link #refresh()}, and may also be called in response to notification from the model. This
+	//	 * method requires linear time to complete. Clients should call this method as few times as possible.
+	//	 * Consider also calling {@link #removeChild(IEditPart)} and {@link #addChild(IEditPart, int)} which run in
+	//	 * constant time.
+	//	 * <P>
+	//	 * The update is performed by comparing the existing EditParts with the set of model children returned from
+	//	 * {@link #getModelChildren()}. EditParts whose models no longer exist are {@link #removeChild(IEditPart)
+	//	 * removed}. New models have their EditParts {@link #createChild(Object) created}.
+	//	 * <P>
+	//	 * This method should <em>not</em> be overridden.
+	//	 * 
+	//	 * @see #getModelChildren()
+	//	 */
+	//	public void refreshChildren() {
+	//		logger.info(">> [AbstractEditPart.refreshChildren]");
+	//		int i;
+	//		//		AbstractEditPart editPart;
+	//		Object model;
+	//
+	//		// Get the list of children for this Part.
+	//		List selfChildren = getChildren();
+	//		int size = selfChildren.size();
+	//		// This field has the list of Parts pointed by their corresponding model.
+	//		Map modelToEditPart = Collections.EMPTY_MAP;
+	//		if (size > 0) {
+	//			modelToEditPart = new HashMap(size);
+	//			for (i = 0; i < size; i++) {
+	//				AbstractEditPart editPart = (AbstractEditPart) selfChildren.get(i);
+	//				modelToEditPart.put(editPart.getModel(), editPart);
+	//			}
+	//		}
+	//
+	//		// Get the list of model elements that collaborate to the Part model. This is the complex-simple model transformation.
+	//		INeoComNode partModel = (INeoComNode) getModel();
+	//		logger.info("-- [AbstractEditPart.refreshChildren]> partModel: " + partModel);
+	//		ArrayList<AbstractComplexNode> modelObjects = partModel.collaborate2Model(get));
+	//		logger.info("-- [AbstractEditPart.refreshChildren]> modelObjects: " + modelObjects);
+	//
+	//		// Process the list of model children for this Part.
+	//		for (i = 0; i < modelObjects.size(); i++) {
+	//			model = modelObjects.get(i);
+	//
+	//			// Do a quick check to see if editPart[i] == model[i]
+	//			AbstractEditPart editPart = (AbstractEditPart) modelToEditPart.get(model);
+	//			if ((i < selfChildren.size()) && (((IEditPart) selfChildren.get(i)).getModel() == model)) {
+	//				// But in any case try to update all the children
+	//				//				editPart = (AbstractEditPart) modelToEditPart.get(model);
+	//				logger.info("-- [AbstractEditPart.refreshChildren]> model matches. Refreshing children.");
+	//				if (editPart != null) editPart.refreshChildren();
+	//				continue;
+	//			}
+	//
+	//			// Look to see if the EditPart is already around but in the wrong location
+	//			//			editPart = (AbstractEditPart) modelToEditPart.get(model);
+	//
+	//			if (editPart != null) {
+	//				logger.info("-- [AbstractEditPart.refreshChildren]> model found but out of order.");
+	//				reorderChild(editPart, i);
+	//			} else {
+	//				// An EditPart for this model doesn't exist yet. Create and insert one.
+	//				editPart = (AbstractEditPart) createChild(model);
+	//				logger.info("-- [AbstractEditPart.refreshChildren]> New Part: " + editPart);
+	//				// If the factory is unable to create the Part then skip this element or wait to be replaced by a dummy
+	//				if (null != editPart) {
+	//					addChild(editPart, i);
+	//					editPart.refreshChildren();
+	//				}
+	//			}
+	//		}
+	//
+	//		// Remove the remaining EditParts
+	//		size = selfChildren.size();
+	//		if (i < size) {
+	//			List trash = new ArrayList(size - i);
+	//			for (; i < size; i++)
+	//				trash.add(selfChildren.get(i));
+	//			for (i = 0; i < trash.size(); i++) {
+	//				IEditPart ep = (IEditPart) trash.get(i);
+	//				removeChild(ep);
+	//			}
+	//		}
+	//	}
 
 	/**
 	 * Set the primary model object that this EditPart represents. This method is used by an
