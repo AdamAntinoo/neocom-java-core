@@ -125,13 +125,13 @@ final class ExpandableGroup extends Separator {
 //- CLASS IMPLEMENTATION ...................................................................................
 final class FittingListDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID	= 7810087592108417570L;
-	private static Logger											logger						= Logger.getLogger("FittingDataSource");
+	private static final long												serialVersionUID	= 7810087592108417570L;
+	private static Logger														logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Fitting											fit								= null;
-	private HashMap<String, ExpandableGroup>	groups						= new HashMap<String, ExpandableGroup>();
-	private final ExpandableGroup							defaultGroup			= new ExpandableGroup("-UNDEFINED-HULL-");
+	private final Fitting														fit								= null;
+	private final HashMap<String, ExpandableGroup>	groups						= new HashMap<String, ExpandableGroup>();
+	private final ExpandableGroup										defaultGroup			= new ExpandableGroup("-UNDEFINED-HULL-");
 
 	//	private final ArrayList<Asset>						ships							= null;
 
@@ -151,6 +151,7 @@ final class FittingListDataSource extends SpecialDataSource {
 			HashMap<String, Fitting> fitList = store.getFittings();
 			// Create the list of Groups.
 			_dataModelRoot = new RootNode();
+			defaultGroup.clean();
 			initGroups();
 			for (Fitting fit : fitList.values()) {
 				logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
@@ -189,14 +190,57 @@ final class FittingListDataSource extends SpecialDataSource {
 		return new RootNode();
 	}
 
+	/**
+	 * Creates the full list of ship types where to classify the fittings. To optimize and guarantee that the
+	 * list is new every time the DataSource is used we keep the object being created on instantiation but
+	 * cleared before initialization.
+	 */
 	private void initGroups() {
-		groups = new HashMap<String, ExpandableGroup>();
-		groups.put("Interceptor", new ExpandableGroup("Interceptor"));
+		groups.clear();
+		groups.put("Assault Frigate", new ExpandableGroup("Assault Frigate"));
+		groups.put("Attack Battlecruiser", new ExpandableGroup("Attack Battlecruiser"));
 		groups.put("Battleship", new ExpandableGroup("Battleship"));
-		groups.put("Frigate", new ExpandableGroup("Frigate"));
-		groups.put("Cruiser", new ExpandableGroup("Cruiser"));
+		groups.put("Black Ops", new ExpandableGroup("Black Ops"));
+		groups.put("Blockade Runner", new ExpandableGroup("Blockade Runner"));
+		groups.put("Capital Industrial Ship", new ExpandableGroup("Capital Industrial Ship"));
+		groups.put("Capsule", new ExpandableGroup("Capsule"));
+		groups.put("Carrier", new ExpandableGroup("Carrier"));
+		groups.put("Combat Battlecruiser", new ExpandableGroup("Combat Battlecruiser"));
+		groups.put("Combat Recon Ship", new ExpandableGroup("Combat Recon Ship"));
+		groups.put("Command Destroyer", new ExpandableGroup("Command Destroyer"));
+		groups.put("Command Ship", new ExpandableGroup("Command Ship"));
 		groups.put("Covert Ops", new ExpandableGroup("Covert Ops"));
+		groups.put("Cruiser", new ExpandableGroup("Cruiser"));
+		groups.put("Deep Space Transport", new ExpandableGroup("Deep Space Transport"));
+		groups.put("Destroyer", new ExpandableGroup("Destroyer"));
+		groups.put("Dreadnought", new ExpandableGroup("Dreadnought"));
+		groups.put("Electronic Attack Ship", new ExpandableGroup("Electronic Attack Ship"));
+		groups.put("Elite Battleship", new ExpandableGroup("Elite Battleship"));
+		groups.put("Exhumer", new ExpandableGroup("Exhumer"));
+		groups.put("Expedition Frigate", new ExpandableGroup("Expedition Frigate"));
+		groups.put("Force Auxiliary", new ExpandableGroup("Force Auxiliary"));
+		groups.put("Force Recon Ship", new ExpandableGroup("Force Recon Ship"));
+		groups.put("Freighter", new ExpandableGroup("Freighter"));
+		groups.put("Frigate", new ExpandableGroup("Frigate"));
+		groups.put("Heavy Assault Cruiser", new ExpandableGroup("Heavy Assault Cruiser"));
+		groups.put("Heavy Interdiction Cruiser", new ExpandableGroup("Heavy Interdiction Cruiser"));
+		groups.put("Industrial", new ExpandableGroup("Industrial"));
+		groups.put("Industrial Command Ship", new ExpandableGroup("Industrial Command Ship"));
+		groups.put("Interceptor", new ExpandableGroup("Interceptor"));
+		groups.put("Interdictor", new ExpandableGroup("Interdictor"));
+		groups.put("Jump Freighter", new ExpandableGroup("Jump Freighter"));
+		groups.put("Logistics", new ExpandableGroup("Logistics"));
+		groups.put("Logistics Frigate", new ExpandableGroup("Logistics Frigate"));
+		groups.put("Marauder", new ExpandableGroup("Marauder"));
+		groups.put("Mining Barge", new ExpandableGroup("Mining Barge"));
+		groups.put("Prototype Exploration Ship", new ExpandableGroup("Prototype Exploration Ship"));
+		groups.put("Rookie ship", new ExpandableGroup("Rookie ship"));
+		groups.put("Shuttle", new ExpandableGroup("Shuttle"));
+		groups.put("Stealth Bomber", new ExpandableGroup("Stealth Bomber"));
+		groups.put("Strategic Cruiser", new ExpandableGroup("Strategic Cruiser"));
+		groups.put("Supercarrier", new ExpandableGroup("Supercarrier"));
+		groups.put("Tactical Destroyer", new ExpandableGroup("Tactical Destroyer"));
+		groups.put("Titan", new ExpandableGroup("Titan"));
 	}
-
 }
 // - UNUSED CODE ............................................................................................

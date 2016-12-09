@@ -18,5 +18,10 @@
         android:orderInCategory="300"
         android:showAsAction="collapseActionView"
         android:title="Reload"/>
-
+    <item
+        android:id="@+id/action_createFitting"
+        android:orderInCategory="500"
+        android:showAsAction="collapseActionView"
+        android:title="Create Fitting"/>
+    
 </menu>

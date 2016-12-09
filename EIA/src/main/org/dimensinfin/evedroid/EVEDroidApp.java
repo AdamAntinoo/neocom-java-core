@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid;
 
 // - IMPORT SECTION .........................................................................................
@@ -47,7 +49,6 @@ import org.dimensinfin.evedroid.part.ShipPart;
 import org.dimensinfin.evedroid.service.PendingRequestEntry;
 import org.dimensinfin.evedroid.service.TimeTickReceiver;
 import org.dimensinfin.evedroid.storage.AppModelStore;
-import org.dimensinfin.evedroid.storage.UserModelPersistenceHandler;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.w3c.dom.Document;
@@ -435,11 +436,11 @@ public class EVEDroidApp extends Application implements IConnector {
 	 * @return
 	 */
 	public static AppModelStore getAppStore() {
-		if (null == appModelStore) {
-			appModelStore = new AppModelStore(new UserModelPersistenceHandler());
-			appModelStore.restore();
-		}
-		return appModelStore;
+		//		if (null == appModelStore) {
+		//			appModelStore = new AppModelStore(new UserModelPersistenceHandler());
+		//			appModelStore.restore();
+		//		}
+		return AppModelStore.getSingleton();
 	}
 
 	public static boolean getBooleanPreference(final String preferenceName, final boolean defaultValue) {

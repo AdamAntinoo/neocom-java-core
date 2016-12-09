@@ -1,12 +1,22 @@
-//	PROJECT:        EveIndustrialAssistant (EIA)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Minery and mainly on Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.storage;
 
-// - IMPORT SECTION .........................................................................................
+//- IMPORT SECTION .........................................................................................
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,8 +25,8 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
+import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
@@ -25,7 +35,6 @@ import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.Fitting;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.Menu;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -53,10 +62,73 @@ import android.view.Menu;
 public class AppModelStore extends AbstractModelStore {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID	= 8777607802616543118L;
-	private static Logger											logger						= Logger.getLogger("AppModelStore");
+	private static final long			serialVersionUID	= 8777607802616543118L;
+	private static Logger					logger						= Logger.getLogger("AppModelStore");
+	private static AppModelStore	singleton					= null;
+
+	/**
+	 * Returns the single global instance of the Store to be used as an instance. In case the instance does not
+	 * exists then we initiate the initialization process trying to create the most recent instance we have
+	 * recorded or recreate it from scratch from the api_list file.
+	 * 
+	 * @return the single global instance
+	 */
+	public static AppModelStore getSingleton() {
+		if (null == singleton) {
+			// Initiate the recovery.
+			// Try to read from persistence file.
+			singleton = new AppModelStore(new UserModelPersistenceHandler());
+			singleton.restore();
+			if (!singleton.isRestored()) {
+				// Create a new from scratch. Read the api key list.
+				readApiKeys();
+			}
+		}
+		return singleton;
+	}
+
+	private static void readApiKeys() {
+		logger.info(">> [AppModelStore.readApiKeys]");
+		try {
+			// Read the contents of the character information.
+			final File characterFile = AppConnector.getStorageConnector()
+					.accessAppStorage(AppConnector.getResourceString(R.string.apikeysfilename));
+			InputStream is = new BufferedInputStream(new FileInputStream(characterFile));
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			String line = br.readLine();
+			while (null != line) {
+				try {
+					String[] parts = line.split(":");
+					String key = parts[0];
+					String validationcode = parts[1];
+					int keynumber = Integer.parseInt(key);
+					logger.info("-- Inserting API key " + keynumber);
+					APIKey api = new APIKey(keynumber, validationcode);
+					if (null != singleton) {
+						singleton.addApiKey(api);
+					}
+				} catch (NumberFormatException nfex) {
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				line = br.readLine();
+			}
+			if (null != br) {
+				br.close();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.info("<< [AppModelStore.readApiKeys]");
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
+	/** Check to verify if the recovery process is successful. */
+	private boolean														recovered					= false;
 	/** Reference to the application menu to make it accessible to any level. */
 	private transient Menu										_appMenu					= null;
 	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
@@ -72,31 +144,12 @@ public class AppModelStore extends AbstractModelStore {
 	private final long												lastCCPAccessTime	= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AppModelStore(final IPersistentHandler storageHandler) {
+	private AppModelStore(final IPersistentHandler storageHandler) {
 		super();
 		// On creation we can set the proper model persistence handler.
 		try {
 			setPersistentStorage(storageHandler);
 			setAutomaticUpdate(true);
-
-			if (AppWideConstants.DEVELOPMENT) {
-				// Create demo fittings to test the save/restore and continue the development.
-				Fitting onConstructionFit = new Fitting();
-				onConstructionFit.setName("Testing - Crusader");
-				onConstructionFit.addHull(11184);
-				onConstructionFit.fitModule(6719, 4);
-				onConstructionFit.fitModule(5973);
-				onConstructionFit.fitModule(5405);
-				onConstructionFit.fitModule(5839);
-				onConstructionFit.fitModule(5849);
-				onConstructionFit.fitModule(11563);
-				onConstructionFit.fitModule(33076);
-				onConstructionFit.fitRig(26929);
-				onConstructionFit.fitRig(26929);
-				onConstructionFit.addCargo(244, 4);
-				onConstructionFit.addCargo(240, 4);
-				fittings.put(onConstructionFit.getName(), onConstructionFit);
-			}
 		} catch (final Exception ex) {
 			// TODO This is a quite serious error because invalidates any storage of the model data
 			ex.printStackTrace();
@@ -251,6 +304,14 @@ public class AppModelStore extends AbstractModelStore {
 	}
 
 	/**
+	 * Refreshes the api keys and all other depending structures from the api list file. Keeps as much of the
+	 * current information as possible while updating the list of keys.
+	 */
+	public void refresh() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
 	 * Restores the stored state from the disk file. If there any problem the method returns true.
 	 * 
 	 * @return <code>true</code> if there is a problem and the restore was not executed.
@@ -262,7 +323,7 @@ public class AppModelStore extends AbstractModelStore {
 		// REFACTOR - Optimize the outpost by forcing a read at this point.
 		//		AppConnector.getDBConnector().searchLocationbyID(61000890);
 		if (state) {
-			Log.i("AppModelStore", "~~ Time lapse for APPSTORE[RESTORE] - " + AppConnector.timeLapse());
+			logger.info("~~ Time lapse for APPSTORE[RESTORE] - " + AppConnector.timeLapse());
 			return state;
 		} else {
 			// The handler was not able to retrieve the file. Possibly because there was no file.
@@ -280,9 +341,10 @@ public class AppModelStore extends AbstractModelStore {
 		if (isDirty()) {
 			// Clean the dirty flag.
 			setDirty(false);
+			recovered = true;
 			AppConnector.startChrono();
 			final boolean state = super.save();
-			Log.i("AppModelStore", "~~ Time lapse for APPSTORE[SAVE] - " + AppConnector.timeLapse());
+			logger.info("~~ Time lapse for APPSTORE[SAVE] - " + AppConnector.timeLapse());
 			return state;
 		} else
 			return false;
@@ -332,6 +394,11 @@ public class AppModelStore extends AbstractModelStore {
 		//		buffer.append(" characters: ").append(characters.size());
 		buffer.append(" ]");
 		return buffer.toString();
+	}
+
+	private boolean isRestored() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
 
