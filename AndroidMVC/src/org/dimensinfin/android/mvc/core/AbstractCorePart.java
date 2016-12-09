@@ -47,6 +47,11 @@ public abstract class AbstractCorePart extends AbstractEditPart {
 		super(model);
 	}
 
+	public AbstractCorePart(RootNode model, IPartFactory factory) {
+		super(model);
+		_factory = factory;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Returns a numeric identifier for this part model item that should be unique from all other system wide
@@ -175,8 +180,19 @@ public abstract class AbstractCorePart extends AbstractEditPart {
 		return getPartFactory().createPart(model);
 	}
 
-	private IPartFactory getPartFactory() {
-		return _factory;
+	/**
+	 * The factory is set on the Root parts. Most of the other parts do not declare it or is not setup. To
+	 * detect this problem and correct if if we detect the null we search for the parent until a factory is
+	 * found.
+	 * 
+	 * @return
+	 */
+	protected IPartFactory getPartFactory() {
+		if (null == _factory) {
+			// Search at the parent 
+			return ((AbstractCorePart) getParentPart()).getPartFactory();
+		} else
+			return _factory;
 	}
 }
 

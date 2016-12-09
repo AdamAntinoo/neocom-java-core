@@ -24,14 +24,14 @@ public class RootPart extends AbstractCorePart {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -8085543451527813221L;
 	private static Logger			logger						= Logger.getLogger("SeparatorPart");
-	private IPartFactory			_factory					= null;
+	//	private IPartFactory			_factory					= null;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public RootPart(final RootNode node, IPartFactory factory) {
-		super(node);
-		_factory = factory;
+		super(node, factory);
+		//		_factory = factory;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -95,15 +95,15 @@ public class RootPart extends AbstractCorePart {
 	 */
 	@Override
 	protected IEditPart createChild(final Object model) {
-		IPartFactory factory = getRoot().getFactory();
+		IPartFactory factory = getRoot().getPartFactory();
 		IEditPart part = factory.createPart((IGEFNode) model);
 		part.setParent(this);
 		return part;
 	}
 
-	protected IPartFactory getFactory() {
-		return _factory;
-	}
+	//	protected IPartFactory getFactory() {
+	//		return _factory;
+	//	}
 
 	/**
 	 * A RooPart has no visuals, but other Parts may have.

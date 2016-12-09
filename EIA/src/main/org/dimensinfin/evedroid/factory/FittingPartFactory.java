@@ -53,7 +53,7 @@ public class FittingPartFactory implements IPartFactory {
 		// Set of Parts for the list of fittings.
 		if (variant == AppWideConstants.EFragment.FITTING_LIST) {
 			if (node instanceof Separator) {
-				GroupPart part = new GroupPart((Separator) node);
+				GroupPart part = (GroupPart) new GroupPart((Separator) node).setFactory(this);
 				return part;
 			}
 			if (node instanceof Fitting) {
