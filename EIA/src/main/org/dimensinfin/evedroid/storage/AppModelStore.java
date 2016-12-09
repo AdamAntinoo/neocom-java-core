@@ -319,12 +319,12 @@ public class AppModelStore extends AbstractModelStore {
 	@Override
 	public boolean restore() {
 		AppConnector.startChrono();
-		final boolean state = super.restore();
+		recovered = super.restore();
 		// REFACTOR - Optimize the outpost by forcing a read at this point.
 		//		AppConnector.getDBConnector().searchLocationbyID(61000890);
-		if (state) {
+		if (recovered) {
 			logger.info("~~ Time lapse for APPSTORE[RESTORE] - " + AppConnector.timeLapse());
-			return state;
+			return recovered;
 		} else {
 			// The handler was not able to retrieve the file. Possibly because there was no file.
 			setDirty(true);
@@ -397,8 +397,7 @@ public class AppModelStore extends AbstractModelStore {
 	}
 
 	private boolean isRestored() {
-		// TODO Auto-generated method stub
-		return false;
+		return recovered;
 	}
 }
 

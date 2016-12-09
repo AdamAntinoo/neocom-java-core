@@ -21,7 +21,6 @@ import org.xml.sax.XMLReader;
 
 import com.beimin.eveapi.core.AbstractContentHandler;
 import com.beimin.eveapi.core.ApiAuth;
-import com.beimin.eveapi.core.ApiPage;
 import com.beimin.eveapi.core.ApiRequest;
 import com.beimin.eveapi.core.ApiResponse;
 import com.beimin.eveapi.exception.ApiException;
@@ -175,7 +174,7 @@ public class ApiConnector {
 	protected Map<String, String> getParams(final ApiRequest request) {
 		Map<String, String> result = new HashMap<String, String>();
 		result.put("version", Integer.toString(request.getVersion()));
-		if (request.page == ApiPage.ASSET_LIST) result.put("flat", "1");
+		//		if (request.page == ApiPage.ASSET_LIST) result.put("flat", "1");
 		ApiAuth<?> auth = request.getAuth();
 		if (auth != null) {
 			result.putAll(auth.getParams());
