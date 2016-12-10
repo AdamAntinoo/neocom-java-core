@@ -59,7 +59,7 @@ public final class PilotListDataSource extends SpecialDataSource {
 		// Add all the nodes to the new root
 		for (NeoComApiKey key : keys.values()) {
 			_dataModelRoot.addChild(key);
-			logger.info("-- PilotListDataSource.collaborate2Model-Adding " + key.getKeyID() + " to the _dataModelRoot");
+			logger.info("-- PilotListDataSource.collaborate2Model-Adding " + key.getKey() + " to the _dataModelRoot");
 		}
 		logger.info("<< PilotListDataSource.collaborate2Model");
 		return _dataModelRoot;

@@ -9,11 +9,10 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.connector;
 
+//- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.evedroid.core.INeoComModelStore;
-import org.dimensinfin.evedroid.model.AppModelStore;
-// - IMPORT SECTION .........................................................................................
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 

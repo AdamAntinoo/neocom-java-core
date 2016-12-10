@@ -56,9 +56,9 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
-	private static Logger logger = Logger.getLogger("AndroidDatabaseConnector");
+	private static Logger											logger										= Logger.getLogger("AndroidDatabaseConnector");
 
-	private static final String SELECT_ITEM_BYID = "SELECT it.typeID AS typeID, it.typeName AS typeName"
+	private static final String								SELECT_ITEM_BYID					= "SELECT it.typeID AS typeID, it.typeName AS typeName"
 			+ " , ig.groupName AS groupName" + " , ic.categoryName AS categoryName" + " , it.basePrice AS basePrice"
 			+ " , it.volume AS volume" + " , IFNULL(img.metaGroupName, " + '"' + "NOTECH" + '"' + ") AS Tech"
 			+ " FROM invTypes it" + " LEFT OUTER JOIN invGroups ig ON ig.groupID = it.groupID"
@@ -66,40 +66,39 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			+ " LEFT OUTER JOIN invMetaTypes imt ON imt.typeID = it.typeID"
 			+ " LEFT OUTER JOIN invMetaGroups img ON img.metaGroupID = imt.metaGroupID" + " WHERE it.typeID = ?";
 
-	private static final String SELECT_LOCATIONBYID = "SELECT md.itemID AS locationID, md.typeID AS typeID, md.itemName AS locationName, md.security AS security"
+	private static final String								SELECT_LOCATIONBYID				= "SELECT md.itemID AS locationID, md.typeID AS typeID, md.itemName AS locationName, md.security AS security"
 			+ " , IFNULL(md.solarSystemID, -1) AS systemID, ms.solarSystemName AS system"
 			+ " , IFNULL(md.constellationID, -1) AS constellationID, mc.constellationName AS constellation"
 			+ " , IFNULL(md.regionID, -1) AS regionID, mr.regionName AS region" + " FROM mapDenormalize md"
 			+ " LEFT OUTER JOIN mapRegions mr ON mr.regionID = md.regionID"
 			+ " LEFT OUTER JOIN mapConstellations mc ON mc.constellationID = md.constellationID"
 			+ " LEFT OUTER JOIN mapSolarSystems ms ON ms.solarSystemID = md.solarSystemID" + " WHERE itemID = ?";
-	private static final String SELECT_MATERIAL_USAGE = "SELECT typeID, materialTypeID, quantity FROM industryActivityMaterials WHERE typeID = ? AND activityID = 1";
-	private static final String LOM4BLUEPRINT = "SELECT iam.typeID, itb.typeName, iam.materialTypeID, it.typeName, ig.groupName, ic.categoryName, iam.quantity, iam.consume"
+	private static final String								SELECT_MATERIAL_USAGE			= "SELECT typeID, materialTypeID, quantity FROM industryActivityMaterials WHERE typeID = ? AND activityID = 1";
+	private static final String								LOM4BLUEPRINT							= "SELECT iam.typeID, itb.typeName, iam.materialTypeID, it.typeName, ig.groupName, ic.categoryName, iam.quantity, iam.consume"
 			+ " FROM industryActivityMaterials iam, invTypes itb, invTypes it, invGroups ig, invCategories ic"
 			+ " WHERE iam.typeID = ?" + " AND iam.activityID = 1" + " AND itb.typeID = iam.typeID"
-			+ " AND it.typeID = iam.materialTypeID" + " AND ig.groupID = it.groupID"
-			+ " AND ic.categoryID = ig.categoryID";
+			+ " AND it.typeID = iam.materialTypeID" + " AND ig.groupID = it.groupID" + " AND ic.categoryID = ig.categoryID";
 
-	private static final String TECH4BLUEPRINT = "SELECT iap.typeID, it.typeName, imt.metaGroupID, img.metaGroupName"
-			+ " FROM industryActivityProducts iap, invTypes it, invMetaTypes imt, invMetaGroups img"
-			+ " WHERE it.typeID =?" + " AND iap.typeID = it.typeID" + " AND imt.typeID = productTypeID"
-			+ " AND img.metaGroupID = imt.metaGroupID" + " AND iap.activityID = 1";
+	private static final String								TECH4BLUEPRINT						= "SELECT iap.typeID, it.typeName, imt.metaGroupID, img.metaGroupName"
+			+ " FROM industryActivityProducts iap, invTypes it, invMetaTypes imt, invMetaGroups img" + " WHERE it.typeID =?"
+			+ " AND iap.typeID = it.typeID" + " AND imt.typeID = productTypeID" + " AND img.metaGroupID = imt.metaGroupID"
+			+ " AND iap.activityID = 1";
 
-	private static final String REFINING_ASTEROID = "SELECT itm.materialTypeID AS materialTypeID, itm.quantity AS qty"
+	private static final String								REFINING_ASTEROID					= "SELECT itm.materialTypeID AS materialTypeID, itm.quantity AS qty"
 			+ " , it.typeName AS materialName" + " , ito.portionSize AS portionSize"
 			+ " FROM invTypeMaterials itm, invTypes it, invTypes ito" + " WHERE itm.typeID = ?"
 			+ " AND it.typeID = itm.materialTypeID" + " AND ito.typeID = itm.typeID" + " ORDER BY itm.materialTypeID";
 
-	private static final String INDUSTRYACTIVITYMATERIALS = "SELECT materialTypeID, quantity, consume FROM industryActivityMaterials WHERE typeID = ? AND activityID = 8";
-	private static final String STATIONTYPE = "SELECT stationTypeID FROM staStations WHERE stationID = ?";
-	private static final String JOB_COMPLETION_TIME = "SELECT typeID, time FROM industryActivity WHERE typeID = ? AND activityID = ?";
-	private static final String CHECK_INVENTION = "SELECT count(*) AS counter" + " FROM industryActivityProducts iap"
-			+ " WHERE iap.typeID = ?" + " AND iap.activityID = 8";
-	private static final String INVENTION_PRODUCT = "SELECT productTypeID FROM industryActivityProducts WHERE typeID = ? AND activityID = 8";
-	private static final String CHECK_MANUFACTURABLE = "SELECT count(*) AS counter FROM industryActivityProducts iap WHERE iap.productTypeID = ? AND iap.activityID = 1";
-	private static final String CHECK_REACTIONABLE = "SELECT count(*) AS counter FROM industryActivityProducts iap WHERE iap.productTypeID = ? AND iap.activityID = 1";
-	private static final String CHECK_PLANETARYPRODUCED = "SELECT count(*) AS counter FROM industryActivityProducts iap WHERE iap.productTypeID = ? AND iap.activityID = 1";
-	private static final String REACTION_COMPONENTS = "SELECT" + "   invTypeReactions.reactionTypeID"
+	private static final String								INDUSTRYACTIVITYMATERIALS	= "SELECT materialTypeID, quantity, consume FROM industryActivityMaterials WHERE typeID = ? AND activityID = 8";
+	private static final String								STATIONTYPE								= "SELECT stationTypeID FROM staStations WHERE stationID = ?";
+	private static final String								JOB_COMPLETION_TIME				= "SELECT typeID, time FROM industryActivity WHERE typeID = ? AND activityID = ?";
+	private static final String								CHECK_INVENTION						= "SELECT count(*) AS counter"
+			+ " FROM industryActivityProducts iap" + " WHERE iap.typeID = ?" + " AND iap.activityID = 8";
+	private static final String								INVENTION_PRODUCT					= "SELECT productTypeID FROM industryActivityProducts WHERE typeID = ? AND activityID = 8";
+	private static final String								CHECK_MANUFACTURABLE			= "SELECT count(*) AS counter FROM industryActivityProducts iap WHERE iap.productTypeID = ? AND iap.activityID = 1";
+	private static final String								CHECK_REACTIONABLE				= "SELECT count(*) AS counter FROM industryActivityProducts iap WHERE iap.productTypeID = ? AND iap.activityID = 1";
+	private static final String								CHECK_PLANETARYPRODUCED		= "SELECT count(*) AS counter FROM industryActivityProducts iap WHERE iap.productTypeID = ? AND iap.activityID = 1";
+	private static final String								REACTION_COMPONENTS				= "SELECT" + "   invTypeReactions.reactionTypeID"
 			+ " , invTypes.typeID, invTypes.typeName" + " , invTypeReactions.input"
 			+ " , COALESCE(dgmTypeAttributes.valueInt, dgmTypeAttributes.valueFloat) * invTypeReactions.quantity AS quantity"
 			+ " FROM invTypeReactions, dgmTypeAttributes, invTypes" + " WHERE"
@@ -109,15 +108,15 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
-	private Context _context = null;
-	private SQLiteDatabase staticDatabase = null;
-	private SQLiteDatabase ccpDatabase = null;
-	private EveDroidDBHelper appDatabaseHelper = null;
-	private final SparseArray<EveItem> itemCache = new SparseArray<EveItem>();
-	private final SparseArray<MarketDataSet> buyMarketDataCache = new SparseArray<MarketDataSet>();
-	private final SparseArray<MarketDataSet> sellMarketDataCache = new SparseArray<MarketDataSet>();
-	private final SparseArray<Outpost> outpostsCache = new SparseArray<Outpost>();
-	private final HashMap<Long, Asset> containerCache = new HashMap<Long, Asset>();;
+	private Context														_context									= null;
+	private SQLiteDatabase										staticDatabase						= null;
+	private SQLiteDatabase										ccpDatabase								= null;
+	private EveDroidDBHelper									appDatabaseHelper					= null;
+	private final SparseArray<EveItem>				itemCache									= new SparseArray<EveItem>();
+	private final SparseArray<MarketDataSet>	buyMarketDataCache				= new SparseArray<MarketDataSet>();
+	private final SparseArray<MarketDataSet>	sellMarketDataCache				= new SparseArray<MarketDataSet>();
+	private final SparseArray<Outpost>				outpostsCache							= new SparseArray<Outpost>();
+	private final HashMap<Long, Asset>				containerCache						= new HashMap<Long, Asset>();;
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -136,10 +135,9 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * removes from the application database any asset and blueprint that
-	 * contains the special -1 code as the owner identifier. Those records are
-	 * from older downloads and have to be removed to avoid merging with the new
-	 * download.
+	 * removes from the application database any asset and blueprint that contains the special -1 code as the
+	 * owner identifier. Those records are from older downloads and have to be removed to avoid merging with the
+	 * new download.
 	 */
 	public synchronized void clearInvalidRecords() {
 		SQLiteDatabase database = null;
@@ -214,8 +212,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Opens a SQLite database to get access to the Items and locations. If
-	 * there is any problem the method returns true.
+	 * Opens a SQLite database to get access to the Items and locations. If there is any problem the method
+	 * returns true.
 	 * 
 	 * @return <code>true</code> if there was any problem.
 	 */
@@ -261,8 +259,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Like the other initialization methods this return a true if there was any
-	 * problem during the process.
+	 * Like the other initialization methods this return a true if there was any problem during the process.
 	 * 
 	 * @return
 	 */
@@ -320,10 +317,9 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Changes the owner id for all records from a new download with the id of
-	 * the current character. This completes the download and the assignment of
-	 * the resources to the character without interrupting the processing of
-	 * data by the application.
+	 * Changes the owner id for all records from a new download with the id of the current character. This
+	 * completes the download and the assignment of the resources to the character without interrupting the
+	 * processing of data by the application.
 	 */
 	public synchronized void replaceAssets(final long characterID) {
 		SQLiteDatabase database = null;
@@ -436,9 +432,26 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		return hit;
 	}
 
+	public ArrayList<Asset> searchAssetContainedAt(final long characterID, final long containerId) {
+		// Select assets for the owner and with an specific type id.
+		List<Asset> assetList = new ArrayList<Asset>();
+		try {
+			Dao<Asset, String> assetDao = getAssetDAO();
+			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
+			Where<Asset, String> where = queryBuilder.where();
+			where.eq("ownerID", characterID);
+			where.and();
+			where.eq("parentAssetID", containerId);
+			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			assetList = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<Asset>) assetList;
+	}
+
 	/**
-	 * Returns the blueprint id that matched this module from the
-	 * <code>invBlueprintTypes</code> table.
+	 * Returns the blueprint id that matched this module from the <code>invBlueprintTypes</code> table.
 	 */
 	public int searchBlueprint4Module(final int moduleID) {
 		try {
@@ -468,9 +481,9 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		AppConnector.startChrono();
 		try {
 			// if (null == ccpDatabase) ccpDatabase = getCCPDatabase();
-			final Cursor cursor = getCCPDatabase()
-					.rawQuery("SELECT typeID FROM industryActivityProducts WHERE productTypeID in ( " + idList
-							+ " ) AND activityID = 8", null);
+			final Cursor cursor = getCCPDatabase().rawQuery(
+					"SELECT typeID FROM industryActivityProducts WHERE productTypeID in ( " + idList + " ) AND activityID = 8",
+					null);
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
 					blueprintIds.add(new Integer(cursor.getInt(cursor.getColumnIndex("typeID"))));
@@ -506,11 +519,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Search on the eve.db database for the attributes that describe an Item.
-	 * Items are the lowest data structure for EVE resources or modules.
-	 * Everything on Eve is an Item. We detect blueprints that require a
-	 * different treatment and also we check for the availability of the item at
-	 * the current cache if implemented.
+	 * Search on the eve.db database for the attributes that describe an Item. Items are the lowest data
+	 * structure for EVE resources or modules. Everything on Eve is an Item. We detect blueprints that require a
+	 * different treatment and also we check for the availability of the item at the current cache if
+	 * implemented.
 	 */
 	public EveItem searchItembyID(final int typeID) {
 		// Search the item on the cache.
@@ -657,8 +669,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			if (null == ccpDatabase) {
 				ccpDatabase = getCCPDatabase();
 			}
-			Cursor cursor = ccpDatabase.rawQuery(SELECT_MATERIAL_USAGE,
-					new String[] { Integer.valueOf(itemID).toString() });
+			Cursor cursor = ccpDatabase.rawQuery(SELECT_MATERIAL_USAGE, new String[] { Integer.valueOf(itemID).toString() });
 			int blueprintId = -1;
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -682,8 +693,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				cursor = ccpDatabase.rawQuery(
 						"SELECT ais.typeID, ais.skillID, ais.level, it.typeName FROM industryActivitySkills ais, invTypes it WHERE ais.typeID = ? AND ais.activityID = 1 AND it.typeID=ais.skillID",
 						new String[] { Integer.valueOf(itemID).toString() });
-				if (null == cursor)
-					throw new Exception("E> Invalid cursor or empty.");
+				if (null == cursor) throw new Exception("E> Invalid cursor or empty.");
 				while (cursor.moveToNext()) {
 					// The the data of the resource. Check for blueprints.
 					int skillID = cursor.getInt(cursor.getColumnIndex("skillID"));
@@ -701,8 +711,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		} catch (final Exception ex) {
 			logger.severe("E> Error searching for material <" + itemID + "> not found.");
 		}
-		Log.i("DBQUERY.TIME", "~~ Time lapse for [SELECT LOM " + itemID + "] - [" + buildJob.size() + "] "
-				+ AppConnector.timeLapse());
+		Log.i("DBQUERY.TIME",
+				"~~ Time lapse for [SELECT LOM " + itemID + "] - [" + buildJob.size() + "] " + AppConnector.timeLapse());
 		// Log.i("AndroidDatabaseConnector", "<<
 		// AndroidDatabaseConnector.searchListOfMaterials " + buildJob.size());
 		return buildJob;
@@ -715,8 +725,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			if (null == ccpDatabase) {
 				ccpDatabase = getCCPDatabase();
 			}
-			Cursor cursor = ccpDatabase.rawQuery(REACTION_COMPONENTS,
-					new String[] { Integer.valueOf(itemID).toString() });
+			Cursor cursor = ccpDatabase.rawQuery(REACTION_COMPONENTS, new String[] { Integer.valueOf(itemID).toString() });
 			// int blueprintId = -1;
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -766,11 +775,161 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		} catch (final Exception ex) {
 			logger.severe("E> Error searching for material <" + itemID + "> not found.");
 		}
-		Log.i("DBQUERY.TIME", "~~ Time lapse for [SELECT LOM " + itemID + "] - [" + buildJob.size() + "] "
-				+ AppConnector.timeLapse());
+		Log.i("DBQUERY.TIME",
+				"~~ Time lapse for [SELECT LOM " + itemID + "] - [" + buildJob.size() + "] " + AppConnector.timeLapse());
 		// Log.i("AndroidDatabaseConnector", "<<
 		// AndroidDatabaseConnector.searchListOfMaterials " + buildJob.size());
 		return buildJob;
+	}
+
+	/**
+	 * Loates the systema nd other information for a location based on the ID received as a parameter. New
+	 * implementation use this ID to calculate if this matches a corporation outpost or a corporation office
+	 * hangar.
+	 */
+	public EveLocation searchLocationbyID(long locationID) {
+		EveLocation hit = new EveLocation(locationID);
+		// Check if a corporation hangar. ID > 66000000
+		if (locationID > 66000000) {
+			locationID -= 6000001;
+		}
+		try {
+			final Cursor cursor = getCCPDatabase().rawQuery(SELECT_LOCATIONBYID,
+					new String[] { Long.valueOf(locationID).toString() });
+			if (null != cursor) {
+				boolean detected = false;
+				if (cursor.moveToFirst()) {
+					detected = true;
+					// Check returned values when doing the assignments.
+					long fragmentID = cursor.getLong(cursor.getColumnIndex("systemID"));
+					if (fragmentID > 0) {
+						hit.setSystemID(fragmentID);
+						hit.setSystem(cursor.getString(cursor.getColumnIndex("system")));
+					} else {
+						hit.setSystem(cursor.getString(cursor.getColumnIndex("locationName")));
+					}
+					fragmentID = cursor.getLong(cursor.getColumnIndex("constellationID"));
+					if (fragmentID > 0) {
+						hit.setConstellationID(fragmentID);
+						hit.setConstellation(cursor.getString(cursor.getColumnIndex("constellation")));
+					}
+					fragmentID = cursor.getLong(cursor.getColumnIndex("regionID"));
+					if (fragmentID > 0) {
+						hit.setRegionID(fragmentID);
+						hit.setRegion(cursor.getString(cursor.getColumnIndex("region")));
+					}
+					hit.setTypeID(cursor.getInt(cursor.getColumnIndex("typeID")));
+					hit.setStation(cursor.getString(cursor.getColumnIndex("locationName")));
+					hit.setLocationID(cursor.getLong(cursor.getColumnIndex("locationID")));
+					hit.setSecurity(cursor.getString(cursor.getColumnIndex("security")));
+					cursor.close();
+				}
+				if (!detected) {
+					// Search the location on the list of outposts.
+					hit = searchOutpostbyID(locationID);
+				}
+			}
+		} catch (final Exception ex) {
+			logger.warning("Location <" + locationID + "> not found.");
+		}
+		return hit;
+	}
+
+	public EveLocation searchLocationBySystem(final String name) {
+		final EveLocation newLocation = new EveLocation();
+		try {
+			final Cursor cursor = getCCPDatabase()
+					.rawQuery("SELECT solarSystemID from mapSolarSystems WHERE solarSystemName = ?", new String[] { name });
+			if (null != cursor) {
+				if (cursor.moveToFirst()) {
+					int locationID = cursor.getInt(cursor.getColumnIndex("solarSystemID"));
+					cursor.close();
+					return searchLocationbyID(locationID);
+				}
+			}
+		} catch (final Exception ex) {
+			logger.warning("W> Location <" + name + "> not found.");
+		}
+		return newLocation;
+	}
+
+	/**
+	 * Search for this data on the cache. <br>
+	 * The cache used for the search depends on the side parameter received on the call. All default prices are
+	 * references to the cost of the price to be spent to buy the item.<br>
+	 * If not found on the memory cache then try to load from the serialized version stored on disk. In case
+	 * this action also fails return an empty data structure with the minimum filed data information from the
+	 * related item and fire the update request.
+	 * 
+	 * @param itemID
+	 *          item id code of the item assigned to this market request.
+	 * @param side
+	 *          differentiates if we like to BUY or SELL the item.
+	 * @return the cached data or an empty locator ready to receive downloaded data.
+	 */
+	public MarketDataSet searchMarketData(final int itemID, final EMarketSide side) {
+		// Log.i("EVEI","-- MarketUpdaterService.searchMarketDataByID. Searching
+		// for Market Data: " + itemID + " - " + side);
+		// Search on the cache. By default load the SELLER as If I am buying the
+		// item.
+		SparseArray<MarketDataSet> cache = sellMarketDataCache;
+		if (side == EMarketSide.BUYER) {
+			cache = buyMarketDataCache;
+		}
+		MarketDataSet entry = cache.get(itemID);
+		if (null == entry) {
+			// Try to get the data from disk.
+			entry = AppConnector.getStorageConnector().readDiskMarketData(itemID, side);
+			if (null == entry) {
+				// Neither on disk. Make a request for download and return a
+				// dummy placeholder.
+				entry = new MarketDataSet(itemID, side);
+				if (true) {
+					EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
+				}
+			}
+			cache.put(itemID, entry);
+		} else {
+			Log.i("EVEI", "-- MarketUpdaterService.searchMarketDataByID. Cache hit on memory.");
+			// Check again the location. If is the default then request a new
+			// update and remove it from the cache.
+			long lid = entry.getBestMarket().getLocation().getID();
+			if (lid < 0) {
+				EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
+				cache.put(itemID, null);
+			}
+		}
+		// Check entry timestamp before return. Post an update if old.
+		// if (side.equalsIgnoreCase(ModelWideConstants.marketSide.CALCULATE))
+		// return entry;
+		// else {
+		if (AppConnector.checkExpiration(entry.getTS(), ModelWideConstants.HOURS2)) if (true) {
+			EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
+		}
+		return entry;
+		// }
+	}
+
+	public int searchModule4Blueprint(final int bpitemID) {
+		try {
+			if (null == ccpDatabase) {
+				ccpDatabase = getCCPDatabase();
+			}
+			final Cursor cursor = ccpDatabase.rawQuery(
+					"SELECT productTypeID FROM industryActivityProducts BT WHERE typeID = ? AND activityID = 1",
+					new String[] { Integer.valueOf(bpitemID).toString() });
+			if (null != cursor) {
+				int productTypeID = -1;
+				while (cursor.moveToNext()) {
+					productTypeID = cursor.getInt(cursor.getColumnIndex("productTypeID"));
+				}
+				cursor.close();
+				return productTypeID;
+			}
+		} catch (final Exception ex) {
+			logger.severe("E> Error locating module for BPO <" + bpitemID + ">.");
+		}
+		return -1;
 	}
 
 	public int searchReactionOutputMultiplier(final int itemID) {
@@ -780,8 +939,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			if (null == ccpDatabase) {
 				ccpDatabase = getCCPDatabase();
 			}
-			Cursor cursor = ccpDatabase.rawQuery(REACTION_COMPONENTS,
-					new String[] { Integer.valueOf(itemID).toString() });
+			Cursor cursor = ccpDatabase.rawQuery(REACTION_COMPONENTS, new String[] { Integer.valueOf(itemID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
 					// Search for the itemid at the reaction and then return the
@@ -845,162 +1003,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Loates the systema nd other information for a location based on the ID
-	 * received as a parameter. New implementation use this ID to calculate if
-	 * this matches a corporation outpost or a corporation office hangar.
-	 */
-	public EveLocation searchLocationbyID(long locationID) {
-		EveLocation hit = new EveLocation(locationID);
-		// Check if a corporation hangar. ID > 66000000
-		if (locationID > 66000000) {
-			locationID -= 6000001;
-		}
-		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(SELECT_LOCATIONBYID,
-					new String[] { Long.valueOf(locationID).toString() });
-			if (null != cursor) {
-				boolean detected = false;
-				if (cursor.moveToFirst()) {
-					detected = true;
-					// Check returned values when doing the assignments.
-					long fragmentID = cursor.getLong(cursor.getColumnIndex("systemID"));
-					if (fragmentID > 0) {
-						hit.setSystemID(fragmentID);
-						hit.setSystem(cursor.getString(cursor.getColumnIndex("system")));
-					} else {
-						hit.setSystem(cursor.getString(cursor.getColumnIndex("locationName")));
-					}
-					fragmentID = cursor.getLong(cursor.getColumnIndex("constellationID"));
-					if (fragmentID > 0) {
-						hit.setConstellationID(fragmentID);
-						hit.setConstellation(cursor.getString(cursor.getColumnIndex("constellation")));
-					}
-					fragmentID = cursor.getLong(cursor.getColumnIndex("regionID"));
-					if (fragmentID > 0) {
-						hit.setRegionID(fragmentID);
-						hit.setRegion(cursor.getString(cursor.getColumnIndex("region")));
-					}
-					hit.setTypeID(cursor.getInt(cursor.getColumnIndex("typeID")));
-					hit.setStation(cursor.getString(cursor.getColumnIndex("locationName")));
-					hit.setLocationID(cursor.getLong(cursor.getColumnIndex("locationID")));
-					hit.setSecurity(cursor.getString(cursor.getColumnIndex("security")));
-					cursor.close();
-				}
-				if (!detected) {
-					// Search the location on the list of outposts.
-					hit = searchOutpostbyID(locationID);
-				}
-			}
-		} catch (final Exception ex) {
-			logger.warning("Location <" + locationID + "> not found.");
-		}
-		return hit;
-	}
-
-	public EveLocation searchLocationBySystem(final String name) {
-		final EveLocation newLocation = new EveLocation();
-		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(
-					"SELECT solarSystemID from mapSolarSystems WHERE solarSystemName = ?", new String[] { name });
-			if (null != cursor) {
-				if (cursor.moveToFirst()) {
-					int locationID = cursor.getInt(cursor.getColumnIndex("solarSystemID"));
-					cursor.close();
-					return searchLocationbyID(locationID);
-				}
-			}
-		} catch (final Exception ex) {
-			logger.warning("W> Location <" + name + "> not found.");
-		}
-		return newLocation;
-	}
-
-	/**
-	 * Search for this data on the cache. <br>
-	 * The cache used for the search depends on the side parameter received on
-	 * the call. All default prices are references to the cost of the price to
-	 * be spent to buy the item.<br>
-	 * If not found on the memory cache then try to load from the serialized
-	 * version stored on disk. In case this action also fails return an empty
-	 * data structure with the minimum filed data information from the related
-	 * item and fire the update request.
-	 * 
-	 * @param itemID
-	 *            item id code of the item assigned to this market request.
-	 * @param side
-	 *            differentiates if we like to BUY or SELL the item.
-	 * @return the cached data or an empty locator ready to receive downloaded
-	 *         data.
-	 */
-	public MarketDataSet searchMarketData(final int itemID, final EMarketSide side) {
-		// Log.i("EVEI","-- MarketUpdaterService.searchMarketDataByID. Searching
-		// for Market Data: " + itemID + " - " + side);
-		// Search on the cache. By default load the SELLER as If I am buying the
-		// item.
-		SparseArray<MarketDataSet> cache = sellMarketDataCache;
-		if (side == EMarketSide.BUYER) {
-			cache = buyMarketDataCache;
-		}
-		MarketDataSet entry = cache.get(itemID);
-		if (null == entry) {
-			// Try to get the data from disk.
-			entry = AppConnector.getStorageConnector().readDiskMarketData(itemID, side);
-			if (null == entry) {
-				// Neither on disk. Make a request for download and return a
-				// dummy placeholder.
-				entry = new MarketDataSet(itemID, side);
-				if (true) {
-					EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
-				}
-			}
-			cache.put(itemID, entry);
-		} else {
-			Log.i("EVEI", "-- MarketUpdaterService.searchMarketDataByID. Cache hit on memory.");
-			// Check again the location. If is the default then request a new
-			// update and remove it from the cache.
-			long lid = entry.getBestMarket().getLocation().getID();
-			if (lid < 0) {
-				EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
-				cache.put(itemID, null);
-			}
-		}
-		// Check entry timestamp before return. Post an update if old.
-		// if (side.equalsIgnoreCase(ModelWideConstants.marketSide.CALCULATE))
-		// return entry;
-		// else {
-		if (AppConnector.checkExpiration(entry.getTS(), ModelWideConstants.HOURS2))
-			if (true) {
-				EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
-			}
-		return entry;
-		// }
-	}
-
-	public int searchModule4Blueprint(final int bpitemID) {
-		try {
-			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
-			}
-			final Cursor cursor = ccpDatabase.rawQuery(
-					"SELECT productTypeID FROM industryActivityProducts BT WHERE typeID = ? AND activityID = 1",
-					new String[] { Integer.valueOf(bpitemID).toString() });
-			if (null != cursor) {
-				int productTypeID = -1;
-				while (cursor.moveToNext()) {
-					productTypeID = cursor.getInt(cursor.getColumnIndex("productTypeID"));
-				}
-				cursor.close();
-				return productTypeID;
-			}
-		} catch (final Exception ex) {
-			logger.severe("E> Error locating module for BPO <" + bpitemID + ">.");
-		}
-		return -1;
-	}
-
-	/**
-	 * Returns the resource identifier of the station class to locate icons or
-	 * other type related resources.
+	 * Returns the resource identifier of the station class to locate icons or other type related resources.
 	 * 
 	 * @param stationID
 	 * @return
@@ -1010,8 +1013,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		int stationTypeID = 1529;
 		AppConnector.startChrono();
 		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(STATIONTYPE,
-					new String[] { Long.valueOf(stationID).toString() });
+			final Cursor cursor = getCCPDatabase().rawQuery(STATIONTYPE, new String[] { Long.valueOf(stationID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
 					stationTypeID = cursor.getInt(cursor.getColumnIndex("stationTypeID"));

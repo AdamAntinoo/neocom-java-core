@@ -38,41 +38,6 @@ public class NeoComCorporation extends NeoComCharacter {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		return results;
 	}
-	protected  void getAllAssets() {
-		try {
-			// Initialize the model
-			_dataModelRoot = new RootNode();
-			regions = new LongSparseArray<Region>();
-			locations = new LongSparseArray<EveLocation>();
-			containers = new LongSparseArray<Asset>();
-			// Read all the assets for this character is not done already.
-			AppModelStore store = EVEDroidApp.getAppStore();
-			// Get the full list of assets for this pilot.
-			final AssetsManager manager = store.getPilot().getAssetsManager();
-			ArrayList<Asset> assets = manager.getAllAssets();
-			// Move the list to a processing map.
-			assetMap = new LongSparseArray<Asset>(assets.size());
-			for (Asset asset : assets) {
-				assetMap.put(asset.getAssetID(), asset);
-			}
-			// Process the map until all elements are removed.
-			try {
-				Long key = assetMap.keyAt(0);
-				Asset point = assetMap.get(key);
-				while (null != point) {
-					processElement(point);
-					key = assetMap.keyAt(0);
-					point = assetMap.get(key);
-				}
-			} catch (NoSuchElementException nsee) {
-				nsee.printStackTrace();
-			}
-		} catch (final RuntimeException rex) {
-			rex.printStackTrace();
-			logger.severe(
-					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
-		}
-	}
 }
 
 // - UNUSED CODE ............................................................................................

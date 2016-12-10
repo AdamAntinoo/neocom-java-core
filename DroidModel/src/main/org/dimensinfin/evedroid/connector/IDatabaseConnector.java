@@ -46,6 +46,7 @@ public interface IDatabaseConnector {
 
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
 
+	public ArrayList<Asset> searchAssetContainedAt(long pilotID, long assetID);
 	public boolean openAppDataBase();
 
 	public boolean openCCPDataBase();
