@@ -21,6 +21,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
+import org.dimensinfin.evedroid.manager.AssetsManager;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
@@ -42,8 +43,10 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import android.support.v4.util.LongSparseArray;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public class NeoComCharacter extends AbstractComplexNode implements INeoComNode {
+public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("NeoComCharacter");
 
@@ -84,9 +87,10 @@ public class NeoComCharacter extends AbstractComplexNode implements INeoComNode 
 		if (null != skillresponse) {
 			newchar.setSkillInTraining( trainingresponse);
 		}
+		// Full list of assets from database.
+		newchar.getAllAssets();
 		return newchar;
 	}
-
 	private static NeoComCorporation createCorporation(Character coreChar, NeoComApiKey apikey) throws ApiException{
 		NeoComCorporation newcorp = new NeoComCorporation();
 		newcorp.setDelegatedCharacter(coreChar);
@@ -107,21 +111,23 @@ public class NeoComCharacter extends AbstractComplexNode implements INeoComNode 
 	private Character							delegatedCharacter	= null;
 	private CharacterInfoResponse	characterInfo				= null;
 	private double								accountBalance			= 0.0;
-	// - U S E R   K E Y E D   D A T A
+	private long															totalAssets					= -1;
+
+	// - T R A N S I E N T   D A T A
+	private transient AssetsManager						assetsManager				= null;
 	private transient ArrayList<Property>			locationRoles				= null;
 	private transient HashMap<Long, Property>	actions4Character		= null;
+	protected transient LongSparseArray<Region>							regions						= null;
+	protected transient LongSparseArray<EveLocation>				locations					= null;
+	protected transient LongSparseArray<Asset>							containers				= null;
+
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComCharacter() {
+	protected NeoComCharacter() {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant) ;
 	public String getName() {
 		return delegatedCharacter.getName();
 	}
@@ -129,6 +135,7 @@ public class NeoComCharacter extends AbstractComplexNode implements INeoComNode 
 	public long getCharacterID() {
 		return delegatedCharacter.getCharacterID();
 	}
+	protected abstract  void getAllAssets() ;
 
 	protected void setApiKey(NeoComApiKey apikey) {
 		this.apikey = apikey;

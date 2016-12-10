@@ -1,11 +1,12 @@
-//	PROJECT:        NeoCom.Android (NEOC.A)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
 //	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
-//									for characters and corporations at Eve Online. The set is composed of some projects
-//									with implementation for Android and for an AngularJS web interface based on REST
-//									services on Sprint Boot Cloud.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.manager;
 
 // - IMPORT SECTION .........................................................................................
@@ -15,17 +16,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.industry.EJobClasses;
-import org.dimensinfin.evedroid.industry.IJobProcess;
-import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.joda.time.Duration;
 
 import com.j256.ormlite.dao.Dao;
@@ -36,12 +35,19 @@ import com.j256.ormlite.stmt.Where;
 
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to
- * cache and manage all data in favour of speed versus space. Takes care to update memory references so model
+ * cache and manage all data in favor of speed versus space. Takes care to update memory references so model
  * data used on the different pages does not gets changes by other pages if not necessary. But if the same
  * data is to be represented at different locations this class should make sure that the same data is
  * returned.<br>
  * At the same time different instances allow to separate asset usage and simulate assets changes by the
  * scheduled industry jobs created by the user.
+ * <br>
+ * Adapted to new design and the new asset list management. Now the list downloaded from CCP is not hierarchically
+ * ordered so the location is lost in replacement for the parent id. With this new structure is no longer possible to locate the
+ * assets in a single location or system on a database search. The new object management requires to get from the
+ * database the complete list of assets, order and classify them on memory and store at the assets manager. This will
+ * need to have a protected AssetManager on each character so it is not the same one used on destructive industry operations
+ * that will change the asset contents.
  * 
  * @author Adam Antinoo
  */
@@ -49,9 +55,10 @@ import com.j256.ormlite.stmt.Where;
 public class AssetsManager implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long													serialVersionUID			= -8502099148768297876L;
+	private static Logger logger = Logger.getLogger("AssetsManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private transient EveChar													pilot									= null;
+	private transient NeoComCharacter													pilot									= null;
 	private transient Dao<Asset, String>							assetDao							= null;
 
 	// - L O C A T I O N   M A N A G E M E N T
@@ -63,12 +70,12 @@ public class AssetsManager implements Serializable {
 	private final HashMap<Long, ArrayList<Asset>>			assetsAtLocationcache	= new HashMap<Long, ArrayList<Asset>>();
 	private final HashMap<String, ArrayList<Asset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<Asset>>();
 	private final HashMap<Integer, ArrayList<Asset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<Asset>>();
-	private final ArrayList<Blueprint>								blueprintCache				= new ArrayList<Blueprint>();
+//	private final ArrayList<Blueprint>								blueprintCache				= new ArrayList<Blueprint>();
 	public final HashMap<Long, ArrayList<Asset>>			assetCache						= new HashMap<Long, ArrayList<Asset>>();
 	public final HashMap<Long, ArrayList<Asset>>			asteroidCache					= new HashMap<Long, ArrayList<Asset>>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetsManager(final EveChar pilot) {
+	public AssetsManager(final NeoComCharacter pilot) {
 		setPilot(pilot);
 	}
 
@@ -86,21 +93,21 @@ public class AssetsManager implements Serializable {
 				totalAssets = assetDao.countOf(
 						assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", getPilot().getCharacterID()).prepare());
 			} catch (SQLException sqle) {
-				Log.w("NEOCOM", "W> Proglem calculating the number of assets for " + getPilot().getName());
+				logger.info("W> Proglem calculating the number of assets for " + getPilot().getName());
 			}
 		}
 		return totalAssets;
 	}
 
-	public ArrayList<Blueprint> getBlueprints() {
-		if (null == blueprintCache) {
-			updateBlueprints();
-		}
-		if (blueprintCache.size() == 0) {
-			updateBlueprints();
-		}
-		return blueprintCache;
-	}
+//	public ArrayList<Blueprint> getBlueprints() {
+//		if (null == blueprintCache) {
+//			updateBlueprints();
+//		}
+//		if (blueprintCache.size() == 0) {
+//			updateBlueprints();
+//		}
+//		return blueprintCache;
+//	}
 
 	public int getLocationCount() {
 		if (locationCount < 0) {
@@ -126,7 +133,7 @@ public class AssetsManager implements Serializable {
 		return locationsList;
 	}
 
-	public EveChar getPilot() {
+	public NeoComCharacter getPilot() {
 		return pilot;
 	}
 
@@ -176,7 +183,7 @@ public class AssetsManager implements Serializable {
 				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
 				assetsCategoryList = assetDao.query(preparedQuery);
 				Duration lapse = AppConnector.timeLapse();
-				Log.i("AssetsManager", "~~ Time lapse for [SELECT CATEGORY=" + category + " OWNERID = "
+				logger.info("~~ Time lapse for [SELECT CATEGORY=" + category + " OWNERID = "
 						+ getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtCategoryCache.put(category, (ArrayList<Asset>) assetsCategoryList);
 				// Update the dirty state to signal modification of store structures.
@@ -185,7 +192,7 @@ public class AssetsManager implements Serializable {
 				sqle.printStackTrace();
 			}
 		} else {
-			Log.i("AssetsManager",
+			logger.info(
 					"~~ Cache hit [SELECT CATEGORY=" + category + " OWNERID = " + getPilot().getCharacterID() + "]");
 		}
 
@@ -235,7 +242,7 @@ public class AssetsManager implements Serializable {
 	//	}
 
 	public ArrayList<Asset> searchAsset4Location(final EveLocation location) {
-		Log.i("AssetsManager", ">> AssetsManager.searchAsset4Location");
+		logger.info(">> AssetsManager.searchAsset4Location");
 		List<Asset> assetList = new ArrayList<Asset>();
 		// Check if we have already that list on the cache.
 		assetList = assetsAtLocationcache.get(location.getID());
@@ -251,12 +258,12 @@ public class AssetsManager implements Serializable {
 				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
 				Duration lapse = AppConnector.timeLapse();
-				Log.i("AssetsManager", "~~ Time lapse for [SELECT LOCATIONID=" + location.getID() + " OWNERID = "
+				logger.info("~~ Time lapse for [SELECT LOCATIONID=" + location.getID() + " OWNERID = "
 						+ getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtLocationcache.put(location.getID(), (ArrayList<Asset>) assetList);
 				// Update the dirty state to signal modification of store structures.
 				setDirty(true);
-				Log.i("AssetsManager", "<< AssetsManager.searchAsset4Location [" + assetList.size() + "]");
+				logger.info("<< AssetsManager.searchAsset4Location [" + assetList.size() + "]");
 			} catch (java.sql.SQLException sqle) {
 				sqle.printStackTrace();
 			}
@@ -264,13 +271,13 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<Asset>) assetList;
 	}
 
-	public Blueprint searchBlueprintByID(final long assetid) {
-		for (Blueprint bp : getBlueprints()) {
-			String refs = bp.getStackIDRefences();
-			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
-		}
-		return null;
-	}
+//	public Blueprint searchBlueprintByID(final long assetid) {
+//		for (Blueprint bp : getBlueprints()) {
+//			String refs = bp.getStackIDRefences();
+//			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
+//		}
+//		return null;
+//	}
 
 	//	/**
 	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
@@ -279,38 +286,38 @@ public class AssetsManager implements Serializable {
 	//	public void reinstantiate() {
 	//	}
 
-	/**
-	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
-	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	 * 
-	 * @return list of T1 blueprints.
-	 */
-	public ArrayList<Blueprint> searchT1Blueprints() {
-		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
-		for (Blueprint bp : getBlueprints())
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				blueprintList.add(bp);
-			}
-		return blueprintList;
-	}
+//	/**
+//	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
+//	 * blueprints. We expect this is not cost intensive because this function is called few times.
+//	 * 
+//	 * @return list of T1 blueprints.
+//	 */
+//	public ArrayList<Blueprint> searchT1Blueprints() {
+//		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
+//		for (Blueprint bp : getBlueprints())
+//			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+//				blueprintList.add(bp);
+//			}
+//		return blueprintList;
+//	}
 
-	/**
-	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
-	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	 * 
-	 * @return list of T2 blueprints.
-	 */
-	public ArrayList<Blueprint> searchT2Blueprints() {
-		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
-		for (Blueprint bp : getBlueprints())
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-				blueprintList.add(bp);
-			}
-		return blueprintList;
-	}
+//	/**
+//	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
+//	 * blueprints. We expect this is not cost intensive because this function is called few times.
+//	 * 
+//	 * @return list of T2 blueprints.
+//	 */
+//	public ArrayList<Blueprint> searchT2Blueprints() {
+//		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
+//		for (Blueprint bp : getBlueprints())
+//			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+//				blueprintList.add(bp);
+//			}
+//		return blueprintList;
+//	}
 
 	public ArrayList<Asset> searchT2Modules() {
-		Log.i("NEOCOM", ">> EveChar.queryT2Modules");
+		logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
 		List<Asset> assetList = new ArrayList<Asset>();
 		assetList = assetsAtCategoryCache.get("T2Modules");
@@ -328,18 +335,18 @@ public class AssetsManager implements Serializable {
 				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
 				Duration lapse = AppConnector.timeLapse();
-				Log.i("EVEI Time", "~~ Time lapse for [SELECT CATEGORY=MODULE TECH=TECH II OWNERID = "
+				logger.info("~~ Time lapse for [SELECT CATEGORY=MODULE TECH=TECH II OWNERID = "
 						+ getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtCategoryCache.put("T2Modules", (ArrayList<Asset>) assetList);
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			}
 		}
-		Log.i("NEOCOM", "<< EveChar.queryT2Modules");
+		logger.info("<< EveChar.queryT2Modules");
 		return (ArrayList<Asset>) assetList;
 	}
 
-	public void setPilot(final EveChar newPilot) {
+	public void setPilot(final NeoComCharacter newPilot) {
 		pilot = newPilot;
 	}
 
@@ -372,44 +379,44 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<Asset>) assetList;
 	}
 
-	/**
-	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
-	 * This will simplify the quantity of data exported to presentation layers.<br>
-	 * Aggregation is performed by TYPEID-LOCATION-CONTAINER-RUNS
-	 * 
-	 * @param bplist
-	 *          list of newly created Blueprints from the CCP API download
-	 */
-	public void storeBlueprints(final ArrayList<Blueprint> bplist) {
-		HashMap<String, Blueprint> bpStacks = new HashMap<String, Blueprint>();
-		for (Blueprint blueprint : bplist) {
-			checkBPCStacking(bpStacks, blueprint);
-		}
-
-		// Extract stacks and store them into the caches.
-		blueprintCache.addAll(bpStacks.values());
-		// Update the database information.
-		for (Blueprint blueprint : blueprintCache) {
-			try {
-				Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
-				// Be sure the owner is reset to undefined when stored at the database.
-				blueprint.resetOwner();
-				// Set new calculated values to reduce the time for blueprint part rendering.
-				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
-				blueprint.setManufactureIndex(process.getProfitIndex());
-				blueprint.setJobProductionCost(process.getJobCost());
-				blueprint.setManufacturableCount(process.getManufacturableCount());
-				blueprintDao.create(blueprint);
-				Log.i("DB", "-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
-			} catch (final SQLException sqle) {
-				Log.e("NEOCOM", "E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
-				sqle.printStackTrace();
-			} catch (final RuntimeException rtex) {
-				Log.e("NEOCOM", "E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + rtex.getMessage());
-				rtex.printStackTrace();
-			}
-		}
-	}
+//	/**
+//	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
+//	 * This will simplify the quantity of data exported to presentation layers.<br>
+//	 * Aggregation is performed by TYPEID-LOCATION-CONTAINER-RUNS
+//	 * 
+//	 * @param bplist
+//	 *          list of newly created Blueprints from the CCP API download
+//	 */
+//	public void storeBlueprints(final ArrayList<Blueprint> bplist) {
+//		HashMap<String, Blueprint> bpStacks = new HashMap<String, Blueprint>();
+//		for (Blueprint blueprint : bplist) {
+//			checkBPCStacking(bpStacks, blueprint);
+//		}
+//
+//		// Extract stacks and store them into the caches.
+//		blueprintCache.addAll(bpStacks.values());
+//		// Update the database information.
+//		for (Blueprint blueprint : blueprintCache) {
+//			try {
+//				Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
+//				// Be sure the owner is reset to undefined when stored at the database.
+//				blueprint.resetOwner();
+//				// Set new calculated values to reduce the time for blueprint part rendering.
+//				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
+//				blueprint.setManufactureIndex(process.getProfitIndex());
+//				blueprint.setJobProductionCost(process.getJobCost());
+//				blueprint.setManufacturableCount(process.getManufacturableCount());
+//				blueprintDao.create(blueprint);
+//				logger.info("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
+//			} catch (final SQLException sqle) {
+//				logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
+//				sqle.printStackTrace();
+//			} catch (final RuntimeException rtex) {
+//				logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + rtex.getMessage());
+//				rtex.printStackTrace();
+//			}
+//		}
+//	}
 
 	@Override
 	public String toString() {
@@ -423,9 +430,9 @@ public class AssetsManager implements Serializable {
 		if (assetsAtLocationcache.size() > 0) {
 			buffer.append("assetsAtLocationcache:").append(assetsAtLocationcache.size()).append(" ");
 		}
-		if (blueprintCache.size() > 0) {
-			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
-		}
+//		if (blueprintCache.size() > 0) {
+//			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
+//		}
 		if (null != locationsList) {
 			buffer.append("locationsList: ").append(locationsList).append(" ");
 		}
@@ -465,7 +472,7 @@ public class AssetsManager implements Serializable {
 		Blueprint hit = targetContainer.get(id);
 		if (null == hit) {
 			// Miss. The blueprint is not registered.
-			Log.i("EVEI", "-- AssetsManager.checkBPCStacking >Stacked blueprint. " + bp.toString());
+			logger.info("-- AssetsManager.checkBPCStacking >Stacked blueprint. " + bp.toString());
 			bp.registerReference(bp.getAssetID());
 			targetContainer.put(id, bp);
 		} else {
@@ -474,34 +481,34 @@ public class AssetsManager implements Serializable {
 			hit.registerReference(bp.getAssetID());
 		}
 	}
-
+// TODO The dirty flag for the assets is not used because assets are not persisted.
 	private void setDirty(final boolean value) {
-		getPilot().setDirty(value);
+//		getPilot().setDirty(value);
 	}
 
-	private void updateBlueprints() {
-		Log.i("EVEI", ">> AssetsManager.updateBlueprints");
-		//		List<Blueprint> blueprintList = new ArrayList<Blueprint>();
-		try {
-			AppConnector.startChrono();
-			Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
-			QueryBuilder<Blueprint, String> queryBuilder = blueprintDao.queryBuilder();
-			Where<Blueprint, String> where = queryBuilder.where();
-			where.eq("ownerID", getPilot().getCharacterID());
-			PreparedQuery<Blueprint> preparedQuery = queryBuilder.prepare();
-			blueprintCache.addAll(blueprintDao.query(preparedQuery));
-			Duration lapse = AppConnector.timeLapse();
-			Log.i("TIME", "~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + getPilot().getCharacterID() + "] - " + lapse);
-			// Check if the list is empty. Then force a refresh download.
-			if (blueprintCache.size() < 1) {
-				getPilot().forceRefresh();
-			}
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		Log.i("EVEI", "<< AssetsManager.updateBlueprints [" + blueprintCache.size() + "]");
-		//		return (ArrayList<Blueprint>) blueprintList;
-	}
+//	private void updateBlueprints() {
+//		logger.info(">> AssetsManager.updateBlueprints");
+//		//		List<Blueprint> blueprintList = new ArrayList<Blueprint>();
+//		try {
+//			AppConnector.startChrono();
+//			Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
+//			QueryBuilder<Blueprint, String> queryBuilder = blueprintDao.queryBuilder();
+//			Where<Blueprint, String> where = queryBuilder.where();
+//			where.eq("ownerID", getPilot().getCharacterID());
+//			PreparedQuery<Blueprint> preparedQuery = queryBuilder.prepare();
+//			blueprintCache.addAll(blueprintDao.query(preparedQuery));
+//			Duration lapse = AppConnector.timeLapse();
+//			logger.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + getPilot().getCharacterID() + "] - " + lapse);
+//			// Check if the list is empty. Then force a refresh download.
+//			if (blueprintCache.size() < 1) {
+//				getPilot().forceRefresh();
+//			}
+//		} catch (SQLException sqle) {
+//			sqle.printStackTrace();
+//		}
+//		logger.info("<< AssetsManager.updateBlueprints [" + blueprintCache.size() + "]");
+//		//		return (ArrayList<Blueprint>) blueprintList;
+//	}
 
 	/**
 	 * Gets the list of locations for a character. It will store the results into a local variable to speed up
@@ -512,7 +519,7 @@ public class AssetsManager implements Serializable {
 	 * @return
 	 */
 	private synchronized void updateLocations() {
-		Log.i("NEOCOM", ">> AssetsManager.updateLocations");
+		logger.info(">> AssetsManager.updateLocations");
 		AppConnector.startChrono();
 		//	Select assets for the owner and with an specific type id.
 		List<Integer> locationIdentifierList = new ArrayList<Integer>();
@@ -544,7 +551,7 @@ public class AssetsManager implements Serializable {
 		locationCount = locationsList.size();
 		// Update the dirty state to signal modification of store structures.
 		setDirty(true);
-		Log.i("NEOCOM", "<< AssetsManager.updateLocations. " + AppConnector.timeLapse());
+		logger.info("<< AssetsManager.updateLocations. " + AppConnector.timeLapse());
 	}
 }
 // - UNUSED CODE ............................................................................................

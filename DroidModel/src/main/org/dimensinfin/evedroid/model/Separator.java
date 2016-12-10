@@ -34,7 +34,6 @@ public class Separator extends AbstractComplexNode implements INeoComNode {
 	/**
 	 * Check if the Separator has children and then add all them to the model.
 	 */
-	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		//		if (renderWhenEmpty()) {

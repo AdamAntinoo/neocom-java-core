@@ -109,7 +109,6 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	/**
 	 * Check if the Region is empty and if not then add all the children to the model.
 	 */
-	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (renderWhenEmpty()) {

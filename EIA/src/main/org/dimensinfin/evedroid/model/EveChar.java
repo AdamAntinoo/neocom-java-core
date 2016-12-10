@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -49,7 +50,7 @@ import com.j256.ormlite.stmt.Where;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveChar extends NeoComCharacter implements INeoComNode {
+public class EveChar extends NeoComPilot implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID		= -955059830168434115L;
 	private static Logger											logger							= Logger.getLogger("EveChar");
@@ -64,14 +65,16 @@ public class EveChar extends NeoComCharacter implements INeoComNode {
 	// - D E P E N D A N T   P R O P E R T I E S
 	private long															totalAssets					= -1;
 	//	private CharacterSheetResponse						characterSheet			= null;
-	private transient AssetsManager						assetsManager				= null;
+	//	private transient AssetsManager						assetsManager				= null;
 	//	private transient SkillInTrainingResponse	skillInTraining			= null;
 	//	private transient ArrayList<ApiIndustryJob>	industryJobs				= null;
 	private transient ArrayList<Job>					jobList							= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public EveChar(final Integer key, final String validation, final long characterID) {
-		super(key, validation, characterID);
+	//	public EveChar(final Integer key, final String validation, final long characterID) {
+	//		super(key, validation, characterID);
+	//	}
+	protected EveChar() {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -182,7 +185,7 @@ public class EveChar extends NeoComCharacter implements INeoComNode {
 	@Override
 	public void clean() {
 		assetsManager = null;
-		lastCCPAccessTime = null;
+		//		lastCCPAccessTime = null;
 		assetsCacheTime = null;
 		blueprintsCacheTime = null;
 		jobsCacheTime = null;
@@ -202,16 +205,15 @@ public class EveChar extends NeoComCharacter implements INeoComNode {
 		marketCacheTime = null;
 	}
 
-	/**
-	 * For the EveChar the contents provided to the model are empty when the variant is related to the pilot
-	 * list. Maybe in other calls the return would be another list of contents.
-	 */
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		//		if (renderWhenEmpty()) results.add(this);
-		return results;
-	}
+	//	/**
+	//	 * For the EveChar the contents provided to the model are empty when the variant is related to the pilot
+	//	 * list. Maybe in other calls the return would be another list of contents.
+	//	 */
+	//	@Override
+	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+	//		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	//		return results;
+	//	}
 
 	public void forceRefresh() {
 		clean();
