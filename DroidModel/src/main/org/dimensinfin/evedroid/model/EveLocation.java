@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -72,20 +71,20 @@ public class EveLocation extends AbstractComplexNode {
 	public EveLocation() {
 	}
 
-	public EveLocation(ApiStation station) {
-		try {
-			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
-			// Calculate the locationID from the source item and update the rest of the fields.
-			updateFromSystem(station.getSolarSystemID());
-			id = station.getStationID();
-			setStation(station.getStationName());
-			// Try to create the pair. It fails then  it was already created.
-			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			setDirty(true);
-		}
-	}
+	//	public EveLocation(ApiStation station) {
+	//		try {
+	//			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+	//			// Calculate the locationID from the source item and update the rest of the fields.
+	//			updateFromSystem(station.getSolarSystemID());
+	//			id = station.getStationID();
+	//			setStation(station.getStationName());
+	//			// Try to create the pair. It fails then  it was already created.
+	//			locationDao.createOrUpdate(this);
+	//		} catch (final SQLException sqle) {
+	//			sqle.printStackTrace();
+	//			setDirty(true);
+	//		}
+	//	}
 
 	public EveLocation(final long locationID) {
 		stationID = locationID;

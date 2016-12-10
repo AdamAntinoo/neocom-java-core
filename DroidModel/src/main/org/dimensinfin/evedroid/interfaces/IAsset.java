@@ -21,6 +21,8 @@ public interface IAsset extends INamed {
 
 	public long getAssetID();
 
+	public double getIskvalue();
+
 	public long getLocationID();
 
 	public Asset getParentContainer();

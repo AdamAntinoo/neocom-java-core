@@ -8,10 +8,6 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -19,8 +15,6 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.interfaces.IAsset;
-
-import com.j256.ormlite.field.DatabaseField;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Ship extends AbstractNeoComNode implements IAsset {
@@ -83,36 +77,36 @@ public class Ship extends AbstractNeoComNode implements IAsset {
 		return result;
 	}
 
-	/**
-	 * Even this object inherits from the asset structure, it is a new instance of the object and we should copy
-	 * the data from the original reference to this instance instead using delegates that will not work when
-	 * accessing directly to fields.
-	 * 
-	 * @return this same instance updated with the reference data.
-	 */
-	public Asset copyAssetFields() {
-		this.id = reference.id;
-		this.assetID = reference.assetID;
-		this.locationID = reference.locationID;
-		this.typeID = reference.typeID;
-		this.quantity = reference.quantity;
-		this.flag = reference.flag;
-		this.singleton = reference.singleton;
-		this.parentAssetID = reference.parentAssetID;
-
-		//- D E R I V E D   F I E L D S
-		this.ownerID = reference.ownerID;
-		this.name = reference.name;
-		this.category = reference.category;
-		this.groupName = reference.groupName;
-		this.tech = reference.tech;
-		this.blueprintFlag = reference.blueprintFlag;
-		this.userLabel = reference.userLabel;
-		this.shipFlag = reference.shipFlag;
-		this.containerFlag = reference.containerFlag;
-
-		return this;
-	}
+	//	/**
+	//	 * Even this object inherits from the asset structure, it is a new instance of the object and we should copy
+	//	 * the data from the original reference to this instance instead using delegates that will not work when
+	//	 * accessing directly to fields.
+	//	 * 
+	//	 * @return this same instance updated with the reference data.
+	//	 */
+	//	public Asset copyAssetFields() {
+	//		this.id = reference.id;
+	//		this.assetID = reference.assetID;
+	//		this.locationID = reference.locationID;
+	//		this.typeID = reference.typeID;
+	//		this.quantity = reference.quantity;
+	//		this.flag = reference.flag;
+	//		this.singleton = reference.singleton;
+	//		this.parentAssetID = reference.parentAssetID;
+	//
+	//		//- D E R I V E D   F I E L D S
+	//		this.ownerID = reference.ownerID;
+	//		this.name = reference.name;
+	//		this.category = reference.category;
+	//		this.groupName = reference.groupName;
+	//		this.tech = reference.tech;
+	//		this.blueprintFlag = reference.blueprintFlag;
+	//		this.userLabel = reference.userLabel;
+	//		this.shipFlag = reference.shipFlag;
+	//		this.containerFlag = reference.containerFlag;
+	//
+	//		return this;
+	//	}
 
 	public Ship copyFrom(final IAsset asset) {
 		// Install the original asset in this instance as the delegate.

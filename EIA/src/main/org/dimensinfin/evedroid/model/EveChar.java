@@ -63,7 +63,7 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 	private transient Instant									marketCacheTime			= null;
 
 	// - D E P E N D A N T   P R O P E R T I E S
-	private long															totalAssets					= -1;
+	//	private long															totalAssets					= -1;
 	//	private CharacterSheetResponse						characterSheet			= null;
 	//	private transient AssetsManager						assetsManager				= null;
 	//	private transient SkillInTrainingResponse	skillInTraining			= null;
@@ -221,17 +221,13 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
 	}
 
+	/**
+	 * Delegate the request to the assets manager that will make a sql request to get the assets number.
+	 * 
+	 * @return
+	 */
 	public long getAssetCount() {
-		if (totalAssets == -1) {
-			try {
-				final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-				totalAssets = assetDao
-						.countOf(assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", getCharacterID()).prepare());
-			} catch (final SQLException sqle) {
-				Log.w("EVEI", "W> Proglem calculating the number of assets for " + getName());
-			}
-		}
-		return totalAssets;
+		return getAssetsManager().getAssetTotalCount();
 	}
 
 	//	public AssetsManager getAssetsManager() {

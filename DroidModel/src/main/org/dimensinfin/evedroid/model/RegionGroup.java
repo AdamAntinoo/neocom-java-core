@@ -20,15 +20,9 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/model/RegionGroup.java
-import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
-=======
-import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.EComparatorField;
 import org.dimensinfin.evedroid.factory.ComparatorFactory;
->>>>>>> 0.6.2-NewEveapi:DroidModel/src/main/org/dimensinfin/evedroid/model/RegionGroup.java
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

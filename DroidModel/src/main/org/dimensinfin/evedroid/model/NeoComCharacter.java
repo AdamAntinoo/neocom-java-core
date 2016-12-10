@@ -112,7 +112,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	private long															totalAssets					= -1;
 
 	// - T R A N S I E N T   D A T A
-	private transient AssetsManager						assetsManager				= null;
+	protected transient AssetsManager					assetsManager				= null;
 	private transient ArrayList<Property>			locationRoles				= null;
 	private transient HashMap<Long, Property>	actions4Character		= null;
 
