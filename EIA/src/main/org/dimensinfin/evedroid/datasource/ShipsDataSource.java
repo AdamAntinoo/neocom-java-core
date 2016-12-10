@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;

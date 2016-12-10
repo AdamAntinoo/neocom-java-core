@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.core.IPartFactory;
-import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;

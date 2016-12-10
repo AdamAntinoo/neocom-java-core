@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.RootNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class RootPart extends AbstractEditPart {
