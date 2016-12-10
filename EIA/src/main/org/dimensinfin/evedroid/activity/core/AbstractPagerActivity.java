@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity.core;
 
 //- IMPORT SECTION .........................................................................................
@@ -15,6 +17,8 @@ import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
+import org.dimensinfin.evedroid.model.Fitting;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
@@ -43,11 +47,9 @@ import android.widget.ImageView;
  * @author Adam Antinoo
  */
 public abstract class AbstractPagerActivity extends Activity {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	protected ActionBar					_actionBar			= null;
 	private ViewPager						_pageContainer	= null;
 	private EvePagerAdapter			_pageAdapter		= null;
@@ -55,11 +57,9 @@ public abstract class AbstractPagerActivity extends Activity {
 	// private AppModelStore _store = null;
 	private CirclePageIndicator	_indicator			= null;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = getMenuInflater();
@@ -92,6 +92,23 @@ public abstract class AbstractPagerActivity extends Activity {
 				// Insert into the download queue the action to download the locations.
 				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
 				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+			case R.id.action_createFitting:
+				// Create demo fittings to test the save/restore and continue the development.
+				Fitting onConstructionFit = new Fitting();
+				onConstructionFit.setName("Testing - Crusader");
+				onConstructionFit.addHull(11184);
+				onConstructionFit.fitModule(6719, 4);
+				onConstructionFit.fitModule(5973);
+				onConstructionFit.fitModule(5405);
+				onConstructionFit.fitModule(5839);
+				onConstructionFit.fitModule(5849);
+				onConstructionFit.fitModule(11563);
+				onConstructionFit.fitModule(33076);
+				onConstructionFit.fitRig(26929);
+				onConstructionFit.fitRig(26929);
+				onConstructionFit.addCargo(244, 4);
+				onConstructionFit.addCargo(240, 4);
+				AppModelStore.getSingleton().addFitting(onConstructionFit, onConstructionFit.getName());
 				return true;
 		}
 		return super.onOptionsItemSelected(item);

@@ -1,25 +1,19 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity.core;
 
-// - IMPORT SECTION .........................................................................................
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
+//- IMPORT SECTION .........................................................................................
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -27,8 +21,6 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.model.APIKey;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.app.Activity;
@@ -93,7 +85,6 @@ public class SplashActivity extends Activity {
 				startActivity(new Intent(_activity, AddNewAPIActivity.class));
 				return false;
 			}
-			AppModelStore store = EVEDroidApp.getAppStore();
 			//				// Try to read the data. If this fails we have to force an update or leave the user to do that.
 			//				status = EVEDroidApp.getSingletonApp().getAppStore().restore();
 			//				logger.info(">> EveDroidInitialization.STEP 06. Reload of user data [" + status + "]");
@@ -101,9 +92,13 @@ public class SplashActivity extends Activity {
 			logger.info(">> EveDroidInitialization.STEP 08. API list available");
 			updateStateLabel("Downloading data from CCP...");
 			// STEP 09. Refresh data from CCP.	
-			readApiKeys();
+			// Initialize the store or read it from the storage.
+			AppModelStore store = AppModelStore.getSingleton();
+			// Force the store to be updated from the api list file.
+			store.refresh();
+			//			readApiKeys();
 			// STEP 10. Load and cache the citadels
-			postUpdateCitadels();
+			//			postUpdateCitadels();
 			logger.info(">> EveDroidInitialization.STEP 09. API list refreshed");
 			EVEDroidApp.getSingletonApp().startTimer();
 			logger.info("<< EveDroidInitialization.doInBackground.Exit");
@@ -111,54 +106,54 @@ public class SplashActivity extends Activity {
 		}
 		//[01]
 
-		protected boolean doInitStepB() {
-			// STEP 06. Check user data information and storage file.
-			boolean status = false;
-			if (EVEDroidApp.getSingletonApp().getAppStore().needsRestore()) {
-				// Try to read the data. If this fails we have to force an update or leave the user to do that.
-				status = EVEDroidApp.getSingletonApp().getAppStore().restore();
-				logger.info(">> EveDroidInitialization.STEP 06. Reload of user data [" + status + "]");
-			}
-
-			// STEP 07. Check is there are characters available
-			logger.info(">> EveDroidInitialization.STEP 07. Checking API keys availability");
-			if (status) {
-				ArrayList<EveChar> pilots = EVEDroidApp.getSingletonApp().getAppStore().getActiveCharacters();
-				if (pilots.size() < 1) {
-					// There are no characters. Check for api list.
-					// STEP 08. Check API file.
-					if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
-						logger.info("-- EveDroidInitialization.STEP 06. No API List. Needs API introduction");
-						startActivity(new Intent(_activity, AddNewAPIActivity.class));
-						return false;
-					}
-					logger.info(">> EveDroidInitialization.STEP 08. API list available");
-					updateStateLabel("Downloading data from CCP...");
-					// STEP 09. Refresh data from CCP.	
-					readApiKeys();
-					logger.info(">> EveDroidInitialization.STEP 09. API list refreshed");
-				}
-			} else {
-				// User data file is not compatible with current version. Go to info page.
-				startActivity(new Intent(_activity, NewVersionWarningActivity.class));
-				return false;
-			}
-
-			//			// STEP 08. Process Fittings information stored on the internal app data.
-			//			logger.info(">> EveDroidInitialization.STEP 08. Processing Fittings information");
-			//			// STEP 09. Load user selected Theme.
-			//			updateStateLabel("Instantiating user selected theme...");
-			//			logger.info(">> EveDroidInitialization.STEP 09. Load User selected theme");
-			//			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_activity);
-			//			String themeCode = sharedPrefs.getString(AppWideConstants.preference.PREF_APPTHEMES, "-1");
-			//			//		int themeCode1 = sharedPrefs.getInt(AppWideConstants.preference.PREF_APPTHEMES, -1);
-			//			EVEDroidApp.setAppTheme(-1);
-
-			//			app.startTimer();
-			EVEDroidApp.setFirstInitalization(false);
-			logger.info("<< EveDroidInitialization.doInBackground");
-			return true;
-		}
+		//		protected boolean doInitStepB() {
+		//			// STEP 06. Check user data information and storage file.
+		//			boolean status = false;
+		//			if (EVEDroidApp.getSingletonApp().getAppStore().needsRestore()) {
+		//				// Try to read the data. If this fails we have to force an update or leave the user to do that.
+		//				status = EVEDroidApp.getSingletonApp().getAppStore().restore();
+		//				logger.info(">> EveDroidInitialization.STEP 06. Reload of user data [" + status + "]");
+		//			}
+		//
+		//			// STEP 07. Check is there are characters available
+		//			logger.info(">> EveDroidInitialization.STEP 07. Checking API keys availability");
+		//			if (status) {
+		//				ArrayList<EveChar> pilots = EVEDroidApp.getSingletonApp().getAppStore().getActiveCharacters();
+		//				if (pilots.size() < 1) {
+		//					// There are no characters. Check for api list.
+		//					// STEP 08. Check API file.
+		//					if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
+		//						logger.info("-- EveDroidInitialization.STEP 06. No API List. Needs API introduction");
+		//						startActivity(new Intent(_activity, AddNewAPIActivity.class));
+		//						return false;
+		//					}
+		//					logger.info(">> EveDroidInitialization.STEP 08. API list available");
+		//					updateStateLabel("Downloading data from CCP...");
+		//					// STEP 09. Refresh data from CCP.	
+		//					readApiKeys();
+		//					logger.info(">> EveDroidInitialization.STEP 09. API list refreshed");
+		//				}
+		//			} else {
+		//				// User data file is not compatible with current version. Go to info page.
+		//				startActivity(new Intent(_activity, NewVersionWarningActivity.class));
+		//				return false;
+		//			}
+		//
+		//			//			// STEP 08. Process Fittings information stored on the internal app data.
+		//			//			logger.info(">> EveDroidInitialization.STEP 08. Processing Fittings information");
+		//			//			// STEP 09. Load user selected Theme.
+		//			//			updateStateLabel("Instantiating user selected theme...");
+		//			//			logger.info(">> EveDroidInitialization.STEP 09. Load User selected theme");
+		//			//			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(_activity);
+		//			//			String themeCode = sharedPrefs.getString(AppWideConstants.preference.PREF_APPTHEMES, "-1");
+		//			//			//		int themeCode1 = sharedPrefs.getInt(AppWideConstants.preference.PREF_APPTHEMES, -1);
+		//			//			EVEDroidApp.setAppTheme(-1);
+		//
+		//			//			app.startTimer();
+		//			EVEDroidApp.setFirstInitalization(false);
+		//			logger.info("<< EveDroidInitialization.doInBackground");
+		//			return true;
+		//		}
 
 		@Override
 		protected void onPostExecute(final Boolean result) {
@@ -250,41 +245,41 @@ public class SplashActivity extends Activity {
 			logger.info("<< [SplashActivity.postUpdateCitadels]");
 		}
 
-		private void readApiKeys() {
-			logger.info(">> EveDroidInitialization.readApiKeys");
-			try {
-				// Read the contents of the character information.
-				final File characterFile = AppConnector.getStorageConnector()
-						.accessAppStorage(AppConnector.getResourceString(R.string.apikeysfilename));
-				InputStream is = new BufferedInputStream(new FileInputStream(characterFile));
-				BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-				String line = br.readLine();
-				while (null != line) {
-					try {
-						String[] parts = line.split(":");
-						String key = parts[0];
-						String validationcode = parts[1];
-						int keynumber = Integer.parseInt(key);
-						logger.info("-- Inserting API key " + keynumber);
-						APIKey api = new APIKey(keynumber, validationcode);
-						EVEDroidApp.getAppStore().addApiKey(api);
-					} catch (NumberFormatException nfex) {
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-					line = br.readLine();
-				}
-				if (null != br) {
-					br.close();
-				}
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		//		private void readApiKeys() {
+		//			logger.info(">> EveDroidInitialization.readApiKeys");
+		//			try {
+		//				// Read the contents of the character information.
+		//				final File characterFile = AppConnector.getStorageConnector()
+		//						.accessAppStorage(AppConnector.getResourceString(R.string.apikeysfilename));
+		//				InputStream is = new BufferedInputStream(new FileInputStream(characterFile));
+		//				BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		//				String line = br.readLine();
+		//				while (null != line) {
+		//					try {
+		//						String[] parts = line.split(":");
+		//						String key = parts[0];
+		//						String validationcode = parts[1];
+		//						int keynumber = Integer.parseInt(key);
+		//						logger.info("-- Inserting API key " + keynumber);
+		//						APIKey api = new APIKey(keynumber, validationcode);
+		//						EVEDroidApp.getAppStore().addApiKey(api);
+		//					} catch (NumberFormatException nfex) {
+		//					} catch (Exception ex) {
+		//						ex.printStackTrace();
+		//					}
+		//					line = br.readLine();
+		//				}
+		//				if (null != br) {
+		//					br.close();
+		//				}
+		//			} catch (FileNotFoundException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			} catch (IOException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			}
+		//		}
 
 		/**
 		 * Save the Citadel information into the Application database at the Locations table.

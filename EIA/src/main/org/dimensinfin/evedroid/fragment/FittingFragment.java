@@ -8,6 +8,7 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
@@ -16,24 +17,14 @@ import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.FittingDataSource;
 import org.dimensinfin.evedroid.datasource.IExtendedDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
-import org.dimensinfin.evedroid.factory.PartFactory;
+import org.dimensinfin.evedroid.factory.FittingPartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
-import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.EveTask;
-import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.part.ActionPart;
-import org.dimensinfin.evedroid.part.FittingPart;
-import org.dimensinfin.evedroid.part.GroupPart;
-import org.dimensinfin.evedroid.part.TaskPart;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -164,159 +155,4 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		}
 	}
 }
-
-//- CLASS IMPLEMENTATION ...................................................................................
-final class FittingPartFactory extends PartFactory implements IPartFactory {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	// - F I E L D - S E C T I O N ............................................................................
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public FittingPartFactory(final EFragment _variant) {
-		super(_variant);
-	}
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * The method should create the matching part for the model received but there is no other place where we
-	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
-	 */
-	@Override
-	public IEditPart createPart(final IGEFNode node) {
-		if (node instanceof Action) {
-			ActionPart part = new ActionPart((AbstractComplexNode) node);
-			return part;
-		}
-		if (node instanceof EveTask) {
-			TaskPart part = new TaskPart((AbstractComplexNode) node);
-			return part;
-		}
-		if (node instanceof Separator) {
-			GroupPart part = new GroupPart((Separator) node);
-			return part;
-		}
-		// This is the part element for the Fitting that going in the head.
-		if (node instanceof Fitting) {
-			FittingPart part = (FittingPart) new FittingPart((Fitting) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_FITTINGHEADER);
-			return part;
-		}
-		return new GroupPart(new Separator("-NO data-"));
-	}
-}
-
-////- CLASS IMPLEMENTATION ...................................................................................
-//final class FittingHeaderHolder extends AbstractHolder {
-//	// - S T A T I C - S E C T I O N ..........................................................................
-//	// - F I E L D - S E C T I O N ............................................................................
-//	//	private ITheme	_theme					= null;
-//
-//	private Spinner fittingsSpinner = null;
-//
-//	// - C O N S T R U C T O R - S E C T I O N ................................................................
-//	public FittingHeaderHolder(final FittingHeaderPart target, final Activity context) {
-//		super(target, context);
-//		//		_theme = new RubiconRedTheme(context);
-//	}
-//
-//	// - M E T H O D - S E C T I O N ..........................................................................
-//	@Override
-//	public FittingHeaderPart getPart() {
-//		return (FittingHeaderPart) super.getPart();
-//	}
-//
-//	@Override
-//	public void initializeViews() {
-//		super.initializeViews();
-//		// Create spinner contents from part.
-//		fittingsSpinner = (Spinner) _convertView.findViewById(R.id.fittingspinner);
-//		if (null != fittingsSpinner) {
-//			fittingsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-//				public void onItemSelected(final AdapterView<?> parentView, final View selectedItemView, final int position,
-//						final long id) {
-//					Object item = fittingsSpinner.getSelectedItem();
-//					if (item instanceof String) {
-//						String itemName = (String) item;
-//						Toast toast = Toast.makeText(getPart().getActivity(), "Item selected: " + itemName, Toast.LENGTH_SHORT);
-//						toast.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
-//						toast.show();
-//					}
-//				}
-//
-//				public void onNothingSelected(final AdapterView<?> parentView) {
-//					// your code here
-//				}
-//
-//			});
-//			List<String> ships = getPart().getFittings();
-//			ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, ships);
-//			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//			fittingsSpinner.setAdapter(dataAdapter);
-//		}
-//	}
-//
-//	public void setView(final View newView) {
-//		_convertView = newView;
-//	}
-//
-//	@Override
-//	public void updateContent() {
-//		super.updateContent();
-//	}
-//
-//	@Override
-//	protected void createView() {
-//		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-//		_convertView = mInflater.inflate(R.layout.fitting_4header, null);
-//		_convertView.setTag(this);
-//	}
-//
-//	protected void loadEveIcon(final ImageView targetIcon, final int typeID) {
-//		if (null != targetIcon) {
-//			final String link = EVEDroidApp.getTheCacheConnector().getURLForItem(typeID);
-//			final Drawable draw = EVEDroidApp.getTheCacheConnector().getCacheDrawable(link, targetIcon);
-//			targetIcon.setImageDrawable(draw);
-//		}
-//	}
-//}
-//
-////- CLASS IMPLEMENTATION ...................................................................................
-//final class FittingHeaderPart extends EveAbstractPart {
-//	// - S T A T I C - S E C T I O N ..........................................................................
-//	private static final long serialVersionUID = -4642153502498052929L;
-//
-//	// - F I E L D - S E C T I O N ............................................................................
-//
-//	// - C O N S T R U C T O R - S E C T I O N ................................................................
-//	public FittingHeaderPart(final AbstractGEFNode item) {
-//		super(item);
-//	}
-//
-//	// - M E T H O D - S E C T I O N ..........................................................................
-//	public EveItem getCastedModel() {
-//		return (EveItem) getModel();
-//	}
-//
-//	public List<String> getFittings() {
-//		List<String> fittings = new ArrayList<String>();
-//
-//		// Get a reference to the special DataSource.
-//		if (getActivity() instanceof FittingActivity) {
-//			FittingActivity act = (FittingActivity) getActivity();
-//			FittingsDataSource ds = (FittingsDataSource) act.getDataSource(AppWideConstants.fragment.FRAGMENT_FITTINGS);
-//			fittings.addAll(ds.getFittings());
-//		}
-//		return fittings;
-//	}
-//
-//	@Override
-//	public long getModelID() {
-//		return 0;
-//	}
-//
-//	@Override
-//	protected AbstractHolder selectHolder() {
-//		// Get the proper holder from the render mode.
-//		return new FittingHeaderHolder(this, _activity);
-//	}
-//}
-
 // - UNUSED CODE ............................................................................................

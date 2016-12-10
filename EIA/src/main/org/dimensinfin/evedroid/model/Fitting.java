@@ -13,7 +13,6 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.INodeModel;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -21,6 +20,7 @@ import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
 import org.dimensinfin.evedroid.industry.Resource;
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 
 import com.j256.ormlite.dao.Dao;
@@ -31,7 +31,7 @@ import com.j256.ormlite.stmt.Where;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Fitting extends AbstractManufactureProcess implements INodeModel {
+public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long				serialVersionUID	= 6740483226926234807L;
 	private static Logger						logger						= Logger.getLogger("Fitting");
@@ -45,6 +45,15 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	private final Vector<Resource>	drones						= new Vector<Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/**
+	 * This constructor just creates the data structures. If should not be used but for testing because a
+	 * Fitting requires an asset manager to be able to perform the Industry activities.
+	 */
+	// TODO The Fitting should not have the dependency on the industry until the moment the model need to get generated.
+	@Deprecated
+	public Fitting() {
+	}
+
 	/**
 	 * Initializes a fitting. A Fitting is a complex objects that performs manufactuting actions and that should
 	 * have a reference to the current selected pilot because the resources required for manufacturing are

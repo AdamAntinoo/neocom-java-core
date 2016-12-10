@@ -1,14 +1,14 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity;
 
-// - IMPORT SECTION .........................................................................................
+//- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.R;
@@ -19,7 +19,6 @@ import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.EveChar;
 
 import android.os.Bundle;
-import android.util.Log;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 public class FittingActivity extends PilotPagerActivity implements INeoComDirector {
@@ -70,7 +69,7 @@ public class FittingActivity extends PilotPagerActivity implements INeoComDirect
 			//				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE), page++);
 			//			}
 		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> FittingActivity.onCreate - " + rtex.getMessage());
+			logger.severe("RTEX> FittingActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
 			stopActivity(new RuntimeException("RTEX> FittingActivity.onCreate - " + rtex.getMessage()));
 		}

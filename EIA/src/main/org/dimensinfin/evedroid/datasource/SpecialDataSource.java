@@ -47,7 +47,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	protected ArrayList<AbstractCorePart>	_bodyParts				= new ArrayList<AbstractCorePart>();
 	protected ArrayList<AbstractCorePart>	_headParts				= new ArrayList<AbstractCorePart>();
 
-	private EFragment											_variant					= AppWideConstants.EFragment.UNDEFINED_FRAGMENT;
+	private EFragment											_variant					= AppWideConstants.EFragment.DEFAULT_VARIANT;
 
 	private final HashMap<String, Object>	_parameters				= new HashMap<String, Object>();
 

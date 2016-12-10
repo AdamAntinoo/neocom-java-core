@@ -51,8 +51,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 
 	private static Logger									logger							= Logger.getLogger("DirectorsBoardActivity");
 	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
-			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.JOBDIRECTOR, EDirectorCode.MARKETDIRECTOR,
-			EDirectorCode.FITDIRECTOR };
+			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.FITDIRECTOR };
 	protected static Typeface							daysFace						= Typeface
 			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
@@ -119,33 +118,33 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 			Log.i("DirectorsBoardActivity", "-- DirectorsBoardActivity.onCreate -- Detected "
 					+ AppWideConstants.extras.EXTRA_EVECHARACTERID + "=" + characterid);
 			if (characterid > 0) {
-				this._store = EVEDroidApp.getAppStore();
-				this._store.activatePilot(characterid);
-				this._store.activateActivity(this);
+				_store = EVEDroidApp.getAppStore();
+				_store.activatePilot(characterid);
+				_store.activateActivity(this);
 			} else
 				throw new RuntimeException(
 						"RT DirectorsBoardActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
 
 			// Gets the activity's default ActionBar
-			this._actionBar = getActionBar();
-			this._actionBar.show();
-			this._actionBar.setDisplayHomeAsUpEnabled(true);
+			_actionBar = getActionBar();
+			_actionBar.show();
+			_actionBar.setDisplayHomeAsUpEnabled(true);
 
 			// Change the title and the background of the activity.
-			this._actionBar.setTitle(this._store.getPilot().getName());
+			_actionBar.setTitle(_store.getPilot().getName());
 
 			// Locate the elements of the page and store in global data.
-			this._directorContainer = (ViewGroup) findViewById(R.id.neocomContainer);
-			this._fragmentContainer = (ViewGroup) findViewById(R.id.fragmentContainer);
-			this._back = (ImageView) findViewById(R.id.backgroundFrame);
+			_directorContainer = (ViewGroup) findViewById(R.id.neocomContainer);
+			_fragmentContainer = (ViewGroup) findViewById(R.id.fragmentContainer);
+			_back = (ImageView) findViewById(R.id.backgroundFrame);
 			// Check page structure.
-			if (null == this._directorContainer) {
+			if (null == _directorContainer) {
 				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 			}
-			if (null == this._fragmentContainer) {
+			if (null == _fragmentContainer) {
 				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 			}
-			if (null == this._back) {
+			if (null == _back) {
 				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 			}
 		} catch (final Exception rtex) {
@@ -178,8 +177,8 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	protected void onPause() {
 		Log.i("DirectorsBoardActivity", ">> DirectorsBoardActivity.onPause");
 		// Check store state and update cache on disk if it has changed.
-		if (this._store.isDirty()) {
-			this._store.save();
+		if (_store.isDirty()) {
+			_store.save();
 		}
 		super.onPause();
 		Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.onPause");
@@ -193,7 +192,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	 * present.
 	 */
 	@SuppressLint("NewApi")
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onResume() {
@@ -217,7 +216,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 				switch (directorCode) {
 					case ASSETDIRECTOR:
 						final IDirector adirector = new AssetsDirectorActivity();
-						if (adirector.checkActivation(this._store.getPilot())) {
+						if (adirector.checkActivation(_store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.assetsDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.assetsdirector));
@@ -229,8 +228,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 									final Intent intent = new Intent(parentActivity, adirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-											DirectorsBoardActivity.this._store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 									startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
 								}
@@ -241,7 +239,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						}
 					case SHIPDIRECTOR:
 						final IDirector sdirector = new ShipDirectorActivity();
-						if (sdirector.checkActivation(this._store.getPilot())) {
+						if (sdirector.checkActivation(_store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.shipsDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.shipsdirector));
@@ -253,8 +251,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 									final Intent intent = new Intent(parentActivity, sdirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-											DirectorsBoardActivity.this._store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 									startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
 								}
@@ -265,7 +262,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						}
 					case INDUSTRYDIRECTOR:
 						final IDirector thedirector = new IndustryDirectorActivity();
-						if (thedirector.checkActivation(this._store.getPilot())) {
+						if (thedirector.checkActivation(_store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.industryDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.industrydirector));
@@ -277,8 +274,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 									final Intent intent = new Intent(parentActivity, thedirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-											DirectorsBoardActivity.this._store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 									startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.INDUSTRYDIRECTOR.onClick");
 								}
@@ -290,7 +286,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						break;
 					case JOBDIRECTOR:
 						final IDirector jdirector = new FittingActivity();
-						if (jdirector.checkActivation(this._store.getPilot())) {
+						if (jdirector.checkActivation(_store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.jobDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.jobdirector));
@@ -301,8 +297,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 									final Intent intent = new Intent(parentActivity, jdirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-											DirectorsBoardActivity.this._store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 									startActivity(intent);
 								}
 							});
@@ -311,7 +306,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						break;
 					case MARKETDIRECTOR:
 						final IDirector director = new MarketDirectorActivity();
-						if (director.checkActivation(this._store.getPilot())) {
+						if (director.checkActivation(_store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.marketDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.marketdirector));
@@ -322,8 +317,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 									final Intent intent = new Intent(parentActivity, director.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-											DirectorsBoardActivity.this._store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 									startActivity(intent);
 								}
 							});
@@ -331,20 +325,18 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						}
 						break;
 					case FITDIRECTOR:
-						final IDirector fdirector = new FittingActivity();
-						if (fdirector.checkActivation(this._store.getPilot())) {
+						final IDirector fdirector = new FittingListActivity();
+						if (fdirector.checkActivation(_store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
-							activator = (ImageView) findViewById(R.id.marketDirectorIcon);
+							activator = (ImageView) findViewById(R.id.fitDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.fitsdirector));
 							activator.setClickable(true);
 							activator.setOnClickListener(new View.OnClickListener() {
 								public void onClick(final View view) {
 									// Activate the manager.
 									final Intent intent = new Intent(parentActivity, fdirector.getClass());
-									// Send the pilot id and transfer it to the next
-									// Activity
-									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID,
-											DirectorsBoardActivity.this._store.getPilot().getCharacterID());
+									// Send the pilot id and transfer it to the next Activity
+									intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 									startActivity(intent);
 								}
 							});
@@ -429,22 +421,12 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 		logger.info("<< DirectorsBoardActivity.onResume");
 	}
 
-	@SuppressLint("Override")
-	private Drawable getDrawable(final int reference) {
-		// ContextCompat.getDrawable(getActivity(), reference);
-		return getActivity().getResources().getDrawable(reference);
-	}
-
-	private Activity getActivity() {
-		return this;
-	}
-
 	@Override
 	protected void onSaveInstanceState(final Bundle savedInstanceState) {
 		Log.i("DirectorsBoardActivity", ">> DirectorsBoardActivity.onSaveInstanceState"); //$NON-NLS-1$
 		super.onSaveInstanceState(savedInstanceState);
 		// Add current model data dependencies. EVECHARACTERID
-		savedInstanceState.putLong(AppWideConstants.extras.EXTRA_EVECHARACTERID, this._store.getPilot().getCharacterID());
+		savedInstanceState.putLong(AppWideConstants.extras.EXTRA_EVECHARACTERID, _store.getPilot().getCharacterID());
 		// _store.save();
 		Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.onSaveInstanceState"); //$NON-NLS-1$
 	}
@@ -455,7 +437,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	 */
 	@Override
 	@SuppressLint("NewApi")
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 	@SuppressWarnings("deprecation")
 	protected void onStart() {
 		logger.info(">> DirectorsBoardActivity.onStart");
@@ -484,7 +466,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 		// directorButton.setClickable(false);
 
 		directorButton = (ImageView) findViewById(R.id.fitDirectorIcon);
-		directorButton.setImageDrawable(getDrawable(R.drawable.fitdirectordimmed));
+		directorButton.setImageDrawable(getDrawable(R.drawable.fitsdirector));
 		directorButton.setClickable(true);
 		logger.info("<< DirectorsBoardActivity.onStart");
 	}
@@ -543,6 +525,16 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 			// Add the fragment to the 'fragmentContainer' Layout
 			getFragmentManager().beginTransaction().add(R.id.fragmentContainer, thefrag).commit();
 		}
+	}
+
+	private Activity getActivity() {
+		return this;
+	}
+
+	@SuppressLint("Override")
+	private Drawable getDrawable(final int reference) {
+		// ContextCompat.getDrawable(getActivity(), reference);
+		return getActivity().getResources().getDrawable(reference);
 	}
 
 	// private EveChar getPilot() {

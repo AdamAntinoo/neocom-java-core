@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.fragment.FittingFragment;
+import org.dimensinfin.evedroid.fragment.FittingListFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.EveChar;
 
@@ -24,7 +24,7 @@ import android.util.Log;
 //- CLASS IMPLEMENTATION ...................................................................................
 public class FittingListActivity extends PilotPagerActivity implements INeoComDirector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	public static Logger logger = Logger.getLogger("FittingActivity");
+	public static Logger logger = Logger.getLogger("FittingListActivity");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -56,27 +56,22 @@ public class FittingListActivity extends PilotPagerActivity implements INeoComDi
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		logger.info(">> FittingActivity.onCreate"); //$NON-NLS-1$
+		logger.info(">> [FittingListActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		try {// Reset the page position.
 			int page = 0;
 			// Get the parameters from the bundle. If not defined then use the demo.
 			final Bundle extras = getIntent().getExtras();
-			if (null != extras) {
-				// Create the pages that form this Activity. Each page implemented by a Fragment.
-				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE).setExtras(extras),
-						page++);
-			} else {
-				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE), page++);
-			}
+			// Create the pages that form this Activity. Each page implemented by a Fragment.
+			addPage(new FittingListFragment().setVariant(AppWideConstants.EFragment.FITTING_LIST).setExtras(extras), page++);
 		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> FittingActivity.onCreate - " + rtex.getMessage());
+			Log.e("NEOCOM", "RTEX> FittingListActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingActivity.onCreate - " + rtex.getMessage()));
+			stopActivity(new RuntimeException("RTEX> FittingListActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
 		updateInitialTitle();
-		logger.info("<< FittingActivity.onCreate"); //$NON-NLS-1$
+		logger.info("<< [FittingListActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
 // - UNUSED CODE ............................................................................................

@@ -19,7 +19,6 @@ import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.ShipsDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Region;
@@ -110,14 +109,15 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 }
 
 //- CLASS IMPLEMENTATION ...................................................................................
-final class ShipPartFactory extends PartFactory implements IPartFactory {
+final class ShipPartFactory implements IPartFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private EFragment variant = AppWideConstants.EFragment.DEFAULT_VARIANT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ShipPartFactory(final EFragment _variant) {
-		super(_variant);
+	public ShipPartFactory(final EFragment variantSelected) {
+		variant = variantSelected;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -146,6 +146,10 @@ final class ShipPartFactory extends PartFactory implements IPartFactory {
 			return part;
 		}
 		return null;
+	}
+
+	public String getVariant() {
+		return variant.name();
 	}
 }
 

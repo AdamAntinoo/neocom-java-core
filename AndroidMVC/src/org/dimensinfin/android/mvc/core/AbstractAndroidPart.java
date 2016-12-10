@@ -156,7 +156,6 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 		return _view;
 	}
 
-	@Override
 	public void invalidate() {
 		if (null != _view) {
 			//			_view.invalidate();
@@ -207,7 +206,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	//		}
 	@Override
 	protected IEditPart createChild(final Object model) {
-		IPartFactory factory = getRoot().getFactory();
+		IPartFactory factory = getRoot().getPartFactory();
 		IEditPart part = factory.createPart((IGEFNode) model);
 		// If the factory is unable to create the Part then skip this element or wait to be replaced by a dummy
 		if (null != part) {
