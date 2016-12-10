@@ -1,0 +1,204 @@
+//	PROJECT:        NeoCom.model (NEOC.M)
+//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
+package org.dimensinfin.evedroid.model;
+
+//- IMPORT SECTION .........................................................................................
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Logger;
+
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.interfaces.INeoComNode;
+import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.account.AccountStatus;
+import com.beimin.eveapi.model.account.ApiKeyInfo;
+import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.model.shared.KeyType;
+import com.beimin.eveapi.parser.ApiAuthorization;
+import com.beimin.eveapi.parser.account.AccountStatusParser;
+import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
+import com.beimin.eveapi.response.account.AccountStatusResponse;
+import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
+
+// - CLASS IMPLEMENTATION ...................................................................................
+public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
+	// - S T A T I C - S E C T I O N ..........................................................................
+	private static final long	serialVersionUID	= 4162373120742984305L;
+	private static Logger			logger						= Logger.getLogger("NeoComApiKey");
+
+	/**
+	 * Constructor of the apikey. This static method will instantiate a key and be sure it can download the data
+	 * from CCP using the eveapi library.
+	 * 
+	 * @param keynumber
+	 * @param validationcode
+	 * @return new instance of an eve apikey
+	 * @throws ApiException
+	 */
+	public static NeoComApiKey build(final int keynumber, final String validationcode) throws ApiException {
+		// Get the complete api information for CCP through the eveapi.
+		logger.info("-- [NeoComApiKey.build]> Creating key: " + keynumber + "/" + validationcode);
+		ApiAuthorization authorization = new ApiAuthorization(keynumber, validationcode);
+		ApiKeyInfoParser infoparser = new ApiKeyInfoParser();
+		ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
+		NeoComApiKey apiKey = null;
+		if (null != inforesponse) {
+			apiKey = new NeoComApiKey();
+			apiKey.setAuthorization(authorization);
+			apiKey.setDelegate(inforesponse);
+			apiKey.setKey(keynumber);
+			apiKey.setValidationCode(validationcode);
+			apiKey.setCachedUntil(inforesponse.getCachedUntil());
+			// TODO get the error and the version to complete the api and check the Error for any kind of problem.
+		} else
+			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
+		AccountStatusParser statusparser = new AccountStatusParser();
+		AccountStatusResponse statusresponse = statusparser.getResponse(authorization);
+		if (null != statusresponse) {
+			apiKey.setDelegateStatus(statusresponse);
+		} else
+			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
+		return apiKey;
+	}
+
+	// - F I E L D - S E C T I O N ............................................................................
+	private ApiAuthorization	authorization		= null;
+	private ApiKeyInfo				delegatedApiKey	= null;
+	private AccountStatus			delegateStatus	= null;
+	private int								key							= -1;
+	private String						validationCode	= "<INVALID>";
+	private Date							cachedUntil			= GregorianCalendar.getInstance().getTime();
+	private Instant						paidUntil				= new Instant(0);
+
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	private NeoComApiKey() {
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * The model elements exported by this class are the characters or corporations defined for it. We should
+	 * check the different yypes but the elements exported will all share a common interface.
+	 */
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
+		try {
+			for (NeoComCharacter node : getApiCharacters()) {
+				result.add(node);
+			}
+		} catch (ApiException apiex) {
+			apiex.printStackTrace();
+		}
+		return result;
+	}
+
+	public long getAccessMask() {
+		return delegatedApiKey.getAccessMask();
+	}
+
+	public ArrayList<NeoComCharacter> getApiCharacters() throws ApiException {
+		ArrayList<NeoComCharacter> result = new ArrayList<NeoComCharacter>();
+		Collection<Character> coreList = delegatedApiKey.getEveCharacters();
+		for (Character character : coreList) {
+			NeoComCharacter neochar = NeoComCharacter.build(character, this);
+			result.add(neochar);
+		}
+		return result;
+	}
+
+	public ApiAuthorization getAuthorization() {
+		return authorization;
+	}
+
+	public Date getCachedUntil() {
+		return cachedUntil;
+	}
+
+	public Date getExpires() {
+		return delegatedApiKey.getExpires();
+	}
+
+	public int getKey() {
+		return key;
+	}
+
+	public KeyType getType() {
+		return delegatedApiKey.getType();
+	}
+
+	public String getValidationCode() {
+		return validationCode;
+	}
+
+	public boolean isAccountKey() {
+		return delegatedApiKey.isAccountKey();
+	}
+
+	public boolean isCharacterKey() {
+		return delegatedApiKey.isCharacterKey();
+	}
+
+	public boolean isCorporationKey() {
+		return delegatedApiKey.isCorporationKey();
+	}
+
+	public void setCachedUntil(Date cachedUntil) {
+		this.cachedUntil = cachedUntil;
+	}
+
+	public void setDelegate(final ApiKeyInfoResponse response) {
+		delegatedApiKey = response.getApiKeyInfo();
+	}
+
+	public void setKey(int key) {
+		this.key = key;
+	}
+
+	public void setValidationCode(String validationcode) {
+		this.validationCode = validationcode;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("NeoComApiKey [");
+		buffer.append("keyID=").append(getKey()).append(" ");
+		buffer.append("verificationCode='").append(getValidationCode()).append("' ");
+		buffer.append("type='").append(getType());
+		buffer.append("]");
+		return super.toString() + buffer.toString();
+	}
+
+	protected void setPaidUntil(final String text) {
+		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss");
+		try {
+			String source = text.replace(" ", "'T'") + ".00000";
+			DateTime dt = fmt.parseDateTime(text);
+			paidUntil = new Instant(dt);
+		} catch (Exception ex) {
+			paidUntil = new Instant();
+		}
+	}
+
+	private void setAuthorization(ApiAuthorization auth) {
+		authorization = auth;
+	}
+
+	private void setDelegateStatus(AccountStatusResponse statusresponse) {
+		delegateStatus = statusresponse.get();
+	}
+}
+
+// - UNUSED CODE ............................................................................................

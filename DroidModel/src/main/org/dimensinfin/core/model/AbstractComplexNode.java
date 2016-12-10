@@ -36,12 +36,6 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-//	public ArrayList<AbstractAndroidNode> collaborate2Model(final String variant) {
-//		final ArrayList<AbstractAndroidNode> results = new ArrayList<AbstractAndroidNode>();
-//		if (renderWhenEmpty()) results.add(this);
-//		return results;
-//	}
-//public abstract ArrayList<AbstractComplexNode> collaborate2Model(final String variant);
 	/**
 	 * Collapses a node from any state if had. If will collapse the node without checking the current state.
 	 * 

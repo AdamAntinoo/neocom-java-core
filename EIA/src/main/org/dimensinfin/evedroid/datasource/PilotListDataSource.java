@@ -10,10 +10,10 @@ package org.dimensinfin.evedroid.datasource;
 
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.model.APIKey;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 //- CLASS IMPLEMENTATION ...................................................................................
@@ -51,15 +51,15 @@ public final class PilotListDataSource extends SpecialDataSource {
 		logger.info(">> PilotListDataSource.collaborate2Model");
 		AppModelStore store = EVEDroidApp.getAppStore();
 		// The model is the list of current regtistered api keys with their characters.
-		HashMap<Integer, APIKey> keys = store.getApiKeys();
+		HashMap<Integer, NeoComApiKey> keys = store.getApiKeys();
 		// Add the keys to the model root node. If the root is already on place then the model is already loaded.
 		//		if (null == _dataModelRoot) {
 		setDataModel(new RootNode());
 		//		}
 		// Add all the nodes to the new root
-		for (APIKey key : keys.values()) {
+		for (NeoComApiKey key : keys.values()) {
 			_dataModelRoot.addChild(key);
-			logger.info("-- PilotListDataSource.collaborate2Model-Adding " + key.getKeyID() + " to the _dataModelRoot");
+			logger.info("-- PilotListDataSource.collaborate2Model-Adding " + key.getKey() + " to the _dataModelRoot");
 		}
 		logger.info("<< PilotListDataSource.collaborate2Model");
 		return _dataModelRoot;

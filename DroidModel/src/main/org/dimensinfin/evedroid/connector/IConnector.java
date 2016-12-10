@@ -7,6 +7,10 @@
 package org.dimensinfin.evedroid.connector;
 
 //- IMPORT SECTION .........................................................................................
+import org.dimensinfin.core.model.AbstractModelStore;
+import org.dimensinfin.core.model.IModelStore;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
+
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IConnector {
@@ -29,6 +33,8 @@ public interface IConnector {
 	public boolean sdcardAvailable();
 
 	public IConnector getSingleton();
+
+	public INeoComModelStore getModelStore();
 }
 
 // - UNUSED CODE ............................................................................................

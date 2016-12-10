@@ -1,11 +1,12 @@
-//	PROJECT:        NeoCom.Android (NEOC.A)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
 //	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
-//									for characters and corporations at Eve Online. The set is composed of some projects
-//									with implementation for Android and for an AngularJS web interface based on REST
-//									services on Sprint Boot Cloud.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
@@ -19,9 +20,15 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/model/RegionGroup.java
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
+=======
+import org.dimensinfin.evedroid.core.INeoComNode;
+import org.dimensinfin.evedroid.enums.EComparatorField;
+import org.dimensinfin.evedroid.factory.ComparatorFactory;
+>>>>>>> 0.6.2-NewEveapi:DroidModel/src/main/org/dimensinfin/evedroid/model/RegionGroup.java
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -97,7 +104,7 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
 		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
-		Collections.sort(orders, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractPropertyChanger node : orders)
 			if (node instanceof MarketOrder) {
 				results.addAll(((MarketOrder) node).collaborate2Model());
@@ -108,7 +115,6 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	/**
 	 * Check if the Region is empty and if not then add all the children to the model.
 	 */
-	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (renderWhenEmpty()) {

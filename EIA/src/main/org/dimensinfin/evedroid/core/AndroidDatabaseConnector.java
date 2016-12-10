@@ -58,8 +58,7 @@ import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AndroidDatabaseConnector implements IDatabaseConnector {
 
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger				logger										= Logger.getLogger("AndroidDatabaseConnector");
 
 	private static final String	SELECT_ITEM_BYID					= "SELECT it.typeID AS typeID, it.typeName AS typeName"
@@ -131,8 +130,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		return new MyLocation(locationID);
 	}
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private Context														_context						= null;
 	private SQLiteDatabase										staticDatabase			= null;
 	private SQLiteDatabase										ccpDatabase					= null;
@@ -144,14 +142,12 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 	private final HashMap<Long, Asset>				containerCache			= new HashMap<Long, Asset>();
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AndroidDatabaseConnector(final Context app) {
 		_context = app;
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkInvention(final int typeID) {
 		return checkRecordExistence(typeID, CHECK_INVENTION);
 	}
@@ -471,6 +467,24 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			}
 		}
 		return hit;
+	}
+
+	public ArrayList<Asset> searchAssetContainedAt(final long characterID, final long containerId) {
+		// Select assets for the owner and with an specific type id.
+		List<Asset> assetList = new ArrayList<Asset>();
+		try {
+			Dao<Asset, String> assetDao = getAssetDAO();
+			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
+			Where<Asset, String> where = queryBuilder.where();
+			where.eq("ownerID", characterID);
+			where.and();
+			where.eq("parentAssetID", containerId);
+			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			assetList = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<Asset>) assetList;
 	}
 
 	/**
@@ -806,9 +820,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Loates the system and other information for a location based on the ID received as a parameter. New
-	 * implementation use this ID to calculate if this matches a corporation outpost or a corporation office
-	 * hangar.
+	 * <<<<<<< HEAD Loates the system and other information for a location based on the ID received as a
+	 * parameter. New ======= Loates the systema nd other information for a location based on the ID received as
+	 * a parameter. New >>>>>>> 0.6.2-NewEveapi implementation use this ID to calculate if this matches a
+	 * corporation outpost or a corporation office hangar.
 	 */
 	public EveLocation searchLocationbyID(final long locationID) {
 		// Try to get that id from the cache tables
@@ -1254,5 +1269,4 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 }
 
-// - UNUSED CODE
-// ............................................................................................
+// - UNUSED CODE ............................................................................................

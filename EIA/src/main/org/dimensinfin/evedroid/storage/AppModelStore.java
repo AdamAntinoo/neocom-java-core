@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
@@ -28,11 +27,14 @@ import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
-import org.dimensinfin.evedroid.model.APIKey;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.Fitting;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+
+import com.beimin.eveapi.exception.ApiException;
 
 import android.app.Activity;
 import android.view.Menu;
@@ -59,7 +61,7 @@ import android.view.Menu;
  * 
  * @author Adam Antinoo
  */
-public class AppModelStore extends AbstractModelStore {
+public class AppModelStore extends AbstractModelStore implements INeoComModelStore {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= 8777607802616543118L;
@@ -87,6 +89,16 @@ public class AppModelStore extends AbstractModelStore {
 		return singleton;
 	}
 
+	/**
+	 * Forces the initialization of the Model store from the api list file. Instead reading the data from the
+	 * store file it will process the api list and reload all the character information from scratch.
+	 */
+	public static void initialize() {
+		// Create a new from scratch. Read the api key list.
+		singleton = new AppModelStore(new UserModelPersistenceHandler());
+		readApiKeys();
+	}
+
 	private static void readApiKeys() {
 		logger.info(">> [AppModelStore.readApiKeys]");
 		try {
@@ -103,7 +115,7 @@ public class AppModelStore extends AbstractModelStore {
 					String validationcode = parts[1];
 					int keynumber = Integer.parseInt(key);
 					logger.info("-- Inserting API key " + keynumber);
-					APIKey api = new APIKey(keynumber, validationcode);
+					NeoComApiKey api = NeoComApiKey.build(keynumber, validationcode);
 					if (null != singleton) {
 						singleton.addApiKey(api);
 					}
@@ -128,20 +140,20 @@ public class AppModelStore extends AbstractModelStore {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Check to verify if the recovery process is successful. */
-	private boolean														recovered					= false;
+	private boolean													recovered					= false;
 	/** Reference to the application menu to make it accessible to any level. */
-	private transient Menu										_appMenu					= null;
+	private transient Menu									_appMenu					= null;
 	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
-	private transient Activity								_activity					= null;
-	private transient EveChar									_pilot						= null;
+	private transient Activity							_activity					= null;
+	private transient NeoComCharacter				_pilot						= null;
 
 	/** List of registered DataSources. This data is not stored on switch or termination. */
-	private transient DataSourceManager				dsManager					= null;
-	private HashMap<Integer, APIKey>					apiKeys						= new HashMap<Integer, APIKey>();
+	private transient DataSourceManager			dsManager					= null;
+	private HashMap<Integer, NeoComApiKey>	apiKeys						= new HashMap<Integer, NeoComApiKey>();
 	/** List of fittings by name. This is the source for the Fittings DataSource. */
-	private HashMap<String, Fitting>					fittings					= new HashMap<String, Fitting>();
-	private transient HashMap<Long, EveChar>	charCache					= null;
-	private final long												lastCCPAccessTime	= 0;
+	private HashMap<String, Fitting>				fittings					= new HashMap<String, Fitting>();
+	//	private transient HashMap<Long, EveChar>	charCache					= null;
+	private final long											lastCCPAccessTime	= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private AppModelStore(final IPersistentHandler storageHandler) {
@@ -191,13 +203,13 @@ public class AppModelStore extends AbstractModelStore {
 	 * 
 	 * @param newKey
 	 */
-	public void addApiKey(final APIKey newKey) {
+	public void addApiKey(final NeoComApiKey newKey) {
 		if (null != newKey) {
 			//			HashMap<Integer, APIKey> oldState = (HashMap<Integer, APIKey>) apiKeys.clone();
 			newKey.setParent(this);
 			// First update the key to avoid adding invalid keys.
-			newKey.update();
-			apiKeys.put(newKey.getKeyID(), newKey);
+			//			newKey.update();
+			apiKeys.put(newKey.getKey(), newKey);
 			//		fireStructureChange(BundlesAndMessages.events.EVENTSTR_APIKEY, oldState, apiKeys);
 			setDirty(true);
 		}
@@ -214,9 +226,8 @@ public class AppModelStore extends AbstractModelStore {
 
 	@Override
 	public void clean() {
-		apiKeys = new HashMap<Integer, APIKey>();
+		apiKeys = new HashMap<Integer, NeoComApiKey>();
 		fittings = new HashMap<String, Fitting>();
-		//		characters = new HashMap<Long, EveChar>();
 	}
 
 	/**
@@ -225,10 +236,10 @@ public class AppModelStore extends AbstractModelStore {
 	 * 
 	 * @return
 	 */
-	public ArrayList<EveChar> getActiveCharacters() {
+	public ArrayList<NeoComCharacter> getActiveCharacters() {
 		// Iterate the list of pilots and accumulate the active ones.
-		final ArrayList<EveChar> activePilots = new ArrayList<EveChar>();
-		for (final EveChar pilot : getCharacters().values())
+		final ArrayList<NeoComCharacter> activePilots = new ArrayList<NeoComCharacter>();
+		for (final NeoComCharacter pilot : getCharacters().values())
 			if (pilot.isActive()) {
 				activePilots.add(pilot);
 			}
@@ -239,7 +250,7 @@ public class AppModelStore extends AbstractModelStore {
 		return _activity;
 	}
 
-	public HashMap<Integer, APIKey> getApiKeys() {
+	public HashMap<Integer, NeoComApiKey> getApiKeys() {
 		return apiKeys;
 	}
 
@@ -247,14 +258,20 @@ public class AppModelStore extends AbstractModelStore {
 		return _appMenu;
 	}
 
-	public HashMap<Long, EveChar> getCharacters() {
-		if (null == charCache) {
-			charCache = new HashMap<Long, EveChar>();
-			for (final APIKey key : apiKeys.values()) {
-				final Collection<EveChar> chars = key.getCharacters().values();
-				for (final EveChar eveChar : chars) {
+	/**
+	 * Get a complete list of the characters available indexed by the character id.
+	 * 
+	 * @return
+	 */
+	public HashMap<Long, NeoComCharacter> getCharacters() {
+		HashMap<Long, NeoComCharacter> charCache = new HashMap<Long, NeoComCharacter>();
+		for (final NeoComApiKey key : apiKeys.values()) {
+			try {
+				for (final NeoComCharacter eveChar : key.getApiCharacters()) {
 					charCache.put(eveChar.getCharacterID(), eveChar);
 				}
+			} catch (ApiException apiex) {
+				apiex.printStackTrace();
 			}
 		}
 		return charCache;
@@ -271,7 +288,7 @@ public class AppModelStore extends AbstractModelStore {
 		return fittings;
 	}
 
-	public EveChar getPilot() {
+	public NeoComCharacter getPilot() {
 		if (null == _pilot)
 			throw new RuntimeException("RT CharacterStore - Pilot access cannot be completed. Pilot is NULL");
 		return _pilot;
@@ -359,7 +376,7 @@ public class AppModelStore extends AbstractModelStore {
 	 * @param characterID
 	 * @return
 	 */
-	public EveChar searchCharacter(final long characterID) {
+	public NeoComCharacter searchCharacter(final long characterID) {
 		return getCharacters().get(characterID);
 	}
 
@@ -367,13 +384,13 @@ public class AppModelStore extends AbstractModelStore {
 		return fittings.get(fittingLabel);
 	}
 
-	public void setApiKeys(final HashMap<Integer, APIKey> newkeys) {
+	public void setApiKeys(final HashMap<Integer, NeoComApiKey> newkeys) {
 		apiKeys = newkeys;
 		// we have to reparent the new data because this is not stored on the serialization.
 		// Also reinitialize transient fields that are not saved
-		final Iterator<APIKey> eit = apiKeys.values().iterator();
+		final Iterator<NeoComApiKey> eit = apiKeys.values().iterator();
 		while (eit.hasNext()) {
-			final APIKey apiKey = eit.next();
+			final NeoComApiKey apiKey = eit.next();
 			apiKey.setParent(this);
 			//			apiKey.initialize();
 		}

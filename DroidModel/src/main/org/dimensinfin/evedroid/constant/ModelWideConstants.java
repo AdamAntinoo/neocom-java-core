@@ -12,6 +12,10 @@ package org.dimensinfin.evedroid.constant;
 public class ModelWideConstants {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
+	// - M O D E L   V I E W   C O N T R O L L E R   V A R I A N T S
+	public enum EVARIANT{
+		DEFAULT_VARIANT
+	}
 	// - I N D U S T R Y   A C T I V I T I E S
 	public static final class activities {
 		public static final int	NO_ACTIVITY		= 0;

@@ -31,15 +31,16 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.AndroidCacheConnector;
 import org.dimensinfin.evedroid.core.AndroidDatabaseConnector;
 import org.dimensinfin.evedroid.core.AndroidStorageConnector;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.ICache;
 import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
 import org.dimensinfin.evedroid.interfaces.INamed;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.interfaces.IWeigthedNode;
-import org.dimensinfin.evedroid.model.APIKey;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.JobQueue;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.part.APIKeyPart;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.BlueprintPart;
@@ -76,8 +77,7 @@ import android.widget.TextView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EVEDroidApp extends Application implements IConnector {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger							logger									= Logger.getLogger("EVEDroidApp");
 	private static DecimalFormat			pendingCounter					= new DecimalFormat("0.0##");
 	private static EVEDroidApp				singleton								= null;
@@ -232,13 +232,13 @@ public class EVEDroidApp extends Application implements IConnector {
 						long leftField = -1;
 						long rightField = -1;
 						if (left instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
-							leftField = intermediate.getKeyID();
+							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
+							leftField = intermediate.getKey();
 						}
 
 						if (right instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
-							rightField = intermediate.getKeyID();
+							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
+							rightField = intermediate.getKey();
 						}
 						if (leftField < rightField) return -1;
 						if (leftField > rightField) return 1;
@@ -252,13 +252,13 @@ public class EVEDroidApp extends Application implements IConnector {
 						long leftField = -1;
 						long rightField = -1;
 						if (left instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) left).getCastedModel();
-							leftField = intermediate.getKeyID();
+							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
+							leftField = intermediate.getKey();
 						}
 
 						if (right instanceof APIKeyPart) {
-							final APIKey intermediate = ((APIKeyPart) right).getCastedModel();
-							rightField = intermediate.getKeyID();
+							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
+							rightField = intermediate.getKey();
 						}
 						if (leftField > rightField) return -1;
 						if (leftField < rightField) return 1;
@@ -609,6 +609,11 @@ public class EVEDroidApp extends Application implements IConnector {
 			dbconnector = new AndroidDatabaseConnector(this);
 		}
 		return dbconnector;
+	}
+
+	@Override
+	public INeoComModelStore getModelStore() {
+		return AppModelStore.getSingleton();
 	}
 
 	public String getResourceString(final int reference) {

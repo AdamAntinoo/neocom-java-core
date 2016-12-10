@@ -35,8 +35,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import net.nikr.eve.jeveasset.data.Citadel;
-import net.nikr.eve.jeveasset.data.MyLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SplashActivity extends Activity {
@@ -62,11 +60,11 @@ public class SplashActivity extends Activity {
 			// Just check that the files exist and if not load the Api list and their characters.
 			logger.info(">> EveDroidInitialization.doInBackground.Entry");
 			updateStateLabel("Checking application database...");
-			// STEP 03. Check required files availability on app directory.
+			// STEP 01. Check required files availability on app directory.
 			createAppDir();
 			createCacheDirectories();
-			logger.info(">> EveDroidInitialization.STEP 03. App Directories created");
-			// STEP 04. Check existence of required files.
+			logger.info(">> EveDroidInitialization.STEP 01. App Directories created");
+			// STEP 02. Check existence of required files.
 			if (!checkAppFile(AppConnector.getResourceString(R.string.ccpdatabasefilename))) {
 				// Initial item database is not on place. Copy one from the assets.
 				// TODO The CCP database is not distributed with the application. If not available then close the App
@@ -76,26 +74,30 @@ public class SplashActivity extends Activity {
 				// Initial item database is not on place. Copy one from the assets.
 				copyFromAssets(R.string.apikeysfilename);
 			}
-			logger.info(">> EveDroidInitialization.STEP 04. Required files on place");
+			logger.info(">> EveDroidInitialization.STEP 02. Required files on place");
 
 			updateStateLabel("Loading user data...");
+			// STEP 03. Initialize the Model store and force a refresh from the api list file.
+			AppModelStore.initialize();
+
 			// STEP 08. Check API file.
-			if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
-				logger.info("-- EveDroidInitialization.STEP 06. No API List. Needs API introduction");
-				startActivity(new Intent(_activity, AddNewAPIActivity.class));
-				return false;
-			}
+			//			if (!checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
+			//				logger.info("-- EveDroidInitialization.STEP 06. No API List. Needs API introduction");
+			//				startActivity(new Intent(_activity, AddNewAPIActivity.class));
+			//				return false;
+			//			}
+			//			AppModelStore store = EVEDroidApp.getAppStore();
 			//				// Try to read the data. If this fails we have to force an update or leave the user to do that.
 			//				status = EVEDroidApp.getSingletonApp().getAppStore().restore();
 			//				logger.info(">> EveDroidInitialization.STEP 06. Reload of user data [" + status + "]");
 			//			}
-			logger.info(">> EveDroidInitialization.STEP 08. API list available");
-			updateStateLabel("Downloading data from CCP...");
+			//			logger.info(">> EveDroidInitialization.STEP 08. API list available");
+			//			updateStateLabel("Downloading data from CCP...");
 			// STEP 09. Refresh data from CCP.	
 			// Initialize the store or read it from the storage.
-			AppModelStore store = AppModelStore.getSingleton();
+			//			AppModelStore store = AppModelStore.getSingleton();
 			// Force the store to be updated from the api list file.
-			store.refresh();
+			//			store.refresh();
 			//			readApiKeys();
 			// STEP 10. Load and cache the citadels
 			//			postUpdateCitadels();
@@ -233,17 +235,17 @@ public class SplashActivity extends Activity {
 			alternatedir.mkdir();
 		}
 
-		/**
-		 * This method will reginter into the updater queue the need to read and update the Citadel location and
-		 * the Outposts. During the initialization then we should read in background that data and update the
-		 * Location table on the NeoCom database.
-		 */
-		private void postUpdateCitadels() {
-			logger.info(">> [SplashActivity.postUpdateCitadels]");
-			//			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
-			//			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
-			logger.info("<< [SplashActivity.postUpdateCitadels]");
-		}
+		//		/**
+		//		 * This method will reginter into the updater queue the need to read and update the Citadel location and
+		//		 * the Outposts. During the initialization then we should read in background that data and update the
+		//		 * Location table on the NeoCom database.
+		//		 */
+		//		private void postUpdateCitadels() {
+		//			logger.info(">> [SplashActivity.postUpdateCitadels]");
+		//			//			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
+		//			//			EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+		//			logger.info("<< [SplashActivity.postUpdateCitadels]");
+		//		}
 
 		//		private void readApiKeys() {
 		//			logger.info(">> EveDroidInitialization.readApiKeys");
@@ -281,17 +283,83 @@ public class SplashActivity extends Activity {
 		//			}
 		//		}
 
-		/**
-		 * Save the Citadel information into the Application database at the Locations table.
-		 * 
-		 * @param locationId
-		 * @param citadel
-		 */
-		private void saveCitadel(final Long locationId, final Citadel citadel) {
-			// Create a NeoComLocation and add to it all the Citadel data.
-			//			loc=new NeoComLocation(
-			MyLocation loc = citadel.getLocation(locationId);
-		}
+		//		/**
+		//		 * Save the Citadel information into the Application database at the Locations table.
+		//		 * 
+		//		 * @param locationId
+		//		 * @param citadel
+		//		 */
+		//		private void saveCitadel(final Long locationId, final Citadel citadel) {
+		//			// Create a NeoComLocation and add to it all the Citadel data.
+		//			//			loc=new NeoComLocation(
+		//			MyLocation loc = citadel.getLocation(locationId);
+		//
+		//		private void instantiateKey() {
+		//			// Get the complete api information for CCP through the eveapi.
+		//			ApiAuthorization authorization = new ApiAuthorization(apiKey.getKeyID(), apiKey.getVerificationCode());
+		//			ApiKeyInfoParser parser = new ApiKeyInfoParser();
+		//			ApiKeyInfoResponse response = parser.getResponse(authorization);
+		//			if (null != response) {
+		//				apiKey.updateAllParameters(response);
+		//				// Get access to all the pilots and update the information on the ApiKey.
+		//				final CharactersParser pilotParser = new CharactersParser();
+		//				final CharactersResponse pilotResponse = pilotParser.getResponse(authorization);
+		//				if (null != pilotResponse) {
+		//					//			 HashSet<Character> characterList = new HashSet<Character>();
+		//					Set<Character> characterList = pilotResponse.getAll();
+		//					for (final Character evechar : characterList) {
+		//						EveCharCore newChar = processCharacter(evechar);
+		//						//Add the credentials
+		//						//	newChar.setApiKeyID(2889577);
+		//						newChar.setKeyID(apiKey.getKeyID());
+		//						newChar.setVerificationCode(apiKey.getVerificationCode());
+		//						// Add more information to the character using mode CCP calls.
+		//						// CharacterInfo
+		//						//				updateCharacterInfo(newChar);
+		//						apiKey.addCharacter(newChar);
+		//					}
+		//				}
+		//				_modelRoot.add(apiKey);
+		//			}
+		//
+		//		}
+
+		//		private void readApiKeys() {
+		//			logger.info(">> EveDroidInitialization.readApiKeys");
+		//			try {
+		//				// Read the contents of the character information.
+		//				final File characterFile = AppConnector.getStorageConnector()
+		//						.accessAppStorage(AppConnector.getResourceString(R.string.apikeysfilename));
+		//				InputStream is = new BufferedInputStream(new FileInputStream(characterFile));
+		//				BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+		//				String line = br.readLine();
+		//				while (null != line) {
+		//					try {
+		//						String[] parts = line.split(":");
+		//						String key = parts[0];
+		//						String validationcode = parts[1];
+		//						int keynumber = Integer.parseInt(key);
+		//						logger.info("-- Inserting API key " + keynumber);
+		//						//						APIKey api = new APIKey(keynumber, validationcode);
+		//						NeoComApiKey api = NeoComApiKey.build(keynumber, validationcode);
+		//						EVEDroidApp.getAppStore().addApiKey(api);
+		//					} catch (NumberFormatException nfex) {
+		//					} catch (Exception ex) {
+		//						ex.printStackTrace();
+		//					}
+		//					line = br.readLine();
+		//				}
+		//				if (null != br) {
+		//					br.close();
+		//				}
+		//			} catch (FileNotFoundException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			} catch (IOException e) {
+		//				// TODO Auto-generated catch block
+		//				e.printStackTrace();
+		//			}
+		//		}
 
 		private void updateStateLabel(final String newLabel) {
 			runOnUiThread(new Runnable() {

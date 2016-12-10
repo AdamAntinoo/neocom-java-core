@@ -1,9 +1,12 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
@@ -14,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
+import org.dimensinfin.evedroid.core.INeoComNode;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.joda.time.Duration;
@@ -25,13 +28,22 @@ import org.joda.time.Instant;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.response.eve.CharacterInfoResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+/**
+ * This class encapsulates the eveapi Character into a NeoCom data structure that will allow me to use the
+ * original character as a delegate to use eveapi code for all CCP interactions. <br>
+ * Fields not declared on the core Character will be added through more delegates or coded into this class
+ * 
+ * @author Adam Antinoo
+ */
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class EveCharCore extends AbstractComplexNode {
+public abstract class EveCharCore extends AbstractNeoComNode implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID		= 7187291497544861371L;
 	protected static Logger										logger							= Logger.getLogger("EveChar");
@@ -39,27 +51,30 @@ public abstract class EveCharCore extends AbstractComplexNode {
 	protected static String										EVE_CHARACTERINFO		= "https://api.eveonline.com/eve/CharacterInfo.xml.aspx";
 
 	// - F I E L D - S E C T I O N ............................................................................
-	/**
-	 * Flag that shows if this character is active or not for user interaction. Can be changed from UI.
-	 */
-	private final boolean											active							= true;
-
-	// - C C P   A U T H E N T I C A T I O N
-	protected transient Instant								lastCCPAccessTime		= new Instant(0);
-	protected int															keyID								= 0;
-	protected String													verificationCode		= null;
-	protected long														characterID					= 0;
+	/** Reference to the delegated core eveapi Character */
+	private Character													coreCharacter				= null;
+	private CharacterInfoResponse							characterInfo				= null;
+	//	/**
+	//	 * Flag that shows if this character is active or not for user interaction. Can be changed from UI.
+	//	 */
+	//	private final boolean											active							= true;
+	//
+	//	// - C C P   A U T H E N T I C A T I O N
+	//	protected transient Instant								lastCCPAccessTime		= new Instant(0);
+	//	protected int															keyID								= 0;
+	//	protected String													verificationCode		= null;
+	//	protected long														characterID					= 0;
 
 	// - P R O P E R T I E S
-	private String														name								= "<undefined>";
+	//	private String														name								= "<undefined>";
 	private double														accountBalance			= 0.0;
 	private String														shipName						= "<undefined>";
 	private String														shipTypeName				= "<undefined>";
 	private String														lastKnownLocation		= "Space";
-	private String														corporationName			= "<undefined>";
+	//	private String														corporationName			= "<undefined>";
 	private String														race								= "<NO RACE>";
 	private String														cloneName						= "Clone Grade Alpha";
-	private final long												corporationID				= 0;
+	//	private final long												corporationID				= 0;
 
 	// - D E P E N D A N T   P R O P E R T I E S
 	private boolean														hasBlueprints				= false;
@@ -74,9 +89,20 @@ public abstract class EveCharCore extends AbstractComplexNode {
 		keyID = key;
 		verificationCode = validation;
 		this.characterID = characterID;
+		coreCharacter.setCharacterID(characterID);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
+		if (null == locationRoles) accessLocationRoles();
+		if (locationRoles.size() < 1) accessLocationRoles();
+		Property hit = new Property(EPropertyTypes.LOCATIONROLE);
+		hit.setOwnerID(getCharacterID());
+		hit.setNumericValue(theSelectedLocation.getID());
+		hit.setStringValue(locationrole);
+		locationRoles.add(hit);
+	}
+
 	/**
 	 * Removes the records that define the association of roles to the selected location. This clears all the
 	 * roles for a location and if the user only wants to clear one he/she has to activate the others again
@@ -124,6 +150,7 @@ public abstract class EveCharCore extends AbstractComplexNode {
 		return bps;
 	}
 
+	@Override
 	public long getCharacterID() {
 		return characterID;
 	}
@@ -132,6 +159,7 @@ public abstract class EveCharCore extends AbstractComplexNode {
 		return cloneName;
 	}
 
+	@Override
 	public String getCorporationName() {
 		return corporationName;
 	}
@@ -179,8 +207,8 @@ public abstract class EveCharCore extends AbstractComplexNode {
 		//		EveLocation preferredLocation = null;
 		for (Property role : locationRoles) {
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole)) {
-				EveLocation target = AppConnector.getDBConnector().searchLocationbyID(
-						Double.valueOf(role.getNumericValue()).longValue());
+				EveLocation target = AppConnector.getDBConnector()
+						.searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 				if (target.getRegion().equalsIgnoreCase(region)) return target;
 				//		Property currentRole = locationRoles.get(locID);
 				//			if (matchingRole.equalsIgnoreCase(currentRole.getStringValue()))
@@ -188,28 +216,6 @@ public abstract class EveCharCore extends AbstractComplexNode {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * From the list of roles set to location, extract all the roles that match the location ID.
-	 * 
-	 * @param targetLocationID
-	 * @param defaultValue
-	 * @return
-	 * @return
-	 */
-	public ArrayList<Property> getLocationRoles(final long targetLocationID, final String defaultValue) {
-		ArrayList<Property> roles = new ArrayList<Property>();
-		if (null == locationRoles) accessLocationRoles();
-		for (Property role : locationRoles) {
-			if (role.getNumericValue() == Double.valueOf(targetLocationID)) roles.add(role);
-			//		Property hit = locationRoles.get(targetLocationID);
-			//		if (null == hit)
-			//			return defaultValue;
-			//		else
-			//			return hit.getStringValue();
-		}
-		return roles;
 	}
 
 	//	/**
@@ -238,6 +244,29 @@ public abstract class EveCharCore extends AbstractComplexNode {
 	//		return preferredLocation;
 	//	}
 
+	/**
+	 * From the list of roles set to location, extract all the roles that match the location ID.
+	 * 
+	 * @param targetLocationID
+	 * @param defaultValue
+	 * @return
+	 * @return
+	 */
+	public ArrayList<Property> getLocationRoles(final long targetLocationID, final String defaultValue) {
+		ArrayList<Property> roles = new ArrayList<Property>();
+		if (null == locationRoles) accessLocationRoles();
+		for (Property role : locationRoles) {
+			if (role.getNumericValue() == Double.valueOf(targetLocationID)) roles.add(role);
+			//		Property hit = locationRoles.get(targetLocationID);
+			//		if (null == hit)
+			//			return defaultValue;
+			//		else
+			//			return hit.getStringValue();
+		}
+		return roles;
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -248,10 +277,6 @@ public abstract class EveCharCore extends AbstractComplexNode {
 
 	public String getShipName() {
 		return shipName;
-	}
-
-	public ArrayList<Asset> getShips() {
-		return searchAsset4Category(getCharacterID(), "Ship");
 	}
 
 	//	public SkillInTrainingResponse getSkills() {
@@ -281,6 +306,10 @@ public abstract class EveCharCore extends AbstractComplexNode {
 	//		logger.info("<< EveChar.getT2Modules");
 	//		return (ArrayList<Asset>) assetList;
 	//	}
+
+	public ArrayList<Asset> getShips() {
+		return searchAsset4Category(getCharacterID(), "Ship");
+	}
 
 	public String getShipTypeName() {
 		return shipTypeName;
@@ -333,19 +362,20 @@ public abstract class EveCharCore extends AbstractComplexNode {
 		this.cloneName = cloneName;
 	}
 
+	@Override
 	public void setCorporationName(final String corporationName) {
 		this.corporationName = corporationName;
 	}
+
+	//	public void setCloneSkillPoints(final int cloneSkillPoints) {
+	//		this.cloneSkillPoints = cloneSkillPoints;
+	//	}
 
 	@Override
 	public void setDirty(final boolean dirtyState) {
 		// If dirty then write down the assets to a file. But only when the assets have been changed.
 		super.setDirty(dirtyState);
 	}
-
-	//	public void setCloneSkillPoints(final int cloneSkillPoints) {
-	//		this.cloneSkillPoints = cloneSkillPoints;
-	//	}
 
 	//	public void setCloneSkillPoints(final String points) {
 	//		// Convert the parameter to a number
@@ -355,16 +385,7 @@ public abstract class EveCharCore extends AbstractComplexNode {
 		this.lastKnownLocation = lastKnownLocation;
 	}
 
-	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
-		if (null == locationRoles) accessLocationRoles();
-		if (locationRoles.size() < 1) accessLocationRoles();
-		Property hit = new Property(EPropertyTypes.LOCATIONROLE);
-		hit.setOwnerID(getCharacterID());
-		hit.setNumericValue(theSelectedLocation.getID());
-		hit.setStringValue(locationrole);
-		locationRoles.add(hit);
-	}
-
+	@Override
 	public void setName(final String name) {
 		this.name = name;
 	}
@@ -691,8 +712,8 @@ public abstract class EveCharCore extends AbstractComplexNode {
 			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 			Duration lapse = AppConnector.timeLapse();
-			logger.info("-- Time lapse for [SELECT CATEGORY=BLUEPRINT NAME LIKE %BPO% OWNERID = " + getCharacterID() + "] "
-					+ lapse);
+			logger.info(
+					"-- Time lapse for [SELECT CATEGORY=BLUEPRINT NAME LIKE %BPO% OWNERID = " + getCharacterID() + "] " + lapse);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

@@ -1,10 +1,11 @@
-//	PROJECT:        NeoCom (NEOC)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application to get access to character data from Eve Online. Specialized on
-//									industrial management.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.manager;
 
 // - IMPORT SECTION .........................................................................................
@@ -32,8 +33,6 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
-
-import android.util.Log;
 
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to

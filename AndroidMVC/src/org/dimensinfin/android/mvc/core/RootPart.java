@@ -17,6 +17,7 @@ import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................

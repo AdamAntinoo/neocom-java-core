@@ -1,11 +1,12 @@
-//	PROJECT:        NeoCom.Android (NEOC.A)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
-//									for characters and corporations at Eve Online. The set is composed of some projects
-//									with implementation for Android and for an AngularJS web interface based on REST
-//									services on Sprint Boot Cloud.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.model;
 
 // - CLASS IMPLEMENTATION ...................................................................................

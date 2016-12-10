@@ -21,7 +21,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 // - CLASS IMPLEMENTATION ...................................................................................
+<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/model/APIKey.java
 public class APIKey extends APIKeyCore {
+=======
+public class NeoComApiKey extends APIKeyCore implements INeoComNode {
+>>>>>>> 0.6.2-NewEveapi:EIA/src/main/org/dimensinfin/evedroid/model/NeoComApiKey.java
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long								serialVersionUID		= 2600656062640799339L;
 	private static Logger										logger							= Logger.getLogger("APIKey");
@@ -34,11 +38,15 @@ public class APIKey extends APIKeyCore {
 	// - P R O P E R T I E S
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public APIKey(final int keyID, final String verificationCode) {
+	public NeoComApiKey(final int keyID, final String verificationCode) {
 		super(keyID, verificationCode);
 	}
 
+<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/model/APIKey.java
 	@Override
+=======
+	// - M E T H O D - S E C T I O N ..........................................................................
+>>>>>>> 0.6.2-NewEveapi:EIA/src/main/org/dimensinfin/evedroid/model/NeoComApiKey.java
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		//		results.add(this);
@@ -49,7 +57,6 @@ public class APIKey extends APIKeyCore {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public HashMap<Long, EveChar> getCharacters() {
 		return characters;
 	}
