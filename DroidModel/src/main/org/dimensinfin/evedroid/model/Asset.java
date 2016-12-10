@@ -9,6 +9,8 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
@@ -17,6 +19,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.INamed;
 import org.dimensinfin.evedroid.core.INeoComNode;
+import org.dimensinfin.evedroid.interfaces.IAsset;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -37,7 +40,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class Asset extends AbstractComplexNode implements INamed {
+public class Asset extends AbstractComplexNode implements IAsset,INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -119,6 +122,15 @@ public class Asset extends AbstractComplexNode implements INamed {
 	public String getGroupName() {
 		return groupName;
 	}
+	/**
+	 * Assets should collaborate to the model adding their children. Most of the assets will not have children
+	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
+	 */
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll( (Collection<? extends AbstractComplexNode>) getChildren());
+		return results;
+	}
 
 	/**
 	 * New optimization will leave this filed for lazy evaluation. So check if this is empty before getting any
@@ -129,6 +141,10 @@ public class Asset extends AbstractComplexNode implements INamed {
 	public EveItem getItem() {
 		if (null == itemCache) itemCache = AppConnector.getDBConnector().searchItembyID(typeID);
 		return itemCache;
+	}
+
+	public long getParentContainerId() {
+		return parentAssetID;
 	}
 
 	public String getItemName() {

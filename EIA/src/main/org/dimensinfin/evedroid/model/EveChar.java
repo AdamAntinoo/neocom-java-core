@@ -234,14 +234,14 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 		return totalAssets;
 	}
 
-	public AssetsManager getAssetsManager() {
-		if (null == assetsManager) {
-			assetsManager = new AssetsManager(this);
-		}
-		// Make sure the Manager is already connected to the Pilot.
-		assetsManager.setPilot(this);
-		return assetsManager;
-	}
+	//	public AssetsManager getAssetsManager() {
+	//		if (null == assetsManager) {
+	//			assetsManager = new AssetsManager(this);
+	//		}
+	//		// Make sure the Manager is already connected to the Pilot.
+	//		assetsManager.setPilot(this);
+	//		return assetsManager;
+	//	}
 
 	//	public ApiAuthorization getAuthorization() {
 	//		return new ApiAuthorization(keyID, characterID, verificationCode);

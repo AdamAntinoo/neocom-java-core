@@ -15,7 +15,12 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.AbstractModelStore;
+import org.dimensinfin.core.model.IModelStore;
+import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
@@ -57,42 +62,6 @@ public class NeoComPilot extends NeoComCharacter {
 	public void setSkillInTraining(SkillInTrainingResponse training) {
 		skillInTraining=training;
 	}
-	protected  void getAllAssets() {
-		try {
-			// Initialize the model
-			dataModelRoot = new RootNode();
-			regions = new LongSparseArray<Region>();
-			locations = new LongSparseArray<EveLocation>();
-			containers = new LongSparseArray<Asset>();
-			// Read all the assets for this character is not done already.
-			AppModelStore store = EVEDroidApp.getAppStore();
-			// Get the full list of assets for this pilot.
-			final AssetsManager manager = store.getPilot().getAssetsManager();
-			ArrayList<Asset> assets = manager.getAllAssets();
-			// Move the list to a processing map.
-			assetMap = new LongSparseArray<Asset>(assets.size());
-			for (Asset asset : assets) {
-				assetMap.put(asset.getAssetID(), asset);
-			}
-			// Process the map until all elements are removed.
-			try {
-				Long key = assetMap.keyAt(0);
-				Asset point = assetMap.get(key);
-				while (null != point) {
-					processElement(point);
-					key = assetMap.keyAt(0);
-					point = assetMap.get(key);
-				}
-			} catch (NoSuchElementException nsee) {
-				nsee.printStackTrace();
-			}
-		} catch (final RuntimeException rex) {
-			rex.printStackTrace();
-			logger.severe(
-					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
-		}
-	}
-
 	public void setCharacterSheet(CharacterSheetResponse sheet) {
 		characterSheet=sheet;
 	}

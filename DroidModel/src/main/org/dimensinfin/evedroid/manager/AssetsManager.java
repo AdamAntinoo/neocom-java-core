@@ -18,13 +18,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
+import org.dimensinfin.evedroid.interfaces.IAsset;
 import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.Container;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.model.Region;
+import org.dimensinfin.evedroid.model.Ship;
 import org.joda.time.Duration;
 
 import com.j256.ormlite.dao.Dao;
@@ -32,6 +40,8 @@ import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+
+import android.support.v4.util.LongSparseArray;
 
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to
@@ -66,7 +76,13 @@ public class AssetsManager implements Serializable {
 	private HashSet<String>														regionNames						= null;
 	private ArrayList<EveLocation>										locationsList					= null;
 
+	// - A S S E T   M A N A G E M E N T
 	private long																			totalAssets						= -1;
+	private  LongSparseArray<Region>							regions						= new LongSparseArray<Region>();
+	private  LongSparseArray<EveLocation>				locations					= new LongSparseArray<EveLocation>();
+	private  LongSparseArray<Asset>							containers				= new LongSparseArray<Asset>();
+	private  LongSparseArray<Asset>							assetsAtContainer				= new LongSparseArray<Asset>();
+	private transient LongSparseArray<Asset> assetMap= new LongSparseArray<Asset>();
 	private final HashMap<Long, ArrayList<Asset>>			assetsAtLocationcache	= new HashMap<Long, ArrayList<Asset>>();
 	private final HashMap<String, ArrayList<Asset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<Asset>>();
 	private final HashMap<Integer, ArrayList<Asset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<Asset>>();
@@ -98,6 +114,201 @@ public class AssetsManager implements Serializable {
 		}
 		return totalAssets;
 	}
+	/**
+	 * Updates the list of assets, regions and locations from the database. Go to the database to download all the assets for this
+	 * pilot or corporation and then process them one by one to ge the complete parenship and store the result on the assets caches
+	 * for later use.
+	 */
+	public void accessAllAssets() {
+		try {
+			// Initialize the model
+//			RootNode dataModelRoot = new RootNode();
+			regions.clear();
+			locations.clear();
+			containers.clear();
+			assetsAtContainer.clear();
+			// Read all the assets for this character is not done already.
+//			  INeoComModelStore store = AppConnector.getModelStore();
+			// Get the full list of assets for this pilot.
+//			final AssetsManager manager = store.getPilot().getAssetsManager();
+			ArrayList<Asset> assets = this.getAllAssets();
+			// Move the list to a processing map.
+			 assetMap = new LongSparseArray<Asset>(assets.size());
+			for (Asset asset : assets) {
+				assetMap.put(asset.getAssetID(), asset);
+			}
+			// Process the map until all elements are removed.
+			try {
+				Long key = assetMap.keyAt(0);
+				Asset point = assetMap.get(key);
+				while (null != point) {
+					processElement(point);
+					key = assetMap.keyAt(0);
+					point = assetMap.get(key);
+				}
+			} catch (Exception nsee) {
+				nsee.printStackTrace();
+			}
+		} catch (final RuntimeException rex) {
+			rex.printStackTrace();
+			logger.severe(
+					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+		}
+	}
+	/**
+	 * Get one asset and performs some checks to transform it into another type or to process its parentship
+	 * because with the flat listing there is only relationship through the location id. <br>
+	 * If the Category of the asset is a container or a ship then it is encapsulated into another type that
+	 * specializes the view presentation. This is the case of Containers and Ships. <br>
+	 * If it found one of those items gets the list of contents to be removed to the to be processed list
+	 * because the auto model generation will already include those items. Only Locations or Regions behave
+	 * differently.
+	 * 
+	 * @param asset
+	 */
+	private void processElement(final IAsset asset) {
+		// Remove the element from the map.
+		assetMap.remove(asset.getAssetID());
+		// Transform the asset if on specific categories like Ship or Container
+		if (asset.isShip()) {
+			// Check if the ship is packaged. If packaged leave it as a simple asset.
+			if (!asset.isPackaged()) {
+				// Transform the asset to a ship.
+				Ship ship = new Ship(getPilot().getCharacterID()).copyFrom(asset);
+				//				asset = ship;
+				// The ship is a container so add it and forget about this asset.
+				if (ship.hasParent()) {
+					processElement(ship.getParentContainer());
+				} else {
+					add2Location(ship);
+					// Remove all the assets contained because they will be added in the call to collaborate2Model
+					ArrayList<AbstractComplexNode> removable = asset.collaborate2Model(ModelWideConstants.EVARIANT.DEFAULT_VARIANT.name());
+					for (AbstractComplexNode node : removable) {
+						assetMap.remove(((IAsset) node).getAssetID());
+						// Remove also the children.
+						for (IGEFNode child : node.getChildren()) {
+							if (child instanceof IAsset) {
+								assetMap.remove(((IAsset) child).getAssetID());
+							}
+						}
+					}
+				}
+			} else {
+				add2Location(asset);
+			}
+			return;
+		}
+		if (asset.isContainer()) {
+			// Check if the asset is packaged. If so leave as asset
+			if (!asset.isPackaged()) {
+				// Transform the asset to a ship.
+				Container container = new Container(getPilot().getCharacterID()).copyFrom(asset);
+				//			asset = container;
+				// The container is a container so add it and forget about this asset.
+				if (container.hasParent()) {
+					processElement(container.getParentContainer());
+				} else {
+					add2Location(container);
+				}
+			} else {
+				add2Location(asset);
+				// Remove all the assets contained because they will be added in the call to collaborate2Model
+				ArrayList<AbstractComplexNode> removable = asset.collaborate2Model("REPLACE");
+				for (AbstractComplexNode node : removable) {
+					assetMap.remove(((IAsset) node).getAssetID());
+				}
+			}
+			return;
+		}
+
+		// Process the asset parent if this is the case because we should add first parent to the hierarchy
+		if (asset.hasParent()) {
+			processElement(asset.getParentContainer());
+		} else {
+			add2Location(asset);
+		}
+	}
+	/**
+	 * Search for this container reference on this Location's children until found. Then aggregates the asset to
+	 * that container calculating stacking if this is possible. There can be containers inside container like
+	 * the case where a container is on the hols of a ship. That special case will not be implemented on this
+	 * first approach and all the container will be located at the Location's hangar floor.<br>
+	 * Containers also do not have its market value added to the location's aggregation.
+	 * 
+	 * @param apart
+	 */
+	private void add2Container(final IAsset asset) {
+		logger.info(">> LocationAssetsPart.add2Container");
+		// Locate the container if already added to the location.
+		Asset cont = asset.getParentContainer();
+		// TODO Check what is the cause of a parent container null and solve it
+		if (null != cont) {
+			long pcid = cont.getDAOID();
+			Asset target = containers.get(pcid);
+			if (null == target) {
+				// Add the container to the list of containers.
+				logger.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
+				containers.put(new Long(pcid), cont);
+				// Add the container to the list of locations or to another container if not child
+				//			if (asset.hasParent()) {
+				//				add2Container(cont);
+				//			} else {
+				//				add2Location(cont);
+				//			}
+			} else {
+				// Add the asset to the children list of the target container
+				target.addChild(asset);
+			}
+		} else {
+			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
+			Asset parentAssetCache = AppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
+			// This is an Unknown location that should be a Custom Office
+		}
+	}
+	private void add2Location(final IAsset asset) {
+		long locid = asset.getLocationID();
+		EveLocation target = locations.get(locid);
+		if (null == target) {
+			target = AppConnector.getDBConnector().searchLocationbyID(locid);
+			locations.put(new Long(locid), target);
+			add2Region(target);
+		}
+		target.addChild(asset);
+	}
+
+	private void add2Region(final EveLocation target) {
+		long regionid = target.getRegionID();
+		Region region = regions.get(regionid);
+		if (null == region) {
+			region = new Region(target.getRegion());
+			regions.put(new Long(regionid), region);
+		}
+		region.addChild(target);
+	}
+
+	/**
+	 * Get the complete list of the assets that belong to this owner.
+	 * @return
+	 */
+	public ArrayList<Asset> getAllAssets() {
+		// Select assets for the owner.
+		ArrayList<Asset> assetList = new ArrayList<Asset>();
+		try {
+			Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			AppConnector.startChrono();
+			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
+			Where<Asset, String> where = queryBuilder.where();
+			where.eq("ownerID", getPilot().getCharacterID());
+			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			assetList = (ArrayList<Asset>) assetDao.query(preparedQuery);
+			Duration lapse = AppConnector.timeLapse();
+			logger.info(					"~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + getPilot().getCharacterID() + "] - " + lapse);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return assetList;
+	}
+
 
 //	public ArrayList<Blueprint> getBlueprints() {
 //		if (null == blueprintCache) {

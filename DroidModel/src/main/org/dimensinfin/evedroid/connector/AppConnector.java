@@ -9,6 +9,10 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.connector;
 
+import org.dimensinfin.core.model.AbstractModelStore;
+import org.dimensinfin.core.model.IModelStore;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
+import org.dimensinfin.evedroid.model.AppModelStore;
 // - IMPORT SECTION .........................................................................................
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -103,6 +107,14 @@ public class AppConnector {
 	public static void startChrono() {
 		chrono = new Instant();
 	}
+	public static INeoComModelStore getModelStore() {
+		if (null != connection)
+			return connection.getModelStore();
+		else
+			throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
+	}
+
+
 
 	public static Duration timeLapse() {
 		return new Duration(chrono, new Instant());
@@ -111,7 +123,6 @@ public class AppConnector {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AppConnector() {
 	}
-
 
 	// - F I E L D - S E C T I O N ............................................................................
 	// - M E T H O D - S E C T I O N ..........................................................................

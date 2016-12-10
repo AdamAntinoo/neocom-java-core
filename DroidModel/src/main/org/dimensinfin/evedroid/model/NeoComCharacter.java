@@ -88,7 +88,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			newchar.setSkillInTraining( trainingresponse);
 		}
 		// Full list of assets from database.
-		newchar.getAllAssets();
+		newchar.accessAllAssets();
 		return newchar;
 	}
 	private static NeoComCorporation createCorporation(Character coreChar, NeoComApiKey apikey) throws ApiException{
@@ -117,9 +117,6 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	private transient AssetsManager						assetsManager				= null;
 	private transient ArrayList<Property>			locationRoles				= null;
 	private transient HashMap<Long, Property>	actions4Character		= null;
-	protected transient LongSparseArray<Region>							regions						= null;
-	protected transient LongSparseArray<EveLocation>				locations					= null;
-	protected transient LongSparseArray<Asset>							containers				= null;
 
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -135,7 +132,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public long getCharacterID() {
 		return delegatedCharacter.getCharacterID();
 	}
-	protected abstract  void getAllAssets() ;
+	/**
+	 * Updates the list of assets, regions and locations from the database. This code will initialize the AssetsManager
+	 * with that information on application load preferably and that lengthy operation will be done on background. After this
+	 * call the list of assets by location is accessible with just a call.
+	 */
+	protected  void accessAllAssets() {
+		// Do this on the assets manager or create one is reuired.
+		getAssetsManager().accessAllAssets();
+	}
 
 	protected void setApiKey(NeoComApiKey apikey) {
 		this.apikey = apikey;
@@ -309,6 +314,14 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		delegatedCharacter = coreChar;
 	}
 
+	public AssetsManager getAssetsManager() {
+		if (null == assetsManager) {
+			assetsManager = new AssetsManager(this);
+		}
+		// Make sure the Manager is already connected to the Pilot.
+		assetsManager.setPilot(this);
+		return assetsManager;
+	}
 }
 
 // - UNUSED CODE ............................................................................................
