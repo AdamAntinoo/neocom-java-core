@@ -23,7 +23,7 @@ public class Ship extends AbstractNeoComNode implements IAsset {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private IAsset					delegate		= null;
-	private NeoComAsset						reference		= null;
+	private NeoComAsset			reference		= null;
 	private long						pilotID			= 0;
 	private final Separator	highModules	= new Separator("HIGH");
 	private final Separator	medModules	= new Separator("MED");
@@ -116,6 +116,10 @@ public class Ship extends AbstractNeoComNode implements IAsset {
 
 	public long getAssetID() {
 		return delegate.getAssetID();
+	}
+
+	public double getIskvalue() {
+		return delegate.getIskvalue();
 	}
 
 	public long getLocationID() {

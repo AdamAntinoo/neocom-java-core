@@ -91,7 +91,7 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	private double								iskvalue					= 0.0;
 
 	// - C A C H E D   F I E L D S
-	private transient NeoComAsset				parentAssetCache	= null;
+	private transient NeoComAsset	parentAssetCache	= null;
 	private transient EveLocation	locationCache			= null;
 	private transient EveItem			itemCache					= null;
 
@@ -102,6 +102,7 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 		locationID = -1;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Assets should collaborate to the model adding their children. Most of the assets will not have children
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
@@ -112,7 +113,6 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public long getAssetID() {
 		return assetID;
 	}

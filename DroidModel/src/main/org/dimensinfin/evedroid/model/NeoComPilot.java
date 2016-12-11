@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
@@ -25,10 +26,13 @@ import org.joda.time.Instant;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
 import com.beimin.eveapi.model.shared.Asset;
+import com.beimin.eveapi.model.shared.Location;
 import com.beimin.eveapi.parser.corporation.AssetListParser;
+import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.shared.AssetListResponse;
+import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.j256.ormlite.dao.Dao;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -48,6 +52,7 @@ public class NeoComPilot extends NeoComCharacter {
 	public NeoComPilot() {
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Returns the number of invention jobs that can be launched simultaneously. This will depend on the skills
 	 * <code>Laboratory Operation</code> and <code>Advanced Laboratory Operation</code>.
@@ -88,7 +93,6 @@ public class NeoComPilot extends NeoComCharacter {
 		return queues;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Return the elements collaborated by this object. For a Character it depends on the implementation being a
 	 * Pilot or a Corporation. For a Pilot the result depends on the variant received as the parameter
@@ -141,10 +145,10 @@ public class NeoComPilot extends NeoComCharacter {
 			AssetListParser parser = new AssetListParser();
 			AssetListResponse response = parser.getResponse(apikey.getAuthorization());
 			if (null != response) {
-				List<NeoComAsset> assets = response.getAll();
+				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
-				for (final NeoComAsset eveAsset : assets) {
+				for (final Asset eveAsset : assets) {
 					processAsset(eveAsset, null);
 				}
 			}
@@ -153,19 +157,17 @@ public class NeoComPilot extends NeoComCharacter {
 
 			// Update the caching time to the time set by the eveapi.
 			assetsCacheTime = new Instant(response.getCachedUntil());
-		} catch (
-
-		final ApiException apie) {
+		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
 		// Clean all user structures invalid after the reload of the assets.
 		assetsManager = null;
-		totalAssets = -1;
+		//		totalAssets = -1;
 		//		clearTimers();
-		JobManager.clearCache();
+		//		JobManager.clearCache();
 
 		setDirty(true);
-		fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_EVECHARACTER_ASSETS, null, null);
+		fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
 		logger.info("<< EveChar.updateAssets");
 	}
 
@@ -190,13 +192,34 @@ public class NeoComPilot extends NeoComCharacter {
 		skills = skilllist;
 	}
 
+	private double calculateAssetValue(final NeoComAsset asset) {
+		// Skip blueprints from the value calculations
+		double assetValueISK = 0.0;
+		if (null != asset) {
+			EveItem item = asset.getItem();
+			if (null != item) {
+				String category = item.getCategory();
+				String group = item.getGroupName();
+				if (null != category) {
+					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+						// Add the value and volume of the stack to the global result.
+						long quantity = asset.getQuantity();
+						double price = asset.getItem().getHighestBuyerPrice().getPrice();
+						assetValueISK = price * quantity;
+					}
+				}
+			}
+		}
+		return assetValueISK;
+	}
+
 	/**
 	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
 	 * 
 	 * @param eveAsset
 	 * @return
 	 */
-	private NeoComAsset convert2Asset(final NeoComAsset eveAsset) {
+	private NeoComAsset convert2Asset(final Asset eveAsset) {
 		// Create the asset from the API asset.
 		final NeoComAsset newAsset = new NeoComAsset();
 		newAsset.setAssetID(eveAsset.getItemID());
@@ -235,13 +258,36 @@ public class NeoComPilot extends NeoComCharacter {
 		return newAsset;
 	}
 
+	private String downloadAssetEveName(final long assetID) {
+		// Wait up to one second to avoid request rejections from CCP.
+		try {
+			Thread.sleep(500); // 500 milliseconds is half second.
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+		final Vector<Long> ids = new Vector<Long>();
+		ids.add(assetID);
+		try {
+			final LocationsParser parser = new LocationsParser();
+			final LocationsResponse response = parser.getResponse(apikey.getAuthorization(), ids);
+			if (null != response) {
+				Set<Location> userNames = response.getAll();
+				if (userNames.size() > 0) return userNames.iterator().next().getItemName();
+			}
+		} catch (final ApiException e) {
+			logger.info("W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
+			//			e.printStackTrace();
+		}
+		return null;
+	}
+
 	/**
 	 * Processes an asset and all their children. This method converts from a API record to a database asset
 	 * record.
 	 * 
 	 * @param eveAsset
 	 */
-	private void processAsset(NeoComAsset eveAsset, final NeoComAsset parent) {
+	private void processAsset(Asset eveAsset, final NeoComAsset parent) {
 		final NeoComAsset myasset = convert2Asset(eveAsset);
 		if (null != parent) {
 			myasset.setParent(parent);
@@ -260,7 +306,7 @@ public class NeoComPilot extends NeoComCharacter {
 		}
 		try {
 			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			final HashSet<EveAsset> children = new HashSet<EveAsset>(eveAsset.getAssets());
+			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
 			if (children.size() > 0) {
 				myasset.setContainer(true);
 			}
@@ -271,7 +317,7 @@ public class NeoComPilot extends NeoComCharacter {
 
 			// Process all the children and convert them to assets.
 			if (children.size() > 0) {
-				for (final EveAsset childAsset : children) {
+				for (final Asset childAsset : children) {
 					processAsset(childAsset, myasset);
 				}
 			}

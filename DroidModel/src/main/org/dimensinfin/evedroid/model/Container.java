@@ -57,6 +57,10 @@ public class Container extends AbstractNeoComNode implements IAsset {
 		return delegate.getAssetID();
 	}
 
+	public double getIskvalue() {
+		return delegate.getIskvalue();
+	}
+
 	public long getLocationID() {
 		return delegate.getLocationID();
 	}

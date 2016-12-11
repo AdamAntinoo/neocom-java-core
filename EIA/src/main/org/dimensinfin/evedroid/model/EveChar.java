@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -36,7 +35,6 @@ import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
-import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -513,27 +511,6 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 		Log.i("EveChar", "<< EveChar.updateMarketOrders");
 	}
 
-	private double calculateAssetValue(final NeoComAsset asset) {
-		// Skip blueprints from the value calculations
-		double assetValueISK = 0.0;
-		if (null != asset) {
-			EveItem item = asset.getItem();
-			if (null != item) {
-				String category = item.getCategory();
-				String group = item.getGroupName();
-				if (null != category) {
-					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-						// Add the value and volume of the stack to the global result.
-						long quantity = asset.getQuantity();
-						double price = asset.getItem().getHighestBuyerPrice().getPrice();
-						assetValueISK = price * quantity;
-					}
-				}
-			}
-		}
-		return assetValueISK;
-	}
-
 	/**
 	 * Checks if the database is empty of a set of records so it may require a forced request to update their
 	 * data from CCP databases. If no records then it will reset the cache timers.
@@ -632,29 +609,6 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 			rtex.printStackTrace();
 		}
 		return newMarketOrder;
-	}
-
-	private String downloadAssetEveName(final long assetID) {
-		// Wait up to one second to avoid request rejections from CCP.
-		try {
-			Thread.sleep(1000); //1000 milliseconds is one second.
-		} catch (InterruptedException ex) {
-			Thread.currentThread().interrupt();
-		}
-		final Vector<Long> ids = new Vector<Long>();
-		ids.add(assetID);
-		try {
-			final LocationsParser parser = LocationsParser.getInstance();
-			final LocationsResponse response = parser.getResponse(getAuthorization(), ids);
-			if (null != response) {
-				final HashSet<ApiLocation> userNames = new HashSet<ApiLocation>(response.getAll());
-				if (userNames.size() > 0) return userNames.iterator().next().getItemName();
-			}
-		} catch (final ApiException e) {
-			Log.w("NEOCOM", "W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
-			//			e.printStackTrace();
-		}
-		return null;
 	}
 
 	private synchronized void downloadCharacterSheet() {
