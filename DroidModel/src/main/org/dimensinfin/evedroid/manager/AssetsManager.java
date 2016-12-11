@@ -183,6 +183,16 @@ public class AssetsManager implements Serializable {
 		return totalAssets;
 	}
 
+	public ArrayList<NeoComBlueprint> getBlueprints() {
+		if (null == blueprintCache) {
+			updateBlueprints();
+		}
+		if (blueprintCache.size() == 0) {
+			updateBlueprints();
+		}
+		return blueprintCache;
+	}
+
 	public int getLocationCount() {
 		if (locationCount < 0) {
 			updateLocations();
@@ -220,16 +230,6 @@ public class AssetsManager implements Serializable {
 		}
 		return regionNames;
 	}
-
-	//	public ArrayList<Blueprint> getBlueprints() {
-	//		if (null == blueprintCache) {
-	//			updateBlueprints();
-	//		}
-	//		if (blueprintCache.size() == 0) {
-	//			updateBlueprints();
-	//		}
-	//		return blueprintCache;
-	//	}
 
 	public ArrayList<NeoComAsset> getShips() {
 		return searchAsset4Category("Ship");
@@ -330,6 +330,14 @@ public class AssetsManager implements Serializable {
 	//		return names;
 	//	}
 
+	public NeoComBlueprint searchBlueprintByID(final long assetid) {
+		for (NeoComBlueprint bp : getBlueprints()) {
+			String refs = bp.getStackIDRefences();
+			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
+		}
+		return null;
+	}
+
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
@@ -364,6 +372,30 @@ public class AssetsManager implements Serializable {
 		pilot = newPilot;
 	}
 
+	//	/**
+	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
+	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
+	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
+	//	 * 
+	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
+	//	 */
+	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
+	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
+	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
+	//		EveFilter filter = new EveFilter(bps, techWhere);
+	//		return filter.getResults();
+	//	}
+
+	//	public ArrayList<Blueprint> queryT1Blueprints1() {
+	//		if (null == t1blueprints) getPilot().updateBlueprints();
+	//		return t1blueprints;
+	//	}
+	//
+	//	public ArrayList<Blueprint> queryT2Blueprints1() {
+	//		if (null == t2blueprints) getPilot().updateBlueprints();
+	//		return t2blueprints;
+	//	}
+
 	/**
 	 * Retrieves from the database all the stacks for an specific item type id. The method stores the results
 	 * into the cache so next accesses will not trigger database access.
@@ -392,30 +424,6 @@ public class AssetsManager implements Serializable {
 		stacksByItemCache.put(item.getItemID(), (ArrayList<NeoComAsset>) assetList);
 		return (ArrayList<NeoComAsset>) assetList;
 	}
-
-	//	/**
-	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
-	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
-	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
-	//	 * 
-	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
-	//	 */
-	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
-	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
-	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
-	//		EveFilter filter = new EveFilter(bps, techWhere);
-	//		return filter.getResults();
-	//	}
-
-	//	public ArrayList<Blueprint> queryT1Blueprints1() {
-	//		if (null == t1blueprints) getPilot().updateBlueprints();
-	//		return t1blueprints;
-	//	}
-	//
-	//	public ArrayList<Blueprint> queryT2Blueprints1() {
-	//		if (null == t2blueprints) getPilot().updateBlueprints();
-	//		return t2blueprints;
-	//	}
 
 	/**
 	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
@@ -456,14 +464,6 @@ public class AssetsManager implements Serializable {
 			}
 		}
 	}
-
-	//	public Blueprint searchBlueprintByID(final long assetid) {
-	//		for (Blueprint bp : getBlueprints()) {
-	//			String refs = bp.getStackIDRefences();
-	//			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
-	//		}
-	//		return null;
-	//	}
 
 	//	/**
 	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
@@ -709,29 +709,29 @@ public class AssetsManager implements Serializable {
 		//		getPilot().setDirty(value);
 	}
 
-	//	private void updateBlueprints() {
-	//		logger.info(">> AssetsManager.updateBlueprints");
-	//		//		List<Blueprint> blueprintList = new ArrayList<Blueprint>();
-	//		try {
-	//			AppConnector.startChrono();
-	//			Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
-	//			QueryBuilder<Blueprint, String> queryBuilder = blueprintDao.queryBuilder();
-	//			Where<Blueprint, String> where = queryBuilder.where();
-	//			where.eq("ownerID", getPilot().getCharacterID());
-	//			PreparedQuery<Blueprint> preparedQuery = queryBuilder.prepare();
-	//			blueprintCache.addAll(blueprintDao.query(preparedQuery));
-	//			Duration lapse = AppConnector.timeLapse();
-	//			logger.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + getPilot().getCharacterID() + "] - " + lapse);
-	//			// Check if the list is empty. Then force a refresh download.
-	//			if (blueprintCache.size() < 1) {
-	//				getPilot().forceRefresh();
-	//			}
-	//		} catch (SQLException sqle) {
-	//			sqle.printStackTrace();
-	//		}
-	//		logger.info("<< AssetsManager.updateBlueprints [" + blueprintCache.size() + "]");
-	//		//		return (ArrayList<Blueprint>) blueprintList;
-	//	}
+	private void updateBlueprints() {
+		logger.info(">> AssetsManager.updateBlueprints");
+		//		List<Blueprint> blueprintList = new ArrayList<Blueprint>();
+		try {
+			AppConnector.startChrono();
+			Dao<NeoComBlueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
+			QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
+			Where<NeoComBlueprint, String> where = queryBuilder.where();
+			where.eq("ownerID", getPilot().getCharacterID());
+			PreparedQuery<NeoComBlueprint> preparedQuery = queryBuilder.prepare();
+			blueprintCache.addAll(blueprintDao.query(preparedQuery));
+			Duration lapse = AppConnector.timeLapse();
+			logger.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + getPilot().getCharacterID() + "] - " + lapse);
+			// Check if the list is empty. Then force a refresh download.
+			if (blueprintCache.size() < 1) {
+				getPilot().forceRefresh();
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		logger.info("<< AssetsManager.updateBlueprints [" + blueprintCache.size() + "]");
+		//		return (ArrayList<Blueprint>) blueprintList;
+	}
 
 	/**
 	 * Gets the list of locations for a character. It will store the results into a local variable to speed up

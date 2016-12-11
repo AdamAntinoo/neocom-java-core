@@ -22,15 +22,16 @@ import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.EveTask;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Property;
 
+import com.beimin.eveapi.model.shared.MarketOrder;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -50,9 +51,9 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** The main element used for the manufacture job. */
-	protected NeoComBlueprint												blueprint								= null;
+	protected NeoComBlueprint									blueprint								= null;
 	/** The Pilot owner of the job and blueprint. Required to get the characterID. */
-	protected NeoComCharacter													pilot										= null;
+	protected NeoComCharacter									pilot										= null;
 	/** New and locally used AssetsManager used to process the job requests. */
 	protected AssetsManager										industryAssetsManager		= null;
 	protected int															bpid										= -1;
@@ -641,11 +642,11 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	//		return hit;
 	//	}
 
-	private ArrayList<MarketOrder> accessScheduledOrders() {
+	private ArrayList<NeoComMarketOrder> accessScheduledOrders() {
 		// Search for an scheduled buy and get its quantity.
-		final ArrayList<MarketOrder> allorders = getPilot().searchMarketOrders();
-		final ArrayList<MarketOrder> orders = new ArrayList<MarketOrder>();
-		for (final MarketOrder order : allorders)
+		final ArrayList<NeoComMarketOrder> allorders = getPilot().searchMarketOrders();
+		final ArrayList<NeoComMarketOrder> orders = new ArrayList<NeoComMarketOrder>();
+		for (final NeoComMarketOrder order : allorders)
 			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
 				orders.add(order);
 			}
@@ -670,10 +671,10 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	}
 
 	@SuppressLint("UseValueOf")
-	private ArrayList<MarketOrder> aggregate(final ArrayList<MarketOrder> sourcenodes) {
-		final HashMap<Integer, MarketOrder> datamap = new HashMap<Integer, MarketOrder>();
-		for (final MarketOrder order : sourcenodes) {
-			final MarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
+	private ArrayList<NeoComMarketOrder> aggregate(final ArrayList<NeoComMarketOrder> sourcenodes) {
+		final HashMap<Integer, NeoComMarketOrder> datamap = new HashMap<Integer, NeoComMarketOrder>();
+		for (final NeoComMarketOrder order : sourcenodes) {
+			final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
 			if (null == hit) {
 				datamap.put(new Integer(order.getItemTypeID()), order);
 			} else {
@@ -681,7 +682,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			}
 		}
 		// Unpack the data map into a new list with the quantities aggregated
-		return new ArrayList<MarketOrder>(datamap.values());
+		return new ArrayList<NeoComMarketOrder>(datamap.values());
 	}
 
 	/**

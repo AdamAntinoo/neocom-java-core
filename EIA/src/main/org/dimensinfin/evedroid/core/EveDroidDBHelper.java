@@ -15,7 +15,7 @@ import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Property;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -40,7 +40,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 	private Dao<NeoComAsset, String>				assetDao					= null;
 	private Dao<NeoComBlueprint, String>		blueprintDao			= null;
 	private Dao<Job, String>					jobDao						= null;
-	private Dao<MarketOrder, String>	marketOrderDao		= null;
+	private Dao<NeoComMarketOrder, String>	marketOrderDao		= null;
 	private Dao<Property, String>			propertyDao				= null;
 	private Dao<EveLocation, String>	locationDao				= null;
 
@@ -88,9 +88,9 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		return locationDao;
 	}
 
-	public Dao<MarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
+	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
 		if (null == marketOrderDao) {
-			marketOrderDao = DaoManager.createDao(this.getConnectionSource(), MarketOrder.class);
+			marketOrderDao = DaoManager.createDao(this.getConnectionSource(), NeoComMarketOrder.class);
 		}
 		return marketOrderDao;
 	}
@@ -109,7 +109,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 			TableUtils.createTableIfNotExists(databaseConnection, NeoComAsset.class);
 			TableUtils.createTableIfNotExists(databaseConnection, NeoComBlueprint.class);
 			TableUtils.createTableIfNotExists(databaseConnection, Job.class);
-			TableUtils.createTableIfNotExists(databaseConnection, MarketOrder.class);
+			TableUtils.createTableIfNotExists(databaseConnection, NeoComMarketOrder.class);
 			TableUtils.createTableIfNotExists(databaseConnection, Property.class);
 			TableUtils.createTableIfNotExists(databaseConnection, EveLocation.class);
 		} catch (SQLException sqle) {
@@ -253,7 +253,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		if (oldVersion < 50) {
 			try {
 				TableUtils.dropTable(databaseConnection, Job.class, true);
-				TableUtils.dropTable(databaseConnection, MarketOrder.class, true);
+				TableUtils.dropTable(databaseConnection, NeoComMarketOrder.class, true);
 				TableUtils.dropTable(databaseConnection, Property.class, true);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");

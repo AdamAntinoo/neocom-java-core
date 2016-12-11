@@ -28,7 +28,7 @@ import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Outpost;
 import org.dimensinfin.evedroid.model.Property;
 import org.json.JSONArray;
@@ -227,7 +227,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		return appDatabaseHelper.getLocationDAO();
 	}
 
-	public Dao<MarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
+	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
 			openDAO();
 		}

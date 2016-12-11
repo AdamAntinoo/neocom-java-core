@@ -14,8 +14,8 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveTask;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Skill;
 
 import android.util.Log;
@@ -76,7 +76,7 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 			}
 			// If the resource being processed is the job blueprint reduce the
 			// number of runs and set the counter.
-			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
+			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 				resource.setStackSize(threads);
 			}
 		}
@@ -155,6 +155,7 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 		return index;
 	}
 
+	@Override
 	public int getRuns() {
 		return runs;
 	}
@@ -173,6 +174,7 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 		moduleid = blueprint.getModuleTypeID();
 	}
 
+	@Override
 	public void setRuns(final int runs) {
 		this.runs = runs;
 	}

@@ -19,8 +19,8 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.MarketOrder;
-import org.dimensinfin.evedroid.model.MarketOrderAnalyticalGroup;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.MarketOrderAnalyticalGroupPart;
@@ -101,8 +101,8 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 //				else	
 					hierarchy.add((AbstractAndroidPart) mopart
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
-			}if (node instanceof MarketOrder)
-				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((MarketOrder) node)
+			}if (node instanceof NeoComMarketOrder)
+				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((NeoComMarketOrder) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
 			if (node instanceof Resource)
 				hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)

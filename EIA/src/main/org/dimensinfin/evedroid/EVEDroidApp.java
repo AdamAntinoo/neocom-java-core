@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.text.DecimalFormat;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
@@ -21,17 +22,36 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.connector.IConnector;
 import org.dimensinfin.evedroid.connector.IDatabaseConnector;
 import org.dimensinfin.evedroid.connector.IStorageConnector;
+import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.AndroidCacheConnector;
 import org.dimensinfin.evedroid.core.AndroidDatabaseConnector;
 import org.dimensinfin.evedroid.core.AndroidStorageConnector;
 import org.dimensinfin.evedroid.core.INeoComModelStore;
+import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.ICache;
+import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
+import org.dimensinfin.evedroid.interfaces.INamed;
+import org.dimensinfin.evedroid.interfaces.INamedPart;
+import org.dimensinfin.evedroid.interfaces.IWeigthedNode;
+import org.dimensinfin.evedroid.model.JobQueue;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.part.APIKeyPart;
+import org.dimensinfin.evedroid.part.AssetPart;
+import org.dimensinfin.evedroid.part.BlueprintPart;
+import org.dimensinfin.evedroid.part.ContainerPart;
+import org.dimensinfin.evedroid.part.ResourcePart;
+import org.dimensinfin.evedroid.part.ShipPart;
+import org.dimensinfin.evedroid.service.PendingRequestEntry;
 import org.dimensinfin.evedroid.service.TimeTickReceiver;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -73,6 +93,324 @@ public class EVEDroidApp extends Application implements IConnector {
 		final NetworkInfo netInfo = cm.getActiveNetworkInfo();
 		if ((netInfo != null) && netInfo.isConnectedOrConnecting()) return true;
 		return false;
+	}
+
+	public static Comparator<AbstractPropertyChanger> createComparator(final int code) {
+		Comparator<AbstractPropertyChanger> comparator = new Comparator<AbstractPropertyChanger>() {
+			public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+				return 0;
+			}
+		};
+		switch (code) {
+			case AppWideConstants.comparators.COMPARATOR_NAME:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						String leftField = null;
+						String rightField = null;
+						if (left instanceof INamedPart) {
+							leftField = ((INamedPart) left).getName();
+						}
+						if (right instanceof INamedPart) {
+							rightField = ((INamedPart) right).getName();
+						}
+						if (left instanceof INamed) {
+							leftField = ((INamed) left).getOrderingName();
+						}
+						if (right instanceof INamed) {
+							rightField = ((INamed) right).getOrderingName();
+						}
+
+						if (null == leftField) return 1;
+						if (null == rightField) return -1;
+						if ("" == leftField) return 1;
+						if ("" == rightField) return -1;
+						return leftField.compareTo(rightField);
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_ASSET_COUNT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) left;
+							leftField = intermediate.getQuantity();
+						}
+
+						if (right instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) right;
+							rightField = intermediate.getQuantity();
+						}
+						if (leftField < rightField) return 1;
+						if (leftField > rightField) return -1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_ITEM_TYPE:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						// if (left instanceof BlueprintPart) leftField = 100;
+						if (left instanceof AssetPart) {
+							leftField = 0;
+						}
+						if (left instanceof ShipPart) {
+							leftField = 200;
+						}
+						if (left instanceof ContainerPart) {
+							leftField = -300;
+						}
+
+						// if (right instanceof BlueprintPart) rightField = 100;
+						if (right instanceof AssetPart) {
+							rightField = 0;
+						}
+						if (right instanceof ShipPart) {
+							rightField = 200;
+						}
+						if (right instanceof ContainerPart) {
+							rightField = -300;
+						}
+
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_RESOURCE_TYPE:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof ResourcePart) {
+							final Resource resource = ((ResourcePart) left).getCastedModel();
+							leftField = 0;
+							if (resource.getCategory().equalsIgnoreCase("Material")) {
+								leftField = -300;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Module")) {
+								leftField = -200;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Blueprint")) {
+								leftField = -100;
+							}
+							if (resource.getName().contains("Datacore")) {
+								leftField = 100;
+							}
+						}
+
+						if (right instanceof ResourcePart) {
+							final Resource resource = ((ResourcePart) left).getCastedModel();
+							rightField = 0;
+							if (resource.getCategory().equalsIgnoreCase("Material")) {
+								rightField = -300;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Module")) {
+								rightField = -200;
+							}
+							if (resource.getCategory().equalsIgnoreCase("Blueprint")) {
+								rightField = -100;
+							}
+							if (resource.getName().contains("Datacore")) {
+								rightField = 100;
+							}
+						}
+
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_APIID_ASC:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof APIKeyPart) {
+							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
+							leftField = intermediate.getKey();
+						}
+
+						if (right instanceof APIKeyPart) {
+							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
+							rightField = intermediate.getKey();
+						}
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_APIID_DESC:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof APIKeyPart) {
+							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
+							leftField = intermediate.getKey();
+						}
+
+						if (right instanceof APIKeyPart) {
+							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
+							rightField = intermediate.getKey();
+						}
+						if (leftField > rightField) return -1;
+						if (leftField < rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						long leftField = -1;
+						long rightField = -1;
+						if (left instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) left;
+							leftField = intermediate.getPriority();
+						}
+
+						if (right instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) right;
+							rightField = intermediate.getPriority();
+						}
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_PRIORITY:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) left;
+							leftField = intermediate.getPriority();
+						}
+
+						if (right instanceof PendingRequestEntry) {
+							final PendingRequestEntry intermediate = (PendingRequestEntry) right;
+							rightField = intermediate.getPriority();
+						}
+						if (leftField < rightField) return 1;
+						if (leftField > rightField) return -1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_WEIGHT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof IWeigthedNode) {
+							leftField = ((IWeigthedNode) left).getWeight();
+						}
+						if (right instanceof IWeigthedNode) {
+							rightField = ((IWeigthedNode) right).getWeight();
+						}
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_TIMEPENDING:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						int leftField = -1;
+						int rightField = -1;
+						if (left instanceof JobQueue) {
+							leftField = ((JobQueue) left).getTimeUsed();
+						}
+						if (right instanceof JobQueue) {
+							rightField = ((JobQueue) right).getTimeUsed();
+						}
+
+						if (leftField > rightField) return 1;
+						if (leftField < rightField) return -1;
+						return 0;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_CARD_RATIO:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						double leftField = 0.0;
+						double rightField = 0.0;
+						// if (left instanceof ModulePart) {
+						// ModuleCard intermediate = ((ModulePart)
+						// left).getCastedModel();
+						// leftField = intermediate.getModuleIndex();
+						// }
+						if (left instanceof BlueprintPart) {
+							leftField = ((BlueprintPart) left).getProfitIndex();
+						}
+
+						// if (right instanceof ModulePart) {
+						// ModuleCard intermediate = ((ModulePart)
+						// right).getCastedModel();
+						// rightField = intermediate.getModuleIndex();
+						// }
+						if (right instanceof BlueprintPart) {
+							rightField = ((BlueprintPart) right).getProfitIndex();
+						}
+
+						if (leftField > rightField)
+							return -1;
+						else if (leftField == rightField) return 0;
+						return 1;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						DateTime leftField = new DateTime(DateTimeZone.UTC);
+						DateTime rightField = new DateTime(DateTimeZone.UTC);
+						if (left instanceof IDateTimeComparator) {
+							leftField = ((IDateTimeComparator) left).getComparableDate();
+						}
+						if (right instanceof IDateTimeComparator) {
+							rightField = ((IDateTimeComparator) right).getComparableDate();
+						}
+
+						if (leftField.isAfter(rightField))
+							return -1;
+						else
+							return 1;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_OLDESTDATESORT:
+				comparator = new Comparator<AbstractPropertyChanger>() {
+					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+						DateTime leftField = new DateTime(DateTimeZone.UTC);
+						DateTime rightField = new DateTime(DateTimeZone.UTC);
+						if (left instanceof IDateTimeComparator) {
+							leftField = ((IDateTimeComparator) left).getComparableDate();
+						}
+						if (right instanceof IDateTimeComparator) {
+							rightField = ((IDateTimeComparator) right).getComparableDate();
+						}
+
+						if (leftField.isAfter(rightField))
+							return 1;
+						else
+							return -1;
+					}
+				};
+				break;
+		}
+		return comparator;
 	}
 
 	// public static EveDroidAppContext getAppContext() {
@@ -185,16 +523,14 @@ public class EVEDroidApp extends Application implements IConnector {
 		}
 	}
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private AndroidStorageConnector		storage			= null;
 	private AndroidDatabaseConnector	dbconnector	= null;
 	private AndroidCacheConnector			cache				= null;
 
 	private Typeface									daysFace		= null;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EVEDroidApp() {
 		logger.info(">> EVEDroidApp.<init>");
 		// Setup the referencing structures that will serve as proxy and global
@@ -213,8 +549,12 @@ public class EVEDroidApp extends Application implements IConnector {
 		logger.info("<< EVEDroidApp.<init>");
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	@Override
+	public void addCharacterUpdateRequest(final long characterID) {
+		getCacheConnector().addCharacterUpdateRequest(characterID);
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Checks that the current parameter timestamp is still on the frame of the window.
 	 * 
