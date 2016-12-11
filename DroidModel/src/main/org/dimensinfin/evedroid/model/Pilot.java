@@ -58,49 +58,6 @@ public class Pilot extends NeoComCharacter {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
-	 * This method is to process a request from the UI to get the model for the Market Orders. The market orders
-	 * are stored at the database and there are two sets, the orders that are downloaded from CCP and the orders
-	 * scheduled by the user through the UI. If this access does not find orders it posts a refresh to download
-	 * that information from CCP servers. There is no timing check to access the information.
-	 * 
-	 * @return the market order data hierarchy with the analytical groups and the orders.
-	 */
-	public ArrayList<MarketOrderAnalyticalGroup> accessMarketOrders() {
-		final ArrayList<NeoComMarketOrder> orders = searchMarketOrders();
-		// Create the analytical groups.
-		final MarketOrderAnalyticalGroup scheduledBuyGroup = new MarketOrderAnalyticalGroup(10, "SCHEDULED BUYS");
-		final MarketOrderAnalyticalGroup buyGroup = new MarketOrderAnalyticalGroup(30, "BUYS");
-		final MarketOrderAnalyticalGroup sellGroup = new MarketOrderAnalyticalGroup(40, "SELLS");
-		final MarketOrderAnalyticalGroup finishedGroup = new MarketOrderAnalyticalGroup(50, "FINISHED");
-
-		for (final NeoComMarketOrder order : orders) {
-			// Add the order to the scheduled aggregator that will also pack similar items into a single item.
-			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
-				scheduledBuyGroup.addChild(order);
-				continue;
-			}
-			if (order.getOrderState() == ModelWideConstants.orderstates.EXPIRED) {
-				finishedGroup.addChild(order);
-				continue;
-			}
-			// Detect buys and sells.				
-			final boolean bid = order.getBid();
-			if (bid) {
-				buyGroup.addChild(order);
-			} else {
-				sellGroup.addChild(order);
-			}
-		}
-		// Compose the output.
-		final ArrayList<MarketOrderAnalyticalGroup> result = new ArrayList<MarketOrderAnalyticalGroup>();
-		result.add(scheduledBuyGroup);
-		result.add(buyGroup);
-		result.add(sellGroup);
-		result.add(finishedGroup);
-		return result;
-	}
-
-	/**
 	 * Returns the number of invention jobs that can be launched simultaneously. This will depend on the skills
 	 * <code>Laboratory Operation</code> and <code>Advanced Laboratory Operation</code>.
 	 * 
@@ -169,6 +126,7 @@ public class Pilot extends NeoComCharacter {
 	 * database records not associated to any owner, the add records for a generic owner and finally change the
 	 * owner to this character.
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadAssets() {
 		logger.info(">> EveChar.updateAssets");
@@ -224,6 +182,7 @@ public class Pilot extends NeoComCharacter {
 	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
 	 * Current grouping is by IF-LOCATION-CONTAINER.
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadBlueprints() {
 		try {
@@ -275,6 +234,7 @@ public class Pilot extends NeoComCharacter {
 	 * After the processing check for User Jobs converted to running jobs and remove them from the app list
 	 * because the user has already launched them on the real EVE client.
 	 */
+	@Override
 	public void downloadIndustryJobs() {
 		logger.info(">> EveChar.updateIndustryJobs");
 		try {
@@ -329,6 +289,7 @@ public class Pilot extends NeoComCharacter {
 		logger.info("<< EveChar.updateIndustryJobs");
 	}
 
+	@Override
 	public void downloadMarketOrders() {
 		logger.info(">> EveChar.updateMarketOrders");
 		try {

@@ -36,17 +36,17 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.ERequestState;
 import org.dimensinfin.evedroid.enums.EDataBlock;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveLocation;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.Outpost;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
-import com.beimin.eveapi.eve.conquerablestationlist.ConquerableStationListParser;
-import com.beimin.eveapi.eve.conquerablestationlist.StationListResponse;
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.eve.Station;
+import com.beimin.eveapi.parser.eve.ConquerableStationListParser;
+import com.beimin.eveapi.response.eve.StationListResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -185,12 +185,12 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		protected Void doInBackground(final Void... arg0) {
 			logger.info(">> [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]");
 			try {
-				StationListResponse response = null;
-				ConquerableStationListParser parser = ConquerableStationListParser.getInstance();
-				response = parser.getResponse();
+				//				StationListResponse response = null;
+				ConquerableStationListParser parser = new ConquerableStationListParser();
+				StationListResponse response = parser.getResponse();
 				if (null != response) {
-					Map<Integer, ApiStation> stations = response.getStations();
-					for (Integer stationid : stations.keySet()) {
+					Map<Long, Station> stations = response.getStations();
+					for (Long stationid : stations.keySet()) {
 						// Convert the station to an EveLocation
 						EveLocation loc = new EveLocation(stations.get(stationid));
 						logger.info("-- [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]> Created location: " + loc);

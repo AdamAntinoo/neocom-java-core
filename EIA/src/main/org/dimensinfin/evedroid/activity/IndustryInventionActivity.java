@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.activity.PagerFragment;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.evedroid.activity.core.DefaultNewPagerActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;

@@ -11,8 +11,8 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -33,7 +33,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 7810087592108417570L;
 
-	private ArrayList<NeoComAsset>									ships							= null;
+	private ArrayList<NeoComAsset>						ships							= null;
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
 	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
