@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
@@ -45,8 +45,8 @@ public class StackByItemDataSource extends AbstractIndustryDataSource {
 		// Get the list of Locations for this Pilot.
 		try {
 			AssetsManager manager = _store.getPilot().getAssetsManager();
-			ArrayList<Asset> assets = manager.stacks4Item(item);
-			for (Asset as : assets) {
+			ArrayList<NeoComAsset> assets = manager.stacks4Item(item);
+			for (NeoComAsset as : assets) {
 				AssetPart part = (AssetPart) new AssetPart(as)
 						.setRenderMode(AppWideConstants.fragment.FRAGMENT_ITEMMODULESTACKS);
 				_root.add(part);

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -36,7 +36,7 @@ public interface IDatabaseConnector {
 
 	public void closeDatabases();
 
-	public Dao<Asset, String> getAssetDAO() throws java.sql.SQLException;
+	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
 
 	public Dao<Blueprint, String> getBlueprintDAO() throws java.sql.SQLException;
 
@@ -46,7 +46,7 @@ public interface IDatabaseConnector {
 
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
 
-	public ArrayList<Asset> searchAssetContainedAt(long pilotID, long assetID);
+	public ArrayList<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
 	public boolean openAppDataBase();
 
 	public boolean openCCPDataBase();
@@ -63,9 +63,9 @@ public interface IDatabaseConnector {
 
 	public void replaceJobs(long characterID);
 
-	public ArrayList<Asset> searchAsset4Type(long characterID, int typeID);
+	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 
-	public Asset searchAssetByID(long parentAssetID);
+	public NeoComAsset searchAssetByID(long parentAssetID);
 
 	public int searchBlueprint4Module(final int moduleID);
 

@@ -23,7 +23,7 @@ import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.interfaces.IAsset;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.Container;
 import org.dimensinfin.evedroid.model.EveItem;
@@ -66,7 +66,7 @@ public class AssetsManager implements Serializable {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private transient NeoComCharacter									pilot									= null;
-	private transient Dao<Asset, String>							assetDao							= null;
+	private transient Dao<NeoComAsset, String>							assetDao							= null;
 
 	// - L O C A T I O N   M A N A G E M E N T
 	private int																				locationCount					= -1;
@@ -79,15 +79,15 @@ public class AssetsManager implements Serializable {
 	private double																		totalAssetsValue			= 0.0;
 	private LongSparseArray<Region>										regions								= new LongSparseArray<Region>();
 	private LongSparseArray<EveLocation>							locations							= new LongSparseArray<EveLocation>();
-	private LongSparseArray<Asset>										containers						= new LongSparseArray<Asset>();
-	private LongSparseArray<Asset>										assetsAtContainer			= new LongSparseArray<Asset>();
-	private transient LongSparseArray<Asset>					assetMap							= new LongSparseArray<Asset>();
-	private final HashMap<Long, ArrayList<Asset>>			assetsAtLocationcache	= new HashMap<Long, ArrayList<Asset>>();
-	private final HashMap<String, ArrayList<Asset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<Asset>>();
-	private final HashMap<Integer, ArrayList<Asset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<Asset>>();
+	private LongSparseArray<NeoComAsset>										containers						= new LongSparseArray<NeoComAsset>();
+	private LongSparseArray<NeoComAsset>										assetsAtContainer			= new LongSparseArray<NeoComAsset>();
+	private transient LongSparseArray<NeoComAsset>					assetMap							= new LongSparseArray<NeoComAsset>();
+	private final HashMap<Long, ArrayList<NeoComAsset>>			assetsAtLocationcache	= new HashMap<Long, ArrayList<NeoComAsset>>();
+	private final HashMap<String, ArrayList<NeoComAsset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<NeoComAsset>>();
+	private final HashMap<Integer, ArrayList<NeoComAsset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<NeoComAsset>>();
 	//	private final ArrayList<Blueprint>								blueprintCache				= new ArrayList<Blueprint>();
-	public final HashMap<Long, ArrayList<Asset>>			assetCache						= new HashMap<Long, ArrayList<Asset>>();
-	public final HashMap<Long, ArrayList<Asset>>			asteroidCache					= new HashMap<Long, ArrayList<Asset>>();
+	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
+	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache					= new HashMap<Long, ArrayList<NeoComAsset>>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
@@ -112,16 +112,16 @@ public class AssetsManager implements Serializable {
 			//			  INeoComModelStore store = AppConnector.getModelStore();
 			// Get the full list of assets for this pilot.
 			//			final AssetsManager manager = store.getPilot().getAssetsManager();
-			ArrayList<Asset> assets = this.getAllAssets();
+			ArrayList<NeoComAsset> assets = this.getAllAssets();
 			// Move the list to a processing map.
-			assetMap = new LongSparseArray<Asset>(assets.size());
-			for (Asset asset : assets) {
+			assetMap = new LongSparseArray<NeoComAsset>(assets.size());
+			for (NeoComAsset asset : assets) {
 				assetMap.put(asset.getAssetID(), asset);
 			}
 			// Process the map until all elements are removed.
 			try {
 				Long key = assetMap.keyAt(0);
-				Asset point = assetMap.get(key);
+				NeoComAsset point = assetMap.get(key);
 				while (null != point) {
 					processElement(point);
 					key = assetMap.keyAt(0);
@@ -142,17 +142,17 @@ public class AssetsManager implements Serializable {
 	 * 
 	 * @return
 	 */
-	public ArrayList<Asset> getAllAssets() {
+	public ArrayList<NeoComAsset> getAllAssets() {
 		// Select assets for the owner.
-		ArrayList<Asset> assetList = new ArrayList<Asset>();
+		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
 			AppConnector.startChrono();
-			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			Where<Asset, String> where = queryBuilder.where();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", getPilot().getCharacterID());
-			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
-			assetList = (ArrayList<Asset>) assetDao.query(preparedQuery);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			assetList = (ArrayList<NeoComAsset>) assetDao.query(preparedQuery);
 			Duration lapse = AppConnector.timeLapse();
 			logger.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + getPilot().getCharacterID() + "] - " + lapse);
 		} catch (java.sql.SQLException sqle) {
@@ -228,7 +228,7 @@ public class AssetsManager implements Serializable {
 	//		return blueprintCache;
 	//	}
 
-	public ArrayList<Asset> getShips() {
+	public ArrayList<NeoComAsset> getShips() {
 		return searchAsset4Category("Ship");
 	}
 
@@ -239,25 +239,25 @@ public class AssetsManager implements Serializable {
 	 * @param category
 	 * @return
 	 */
-	public ArrayList<Asset> searchAsset4Category(final String category) {
+	public ArrayList<NeoComAsset> searchAsset4Category(final String category) {
 		//	Select assets for the owner and with an specific category.
-		List<Asset> assetsCategoryList = new ArrayList<Asset>();
+		List<NeoComAsset> assetsCategoryList = new ArrayList<NeoComAsset>();
 		assetsCategoryList = assetsAtCategoryCache.get(category);
 		if (null == assetsCategoryList) {
 			try {
 				accessDao();
 				AppConnector.startChrono();
-				QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-				Where<Asset, String> where = queryBuilder.where();
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", getPilot().getCharacterID());
 				where.and();
 				where.eq("category", category);
-				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetsCategoryList = assetDao.query(preparedQuery);
 				Duration lapse = AppConnector.timeLapse();
 				logger.info("~~ Time lapse for [SELECT CATEGORY=" + category + " OWNERID = " + getPilot().getCharacterID()
 						+ "] - " + lapse);
-				assetsAtCategoryCache.put(category, (ArrayList<Asset>) assetsCategoryList);
+				assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
 				// Update the dirty state to signal modification of store structures.
 				//				setDirty(true);
 			} catch (java.sql.SQLException sqle) {
@@ -267,47 +267,47 @@ public class AssetsManager implements Serializable {
 			logger.info("~~ Cache hit [SELECT CATEGORY=" + category + " OWNERID = " + getPilot().getCharacterID() + "]");
 		}
 
-		return (ArrayList<Asset>) assetsCategoryList;
+		return (ArrayList<NeoComAsset>) assetsCategoryList;
 	}
 
-	public ArrayList<Asset> searchAsset4Group(final String group) {
+	public ArrayList<NeoComAsset> searchAsset4Group(final String group) {
 		//	Select assets for the owner and with an specific category.
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
 			accessDao();
-			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			Where<Asset, String> where = queryBuilder.where();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", getPilot().getCharacterID());
 			where.and();
 			where.eq("groupName", group);
-			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return (ArrayList<Asset>) assetList;
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	public ArrayList<Asset> searchAsset4Location(final EveLocation location) {
+	public ArrayList<NeoComAsset> searchAsset4Location(final EveLocation location) {
 		logger.info(">> AssetsManager.searchAsset4Location");
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		// Check if we have already that list on the cache.
 		assetList = assetsAtLocationcache.get(location.getID());
 		if (null == assetList) {
 			try {
 				AppConnector.startChrono();
 				accessDao();
-				QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-				Where<Asset, String> where = queryBuilder.where();
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", getPilot().getCharacterID());
 				where.and();
 				where.eq("locationID", location.getID());
-				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
 				Duration lapse = AppConnector.timeLapse();
 				logger.info("~~ Time lapse for [SELECT LOCATIONID=" + location.getID() + " OWNERID = "
 						+ getPilot().getCharacterID() + "] - " + lapse);
-				assetsAtLocationcache.put(location.getID(), (ArrayList<Asset>) assetList);
+				assetsAtLocationcache.put(location.getID(), (ArrayList<NeoComAsset>) assetList);
 				// Update the dirty state to signal modification of store structures.
 				setDirty(true);
 				logger.info("<< AssetsManager.searchAsset4Location [" + assetList.size() + "]");
@@ -315,7 +315,7 @@ public class AssetsManager implements Serializable {
 				sqle.printStackTrace();
 			}
 		}
-		return (ArrayList<Asset>) assetList;
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
 	//	public HashSet<String> queryT2ModuleNames() {
@@ -327,34 +327,34 @@ public class AssetsManager implements Serializable {
 	//		return names;
 	//	}
 
-	public ArrayList<Asset> searchT2Modules() {
+	public ArrayList<NeoComAsset> searchT2Modules() {
 		logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		assetList = assetsAtCategoryCache.get("T2Modules");
 		if (null == assetList) {
 			try {
 				AppConnector.startChrono();
-				Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-				QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-				Where<Asset, String> where = queryBuilder.where();
+				Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", getPilot().getCharacterID());
 				where.and();
 				where.eq("category", ModelWideConstants.eveglobal.Module);
 				where.and();
 				where.eq("tech", ModelWideConstants.eveglobal.TechII);
-				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
 				Duration lapse = AppConnector.timeLapse();
 				logger.info("~~ Time lapse for [SELECT CATEGORY=MODULE TECH=TECH II OWNERID = " + getPilot().getCharacterID()
 						+ "] - " + lapse);
-				assetsAtCategoryCache.put("T2Modules", (ArrayList<Asset>) assetList);
+				assetsAtCategoryCache.put("T2Modules", (ArrayList<NeoComAsset>) assetList);
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			}
 		}
 		logger.info("<< EveChar.queryT2Modules");
-		return (ArrayList<Asset>) assetList;
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
 	public void setPilot(final NeoComCharacter newPilot) {
@@ -368,26 +368,26 @@ public class AssetsManager implements Serializable {
 	 * @param item
 	 * @return the list of stacks for this type id that belong to this pilot.
 	 */
-	public ArrayList<Asset> stacks4Item(final EveItem item) {
+	public ArrayList<NeoComAsset> stacks4Item(final EveItem item) {
 		// Check if results already on cache.
-		ArrayList<Asset> hit = stacksByItemCache.get(item.getItemID());
+		ArrayList<NeoComAsset> hit = stacksByItemCache.get(item.getItemID());
 		if (null != hit) return hit;
 		//	Select assets for the owner and with an specific type id.
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
 			accessDao();
-			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			Where<Asset, String> where = queryBuilder.where();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", getPilot().getCharacterID());
 			where.and();
 			where.eq("typeID", item.getItemID());
-			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		stacksByItemCache.put(item.getItemID(), (ArrayList<Asset>) assetList);
-		return (ArrayList<Asset>) assetList;
+		stacksByItemCache.put(item.getItemID(), (ArrayList<NeoComAsset>) assetList);
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
 	//	/**
@@ -508,11 +508,11 @@ public class AssetsManager implements Serializable {
 	private void add2Container(final IAsset asset) {
 		logger.info(">> LocationAssetsPart.add2Container");
 		// Locate the container if already added to the location.
-		Asset cont = asset.getParentContainer();
+		NeoComAsset cont = asset.getParentContainer();
 		// TODO Check what is the cause of a parent container null and solve it
 		if (null != cont) {
 			long pcid = cont.getDAOID();
-			Asset target = containers.get(pcid);
+			NeoComAsset target = containers.get(pcid);
 			if (null == target) {
 				// Add the container to the list of containers.
 				logger.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
@@ -529,7 +529,7 @@ public class AssetsManager implements Serializable {
 			}
 		} else {
 			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
-			Asset parentAssetCache = AppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
+			NeoComAsset parentAssetCache = AppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
 			// This is an Unknown location that should be a Custom Office
 		}
 	}

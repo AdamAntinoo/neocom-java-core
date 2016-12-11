@@ -23,7 +23,7 @@ public class Ship extends AbstractNeoComNode implements IAsset {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private IAsset					delegate		= null;
-	private Asset						reference		= null;
+	private NeoComAsset						reference		= null;
 	private long						pilotID			= 0;
 	private final Separator	highModules	= new Separator("HIGH");
 	private final Separator	medModules	= new Separator("MED");
@@ -46,9 +46,9 @@ public class Ship extends AbstractNeoComNode implements IAsset {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		ArrayList<Asset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID, this.getAssetID());
+		ArrayList<NeoComAsset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID, this.getAssetID());
 		// Classify the contents
-		for (Asset node : contents) {
+		for (NeoComAsset node : contents) {
 			int flag = node.getFlag();
 			if ((flag > 10) && (flag < 19)) {
 				highModules.addChild(node);
@@ -126,7 +126,7 @@ public class Ship extends AbstractNeoComNode implements IAsset {
 		return delegate.getOrderingName();
 	}
 
-	public Asset getParentContainer() {
+	public NeoComAsset getParentContainer() {
 		return delegate.getParentContainer();
 	}
 

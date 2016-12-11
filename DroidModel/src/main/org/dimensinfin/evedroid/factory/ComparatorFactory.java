@@ -19,7 +19,7 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.core.IWeigthedNode;
 import org.dimensinfin.evedroid.enums.EComparatorField;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.JobQueue;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -65,13 +65,13 @@ public class ComparatorFactory {
 					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 						long leftField = -1;
 						long rightField = -1;
-						if (left instanceof Asset) {
-							final Asset intermediate = (Asset) left;
+						if (left instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) left;
 							leftField = intermediate.getQuantity();
 						}
 
-						if (right instanceof Asset) {
-							final Asset intermediate = (Asset) right;
+						if (right instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) right;
 							rightField = intermediate.getQuantity();
 						}
 						if (leftField < rightField) return 1;

@@ -87,7 +87,7 @@ public class Blueprint extends AbstractComplexNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Memory operation fields not stored into the database but stored on the file store. */
-	protected Asset						associatedAsset			= null;
+	protected NeoComAsset						associatedAsset			= null;
 	protected EveLocation			locationCache				= null;
 	protected EveItem					blueprintItem				= null;
 	protected EveItem					moduleItem					= null;
@@ -239,7 +239,7 @@ public class Blueprint extends AbstractComplexNode {
 		return getTypeName();
 	}
 
-	public Asset getParentContainer() {
+	public NeoComAsset getParentContainer() {
 		return getAssociatedAsset().getParentContainer();
 	}
 
@@ -383,7 +383,7 @@ public class Blueprint extends AbstractComplexNode {
 
 	private void accessAssociatedAsset() {
 		try {
-			Dao<Asset, String> dao = AppConnector.getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> dao = AppConnector.getDBConnector().getAssetDAO();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
 			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");
@@ -391,7 +391,7 @@ public class Blueprint extends AbstractComplexNode {
 		}
 	}
 
-	private Asset getAssociatedAsset() {
+	private NeoComAsset getAssociatedAsset() {
 		if (null == associatedAsset) accessAssociatedAsset();
 		return associatedAsset;
 	}

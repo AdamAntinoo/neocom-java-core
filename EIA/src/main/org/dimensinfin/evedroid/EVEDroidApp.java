@@ -38,7 +38,7 @@ import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
 import org.dimensinfin.evedroid.interfaces.INamed;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.interfaces.IWeigthedNode;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.JobQueue;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.part.APIKeyPart;
@@ -133,13 +133,13 @@ public class EVEDroidApp extends Application implements IConnector {
 					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 						long leftField = -1;
 						long rightField = -1;
-						if (left instanceof Asset) {
-							final Asset intermediate = (Asset) left;
+						if (left instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) left;
 							leftField = intermediate.getQuantity();
 						}
 
-						if (right instanceof Asset) {
-							final Asset intermediate = (Asset) right;
+						if (right instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) right;
 							rightField = intermediate.getQuantity();
 						}
 						if (leftField < rightField) return 1;

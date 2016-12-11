@@ -39,9 +39,9 @@ public class Container extends AbstractNeoComNode implements IAsset {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		ArrayList<Asset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID, this.getAssetID());
+		ArrayList<NeoComAsset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID, this.getAssetID());
 		// Classify the contents
-		for (Asset node : contents) {
+		for (NeoComAsset node : contents) {
 			result.add(node);
 		}
 		return result;
@@ -65,7 +65,7 @@ public class Container extends AbstractNeoComNode implements IAsset {
 		return delegate.getOrderingName();
 	}
 
-	public Asset getParentContainer() {
+	public NeoComAsset getParentContainer() {
 		return delegate.getParentContainer();
 	}
 

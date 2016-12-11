@@ -197,7 +197,7 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 		return buffer.toString();
 	}
 
-	private void performTask(final EveTask task, final Asset targetAsset) {
+	private void performTask(final EveTask task, final NeoComAsset targetAsset) {
 		ETaskType type = task.getTaskType();
 		switch (type) {
 			case MOVE:
@@ -225,7 +225,7 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 	 *          other resources. This is used to change the memory copy of the asset so next actions will found
 	 *          an scenery similar to the one in real life and not an infinite number of resources.
 	 */
-	private synchronized void registerTask(final int pri, final EveTask task, final Asset targetAsset) {
+	private synchronized void registerTask(final int pri, final EveTask task, final NeoComAsset targetAsset) {
 		logger.info("-- Registering task request [" + pri + "] " + task);
 		performTask(task, targetAsset);
 		// Filter out assets already on the final location

@@ -141,10 +141,10 @@ public class NeoComPilot extends NeoComCharacter {
 			AssetListParser parser = new AssetListParser();
 			AssetListResponse response = parser.getResponse(apikey.getAuthorization());
 			if (null != response) {
-				List<Asset> assets = response.getAll();
+				List<NeoComAsset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets) {
+				for (final NeoComAsset eveAsset : assets) {
 					processAsset(eveAsset, null);
 				}
 			}
@@ -196,9 +196,9 @@ public class NeoComPilot extends NeoComCharacter {
 	 * @param eveAsset
 	 * @return
 	 */
-	private Asset convert2Asset(final Asset eveAsset) {
+	private NeoComAsset convert2Asset(final NeoComAsset eveAsset) {
 		// Create the asset from the API asset.
-		final Asset newAsset = new Asset();
+		final NeoComAsset newAsset = new NeoComAsset();
 		newAsset.setAssetID(eveAsset.getItemID());
 		newAsset.setTypeID(eveAsset.getTypeID());
 		// Children locations have a null on this field. Set it to their parents
@@ -241,8 +241,8 @@ public class NeoComPilot extends NeoComCharacter {
 	 * 
 	 * @param eveAsset
 	 */
-	private void processAsset(Asset eveAsset, final Asset parent) {
-		final Asset myasset = convert2Asset(eveAsset);
+	private void processAsset(NeoComAsset eveAsset, final NeoComAsset parent) {
+		final NeoComAsset myasset = convert2Asset(eveAsset);
 		if (null != parent) {
 			myasset.setParent(parent);
 			myasset.setParentContainer(parent);
@@ -259,7 +259,7 @@ public class NeoComPilot extends NeoComCharacter {
 			myasset.setUserLabel(downloadAssetEveName(myasset.getAssetID()));
 		}
 		try {
-			final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
 			final HashSet<EveAsset> children = new HashSet<EveAsset>(eveAsset.getAssets());
 			if (children.size() > 0) {
 				myasset.setContainer(true);

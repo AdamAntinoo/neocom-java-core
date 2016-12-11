@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Separator;
@@ -733,8 +733,8 @@ final class ShipsDataSource extends AbstractDataSource {
 		// Clear the current list of elements.
 		_root.clear();
 		// Add the list of assets of ship category
-		final ArrayList<Asset> ships = DataSourceFactory.getPilot().getShips();
-		for (final Asset asset : ships) {
+		final ArrayList<NeoComAsset> ships = DataSourceFactory.getPilot().getShips();
+		for (final NeoComAsset asset : ships) {
 			final ShipPart spart = (ShipPart) new ShipPart(asset)
 					.setRenderMode(AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS);
 			_root.add(spart);

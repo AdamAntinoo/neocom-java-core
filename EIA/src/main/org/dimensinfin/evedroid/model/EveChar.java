@@ -119,9 +119,9 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 
 	public MarketOrderAnalyticalGroup accessModules4Sell() {
 		final ScheduledSellsAnalyticalGroup scheduledSellGroup = new ScheduledSellsAnalyticalGroup(20, "SCHEDULED SELLS");
-		final ArrayList<Asset> modules = getAssetsManager().searchT2Modules();
+		final ArrayList<NeoComAsset> modules = getAssetsManager().searchT2Modules();
 		final HashMap<String, Resource> mods = new HashMap<String, Resource>();
-		for (final Asset mc : modules) {
+		for (final NeoComAsset mc : modules) {
 			// Check if the item is already on the list.
 			final boolean hit = mods.containsKey(mc.getItemName());
 			// Only add to sell list the stacks with more than 10 elements.
@@ -513,7 +513,7 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 		Log.i("EveChar", "<< EveChar.updateMarketOrders");
 	}
 
-	private double calculateAssetValue(final Asset asset) {
+	private double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
 		double assetValueISK = 0.0;
 		if (null != asset) {
@@ -773,23 +773,23 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 		}
 	}
 
-	private ArrayList<Asset> filterAssets4Name(final String moduleName) {
+	private ArrayList<NeoComAsset> filterAssets4Name(final String moduleName) {
 		///	Optimize the update of the assets to just process the ones with the -1 owner.
-		List<Asset> accountList = new ArrayList<Asset>();
+		List<NeoComAsset> accountList = new ArrayList<NeoComAsset>();
 		try {
-			final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			final QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			final Where<Asset, String> where = queryBuilder.where();
+			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			final Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("name", moduleName);
 			//			where.and();
 			//			where.gt("count", new Integer(9));
-			final PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			final PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			accountList = assetDao.query(preparedQuery);
 		} catch (final SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return (ArrayList<Asset>) accountList;
+		return (ArrayList<NeoComAsset>) accountList;
 	}
 
 	private Instant getAssetsCacheTime() {

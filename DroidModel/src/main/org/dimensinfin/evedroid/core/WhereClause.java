@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.core;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.enums.EAssetsFields;
 import org.dimensinfin.evedroid.enums.EMode;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class WhereClause {
@@ -39,7 +39,7 @@ public class WhereClause {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public boolean isFiltered(final Asset target) {
+	public boolean isFiltered(final NeoComAsset target) {
 		// Detect the category to use the right type filter, or for Strings or for numbers.
 		switch (category) {
 			case NAME:
@@ -64,7 +64,7 @@ public class WhereClause {
 		return false;
 	}
 
-	public boolean isNumberFiltered(final Asset target) {
+	public boolean isNumberFiltered(final NeoComAsset target) {
 		long field = getIntField(target, category);
 		switch (mode) {
 			case EQUALS:
@@ -80,7 +80,7 @@ public class WhereClause {
 		}
 	}
 
-	public boolean isStringFiltered(final Asset target) {
+	public boolean isStringFiltered(final NeoComAsset target) {
 		String field = getField(target, category);
 		if (null == field) return false;
 		switch (mode) {
@@ -95,7 +95,7 @@ public class WhereClause {
 		}
 	}
 
-	private String getField(final Asset target, final EAssetsFields category) {
+	private String getField(final NeoComAsset target, final EAssetsFields category) {
 		switch (category) {
 			case NAME:
 				return target.getName();
@@ -112,7 +112,7 @@ public class WhereClause {
 		}
 	}
 
-	private long getIntField(final Asset target, final EAssetsFields category) {
+	private long getIntField(final NeoComAsset target, final EAssetsFields category) {
 		switch (category) {
 			case COUNT:
 				return target.getQuantity();

@@ -22,7 +22,7 @@ import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveItem;
@@ -115,10 +115,10 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 					continue;
 				}
 				// Get the corresponding resource quantity from the location.
-				final ArrayList<Asset> available = getAsset4Type(resource.getTypeID());
+				final ArrayList<NeoComAsset> available = getAsset4Type(resource.getTypeID());
 				Log.i("EVEI", "-- T2ManufactureProcess.getManufacturableCount - available:" + available);
 				int resourceCount = 0;
-				for (final Asset asset : available)
+				for (final NeoComAsset asset : available)
 					if (asset.getLocationID() == location.getID()) {
 						resourceCount += asset.getQuantity();
 					}
@@ -197,8 +197,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param typeID
 	 * @return
 	 */
-	protected ArrayList<Asset> getAsset4Type(final int typeID) {
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(Long.valueOf(typeID));
+	protected ArrayList<NeoComAsset> getAsset4Type(final int typeID) {
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(Long.valueOf(typeID));
 		if (null == hit) {
 			hit = AppConnector.getDBConnector().searchAsset4Type(pilot.getCharacterID(), typeID);
 			industryAssetsManager.assetCache.put(Long.valueOf(typeID), hit);
@@ -309,7 +309,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		final int bpid = AppConnector.getDBConnector().searchBlueprint4Module(itemID);
 		// Check if there is a blueprint of this type on the belongings for this character.
 		boolean blueprintExists = false;
-		final ArrayList<Asset> bpsofType = AppConnector.getDBConnector().searchAsset4Type(getPilot().getCharacterID(),
+		final ArrayList<NeoComAsset> bpsofType = AppConnector.getDBConnector().searchAsset4Type(getPilot().getCharacterID(),
 				bpid);
 		EveLocation loc = manufactureLocation;
 		if (bpsofType.size() > 0) {
@@ -393,7 +393,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	//		}
 	//	}
 
-	protected void processMove(final Asset asset, final EveTask newTask) {
+	protected void processMove(final NeoComAsset asset, final EveTask newTask) {
 		final EveLocation loc = asset.getLocation();
 		final int requestQty = newTask.getQty();
 		final int qty = asset.getQuantity();
@@ -481,7 +481,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		final int mineralCode = newTask.getTypeID();
 		final int mineralRequested = newTask.getQty();
 		int mineralObtained = 0;
-		final Asset oreSelected = searchOREAsset(newTask);
+		final NeoComAsset oreSelected = searchOREAsset(newTask);
 		if (null != oreSelected) {
 			// Get access to the refining parameters
 			final ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(oreSelected.getTypeID());
@@ -559,11 +559,11 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			return;
 		}
 		// Get the Assets that match the current type id.
-		final ArrayList<Asset> available = getAsset4Type(newTask.resource.item.getItemID());
+		final ArrayList<NeoComAsset> available = getAsset4Type(newTask.resource.item.getItemID());
 		Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Available assets: " + available);
 		// See if there are assets of this type on the manufacture location before moving assets.
 		// MOVE - manufacture location
-		for (final Asset asset : available) {
+		for (final NeoComAsset asset : available) {
 			// Removed assets with no count
 			if (asset.getQuantity() < 1) {
 				continue;
@@ -580,7 +580,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		if (moveAllowed()) {
 			// See if we have that resource elsewhere ready for transportation.
 			// MOVE - manufacture region
-			for (final Asset asset : available) {
+			for (final NeoComAsset asset : available) {
 				// Removed assets with no count
 				if (asset.getQuantity() < 1) {
 					continue;
@@ -595,7 +595,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 			// Assets not in same region or not found. Try without region limits.
 			// MOVE - rest of universe
-			for (final Asset asset : available) {
+			for (final NeoComAsset asset : available) {
 				if (asset.getQuantity() < 1) {
 					continue;
 				}
@@ -620,11 +620,11 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		}
 	}
 
-	protected Asset searchResourceAtLocation(final Resource resource, final EveLocation location) {
+	protected NeoComAsset searchResourceAtLocation(final Resource resource, final EveLocation location) {
 		final int targetid = resource.getTypeID();
 		//	int targetqty = resource.getQuantity();
-		final ArrayList<Asset> available = getAssetsAtLocation(location);
-		for (final Asset asset : available) {
+		final ArrayList<NeoComAsset> available = getAssetsAtLocation(location);
+		for (final NeoComAsset asset : available) {
 			final int id = asset.getTypeID();
 			if (id == targetid) return asset;
 		}
@@ -691,9 +691,9 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param category
 	 * @return
 	 */
-	private ArrayList<Asset> getAsset4Category(final String category) {
+	private ArrayList<NeoComAsset> getAsset4Category(final String category) {
 		final long hash = category.hashCode();
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(hash);
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(hash);
 		if (null == hit) {
 			hit = searchAsset4Category(pilot.getCharacterID(), category);
 			industryAssetsManager.assetCache.put(hash, hit);
@@ -701,9 +701,9 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		return hit;
 	}
 
-	private ArrayList<Asset> getAsset4Group(final String groupName) {
+	private ArrayList<NeoComAsset> getAsset4Group(final String groupName) {
 		final long hash = groupName.hashCode();
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(hash);
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(hash);
 		if (null == hit) {
 			hit = getPilot().getAssetsManager().searchAsset4Group(groupName);
 			industryAssetsManager.assetCache.put(hash, hit);
@@ -711,8 +711,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		return hit;
 	}
 
-	private ArrayList<Asset> getAssetsAtLocation(final EveLocation location) {
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(location.getID());
+	private ArrayList<NeoComAsset> getAssetsAtLocation(final EveLocation location) {
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(location.getID());
 		if (null == hit) {
 			hit = industryAssetsManager.searchAsset4Location(location);
 			industryAssetsManager.assetCache.put(location.getID(), hit);
@@ -726,7 +726,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param task
 	 * @param targetAsset
 	 */
-	private void performTask(final EveTask task, final Asset targetAsset) {
+	private void performTask(final EveTask task, final NeoComAsset targetAsset) {
 		final ETaskType type = task.getTaskType();
 		switch (type) {
 			case MOVE:
@@ -756,14 +756,14 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param location
 	 */
 	private void registerAssetChange(final double qty, final int itemID, final long location) {
-		final ArrayList<Asset> hit = industryAssetsManager.assetCache.get(Long.valueOf(itemID));
+		final ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(Long.valueOf(itemID));
 		if (null == hit) {
 			// Force a database access and try again.
 			getAsset4Type(itemID);
 			registerAssetChange(qty, itemID, location);
 		} else {
 			final EveItem item = AppConnector.getDBConnector().searchItembyID(itemID);
-			final Asset newAsset = new Asset();
+			final NeoComAsset newAsset = new NeoComAsset();
 			//		newAsset.setItem(AppConnector.getDBConnector().searchItembyID(itemID));
 			newAsset.setAssetID(GENERATED_ASSETCOUNTER++);
 			newAsset.setTypeID(itemID);
@@ -825,7 +825,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 *          other resources. This is used to change the memory copy of the asset so next actions will found
 	 *          an scenery similar to the one in real life and not an infinite number of resources.
 	 */
-	private void registerTask(final int pri, final EveTask task, final Asset targetAsset) {
+	private void registerTask(final int pri, final EveTask task, final NeoComAsset targetAsset) {
 		logger.info("-- Registering task request [" + pri + "] " + task);
 		performTask(task, targetAsset);
 		//Also add the asset as a reference to the task. Useful when activating links.
@@ -833,22 +833,22 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		registerTask(pri, task);
 	}
 
-	private ArrayList<Asset> searchAsset4Category(final long characterID, final String category) {
+	private ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {
 		//	Select assets for the owner and woth an specific type id.
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			final QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			final Where<Asset, String> where = queryBuilder.where();
+			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			final Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
 			where.and();
 			where.eq("category", category);
-			final PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			final PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 		} catch (final java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return (ArrayList<Asset>) assetList;
+		return (ArrayList<NeoComAsset>) assetList;
 
 	}
 
@@ -866,18 +866,18 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @return an <code>Asset</code> that complies to cover the requested mineral request or at least a part of
 	 *         it.
 	 */
-	private Asset searchOREAsset(final EveTask newTask) {
+	private NeoComAsset searchOREAsset(final EveTask newTask) {
 		// Try to cache the list of assets related to asteroids at partiicualr locations.
-		ArrayList<Asset> asteroids = industryAssetsManager.asteroidCache.get(manufactureLocation.getID());
+		ArrayList<NeoComAsset> asteroids = industryAssetsManager.asteroidCache.get(manufactureLocation.getID());
 		final EveLocation refineLocation = getPilot().getLocation4Role(ModelWideConstants.locationroles.REFINE);
 		if (null == asteroids) if (null != refineLocation) {
 			asteroids = industryAssetsManager.asteroidCache.get(refineLocation.getID());
 		}
 		if (null == asteroids) {
 			// Get the list of assets that are asteroids at the manufacture location.
-			ArrayList<Asset> stacks = getAssetsAtLocation(manufactureLocation);
-			asteroids = new ArrayList<Asset>();
-			for (final Asset asset : stacks)
+			ArrayList<NeoComAsset> stacks = getAssetsAtLocation(manufactureLocation);
+			asteroids = new ArrayList<NeoComAsset>();
+			for (final NeoComAsset asset : stacks)
 				// Filter out the non asteroid stacks
 				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
 					asteroids.add(asset);
@@ -887,8 +887,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			if (asteroids.size() < 1) // If the list is empty do the same for the stacks at the refining location if exists.
 				if (null != refineLocation) {
 				stacks = getAssetsAtLocation(refineLocation);
-				asteroids = new ArrayList<Asset>();
-				for (final Asset asset : stacks)
+				asteroids = new ArrayList<NeoComAsset>();
+				for (final NeoComAsset asset : stacks)
 				// Filter out the non asteroid stacks
 				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
 				asteroids.add(asset);
@@ -899,7 +899,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 		// Scan each stack for the required mineral. Order the asteroids by their ore name first.
 		Collections.sort(asteroids, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		for (final Asset asteroid : asteroids) {
+		for (final NeoComAsset asteroid : asteroids) {
 			// Filter out all ore with quantity less that the portion size (100)
 			if (asteroid.getQuantity() < 100) {
 				continue;

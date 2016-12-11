@@ -16,7 +16,7 @@ import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.market.MarketDataSet;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.EveTask;
@@ -180,10 +180,10 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 					}
 					// Get the corresponding resource quantity from the
 					// location.
-					ArrayList<Asset> available = getAsset4Type(resource.getTypeID());
+					ArrayList<NeoComAsset> available = getAsset4Type(resource.getTypeID());
 					Log.i("EVEI", "-- InventionProcess.getManufacturableCount - available:" + available);
 					int resourceCount = 0;
-					for (Asset asset : available)
+					for (NeoComAsset asset : available)
 						if (asset.getLocationID() == location.getID()) {
 							resourceCount += asset.getQuantity();
 						}

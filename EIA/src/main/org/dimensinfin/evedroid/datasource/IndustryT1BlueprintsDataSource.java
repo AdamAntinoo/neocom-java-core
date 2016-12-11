@@ -18,7 +18,7 @@ import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
@@ -88,7 +88,7 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 		final ArrayList<Blueprint> bps = this._store.getPilot().getAssetsManager().searchT1Blueprints();
 		for (final Blueprint currentbpc : bps) {
 			final long locid = currentbpc.getLocationID();
-			final Asset parent = currentbpc.getParentContainer();
+			final NeoComAsset parent = currentbpc.getParentContainer();
 			final BlueprintPart bppart = new BlueprintPart(currentbpc);
 			bppart.setActivity(ModelWideConstants.activities.MANUFACTURING);
 			bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
@@ -139,7 +139,7 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 	 * @param container
 	 * @param part
 	 */
-	private void add2Container(final Asset container, final BlueprintPart part) {
+	private void add2Container(final NeoComAsset container, final BlueprintPart part) {
 		final long cid = container.getDAOID();
 		LocationIndustryPart lochit = this.locations.get(cid);
 		if (null == lochit) {

@@ -12,7 +12,7 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetGroupRender;
 
 import android.view.View;
@@ -26,7 +26,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetGroupPart(final Asset node) {
+	public AssetGroupPart(final NeoComAsset node) {
 		super(node);
 	}
 
@@ -53,7 +53,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 		double value = 0.0;
 		for (AbstractPropertyChanger node : getChildren()) {
 			if (node instanceof AssetPart) {
-				Asset ass = ((AssetPart) node).getCastedModel();
+				NeoComAsset ass = ((AssetPart) node).getCastedModel();
 				long count = ass.getQuantity();
 				double price = ass.getItem().getHighestBuyerPrice().getPrice();
 				value += count * price;
@@ -66,7 +66,7 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 		double volume = 0.0;
 		for (AbstractPropertyChanger node : getChildren()) {
 			if (node instanceof AssetPart) {
-				Asset ass = ((AssetPart) node).getCastedModel();
+				NeoComAsset ass = ((AssetPart) node).getCastedModel();
 				long count = ass.getQuantity();
 				double vol = ass.getItem().getVolume();
 				volume += count * vol;
@@ -75,8 +75,8 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 		return itemCountFormatter.format(volume);
 	}
 
-	public Asset getCastedModel() {
-		return (Asset) getModel();
+	public NeoComAsset getCastedModel() {
+		return (NeoComAsset) getModel();
 	}
 
 	@Override
