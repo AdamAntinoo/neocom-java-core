@@ -17,8 +17,11 @@ import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
+//import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
+
+import com.beimin.eveapi.model.shared.MarketOrder;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

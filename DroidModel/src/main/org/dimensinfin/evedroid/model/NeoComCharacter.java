@@ -13,23 +13,34 @@ package org.dimensinfin.evedroid.model;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
+import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
+import org.joda.time.Duration;
 import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.model.shared.Asset;
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.KeyType;
+import com.beimin.eveapi.model.shared.Location;
+import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
+import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
@@ -37,6 +48,7 @@ import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
+import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -54,8 +66,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return createPilot(coreChar, apikey);
 	}
 
-	private static NeoComCorporation createCorporation(Character coreChar, NeoComApiKey apikey) throws ApiException {
-		NeoComCorporation newcorp = new NeoComCorporation();
+	private static Corporation createCorporation(Character coreChar, NeoComApiKey apikey) throws ApiException {
+		Corporation newcorp = new Corporation();
 		newcorp.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
 		// Balance information
@@ -68,8 +80,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return newcorp;
 	}
 
-	private static NeoComPilot createPilot(Character coreChar, NeoComApiKey apikey) throws ApiException {
-		NeoComPilot newchar = new NeoComPilot();
+	private static Pilot createPilot(Character coreChar, NeoComApiKey apikey) throws ApiException {
+		Pilot newchar = new Pilot();
 		newchar.setApiKey(apikey);
 		newchar.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
@@ -116,12 +128,37 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	protected transient Instant								lastCCPAccessTime		= null;
 	protected transient Instant								assetsCacheTime			= null;
 	protected transient AssetsManager					assetsManager				= null;
+	protected transient Instant								blueprintsCacheTime	= null;
+	protected transient Instant								jobsCacheTime				= null;
+	protected transient ArrayList<Job>				jobList							= null;
+	protected transient Instant								marketCacheTime			= null;
 	private transient ArrayList<Property>			locationRoles				= null;
 	private transient HashMap<Long, Property>	actions4Character		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
 		lastCCPAccessTime = Instant.now();
+	}
+
+	public MarketOrderAnalyticalGroup accessModules4Sell() {
+		final ScheduledSellsAnalyticalGroup scheduledSellGroup = new ScheduledSellsAnalyticalGroup(20, "SCHEDULED SELLS");
+		final ArrayList<NeoComAsset> modules = getAssetsManager().searchT2Modules();
+		final HashMap<String, Resource> mods = new HashMap<String, Resource>();
+		for (final NeoComAsset mc : modules) {
+			// Check if the item is already on the list.
+			final boolean hit = mods.containsKey(mc.getItemName());
+			// Only add to sell list the stacks with more than 10 elements.
+			if (mc.getQuantity() > 10) if (!hit) {
+				// TODO Instead defining a resoure I should create a new fake order.
+				final Resource mod4sell = new Resource(mc.getTypeID(), mc.getQuantity());
+				mods.put(mc.getItemName(), mod4sell);
+				scheduledSellGroup.addChild(mod4sell);
+			} else {
+				final Resource mod4sell = mods.get(mc.getItemName());
+				mod4sell.setQuantity(mod4sell.getQuantity() + mc.getQuantity());
+			}
+		}
+		return scheduledSellGroup;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -133,6 +170,29 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		hit.setNumericValue(theSelectedLocation.getID());
 		hit.setStringValue(locationrole);
 		locationRoles.add(hit);
+	}
+
+	@Override
+	public void clean() {
+		assetsManager = null;
+		//		lastCCPAccessTime = null;
+		assetsCacheTime = null;
+		blueprintsCacheTime = null;
+		jobsCacheTime = null;
+		super.clean();
+	}
+
+	public void cleanJobs() {
+		jobList = null;
+		jobsCacheTime = new Instant();
+	}
+
+	/**
+	 * Does nothing because the list of orders is not cached on any structure and is read from database every
+	 * time we access that list.
+	 */
+	public void cleanOrders() {
+		marketCacheTime = null;
 	}
 
 	/**
@@ -161,6 +221,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
 
+	public void forceRefresh() {
+		clean();
+		assetsManager = new AssetsManager(this);
+		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
+	}
+
 	public double getAccountBalance() {
 		return accountBalance;
 	}
@@ -168,6 +234,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public HashMap<Long, Property> getActions() {
 		if (null == actions4Character) accessActionList();
 		return actions4Character;
+	}
+
+	/**
+	 * Delegate the request to the assets manager that will make a sql request to get the assets number.
+	 * 
+	 * @return
+	 */
+	public long getAssetCount() {
+		return getAssetsManager().getAssetTotalCount();
 	}
 
 	public AssetsManager getAssetsManager() {
@@ -181,6 +256,23 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	public long getCharacterID() {
 		return delegatedCharacter.getCharacterID();
+	}
+
+	/**
+	 * Returns a non null default location so any Industry action has a location to be used as reference. Any
+	 * location is valid.
+	 * 
+	 * @return
+	 */
+	public EveLocation getDefaultLocation() {
+		return getAssetsManager().getLocations().get(1);
+	}
+
+	public ArrayList<Job> getIndustryJobs() {
+		if (null == jobList) {
+			jobList = searchIndustryJobs();
+		}
+		return jobList;
 	}
 
 	/**
@@ -247,6 +339,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return roles;
 	}
 
+	public ArrayList<NeoComMarketOrder> getMarketOrders() {
+		return searchMarketOrders();
+	}
+
 	public String getName() {
 		return delegatedCharacter.getName();
 	}
@@ -259,6 +355,28 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 */
 	public boolean isActive() {
 		return active;
+	}
+
+	public boolean isCorporation() {
+		if (getName().equalsIgnoreCase("Corporation"))
+			return true;
+		else
+			return false;
+	}
+
+	/**
+	 * Check each of the request cache time until founds one that has expired. If no one found then the
+	 * character does not need any update
+	 * 
+	 * @return
+	 */
+	public EDataBlock needsUpdate() {
+		if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS1)) return EDataBlock.CHARACTERDATA;
+		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
+		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
+		if (AppConnector.checkExpiration(assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
+		return EDataBlock.READY;
 	}
 
 	/**
@@ -283,8 +401,28 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		hit.setStringValue(taskName);
 	}
 
+	public abstract ArrayList<NeoComMarketOrder> searchMarketOrders();
+
 	public void setAccountBalance(double accountBalance) {
 		this.accountBalance = accountBalance;
+	}
+
+	/**
+	 * Connects the AssetsManager to one that maybe has been restored from persistence storage.
+	 * 
+	 * @param manager
+	 */
+	public void setAssetsManager(final AssetsManager manager) {
+		assetsManager = manager;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer("EveChar [");
+		buffer.append(super.toString()).append(" ");
+		buffer.append("assets:").append(getAssetCount()).append(" ");
+		buffer.append("]");
+		return buffer.toString();
 	}
 
 	/**
@@ -295,6 +433,234 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	protected void accessAllAssets() {
 		// Do this on the assets manager or create one is reuired.
 		getAssetsManager().accessAllAssets();
+	}
+
+	protected double calculateAssetValue(final NeoComAsset asset) {
+		// Skip blueprints from the value calculations
+		double assetValueISK = 0.0;
+		if (null != asset) {
+			EveItem item = asset.getItem();
+			if (null != item) {
+				String category = item.getCategory();
+				String group = item.getGroupName();
+				if (null != category) {
+					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+						// Add the value and volume of the stack to the global result.
+						long quantity = asset.getQuantity();
+						double price = asset.getItem().getHighestBuyerPrice().getPrice();
+						assetValueISK = price * quantity;
+					}
+				}
+			}
+		}
+		return assetValueISK;
+	}
+
+	/**
+	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
+	 * 
+	 * @param eveAsset
+	 * @return
+	 */
+	protected NeoComAsset convert2Asset(final Asset eveAsset) {
+		// Create the asset from the API asset.
+		final NeoComAsset newAsset = new NeoComAsset();
+		newAsset.setAssetID(eveAsset.getItemID());
+		newAsset.setTypeID(eveAsset.getTypeID());
+		// Children locations have a null on this field. Set it to their parents
+		final Long assetloc = eveAsset.getLocationID();
+		// DEBUG Add a conditional breakpoint for an specific asset.
+		//		Long test = new Long(1021037093228L);
+		if (eveAsset.getTypeID() == 8625) {
+			@SuppressWarnings("unused")
+			int i = 1; // stop point
+		}
+		if (null != assetloc) {
+			newAsset.setLocationID(eveAsset.getLocationID());
+		}
+		newAsset.setQuantity(eveAsset.getQuantity());
+		newAsset.setFlag(eveAsset.getFlag());
+		newAsset.setSingleton(eveAsset.getSingleton());
+
+		// Get access to the Item and update the copied fields.
+		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
+		if (null != item) {
+			try {
+				newAsset.setName(item.getName());
+				newAsset.setCategory(item.getCategory());
+				newAsset.setGroupName(item.getGroupName());
+				newAsset.setTech(item.getTech());
+				if (item.isBlueprint()) {
+					newAsset.setBlueprintType(eveAsset.getRawQuantity());
+				}
+			} catch (RuntimeException rtex) {
+			}
+		}
+		// Add the asset value to the database.
+		newAsset.setIskvalue(calculateAssetValue(newAsset));
+		return newAsset;
+	}
+
+	protected NeoComBlueprint convert2Blueprint(final Blueprint eveBlue) {
+		// Create the asset from the API asset.
+		final NeoComBlueprint newBlueprint = new NeoComBlueprint(eveBlue.getItemID());
+		newBlueprint.setTypeID(eveBlue.getTypeID());
+		newBlueprint.setTypeName(eveBlue.getTypeName());
+		newBlueprint.setLocationID(eveBlue.getLocationID());
+		newBlueprint.setFlag(eveBlue.getFlagID());
+		newBlueprint.setQuantity(eveBlue.getQuantity());
+		newBlueprint.setTimeEfficiency(eveBlue.getTimeEfficiency());
+		newBlueprint.setMaterialEfficiency(eveBlue.getMaterialEfficiency());
+		newBlueprint.setRuns(eveBlue.getRuns());
+		newBlueprint.setPackaged((eveBlue.getQuantity() == -1) ? true : false);
+
+		// Detect if BPO or BPC and set the flag.
+		if (eveBlue.getRuns() == -1) {
+			newBlueprint.setBpo(true);
+		}
+		return newBlueprint;
+	}
+
+	protected Job convert2Job(final IndustryJob evejob) {
+		// Create the asset from the API asset.
+		final Job newJob = new Job(evejob.getJobID());
+		try {
+			newJob.setOwnerID(evejob.getInstallerID());
+			newJob.setFacilityID(evejob.getFacilityID());
+			newJob.setStationID(evejob.getStationID());
+			newJob.setActivityID(evejob.getActivityID());
+			newJob.setBlueprintID(evejob.getBlueprintID());
+			newJob.setBlueprintTypeID(evejob.getBlueprintTypeID());
+			newJob.setBlueprintLocationID(evejob.getBlueprintLocationID());
+			newJob.setRuns(evejob.getRuns());
+			newJob.setCost(evejob.getCost());
+			newJob.setLicensedRuns(evejob.getLicensedRuns());
+			newJob.setProductTypeID(evejob.getProductTypeID());
+			newJob.setStatus(evejob.getStatus());
+			newJob.setTimeInSeconds(evejob.getTimeInSeconds());
+			newJob.setStartDate(evejob.getStartDate());
+			newJob.setEndDate(evejob.getEndDate());
+			newJob.setCompletedDate(evejob.getCompletedDate());
+			newJob.setCompletedCharacterID(evejob.getCompletedCharacterID());
+			//			newJob.setSuccessfulRuns(evejob.getSuccessfulRuns());
+		} catch (final RuntimeException rtex) {
+			rtex.printStackTrace();
+		}
+		return newJob;
+	}
+
+	protected NeoComMarketOrder convert2Order(final MarketOrder eveorder) {
+		// Create the asset from the API asset.
+		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
+		try {
+			newMarketOrder.setOwnerID(eveorder.getCharID());
+			newMarketOrder.setStationID(eveorder.getStationID());
+			newMarketOrder.setVolEntered(eveorder.getVolEntered());
+			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
+			newMarketOrder.setMinVolume(eveorder.getMinVolume());
+			newMarketOrder.setOrderState(eveorder.getOrderState());
+			newMarketOrder.setTypeID(eveorder.getTypeID());
+			newMarketOrder.setRange(eveorder.getRange());
+			newMarketOrder.setAccountKey(eveorder.getAccountKey());
+			newMarketOrder.setDuration(eveorder.getDuration());
+			newMarketOrder.setEscrow(eveorder.getEscrow());
+			newMarketOrder.setPrice(eveorder.getPrice());
+			newMarketOrder.setBid(eveorder.getBid());
+			newMarketOrder.setIssuedDate(eveorder.getIssued());
+		} catch (final RuntimeException rtex) {
+			rtex.printStackTrace();
+		}
+		return newMarketOrder;
+	}
+
+	protected String downloadAssetEveName(final long assetID) {
+		// Wait up to one second to avoid request rejections from CCP.
+		try {
+			Thread.sleep(500); // 500 milliseconds is half second.
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+		final Vector<Long> ids = new Vector<Long>();
+		ids.add(assetID);
+		try {
+			final LocationsParser parser = new LocationsParser();
+			final LocationsResponse response = parser.getResponse(apikey.getAuthorization(), ids);
+			if (null != response) {
+				Set<Location> userNames = response.getAll();
+				if (userNames.size() > 0) return userNames.iterator().next().getItemName();
+			}
+		} catch (final ApiException e) {
+			logger.info("W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
+			//			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Processes an asset and all their children. This method converts from a API record to a database asset
+	 * record.
+	 * 
+	 * @param eveAsset
+	 */
+	protected void processAsset(Asset eveAsset, final NeoComAsset parent) {
+		final NeoComAsset myasset = convert2Asset(eveAsset);
+		if (null != parent) {
+			myasset.setParent(parent);
+			myasset.setParentContainer(parent);
+			// Set the location to the parent's location is not set.
+			if (myasset.getLocationID() == -1) {
+				myasset.setLocationID(parent.getLocationID());
+			}
+		}
+		// Only search names for containers and ships.
+		if (myasset.isShip()) {
+			myasset.setUserLabel(downloadAssetEveName(myasset.getAssetID()));
+		}
+		if (myasset.isContainer()) {
+			myasset.setUserLabel(downloadAssetEveName(myasset.getAssetID()));
+		}
+		try {
+			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
+			if (children.size() > 0) {
+				myasset.setContainer(true);
+			}
+			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
+				myasset.setShip(true);
+			}
+			assetDao.create(myasset);
+
+			// Process all the children and convert them to assets.
+			if (children.size() > 0) {
+				for (final Asset childAsset : children) {
+					processAsset(childAsset, myasset);
+				}
+			}
+			logger.finest("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+		} catch (final SQLException sqle) {
+			logger.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
+			sqle.printStackTrace();
+		}
+	}
+
+	protected ArrayList<Job> searchIndustryJobs() {
+		logger.info(">> EveChar.searchIndustryJobs");
+		//	Select assets of type blueprint and that are of T2.
+		List<Job> jobList = new ArrayList<Job>();
+		try {
+			AppConnector.startChrono();
+			final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
+			final QueryBuilder<Job, String> qb = jobDao.queryBuilder();
+			qb.where().eq("ownerID", getCharacterID());
+			qb.orderBy("endDate", false);
+			jobList = jobDao.query(qb.prepare());
+			checkRefresh(jobList.size(), "JOBS");
+			final Duration lapse = AppConnector.timeLapse();
+			logger.info("-- Time lapse for [SELECT JOBS] " + lapse);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<Job>) jobList;
 	}
 
 	protected void setApiKey(NeoComApiKey apikey) {
@@ -341,6 +707,60 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
+	}
+
+	/**
+	 * Checks if the database is empty of a set of records so it may require a forced request to update their
+	 * data from CCP databases. If no records then it will reset the cache timers.
+	 * 
+	 * @param size
+	 * @param string
+	 */
+	private void checkRefresh(final int size, final String section) {
+		if (size < 1) {
+			if (section.equalsIgnoreCase("JOBS")) {
+				cleanJobs();
+				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
+			}
+			if (section.equalsIgnoreCase("MARKETORDERS")) {
+				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
+			}
+		}
+	}
+
+	private void clearTimers() {
+		lastCCPAccessTime = null;
+		assetsCacheTime = null;
+		blueprintsCacheTime = null;
+		jobsCacheTime = null;
+		marketCacheTime = null;
+		//		skillsCacheTime = null;
+	}
+
+	private ArrayList<NeoComAsset> filterAssets4Name(final String moduleName) {
+		///	Optimize the update of the assets to just process the ones with the -1 owner.
+		List<NeoComAsset> accountList = new ArrayList<NeoComAsset>();
+		try {
+			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			final Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("name", moduleName);
+			//			where.and();
+			//			where.gt("count", new Integer(9));
+			final PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			accountList = assetDao.query(preparedQuery);
+		} catch (final SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (ArrayList<NeoComAsset>) accountList;
+	}
+
+	private Instant getAssetsCacheTime() {
+		if (null == assetsCacheTime) {
+			assetsCacheTime = new Instant(0);
+		}
+		return assetsCacheTime;
 	}
 }
 

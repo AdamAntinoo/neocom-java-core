@@ -23,16 +23,17 @@ import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.interfaces.IAsset;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.Container;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Ship;
 import org.joda.time.Duration;
 
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -61,31 +62,34 @@ import android.support.v4.util.LongSparseArray;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AssetsManager implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long													serialVersionUID			= -8502099148768297876L;
-	private static Logger															logger								= Logger.getLogger("AssetsManager");
+	private static final long																serialVersionUID			= -8502099148768297876L;
+	private static Logger																		logger								= Logger.getLogger("AssetsManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private transient NeoComCharacter									pilot									= null;
+	private transient NeoComCharacter												pilot									= null;
 	private transient Dao<NeoComAsset, String>							assetDao							= null;
 
 	// - L O C A T I O N   M A N A G E M E N T
-	private int																				locationCount					= -1;
-	private HashSet<String>														regionNames						= null;
-	private ArrayList<EveLocation>										locationsList					= null;
+	private int																							locationCount					= -1;
+	private HashSet<String>																	regionNames						= null;
+	private ArrayList<EveLocation>													locationsList					= null;
 
 	// - A S S E T   M A N A G E M E N T
-	private long																			totalAssets						= -1;
-	private long																			verficationAssetCount	= 0;
-	private double																		totalAssetsValue			= 0.0;
-	private LongSparseArray<Region>										regions								= new LongSparseArray<Region>();
-	private LongSparseArray<EveLocation>							locations							= new LongSparseArray<EveLocation>();
+	private long																						totalAssets						= -1;
+	private long																						verficationAssetCount	= 0;
+	private double																					totalAssetsValue			= 0.0;
+	private LongSparseArray<Region>													regions								= new LongSparseArray<Region>();
+	private LongSparseArray<EveLocation>										locations							= new LongSparseArray<EveLocation>();
 	private LongSparseArray<NeoComAsset>										containers						= new LongSparseArray<NeoComAsset>();
 	private LongSparseArray<NeoComAsset>										assetsAtContainer			= new LongSparseArray<NeoComAsset>();
 	private transient LongSparseArray<NeoComAsset>					assetMap							= new LongSparseArray<NeoComAsset>();
 	private final HashMap<Long, ArrayList<NeoComAsset>>			assetsAtLocationcache	= new HashMap<Long, ArrayList<NeoComAsset>>();
 	private final HashMap<String, ArrayList<NeoComAsset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<NeoComAsset>>();
 	private final HashMap<Integer, ArrayList<NeoComAsset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<NeoComAsset>>();
-	//	private final ArrayList<Blueprint>								blueprintCache				= new ArrayList<Blueprint>();
+	private final ArrayList<NeoComBlueprint>								blueprintCache				= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								t1BlueprintCache			= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								t2BlueprintCache			= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								bpoCache							= new ArrayList<NeoComBlueprint>();
 	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
 	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache					= new HashMap<Long, ArrayList<NeoComAsset>>();
 
@@ -414,29 +418,43 @@ public class AssetsManager implements Serializable {
 	//		return t2blueprints;
 	//	}
 
-	@Override
-	public String toString() {
-		StringBuffer buffer = new StringBuffer("AssetsManager [");
-		buffer.append("owner:").append(getPilot().getName());
-		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
-		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
-		if (assetsAtCategoryCache.size() > 0) {
-			buffer.append("assetsAtCategoryCache:").append(assetsAtCategoryCache.size()).append(" ");
+	/**
+	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
+	 * This will simplify the quantity of data exported to presentation layers.<br>
+	 * Aggregation is performed by TYPEID-LOCATION-CONTAINER-RUNS
+	 * 
+	 * @param bplist
+	 *          list of newly created Blueprints from the CCP API download
+	 */
+	public void storeBlueprints(final ArrayList<NeoComBlueprint> bplist) {
+		HashMap<String, NeoComBlueprint> bpStacks = new HashMap<String, NeoComBlueprint>();
+		for (NeoComBlueprint blueprint : bplist) {
+			checkBPCStacking(bpStacks, blueprint);
 		}
-		if (assetsAtLocationcache.size() > 0) {
-			buffer.append("assetsAtLocationcache:").append(assetsAtLocationcache.size()).append(" ");
+
+		// Extract stacks and store them into the caches.
+		blueprintCache.addAll(bpStacks.values());
+		// Update the database information.
+		for (NeoComBlueprint blueprint : blueprintCache) {
+			try {
+				Dao<NeoComBlueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
+				// Be sure the owner is reset to undefined when stored at the database.
+				blueprint.resetOwner();
+				// Set new calculated values to reduce the time for blueprint part rendering.
+				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
+				blueprint.setManufactureIndex(process.getProfitIndex());
+				blueprint.setJobProductionCost(process.getJobCost());
+				blueprint.setManufacturableCount(process.getManufacturableCount());
+				blueprintDao.create(blueprint);
+				logger.info("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
+			} catch (final SQLException sqle) {
+				logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
+				sqle.printStackTrace();
+			} catch (final RuntimeException rtex) {
+				logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + rtex.getMessage());
+				rtex.printStackTrace();
+			}
 		}
-		//		if (blueprintCache.size() > 0) {
-		//			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
-		//		}
-		if (null != locationsList) {
-			buffer.append("locationsList: ").append(locationsList).append(" ");
-		}
-		if (null != regionNames) {
-			buffer.append("regionNames: ").append(regionNames).append(" ");
-		}
-		buffer.append("]");
-		return buffer.toString();
 	}
 
 	//	public Blueprint searchBlueprintByID(final long assetid) {
@@ -483,6 +501,31 @@ public class AssetsManager implements Serializable {
 	//			}
 	//		return blueprintList;
 	//	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("AssetsManager [");
+		buffer.append("owner:").append(getPilot().getName());
+		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
+		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
+		if (assetsAtCategoryCache.size() > 0) {
+			buffer.append("assetsAtCategoryCache:").append(assetsAtCategoryCache.size()).append(" ");
+		}
+		if (assetsAtLocationcache.size() > 0) {
+			buffer.append("assetsAtLocationcache:").append(assetsAtLocationcache.size()).append(" ");
+		}
+		//		if (blueprintCache.size() > 0) {
+		//			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
+		//		}
+		if (null != locationsList) {
+			buffer.append("locationsList: ").append(locationsList).append(" ");
+		}
+		if (null != regionNames) {
+			buffer.append("regionNames: ").append(regionNames).append(" ");
+		}
+		buffer.append("]");
+		return buffer.toString();
+	}
 
 	private void accessDao() {
 		if (null == assetDao) {
@@ -544,45 +587,6 @@ public class AssetsManager implements Serializable {
 		}
 		target.addChild(asset);
 	}
-
-	//	/**
-	//	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
-	//	 * This will simplify the quantity of data exported to presentation layers.<br>
-	//	 * Aggregation is performed by TYPEID-LOCATION-CONTAINER-RUNS
-	//	 * 
-	//	 * @param bplist
-	//	 *          list of newly created Blueprints from the CCP API download
-	//	 */
-	//	public void storeBlueprints(final ArrayList<Blueprint> bplist) {
-	//		HashMap<String, Blueprint> bpStacks = new HashMap<String, Blueprint>();
-	//		for (Blueprint blueprint : bplist) {
-	//			checkBPCStacking(bpStacks, blueprint);
-	//		}
-	//
-	//		// Extract stacks and store them into the caches.
-	//		blueprintCache.addAll(bpStacks.values());
-	//		// Update the database information.
-	//		for (Blueprint blueprint : blueprintCache) {
-	//			try {
-	//				Dao<Blueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
-	//				// Be sure the owner is reset to undefined when stored at the database.
-	//				blueprint.resetOwner();
-	//				// Set new calculated values to reduce the time for blueprint part rendering.
-	//				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
-	//				blueprint.setManufactureIndex(process.getProfitIndex());
-	//				blueprint.setJobProductionCost(process.getJobCost());
-	//				blueprint.setManufacturableCount(process.getManufacturableCount());
-	//				blueprintDao.create(blueprint);
-	//				logger.info("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
-	//			} catch (final SQLException sqle) {
-	//				logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
-	//				sqle.printStackTrace();
-	//			} catch (final RuntimeException rtex) {
-	//				logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + rtex.getMessage());
-	//				rtex.printStackTrace();
-	//			}
-	//		}
-	//	}
 
 	private void add2Region(final EveLocation target) {
 		long regionid = target.getRegionID();
