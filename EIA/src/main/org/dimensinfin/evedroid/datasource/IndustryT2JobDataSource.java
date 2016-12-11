@@ -20,7 +20,7 @@ import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;

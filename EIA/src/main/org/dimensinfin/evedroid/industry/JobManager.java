@@ -12,24 +12,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.part.BlueprintPart;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
 
+import com.beimin.eveapi.model.shared.Blueprint;
 import com.j256.ormlite.dao.Dao;
-
-import android.util.Log;
+import com.j256.ormlite.logger.Log;
 
 /**
  * The Job Manager will be the application element responsible to get all the structures required to create an
@@ -63,7 +60,7 @@ public class JobManager implements Serializable {
 		industryAssetsManager = null;
 	}
 
-	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target,
+	public static IJobProcess generateJobProcess(final NeoComCharacter thePilot, final Blueprint target,
 			final EJobClasses action) {
 		if (null == thePilot) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
@@ -141,7 +138,7 @@ public class JobManager implements Serializable {
 	 * so next action will not found "reserved" resources as available. Blueprints are an exception because they
 	 * are already segregated into different virtual stacks, some of them visible to Industry and some not.
 	 */
-	public static void initializeAssets(final EveChar pilot) {
+	public static void initializeAssets(final NeoComCharacter pilot) {
 		Log.i("EVEI", ">> JobManager.initializeAssets");
 		if (null != pilot) {
 			industryAssetsManager = new AssetsManager(pilot);
@@ -192,7 +189,8 @@ public class JobManager implements Serializable {
 	 * @param activityID
 	 *          the code of the activity. Maybe manufacture or invention or whatever.
 	 */
-	public static void launchJob(final EveChar pilot, final BlueprintPart part, final int runs, final int activityID) {
+	public static void launchJob(final NeoComCharacter pilot, final BlueprintPart part, final int runs,
+			final int activityID) {
 		Log.i("EVEI", ">> JobManager.launchJob.Blueprint:" + part + " [" + runs + "]");
 		// Get the list of blueprint assets stacked on this part.
 		final Blueprint blueprint = part.getCastedModel();
@@ -271,7 +269,7 @@ public class JobManager implements Serializable {
 	 * @param target
 	 * @return
 	 */
-	private static IJobProcess checkCache(final String tech, final EveChar pilot, final Blueprint target) {
+	private static IJobProcess checkCache(final String tech, final NeoComCharacter pilot, final Blueprint target) {
 		final String jobid = tech + "." + Long.valueOf(pilot.getCharacterID()).toString() + "."
 				+ Long.valueOf(target.getTypeID()).toString();
 		final IJobProcess hit = jobprocesscache.get(jobid);

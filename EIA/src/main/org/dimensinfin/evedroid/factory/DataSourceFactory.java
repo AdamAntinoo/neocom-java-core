@@ -21,7 +21,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.LocationAssetsPart;
@@ -64,7 +64,7 @@ public class DataSourceFactory {
 	// - F I E L D - S E C T I O N ............................................................................
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public static EveChar getPilot() {
+	public static NeoComCharacter getPilot() {
 		return EVEDroidApp.getAppStore().getPilot();
 	}
 }

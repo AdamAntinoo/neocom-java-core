@@ -38,7 +38,6 @@ import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
@@ -366,23 +365,6 @@ public class Pilot extends NeoComCharacter {
 		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills)
 			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
 		return 0;
-	}
-
-	public ArrayList<NeoComMarketOrder> searchMarketOrders() {
-		//	Select assets of type blueprint and that are of T2.
-		List<NeoComMarketOrder> orderList = new ArrayList<NeoComMarketOrder>();
-		try {
-			AppConnector.startChrono();
-			final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
-			final QueryBuilder<NeoComMarketOrder, String> qb = marketOrderDao.queryBuilder();
-			qb.where().eq("ownerID", getCharacterID());
-			orderList = marketOrderDao.query(qb.prepare());
-			final Duration lapse = AppConnector.timeLapse();
-			logger.info("-- Time lapse for [SELECT MARKETORDERS] " + lapse);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return (ArrayList<NeoComMarketOrder>) orderList;
 	}
 
 	public void setCharacterSheet(CharacterSheetResponse sheet) {

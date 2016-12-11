@@ -19,7 +19,7 @@ import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.PilotInfoHolder;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.content.Intent;
 import android.view.View;
@@ -58,8 +58,8 @@ public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, On
 		return strbalance;
 	}
 
-	public EveChar getCastedModel() {
-		return (EveChar) getModel();
+	public NeoComCharacter getCastedModel() {
+		return (NeoComCharacter) getModel();
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class PilotInfoPart extends AbstractAndroidPart implements INamedPart, On
 		if (pilotPart instanceof PilotInfoPart) {
 			// TODO This is to keep compatibility with the old data management.
 			// Pilot are expected to be at the global context
-			final EveChar pilot = ((PilotInfoPart) pilotPart).getCastedModel();
+			final NeoComCharacter pilot = ((PilotInfoPart) pilotPart).getCastedModel();
 			EVEDroidApp.getAppStore().activatePilot(pilot.getCharacterID());
 			final Intent intent = new Intent(getActivity(), DirectorsBoardActivity.class);
 			intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, pilot.getCharacterID());

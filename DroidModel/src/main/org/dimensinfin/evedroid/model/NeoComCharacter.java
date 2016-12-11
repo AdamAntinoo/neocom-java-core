@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.enums.EDataBlock;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
@@ -224,7 +225,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public void forceRefresh() {
 		clean();
 		assetsManager = new AssetsManager(this);
-		EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
+		AppConnector.addCharacterUpdateRequest(getCharacterID());
 	}
 
 	public double getAccountBalance() {
@@ -401,7 +402,22 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		hit.setStringValue(taskName);
 	}
 
-	public abstract ArrayList<NeoComMarketOrder> searchMarketOrders();
+	public ArrayList<NeoComMarketOrder> searchMarketOrders() {
+		//	Select assets of type blueprint and that are of T2.
+		List<NeoComMarketOrder> orderList = new ArrayList<NeoComMarketOrder>();
+		try {
+			AppConnector.startChrono();
+			final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
+			final QueryBuilder<NeoComMarketOrder, String> qb = marketOrderDao.queryBuilder();
+			qb.where().eq("ownerID", getCharacterID());
+			orderList = marketOrderDao.query(qb.prepare());
+			final Duration lapse = AppConnector.timeLapse();
+			logger.info("-- Time lapse for [SELECT MARKETORDERS] " + lapse);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<NeoComMarketOrder>) orderList;
+	}
 
 	public void setAccountBalance(double accountBalance) {
 		this.accountBalance = accountBalance;
@@ -720,10 +736,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		if (size < 1) {
 			if (section.equalsIgnoreCase("JOBS")) {
 				cleanJobs();
-				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
+				AppConnector.addCharacterUpdateRequest(getCharacterID());
 			}
 			if (section.equalsIgnoreCase("MARKETORDERS")) {
-				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(getCharacterID());
+				AppConnector.addCharacterUpdateRequest(getCharacterID());
 			}
 		}
 	}

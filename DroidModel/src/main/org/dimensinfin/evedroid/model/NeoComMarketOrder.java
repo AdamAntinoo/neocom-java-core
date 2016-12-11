@@ -11,7 +11,6 @@ import java.util.Date;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.interfaces.INamed;
 
@@ -76,8 +75,8 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	 * 
 	 * @return
 	 */
-	public ArrayList<AbstractGEFNode> collaborate2Model() {
-		final ArrayList<AbstractGEFNode> result = new ArrayList<AbstractGEFNode>();
+	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+		final ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		result.add(this);
 		return result;
 	}

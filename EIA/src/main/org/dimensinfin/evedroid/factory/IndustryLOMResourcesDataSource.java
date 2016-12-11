@@ -17,7 +17,7 @@ import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.EveItem;

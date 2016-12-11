@@ -33,10 +33,10 @@ import javax.net.ssl.X509TrustManager;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.EDataBlock;
 import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.ERequestState;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.enums.EDataBlock;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Outpost;
 import org.json.JSONArray;
@@ -288,8 +288,8 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		}
 
 		// STEP 02. Check characters for pending structures to update.
-		ArrayList<EveChar> characters = EVEDroidApp.getAppStore().getActiveCharacters();
-		for (EveChar eveChar : characters) {
+		ArrayList<NeoComCharacter> characters = EVEDroidApp.getAppStore().getActiveCharacters();
+		for (NeoComCharacter eveChar : characters) {
 			EDataBlock updateCode = eveChar.needsUpdate();
 			if (updateCode != EDataBlock.READY) {
 				Log.i("EVEI Service",

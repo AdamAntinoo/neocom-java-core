@@ -17,13 +17,13 @@ import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
@@ -207,7 +207,7 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
 			// Clean all asset managers before restarting the action list.
 			_bppart.clean();
-			JobManager.initializeAssets((EveChar) _store.getPilot());
+			JobManager.initializeAssets((NeoComCharacter) _store.getPilot());
 			_bppart.setActivity(_bppart.getJobActivity());
 			createContentHierarchy();
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),

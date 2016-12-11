@@ -10,8 +10,25 @@ package org.dimensinfin.evedroid.constant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelWideConstants {
-
 	// - S T A T I C - S E C T I O N ..........................................................................
+	// - C O M P A R A T O R S
+	public static final class comparators {
+		public static final int	COMPARATOR_NAME							= 100;
+		public static final int	COMPARATOR_ASSET_COUNT			= COMPARATOR_NAME + 1;
+		public static final int	COMPARATOR_ITEM_TYPE				= COMPARATOR_NAME + 2;
+		public static final int	COMPARATOR_RESOURCE_TYPE		= COMPARATOR_NAME + 3;
+		public static final int	COMPARATOR_APIID_ASC				= COMPARATOR_NAME + 4;
+		public static final int	COMPARATOR_APIID_DESC				= COMPARATOR_NAME + 5;
+		public static final int	COMPARATOR_PRIORITY					= COMPARATOR_NAME + 6;
+		public static final int	COMPARATOR_WEIGHT						= COMPARATOR_NAME + 16;
+		public static final int	COMPARATOR_NEWESTDATESORT		= COMPARATOR_NAME + 7;
+		public static final int	COMPARATOR_OLDESTDATESORT		= COMPARATOR_NAME + 8;
+		public static final int	COMPARATOR_REQUEST_PRIORITY	= COMPARATOR_NAME + 17;
+		public static final int	COMPARATOR_CARD_RATIO				= COMPARATOR_NAME + 18;
+		// public static final int COMPARATOR_CREATIONDATE = COMPARATOR_NAME +
+		// 9;
+		public static final int	COMPARATOR_TIMEPENDING			= COMPARATOR_NAME + 10;
+	}
 	// - M O D E L   V I E W   C O N T R O L L E R   V A R I A N T S
 	public enum EVARIANT{
 		DEFAULT_VARIANT

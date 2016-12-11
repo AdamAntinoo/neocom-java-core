@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.model;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.market.MarketDataEntry;
 import org.dimensinfin.evedroid.market.MarketDataSet;

@@ -33,7 +33,6 @@ import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Ship;
 import org.joda.time.Duration;
 
-import com.beimin.eveapi.model.shared.Blueprint;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -441,10 +440,11 @@ public class AssetsManager implements Serializable {
 				// Be sure the owner is reset to undefined when stored at the database.
 				blueprint.resetOwner();
 				// Set new calculated values to reduce the time for blueprint part rendering.
-				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
-				blueprint.setManufactureIndex(process.getProfitIndex());
-				blueprint.setJobProductionCost(process.getJobCost());
-				blueprint.setManufacturableCount(process.getManufacturableCount());
+				// REFACTOR This has to be rewrite to allow this calculation on download time.
+				//				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
+				//				blueprint.setManufactureIndex(process.getProfitIndex());
+				//				blueprint.setJobProductionCost(process.getJobCost());
+				//				blueprint.setManufacturableCount(process.getManufacturableCount());
 				blueprintDao.create(blueprint);
 				logger.info("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {
@@ -609,10 +609,10 @@ public class AssetsManager implements Serializable {
 	 * @param bp
 	 *          the blueprint part to be added to the hierarchy
 	 */
-	private void checkBPCStacking(final HashMap<String, Blueprint> targetContainer, final Blueprint bp) {
+	private void checkBPCStacking(final HashMap<String, NeoComBlueprint> targetContainer, final NeoComBlueprint bp) {
 		// Get the unique identifier for a blueprint related to stack aggregation. TYPEID.LOCATIONID.ASSETID
 		String id = bp.getStackID();
-		Blueprint hit = targetContainer.get(id);
+		NeoComBlueprint hit = targetContainer.get(id);
 		if (null == hit) {
 			// Miss. The blueprint is not registered.
 			logger.info("-- AssetsManager.checkBPCStacking >Stacked blueprint. " + bp.toString());

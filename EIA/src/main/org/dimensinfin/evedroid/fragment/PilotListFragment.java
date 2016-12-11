@@ -21,7 +21,7 @@ import org.dimensinfin.evedroid.datasource.PilotListDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.part.APIKeyPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 
@@ -127,7 +127,7 @@ final class PilotListPartFactory implements IPartFactory {
 			AbstractCorePart part = new APIKeyPart((AbstractComplexNode) node).setFactory(this);
 			return part;
 		}
-		if (node instanceof EveChar) {
+		if (node instanceof NeoComCharacter) {
 			AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
 			return part;
 		}

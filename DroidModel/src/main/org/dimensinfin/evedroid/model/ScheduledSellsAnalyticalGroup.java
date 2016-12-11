@@ -14,8 +14,8 @@ import java.util.Vector;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.industry.Resource;
 
 //- CLASS IMPLEMENTATION ...................................................................................
@@ -36,56 +36,6 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 
 	public ScheduledSellsAnalyticalGroup(final int newWeight, final String newTitle) {
 		super(newWeight, newTitle);
-	}
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public ArrayList<AbstractGEFNode> collaborate2Model() {
-		final ArrayList<AbstractGEFNode> results = new ArrayList<AbstractGEFNode>();
-		results.add(this);
-		for (final IGEFNode node : getChildren())
-			if (node instanceof Resource) {
-				final Resource order = (Resource) node;
-				// Get the type and the location to classify.
-				final EveLocation location = order.getItem().getHighestBuyerPrice().getLocation();
-				final int type = order.getTypeID();
-				classifyOrder(order, type, location);
-			}
-		// Now get the regions and move the parts to the result in the right order.
-		final ArrayList<AbstractGEFNode> regionNames = new ArrayList<AbstractGEFNode>(this.regions.values());
-		Collections.sort(regionNames, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		for (final AbstractGEFNode region : regionNames) {
-			results.add(region);
-			// Now add the depending item in the order but with their own rules.
-			Vector<AbstractPropertyChanger> orders = new Vector<AbstractPropertyChanger>();
-			Vector<IGEFNode> v = region.getChildren();
-			for (IGEFNode node : v) {
-				orders.add((AbstractPropertyChanger) node);
-			}
-			Collections.sort(orders, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-			for (final AbstractPropertyChanger node : orders)
-				if (node instanceof Resource) {
-					results.addAll(((Resource) node).collaborate2Model());
-				}
-		}
-		return results;
-	}
-
-	/**
-	 * Given an order and a set of parameters put it into the corresponding place on the Part hierarchy.
-	 * 
-	 * @param order
-	 * @param type
-	 * @param location
-	 */
-	private void classifyOrder(final Resource order, final int type, final EveLocation location) {
-		final String locRegion = location.getRegion();
-		Separator hitRegion = this.regions.get(locRegion);
-		if (null == hitRegion) {
-			hitRegion = new Separator(locRegion);
-			this.regions.put(locRegion, hitRegion);
-		}
-		hitRegion.addChild(order);
 	}
 
 	/**
@@ -109,6 +59,55 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 		} else {
 			hit.add(newOrder);
 		}
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public ArrayList<AbstractGEFNode> collaborate2Model() {
+		final ArrayList<AbstractGEFNode> results = new ArrayList<AbstractGEFNode>();
+		results.add(this);
+		for (final IGEFNode node : getChildren())
+			if (node instanceof Resource) {
+				final Resource order = (Resource) node;
+				// Get the type and the location to classify.
+				final EveLocation location = order.getItem().getHighestBuyerPrice().getLocation();
+				final int type = order.getTypeID();
+				classifyOrder(order, type, location);
+			}
+		// Now get the regions and move the parts to the result in the right order.
+		final ArrayList<AbstractGEFNode> regionNames = new ArrayList<AbstractGEFNode>(this.regions.values());
+		Collections.sort(regionNames, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
+		for (final AbstractGEFNode region : regionNames) {
+			results.add(region);
+			// Now add the depending item in the order but with their own rules.
+			Vector<AbstractPropertyChanger> orders = new Vector<AbstractPropertyChanger>();
+			Vector<IGEFNode> v = region.getChildren();
+			for (IGEFNode node : v) {
+				orders.add((AbstractPropertyChanger) node);
+			}
+			Collections.sort(orders, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
+			for (final AbstractPropertyChanger node : orders)
+				if (node instanceof Resource) {
+					results.addAll(((Resource) node).collaborate2Model());
+				}
+		}
+		return results;
+	}
+
+	/**
+	 * Given an order and a set of parameters put it into the corresponding place on the Part hierarchy.
+	 * 
+	 * @param order
+	 * @param type
+	 * @param location
+	 */
+	private void classifyOrder(final Resource order, final int type, final EveLocation location) {
+		final String locRegion = location.getRegion();
+		Separator hitRegion = this.regions.get(locRegion);
+		if (null == hitRegion) {
+			hitRegion = new Separator(locRegion);
+			this.regions.put(locRegion, hitRegion);
+		}
+		hitRegion.addChild(order);
 	}
 }
 //- UNUSED CODE ............................................................................................

@@ -17,14 +17,14 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.EveTask;
@@ -52,7 +52,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	/** The main element used for the manufacture job. */
 	protected Blueprint												blueprint								= null;
 	/** The Pilot owner of the job and blueprint. Required to get the characterID. */
-	protected EveChar													pilot										= null;
+	protected NeoComCharacter													pilot										= null;
 	/** New and locally used AssetsManager used to process the job requests. */
 	protected AssetsManager										industryAssetsManager		= null;
 	protected int															bpid										= -1;
@@ -159,7 +159,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		}
 	}
 
-	public void setPilot(final EveChar pilot) {
+	public void setPilot(final NeoComCharacter pilot) {
 		this.pilot = pilot;
 		industryAssetsManager.setPilot(pilot);
 	}
@@ -206,7 +206,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		return hit;
 	}
 
-	protected EveChar getPilot() {
+	protected NeoComCharacter getPilot() {
 		return pilot;
 	}
 

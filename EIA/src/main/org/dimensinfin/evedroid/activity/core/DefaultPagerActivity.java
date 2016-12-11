@@ -15,7 +15,7 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.app.ActionBar;
 import android.content.Intent;
@@ -52,8 +52,8 @@ public abstract class DefaultPagerActivity extends AbstractContextActivity {
 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
-	public EveChar getPilot() {
-		return (EveChar) EVEDroidApp.getAppStore().getPilot();
+	public NeoComCharacter getPilot() {
+		return (NeoComCharacter) EVEDroidApp.getAppStore().getPilot();
 	}
 
 	@Override

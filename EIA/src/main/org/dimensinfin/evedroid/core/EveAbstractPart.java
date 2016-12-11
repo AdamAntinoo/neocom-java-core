@@ -14,7 +14,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;
@@ -168,8 +168,8 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 		return htmlFragmentWithColor.toString();
 	}
 
-	protected EveChar getPilot() {
-		return (EveChar) EVEDroidApp.getAppStore().getPilot();
+	protected NeoComCharacter getPilot() {
+		return (NeoComCharacter) EVEDroidApp.getAppStore().getPilot();
 	}
 }
 

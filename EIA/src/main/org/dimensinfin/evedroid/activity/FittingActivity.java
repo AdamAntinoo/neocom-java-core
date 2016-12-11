@@ -16,7 +16,7 @@ import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.fragment.FittingFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
 
@@ -33,7 +33,7 @@ public class FittingActivity extends PilotPagerActivity implements INeoComDirect
 	/**
 	 * Until the fitting loader is implemented the result is ever true and the Director should be active.
 	 */
-	public boolean checkActivation(final EveChar checkPilot) {
+	public boolean checkActivation(final NeoComCharacter checkPilot) {
 		return true;
 	}
 

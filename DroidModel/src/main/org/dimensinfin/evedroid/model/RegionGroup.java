@@ -63,7 +63,7 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	 * @param newOrder
 	 *          the order to be added to the group.
 	 */
-	public void addChild(final MarketOrder newOrder) {
+	public void addChild(final NeoComMarketOrder newOrder) {
 		super.addChild(newOrder);
 
 		// Recalculate analytical data from the order api methods.
@@ -100,8 +100,8 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
 		Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractPropertyChanger node : orders)
-			if (node instanceof MarketOrder) {
-				results.addAll(((MarketOrder) node).collaborate2Model());
+			if (node instanceof NeoComMarketOrder) {
+				results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
 			}
 		return results;
 	}
@@ -168,11 +168,11 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	}
 
 	private Vector<AbstractPropertyChanger> aggregate(final Vector<IGEFNode> children) {
-		final HashMap<Integer, MarketOrder> datamap = new HashMap<Integer, MarketOrder>();
+		final HashMap<Integer, NeoComMarketOrder> datamap = new HashMap<Integer, NeoComMarketOrder>();
 		for (final IGEFNode node : children)
-			if (node instanceof MarketOrder) {
-				final MarketOrder order = (MarketOrder) node;
-				final MarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
+			if (node instanceof NeoComMarketOrder) {
+				final NeoComMarketOrder order = (NeoComMarketOrder) node;
+				final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
 				if (null == hit) {
 					datamap.put(new Integer(order.getItemTypeID()), order);
 				} else {
