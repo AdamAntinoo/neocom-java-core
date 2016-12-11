@@ -22,6 +22,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
+import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
@@ -104,22 +105,26 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the delegated core eveapi Character */
-	private NeoComApiKey											apikey							= null;
+	protected NeoComApiKey										apikey							= null;
 	private Character													delegatedCharacter	= null;
 	private CharacterInfoResponse							characterInfo				= null;
 	private boolean														active							= true;
 	private double														accountBalance			= 0.0;
-	private long															totalAssets					= -1;
+	//	private long															totalAssets					= -1;
 
 	// - T R A N S I E N T   D A T A
+	protected transient Instant								lastCCPAccessTime		= null;
+	protected transient Instant								assetsCacheTime			= null;
 	protected transient AssetsManager					assetsManager				= null;
 	private transient ArrayList<Property>			locationRoles				= null;
 	private transient HashMap<Long, Property>	actions4Character		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
+		lastCCPAccessTime = Instant.now();
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
 		if (null == locationRoles) accessLocationRoles();
 		if (locationRoles.size() < 1) accessLocationRoles();
@@ -154,7 +159,6 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		}
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
 
 	public double getAccountBalance() {

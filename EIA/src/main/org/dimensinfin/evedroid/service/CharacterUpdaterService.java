@@ -56,7 +56,7 @@ public class CharacterUpdaterService extends IntentService {
 							break;
 						case ASSETDATA:
 						case BLUEPRINTDATA:
-							pilot.updateAssets();
+							pilot.downloadAssets();
 							pilot.updateBlueprints();
 							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
 							EVEDroidApp.topCounter--;

@@ -19,10 +19,8 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EDataBlock;
-import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
@@ -34,12 +32,10 @@ import org.w3c.dom.NodeList;
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.CachingConnector;
 import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.parser.corporation.AssetListParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
-import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import com.j256.ormlite.dao.Dao;
@@ -57,7 +53,7 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 	private static transient CachingConnector	apiCacheConnector		= null;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private transient Instant									assetsCacheTime			= null;
+	//	private transient Instant									assetsCacheTime			= null;
 	private transient Instant									blueprintsCacheTime	= null;
 	private transient Instant									jobsCacheTime				= null;
 	private transient Instant									marketCacheTime			= null;
@@ -325,77 +321,9 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveChar [");
 		buffer.append(super.toString()).append(" ");
-		buffer.append("assets:").append(totalAssets).append(" ");
+		buffer.append("assets:").append(getAssetCount()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
-	}
-
-	/**
-	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
-	 * parser. This requires then that the cache verification and other cache tasks be performed locally to
-	 * avoid downloading the same information multiple times.<br>
-	 * Cache expiration is of 6 hours but we will set it up to 3.<br>
-	 * After verification we have to update the list, we then fire the events to signal asset list modification
-	 * to any dependent data structures or UI objects that may be showing this information.<br>
-	 * This update mechanism may require reading the last known state of the assets list from the sdcard file
-	 * storage. This information is not stored automatically with the character information to speed up the
-	 * initialization process and is loading only when needed and this data should be accessed. This is an
-	 * special case because the assets downloaded are being written to a special set of records in the User
-	 * database. Then, after the download terminates the database is updated to move those assets to the right
-	 * character. It is supposed that this is performed in the background and that while we are doing this the
-	 * uses has access to an older set of assets. New implementation. With the use of the eveapi library there
-	 * is no need to use the URL to locate and download the assets. We use the eveapi locator and parser to get
-	 * the data structures used to generate and store the assets into the local database. We first clear any
-	 * database records not associated to any owner, the add records for a generic owner and finally change the
-	 * owner to this character.
-	 */
-	@SuppressWarnings("rawtypes")
-	public synchronized void updateAssets() {
-		logger.info(">> EveChar.updateAssets");
-		try {
-			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
-			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
-			AssetListResponse response = null;
-			if (getName().equalsIgnoreCase("Corporation")) {
-				AssetListParser parser = com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance();
-				response = parser.getResponse(getAuthorization());
-				if (null != response) {
-					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-					assetsCacheTime = new Instant(response.getCachedUntil());
-					// Assets may be parent of other assets so process them recursively.
-					for (final EveAsset eveAsset : assets) {
-						processAsset(eveAsset, null);
-					}
-				}
-			} else {
-				com.beimin.eveapi.character.assetlist.AssetListParser parser = com.beimin.eveapi.character.assetlist.AssetListParser
-						.getInstance();
-				response = parser.getResponse(getAuthorization());
-				if (null != response) {
-					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-					assetsCacheTime = new Instant(response.getCachedUntil());
-					// Assets may be parent of other assets so process them recursively.
-					for (final EveAsset eveAsset : assets) {
-						processAsset(eveAsset, null);
-					}
-				}
-			}
-			AppConnector.getDBConnector().replaceAssets(getCharacterID());
-
-			// Update the caching time to the time set by the eveapi.
-			assetsCacheTime = new Instant(response.getCachedUntil());
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		// Clean all user structures invalid after the reload of the assets.
-		assetsManager = null;
-		totalAssets = -1;
-		//		clearTimers();
-		JobManager.clearCache();
-		setDirty(true);
-		fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_EVECHARACTER_ASSETS, null, null);
-		logger.info("<< EveChar.updateAssets");
 	}
 
 	/**
@@ -634,51 +562,6 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 		//		skillsCacheTime = null;
 	}
 
-	/**
-	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
-	 * 
-	 * @param eveAsset
-	 * @return
-	 */
-	private Asset convert2Asset(final EveAsset<EveAsset> eveAsset) {
-		// Create the asset from the API asset.
-		final Asset newAsset = new Asset();
-		newAsset.setAssetID(eveAsset.getItemID());
-		newAsset.setTypeID(eveAsset.getTypeID());
-		// Children locations have a null on this field. Set it to their parents
-		final Long assetloc = eveAsset.getLocationID();
-		// DEBUG Add a conditional breakpoint for an specific asset.
-		//		Long test = new Long(1021037093228L);
-		if (eveAsset.getTypeID() == 8625) {
-			@SuppressWarnings("unused")
-			int i = 1; // stop point
-		}
-		if (null != assetloc) {
-			newAsset.setLocationID(eveAsset.getLocationID());
-		}
-		newAsset.setQuantity(eveAsset.getQuantity());
-		newAsset.setFlag(eveAsset.getFlag());
-		newAsset.setSingleton(eveAsset.getSingleton());
-
-		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
-		if (null != item) {
-			try {
-				newAsset.setName(item.getName());
-				newAsset.setCategory(item.getCategory());
-				newAsset.setGroupName(item.getGroupName());
-				newAsset.setTech(item.getTech());
-				if (item.isBlueprint()) {
-					newAsset.setBlueprintType(eveAsset.getRawQuantity());
-				}
-			} catch (RuntimeException rtex) {
-			}
-		}
-		// Add the asset value to the database.
-		newAsset.setIskvalue(calculateAssetValue(newAsset));
-		return newAsset;
-	}
-
 	private Blueprint convert2Blueprint(final EveBlueprint eveBlue) {
 		// Create the asset from the API asset.
 		final Blueprint newBlueprint = new Blueprint(eveBlue.getItemID());
@@ -914,53 +797,6 @@ public class EveChar extends NeoComPilot implements INeoComNode {
 			assetsCacheTime = new Instant(0);
 		}
 		return assetsCacheTime;
-	}
-
-	/**
-	 * Processes an asset and all their children. This method converts from a API record to a database asset
-	 * record.
-	 * 
-	 * @param eveAsset
-	 */
-	private void processAsset(final EveAsset<EveAsset> eveAsset, final Asset parent) {
-		final Asset myasset = convert2Asset(eveAsset);
-		if (null != parent) {
-			myasset.setParent(parent);
-			myasset.setParentContainer(parent);
-			// Set the location to the parent's location is not set.
-			if (myasset.getLocationID() == -1) {
-				myasset.setLocationID(parent.getLocationID());
-			}
-		}
-		// Only search names for containers and ships.
-		if (myasset.isShip()) {
-			myasset.setUserLabel(downloadAssetEveName(myasset.getAssetID()));
-		}
-		if (myasset.isContainer()) {
-			myasset.setUserLabel(downloadAssetEveName(myasset.getAssetID()));
-		}
-		try {
-			final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			final HashSet<EveAsset> children = new HashSet<EveAsset>(eveAsset.getAssets());
-			if (children.size() > 0) {
-				myasset.setContainer(true);
-			}
-			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
-				myasset.setShip(true);
-			}
-			assetDao.create(myasset);
-
-			// Process all the children and convert them to assets.
-			if (children.size() > 0) {
-				for (final EveAsset childAsset : children) {
-					processAsset(childAsset, myasset);
-				}
-			}
-			logger.finest("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
-		} catch (final SQLException sqle) {
-			logger.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
-			sqle.printStackTrace();
-		}
 	}
 
 	private ArrayList<Job> searchIndustryJobs() {

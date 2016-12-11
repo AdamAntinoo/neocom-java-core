@@ -94,6 +94,7 @@ public class AssetsManager implements Serializable {
 		setPilot(pilot);
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Updates the list of assets, regions and locations from the database. Go to the database to download all
 	 * the assets for this pilot or corporation and then process them one by one to ge the complete parenship
@@ -160,7 +161,6 @@ public class AssetsManager implements Serializable {
 		return assetList;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Counts the number of assets that belong to this character. If the current number of assets is negative
 	 * then this signals that the number has not been previously calculated.
