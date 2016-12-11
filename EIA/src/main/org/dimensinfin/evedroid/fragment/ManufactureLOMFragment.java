@@ -14,7 +14,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.IndustryLOMResourcesDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
@@ -77,7 +77,7 @@ public class ManufactureLOMFragment extends AbstractPagerFragment {
 				// Get the product created by the job from the blueprint part process.
 				final long bpassetid = _extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
 				final int activity = _extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
-				final Blueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				final NeoComBlueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
 				final BlueprintPart bppart = new BlueprintPart(blueprint);
 				bppart.setActivity(activity);
 				// REFACTOR This piece of code may be optimized to return the item identifier for the matching activity of a blueprint.

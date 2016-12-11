@@ -12,7 +12,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
 import org.dimensinfin.evedroid.model.MarketOrder;
@@ -38,7 +38,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Dao<NeoComAsset, String>				assetDao					= null;
-	private Dao<Blueprint, String>		blueprintDao			= null;
+	private Dao<NeoComBlueprint, String>		blueprintDao			= null;
 	private Dao<Job, String>					jobDao						= null;
 	private Dao<MarketOrder, String>	marketOrderDao		= null;
 	private Dao<Property, String>			propertyDao				= null;
@@ -67,9 +67,9 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		return assetDao;
 	}
 
-	public Dao<Blueprint, String> getBlueprintDAO() throws java.sql.SQLException {
+	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException {
 		if (null == blueprintDao) {
-			blueprintDao = DaoManager.createDao(this.getConnectionSource(), Blueprint.class);
+			blueprintDao = DaoManager.createDao(this.getConnectionSource(), NeoComBlueprint.class);
 		}
 		return blueprintDao;
 	}
@@ -107,7 +107,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		try {
 			// Now open the DAO connector and create tables if they not exist
 			TableUtils.createTableIfNotExists(databaseConnection, NeoComAsset.class);
-			TableUtils.createTableIfNotExists(databaseConnection, Blueprint.class);
+			TableUtils.createTableIfNotExists(databaseConnection, NeoComBlueprint.class);
 			TableUtils.createTableIfNotExists(databaseConnection, Job.class);
 			TableUtils.createTableIfNotExists(databaseConnection, MarketOrder.class);
 			TableUtils.createTableIfNotExists(databaseConnection, Property.class);
@@ -136,7 +136,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 			}
 			try {
 				// Delete all the CCP data tables to create then again on open.
-				TableUtils.dropTable(databaseConnection, Blueprint.class, true);
+				TableUtils.dropTable(databaseConnection, NeoComBlueprint.class, true);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();
@@ -168,7 +168,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 			}
 			try {
 				// Delete all the CCP data tables to create then again on open.
-				TableUtils.dropTable(databaseConnection, Blueprint.class, true);
+				TableUtils.dropTable(databaseConnection, NeoComBlueprint.class, true);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();
@@ -200,7 +200,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		if (oldVersion == 6) {
 			try {
 				// Delete all the CCP data tables to create then again on open.
-				TableUtils.dropTable(databaseConnection, Blueprint.class, true);
+				TableUtils.dropTable(databaseConnection, NeoComBlueprint.class, true);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();
@@ -265,7 +265,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		}
 		if (oldVersion < 51) {
 			try {
-				TableUtils.dropTable(databaseConnection, Blueprint.class, true);
+				TableUtils.dropTable(databaseConnection, NeoComBlueprint.class, true);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();
@@ -276,7 +276,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		}
 		if (oldVersion < 52) {
 			try {
-				TableUtils.dropTable(databaseConnection, Blueprint.class, true);
+				TableUtils.dropTable(databaseConnection, NeoComBlueprint.class, true);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();

@@ -130,7 +130,7 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 				String category = item.getCategory();
 				String group = item.getGroupName();
 				if (null != category) {
-					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 						// Add the value and volume of the stack to the global result.
 						long quantity = apart.getCastedModel().getQuantity();
 						double price = apart.getCastedModel().getItem().getHighestBuyerPrice().getPrice();

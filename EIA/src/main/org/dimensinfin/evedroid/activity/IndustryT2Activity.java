@@ -12,7 +12,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.fragment.JobActionsFragment;
 import org.dimensinfin.evedroid.fragment.ManufactureLOMFragment;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -75,7 +75,7 @@ public class IndustryT2Activity extends PilotPagerActivity {
 			final long bpassetid = extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
 			//		final int activity = extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
 			if (bpassetid > 0) {
-				final Blueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				final NeoComBlueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
 				if (null == blueprint)
 					throw new RuntimeException(
 							"RT IndustryT2Activity.onCreate - Unable to continue. Expected blueprint not located.");

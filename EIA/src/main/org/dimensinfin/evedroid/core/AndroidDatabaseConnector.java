@@ -24,7 +24,7 @@ import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.market.MarketDataSet;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
@@ -206,7 +206,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		return appDatabaseHelper.getAssetDAO();
 	}
 
-	public Dao<Blueprint, String> getBlueprintDAO() throws java.sql.SQLException {
+	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
 			openDAO();
 		}

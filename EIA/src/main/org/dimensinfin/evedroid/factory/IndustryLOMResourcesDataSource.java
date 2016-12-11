@@ -96,7 +96,7 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 		Vector<IGEFNode> lomParts = new Vector<IGEFNode>();
 		for (Resource resource : lom) {
 			String category = resource.item.getCategory();
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 				balance += 0.0;
 			} else if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 				balance += 0.0;
@@ -109,7 +109,7 @@ public class IndustryLOMResourcesDataSource extends AbstractDataSource {
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 				respart.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCESKILLJOB);
 			}
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 				respart.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEBLUEPRINTJOB);
 			}
 			// Now classify each resource in their Industry group.

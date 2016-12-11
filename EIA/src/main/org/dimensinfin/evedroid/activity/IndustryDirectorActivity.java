@@ -15,7 +15,7 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.fragment.IndustryBlueprintsFragment;
 import org.dimensinfin.evedroid.fragment.InventionBlueprintsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
@@ -53,10 +53,10 @@ public class IndustryDirectorActivity extends PilotPagerActivity implements INeo
 	 * of the pilot.
 	 */
 	public boolean checkActivation(final NeoComCharacter checkPilot) {
-		final ArrayList<Blueprint> bps = checkPilot.getAssetsManager().getBlueprints();
+		final ArrayList<NeoComBlueprint> bps = checkPilot.getAssetsManager().getBlueprints();
 		if (bps.size() > 0) {
 			// Get the counts of the different blueprint categories.
-			for (final Blueprint blueprint : bps) {
+			for (final NeoComBlueprint blueprint : bps) {
 				if (blueprint.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
 					this._T1Count++;
 				}

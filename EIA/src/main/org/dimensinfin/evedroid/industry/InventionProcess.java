@@ -17,7 +17,7 @@ import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.market.MarketDataSet;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Skill;
@@ -172,7 +172,7 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 				ArrayList<Resource> resourceList = getLOM();
 				for (Resource resource : resourceList) {
 					// Remove blueprints from the list of assets.
-					if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+					if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 						continue;
 					}
 					if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
@@ -233,7 +233,7 @@ public class InventionProcess extends AbstractManufactureProcess implements IJob
 		return threads;
 	}
 
-	public void setBlueprint(final Blueprint blueprint) {
+	public void setBlueprint(final NeoComBlueprint blueprint) {
 		this.blueprint = blueprint;
 		bpid = blueprint.getTypeID();
 		moduleid = blueprint.getModuleTypeID();

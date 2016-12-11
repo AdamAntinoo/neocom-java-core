@@ -14,7 +14,7 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.render.ItemHeaderRender;
 
@@ -125,7 +125,7 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 
 	private IJobProcess getJobProcess() {
 		if (null == process)
-			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), new Blueprint(bpid),
+			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), new NeoComBlueprint(bpid),
 					EJobClasses.MANUFACTURE);
 		return process;
 	}

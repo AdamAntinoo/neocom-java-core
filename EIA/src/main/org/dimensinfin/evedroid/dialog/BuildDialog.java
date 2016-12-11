@@ -15,7 +15,7 @@ import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.TaskPart;
 
@@ -66,7 +66,7 @@ public class BuildDialog extends DialogFragment {
 
 	// - W O R K   V A R I A B L E S
 	private int							_runs								= 0;
-	private Blueprint				_blueprint					= null;
+	private NeoComBlueprint				_blueprint					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -92,7 +92,7 @@ public class BuildDialog extends DialogFragment {
 		// Get the martching blueprint and obtain some key information from it.
 		int typeID = _taskPart.getItem().getTypeID();
 		int bpid = AppConnector.getDBConnector().searchBlueprint4Module(typeID);
-		_blueprint = new Blueprint(bpid);
+		_blueprint = new NeoComBlueprint(bpid);
 		IJobProcess buildProcess = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), _blueprint,
 				EJobClasses.MANUFACTURE);
 		_runsBuild.setText(_taskPart.getQuantity());
@@ -137,7 +137,7 @@ public class BuildDialog extends DialogFragment {
 		_taskPart = part;
 		int typeID = _taskPart.getItem().getTypeID();
 		int bpid = AppConnector.getDBConnector().searchBlueprint4Module(typeID);
-		_blueprintPart = new BlueprintPart(new Blueprint(bpid));
+		_blueprintPart = new BlueprintPart(new NeoComBlueprint(bpid));
 		// TODO We have to set the location that should be set to create the job
 		// TODO Set the runs that the user has selected or that are set to the build job
 	}

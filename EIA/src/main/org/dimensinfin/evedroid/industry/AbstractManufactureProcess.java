@@ -23,7 +23,7 @@ import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -50,7 +50,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** The main element used for the manufacture job. */
-	protected Blueprint												blueprint								= null;
+	protected NeoComBlueprint												blueprint								= null;
 	/** The Pilot owner of the job and blueprint. Required to get the characterID. */
 	protected NeoComCharacter													pilot										= null;
 	/** New and locally used AssetsManager used to process the job requests. */
@@ -108,7 +108,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			final ArrayList<Resource> resourceList = AppConnector.getDBConnector().searchListOfMaterials(bpid);
 			for (final Resource resource : resourceList) {
 				// Remove blueprints from the list of assets.
-				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 					continue;
 				}
 				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
@@ -215,7 +215,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		final String category = newTask.getItem().getCategory();
 		// Check the special case for T2 BPC to transform them to default INVENTION.
 		if (newTask.getTaskType() == ETaskType.REQUEST)
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 			final String tech = newTask.getItem().getTech();
 			if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 			Log.i("EVEI", "-- AbstractManufactureProcess.processRequest T2 Blueprint - request INVENTION");
@@ -266,7 +266,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 				processRefine(newTask);
 				return;
 				}
-			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 				// There can be two types. Check the corresponding action.
 				final String tech = newTask.getItem().getTech();
 				if (tech.equalsIgnoreCase("Tech I")) {

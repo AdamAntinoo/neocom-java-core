@@ -122,7 +122,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 					add2Group((ActionPart) action, EIndustryGroup.COMPONENTS);
 					continue;
 				}
-				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 					add2Group((ActionPart) action, EIndustryGroup.BLUEPRINT);
 					continue;
 				}

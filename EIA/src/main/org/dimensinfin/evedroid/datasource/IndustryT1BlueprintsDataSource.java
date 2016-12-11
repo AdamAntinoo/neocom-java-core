@@ -19,7 +19,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;
@@ -85,8 +85,8 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 		this._root.clear();
 
 		// Get the AssetsManager through the Store.
-		final ArrayList<Blueprint> bps = this._store.getPilot().getAssetsManager().searchT1Blueprints();
-		for (final Blueprint currentbpc : bps) {
+		final ArrayList<NeoComBlueprint> bps = this._store.getPilot().getAssetsManager().searchT1Blueprints();
+		for (final NeoComBlueprint currentbpc : bps) {
 			final long locid = currentbpc.getLocationID();
 			final NeoComAsset parent = currentbpc.getParentContainer();
 			final BlueprintPart bppart = new BlueprintPart(currentbpc);

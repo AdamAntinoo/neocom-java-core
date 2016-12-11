@@ -25,7 +25,7 @@ import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
@@ -104,7 +104,7 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 		}
 		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBACTIONS) {
 			// Get the module item that is going to be produced.
-			Blueprint blueprint = _bppart.getCastedModel();
+			NeoComBlueprint blueprint = _bppart.getCastedModel();
 			// Add the manufacture time section.
 			JobTimePart time = new JobTimePart(new Separator(""));
 			time.setRunTime(_bppart.getCycleTime());

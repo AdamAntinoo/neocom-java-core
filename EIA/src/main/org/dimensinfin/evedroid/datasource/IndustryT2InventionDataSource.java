@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;
@@ -65,8 +65,8 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 		// Get the blueprints through the Store. And also the datacores.
 		AssetsManager manager = _store.getPilot().getAssetsManager();
 		ArrayList<NeoComAsset> datacores = manager.searchAsset4Group(ModelWideConstants.eveglobal.Datacores);
-		ArrayList<Blueprint> bps = manager.searchT1Blueprints();
-		for (Blueprint currentbpc : bps) {
+		ArrayList<NeoComBlueprint> bps = manager.searchT1Blueprints();
+		for (NeoComBlueprint currentbpc : bps) {
 			// Check if the bp has the invention feature.
 			if (currentbpc.getItem().hasInvention()) {
 				long locid = currentbpc.getLocationID();

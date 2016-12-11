@@ -26,7 +26,7 @@ import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.render.Blueprint4IndustryHeaderRender;
 import org.dimensinfin.evedroid.render.Blueprint4IndustryRender;
 import org.dimensinfin.evedroid.render.Blueprint4T2InventionRender;
@@ -226,8 +226,8 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 		return budget;
 	}
 
-	public Blueprint getCastedModel() {
-		return (Blueprint) getModel();
+	public NeoComBlueprint getCastedModel() {
+		return (NeoComBlueprint) getModel();
 	}
 
 	public int getCycleTime() {
