@@ -338,6 +338,60 @@ public class AssetsManager implements Serializable {
 		return null;
 	}
 
+	/**
+	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
+	 * blueprints. We expect this is not cost intensive because this function is called few times.
+	 * 
+	 * @return list of T1 blueprints.
+	 */
+	public ArrayList<NeoComBlueprint> searchT1Blueprints() {
+		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
+		for (NeoComBlueprint bp : getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+				blueprintList.add(bp);
+			}
+		return blueprintList;
+	}
+
+	/**
+	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
+	 * blueprints. We expect this is not cost intensive because this function is called few times.
+	 * 
+	 * @return list of T2 blueprints.
+	 */
+	public ArrayList<NeoComBlueprint> searchT2Blueprints() {
+		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
+		for (NeoComBlueprint bp : getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+				blueprintList.add(bp);
+			}
+		return blueprintList;
+	}
+
+	//	/**
+	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
+	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
+	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
+	//	 * 
+	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
+	//	 */
+	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
+	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
+	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
+	//		EveFilter filter = new EveFilter(bps, techWhere);
+	//		return filter.getResults();
+	//	}
+
+	//	public ArrayList<Blueprint> queryT1Blueprints1() {
+	//		if (null == t1blueprints) getPilot().updateBlueprints();
+	//		return t1blueprints;
+	//	}
+	//
+	//	public ArrayList<Blueprint> queryT2Blueprints1() {
+	//		if (null == t2blueprints) getPilot().updateBlueprints();
+	//		return t2blueprints;
+	//	}
+
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
@@ -373,27 +427,10 @@ public class AssetsManager implements Serializable {
 	}
 
 	//	/**
-	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
-	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
-	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
-	//	 * 
-	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
 	//	 */
-	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
-	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
-	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
-	//		EveFilter filter = new EveFilter(bps, techWhere);
-	//		return filter.getResults();
-	//	}
-
-	//	public ArrayList<Blueprint> queryT1Blueprints1() {
-	//		if (null == t1blueprints) getPilot().updateBlueprints();
-	//		return t1blueprints;
-	//	}
-	//
-	//	public ArrayList<Blueprint> queryT2Blueprints1() {
-	//		if (null == t2blueprints) getPilot().updateBlueprints();
-	//		return t2blueprints;
+	//	public void reinstantiate() {
 	//	}
 
 	/**
@@ -464,43 +501,6 @@ public class AssetsManager implements Serializable {
 			}
 		}
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
-
-	//	/**
-	//	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
-	//	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	//	 * 
-	//	 * @return list of T1 blueprints.
-	//	 */
-	//	public ArrayList<Blueprint> searchT1Blueprints() {
-	//		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
-	//		for (Blueprint bp : getBlueprints())
-	//			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-	//				blueprintList.add(bp);
-	//			}
-	//		return blueprintList;
-	//	}
-
-	//	/**
-	//	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
-	//	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	//	 * 
-	//	 * @return list of T2 blueprints.
-	//	 */
-	//	public ArrayList<Blueprint> searchT2Blueprints() {
-	//		ArrayList<Blueprint> blueprintList = new ArrayList<Blueprint>();
-	//		for (Blueprint bp : getBlueprints())
-	//			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-	//				blueprintList.add(bp);
-	//			}
-	//		return blueprintList;
-	//	}
 
 	@Override
 	public String toString() {

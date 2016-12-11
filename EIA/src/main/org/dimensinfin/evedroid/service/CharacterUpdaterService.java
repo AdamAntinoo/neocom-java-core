@@ -62,12 +62,12 @@ public class CharacterUpdaterService extends IntentService {
 							EVEDroidApp.topCounter--;
 							break;
 						case INDUSTRYJOBS:
-							pilot.updateIndustryJobs();
+							pilot.downloadIndustryJobs();
 							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
 							EVEDroidApp.topCounter--;
 							break;
 						case MARKETORDERS:
-							pilot.updateMarketOrders();
+							pilot.downloadMarketOrders();
 							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
 							EVEDroidApp.topCounter--;
 							break;

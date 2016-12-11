@@ -141,6 +141,50 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		lastCCPAccessTime = Instant.now();
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * This method is to process a request from the UI to get the model for the Market Orders. The market orders
+	 * are stored at the database and there are two sets, the orders that are downloaded from CCP and the orders
+	 * scheduled by the user through the UI. If this access does not find orders it posts a refresh to download
+	 * that information from CCP servers. There is no timing check to access the information.
+	 * 
+	 * @return the market order data hierarchy with the analytical groups and the orders.
+	 */
+	public ArrayList<MarketOrderAnalyticalGroup> accessMarketOrders() {
+		final ArrayList<NeoComMarketOrder> orders = searchMarketOrders();
+		// Create the analytical groups.
+		final MarketOrderAnalyticalGroup scheduledBuyGroup = new MarketOrderAnalyticalGroup(10, "SCHEDULED BUYS");
+		final MarketOrderAnalyticalGroup buyGroup = new MarketOrderAnalyticalGroup(30, "BUYS");
+		final MarketOrderAnalyticalGroup sellGroup = new MarketOrderAnalyticalGroup(40, "SELLS");
+		final MarketOrderAnalyticalGroup finishedGroup = new MarketOrderAnalyticalGroup(50, "FINISHED");
+
+		for (final NeoComMarketOrder order : orders) {
+			// Add the order to the scheduled aggregator that will also pack similar items into a single item.
+			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
+				scheduledBuyGroup.addChild(order);
+				continue;
+			}
+			if (order.getOrderState() == ModelWideConstants.orderstates.EXPIRED) {
+				finishedGroup.addChild(order);
+				continue;
+			}
+			// Detect buys and sells.				
+			final boolean bid = order.getBid();
+			if (bid) {
+				buyGroup.addChild(order);
+			} else {
+				sellGroup.addChild(order);
+			}
+		}
+		// Compose the output.
+		final ArrayList<MarketOrderAnalyticalGroup> result = new ArrayList<MarketOrderAnalyticalGroup>();
+		result.add(scheduledBuyGroup);
+		result.add(buyGroup);
+		result.add(sellGroup);
+		result.add(finishedGroup);
+		return result;
+	}
+
 	public MarketOrderAnalyticalGroup accessModules4Sell() {
 		final ScheduledSellsAnalyticalGroup scheduledSellGroup = new ScheduledSellsAnalyticalGroup(20, "SCHEDULED SELLS");
 		final ArrayList<NeoComAsset> modules = getAssetsManager().searchT2Modules();
@@ -162,7 +206,6 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return scheduledSellGroup;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
 		if (null == locationRoles) accessLocationRoles();
 		if (locationRoles.size() < 1) accessLocationRoles();
@@ -221,6 +264,14 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
+
+	public abstract void downloadAssets();
+
+	public abstract void downloadBlueprints();
+
+	public abstract void downloadIndustryJobs();
+
+	public abstract void downloadMarketOrders();
 
 	public void forceRefresh() {
 		clean();
