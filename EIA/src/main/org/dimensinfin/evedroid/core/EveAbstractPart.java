@@ -32,7 +32,6 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	private static final long									ONEHOUR										= 60 * ONEMINUTE;
 	private static final long									ONEDAY										= 24 * ONEHOUR;
 	protected static DecimalFormat						keyFormatter							= new DecimalFormat("0000000");
-	protected final DateTimeFormatter					timePointFormatter				= DateTimeFormat.forPattern("yyyy/MMM/dd HH:mm");
 	protected static DecimalFormat						priceFormatter						= new DecimalFormat("###,###.00");
 	protected static DecimalFormat						qtyFormatter							= new DecimalFormat("###,##0");
 	protected static DecimalFormat						moduleIndexFormatter			= new DecimalFormat("000");
@@ -73,6 +72,8 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 			return "0:00";
 		}
 	}
+
+	protected final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("yyyy/MMM/dd HH:mm");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -168,7 +169,7 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	}
 
 	protected EveChar getPilot() {
-		return EVEDroidApp.getAppStore().getPilot();
+		return (EveChar) EVEDroidApp.getAppStore().getPilot();
 	}
 }
 

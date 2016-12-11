@@ -10,7 +10,7 @@ package org.dimensinfin.evedroid.datasource;
 
 import java.util.ArrayList;
 
-import org.dimensinfin.android.mvc.core.IPartFactory;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;

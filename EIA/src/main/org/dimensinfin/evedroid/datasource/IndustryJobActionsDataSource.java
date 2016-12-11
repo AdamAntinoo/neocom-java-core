@@ -23,6 +23,7 @@ import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
@@ -206,7 +207,7 @@ public class IndustryJobActionsDataSource extends AbstractNewDataSource {
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
 			// Clean all asset managers before restarting the action list.
 			_bppart.clean();
-			JobManager.initializeAssets(_store.getPilot());
+			JobManager.initializeAssets((EveChar) _store.getPilot());
 			_bppart.setActivity(_bppart.getJobActivity());
 			createContentHierarchy();
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),

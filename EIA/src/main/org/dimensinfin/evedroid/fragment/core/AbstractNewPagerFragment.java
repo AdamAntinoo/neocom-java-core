@@ -25,7 +25,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
-import org.dimensinfin.evedroid.datasource.IExtendedDataSource;
+import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 import org.dimensinfin.evedroid.model.EveCharCore;
 
 import android.content.Intent;
