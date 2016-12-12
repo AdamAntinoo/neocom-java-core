@@ -18,7 +18,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Asset4CategoryHolder;
 import org.dimensinfin.evedroid.holder.AssetHolder;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetLineRender;
 
 import android.content.Intent;
@@ -90,8 +90,8 @@ public class AssetPart extends MarketDataPart implements INamedPart, OnClickList
 		return getCastedModel().getAssetID();
 	}
 
-	public Asset getCastedModel() {
-		return (Asset) getModel();
+	public NeoComAsset getCastedModel() {
+		return (NeoComAsset) getModel();
 	}
 
 	public long getModelID() {

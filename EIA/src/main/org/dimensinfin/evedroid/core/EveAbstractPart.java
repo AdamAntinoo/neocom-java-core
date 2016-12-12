@@ -14,7 +14,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;
@@ -32,7 +32,6 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	private static final long									ONEHOUR										= 60 * ONEMINUTE;
 	private static final long									ONEDAY										= 24 * ONEHOUR;
 	protected static DecimalFormat						keyFormatter							= new DecimalFormat("0000000");
-	protected final DateTimeFormatter					timePointFormatter				= DateTimeFormat.forPattern("yyyy/MMM/dd HH:mm");
 	protected static DecimalFormat						priceFormatter						= new DecimalFormat("###,###.00");
 	protected static DecimalFormat						qtyFormatter							= new DecimalFormat("###,##0");
 	protected static DecimalFormat						moduleIndexFormatter			= new DecimalFormat("000");
@@ -73,6 +72,8 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 			return "0:00";
 		}
 	}
+
+	protected final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("yyyy/MMM/dd HH:mm");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -167,8 +168,8 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 		return htmlFragmentWithColor.toString();
 	}
 
-	protected EveChar getPilot() {
-		return EVEDroidApp.getAppStore().getPilot();
+	protected NeoComCharacter getPilot() {
+		return (NeoComCharacter) EVEDroidApp.getAppStore().getPilot();
 	}
 }
 

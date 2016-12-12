@@ -14,7 +14,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.factory.IndustryLOMResourcesDataSource;
 import org.dimensinfin.evedroid.factory.StackByItemDataSource;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.ItemHeader4IndustryPart;
@@ -64,7 +64,7 @@ public class ItemDetailsActivity extends DefaultNewPagerActivity {
 					// Create the Manufacture Resources Page.
 					// Get the product created by the job from the blueprint part process.
 					final int bpid = AppConnector.getDBConnector().searchBlueprint4Module(typeid);
-					final BlueprintPart bppart = new BlueprintPart(new Blueprint(bpid));
+					final BlueprintPart bppart = new BlueprintPart(new NeoComBlueprint(bpid));
 					bppart.setActivity(ModelWideConstants.activities.MANUFACTURING);
 					final int productID = typeid;
 					final EveItem productItem = item;

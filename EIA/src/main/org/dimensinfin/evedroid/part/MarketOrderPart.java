@@ -21,7 +21,7 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
 import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.render.MarketOrderRender;
 import org.joda.time.DateTime;
 
@@ -57,8 +57,8 @@ public class MarketOrderPart extends EveAbstractPart
 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
-	public MarketOrder getCastedModel() {
-		return (MarketOrder) getModel();
+	public NeoComMarketOrder getCastedModel() {
+		return (NeoComMarketOrder) getModel();
 	}
 
 	public DateTime getComparableDate() {

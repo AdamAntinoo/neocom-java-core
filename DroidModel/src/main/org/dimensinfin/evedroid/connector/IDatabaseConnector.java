@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Property;
 
 import com.j256.ormlite.dao.Dao;
@@ -27,26 +27,27 @@ import com.j256.ormlite.dao.Dao;
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IDatabaseConnector {
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkInvention(int typeID);
 
 	public boolean checkManufacturable(int typeid);
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public void clearInvalidRecords();
 
 	public void closeDatabases();
 
-	public Dao<Asset, String> getAssetDAO() throws java.sql.SQLException;
+	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
 
-	public Dao<Blueprint, String> getBlueprintDAO() throws java.sql.SQLException;
+	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException;
 
 	public Dao<Job, String> getJobDAO() throws SQLException;
 
-	public Dao<MarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException;
+	public Dao<EveLocation, String> getLocationDAO() throws java.sql.SQLException;
+
+	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException;
 
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
 
-	public ArrayList<Asset> searchAssetContainedAt(long pilotID, long assetID);
 	public boolean openAppDataBase();
 
 	public boolean openCCPDataBase();
@@ -63,9 +64,11 @@ public interface IDatabaseConnector {
 
 	public void replaceJobs(long characterID);
 
-	public ArrayList<Asset> searchAsset4Type(long characterID, int typeID);
+	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 
-	public Asset searchAssetByID(long parentAssetID);
+	public NeoComAsset searchAssetByID(long parentAssetID);
+
+	public ArrayList<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
 
 	public int searchBlueprint4Module(final int moduleID);
 
@@ -83,6 +86,8 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Resource> searchListOfMaterials(int itemID);
 
+	public ArrayList<Resource> searchListOfReaction(int itemID);
+
 	public EveLocation searchLocationbyID(long locationID);
 
 	public EveLocation searchLocationBySystem(String system);
@@ -91,15 +96,11 @@ public interface IDatabaseConnector {
 
 	public int searchModule4Blueprint(int bpitemID);
 
+	public int searchReactionOutputMultiplier(int itemID);
+
 	public int searchStationType(long systemID);
 
 	public String searchTech4Blueprint(int blueprintID);
-
-	public ArrayList<Resource> searchListOfReaction(int itemID);
-
-	public int searchReactionOutputMultiplier(int itemID);
-
-	public Dao<EveLocation, String> getLocationDAO()throws java.sql.SQLException;
 }
 
 // - UNUSED CODE ............................................................................................

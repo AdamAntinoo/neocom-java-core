@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.dialog.BuyQtyDialog;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.EveTask;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.render.TaskRender;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -53,10 +53,10 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
-	public MarketOrder generateOrder(final int quantity) {
+	public NeoComMarketOrder generateOrder(final int quantity) {
 		final DateTime now = new DateTime(DateTimeZone.UTC);
 		item = getCastedModel().getItem();
-		final MarketOrder newMarketOrder = new MarketOrder(now.getMillis());
+		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(now.getMillis());
 		try {
 			newMarketOrder.setOwnerID(getPilot().getCharacterID());
 			newMarketOrder.setStationID(item.getLowestSellerPrice().getLocation().getID());
@@ -73,7 +73,7 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 			newMarketOrder.setBid(0);
 			newMarketOrder.setIssuedDate(now.toDate());
 			try {
-				final Dao<MarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
+				final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
 				marketOrderDao.createOrUpdate(newMarketOrder);
 				Log.i("EVEI",
 						"-- TaskPart.generateOrder.Wrote MarketOrder to database id [" + newMarketOrder.getOrderID() + "]");

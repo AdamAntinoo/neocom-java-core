@@ -6,13 +6,11 @@
 
 package org.dimensinfin.evedroid.model;
 
-//- IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
-
 import java.util.ArrayList;
 import java.util.Date;
 
+//- IMPORT SECTION .........................................................................................
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.interfaces.INamed;
 
@@ -21,7 +19,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "MarketOrders")
-public class MarketOrder extends AbstractComplexNode implements INamed {
+public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -65,10 +63,10 @@ public class MarketOrder extends AbstractComplexNode implements INamed {
 	private transient EveLocation	orderLocation	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public MarketOrder() {
+	public NeoComMarketOrder() {
 	}
 
-	public MarketOrder(final long newOrderID) {
+	public NeoComMarketOrder(final long newOrderID) {
 		this.orderID = newOrderID;
 	}
 
@@ -77,8 +75,8 @@ public class MarketOrder extends AbstractComplexNode implements INamed {
 	 * 
 	 * @return
 	 */
-	public ArrayList<AbstractGEFNode> collaborate2Model() {
-		final ArrayList<AbstractGEFNode> result = new ArrayList<AbstractGEFNode>();
+	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+		final ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		result.add(this);
 		return result;
 	}

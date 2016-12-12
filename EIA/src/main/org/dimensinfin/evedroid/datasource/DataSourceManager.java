@@ -11,6 +11,8 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
  * Controls and caches all DataSources in use. Will use a single multifield Locator to store and remember used

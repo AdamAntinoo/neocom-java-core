@@ -7,7 +7,6 @@ package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
@@ -16,9 +15,11 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
+
+import com.beimin.eveapi.model.shared.MarketOrder;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -60,7 +61,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	 * @param newOrder
 	 *          the order to be added to the group.
 	 */
-	public void addChild(final MarketOrder newOrder) {
+	public void addChild(final NeoComMarketOrder newOrder) {
 		super.addChild(newOrder);
 
 		// Recalculate analytical data from the order api methods.
@@ -86,8 +87,8 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	 * 
 	 * @return
 	 */
-	public ArrayList<AbstractGEFNode> collaborate2Model() {
-		final ArrayList<AbstractGEFNode> results = new ArrayList<AbstractGEFNode>();
+	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		// If the groups has no elements then check the flag to determinate if it is shown or not.
 		if (renderWhenEmpty()) {
 			results.add(this);
@@ -95,20 +96,20 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
 		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
-		Collections.sort(orders, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(orders, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
 		for (final AbstractPropertyChanger node : orders)
-			if (node instanceof MarketOrder) {
-				results.addAll(((MarketOrder) node).collaborate2Model());
+			if (node instanceof NeoComMarketOrder) {
+				results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
 			}
 		return results;
 	}
 
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-		return results;
-	}
+	//	@Override
+	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+	//		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	//		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+	//		return results;
+	//	}
 
 	public double getBudget() {
 		return budget;
@@ -150,11 +151,11 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	}
 
 	private Vector<AbstractPropertyChanger> aggregate(final Vector<IGEFNode> children) {
-		final HashMap<Integer, MarketOrder> datamap = new HashMap<Integer, MarketOrder>();
+		final HashMap<Integer, NeoComMarketOrder> datamap = new HashMap<Integer, NeoComMarketOrder>();
 		for (final IGEFNode node : children)
 			if (node instanceof MarketOrder) {
-				final MarketOrder order = (MarketOrder) node;
-				final MarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
+				final NeoComMarketOrder order = (NeoComMarketOrder) node;
+				final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
 				if (null == hit) {
 					datamap.put(new Integer(order.getItemTypeID()), order);
 				} else {

@@ -13,7 +13,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.IndustryJobActionsDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -67,7 +67,7 @@ public class JobActionsFragment extends AbstractPagerFragment {
 			if (!_alreadyInitialized) {
 				final long bpassetid = _extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
 				final int activity = _extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
-				final Blueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				final NeoComBlueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
 				// Create the key element for this activity. All data to be shown comes from this single element.
 				final BlueprintPart bppart = new BlueprintPart(blueprint);
 				bppart.setActivity(activity);

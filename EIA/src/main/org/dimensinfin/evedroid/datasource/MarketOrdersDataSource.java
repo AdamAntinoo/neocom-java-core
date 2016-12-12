@@ -17,10 +17,9 @@ import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.MarketOrder;
 import org.dimensinfin.evedroid.model.MarketOrderAnalyticalGroup;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.MarketOrderAnalyticalGroupPart;
@@ -28,7 +27,6 @@ import org.dimensinfin.evedroid.part.MarketOrderPart;
 import org.dimensinfin.evedroid.part.ResourcePart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
-import android.R;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -66,10 +64,10 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		super.createContentHierarchy();
 
 		// Get the full model from the character. The model already arrives with all the hierarchy developed.
-		this.analyticalGroups = this._store.getPilot().accessMarketOrders();
+		analyticalGroups = _store.getPilot().accessMarketOrders();
 		// Get the modules ready for sell and add them to the new group.
-		final MarketOrderAnalyticalGroup scheduledSellGroup = this._store.getPilot().accessModules4Sell();
-		this.analyticalGroups.add(scheduledSellGroup);
+		final MarketOrderAnalyticalGroup scheduledSellGroup = _store.getPilot().accessModules4Sell();
+		analyticalGroups.add(scheduledSellGroup);
 		Log.i("EVEI", "<< MarketOrdersDataSource.createHierarchy");
 	}
 
@@ -80,39 +78,49 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 	 * @param panelMarketordersbody
 	 * @return
 	 */
+	@Override
 	public ArrayList<AbstractAndroidPart> getBodyPartsHierarchy(final int panelMarketordersbody) {
 		final ArrayList<AbstractAndroidPart> hierarchy = new ArrayList<AbstractAndroidPart>();
 		// Order the groups on the defined weight order.
-		Collections.sort(this.analyticalGroups,
-				EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
+		Collections.sort(analyticalGroups, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
 		// Add all the collaborations to the output list
 		modelList.clear();
-		for (final MarketOrderAnalyticalGroup group : this.analyticalGroups)
-			this.modelList.addAll(group.collaborate2Model());
+		for (final MarketOrderAnalyticalGroup group : analyticalGroups) {
+			modelList.addAll(group.collaborate2Model());
+		}
 
 		// Create the hierarchy from the model list.
-		for (final IGEFNode node : this.modelList) {
+		for (final IGEFNode node : modelList) {
 			if (node instanceof MarketOrderAnalyticalGroup) {
 				MarketOrderAnalyticalGroupPart mopart = new MarketOrderAnalyticalGroupPart((MarketOrderAnalyticalGroup) node);
 				// Depending on the coded name of the group we can use different renders.
-//				if(node.getTitleresourceId()==R.string.Finished)
-//					hierarchy.add(mopart
-//							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
-//				else	
-					hierarchy.add((AbstractAndroidPart) mopart
-						.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
-			}if (node instanceof MarketOrder)
-				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((MarketOrder) node)
+				//				if(node.getTitleresourceId()==R.string.Finished)
+				//					hierarchy.add(mopart
+				//							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
+				//				else	
+				hierarchy
+						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
+			}
+			if (node instanceof NeoComMarketOrder) {
+				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((NeoComMarketOrder) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
-			if (node instanceof Resource)
+			}
+			if (node instanceof Resource) {
 				hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
-			if (node instanceof Separator)
+			}
+			if (node instanceof Separator) {
 				hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
+			}
 		}
-		this._adapterData = hierarchy;
+		_adapterData = hierarchy;
 		return hierarchy;
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getHeaderPartsHierarchy(final int panelMarketordersbody) {
+		return new ArrayList<AbstractAndroidPart>();
 	}
 
 	@Override
@@ -127,23 +135,20 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		//				result.addAll(grand);
 		//			}
 		//		}
-		this._adapterData = result;
+		_adapterData = result;
 		return result;
 	}
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH))
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH)) {
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
+		}
+		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP)) {
 			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getHeaderPartsHierarchy(int panelMarketordersbody) {
-		return new ArrayList<AbstractAndroidPart>();
+		}
 	}
 
 }

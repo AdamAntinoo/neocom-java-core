@@ -25,8 +25,8 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
-import org.dimensinfin.evedroid.datasource.IExtendedDataSource;
-import org.dimensinfin.evedroid.model.EveCharCore;
+import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -214,7 +214,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			return getId();
 	}
 
-	public EveCharCore getPilot() {
+	public NeoComCharacter getPilot() {
 		return EVEDroidApp.getAppStore().getPilot();
 	}
 

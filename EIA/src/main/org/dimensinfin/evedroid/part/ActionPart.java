@@ -24,12 +24,12 @@ import org.dimensinfin.evedroid.activity.IndustryT2Activity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.render.ActionRender;
 import org.dimensinfin.evedroid.render.SkillRender;
@@ -259,7 +259,7 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 				// Identify a blueprint of the correct type and open the Invention
 				// activity.
 				final ArrayList<EveTask> tasks = getCastedModel().getTasks();
-				final Asset asset = tasks.get(0).getReferencedAsset();
+				final NeoComAsset asset = tasks.get(0).getReferencedAsset();
 				// Check this is a T2 blueprint and then get its T1 version.
 				if (asset.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 					final ArrayList<Integer> ids = AppConnector.getDBConnector()
@@ -267,10 +267,10 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 					// The first element is the blueprint that invents the target.
 					// Now search for an asset of that type.
 					final Integer t1bpid = ids.get(0);
-					final ArrayList<Asset> targetbpassetid = AppConnector.getDBConnector()
+					final ArrayList<NeoComAsset> targetbpassetid = AppConnector.getDBConnector()
 							.searchAsset4Type(getPilot().getCharacterID(), t1bpid);
 					if (targetbpassetid.size() > 0) {
-						final Asset targetAsset = targetbpassetid.get(0);
+						final NeoComAsset targetAsset = targetbpassetid.get(0);
 						final Intent intent = new Intent(getActivity(), IndustryT2Activity.class);
 						intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
 						intent.putExtra(AppWideConstants.extras.EXTRA_BLUEPRINTID,

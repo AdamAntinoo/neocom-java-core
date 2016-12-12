@@ -12,7 +12,7 @@ import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.fragment.AssetsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +36,7 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 	 * The BPOManager need that there are at least one BPO on the list of assets
 	 * of the pilot.
 	 */
-	public boolean checkActivation(final EveChar checkPilot) {
+	public boolean checkActivation(final NeoComCharacter checkPilot) {
 		if (checkPilot.getAssetCount() > 0)
 			return true;
 		else

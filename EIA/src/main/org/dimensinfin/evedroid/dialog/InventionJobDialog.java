@@ -15,7 +15,7 @@ import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -48,7 +48,7 @@ public class InventionJobDialog extends DialogFragment {
 	// ............................................................................
 	private ADialogCallback _dialogCallback = null;
 	private View _dialogContainer = null;
-	private Blueprint _blueprint = null;
+	private NeoComBlueprint _blueprint = null;
 
 	// - U I F I E L D S
 	private ImageView jobTypeIcon = null;
@@ -183,7 +183,7 @@ public class InventionJobDialog extends DialogFragment {
 	public void setBlueprint(final Resource bp) {
 		// REFACTOR Implemente the assignment of the resource as a blueprint.
 		// What is the received resource?.
-		this._blueprint = new Blueprint(bp.getTypeID());
+		this._blueprint = new NeoComBlueprint(bp.getTypeID());
 	}
 
 	public void setDialogCallback(final ADialogCallback callback) {

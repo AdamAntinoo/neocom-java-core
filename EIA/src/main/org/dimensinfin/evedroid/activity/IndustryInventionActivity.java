@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.activity.PagerFragment;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.evedroid.activity.core.DefaultNewPagerActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -21,7 +21,7 @@ import org.dimensinfin.evedroid.datasource.IndustryT2JobDataSource;
 import org.dimensinfin.evedroid.factory.IndustryLOMResourcesDataSource;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
@@ -94,7 +94,7 @@ public class IndustryInventionActivity extends DefaultNewPagerActivity implement
 			Bundle extras = getIntent().getExtras();
 			long bpassetid = extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
 			if (bpassetid > 0) {
-				Blueprint blueprint = _store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				NeoComBlueprint blueprint = _store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
 				if (null == blueprint)
 					throw new RuntimeException(
 							"RT IndustryT2Activity.onCreate - Unable to continue. Expected blueprint not located.");

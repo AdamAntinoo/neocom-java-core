@@ -20,7 +20,7 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
@@ -122,7 +122,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 					add2Group((ActionPart) action, EIndustryGroup.COMPONENTS);
 					continue;
 				}
-				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 					add2Group((ActionPart) action, EIndustryGroup.BLUEPRINT);
 					continue;
 				}

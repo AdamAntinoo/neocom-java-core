@@ -70,7 +70,7 @@ public class ResourceRender extends EveAbstractHolder {
 		itemName.setText(getPart().getName());
 		if (AppWideConstants.DEVELOPMENT) itemName.setText(getPart().getName() + " [#" + getPart().getTypeID() + "]");
 		String category = getPart().getCategory();
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 			itemPrice.setVisibility(View.GONE);
 			balance.setVisibility(View.GONE);
 			totalItems.setText("x1");

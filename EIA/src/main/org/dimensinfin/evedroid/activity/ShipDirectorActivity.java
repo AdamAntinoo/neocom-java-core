@@ -13,7 +13,7 @@ import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.fragment.ShipsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +31,7 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 	 * Checks if there are the conditions to activate this particular manager. This manager is activated if the
 	 * capsuleer has fitted ships.
 	 */
-	public boolean checkActivation(final EveChar checkPilot) {
+	public boolean checkActivation(final NeoComCharacter checkPilot) {
 		if (checkPilot.getShips().size() > 0)
 			return true;
 		else

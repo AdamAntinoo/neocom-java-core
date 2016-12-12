@@ -26,7 +26,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Blueprints")
-public class Blueprint extends AbstractComplexNode {
+public class NeoComBlueprint extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID		= -1284879453130050089L;
 
@@ -38,7 +38,9 @@ public class Blueprint extends AbstractComplexNode {
 	@DatabaseField(generatedId = true)
 	private final long				id									= -2;
 
-	/** This field connect the blueprint with the matching asset. The asset reference is not database enforced. */
+	/**
+	 * This field connect the blueprint with the matching asset. The asset reference is not database enforced.
+	 */
 	@DatabaseField(index = true)
 	protected long						assetID;
 	/**
@@ -87,13 +89,13 @@ public class Blueprint extends AbstractComplexNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Memory operation fields not stored into the database but stored on the file store. */
-	protected Asset						associatedAsset			= null;
+	protected NeoComAsset			associatedAsset			= null;
 	protected EveLocation			locationCache				= null;
 	protected EveItem					blueprintItem				= null;
 	protected EveItem					moduleItem					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Blueprint() {
+	public NeoComBlueprint() {
 		super();
 	}
 
@@ -103,7 +105,7 @@ public class Blueprint extends AbstractComplexNode {
 	 * 
 	 * @param blueprintID
 	 */
-	public Blueprint(final int blueprintID) {
+	public NeoComBlueprint(final int blueprintID) {
 		super();
 		typeID = blueprintID;
 		blueprintItem = AppConnector.getDBConnector().searchItembyID(blueprintID);
@@ -114,30 +116,6 @@ public class Blueprint extends AbstractComplexNode {
 		associatedAsset = null;
 	}
 
-	public double getJobProductionCost() {
-		return jobProductionCost;
-	}
-
-	public void setJobProductionCost(double jobProductionCost) {
-		this.jobProductionCost = jobProductionCost;
-	}
-
-	public int getManufactureIndex() {
-		return manufactureIndex;
-	}
-
-	public int getManufacturableCount() {
-		return manufacturableCount;
-	}
-
-	public void setManufacturableCount(int manufacturableCount) {
-		this.manufacturableCount = manufacturableCount;
-	}
-
-	public void setManufactureIndex(int manufactureIndex) {
-		this.manufactureIndex = manufactureIndex;
-	}
-
 	/**
 	 * The creation method is called during the parsing conversion from eveapi objects to Android model objects.
 	 * 
@@ -145,7 +123,7 @@ public class Blueprint extends AbstractComplexNode {
 	 *          the resource identifier for an existing resource on the database. If the resource on the
 	 *          database does not exist the blueprint is not created.
 	 */
-	public Blueprint(final long newAsseID) {
+	public NeoComBlueprint(final long newAsseID) {
 		assetID = newAsseID;
 		// Load the asset and set the reference.
 		try {
@@ -163,7 +141,6 @@ public class Blueprint extends AbstractComplexNode {
 		}
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public long getAssetID() {
 		return assetID;
 	}
@@ -182,6 +159,11 @@ public class Blueprint extends AbstractComplexNode {
 
 	public EveItem getItem() {
 		return getAssociatedAsset().getItem();
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public double getJobProductionCost() {
+		return jobProductionCost;
 	}
 
 	/**
@@ -203,18 +185,26 @@ public class Blueprint extends AbstractComplexNode {
 		return containerID;
 	}
 
-	public int getMaterialEfficiency() {
-		return materialEfficiency;
+	public int getManufacturableCount() {
+		return manufacturableCount;
 	}
 
-	public String getModuleGroup() {
-		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
-		return moduleItem.getGroupName();
+	public int getManufactureIndex() {
+		return manufactureIndex;
+	}
+
+	public int getMaterialEfficiency() {
+		return materialEfficiency;
 	}
 
 	public String getModuleCategory() {
 		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
 		return moduleItem.getCategory();
+	}
+
+	public String getModuleGroup() {
+		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
+		return moduleItem.getGroupName();
 	}
 
 	public String getModuleGroupCategory() {
@@ -239,7 +229,7 @@ public class Blueprint extends AbstractComplexNode {
 		return getTypeName();
 	}
 
-	public Asset getParentContainer() {
+	public NeoComAsset getParentContainer() {
 		return getAssociatedAsset().getParentContainer();
 	}
 
@@ -318,8 +308,20 @@ public class Blueprint extends AbstractComplexNode {
 		this.flag = flag;
 	}
 
+	public void setJobProductionCost(double jobProductionCost) {
+		this.jobProductionCost = jobProductionCost;
+	}
+
 	public void setLocationID(final long locationID) {
 		containerID = locationID;
+	}
+
+	public void setManufacturableCount(int manufacturableCount) {
+		this.manufacturableCount = manufacturableCount;
+	}
+
+	public void setManufactureIndex(int manufactureIndex) {
+		this.manufactureIndex = manufactureIndex;
 	}
 
 	public void setMaterialEfficiency(final int materialEfficiency) {
@@ -383,7 +385,7 @@ public class Blueprint extends AbstractComplexNode {
 
 	private void accessAssociatedAsset() {
 		try {
-			Dao<Asset, String> dao = AppConnector.getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> dao = AppConnector.getDBConnector().getAssetDAO();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
 			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");
@@ -391,7 +393,7 @@ public class Blueprint extends AbstractComplexNode {
 		}
 	}
 
-	private Asset getAssociatedAsset() {
+	private NeoComAsset getAssociatedAsset() {
 		if (null == associatedAsset) accessAssociatedAsset();
 		return associatedAsset;
 	}

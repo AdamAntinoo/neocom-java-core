@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.interfaces;
 import java.util.ArrayList;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IAsset extends INamed {
@@ -21,9 +21,11 @@ public interface IAsset extends INamed {
 
 	public long getAssetID();
 
+	public double getIskvalue();
+
 	public long getLocationID();
 
-	public Asset getParentContainer();
+	public NeoComAsset getParentContainer();
 
 	public long getParentContainerId();
 

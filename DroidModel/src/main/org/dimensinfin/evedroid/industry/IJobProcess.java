@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IJobProcess {
@@ -36,9 +36,9 @@ public interface IJobProcess {
 
 	public void setAssetsManager(AssetsManager industryAssetsManager);
 
-	void setBlueprint(Blueprint target);
+	void setBlueprint(NeoComBlueprint target);
 
-	void setPilot(EveChar thePilot);
+	void setPilot(NeoComCharacter thePilot);
 }
 
 // - UNUSED CODE ............................................................................................

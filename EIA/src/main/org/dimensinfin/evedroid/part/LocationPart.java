@@ -22,7 +22,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Separator;
@@ -122,7 +122,7 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 		return buffer.toString();
 	}
 
-	protected void calculateValue(final Asset asset, final AssetPart apart) {
+	protected void calculateValue(final NeoComAsset asset, final AssetPart apart) {
 		// Skip blueprints from the value calculations
 		if (null != asset) {
 			EveItem item = asset.getItem();
@@ -130,7 +130,7 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 				String category = item.getCategory();
 				String group = item.getGroupName();
 				if (null != category) {
-					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+					if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 						// Add the value and volume of the stack to the global result.
 						long quantity = apart.getCastedModel().getQuantity();
 						double price = apart.getCastedModel().getItem().getHighestBuyerPrice().getPrice();

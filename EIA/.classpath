@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry excluding="com/beimin/eveapi/|org/dimensinfin/evedroid/model/NeoComApiKey.java|org/dimensinfin/evedroid/manager/AssetsManager.java|org/dimensinfin/evedroid/holder/AsteroidOnProgressHolder.java" kind="src" path="src/main"/>
+	<classpathentry excluding="com/beimin/eveapi/|org/dimensinfin/evedroid/holder/AsteroidOnProgressHolder.java|org/dimensinfin/evedroid/fragment/MiningSessionFragment.java|org/dimensinfin/evedroid/activity/IndustryInventionActivity.java|org/dimensinfin/evedroid/activity/MiningSessionActivity.java|org/dimensinfin/evedroid/fragment/Job2ListFragment.java|org/dimensinfin/evedroid/fragment/MarketOrdersFragment.java" kind="src" path="src/main"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">

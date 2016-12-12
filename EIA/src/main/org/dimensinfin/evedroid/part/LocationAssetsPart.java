@@ -21,7 +21,7 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.render.Location4AssetsRender;
 
@@ -69,7 +69,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 			locationAssets = getChildren().size();
 		} else {
 			try {
-				Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+				Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
 				// DEBUG I have to get access to the pilot ID for some filters. Possible set the parent the root and from it to the Pilot
 				locationAssets = assetDao.countOf(assetDao.queryBuilder().setCountOf(true).where()
 						.eq("ownerID", getPilot().getCharacterID()).and().eq("locationID", getCastedModel().getID()).prepare());
@@ -112,8 +112,8 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 			boolean calculateValue = sharedPrefs.getBoolean(AppWideConstants.preference.PREF_CALCULATEASSETVALUE, true);
 			try {
 				AssetsManager manager = getPilot().getAssetsManager();
-				ArrayList<Asset> assetList = manager.searchAsset4Location(getCastedModel());
-				for (Asset asset : assetList) {
+				ArrayList<NeoComAsset> assetList = manager.searchAsset4Location(getCastedModel());
+				for (NeoComAsset asset : assetList) {
 					// Detect the type: Asset / Ship / Container
 					AssetPart apart = null;
 					if (asset.isShip()) {
@@ -138,7 +138,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 					}
 
 					// Assets may not contain a parent (so they are on the Hangar floor) or are inside a Container/Ship
-					Asset container = asset.getParentContainer();
+					NeoComAsset container = asset.getParentContainer();
 					if (null == container) {
 						add2Location(apart);
 					} else {
@@ -224,7 +224,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 			}
 		}
 		// Add the container to the location and the the item to the container.
-		Asset container = apart.getCastedModel().getParentContainer();
+		NeoComAsset container = apart.getCastedModel().getParentContainer();
 		AssetPart newpart = null;
 		if (container.isShip()) {
 			newpart = (AssetPart) new ShipPart(container).setRenderMode(getRenderMode());

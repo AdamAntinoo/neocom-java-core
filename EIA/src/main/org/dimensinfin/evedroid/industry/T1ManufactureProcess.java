@@ -14,8 +14,8 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveTask;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Skill;
 
 import android.util.Log;
@@ -155,6 +155,7 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 		return index;
 	}
 
+	@Override
 	public int getRuns() {
 		return runs;
 	}
@@ -167,12 +168,13 @@ public class T1ManufactureProcess extends AbstractManufactureProcess implements 
 		return threads;
 	}
 
-	public void setBlueprint(final Blueprint blueprint) {
+	public void setBlueprint(final NeoComBlueprint blueprint) {
 		this.blueprint = blueprint;
 		bpid = blueprint.getTypeID();
 		moduleid = blueprint.getModuleTypeID();
 	}
 
+	@Override
 	public void setRuns(final int runs) {
 		this.runs = runs;
 	}

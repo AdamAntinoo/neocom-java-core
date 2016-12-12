@@ -38,9 +38,9 @@ import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
 import org.dimensinfin.evedroid.interfaces.INamed;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.interfaces.IWeigthedNode;
-import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.JobQueue;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.part.APIKeyPart;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.BlueprintPart;
@@ -133,13 +133,13 @@ public class EVEDroidApp extends Application implements IConnector {
 					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 						long leftField = -1;
 						long rightField = -1;
-						if (left instanceof Asset) {
-							final Asset intermediate = (Asset) left;
+						if (left instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) left;
 							leftField = intermediate.getQuantity();
 						}
 
-						if (right instanceof Asset) {
-							final Asset intermediate = (Asset) right;
+						if (right instanceof NeoComAsset) {
+							final NeoComAsset intermediate = (NeoComAsset) right;
 							rightField = intermediate.getQuantity();
 						}
 						if (leftField < rightField) return 1;
@@ -523,16 +523,14 @@ public class EVEDroidApp extends Application implements IConnector {
 		}
 	}
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private AndroidStorageConnector		storage			= null;
 	private AndroidDatabaseConnector	dbconnector	= null;
 	private AndroidCacheConnector			cache				= null;
 
 	private Typeface									daysFace		= null;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EVEDroidApp() {
 		logger.info(">> EVEDroidApp.<init>");
 		// Setup the referencing structures that will serve as proxy and global
@@ -551,8 +549,12 @@ public class EVEDroidApp extends Application implements IConnector {
 		logger.info("<< EVEDroidApp.<init>");
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	@Override
+	public void addCharacterUpdateRequest(final long characterID) {
+		getCacheConnector().addCharacterUpdateRequest(characterID);
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Checks that the current parameter timestamp is still on the frame of the window.
 	 * 

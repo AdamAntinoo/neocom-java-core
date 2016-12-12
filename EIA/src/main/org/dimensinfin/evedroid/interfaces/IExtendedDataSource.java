@@ -6,14 +6,16 @@
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
-package org.dimensinfin.evedroid.datasource;
+package org.dimensinfin.evedroid.interfaces;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
+import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.evedroid.datasource.DataSourceLocator;
+import org.dimensinfin.evedroid.datasource.DataSourceManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IExtendedDataSource extends IDataSource {

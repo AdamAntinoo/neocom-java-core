@@ -27,7 +27,7 @@ import org.dimensinfin.evedroid.factory.AssetsMaterialsDataSource;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.RegionGroup;
 import org.dimensinfin.evedroid.model.Separator;
@@ -338,8 +338,8 @@ final class AssetsShipsDataSource extends AbstractIndustryDataSource {
 		try {
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
-			final ArrayList<Asset> assetsShips = manager.searchAsset4Category("Ship");
-			for (final Asset asset : assetsShips) {
+			final ArrayList<NeoComAsset> assetsShips = manager.searchAsset4Category("Ship");
+			for (final NeoComAsset asset : assetsShips) {
 				// Check if there an entry for this asset name.
 				//		CategoryGroupPart hit = categories.get(asset.getName());
 				//					if (null == hit) {

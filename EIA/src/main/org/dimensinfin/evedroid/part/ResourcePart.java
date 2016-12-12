@@ -14,13 +14,13 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.render.BlueprintResourceRender;
 import org.dimensinfin.evedroid.render.OutputBlueprintRender;
@@ -92,7 +92,7 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 		ArrayList<Integer> ids = AppConnector.getDBConnector()
 				.searchInventionableBlueprints(Integer.valueOf(getCastedModel().getTypeID()).toString());
 		// Get access to the Invention process.
-		IJobProcess inventionProcess = JobManager.generateJobProcess(getPilot(), new Blueprint(ids.get(0)),
+		IJobProcess inventionProcess = JobManager.generateJobProcess(getPilot(), new NeoComBlueprint(ids.get(0)),
 				EJobClasses.INVENTION);
 		return generatePriceString(inventionProcess.getJobCost(), true, true);
 	}
@@ -139,7 +139,7 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 		int moduleid = getCastedModel().getTypeID();
 		int blueprintid = AppConnector.getDBConnector().searchBlueprint4Module(moduleid);
 		IJobProcess process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(),
-				new Blueprint(blueprintid), EJobClasses.MANUFACTURE);
+				new NeoComBlueprint(blueprintid), EJobClasses.MANUFACTURE);
 		return process.getJobCost();
 	}
 
@@ -211,7 +211,7 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 		if (null == process) {
 			int moduleid = getCastedModel().getTypeID();
 			int blueprintid = AppConnector.getDBConnector().searchBlueprint4Module(moduleid);
-			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), new Blueprint(blueprintid),
+			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), new NeoComBlueprint(blueprintid),
 					EJobClasses.MANUFACTURE);
 		}
 		return process;

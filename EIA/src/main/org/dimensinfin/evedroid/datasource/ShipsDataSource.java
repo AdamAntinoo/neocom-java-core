@@ -11,15 +11,15 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.ShipLocation;
@@ -33,7 +33,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 7810087592108417570L;
 
-	private ArrayList<Asset>									ships							= null;
+	private ArrayList<NeoComAsset>						ships							= null;
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
 	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
@@ -70,12 +70,12 @@ public class ShipsDataSource extends SpecialDataSource {
 			// Get the complete list of ships. Compare it to the current list if it exists.
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
-			final ArrayList<Asset> assetsShips = manager.searchAsset4Category("Ship");
+			final ArrayList<NeoComAsset> assetsShips = manager.searchAsset4Category("Ship");
 			if (null == ships) {
 				// Transform the list of assets into a list of ships.
 				ships = assetsShips;
 				// Process the list into the classifiers.
-				for (Asset ship : assetsShips) {
+				for (NeoComAsset ship : assetsShips) {
 					long locid = ship.getLocationID();
 					String category = ship.getGroupName();
 					add2Location(locid, ship);
@@ -93,7 +93,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		return _dataModelRoot;
 	}
 
-	private void add2Category(final String category, final Asset ship) {
+	private void add2Category(final String category, final NeoComAsset ship) {
 		// Check if the location is already on the array.
 		Separator hit = _categories.get(category);
 		if (null == hit) {
@@ -112,7 +112,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * @param ship
 	 *          part to be added to the locations. May be an asset or a container.
 	 */
-	private void add2Location(final long locationid, final Asset ship) {
+	private void add2Location(final long locationid, final NeoComAsset ship) {
 		// Check if the location is already on the array.
 		ShipLocation hit = _locations.get(locationid);
 		if (null == hit) {

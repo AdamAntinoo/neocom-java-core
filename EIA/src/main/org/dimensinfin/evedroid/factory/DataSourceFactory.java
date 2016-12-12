@@ -20,14 +20,12 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveLocation;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.LocationAssetsPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 import org.dimensinfin.evedroid.part.RegionPart;
-import org.dimensinfin.evedroid.part.ShipPart;
 import org.dimensinfin.evedroid.part.TerminatorPart;
 
 import android.content.SharedPreferences;
@@ -39,7 +37,7 @@ public class DataSourceFactory {
 	public static IDataSource createDataSource(final int datasourceCode) {
 		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO) return new PilotInfoDataSource();
 		//		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_PILOTINFO_T24SELL) return new T2Mod4SellDataSource();
-		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS) return new ShipsDataSource();
+		//		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS) return new ShipsDataSource();
 		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION) return new AssetsByLocationDataSource();
 		//		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_ASSETSAREASTEROIDS) return new AssetsMiningDataSource();
 		//		if (datasourceCode == AppWideConstants.fragment.FRAGMENT_ASSETSAREPLANETARY)
@@ -64,7 +62,7 @@ public class DataSourceFactory {
 	// - F I E L D - S E C T I O N ............................................................................
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public static EveChar getPilot() {
+	public static NeoComCharacter getPilot() {
 		return EVEDroidApp.getAppStore().getPilot();
 	}
 }
@@ -721,33 +719,33 @@ final class PilotInfoDataSource extends AbstractDataSource {
 //	}
 //}
 
-//- CLASS IMPLEMENTATION ...................................................................................
-final class ShipsDataSource extends AbstractDataSource {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = -1934794359407599783L;
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public void createContentHierarchy() {
-		logger.info(">> DirectorsBoardActivity.ShipsDataSource.createContentHierarchy");
-		// Clear the current list of elements.
-		_root.clear();
-		// Add the list of assets of ship category
-		final ArrayList<Asset> ships = DataSourceFactory.getPilot().getShips();
-		for (final Asset asset : ships) {
-			final ShipPart spart = (ShipPart) new ShipPart(asset)
-					.setRenderMode(AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS);
-			_root.add(spart);
-		}
-		logger.info("<< DirectorsBoardActivity.ShipsDataSource.createContentHierarchy");
-	}
-
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		return super.getPartHierarchy();
-	}
-}
+////- CLASS IMPLEMENTATION ...................................................................................
+//final class ShipsDataSource extends AbstractDataSource {
+//	// - S T A T I C - S E C T I O N ..........................................................................
+//	private static final long serialVersionUID = -1934794359407599783L;
+//
+//	// - M E T H O D - S E C T I O N ..........................................................................
+//	@Override
+//	public void createContentHierarchy() {
+//		logger.info(">> DirectorsBoardActivity.ShipsDataSource.createContentHierarchy");
+//		// Clear the current list of elements.
+//		_root.clear();
+//		// Add the list of assets of ship category
+//		final ArrayList<NeoComAsset> ships = DataSourceFactory.getPilot().getShips();
+//		for (final NeoComAsset asset : ships) {
+//			final ShipPart spart = (ShipPart) new ShipPart(asset)
+//					.setRenderMode(AppWideConstants.fragment.FRAGMENT_PILOTINFO_SHIPS);
+//			_root.add(spart);
+//		}
+//		logger.info("<< DirectorsBoardActivity.ShipsDataSource.createContentHierarchy");
+//	}
+//
+//	@Override
+//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+//		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+//		return super.getPartHierarchy();
+//	}
+//}
 
 // - UNUSED CODE ............................................................................................
 

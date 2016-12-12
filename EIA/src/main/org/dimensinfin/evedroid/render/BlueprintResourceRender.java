@@ -35,7 +35,7 @@ public class BlueprintResourceRender extends ResourceRender {
 		itemName.setText(getPart().getName());
 		if (AppWideConstants.DEVELOPMENT) itemName.setText(getPart().getName() + " [#" + getPart().getTypeID() + "]");
 		String category = getPart().getCategory();
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
 			itemPrice.setVisibility(View.GONE);
 			// Check for blueprint level 2
 			if (getPart().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {

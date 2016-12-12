@@ -19,8 +19,8 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;
@@ -64,13 +64,13 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 
 		// Get the blueprints through the Store. And also the datacores.
 		AssetsManager manager = _store.getPilot().getAssetsManager();
-		ArrayList<Asset> datacores = manager.searchAsset4Group(ModelWideConstants.eveglobal.Datacores);
-		ArrayList<Blueprint> bps = manager.searchT1Blueprints();
-		for (Blueprint currentbpc : bps) {
+		ArrayList<NeoComAsset> datacores = manager.searchAsset4Group(ModelWideConstants.eveglobal.Datacores);
+		ArrayList<NeoComBlueprint> bps = manager.searchT1Blueprints();
+		for (NeoComBlueprint currentbpc : bps) {
 			// Check if the bp has the invention feature.
 			if (currentbpc.getItem().hasInvention()) {
 				long locid = currentbpc.getLocationID();
-				Asset parent = currentbpc.getParentContainer();
+				NeoComAsset parent = currentbpc.getParentContainer();
 				BlueprintPart bppart = new BlueprintPart(currentbpc);
 				bppart.setActivity(ModelWideConstants.activities.MANUFACTURING);
 				bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION);
@@ -85,7 +85,7 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 		// Filter our all the locations that do not contain datacores.
 		for (LocationIndustryPart locationPart : locations.values()) {
 			long stationID = locationPart.getCastedModel().getStationID();
-			for (Asset datacore : datacores) {
+			for (NeoComAsset datacore : datacores) {
 				if (datacore.getLocation().getStationID() == stationID) {
 					_root.add(locationPart);
 					break;
@@ -133,7 +133,7 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 	 * @param container
 	 * @param part
 	 */
-	private void add2Container(final Asset container, final BlueprintPart part) {
+	private void add2Container(final NeoComAsset container, final BlueprintPart part) {
 		long cid = container.getDAOID();
 		LocationIndustryPart lochit = locations.get(cid);
 		if (null == lochit) {

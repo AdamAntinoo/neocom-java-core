@@ -39,7 +39,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class Asset extends AbstractComplexNode implements IAsset, INamed {
+public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -91,17 +91,18 @@ public class Asset extends AbstractComplexNode implements IAsset, INamed {
 	private double								iskvalue					= 0.0;
 
 	// - C A C H E D   F I E L D S
-	private transient Asset				parentAssetCache	= null;
+	private transient NeoComAsset	parentAssetCache	= null;
 	private transient EveLocation	locationCache			= null;
 	private transient EveItem			itemCache					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Asset() {
+	public NeoComAsset() {
 		super();
 		id = -2;
 		locationID = -1;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Assets should collaborate to the model adding their children. Most of the assets will not have children
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
@@ -112,7 +113,6 @@ public class Asset extends AbstractComplexNode implements IAsset, INamed {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public long getAssetID() {
 		return assetID;
 	}
@@ -174,7 +174,7 @@ public class Asset extends AbstractComplexNode implements IAsset, INamed {
 		return ownerID;
 	}
 
-	public Asset getParentContainer() {
+	public NeoComAsset getParentContainer() {
 		if (parentAssetID > 0)
 			if (null == parentAssetCache) parentAssetCache = AppConnector.getDBConnector().searchAssetByID(parentAssetID);
 		return parentAssetCache;
@@ -281,7 +281,7 @@ public class Asset extends AbstractComplexNode implements IAsset, INamed {
 		this.ownerID = ownerID;
 	}
 
-	public void setParentContainer(final Asset newParent) {
+	public void setParentContainer(final NeoComAsset newParent) {
 		if (null != newParent) {
 			parentAssetCache = newParent;
 			parentAssetID = newParent.getAssetID();

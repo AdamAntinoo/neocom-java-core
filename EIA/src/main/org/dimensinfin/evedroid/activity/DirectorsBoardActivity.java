@@ -19,6 +19,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.fragment.core.ExpandableFragment;
 import org.dimensinfin.evedroid.interfaces.IDirector;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.annotation.SuppressLint;
@@ -216,7 +217,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 				switch (directorCode) {
 					case ASSETDIRECTOR:
 						final IDirector adirector = new AssetsDirectorActivity();
-						if (adirector.checkActivation(_store.getPilot())) {
+						if (adirector.checkActivation((NeoComCharacter) _store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.assetsDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.assetsdirector));
@@ -239,7 +240,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						}
 					case SHIPDIRECTOR:
 						final IDirector sdirector = new ShipDirectorActivity();
-						if (sdirector.checkActivation(_store.getPilot())) {
+						if (sdirector.checkActivation((NeoComCharacter) _store.getPilot())) {
 							logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) findViewById(R.id.shipsDirectorIcon);
 							activator.setImageDrawable(getDrawable(R.drawable.shipsdirector));

@@ -13,7 +13,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 
 import android.app.Activity;
@@ -75,7 +75,7 @@ public class PilotInfoHolder extends EveAbstractHolder {
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		EveChar pilot = getPart().getCastedModel();
+		NeoComCharacter pilot = getPart().getCastedModel();
 		pilotName.setText(pilot.getName());
 		lastKnownLocation.setText(">> " + pilot.getLastKnownLocation() + " <<");
 		accountBalance.setText(getPart().get_balance());

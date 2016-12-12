@@ -16,10 +16,10 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.AssetGroupPart;
 import org.dimensinfin.evedroid.part.AssetPart;
@@ -84,8 +84,8 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 		// Get the list of Locations for this Pilot.
 		try {
 			AssetsManager manager = _store.getPilot().getAssetsManager();
-			ArrayList<Asset> mineralResources = manager.searchAsset4Group("Mineral");
-			for (Asset asset : mineralResources) {
+			ArrayList<NeoComAsset> mineralResources = manager.searchAsset4Group("Mineral");
+			for (NeoComAsset asset : mineralResources) {
 				// Check if there an entry for this asset name.
 				AssetGroupPart hit = names.get(asset.getName());
 				if (null == hit) {
@@ -96,8 +96,8 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 				hit.addChild(new AssetPart(asset).setRenderMode(AppWideConstants.rendermodes.RENDER_LOCATIONMODE));
 			}
 
-			ArrayList<Asset> asteroidResources = manager.searchAsset4Category("Asteroid");
-			for (Asset asset : asteroidResources) {
+			ArrayList<NeoComAsset> asteroidResources = manager.searchAsset4Category("Asteroid");
+			for (NeoComAsset asset : asteroidResources) {
 				// Check if there an entry for this asset name.
 				AssetGroupPart hit = names.get(asset.getName());
 				if (null == hit) {
@@ -108,9 +108,9 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 				hit.addChild(new AssetPart(asset).setRenderMode(AppWideConstants.rendermodes.RENDER_LOCATIONMODE));
 			}
 
-			ArrayList<Asset> assetsPlanetaryCommodities = manager.searchAsset4Category("Planetary Commodities");
-			ArrayList<Asset> assetsPlanetaryResources = manager.searchAsset4Category("Planetary Resources");
-			for (Asset asset : assetsPlanetaryCommodities) {
+			ArrayList<NeoComAsset> assetsPlanetaryCommodities = manager.searchAsset4Category("Planetary Commodities");
+			ArrayList<NeoComAsset> assetsPlanetaryResources = manager.searchAsset4Category("Planetary Resources");
+			for (NeoComAsset asset : assetsPlanetaryCommodities) {
 				// Check if there an entry for this asset name.
 				AssetGroupPart hit = names.get(asset.getName());
 				if (null == hit) {
@@ -120,7 +120,7 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 				}
 				hit.addChild(new AssetPart(asset).setRenderMode(AppWideConstants.rendermodes.RENDER_LOCATIONMODE));
 			}
-			for (Asset asset : assetsPlanetaryResources) {
+			for (NeoComAsset asset : assetsPlanetaryResources) {
 				// Check if there an entry for this asset name.
 				AssetGroupPart hit = names.get(asset.getName());
 				if (null == hit) {
@@ -131,8 +131,8 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 				hit.addChild(new AssetPart(asset).setRenderMode(AppWideConstants.rendermodes.RENDER_LOCATIONMODE));
 			}
 
-			ArrayList<Asset> assetsSalvageResources = manager.searchAsset4Group("Salvaged Materials");
-			for (Asset asset : assetsSalvageResources) {
+			ArrayList<NeoComAsset> assetsSalvageResources = manager.searchAsset4Group("Salvaged Materials");
+			for (NeoComAsset asset : assetsSalvageResources) {
 				// Check if there an entry for this asset name.
 				AssetGroupPart hit = names.get(asset.getName());
 				if (null == hit) {
