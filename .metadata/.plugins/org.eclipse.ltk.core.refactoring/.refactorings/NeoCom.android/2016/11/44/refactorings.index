@@ -1,0 +1,32 @@
+1478078815732	Move compilation unit
+1478078851543	Move compilation unit
+1478080046317	Move compilation unit
+1478080157094	Rename type 'ModuleGroup'
+1478081161079	Rename type 'GroupPart'
+1478085947451	Move compilation units
+1478087353709	Delete element
+1478088612437	Move compilation unit
+1478088706540	Copy compilation unit
+1478092530900	Rename type 'LabeledGroupPart'
+1478092557436	Rename type 'LabeledGroup'
+1478094800298	Move file
+1478095289877	Rename resource 'styles_eveindustrialist.xml'
+1478095301033	Copy file
+1478095459680	Delete element
+1478095465067	Delete element
+1478095676150	Move files
+1478095685420	Move file
+1478099781867	Delete element
+1478099791276	Delete element
+1478099851987	Move compilation unit
+1478100575068	Move compilation unit
+1478100591990	Delete element
+1478169815440	Copy compilation unit
+1478170080990	Rename type 'FittingFragment'
+1478172834374	Delete element
+1478172946835	Copy compilation unit
+1478173877580	Rename local variable 'collaborate2Model'
+1478183897914	Rename field 'children'
+1478184799079	Rename type 'EditPart'
+1478186848355	Infer generic type arguments
+1478265448517	Rename type 'R'

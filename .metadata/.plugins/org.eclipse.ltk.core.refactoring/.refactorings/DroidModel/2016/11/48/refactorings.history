@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;Context.java&apos; to &apos;NeoCom.tester/src/android.content&apos;&#x0D;&#x0A;- Original project: &apos;DroidModel&apos;&#x0D;&#x0A;- Destination element: &apos;NeoCom.tester/src/android.content&apos;&#x0D;&#x0A;- Original element: &apos;android.content.Context.java&apos;&#x0D;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="=NeoCom.tester/src&lt;android.content" element1="/src\/main&lt;android.content{Context.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" log="=NeoCom.tester/src&lt;org.dimensinfin.lab&#x09;=NeoCom.tester/src&lt;android.content" patterns="*" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1480497856815" units="1" version="1.0"/>
+</session>
