@@ -12,7 +12,7 @@ package org.dimensinfin.evedroid.activity;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.activity.core.AbstractPagerActivity;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.PilotListFragment;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -54,7 +54,7 @@ public class PilotListActivity extends AbstractPagerActivity {
 			int page = 0;
 			// Register this Activity as the current active Activity.
 			AppModelStore.getSingleton().activateActivity(this);
-			this.addPage(new PilotListFragment().setVariant(AppWideConstants.EFragment.CAPSULEER_LIST), page++);
+			this.addPage(new PilotListFragment().setVariant(EVARIANT.CAPSULEER_LIST), page++);
 		} catch (final Exception rtex) {
 			PilotListActivity.logger.severe("[PilotListActivity.onCreate]> RTEX> Runtime Exception." + rtex.getMessage());
 			rtex.printStackTrace();

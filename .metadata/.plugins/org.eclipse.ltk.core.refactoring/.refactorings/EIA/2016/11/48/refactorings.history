@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy element &apos;ApiStation.java&apos; to &apos;DroidModel/src/main/org.dimensinfin.evedroid.model&apos;&#x0D;&#x0A;- Original project: &apos;EIA&apos;&#x0D;&#x0A;- Destination element: &apos;DroidModel/src/main/org.dimensinfin.evedroid.model&apos;&#x0D;&#x0A;- Original element: &apos;com.beimin.eveapi.eve.conquerablestationlist.ApiStation.java&apos;" description="Copy compilation unit" destination="=DroidModel/src\/main&lt;org.dimensinfin.evedroid.model" element1="/src\/eveapi&lt;com.beimin.eveapi.eve.conquerablestationlist{ApiStation.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1480331030917" units="1" version="1.0"/>
-</session>
