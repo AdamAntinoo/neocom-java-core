@@ -25,7 +25,7 @@ import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
-import org.dimensinfin.evedroid.render.APIKeyRender;
+import org.dimensinfin.evedroid.render.ApiKeyRender;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,17 +71,13 @@ public class ApiKeyPart extends EveAbstractPart implements OnClickListener {
 		return result;
 	}
 
-	public String get_key() {
-		return EveAbstractPart.keyFormatter.format(this.getCastedModel().getKey());
-	}
-
-	public String get_type() {
-		return this.getCastedModel().getType();
-	}
-
 	public NeoComApiKey getCastedModel() {
 		return (NeoComApiKey) this.getModel();
 	}
+
+	//	public String get_type() {
+	//		return this.getCastedModel().getType();
+	//	}
 
 	@Override
 	public long getModelID() {
@@ -120,6 +116,10 @@ public class ApiKeyPart extends EveAbstractPart implements OnClickListener {
 		return result;
 	}
 
+	public String getTransformedKey() {
+		return EveAbstractPart.keyFormatter.format(this.getCastedModel().getKey());
+	}
+
 	/**
 	 * Manage a click on the key visible element. A click will toggle the expand/collapse state.
 	 */
@@ -140,9 +140,9 @@ public class ApiKeyPart extends EveAbstractPart implements OnClickListener {
 	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder set for the render mode.
-		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new APIKeyRender(this, _activity);
+		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new ApiKeyRender(this, _activity);
 		// If holder not located return a default view for a sample and modeless Part.
-		return new DefaultRender(this, _activity);
+		return super.selectHolder();
 	}
 }
 

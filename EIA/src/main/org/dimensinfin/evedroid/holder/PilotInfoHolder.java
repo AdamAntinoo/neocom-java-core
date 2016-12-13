@@ -6,9 +6,6 @@
 
 package org.dimensinfin.evedroid.holder;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.logging.Logger;
-
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
@@ -25,25 +22,20 @@ import android.widget.TextView;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotInfoHolder extends EveAbstractHolder {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger									= Logger.getLogger("PilotInfoHolder");
-	//	private static RubiconRedTheme	theme										= new RubiconRedTheme();
-	//	protected static Typeface	daysFace								= Typeface.createFromAsset(EVEDroidApp.getSingletonApp()
-	//																												.getApplicationContext().getAssets(), "fonts/Days.otf");
+	//	private static Logger	logger									= Logger.getLogger("PilotInfoHolder");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	// - L A Y O U T   F I E L D S
-	private ImageView			pilotAvatar							= null;
-	private TextView			pilotName								= null;
-	private TextView			lastKnownLocation				= null;
-	private TextView			accountBalance					= null;
-	private TextView			assetsCount							= null;
+	private ImageView	pilotAvatar							= null;
+	private TextView	pilotName								= null;
+	private TextView	lastKnownLocation				= null;
+	private TextView	accountBalance					= null;
+	private TextView	assetsCount							= null;
 
-	//	private TextView			pilotSectionLabel				= null;
-	private TextView			lastKnownLocationLabel	= null;
-	private TextView			accountBalanceLabel			= null;
-	private TextView			assetsCountLabel				= null;
-
-	//	private TextView			skillSectionLabel				= null;
+	// - L A Y O U T   L A B E L S
+	private TextView	lastKnownLocationLabel	= null;
+	private TextView	accountBalanceLabel			= null;
+	private TextView	assetsCountLabel				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotInfoHolder(final AbstractAndroidPart newPart, final Activity context) {
@@ -56,6 +48,7 @@ public class PilotInfoHolder extends EveAbstractHolder {
 		return (PilotInfoPart) super.getPart();
 	}
 
+	@Override
 	public void initializeViews() {
 		super.initializeViews();
 		pilotAvatar = (ImageView) _convertView.findViewById(R.id.pilotAvatar);
@@ -64,22 +57,19 @@ public class PilotInfoHolder extends EveAbstractHolder {
 		accountBalance = (TextView) _convertView.findViewById(R.id.accountBalance);
 		assetsCount = (TextView) _convertView.findViewById(R.id.assetsCount);
 
-		//		pilotSectionLabel = (TextView) _convertView.findViewById(R.id.pilotSectionLabel);
 		lastKnownLocationLabel = (TextView) _convertView.findViewById(R.id.lastKnownLocationLabel);
 		accountBalanceLabel = (TextView) _convertView.findViewById(R.id.accountBalanceLabel);
 		assetsCountLabel = (TextView) _convertView.findViewById(R.id.assetsCountLabel);
-		//	skillSectionLabel = (TextView) _convertView.findViewById(R.id.skillSectionLabel);
-
 	}
 
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		NeoComCharacter pilot = getPart().getCastedModel();
+		NeoComCharacter pilot = this.getPart().getCastedModel();
 		pilotName.setText(pilot.getName());
 		lastKnownLocation.setText(">> " + pilot.getLastKnownLocation() + " <<");
-		accountBalance.setText(getPart().get_balance());
-		assetsCount.setText(getPart().get_assetsCount());
+		accountBalance.setText(this.getPart().get_balance());
+		assetsCount.setText(this.getPart().get_assetsCount());
 
 		if (null != pilotAvatar) {
 			String link = pilot.getURLForAvatar();
@@ -91,8 +81,9 @@ public class PilotInfoHolder extends EveAbstractHolder {
 
 	@Override
 	protected void createView() {
-		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-		_convertView = mInflater.inflate(R.layout.pilotinfo_4list, null);
+		final LayoutInflater mInflater = (LayoutInflater) this.getContext()
+				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		_convertView = mInflater.inflate(R.layout.pilotinfo4list, null);
 		_convertView.setTag(this);
 	}
 }

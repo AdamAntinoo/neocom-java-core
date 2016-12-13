@@ -11,11 +11,13 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
+import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveLocation;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.render.DefaultRender;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -29,8 +31,8 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID					= -2988276062110424930L;
 	private static final long									ONEMINUTE									= 60 * 1000;
-	private static final long									ONEHOUR										= 60 * ONEMINUTE;
-	private static final long									ONEDAY										= 24 * ONEHOUR;
+	private static final long									ONEHOUR										= 60 * EveAbstractPart.ONEMINUTE;
+	private static final long									ONEDAY										= 24 * EveAbstractPart.ONEHOUR;
 	protected static DecimalFormat						keyFormatter							= new DecimalFormat("0000000");
 	protected static DecimalFormat						priceFormatter						= new DecimalFormat("###,###.00");
 	protected static DecimalFormat						qtyFormatter							= new DecimalFormat("###,##0");
@@ -42,31 +44,26 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	protected static DecimalFormat						securityFormatter					= new DecimalFormat("0.0");
 	protected static HashMap<Integer, String>	securityLevels						= new HashMap<Integer, String>();
 	static {
-		securityLevels.put(10, "#2FEFEF");
-		securityLevels.put(9, "#48F0C0");
-		securityLevels.put(8, "#00EF47");
-		securityLevels.put(7, "#00F000");
-		securityLevels.put(6, "#8FEF2F");
-		securityLevels.put(5, "#EFEF00");
-		securityLevels.put(4, "#D77700");
-		securityLevels.put(3, "#F06000");
-		securityLevels.put(2, "#F04800");
-		securityLevels.put(1, "#D73000");
-		securityLevels.put(0, "#F00000");
+		EveAbstractPart.securityLevels.put(10, "#2FEFEF");
+		EveAbstractPart.securityLevels.put(9, "#48F0C0");
+		EveAbstractPart.securityLevels.put(8, "#00EF47");
+		EveAbstractPart.securityLevels.put(7, "#00F000");
+		EveAbstractPart.securityLevels.put(6, "#8FEF2F");
+		EveAbstractPart.securityLevels.put(5, "#EFEF00");
+		EveAbstractPart.securityLevels.put(4, "#D77700");
+		EveAbstractPart.securityLevels.put(3, "#F06000");
+		EveAbstractPart.securityLevels.put(2, "#F04800");
+		EveAbstractPart.securityLevels.put(1, "#D73000");
+		EveAbstractPart.securityLevels.put(0, "#F00000");
 	}
 
 	public static String generateTimeString(final long millis) {
 		try {
 			DateTimeFormatterBuilder timeFormatter = new DateTimeFormatterBuilder();
-			if (millis > ONEDAY) {
-				timeFormatter.appendDayOfYear(1).appendLiteral("D ");
-			}
-			if (millis > ONEHOUR) {
-				timeFormatter.appendHourOfDay(2).appendLiteral(":");
-			}
-			if (millis > ONEMINUTE) {
+			if (millis > EveAbstractPart.ONEDAY) timeFormatter.appendDayOfYear(1).appendLiteral("D ");
+			if (millis > EveAbstractPart.ONEHOUR) timeFormatter.appendHourOfDay(2).appendLiteral(":");
+			if (millis > EveAbstractPart.ONEMINUTE)
 				timeFormatter.appendMinuteOfHour(2).appendLiteral(":").appendSecondOfMinute(2);
-			}
 			return timeFormatter.toFormatter().print(new Instant(millis));
 		} catch (RuntimeException rtex) {
 			return "0:00";
@@ -83,7 +80,7 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	}
 
 	public EveAbstractPart(final AbstractGEFNode model) {
-		setModel(model);
+		this.setModel(model);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -92,24 +89,24 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 		// Get rid of negative numbers.
 		if (compress) {
 			if (Math.abs(price) > 1200000000.0) if (addSuffix)
-				return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0) + " B ISK";
+				return EveAbstractPart.priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0) + " B ISK";
 			else
-				return priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0);
+				return EveAbstractPart.priceFormatter.format(price / 1000.0 / 1000.0 / 1000.0);
 			if (Math.abs(price) > 12000000.0) if (addSuffix)
-				return priceFormatter.format(price / 1000.0 / 1000.0) + " M ISK";
+				return EveAbstractPart.priceFormatter.format(price / 1000.0 / 1000.0) + " M ISK";
 			else
-				return priceFormatter.format(price / 1000.0 / 1000.0);
+				return EveAbstractPart.priceFormatter.format(price / 1000.0 / 1000.0);
 		}
 		if (addSuffix)
-			return priceFormatter.format(price) + " ISK";
+			return EveAbstractPart.priceFormatter.format(price) + " ISK";
 		else
-			return priceFormatter.format(price);
+			return EveAbstractPart.priceFormatter.format(price);
 	}
 
 	protected Spanned colorFormatLocation(final EveLocation location) {
 		StringBuffer htmlLocation = new StringBuffer();
 		double security = location.getSecurityValue();
-		htmlLocation.append(generateSecurityColor(security, securityFormatter.format(security)));
+		htmlLocation.append(this.generateSecurityColor(security, EveAbstractPart.securityFormatter.format(security)));
 		htmlLocation.append(" ").append(location.getRegion()).append("-").append(location.getStation());
 		return Html.fromHtml(htmlLocation.toString());
 	}
@@ -135,20 +132,15 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	 * @return
 	 */
 	protected String generateDurationString(final Instant timer) {
-		return generateDurationString(timer.getMillis());
+		return this.generateDurationString(timer.getMillis());
 	}
 
 	protected String generateDurationString(final long millis) {
 		DateTimeFormatterBuilder timeLeftCountdown = new DateTimeFormatterBuilder();
-		if (millis > ONEDAY) {
-			timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
-		}
-		if (millis > ONEHOUR) {
-			timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
-		}
-		if (millis > ONEMINUTE) {
+		if (millis > EveAbstractPart.ONEDAY) timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
+		if (millis > EveAbstractPart.ONEHOUR) timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
+		if (millis > EveAbstractPart.ONEMINUTE)
 			timeLeftCountdown.appendMinuteOfHour(2).appendLiteral("M ").appendSecondOfMinute(2).appendLiteral('S');
-		}
 		return timeLeftCountdown.toFormatter().print(new Instant(millis));
 	}
 
@@ -156,20 +148,21 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 		StringBuffer htmlFragmentWithColor = new StringBuffer();
 		String secColor = "#F00000";
 		// Get the color from the table.
-		if (sec < 0.0) {
-			sec = 0.0;
-		}
-		if (sec > 1.0) {
-			sec = 1.0;
-		}
+		if (sec < 0.0) sec = 0.0;
+		if (sec > 1.0) sec = 1.0;
 		long secAdjust = Long.valueOf(Math.round(sec * 10.0)).intValue();
-		secColor = securityLevels.get(Long.valueOf(secAdjust).intValue());
+		secColor = EveAbstractPart.securityLevels.get(Long.valueOf(secAdjust).intValue());
 		htmlFragmentWithColor.append("<font color='").append(secColor).append("'>").append(data).append("</font>");
 		return htmlFragmentWithColor.toString();
 	}
 
 	protected NeoComCharacter getPilot() {
-		return (NeoComCharacter) EVEDroidApp.getAppStore().getPilot();
+		return EVEDroidApp.getAppStore().getPilot();
+	}
+
+	@Override
+	protected AbstractHolder selectHolder() {
+		return new DefaultRender(this, _activity);
 	}
 }
 

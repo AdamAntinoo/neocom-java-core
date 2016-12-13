@@ -528,7 +528,8 @@ public class AssetsManager implements Serializable {
 			NeoComAsset target = containers.get(pcid);
 			if (null == target) {
 				// Add the container to the list of containers.
-				AssetsManager.logger.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
+				AssetsManager.logger
+						.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
 				containers.put(new Long(pcid), cont);
 				// Add the container to the list of locations or to another container if not child
 				//			if (asset.hasParent()) {
@@ -539,8 +540,11 @@ public class AssetsManager implements Serializable {
 			} else
 				// Add the asset to the children list of the target container
 				target.addChild(asset);
-		}else // Investigate why the container is null. And maybe we should search for it because it is not our asset.
-		NeoComAsset parentAssetCache = AppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
+		} else {
+			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
+			long id = asset.getParentContainerId();
+			NeoComAsset parentAssetCache = AppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
+		}
 		// This is an Unknown location that should be a Custom Office
 	}
 
