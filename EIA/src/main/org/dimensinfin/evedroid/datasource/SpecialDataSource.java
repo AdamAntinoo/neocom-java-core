@@ -22,7 +22,7 @@ import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -40,6 +40,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private DataSourceLocator							_locator					= null;
+	private EVARIANT											_variant					= EVARIANT.DEFAULT_VARIANT;
+	private boolean												_cacheable				= true;
 	//	protected AppModelStore		_store						= null;
 	//	private final int					_version					= 0;
 	protected RootNode										_dataModelRoot		= null;
@@ -47,8 +49,6 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	protected RootPart										_partModelRoot		= null;
 	protected ArrayList<AbstractCorePart>	_bodyParts				= new ArrayList<AbstractCorePart>();
 	protected ArrayList<AbstractCorePart>	_headParts				= new ArrayList<AbstractCorePart>();
-
-	private EFragment											_variant					= AppWideConstants.EFragment.DEFAULT_VARIANT;
 
 	private final HashMap<String, Object>	_parameters				= new HashMap<String, Object>();
 
@@ -78,6 +78,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Deprecated
 	public void connect(final DataSourceManager dataSourceManager) {
 		_dsManager = dataSourceManager;
 	}
@@ -93,16 +94,15 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Override
 	public void createContentHierarchy() {
 		try {
-			logger.info(">> [SpecialDataSource.createContentHierarchy]");
+			SpecialDataSource.logger.info(">> [SpecialDataSource.createContentHierarchy]");
 			// Check if we have already a Part model.
 			// But do not forget to associate the new Data model even of the old exists.
-			if (null == _partModelRoot) {
+			if (null == _partModelRoot)
 				_partModelRoot = new RootPart(_dataModelRoot, _partFactory);
-			} else {
+			else
 				_partModelRoot.setModel(_dataModelRoot);
-			}
 
-			logger.info(
+			SpecialDataSource.logger.info(
 					"-- [SpecialDataSource.createContentHierarchy]> Initiating the refreshChildren() for the _partModelRoot");
 			// Intercept any exception on the creation of the model but do not cut the progress of the already added items
 			try {
@@ -113,7 +113,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			// Get the list of Parts that will be used for the ListView
 			_bodyParts = new ArrayList<AbstractCorePart>();
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			logger.info("<< [SpecialDataSource.createContentHierarchy]");
+			SpecialDataSource.logger.info("<< [SpecialDataSource.createContentHierarchy]");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -162,9 +162,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts) {
+		for (AbstractCorePart node : _bodyParts)
 			result.add((AbstractAndroidPart) node);
-		}
 		return result;
 	}
 
@@ -174,22 +173,21 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _headParts) {
+		for (AbstractCorePart node : _headParts)
 			result.add((AbstractAndroidPart) node);
-		}
 		return result;
 	}
 
 	@Override
+	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts) {
+		for (AbstractCorePart node : _bodyParts)
 			result.add((AbstractAndroidPart) node);
-		}
 		return result;
 	}
 
-	public EFragment getVariant() {
+	public EVARIANT getVariant() {
 		return _variant;
 	}
 
@@ -203,27 +201,29 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
 			_bodyParts = new ArrayList<AbstractCorePart>();
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 		}
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES)) {
-			// The DataSourceAdapter will call getPartHierarchy() and this will return the list of parts on the body. So update the list.
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES)) // The DataSourceAdapter will call getPartHierarchy() and this will return the list of parts on the body. So update the list.
 			// But we have changes a key value, so recalculate the model
 			// Just activate the refresh because some  refresh.
 			//			_bodyParts = new ArrayList<AbstractCorePart>();
 			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 		// THis event is when the user changes the preferred action so I have to calculate the model again.
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
-			collaborate2Model();
-			createContentHierarchy();
+			this.collaborate2Model();
+			this.createContentHierarchy();
 			//			_bodyParts = new ArrayList<AbstractCorePart>();
 			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 		}
+	}
+
+	public void setCacheable(final boolean cacheState) {
+		_cacheable = cacheState;
 	}
 
 	//	@Deprecated
@@ -245,7 +245,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		_dataModelRoot = root;
 	}
 
-	public SpecialDataSource setVariant(final EFragment variant) {
+	public SpecialDataSource setVariant(final EVARIANT variant) {
 		_variant = variant;
 		return this;
 	}

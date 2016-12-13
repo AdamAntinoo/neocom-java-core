@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -9,33 +9,51 @@
 package org.dimensinfin.evedroid.factory;
 
 // - IMPORT SECTION .........................................................................................
+import java.util.logging.Logger;
+
+import org.dimensinfin.android.mvc.core.AbstractCorePart;
 import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.enums.EVARIANT;
-import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.part.GroupPart;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.part.APIKeyPart;
+import org.dimensinfin.evedroid.part.PilotInfoPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PartFactory implements IPartFactory {
+public class PilotPartFactory extends PartFactory implements IPartFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static Logger logger = Logger.getLogger("PilotPartFactory");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final EVARIANT variant;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PartFactory(final EVARIANT selectedVariant) {
-		variant = selectedVariant;
+	public PilotPartFactory(final EVARIANT variantSelected) {
+		super(variantSelected);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * The method should create the matching part for the model received but there is no other place where we
+	 * should create the next levels of the hierarchy. So we will create the part transformations here.
+	 */
+	@Override
 	public IEditPart createPart(final IGEFNode node) {
-		// If no part is trapped then result a NOT FOUND mark
-		return new GroupPart(new Separator("-NO data-[" + node.getClass().getName() + "]-"));
-	}
-
-	public String getVariant() {
-		return variant.name();
+		PilotPartFactory.logger.info("-- [PilotPartFactory.createPart]> Node class: " + node.getClass().getName());
+		if (this.getVariant() == EVARIANT.CAPSULEER_LIST.name()) {
+			if (node instanceof NeoComApiKey) {
+				AbstractCorePart part = new APIKeyPart((AbstractComplexNode) node).setFactory(this);
+				return part;
+			}
+			if (node instanceof NeoComCharacter) {
+				AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
+				return part;
+			}
+		}
+		// If no part is trapped then call the parent chain until one is found.
+		return super.createPart(node);
 	}
 }
 
