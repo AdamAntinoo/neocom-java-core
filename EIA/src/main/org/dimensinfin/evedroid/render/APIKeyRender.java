@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.render;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.part.APIKeyPart;
+import org.dimensinfin.evedroid.part.ApiKeyPart;
 import org.joda.time.Instant;
 
 import android.app.Activity;
@@ -31,13 +31,13 @@ public class APIKeyRender extends EveAbstractHolder {
 	private TextView	timeLeftLabel	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public APIKeyRender(final APIKeyPart target, final Activity context) {
+	public APIKeyRender(final ApiKeyPart target, final Activity context) {
 		super(target, context);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public APIKeyPart getPart() {
-		return (APIKeyPart) super.getPart();
+	public ApiKeyPart getPart() {
+		return (ApiKeyPart) super.getPart();
 	}
 
 	@Override

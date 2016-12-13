@@ -17,9 +17,10 @@ import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.evedroid.model.Corporation;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
-import org.dimensinfin.evedroid.part.APIKeyPart;
+import org.dimensinfin.evedroid.model.Pilot;
+import org.dimensinfin.evedroid.part.ApiKeyPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -44,10 +45,14 @@ public class PilotPartFactory extends PartFactory implements IPartFactory {
 		PilotPartFactory.logger.info("-- [PilotPartFactory.createPart]> Node class: " + node.getClass().getName());
 		if (this.getVariant() == EVARIANT.CAPSULEER_LIST.name()) {
 			if (node instanceof NeoComApiKey) {
-				AbstractCorePart part = new APIKeyPart((AbstractComplexNode) node).setFactory(this);
+				AbstractCorePart part = new ApiKeyPart((AbstractComplexNode) node).setFactory(this);
 				return part;
 			}
-			if (node instanceof NeoComCharacter) {
+			if (node instanceof Pilot) {
+				AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
+				return part;
+			}
+			if (node instanceof Corporation) {
 				AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
 				return part;
 			}

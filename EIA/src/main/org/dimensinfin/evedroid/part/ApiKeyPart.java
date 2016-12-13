@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.part;
 
 // - IMPORT SECTION .........................................................................................
@@ -19,7 +21,9 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.render.APIKeyRender;
 
@@ -27,7 +31,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class APIKeyPart extends EveAbstractPart implements OnClickListener {
+public class ApiKeyPart extends EveAbstractPart implements OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -7718648590261849585L;
 	private static Logger			logger						= Logger.getLogger("APIKeyPart");
@@ -35,52 +39,70 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public APIKeyPart(final AbstractComplexNode node) {
+	public ApiKeyPart(final AbstractComplexNode node) {
 		super(node);
-		getCastedModel().setExpanded(true);
-	}
-
-	/**
-	 * This method should get the visible elements on the chain hierarchy. We depend on the children list as the
-	 * source for the initial hierarchy to be run for visible pieces.
-	 */
-	@Override
-	public ArrayList<AbstractAndroidPart> collaborate2View() {
-		return getPartChildren();
+		this.getCastedModel().setExpanded(true);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * This method should get the visible elements on the chain hierarchy. We depend on the children list as the
+	 * source for the initial hierarchy to be run for visible pieces.<br>
+	 * The method returns the visible elements and for each visible element will call its own
+	 * <code>collaborate2View</code> recursively to add all the visible items under this element hierarchy.
+	 */
+	@Override
+	public ArrayList<AbstractAndroidPart> collaborate2View() {
+		ApiKeyPart.logger.info(">> [ApiKeyPart.collaborate2View]");
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		Vector<AbstractPropertyChanger> ch = this.getChildren();
+		for (AbstractPropertyChanger nodePart : ch)
+			// Check if the element is visible
+			if (nodePart instanceof AbstractNeoComNode) {
+				AbstractNeoComNode neocomModel = (AbstractNeoComNode) nodePart;
+				if (neocomModel.renderWhenEmpty()) {
+					ApiKeyPart.logger.info("-- [ApiKeyPart.collaborate2View]> Adding node: " + neocomModel);
+					result.add((AbstractAndroidPart) nodePart);
+					// If the node is added to the result then give the children the opportinity to also be added.
+					result.addAll(((AbstractAndroidPart) nodePart).collaborate2View());
+				}
+			}
+		ApiKeyPart.logger.info("<< [ApiKeyPart.collaborate2View]");
+		return result;
+	}
+
 	public String get_key() {
-		return keyFormatter.format(getCastedModel().getKeyID());
+		return EveAbstractPart.keyFormatter.format(this.getCastedModel().getKey());
 	}
 
 	public String get_type() {
-		return getCastedModel().getType();
+		return this.getCastedModel().getType();
 	}
 
 	public NeoComApiKey getCastedModel() {
-		return (NeoComApiKey) getModel();
+		return (NeoComApiKey) this.getModel();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getKeyID();
+		return this.getCastedModel().getKey();
 	}
 
 	/**
 	 * Returns the list of parts that are available for this node. If the node it is expanded then the list will
-	 * include the children and any other grandchildren of this one. If the node is collapsed then the only
+	 * include the children and any other grand children of this one. If the node is collapsed then the only
 	 * result will be the node itself.
 	 * 
-	 * @return list of parts that are accesible for this node.
+	 * @return list of parts that are accessible for this node.
 	 */
 	@Override
+	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		//		result.add(this);
 		// Check if expanded. Then add the list of children and their collaboration to the list.
-		if (getCastedModel().isExpanded()) {
-			Vector<AbstractPropertyChanger> ch = getChildren();
+		if (this.getCastedModel().isExpanded()) {
+			Vector<AbstractPropertyChanger> ch = this.getChildren();
 			// Order the chatacters by alphabetical name.
 			Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 
@@ -98,11 +120,13 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 		return result;
 	}
 
+	/**
+	 * Manage a click on the key visible element. A click will toggle the expand/collapse state.
+	 */
 	public void onClick(final View view) {
 		// Toggle location to show its contents.
-		getCastedModel().toggleExpanded();
-		//		getCastedModel().setExpanded(getCastedModel().isExpanded());
-		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+		this.getCastedModel().toggleExpanded();
+		this.fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
 	@Override
@@ -115,8 +139,10 @@ public class APIKeyPart extends EveAbstractPart implements OnClickListener {
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		// Get the proper holder from the render mode.
-		return new APIKeyRender(this, _activity);
+		// Get the proper holder set for the render mode.
+		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new APIKeyRender(this, _activity);
+		// If holder not located return a default view for a sample and modeless Part.
+		return new DefaultRender(this, _activity);
 	}
 }
 

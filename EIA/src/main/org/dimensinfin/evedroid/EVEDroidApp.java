@@ -41,7 +41,7 @@ import org.dimensinfin.evedroid.interfaces.IWeigthedNode;
 import org.dimensinfin.evedroid.model.JobQueue;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.part.APIKeyPart;
+import org.dimensinfin.evedroid.part.ApiKeyPart;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.ContainerPart;
@@ -198,13 +198,13 @@ public class EVEDroidApp extends Application implements IConnector {
 					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 						long leftField = -1;
 						long rightField = -1;
-						if (left instanceof APIKeyPart) {
-							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
+						if (left instanceof ApiKeyPart) {
+							final NeoComApiKey intermediate = ((ApiKeyPart) left).getCastedModel();
 							leftField = intermediate.getKey();
 						}
 
-						if (right instanceof APIKeyPart) {
-							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
+						if (right instanceof ApiKeyPart) {
+							final NeoComApiKey intermediate = ((ApiKeyPart) right).getCastedModel();
 							rightField = intermediate.getKey();
 						}
 						if (leftField < rightField) return -1;
@@ -218,13 +218,13 @@ public class EVEDroidApp extends Application implements IConnector {
 					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 						long leftField = -1;
 						long rightField = -1;
-						if (left instanceof APIKeyPart) {
-							final NeoComApiKey intermediate = ((APIKeyPart) left).getCastedModel();
+						if (left instanceof ApiKeyPart) {
+							final NeoComApiKey intermediate = ((ApiKeyPart) left).getCastedModel();
 							leftField = intermediate.getKey();
 						}
 
-						if (right instanceof APIKeyPart) {
-							final NeoComApiKey intermediate = ((APIKeyPart) right).getCastedModel();
+						if (right instanceof ApiKeyPart) {
+							final NeoComApiKey intermediate = ((ApiKeyPart) right).getCastedModel();
 							rightField = intermediate.getKey();
 						}
 						if (leftField > rightField) return -1;
