@@ -3,8 +3,8 @@
 .log
 version.ini
 
-**/_0.*
-
-# ignore the rest by marking the directories
+# Ignore the rest by marking the directories
+**.index
+**.snap
 .mylyn/
 .plugins/

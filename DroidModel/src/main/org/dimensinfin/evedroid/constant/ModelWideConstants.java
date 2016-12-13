@@ -10,29 +10,10 @@ package org.dimensinfin.evedroid.constant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelWideConstants {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	// - C O M P A R A T O R S
-	public static final class comparators {
-		public static final int	COMPARATOR_NAME							= 100;
-		public static final int	COMPARATOR_ASSET_COUNT			= COMPARATOR_NAME + 1;
-		public static final int	COMPARATOR_ITEM_TYPE				= COMPARATOR_NAME + 2;
-		public static final int	COMPARATOR_RESOURCE_TYPE		= COMPARATOR_NAME + 3;
-		public static final int	COMPARATOR_APIID_ASC				= COMPARATOR_NAME + 4;
-		public static final int	COMPARATOR_APIID_DESC				= COMPARATOR_NAME + 5;
-		public static final int	COMPARATOR_PRIORITY					= COMPARATOR_NAME + 6;
-		public static final int	COMPARATOR_WEIGHT						= COMPARATOR_NAME + 16;
-		public static final int	COMPARATOR_NEWESTDATESORT		= COMPARATOR_NAME + 7;
-		public static final int	COMPARATOR_OLDESTDATESORT		= COMPARATOR_NAME + 8;
-		public static final int	COMPARATOR_REQUEST_PRIORITY	= COMPARATOR_NAME + 17;
-		public static final int	COMPARATOR_CARD_RATIO				= COMPARATOR_NAME + 18;
-		// public static final int COMPARATOR_CREATIONDATE = COMPARATOR_NAME +
-		// 9;
-		public static final int	COMPARATOR_TIMEPENDING			= COMPARATOR_NAME + 10;
-	}
 	// - M O D E L   V I E W   C O N T R O L L E R   V A R I A N T S
-	public enum EVARIANT{
-		DEFAULT_VARIANT
-	}
+	//	public enum EVARIANT{
+	//		DEFAULT_VARIANT
+	//	}
 	// - I N D U S T R Y   A C T I V I T I E S
 	public static final class activities {
 		public static final int	NO_ACTIVITY		= 0;
@@ -41,6 +22,26 @@ public class ModelWideConstants {
 		public static final int	RESEARCH_TIME	= 4;
 		public static final int	COPYING				= 5;
 		public static final int	INVENTION			= 8;
+	}
+
+	// - S T A T I C - S E C T I O N ..........................................................................
+	// - C O M P A R A T O R S
+	public static final class comparators {
+		public static final int	COMPARATOR_NAME							= 100;
+		public static final int	COMPARATOR_ASSET_COUNT			= comparators.COMPARATOR_NAME + 1;
+		public static final int	COMPARATOR_ITEM_TYPE				= comparators.COMPARATOR_NAME + 2;
+		public static final int	COMPARATOR_RESOURCE_TYPE		= comparators.COMPARATOR_NAME + 3;
+		public static final int	COMPARATOR_APIID_ASC				= comparators.COMPARATOR_NAME + 4;
+		public static final int	COMPARATOR_APIID_DESC				= comparators.COMPARATOR_NAME + 5;
+		public static final int	COMPARATOR_PRIORITY					= comparators.COMPARATOR_NAME + 6;
+		public static final int	COMPARATOR_WEIGHT						= comparators.COMPARATOR_NAME + 16;
+		public static final int	COMPARATOR_NEWESTDATESORT		= comparators.COMPARATOR_NAME + 7;
+		public static final int	COMPARATOR_OLDESTDATESORT		= comparators.COMPARATOR_NAME + 8;
+		public static final int	COMPARATOR_REQUEST_PRIORITY	= comparators.COMPARATOR_NAME + 17;
+		public static final int	COMPARATOR_CARD_RATIO				= comparators.COMPARATOR_NAME + 18;
+		// public static final int COMPARATOR_CREATIONDATE = COMPARATOR_NAME +
+		// 9;
+		public static final int	COMPARATOR_TIMEPENDING			= comparators.COMPARATOR_NAME + 10;
 	}
 
 	// - L I T E R A L   C O N S T A N T S
@@ -114,21 +115,20 @@ public class ModelWideConstants {
 	// - E X P I R A T I O N   T I M E S
 	public static final int			NOW								= 0;
 	public static final int			SECONDS1					= 1 * 1000;
-	public static final int			SECONDS5					= 5 * SECONDS1;
-	public static final int			MINUTES1					= 1 * 60 * SECONDS1;
-	public static final int			MINUTES15					= 15 * MINUTES1;
-	public static final int			MINUTES30					= 30 * MINUTES1;
-	public static final int			MINUTES45					= 45 * MINUTES1;
-	public static final int			MINUTES60					= 60 * MINUTES1;
-	public static final int			HOURS1						= 1 * 60 * MINUTES1;
-	public static final int			HOURS2						= 2 * HOURS1;
-	public static final int			HOURS3						= 3 * HOURS1;
-	public static final int			HOURS8						= 8 * HOURS1;
+	public static final int			SECONDS5					= 5 * ModelWideConstants.SECONDS1;
+	public static final int			MINUTES1					= 1 * 60 * ModelWideConstants.SECONDS1;
+	public static final int			MINUTES15					= 15 * ModelWideConstants.MINUTES1;
+	public static final int			MINUTES30					= 30 * ModelWideConstants.MINUTES1;
+	public static final int			MINUTES45					= 45 * ModelWideConstants.MINUTES1;
+	public static final int			MINUTES60					= 60 * ModelWideConstants.MINUTES1;
+	public static final int			HOURS1						= 1 * 60 * ModelWideConstants.MINUTES1;
+	public static final int			HOURS2						= 2 * ModelWideConstants.HOURS1;
+	public static final int			HOURS3						= 3 * ModelWideConstants.HOURS1;
+	public static final int			HOURS8						= 8 * ModelWideConstants.HOURS1;
 
-	public static final int			HOURS6						= 6 * HOURS1;
-	public static final int			HOURS24						= 24 * HOURS1;
+	public static final int			HOURS6						= 6 * ModelWideConstants.HOURS1;
+	public static final int			HOURS24						= 24 * ModelWideConstants.HOURS1;
 	public static final String	STACKID_SEPARATOR	= "/";
 }
 
 // - UNUSED CODE ............................................................................................
-
