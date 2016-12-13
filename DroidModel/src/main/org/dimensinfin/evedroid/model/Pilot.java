@@ -67,12 +67,10 @@ public class Pilot extends NeoComCharacter {
 		int queues = 1;
 		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation)
 				queues += apiSkill.getLevel();
-			}
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation)
 				queues += apiSkill.getLevel();
-			}
 		}
 		return queues;
 	}
@@ -87,12 +85,9 @@ public class Pilot extends NeoComCharacter {
 		int queues = 1;
 		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) queues += apiSkill.getLevel();
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction)
 				queues += apiSkill.getLevel();
-			}
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
-				queues += apiSkill.getLevel();
-			}
 		}
 		return queues;
 	}
@@ -129,7 +124,7 @@ public class Pilot extends NeoComCharacter {
 	@Override
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadAssets() {
-		logger.info(">> EveChar.updateAssets");
+		Pilot.logger.info(">> EveChar.updateAssets");
 		try {
 			// Clear any previous record with owner -1 from database.
 			AppConnector.getDBConnector().clearInvalidRecords();
@@ -153,12 +148,11 @@ public class Pilot extends NeoComCharacter {
 				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets) {
-					processAsset(eveAsset, null);
-				}
+				for (final Asset eveAsset : assets)
+					this.processAsset(eveAsset, null);
 			}
 			//			}
-			AppConnector.getDBConnector().replaceAssets(getCharacterID());
+			AppConnector.getDBConnector().replaceAssets(this.getCharacterID());
 
 			// Update the caching time to the time set by the eveapi.
 			assetsCacheTime = new Instant(response.getCachedUntil());
@@ -171,9 +165,9 @@ public class Pilot extends NeoComCharacter {
 		//		clearTimers();
 		//		JobManager.clearCache();
 
-		setDirty(true);
-		fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
-		logger.info("<< EveChar.updateAssets");
+		this.setDirty(true);
+		this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
+		Pilot.logger.info("<< EveChar.updateAssets");
 	}
 
 	/**
@@ -202,29 +196,28 @@ public class Pilot extends NeoComCharacter {
 			if (null != response) {
 				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
-				for (Blueprint bp : blueprints) {
+				for (Blueprint bp : blueprints)
 					try {
-						bplist.add(convert2Blueprint(bp));
+						bplist.add(this.convert2Blueprint(bp));
 					} catch (final RuntimeException rtex) {
 						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-						logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
-						logger.info("W> " + bp.toString());
+						Pilot.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
+						Pilot.logger.info("W> " + bp.toString());
 					}
-				}
 			}
 			//			}
 			// Pack the blueprints and store them on the database.
-			getAssetsManager().storeBlueprints(bplist);
-			AppConnector.getDBConnector().replaceBlueprints(getCharacterID());
+			this.getAssetsManager().storeBlueprints(bplist);
+			AppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
 			// Update the caching time to the time set by the eveapi.
 			blueprintsCacheTime = new Instant(response.getCachedUntil());
 			// Update the dirty state to signal modification of store structures.
-			setDirty(true);
+			this.setDirty(true);
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
 		final Duration lapse = AppConnector.timeLapse();
-		logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
+		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	}
 
 	/**
@@ -236,7 +229,7 @@ public class Pilot extends NeoComCharacter {
 	 */
 	@Override
 	public void downloadIndustryJobs() {
-		logger.info(">> EveChar.updateIndustryJobs");
+		Pilot.logger.info(">> EveChar.updateIndustryJobs");
 		try {
 			// Clear any previous record with owner -1 from database.
 			//		AppConnector.getDBConnector().clearInvalidRecords();
@@ -247,15 +240,15 @@ public class Pilot extends NeoComCharacter {
 				Set<IndustryJob> jobs = responsehist.getAll();
 				jobsCacheTime = new Instant(responsehist.getCachedUntil());
 				for (final IndustryJob evejob : jobs) {
-					final Job myjob = convert2Job(evejob);
+					final Job myjob = this.convert2Job(evejob);
 					// Set the owner my there is not job cleanup.
 					//					myjob.setOwnerID(getCharacterID());
 					try {
 						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
 						jobDao.createOrUpdate(myjob);
-						logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
+						Pilot.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
 					} catch (final SQLException sqle) {
-						logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
+						Pilot.logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
 						sqle.printStackTrace();
 					}
 				}
@@ -285,13 +278,13 @@ public class Pilot extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		setDirty(true);
-		logger.info("<< EveChar.updateIndustryJobs");
+		this.setDirty(true);
+		Pilot.logger.info("<< EveChar.updateIndustryJobs");
 	}
 
 	@Override
 	public void downloadMarketOrders() {
-		logger.info(">> EveChar.updateMarketOrders");
+		Pilot.logger.info(">> EveChar.updateMarketOrders");
 		try {
 			// Download and parse the market orders.
 			MarketOrdersParser parser = new MarketOrdersParser();
@@ -299,14 +292,14 @@ public class Pilot extends NeoComCharacter {
 			if (null != response) {
 				Set<MarketOrder> orders = response.getAll();
 				for (final MarketOrder eveorder : orders) {
-					final NeoComMarketOrder myorder = convert2Order(eveorder);
+					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
 					try {
 						final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
 						marketOrderDao.createOrUpdate(myorder);
-						logger.finest(
+						Pilot.logger.finest(
 								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
 					} catch (final SQLException sqle) {
-						logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
+						Pilot.logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
 						sqle.printStackTrace();
 					}
 				}
@@ -315,8 +308,12 @@ public class Pilot extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		setDirty(true);
-		logger.info("<< EveChar.updateMarketOrders");
+		this.setDirty(true);
+		Pilot.logger.info("<< EveChar.updateMarketOrders");
+	}
+
+	public String getLastKnownLocation() {
+		return characterInfo.getLastKnownLocation();
 	}
 
 	public int getSkillLevel(final int skillID) {
@@ -328,15 +325,19 @@ public class Pilot extends NeoComCharacter {
 		return 0;
 	}
 
-	public void setCharacterSheet(CharacterSheetResponse sheet) {
+	public String getURLForAvatar() {
+		return "http://image.eveonline.com/character/" + this.getCharacterID() + "_256.jpg";
+	}
+
+	public void setCharacterSheet(final CharacterSheetResponse sheet) {
 		characterSheet = sheet;
 	}
 
-	public void setSkillInTraining(SkillInTrainingResponse training) {
+	public void setSkillInTraining(final SkillInTrainingResponse training) {
 		skillInTraining = training;
 	}
 
-	public void setSkillQueue(Set<SkillQueueItem> skilllist) {
+	public void setSkillQueue(final Set<SkillQueueItem> skilllist) {
 		skills = skilllist;
 	}
 }

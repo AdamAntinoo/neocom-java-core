@@ -1,16 +1,19 @@
-//	PROJECT:        EveIndustrialAssistant (EIA)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Minery and mainly on Manufacture.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
+package org.dimensinfin.evedroid.render;
 
-package org.dimensinfin.evedroid.holder;
-
+//- IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.model.Pilot;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 
 import android.app.Activity;
@@ -33,8 +36,11 @@ public class PilotInfoHolder extends EveAbstractHolder {
 	private TextView	assetsCount							= null;
 
 	// - L A Y O U T   L A B E L S
+	@SuppressWarnings("unused")
 	private TextView	lastKnownLocationLabel	= null;
+	@SuppressWarnings("unused")
 	private TextView	accountBalanceLabel			= null;
+	@SuppressWarnings("unused")
 	private TextView	assetsCountLabel				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -65,11 +71,11 @@ public class PilotInfoHolder extends EveAbstractHolder {
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		NeoComCharacter pilot = this.getPart().getCastedModel();
+		Pilot pilot = this.getPart().getCastedModel();
 		pilotName.setText(pilot.getName());
-		lastKnownLocation.setText(">> " + pilot.getLastKnownLocation() + " <<");
-		accountBalance.setText(this.getPart().get_balance());
-		assetsCount.setText(this.getPart().get_assetsCount());
+		lastKnownLocation.setText(">> " + pilot.getLastKnownLocation());
+		accountBalance.setText(this.getPart().getTransformedBalance());
+		assetsCount.setText(this.getPart().getTransformedAssetsCount());
 
 		if (null != pilotAvatar) {
 			String link = pilot.getURLForAvatar();

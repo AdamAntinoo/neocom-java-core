@@ -21,9 +21,11 @@ import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.enums.EVARIANT;
-import org.dimensinfin.evedroid.holder.PilotInfoHolder;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.model.Pilot;
+import org.dimensinfin.evedroid.render.PilotInfoHolder;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.content.Intent;
 import android.view.View;
@@ -42,6 +44,7 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 		super(pilot);
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The result of this method depends on the variant use but this is not already supported. For the initial
 	 * usage of this part at the Pilot List Activity we just expand to itself.
@@ -53,22 +56,8 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 		return result;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public String get_assetsCount() {
-		final DecimalFormat formatter = new DecimalFormat("###,### Items");
-		final long assetCount = this.getCastedModel().getAssetCount();
-		final String countString = formatter.format(assetCount);
-		return countString;
-	}
-
-	public String get_balance() {
-		final DecimalFormat formatter = new DecimalFormat("#,###.00 ISK");
-		final String strbalance = formatter.format(this.getCastedModel().getBalance());
-		return strbalance;
-	}
-
-	public NeoComCharacter getCastedModel() {
-		return (NeoComCharacter) this.getModel();
+	public Pilot getCastedModel() {
+		return (Pilot) this.getModel();
 	}
 
 	@Override
@@ -78,6 +67,19 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 
 	public String getName() {
 		return this.getCastedModel().getName();
+	}
+
+	public String getTransformedAssetsCount() {
+		final DecimalFormat formatter = new DecimalFormat("###,### Items");
+		final long assetCount = this.getCastedModel().getAssetCount();
+		final String countString = formatter.format(assetCount);
+		return countString;
+	}
+
+	public String getTransformedBalance() {
+		final DecimalFormat formatter = new DecimalFormat("#,###.00 ISK");
+		final String strbalance = formatter.format(this.getCastedModel().getAccountBalance());
+		return strbalance;
 	}
 
 	/**
@@ -92,7 +94,7 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 			// TODO This is to keep compatibility with the old data management.
 			// Pilot are expected to be at the global context
 			final NeoComCharacter pilot = ((PilotInfoPart) pilotPart).getCastedModel();
-			EVEDroidApp.getAppStore().activatePilot(pilot.getCharacterID());
+			AppModelStore.getSingleton().activatePilot(pilot.getCharacterID());
 			final Intent intent = new Intent(this.getActivity(), DirectorsBoardActivity.class);
 			intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, pilot.getCharacterID());
 			EVEDroidApp.getAppStore().getActivity().startActivity(intent);
