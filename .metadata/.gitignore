@@ -7,4 +7,4 @@ version.ini
 
 # ignore the rest by marking the directories
 .mylyn/
-#.plugins/
+.plugins/
