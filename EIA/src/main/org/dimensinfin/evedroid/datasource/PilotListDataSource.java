@@ -8,11 +8,11 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
+//- CLASS IMPLEMENTATION ...................................................................................
 import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -40,51 +40,50 @@ public final class PilotListDataSource extends SpecialDataSource {
 	 * This is the method to initialize the copy of the model structures on the DataSource. Every time this
 	 * method is called, the complete model is recreated. There are two ways to recreate it, comparing with the
 	 * old copy and inserting/deleting different nodes or recreating completely the new model copy. Once this
-	 * method is called we can create the depending part hierarchy. <br>
-	 * Of this instance of DataSource the method gets to the model store and searches for the selected fitting.
-	 * That fitting collaborates to the view giving its contents in 6 blocks: high, med, low, rigs, drones and
-	 * cargo that are the start parts for the model. <br>
-	 * WARNING. This implementation is connected to the old unchanged APIKey/EveChar model. The code should be
-	 * changed once the new model is implemented but the API remains witout changes.
+	 * method is called we can create the depending part hierarchy. In the current implementation we always
+	 * recreate the model from scratch.<br>
+	 * The resulting model always has a RootNode and the contents are stored as children of that node. The model
+	 * only deals with the first level so each on the childs will create their own set of the model on call when
+	 * required by the model transformation.
 	 */
 	public RootNode collaborate2Model() {
-		logger.info(">> PilotListDataSource.collaborate2Model");
-		AppModelStore store = EVEDroidApp.getAppStore();
-		// The model is the list of current regtistered api keys with their characters.
-		HashMap<Integer, NeoComApiKey> keys = store.getApiKeys();
-		// Add the keys to the model root node. If the root is already on place then the model is already loaded.
-		//		if (null == _dataModelRoot) {
-		setDataModel(new RootNode());
-		//		}
-		// Add all the nodes to the new root
+		SpecialDataSource.logger.info(">> [PilotListDataSource.collaborate2Model]");
+		//		AppModelStore store = AppModelStore.getSingleton();
+		// The model contains the list of current registered api keys with their characters.
+		HashMap<Integer, NeoComApiKey> keys = AppModelStore.getSingleton().getApiKeys();
+		this.setDataModel(new RootNode());
+		// Add all the characters to the new root
 		for (NeoComApiKey key : keys.values()) {
 			_dataModelRoot.addChild(key);
-			logger.info("-- PilotListDataSource.collaborate2Model-Adding " + key.getKey() + " to the _dataModelRoot");
+			SpecialDataSource.logger
+					.info("-- [PilotListDataSource.collaborate2Model]> Adding " + key.getKey() + " to the _dataModelRoot");
 		}
-		logger.info("<< PilotListDataSource.collaborate2Model");
+		SpecialDataSource.logger.info("<< [PilotListDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
-
-	//	@Override
-	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-	//		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-	//		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_APIID_DESC));
-	//		for (final AbstractAndroidPart node : this._root) {
-	//			result.add(node);
-	//			// Check if the node is expanded but test the model. Then add its
-	//			// children.
-	//			if (node.isExpanded()) {
-	//				final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-	//				result.addAll(grand);
-	//			}
-	//		}
-	//		this._adapterData = result;
-	//		return result;
-	//	}
+	//[01]
 
 	@Override
+	@Deprecated
 	public void createPartsHierarchy() {
-		createContentHierarchy();
+		this.createContentHierarchy();
 	}
 }
 // - UNUSED CODE ............................................................................................
+//[01]
+//	@Override
+//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+//		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+//		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_APIID_DESC));
+//		for (final AbstractAndroidPart node : this._root) {
+//			result.add(node);
+//			// Check if the node is expanded but test the model. Then add its
+//			// children.
+//			if (node.isExpanded()) {
+//				final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
+//				result.addAll(grand);
+//			}
+//		}
+//		this._adapterData = result;
+//		return result;
+//	}

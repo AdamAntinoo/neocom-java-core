@@ -8,8 +8,10 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 
+import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
@@ -72,38 +74,55 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	public RootNode collaborate2Model() {
-		logger.info(">> FittingDataSource.collaborate2Model");
+		SpecialDataSource.logger.info(">> FittingDataSource.collaborate2Model");
 		try {
 			AppModelStore store = EVEDroidApp.getAppStore();
 			// Get the complete list of ships. Compare it to the current list if it exists.
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
 			// Create the testing fit from the list of predefined modules. This shluld be replaced by the Fitting locator.
-			fit = createTestFitting(manager);
+			fit = this.createTestFitting(manager);
 			_dataModelRoot = new RootNode();
 
 			// Add the classification groups and the get the first level model. The model elements are added to the
 			// right group depending on their properties.
-			doGroupInit();
+			this.doGroupInit();
 			ArrayList<AbstractComplexNode> modelList = fit
 					.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name());
-			classifyModel(modelList);
+			this.classifyModel(modelList);
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			logger.severe(
+			SpecialDataSource.logger.severe(
 					"RTEX> ShipsDatasource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		logger.info("<< ShipsDatasource.collaborate2Model");
+		SpecialDataSource.logger.info("<< ShipsDatasource.collaborate2Model");
 		return _dataModelRoot;
 	}
 
-	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
-		for (IGEFNode group : _dataModelRoot.getChildren()) {
-			if (group instanceof Separator) {
-				if (((Separator) group).getTitle().equalsIgnoreCase(igroup.toString())) {
-					group.addChild(action);
-				}
-			}
+	/**
+	 * This are the special events intercepted by this DataSource implementation. We should recreate the model
+	 * when the user changes the preferred action for an asset so the manufacturing chain has to be
+	 * recalculated.
+	 */
+	@Override
+	public void propertyChange(final PropertyChangeEvent event) {
+		// This event is when the user changes the preferred action so I have to calculate the model again.
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
+			this.collaborate2Model();
+			this.createContentHierarchy();
+			//			_bodyParts = new ArrayList<AbstractCorePart>();
+			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+					event.getNewValue());
+			return;
 		}
+		// If not intercepted then pass the event to our parent class.
+		super.propertyChange(event);
+	}
+
+	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
+		for (IGEFNode group : _dataModelRoot.getChildren())
+			if (group instanceof Separator)
+				if (((Separator) group).getTitle().equalsIgnoreCase(igroup.toString())) group.addChild(action);
 	}
 
 	/**
@@ -113,12 +132,11 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	private void classifyModel(final ArrayList<AbstractComplexNode> modelList) {
-		for (AbstractComplexNode node : modelList) {
+		for (AbstractComplexNode node : modelList)
 			if (node instanceof Action) {
 				Action action = (Action) node;
-				add2Group(action, action.getResource().getItem().getIndustryGroup());
+				this.add2Group(action, action.getResource().getItem().getIndustryGroup());
 			}
-		}
 	}
 
 	private Fitting createTestFitting(final AssetsManager manager) {
