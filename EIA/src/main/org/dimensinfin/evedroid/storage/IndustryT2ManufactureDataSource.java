@@ -59,9 +59,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT2ManufactureDataSource(final AppModelStore store) {
 		super();
-		if (null != store) {
-			_store = store;
-		}
+		if (null != store) _store = store;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -71,7 +69,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 	 */
 	@Override
 	public void createContentHierarchy() {
-		logger.info(">> IndustryT2ManufactureDataSource.createHierarchy");
+		AbstractDataSource.logger.info(">> IndustryT2ManufactureDataSource.createHierarchy");
 		// Clear the current list of elements.
 		_root.clear();
 
@@ -101,67 +99,62 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 			ArrayList<Action> actions = process.generateActions4Blueprint();
 			for (Action action : actions) {
 				ActionPart apart = new ActionPart(action);
-				if (action instanceof Skill) {
-					apart.setRenderMode(3000);
-				}
+				if (action instanceof Skill) apart.setRenderMode(3000);
 				apart.createHierarchy();
 				_bppart.addChild(apart);
 			}
 		}
 
 		// Process the actions and set each one on the matching group.
-		for (AbstractPropertyChanger action : _bppart.getChildren()) {
+		for (AbstractPropertyChanger action : _bppart.getChildren())
 			if (action instanceof ActionPart) {
 				String category = ((ActionPart) action).get_category();
 				String group = ((ActionPart) action).get_group();
 				if (group.equalsIgnoreCase("Tool")) {
-					add2Group((ActionPart) action, EIndustryGroup.ITEMS);
+					this.add2Group((ActionPart) action, EIndustryGroup.ITEMS);
 					continue;
 				}
 				if (category.equalsIgnoreCase("Commodity")) {
-					add2Group((ActionPart) action, EIndustryGroup.COMPONENTS);
+					this.add2Group((ActionPart) action, EIndustryGroup.COMPONENTS);
 					continue;
 				}
-				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.NeoComBlueprint)) {
-					add2Group((ActionPart) action, EIndustryGroup.BLUEPRINT);
+				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+					this.add2Group((ActionPart) action, EIndustryGroup.BLUEPRINT);
 					continue;
 				}
 				if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-					add2Group((ActionPart) action, EIndustryGroup.SKILL);
+					this.add2Group((ActionPart) action, EIndustryGroup.SKILL);
 					continue;
 				}
 				if (group.equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
-					add2Group((ActionPart) action, EIndustryGroup.REFINEDMATERIAL);
+					this.add2Group((ActionPart) action, EIndustryGroup.REFINEDMATERIAL);
 					continue;
 				}
 				if (category.equalsIgnoreCase("Module")) {
-					add2Group((ActionPart) action, EIndustryGroup.COMPONENTS);
+					this.add2Group((ActionPart) action, EIndustryGroup.COMPONENTS);
 					continue;
 				}
 				if (category.equalsIgnoreCase("Planetary Commodities")) {
-					add2Group((ActionPart) action, EIndustryGroup.PLANETARYMATERIALS);
+					this.add2Group((ActionPart) action, EIndustryGroup.PLANETARYMATERIALS);
 					continue;
 				}
 				if (group.equalsIgnoreCase("Datacores")) {
-					add2Group((ActionPart) action, EIndustryGroup.DATACORES);
+					this.add2Group((ActionPart) action, EIndustryGroup.DATACORES);
 					continue;
 				}
 				_root.add((AbstractAndroidPart) action);
 			}
-		}
-		logger.info("<< IndustryT2ManufactureDataSource.createHierarchy [" + _root.size() + "]");
+		AbstractDataSource.logger.info("<< IndustryT2ManufactureDataSource.createHierarchy [" + _root.size() + "]");
 	}
 
 	@Override
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
+		AbstractDataSource.logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
 			Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
 			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
-					continue;
-				}
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
 				result.add(node);
 				// Check if the node is expanded. Then add its children.
 				if (node.isExpanded()) {
@@ -172,7 +165,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 		} catch (RuntimeException rtex) {
 		}
 		_adapterData = result;
-		logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
+		AbstractDataSource.logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
 		return result;
 	}
 
@@ -195,10 +188,9 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 	}
 
 	public void setBlueprint(final BlueprintPart blueprintPart) {
@@ -206,13 +198,9 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 	}
 
 	private void add2Group(final ActionPart action, final EIndustryGroup igroup) {
-		for (AbstractAndroidPart group : _root) {
-			if (group instanceof GroupPart) {
-				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
-					group.addChild(action);
-				}
-			}
-		}
+		for (AbstractAndroidPart group : _root)
+			if (group instanceof GroupPart)
+				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) group.addChild(action);
 	}
 
 	//	private void taskCreation(final AbstractAndroidPart part) {

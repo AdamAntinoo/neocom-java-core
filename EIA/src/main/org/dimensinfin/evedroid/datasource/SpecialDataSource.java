@@ -52,8 +52,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	protected ArrayList<AbstractCorePart>	_bodyParts				= new ArrayList<AbstractCorePart>();
 	/** The list of Parts to show on the header. */
 	protected ArrayList<AbstractCorePart>	_headParts				= new ArrayList<AbstractCorePart>();
-
-	//	private DataSourceManager							_dsManager;
+	private DataSourceManager							_dsManager;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public SpecialDataSource(final DataSourceLocator locator, final IPartFactory factory) {
@@ -77,10 +76,10 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		return this;
 	}
 
-	//	@Deprecated
-	//	public void connect(final DataSourceManager dataSourceManager) {
-	//		_dsManager = dataSourceManager;
-	//	}
+	@Deprecated
+	public void connect(final DataSourceManager dataSourceManager) {
+		_dsManager = dataSourceManager;
+	}
 
 	/**
 	 * After the model is created we have to transform it into the Part list expected by the DataSourceAdapter.

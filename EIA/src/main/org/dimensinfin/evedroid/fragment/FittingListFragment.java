@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -18,6 +18,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.factory.FittingPartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.interfaces.IPagerFragment;
@@ -65,19 +66,19 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	 */
 	@Override
 	public void onStart() {
-		logger.info(">> [FittingListFragment.onStart]");
+		FittingListFragment.logger.info(">> [FittingListFragment.onStart]");
 		try {
-			setIdentifier(_variant.hashCode());
-			registerDataSource();
+			this.setIdentifier(_variant.hashCode());
+			this.registerDataSource();
 			// This fragment has a header. Populate it with the datasource header contents.
-			setHeaderContents();
+			this.setHeaderContents();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
 		}
 		super.onStart();
-		logger.info("<< [FittingListFragment.onStart]");
+		FittingListFragment.logger.info("<< [FittingListFragment.onStart]");
 	}
 
 	/**
@@ -85,25 +86,21 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	 * also for each fragment variant.
 	 */
 	public void registerDataSource() {
-		logger.info(">> [FittingListFragment.registerDataSource]");
-		Bundle extras = getExtras();
+		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
+		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
-		//		String fittingLabel = "Purifier";
-		if (null != extras) {
-			capsuleerid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
-			//			fittingLabel = extras.getString(AppWideConstants.EExtras.FITTINGID.name());
-		}
+		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name()).addIdentifier(capsuleerid);
-		// This part of the code may depend on the variant so surronud it with the detector.
-		if (_variant == AppWideConstants.EFragment.FITTING_LIST) {
+		// This part of the code may depend on the variant so surround it with the detector.
+		if (this.getVariant() == EVARIANT.FITTING_LIST) {
 			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 			SpecialDataSource ds = new FittingListDataSource(locator, new FittingPartFactory(_variant));
 			ds.setVariant(_variant);
-			ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
+			ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
 			//			ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
-			setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
+			this.setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
 		}
-		logger.info("<< [FittingListFragment.registerDataSource]");
+		FittingListFragment.logger.info("<< [FittingListFragment.registerDataSource]");
 	}
 
 	/**
@@ -145,40 +142,34 @@ final class FittingListDataSource extends SpecialDataSource {
 	 * Get the list of available fittings from the store and classify them from the Group category.
 	 */
 	public RootNode collaborate2Model() {
-		logger.info(">> [FittingListDataSource.collaborate2Model]");
+		FittingListDataSource.logger.info(">> [FittingListDataSource.collaborate2Model]");
 		try {
-			AppModelStore store = EVEDroidApp.getAppStore();
+			AppModelStore store = AppModelStore.getSingleton();
 			HashMap<String, Fitting> fitList = store.getFittings();
 			// Create the list of Groups.
 			_dataModelRoot = new RootNode();
 			defaultGroup.clean();
-			initGroups();
+			this.initGroups();
 			for (Fitting fit : fitList.values()) {
-				logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
+				FittingListDataSource.logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
 				// Classify the fitting.
 				ExpandableGroup targetGroup = groups.get(fit.getHull().getGroupName());
-				if (null == targetGroup) {
+				if (null == targetGroup)
 					defaultGroup.addChild(fit);
-				} else {
+				else
 					targetGroup.addChild(fit);
-				}
 			}
 			// Link the non empty hull groups into the Data model root.
-			for (ExpandableGroup group : groups.values()) {
-				if (group.getChildren().size() > 0) {
-					_dataModelRoot.addChild(group);
-				}
-			}
+			for (ExpandableGroup group : groups.values())
+				if (group.getChildren().size() > 0) _dataModelRoot.addChild(group);
 			// Add the default group if not empty.
-			if (defaultGroup.getChildren().size() > 0) {
-				_dataModelRoot.addChild(defaultGroup);
-			}
+			if (defaultGroup.getChildren().size() > 0) _dataModelRoot.addChild(defaultGroup);
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			logger
+			FittingListDataSource.logger
 					.severe("RTEX> FittingListDataSource.collaborate2Model-There is a problem while generating the Data model.");
 		}
-		logger.info("<< [FittingListDataSource.collaborate2Model]");
+		FittingListDataSource.logger.info("<< [FittingListDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
 

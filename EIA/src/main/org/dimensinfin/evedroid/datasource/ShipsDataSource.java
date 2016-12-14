@@ -17,6 +17,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.NeoComAsset;
@@ -64,7 +65,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	public RootNode collaborate2Model() {
-		logger.info(">> ShipsDatasource.collaborate2Model");
+		SpecialDataSource.logger.info(">> ShipsDatasource.collaborate2Model");
 		try {
 			AppModelStore store = EVEDroidApp.getAppStore();
 			// Get the complete list of ships. Compare it to the current list if it exists.
@@ -78,18 +79,18 @@ public class ShipsDataSource extends SpecialDataSource {
 				for (NeoComAsset ship : assetsShips) {
 					long locid = ship.getLocationID();
 					String category = ship.getGroupName();
-					add2Location(locid, ship);
-					add2Category(category, ship);
+					this.add2Location(locid, ship);
+					this.add2Category(category, ship);
 				}
 			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			logger.severe(
+			SpecialDataSource.logger.severe(
 					"RTEX> ShipsDatasource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		setupOutputModel();
+		this.setupOutputModel();
 		// [01]
-		logger.info("<< ShipsDatasource.collaborate2Model");
+		SpecialDataSource.logger.info("<< ShipsDatasource.collaborate2Model");
 		return _dataModelRoot;
 	}
 
@@ -118,7 +119,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		if (null == hit) {
 			hit = new ShipLocation(ship.getLocation());
 			// Add the new location to the list of locations and to the Regions
-			add2Region(hit);
+			this.add2Region(hit);
 			_locations.put(locationid, hit);
 		}
 		hit.addChild(ship);
@@ -163,27 +164,18 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * </ul>
 	 */
 	private void setupOutputModel() {
-		if (null == _dataModelRoot) {
+		if (null == _dataModelRoot)
 			_dataModelRoot = new RootNode();
-		} else {
+		else
 			_dataModelRoot.clean();
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-			if (ifGroupLocations()) {
-				for (Region node : _regions.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			} else {
-				for (ShipLocation node : _locations.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			}
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
-			for (Separator node : _categories.values()) {
+		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION) if (this.ifGroupLocations())
+			for (Region node : _regions.values())
 				_dataModelRoot.addChild(node);
-			}
-		}
+		else
+			for (ShipLocation node : _locations.values())
+				_dataModelRoot.addChild(node);
+		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS) for (Separator node : _categories.values())
+			_dataModelRoot.addChild(node);
 	}
 
 	//	@Override

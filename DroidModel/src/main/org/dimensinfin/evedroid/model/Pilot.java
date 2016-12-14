@@ -25,14 +25,21 @@ import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.corporation.AssetListParser;
 import com.beimin.eveapi.parser.pilot.BlueprintsParser;
+import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.IndustryJobsParser;
 import com.beimin.eveapi.parser.pilot.MarketOrdersParser;
+import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
+import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
+import com.beimin.eveapi.response.pilot.SkillQueueResponse;
+import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
@@ -339,6 +346,42 @@ public class Pilot extends NeoComCharacter {
 
 	public void setSkillQueue(final Set<SkillQueueItem> skilllist) {
 		skills = skilllist;
+	}
+
+	/**
+	 * At the Character creation we only have the key values to locate it into the CCP databases. During this
+	 * execution we have to download many different info from many CCP API calls so it will take some time.<br>
+	 * After this update we will have access to all the direct properties of a character. Other multiple value
+	 * properties like assets or derived lists will be updated when needed by using other update calls.
+	 */
+	public synchronized void updateCharacterInfo() {
+		try {
+			// Go to the API and get more information for this character.
+			// Balance information
+			AccountBalanceParser balanceparser = new AccountBalanceParser();
+			AccountBalanceResponse balanceresponse = balanceparser.getResponse(apikey.getAuthorization());
+			if (null != balanceresponse) {
+				Set<EveAccountBalance> balance = balanceresponse.getAll();
+				if (balance.size() > 0) this.setAccountBalance(balance.iterator().next().getBalance());
+			}
+			// Character sheet information
+			CharacterSheetParser sheetparser = new CharacterSheetParser();
+			CharacterSheetResponse sheetresponse = sheetparser.getResponse(apikey.getAuthorization());
+			if (null != sheetresponse) this.setCharacterSheet(sheetresponse);
+			// Skill list
+			SkillQueueParser skillparser = new SkillQueueParser();
+			SkillQueueResponse skillresponse = skillparser.getResponse(apikey.getAuthorization());
+			if (null != skillresponse) this.setSkillQueue(skillresponse.getAll());
+			// Skill in training
+			SkillInTrainingParser trainingparser = new SkillInTrainingParser();
+			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(apikey.getAuthorization());
+			if (null != skillresponse) this.setSkillInTraining(trainingresponse);
+			// Full list of assets from database.
+			this.accessAllAssets();
+		} catch (ApiException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 	}
 }
 

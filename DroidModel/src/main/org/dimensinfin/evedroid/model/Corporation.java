@@ -24,12 +24,15 @@ import org.joda.time.Instant;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.corporation.AssetListParser;
 import com.beimin.eveapi.parser.corporation.BlueprintsParser;
 import com.beimin.eveapi.parser.corporation.IndustryJobsParser;
 import com.beimin.eveapi.parser.corporation.MarketOrdersParser;
+import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
@@ -77,9 +80,10 @@ public class Corporation extends NeoComCharacter {
 	 * database records not associated to any owner, the add records for a generic owner and finally change the
 	 * owner to this character.
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadAssets() {
-		logger.info(">> EveChar.updateAssets");
+		Corporation.logger.info(">> EveChar.updateAssets");
 		try {
 			// Clear any previous record with owner -1 from database.
 			AppConnector.getDBConnector().clearInvalidRecords();
@@ -103,12 +107,11 @@ public class Corporation extends NeoComCharacter {
 				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets) {
-					processAsset(eveAsset, null);
-				}
+				for (final Asset eveAsset : assets)
+					this.processAsset(eveAsset, null);
 			}
 			//			}
-			AppConnector.getDBConnector().replaceAssets(getCharacterID());
+			AppConnector.getDBConnector().replaceAssets(this.getCharacterID());
 
 			// Update the caching time to the time set by the eveapi.
 			assetsCacheTime = new Instant(response.getCachedUntil());
@@ -121,9 +124,9 @@ public class Corporation extends NeoComCharacter {
 		//		clearTimers();
 		//		JobManager.clearCache();
 
-		setDirty(true);
-		fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
-		logger.info("<< EveChar.updateAssets");
+		this.setDirty(true);
+		this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
+		Corporation.logger.info("<< EveChar.updateAssets");
 	}
 
 	/**
@@ -132,6 +135,7 @@ public class Corporation extends NeoComCharacter {
 	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
 	 * Current grouping is by IF-LOCATION-CONTAINER.
 	 */
+	@Override
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadBlueprints() {
 		try {
@@ -151,29 +155,28 @@ public class Corporation extends NeoComCharacter {
 			if (null != response) {
 				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
-				for (Blueprint bp : blueprints) {
+				for (Blueprint bp : blueprints)
 					try {
-						bplist.add(convert2Blueprint(bp));
+						bplist.add(this.convert2Blueprint(bp));
 					} catch (final RuntimeException rtex) {
 						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-						logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
-						logger.info("W> " + bp.toString());
+						Corporation.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
+						Corporation.logger.info("W> " + bp.toString());
 					}
-				}
 			}
 			//			}
 			// Pack the blueprints and store them on the database.
-			getAssetsManager().storeBlueprints(bplist);
-			AppConnector.getDBConnector().replaceBlueprints(getCharacterID());
+			this.getAssetsManager().storeBlueprints(bplist);
+			AppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
 			// Update the caching time to the time set by the eveapi.
 			blueprintsCacheTime = new Instant(response.getCachedUntil());
 			// Update the dirty state to signal modification of store structures.
-			setDirty(true);
+			this.setDirty(true);
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
 		final Duration lapse = AppConnector.timeLapse();
-		logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
+		Corporation.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	}
 
 	/**
@@ -183,8 +186,9 @@ public class Corporation extends NeoComCharacter {
 	 * After the processing check for User Jobs converted to running jobs and remove them from the app list
 	 * because the user has already launched them on the real EVE client.
 	 */
+	@Override
 	public void downloadIndustryJobs() {
-		logger.info(">> EveChar.updateIndustryJobs");
+		Corporation.logger.info(">> EveChar.updateIndustryJobs");
 		try {
 			// Clear any previous record with owner -1 from database.
 			//		AppConnector.getDBConnector().clearInvalidRecords();
@@ -195,15 +199,16 @@ public class Corporation extends NeoComCharacter {
 				Set<IndustryJob> jobs = responsehist.getAll();
 				jobsCacheTime = new Instant(responsehist.getCachedUntil());
 				for (final IndustryJob evejob : jobs) {
-					final Job myjob = convert2Job(evejob);
+					final Job myjob = this.convert2Job(evejob);
 					// Set the owner my there is not job cleanup.
 					//					myjob.setOwnerID(getCharacterID());
 					try {
 						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
 						jobDao.createOrUpdate(myjob);
-						logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
+						Corporation.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
 					} catch (final SQLException sqle) {
-						logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
+						Corporation.logger
+								.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
 						sqle.printStackTrace();
 					}
 				}
@@ -233,12 +238,13 @@ public class Corporation extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		setDirty(true);
-		logger.info("<< EveChar.updateIndustryJobs");
+		this.setDirty(true);
+		Corporation.logger.info("<< EveChar.updateIndustryJobs");
 	}
 
+	@Override
 	public void downloadMarketOrders() {
-		logger.info(">> EveChar.updateMarketOrders");
+		Corporation.logger.info(">> EveChar.updateMarketOrders");
 		try {
 			// Download and parse the market orders.
 			MarketOrdersParser parser = new MarketOrdersParser();
@@ -246,14 +252,15 @@ public class Corporation extends NeoComCharacter {
 			if (null != response) {
 				Set<MarketOrder> orders = response.getAll();
 				for (final MarketOrder eveorder : orders) {
-					final NeoComMarketOrder myorder = convert2Order(eveorder);
+					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
 					try {
 						final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
 						marketOrderDao.createOrUpdate(myorder);
-						logger.finest(
+						Corporation.logger.finest(
 								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
 					} catch (final SQLException sqle) {
-						logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
+						Corporation.logger
+								.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
 						sqle.printStackTrace();
 					}
 				}
@@ -262,8 +269,30 @@ public class Corporation extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		setDirty(true);
-		logger.info("<< EveChar.updateMarketOrders");
+		this.setDirty(true);
+		Corporation.logger.info("<< EveChar.updateMarketOrders");
+	}
+
+	/**
+	 * At the Character creation we only have the key values to locate it into the CCP databases. During this
+	 * execution we have to download many different info from many CCP API calls so it will take some time.<br>
+	 * After this update we will have access to all the direct properties of a character. Other multiple value
+	 * properties like assets or derived lists will be updated when needed by using other update calls.
+	 */
+	public synchronized void updateCharacterInfo() {
+		try {
+			// Go to the API and get more information for this character.
+			// Balance information
+			AccountBalanceParser balanceparser = new AccountBalanceParser();
+			AccountBalanceResponse balanceresponse = balanceparser.getResponse(apikey.getAuthorization());
+			if (null != balanceresponse) {
+				Set<EveAccountBalance> balance = balanceresponse.getAll();
+				if (balance.size() > 0) this.setAccountBalance(balance.iterator().next().getBalance());
+			}
+		} catch (ApiException ex) {
+			// TODO Auto-generated catch block
+			ex.printStackTrace();
+		}
 	}
 }
 

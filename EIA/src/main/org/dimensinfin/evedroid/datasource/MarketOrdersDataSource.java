@@ -17,6 +17,7 @@ import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.model.MarketOrderAnalyticalGroup;
 import org.dimensinfin.evedroid.model.NeoComMarketOrder;
@@ -85,9 +86,8 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		Collections.sort(analyticalGroups, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
 		// Add all the collaborations to the output list
 		modelList.clear();
-		for (final MarketOrderAnalyticalGroup group : analyticalGroups) {
-			modelList.addAll(group.collaborate2Model());
-		}
+		for (final MarketOrderAnalyticalGroup group : analyticalGroups)
+			modelList.addAll(group.collaborate2Model(EVARIANT.DEFAULT_VARIANT.name()));
 
 		// Create the hierarchy from the model list.
 		for (final IGEFNode node : modelList) {
@@ -101,18 +101,13 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 				hierarchy
 						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
 			}
-			if (node instanceof NeoComMarketOrder) {
+			if (node instanceof NeoComMarketOrder)
 				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((NeoComMarketOrder) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
-			}
-			if (node instanceof Resource) {
-				hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
-						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
-			}
-			if (node instanceof Separator) {
-				hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
-						.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
-			}
+			if (node instanceof Resource) hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
+			if (node instanceof Separator) hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
 		}
 		_adapterData = hierarchy;
 		return hierarchy;
@@ -141,14 +136,12 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
-		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 	}
 
 }

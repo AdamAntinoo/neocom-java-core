@@ -481,6 +481,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return buffer.toString();
 	}
 
+	public abstract void updateCharacterInfo();
+
 	/**
 	 * Updates the list of assets, regions and locations from the database. This code will initialize the
 	 * AssetsManager with that information on application load preferably and that lengthy operation will be

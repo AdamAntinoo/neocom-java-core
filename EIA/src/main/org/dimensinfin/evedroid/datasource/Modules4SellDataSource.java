@@ -18,7 +18,6 @@ import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.part.LocationMarketPart;
-import org.dimensinfin.evedroid.part.StackPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................

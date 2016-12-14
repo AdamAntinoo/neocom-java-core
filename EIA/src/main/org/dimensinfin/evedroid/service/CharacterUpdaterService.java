@@ -76,9 +76,7 @@ public class CharacterUpdaterService extends IntentService {
 							break;
 					}
 					// Clean the top counter if completed.
-					if (EVEDroidApp.topCounter < 0) {
-						EVEDroidApp.topCounter = 0;
-					}
+					if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
 				} catch (RuntimeException rtex) {
 				}
 			}

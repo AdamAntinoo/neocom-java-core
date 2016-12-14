@@ -12,8 +12,6 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.evedroid.activity.MiningSessionActivity;
-import org.dimensinfin.evedroid.holder.AsteroidOnProgressHolder;
 import org.dimensinfin.evedroid.model.Asteroid;
 import org.dimensinfin.evedroid.model.EveItem;
 
