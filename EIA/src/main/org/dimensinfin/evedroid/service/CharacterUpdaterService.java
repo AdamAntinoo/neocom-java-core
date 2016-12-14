@@ -11,6 +11,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EDataBlock;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -41,7 +42,7 @@ public class CharacterUpdaterService extends IntentService {
 		Long localizer = (Long) intent.getSerializableExtra(AppWideConstants.extras.EXTRA_CHARACTER_LOCALIZER);
 		// Be sure we have access to the network. Otherwise intercept the exceptions.
 		if (EVEDroidApp.checkNetworkAccess()) {
-			NeoComCharacter pilot = EVEDroidApp.getAppStore().searchCharacter(localizer);
+			NeoComCharacter pilot = AppModelStore.getSingleton().searchCharacter(localizer);
 			if (null != pilot) {
 				// Pilot signaled for update. Locate the next data set to update because its cache has expired.
 				EDataBlock datacode = pilot.needsUpdate();

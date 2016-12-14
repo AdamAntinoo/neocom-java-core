@@ -114,8 +114,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the delegated core eveapi Character */
 	protected NeoComApiKey										apikey							= null;
-	protected Character												delegatedCharacter	= null;
-	protected CharacterInfoResponse						characterInfo				= null;
+	protected transient Character							delegatedCharacter	= null;
+	protected transient CharacterInfoResponse	characterInfo				= null;
 	private final boolean											active							= true;
 	private double														accountBalance			= 0.0;
 	//	private long															totalAssets					= -1;

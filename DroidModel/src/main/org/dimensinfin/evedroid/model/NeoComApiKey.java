@@ -73,6 +73,8 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 			apiKey.setValidationCode(validationcode);
 			apiKey.setCachedUntil(inforesponse.getCachedUntil());
 			// TODO get the error and the version to complete the api and check the Error for any kind of problem.
+			// TODO move the download of the characters to a new location and force its caching.
+			apiKey.getApiCharacters();
 		} else
 			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
 		AccountStatusParser statusparser = new AccountStatusParser();
@@ -85,13 +87,14 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private ApiAuthorization				authorization		= null;
-	private transient ApiKeyInfo		delegatedApiKey	= null;
-	private transient AccountStatus	delegateStatus	= null;
-	private int											key							= -1;
-	private String									validationCode	= "<INVALID>";
-	private Date										cachedUntil			= GregorianCalendar.getInstance().getTime();
-	private Instant									paidUntil				= new Instant(0);
+	private ApiAuthorization						authorization					= null;
+	private transient ApiKeyInfo				delegatedApiKey				= null;
+	private transient AccountStatus			delegateStatus				= null;
+	private ArrayList<NeoComCharacter>	neocomCharactersCache	= null;
+	private int													key										= -1;
+	private String											validationCode				= "<INVALID>";
+	private Date												cachedUntil						= GregorianCalendar.getInstance().getTime();
+	private Instant											paidUntil							= new Instant(0);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private NeoComApiKey() {
@@ -117,14 +120,23 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		return delegatedApiKey.getAccessMask();
 	}
 
+	/**
+	 * Get the list of characters. Force the caching of this information to avoid getting them from the main
+	 * thread and be sure we can get on initialization.
+	 * 
+	 * @return
+	 * @throws ApiException
+	 */
 	public ArrayList<NeoComCharacter> getApiCharacters() throws ApiException {
-		ArrayList<NeoComCharacter> result = new ArrayList<NeoComCharacter>();
-		Collection<Character> coreList = delegatedApiKey.getEveCharacters();
-		for (Character character : coreList) {
-			NeoComCharacter neochar = NeoComCharacter.build(character, this);
-			result.add(neochar);
+		if (null == neocomCharactersCache) {
+			neocomCharactersCache = new ArrayList<NeoComCharacter>();
+			Collection<Character> coreList = delegatedApiKey.getEveCharacters();
+			for (Character character : coreList) {
+				NeoComCharacter neochar = NeoComCharacter.build(character, this);
+				neocomCharactersCache.add(neochar);
+			}
 		}
-		return result;
+		return neocomCharactersCache;
 	}
 
 	public ApiAuthorization getAuthorization() {

@@ -94,6 +94,9 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 		// Create a new from scratch. Read the api key list.
 		AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
 		AppModelStore.readApiKeys();
+
+		// Make sure we get the characters on a thread out of the main one.
+		AppModelStore.getSingleton().getCharacters();
 	}
 
 	private static void readApiKeys() {

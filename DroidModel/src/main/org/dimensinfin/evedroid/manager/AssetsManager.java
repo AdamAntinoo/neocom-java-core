@@ -128,7 +128,8 @@ public class AssetsManager implements Serializable {
 					point = assetMap.get(key);
 				}
 			} catch (Exception nsee) {
-				nsee.printStackTrace();
+				// Reached the end of the list of assets to process.
+				AssetsManager.logger.info("-- [AssetsManager.accessAllAssets]> No more assets to process");
 			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
@@ -156,6 +157,7 @@ public class AssetsManager implements Serializable {
 			Duration lapse = AppConnector.timeLapse();
 			AssetsManager.logger
 					.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + this.getPilot().getCharacterID() + "] - " + lapse);
+			AssetsManager.logger.info("-- Assets processed: " + assetList.size());
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
