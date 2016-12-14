@@ -39,8 +39,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import android.support.v4.util.LongSparseArray;
-
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to
  * cache and manage all data in favor of speed versus space. Takes care to update memory references so model
@@ -77,11 +75,11 @@ public class AssetsManager implements Serializable {
 	private long																						totalAssets						= -1;
 	private long																						verficationAssetCount	= 0;
 	private double																					totalAssetsValue			= 0.0;
-	private final LongSparseArray<Region>										regions								= new LongSparseArray<Region>();
-	private final LongSparseArray<EveLocation>							locations							= new LongSparseArray<EveLocation>();
-	private final LongSparseArray<NeoComAsset>							containers						= new LongSparseArray<NeoComAsset>();
-	private final LongSparseArray<NeoComAsset>							assetsAtContainer			= new LongSparseArray<NeoComAsset>();
-	private transient LongSparseArray<NeoComAsset>					assetMap							= new LongSparseArray<NeoComAsset>();
+	private final HashMap<Long, Region>											regions								= new HashMap<Long, Region>();
+	private final HashMap<Long, EveLocation>								locations							= new HashMap<Long, EveLocation>();
+	private final HashMap<Long, NeoComAsset>								containers						= new HashMap<Long, NeoComAsset>();
+	private final HashMap<Long, NeoComAsset>								assetsAtContainer			= new HashMap<Long, NeoComAsset>();
+	private transient HashMap<Long, NeoComAsset>						assetMap							= new HashMap<Long, NeoComAsset>();
 	private final HashMap<Long, ArrayList<NeoComAsset>>			assetsAtLocationcache	= new HashMap<Long, ArrayList<NeoComAsset>>();
 	private final HashMap<String, ArrayList<NeoComAsset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<NeoComAsset>>();
 	private final HashMap<Integer, ArrayList<NeoComAsset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<NeoComAsset>>();
@@ -117,16 +115,16 @@ public class AssetsManager implements Serializable {
 			//			final AssetsManager manager = store.getPilot().getAssetsManager();
 			ArrayList<NeoComAsset> assets = this.getAllAssets();
 			// Move the list to a processing map.
-			assetMap = new LongSparseArray<NeoComAsset>(assets.size());
+			assetMap = new HashMap<Long, NeoComAsset>(assets.size());
 			for (NeoComAsset asset : assets)
 				assetMap.put(asset.getAssetID(), asset);
 			// Process the map until all elements are removed.
 			try {
-				Long key = assetMap.keyAt(0);
+				Long key = assetMap.keySet().iterator().next();
 				NeoComAsset point = assetMap.get(key);
 				while (null != point) {
 					this.processElement(point);
-					key = assetMap.keyAt(0);
+					key = assetMap.keySet().iterator().next();
 					point = assetMap.get(key);
 				}
 			} catch (Exception nsee) {
