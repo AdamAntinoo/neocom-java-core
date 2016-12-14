@@ -41,34 +41,33 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 	}
 
 	public CharSequence get_fittingRunsCount() {
-		return Integer.valueOf(getCastedModel().getRuns()).toString();
+		return Integer.valueOf(this.getCastedModel().getRuns()).toString();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String getHullGroup() {
-		return getCastedModel().getHull().getItem().getGroupName();
+		return this.getCastedModel().getHull().getItem().getGroupName();
 	}
 
 	public String getHullName() {
-		return getCastedModel().getHull().getItem().getName();
+		return this.getCastedModel().getHull().getItem().getName();
 	}
 
 	public int getHullTypeID() {
-		return getCastedModel().getHull().getItem().getTypeID();
+		return this.getCastedModel().getHull().getItem().getTypeID();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getName().hashCode();
+		return this.getCastedModel().getName().hashCode();
 	}
 
-	@Override
 	public String getName() {
-		return getCastedModel().getName();
+		return this.getCastedModel().getName();
 	}
 
 	public int getRuns() {
-		return getCastedModel().getRuns();
+		return this.getCastedModel().getRuns();
 	}
 
 	public String getSlotsInfo() {
@@ -85,9 +84,9 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 	 */
 	// REFACTOR Removed during the DataSource integration
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
-		logger.info(">> [FittingPart.onCreateContextMenu]");
+		FittingPart.logger.info(">> [FittingPart.onCreateContextMenu]");
 		// Check the renderer to see if I have to show the dialog or not. Only valid if in a header.
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_FITTINGHEADER) {
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_FITTINGHEADER) {
 			final FittingRunsDialog dialog = new FittingRunsDialog();
 			dialog.setFittingPart(this);
 			//			final BlueprintPart self = this;
@@ -103,16 +102,16 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 					// Get the number of runs selected by the user.
 					final int runs = ((FittingRunsDialog) dialog).getRuns();
 					// Update the model with the new runs value
-					getCastedModel().setRuns(runs);
-					invalidate();
-					firePropertyChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+					FittingPart.this.getCastedModel().setRuns(runs);
+					FittingPart.this.invalidate();
+					FittingPart.this.firePropertyChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
 				}
 			});
 			//
-			getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-			dialog.show(getActivity().getFragmentManager(), "JobRunsDialog");
+			this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+			dialog.show(this.getActivity().getFragmentManager(), "JobRunsDialog");
 		}
-		logger.info("<< [FittingPart.onCreateContextMenu]");
+		FittingPart.logger.info("<< [FittingPart.onCreateContextMenu]");
 	}
 
 	@Override
@@ -121,7 +120,7 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 	}
 
 	private Fitting getCastedModel() {
-		return (Fitting) getModel();
+		return (Fitting) this.getModel();
 	}
 
 }

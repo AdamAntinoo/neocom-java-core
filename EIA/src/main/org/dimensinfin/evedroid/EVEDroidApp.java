@@ -528,7 +528,6 @@ public class EVEDroidApp extends Application implements IConnector {
 		return dbconnector;
 	}
 
-	@Override
 	@Deprecated
 	public INeoComModelStore getModelStore() {
 		return AppModelStore.getSingleton();

@@ -120,7 +120,6 @@ final class ShipPartFactory implements IPartFactory {
 	 * The method should create the matching part for the model received but there is no other place where we
 	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
 	 */
-	@Override
 	public IEditPart createPart(final IGEFNode node) {
 		if (node instanceof Region) {
 			AbstractCorePart part = new RegionPart((Region) node);
