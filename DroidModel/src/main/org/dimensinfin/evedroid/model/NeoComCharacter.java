@@ -384,6 +384,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return delegatedCharacter.getName();
 	}
 
+	public ArrayList<NeoComAsset> getShips() {
+		return this.searchAsset4Category(this.getCharacterID(), "Ship");
+	}
+
 	/**
 	 * Return the active state set by the user. The user can hide some characters from the application
 	 * processing through this flag.
@@ -671,6 +675,25 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
 			sqle.printStackTrace();
 		}
+	}
+
+	protected ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {
+		//	Select assets for the owner and with an specific type id.
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		try {
+			Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("ownerID", characterID);
+			where.and();
+			where.eq("category", category);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			assetList = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<NeoComAsset>) assetList;
+
 	}
 
 	protected ArrayList<Job> searchIndustryJobs() {

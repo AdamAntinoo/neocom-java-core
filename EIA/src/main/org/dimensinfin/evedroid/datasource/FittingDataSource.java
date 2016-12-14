@@ -8,18 +8,16 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
-import java.beans.PropertyChangeEvent;
+//- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EIndustryGroup;
-import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Fitting;
@@ -44,11 +42,10 @@ import org.dimensinfin.evedroid.storage.AppModelStore;
 public class FittingDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7810087592108417570L;
+	private static Logger			logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Fitting						fit								= null;
-
-	//	private final ArrayList<Asset>						ships							= null;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public FittingDataSource(final DataSourceLocator locator, final IPartFactory factory) {
@@ -56,67 +53,36 @@ public class FittingDataSource extends SpecialDataSource {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * The data model exported by this method can have two or three levels. If the region grouping is off then
-	 * we return the list of locations that contain ships. If the Region grouping is on then we return the list
-	 * of Regions that point also to the contained Locations. <br>
-	 * The DataSource keeps the list of ships and compares it to the current list so if it is the same then we
-	 * do not do any processing. <br>
-	 * There are two models that can be returned, the ships by Location model and also the ship by Category.
-	 * Both are enerated at the same time. <br>
-	 * The first action is to go to the Pilot asset list and get all the assets with the Category Ship. This
-	 * will return a list of Assets we can transform into Ships. There are two classes for this. The packaged
-	 * ships are simple assets that will not expand to anything else while the other class, the active ships can
-	 * have contents and a fit. That ones are the ones being converted to Ships. <br>
-	 * This new ships will inherit the content management properties of a Container and some of the logic of the
-	 * ShipPart.
-	 * 
-	 * @return
-	 */
 	public RootNode collaborate2Model() {
-		SpecialDataSource.logger.info(">> FittingDataSource.collaborate2Model");
+		FittingDataSource.logger.info(">> [FittingDataSource.collaborate2Model]");
 		try {
-			AppModelStore store = EVEDroidApp.getAppStore();
-			// Get the complete list of ships. Compare it to the current list if it exists.
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
-			// Create the testing fit from the list of predefined modules. This shluld be replaced by the Fitting locator.
-			fit = this.createTestFitting(manager);
-			_dataModelRoot = new RootNode();
+			this.initDataSourceModel();
 
 			// Add the classification groups and the get the first level model. The model elements are added to the
 			// right group depending on their properties.
+			_dataModelRoot = new RootNode();
 			this.doGroupInit();
 			ArrayList<AbstractComplexNode> modelList = fit
 					.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name());
 			this.classifyModel(modelList);
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			SpecialDataSource.logger.severe(
-					"RTEX> ShipsDatasource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+			FittingDataSource.logger.severe(
+					"RTEX> FittingDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		SpecialDataSource.logger.info("<< ShipsDatasource.collaborate2Model");
+		FittingDataSource.logger.info("<< [FittingDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
 
 	/**
-	 * This are the special events intercepted by this DataSource implementation. We should recreate the model
-	 * when the user changes the preferred action for an asset so the manufacturing chain has to be
-	 * recalculated.
+	 * Returns the header root element that contains the header elements to show on the Activity.<br>
+	 * For this implementation we just return the fitting that is the only element to include on the head.
 	 */
-	@Override
-	public void propertyChange(final PropertyChangeEvent event) {
-		// This event is when the user changes the preferred action so I have to calculate the model again.
-		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
-			this.collaborate2Model();
-			this.createContentHierarchy();
-			//			_bodyParts = new ArrayList<AbstractCorePart>();
-			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-					event.getNewValue());
-			return;
-		}
-		// If not intercepted then pass the event to our parent class.
-		super.propertyChange(event);
+	public RootNode getHeaderModel() {
+		this.initDataSourceModel();
+		RootNode root = new RootNode();
+		root.addChild(fit);
+		return root;
 	}
 
 	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
@@ -132,11 +98,13 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	private void classifyModel(final ArrayList<AbstractComplexNode> modelList) {
+		FittingDataSource.logger.info(">> [FittingDataSource.classifyModel]");
 		for (AbstractComplexNode node : modelList)
 			if (node instanceof Action) {
 				Action action = (Action) node;
 				this.add2Group(action, action.getResource().getItem().getIndustryGroup());
 			}
+		FittingDataSource.logger.info("<< [FittingDataSource.classifyModel]");
 	}
 
 	private Fitting createTestFitting(final AssetsManager manager) {
@@ -157,19 +125,54 @@ public class FittingDataSource extends SpecialDataSource {
 	}
 
 	private void doGroupInit() {
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()));
-		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()));
+		boolean renderEmptyState = false;
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SKILL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.BLUEPRINT.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.HULL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMPONENTS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.CHARGE.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.COMMODITY.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.REFINEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.SALVAGEDMATERIAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATACORES.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DATAINTERFACES.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.DECRIPTORS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.MINERAL.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.ITEMS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot
+				.addChild(new Separator(EIndustryGroup.PLANETARYMATERIALS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot
+				.addChild(new Separator(EIndustryGroup.REACTIONMATERIALS.name()).setRenderWhenEmpty(renderEmptyState));
+		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()).setRenderWhenEmpty(renderEmptyState));
+	}
+
+	/**
+	 * The data model exported by this method can have two or three levels. If the region grouping is off then
+	 * we return the list of locations that contain ships. If the Region grouping is on then we return the list
+	 * of Regions that point also to the contained Locations. <br>
+	 * The DataSource keeps the list of ships and compares it to the current list so if it is the same then we
+	 * do not do any processing. <br>
+	 * There are two models that can be returned, the ships by Location model and also the ship by Category.
+	 * Both are generated at the same time. <br>
+	 * The first action is to go to the Pilot asset list and get all the assets with the Category Ship. This
+	 * will return a list of Assets we can transform into Ships. There are two classes for this. The packaged
+	 * ships are simple assets that will not expand to anything else while the other class, the active ships can
+	 * have contents and a fit. That ones are the ones being converted to Ships. <br>
+	 * This new ships will inherit the content management properties of a Container and some of the logic of the
+	 * ShipPart.
+	 * 
+	 * @return
+	 */
+	private void initDataSourceModel() {
+		AppModelStore store = AppModelStore.getSingleton();
+		long capsuleerId = this.getParameterLong(AppWideConstants.EExtras.CAPSULEERID.name());
+		String fittingLabel = this.getParameterString(AppWideConstants.EExtras.FITTINGID.name());
+		final AssetsManager manager = store.getPilot().getAssetsManager();
+		if (capsuleerId == 0)
+			fit = this.createTestFitting(manager);
+		else
+			fit = store.searchFitting(fittingLabel);
+		if (null == fit) fit = this.createTestFitting(manager);
 	}
 }
 // - UNUSED CODE ............................................................................................

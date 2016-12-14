@@ -16,7 +16,7 @@ import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Fitting;
@@ -27,16 +27,15 @@ import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.TaskPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class FittingPartFactory implements IPartFactory {
+public class FittingPartFactory extends PartFactory implements IPartFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger	= Logger.getLogger("FittingPartFactory");
+	private static Logger logger = Logger.getLogger("FittingPartFactory");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private EFragment			variant	= AppWideConstants.EFragment.DEFAULT_VARIANT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public FittingPartFactory(final EFragment variantSelected) {
-		variant = variantSelected;
+	public FittingPartFactory(final EVARIANT variantSelected) {
+		super(variantSelected);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -49,9 +48,9 @@ public class FittingPartFactory implements IPartFactory {
 	 */
 	@Override
 	public IEditPart createPart(final IGEFNode node) {
-		logger.info("-- [FittingPartFactory.createPart]> Node class: " + node.getClass().getName());
+		FittingPartFactory.logger.info("-- [FittingPartFactory.createPart]> Node class: " + node.getClass().getName());
 		// Set of Parts for the list of fittings.
-		if (variant == AppWideConstants.EFragment.FITTING_LIST) {
+		if (this.getVariant() == EVARIANT.FITTING_LIST.name()) {
 			if (node instanceof Separator) {
 				GroupPart part = (GroupPart) new GroupPart((Separator) node).setFactory(this);
 				return part;
@@ -62,7 +61,7 @@ public class FittingPartFactory implements IPartFactory {
 			}
 		}
 		// Set of Parts for the Manufacture Page for a selected fragment.
-		if (variant == AppWideConstants.EFragment.FITTING_MANUFACTURE) {
+		if (this.getVariant() == EVARIANT.FITTING_MANUFACTURE.name()) {
 			if (node instanceof Action) {
 				ActionPart part = new ActionPart((AbstractComplexNode) node);
 				return part;
@@ -85,10 +84,6 @@ public class FittingPartFactory implements IPartFactory {
 
 		// If no part is trapped then result a NOT FOUND mark
 		return new GroupPart(new Separator("-NO data-[" + node.getClass().getName() + "]-"));
-	}
-
-	public String getVariant() {
-		return variant.name();
 	}
 }
 

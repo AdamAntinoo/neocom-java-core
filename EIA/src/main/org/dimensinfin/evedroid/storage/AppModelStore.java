@@ -173,12 +173,11 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 
 	/**
 	 * Searches for the pilot on the character list active after the API key processing and copies it to the
-	 * store slot. If there is an AssetsManager it is connected to the character, otherwise a new AssetsManager
-	 * is created empty.
+	 * store slot.
 	 * 
 	 * @param characterid
+	 *          id of the character to activate and select for work with.
 	 */
-	@Deprecated
 	public void activatePilot(final long characterid) {
 		_pilot = this.searchCharacter(characterid);
 		if (null == _pilot)

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.FittingFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -55,27 +55,25 @@ public class FittingActivity extends PilotPagerActivity implements INeoComDirect
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		logger.info(">> FittingActivity.onCreate"); //$NON-NLS-1$
+		FittingActivity.logger.info(">> [FittingActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		try {// Reset the page position.
 			int page = 0;
 			// Get the parameters from the bundle. If not defined then use the demo.
-			final Bundle extras = getIntent().getExtras();
-			//			if (null != extras) {
+			final Bundle extras = this.getIntent().getExtras();
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE).setExtras(extras),
-					page++);
+			this.addPage(new FittingFragment().setVariant(EVARIANT.FITTING_MANUFACTURE).setExtras(extras), page++);
 			//			} else {
 			//				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE), page++);
 			//			}
 		} catch (final Exception rtex) {
-			logger.severe("RTEX> FittingActivity.onCreate - " + rtex.getMessage());
+			FittingActivity.logger.severe("RTEX> FittingActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> FittingActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
-		updateInitialTitle();
-		logger.info("<< FittingActivity.onCreate"); //$NON-NLS-1$
+		this.updateInitialTitle();
+		FittingActivity.logger.info("<< [FittingActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
 // - UNUSED CODE ............................................................................................

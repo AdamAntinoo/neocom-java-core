@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.FittingListFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -56,22 +56,22 @@ public class FittingListActivity extends PilotPagerActivity implements INeoComDi
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		logger.info(">> [FittingListActivity.onCreate]"); //$NON-NLS-1$
+		FittingListActivity.logger.info(">> [FittingListActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		try {// Reset the page position.
 			int page = 0;
 			// Get the parameters from the bundle. If not defined then use the demo.
-			final Bundle extras = getIntent().getExtras();
+			final Bundle extras = this.getIntent().getExtras();
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			addPage(new FittingListFragment().setVariant(AppWideConstants.EFragment.FITTING_LIST).setExtras(extras), page++);
+			this.addPage(new FittingListFragment().setVariant(EVARIANT.FITTING_LIST).setExtras(extras), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> FittingListActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingListActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> FittingListActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
-		updateInitialTitle();
-		logger.info("<< [FittingListActivity.onCreate]"); //$NON-NLS-1$
+		this.updateInitialTitle();
+		FittingListActivity.logger.info("<< [FittingListActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
 // - UNUSED CODE ............................................................................................

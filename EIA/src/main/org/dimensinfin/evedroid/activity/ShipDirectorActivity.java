@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -10,7 +10,7 @@ package org.dimensinfin.evedroid.activity;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.ShipsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -64,15 +64,15 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		try {// Reset the page position.
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION), page++);
+			this.addPage(new ShipsFragment().setVariant(EVARIANT.SHIPS_BYLOCATION), page++);
 			//			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
-		updateInitialTitle();
+		this.updateInitialTitle();
 		Log.i("NEOCOM", "<< ShipDirectorActivity.onCreate"); //$NON-NLS-1$
 	}
 }

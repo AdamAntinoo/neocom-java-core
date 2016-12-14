@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -15,10 +15,10 @@ import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.ShipsDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
+import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Region;
@@ -45,18 +45,14 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	@Override
 	public String getSubtitle() {
 		String st = "";
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-			st = "Ships - by Location";
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
-			st = "Ships - by Class";
-		}
+		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION) st = "Ships - by Location";
+		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS) st = "Ships - by Class";
 		return st;
 	}
 
 	@Override
 	public String getTitle() {
-		return getPilotName();
+		return this.getPilotName();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -70,11 +66,11 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", ">> ShipsFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(_variant.hashCode());
+			this.setIdentifier(_variant.hashCode());
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> ShipsFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> ShipsFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< ShipsFragment.onCreateView");
 		return theView;
@@ -85,13 +81,11 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", ">> ShipsFragment.onStart");
 		try {
 			// Check the datasource status and create a new one if still does not exists.
-			if (checkDSState()) {
-				registerDataSource();
-			}
+			if (this.checkDSState()) this.registerDataSource();
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> ShipsFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> ShipsFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< ShipsFragment.onStart");
@@ -99,24 +93,25 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 
 	private void registerDataSource() {
 		Log.i("NEOCOM", ">> ShipsFragment.registerDataSource");
-		DataSourceLocator locator = new DataSourceLocator().addIdentifier(getPilotName()).addIdentifier(_variant.name());
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getPilotName())
+				.addIdentifier(_variant.name());
 		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(_variant));
 		ds.setVariant(_variant);
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
-		setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
+		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
+		this.setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
 		Log.i("NEOCOM", "<< ShipsFragment.registerDataSource");
 	}
 }
 
-//- CLASS IMPLEMENTATION ...................................................................................
+// - CLASS IMPLEMENTATION ...................................................................................
 final class ShipPartFactory implements IPartFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private EFragment variant = AppWideConstants.EFragment.DEFAULT_VARIANT;
+	private EVARIANT variant = EVARIANT.DEFAULT_VARIANT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ShipPartFactory(final EFragment variantSelected) {
+	public ShipPartFactory(final EVARIANT variantSelected) {
 		variant = variantSelected;
 	}
 
