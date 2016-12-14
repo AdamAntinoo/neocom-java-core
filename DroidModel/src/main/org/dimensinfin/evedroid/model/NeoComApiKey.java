@@ -17,12 +17,17 @@ import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.core.NeoComConnector;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.beimin.eveapi.EveApi;
+import com.beimin.eveapi.connectors.ApiConnector;
+import com.beimin.eveapi.connectors.CachingConnector;
+import com.beimin.eveapi.connectors.LoggingConnector;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.AccountStatus;
 import com.beimin.eveapi.model.account.ApiKeyInfo;
@@ -51,7 +56,11 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	 */
 	public static NeoComApiKey build(final int keynumber, final String validationcode) throws ApiException {
 		// Get the complete api information for CCP through the eveapi.
-		logger.info("-- [NeoComApiKey.build]> Creating key: " + keynumber + "/" + validationcode);
+		NeoComApiKey.logger.info("-- [NeoComApiKey.build]> Creating key: " + keynumber + "/" + validationcode);
+		// FIXME Change the eveapi connector to a logger cached so I can trace the SSL problem.
+		EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
+		// Remove the secure XML access and configure the ApiConnector.
+		ApiConnector.setSecureXmlProcessing(false);
 		ApiAuthorization authorization = new ApiAuthorization(keynumber, validationcode);
 		ApiKeyInfoParser infoparser = new ApiKeyInfoParser();
 		ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
@@ -68,9 +77,9 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
 		AccountStatusParser statusparser = new AccountStatusParser();
 		AccountStatusResponse statusresponse = statusparser.getResponse(authorization);
-		if (null != statusresponse) {
+		if (null != statusresponse)
 			apiKey.setDelegateStatus(statusresponse);
-		} else
+		else
 			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
 		return apiKey;
 	}
@@ -96,9 +105,8 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		try {
-			for (NeoComCharacter node : getApiCharacters()) {
+			for (NeoComCharacter node : this.getApiCharacters())
 				result.add(node);
-			}
 		} catch (ApiException apiex) {
 			apiex.printStackTrace();
 		}
@@ -155,7 +163,7 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		return delegatedApiKey.isCorporationKey();
 	}
 
-	public void setCachedUntil(Date cachedUntil) {
+	public void setCachedUntil(final Date cachedUntil) {
 		this.cachedUntil = cachedUntil;
 	}
 
@@ -163,20 +171,20 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		delegatedApiKey = response.getApiKeyInfo();
 	}
 
-	public void setKey(int key) {
+	public void setKey(final int key) {
 		this.key = key;
 	}
 
-	public void setValidationCode(String validationcode) {
-		this.validationCode = validationcode;
+	public void setValidationCode(final String validationcode) {
+		validationCode = validationcode;
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("NeoComApiKey [");
-		buffer.append("keyID=").append(getKey()).append(" ");
-		buffer.append("verificationCode='").append(getValidationCode()).append("' ");
-		buffer.append("type='").append(getType());
+		buffer.append("keyID=").append(this.getKey()).append(" ");
+		buffer.append("verificationCode='").append(this.getValidationCode()).append("' ");
+		buffer.append("type='").append(this.getType());
 		buffer.append("]");
 		return super.toString() + buffer.toString();
 	}
@@ -192,11 +200,11 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		}
 	}
 
-	private void setAuthorization(ApiAuthorization auth) {
+	private void setAuthorization(final ApiAuthorization auth) {
 		authorization = auth;
 	}
 
-	private void setDelegateStatus(AccountStatusResponse statusresponse) {
+	private void setDelegateStatus(final AccountStatusResponse statusresponse) {
 		delegateStatus = statusresponse.get();
 	}
 }
