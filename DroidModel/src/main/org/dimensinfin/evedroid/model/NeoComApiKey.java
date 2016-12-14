@@ -198,7 +198,8 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		buffer.append("verificationCode='").append(this.getValidationCode()).append("' ");
 		buffer.append("type='").append(this.getType());
 		buffer.append("]");
-		return super.toString() + buffer.toString();
+		buffer.append("->").append(super.toString());
+		return buffer.toString();
 	}
 
 	protected void setPaidUntil(final String text) {

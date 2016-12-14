@@ -49,15 +49,14 @@ import com.j256.ormlite.dao.Dao;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger											logger					= Logger.getLogger("NeoComPilot");
+	private static Logger												logger					= Logger.getLogger("NeoComPilot");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected CharacterSheetResponse					characterSheet	= null;
 
 	// - T R A N S I E N T   D A T A
-	private transient Set<SkillQueueItem>			skills					= null;
-	private transient SkillInTrainingResponse	skillInTraining	= null;
-	//	protected transient ArrayList<Job>					jobList					= null;
+	protected transient CharacterSheetResponse	characterSheet	= null;
+	private transient Set<SkillQueueItem>				skills					= null;
+	private transient SkillInTrainingResponse		skillInTraining	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Pilot() {
@@ -354,6 +353,7 @@ public class Pilot extends NeoComCharacter {
 	 * After this update we will have access to all the direct properties of a character. Other multiple value
 	 * properties like assets or derived lists will be updated when needed by using other update calls.
 	 */
+	@Override
 	public synchronized void updateCharacterInfo() {
 		try {
 			// Go to the API and get more information for this character.

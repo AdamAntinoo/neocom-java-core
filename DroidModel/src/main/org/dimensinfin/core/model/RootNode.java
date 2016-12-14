@@ -11,7 +11,6 @@ package org.dimensinfin.core.model;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -37,18 +36,17 @@ public class RootNode extends AbstractComplexNode implements INeoComNode {
 	 */
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		for (IGEFNode node : getChildren()) {
+		for (IGEFNode node : this.getChildren())
 			results.add((AbstractComplexNode) node);
-		}
 		return results;
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("RootNode [");
-		buffer.append("count: ").append(getChildren().size());
-		buffer.append("[").append(getChildren()).append("]");
-		buffer.append(super.toString()).append("]");
+		buffer.append("count: ").append(this.getChildren().size()).append("\t,");
+		buffer.append("[").append(this.getChildren()).append("]");
+		buffer.append(" ").append(super.toString()).append(" ]");
 		return buffer.toString();
 	}
 }

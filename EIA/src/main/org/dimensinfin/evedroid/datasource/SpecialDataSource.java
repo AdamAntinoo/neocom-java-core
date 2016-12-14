@@ -169,7 +169,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts)
+		for (AbstractCorePart node : this.getBodyParts())
 			result.add((AbstractAndroidPart) node);
 		return result;
 	}
