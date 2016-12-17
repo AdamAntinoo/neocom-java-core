@@ -118,6 +118,7 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 					NeoComApiKey api = NeoComApiKey.build(keynumber, validationcode);
 					if (null != AppModelStore.singleton) AppModelStore.singleton.addApiKey(api);
 				} catch (NumberFormatException nfex) {
+				} catch (ArrayIndexOutOfBoundsException aioofe) {
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

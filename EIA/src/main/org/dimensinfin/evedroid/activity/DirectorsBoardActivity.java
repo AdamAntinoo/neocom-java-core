@@ -20,7 +20,6 @@ import org.dimensinfin.evedroid.activity.core.SplashActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.interfaces.IDirector;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.annotation.SuppressLint;
@@ -51,9 +50,9 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	}
 
 	private static Logger									logger							= Logger.getLogger("DirectorsBoardActivity");
-	//	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
-	//			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.FITDIRECTOR };
-	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.FITDIRECTOR };
+	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
+			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.FITDIRECTOR };
+	//	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.FITDIRECTOR };
 	protected static Typeface							daysFace						= Typeface
 			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
@@ -211,7 +210,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 				switch (directorCode) {
 					case ASSETDIRECTOR:
 						final IDirector adirector = new AssetsDirectorActivity();
-						if (adirector.checkActivation((NeoComCharacter) _store.getPilot())) {
+						if (adirector.checkActivation(_store.getPilot())) {
 							DirectorsBoardActivity.logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) this.findViewById(R.id.assetsDirectorIcon);
 							activator.setImageDrawable(this.getDrawable(R.drawable.assetsdirector));
@@ -234,7 +233,7 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 						}
 					case SHIPDIRECTOR:
 						final IDirector sdirector = new ShipDirectorActivity();
-						if (sdirector.checkActivation((NeoComCharacter) _store.getPilot())) {
+						if (sdirector.checkActivation(_store.getPilot())) {
 							DirectorsBoardActivity.logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) this.findViewById(R.id.shipsDirectorIcon);
 							activator.setImageDrawable(this.getDrawable(R.drawable.shipsdirector));
@@ -370,30 +369,30 @@ public class DirectorsBoardActivity extends AbstractContextActivity {
 	protected void onStart() {
 		DirectorsBoardActivity.logger.info(">> DirectorsBoardActivity.onStart");
 		super.onStart();
-		//		ImageView directorButton = (ImageView) findViewById(R.id.assetsDirectorIcon);
-		//		directorButton.setImageDrawable(getDrawable(R.drawable.assetsdirectordimmed));
-		//		directorButton.setClickable(false);
-		//
-		//		directorButton = (ImageView) findViewById(R.id.industryDirectorIcon);
-		//		directorButton.setImageDrawable(getDrawable(R.drawable.industrydirectordimmed));
-		//		directorButton.setClickable(false);
-		//
-		//		directorButton = (ImageView) findViewById(R.id.marketDirectorIcon);
-		//		directorButton.setImageDrawable(getDrawable(R.drawable.marketdirectordimmed));
-		//		directorButton.setClickable(false);
-		//		// directorButton = (ImageView) findViewById(R.id.nmarketDirectorIcon);
-		//		// directorButton.setImageDrawable(getDrawable(R.drawable.marketdirectordimmed));
-		//		// directorButton.setClickable(false);
-		//
-		//		directorButton = (ImageView) findViewById(R.id.jobDirectorIcon);
-		//		directorButton.setImageDrawable(getDrawable(R.drawable.jobdirectordimmed));
-		//		directorButton.setClickable(false);
-		//
-		//		// directorButton = (ImageView) findViewById(R.id.taskDirectorIcon);
-		//		// directorButton.setImageDrawable(getDrawable(R.drawable.taskdirectordimmed));
-		//		// directorButton.setClickable(false);
+		ImageView directorButton = (ImageView) this.findViewById(R.id.assetsDirectorIcon);
+		directorButton.setImageDrawable(this.getDrawable(R.drawable.assetsdirectordimmed));
+		directorButton.setClickable(false);
 
-		ImageView directorButton = (ImageView) this.findViewById(R.id.fitDirectorIcon);
+		directorButton = (ImageView) this.findViewById(R.id.industryDirectorIcon);
+		directorButton.setImageDrawable(this.getDrawable(R.drawable.industrydirectordimmed));
+		directorButton.setClickable(false);
+
+		directorButton = (ImageView) this.findViewById(R.id.marketDirectorIcon);
+		directorButton.setImageDrawable(this.getDrawable(R.drawable.marketdirectordimmed));
+		directorButton.setClickable(false);
+		// directorButton = (ImageView) findViewById(R.id.nmarketDirectorIcon);
+		// directorButton.setImageDrawable(getDrawable(R.drawable.marketdirectordimmed));
+		// directorButton.setClickable(false);
+
+		directorButton = (ImageView) this.findViewById(R.id.jobDirectorIcon);
+		directorButton.setImageDrawable(this.getDrawable(R.drawable.jobdirectordimmed));
+		directorButton.setClickable(false);
+
+		// directorButton = (ImageView) findViewById(R.id.taskDirectorIcon);
+		// directorButton.setImageDrawable(getDrawable(R.drawable.taskdirectordimmed));
+		// directorButton.setClickable(false);
+
+		directorButton = (ImageView) this.findViewById(R.id.fitDirectorIcon);
 		directorButton.setImageDrawable(this.getDrawable(R.drawable.fitsdirector));
 		directorButton.setClickable(true);
 		DirectorsBoardActivity.logger.info("<< DirectorsBoardActivity.onStart");

@@ -25,6 +25,7 @@ import com.viewpagerindicator.CirclePageIndicator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -47,6 +48,44 @@ import android.widget.ImageView;
  * @author Adam Antinoo
  */
 public abstract class AbstractPagerActivity extends Activity {
+	/**
+	 * Asynchronous task to perform actions out of main thread when a menu item is selected.
+	 * 
+	 * @author Adam Antinoo
+	 */
+	//- CLASS IMPLEMENTATION ...................................................................................
+	private class BackgroundMenuAction extends AsyncTask<Void, Void, Boolean> {
+		private static final boolean	showProgress	= false;
+		// - F I E L D - S E C T I O N ............................................................................
+		private Activity							_activity			= null;
+		int														action				= 0;
+
+		// - C O N S T R U C T O R - S E C T I O N ................................................................
+		public BackgroundMenuAction(final Activity act, final int action) {
+			_activity = act;
+			this.action = action;
+		}
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		/**
+		 * This is the main method where we do the application data initialization. The process has some steps
+		 * that are listed below:
+		 * <ol>
+		 * <li>STEP 01. Check required files availability on app directory.</li>
+		 * <li>STEP 02. Check existence of required files.</li>
+		 * <li>STEP 03. Initialize the Model store and force a refresh from the api list file.</li>
+		 * </ol>
+		 */
+		@Override
+		protected Boolean doInBackground(final Void... entry) {
+			switch (action) {
+				case R.id.action_updateaccounts:
+					AppModelStore.initialize();
+					break;
+			}
+			return true;
+		}
+	}
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -54,7 +93,6 @@ public abstract class AbstractPagerActivity extends Activity {
 	private ViewPager						_pageContainer	= null;
 	private EvePagerAdapter			_pageAdapter		= null;
 	private ImageView						_back						= null;
-	// private AppModelStore _store = null;
 	private CirclePageIndicator	_indicator			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -95,7 +133,7 @@ public abstract class AbstractPagerActivity extends Activity {
 				break;
 			case R.id.action_updateaccounts:
 				// Refresh the store data
-				AppModelStore.initialize();
+				new BackgroundMenuAction(this, R.id.action_updateaccounts).execute();
 				break;
 			case R.id.action_createFitting:
 				// Create demo fittings to test the save/restore and continue the development.
