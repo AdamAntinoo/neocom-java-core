@@ -149,7 +149,7 @@ public class Pilot extends NeoComCharacter {
 			//				}
 			//			} else {
 			AssetListParser parser = new AssetListParser();
-			AssetListResponse response = parser.getResponse(apikey.getAuthorization());
+			AssetListResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
@@ -198,7 +198,7 @@ public class Pilot extends NeoComCharacter {
 			//			BlueprintListResponse response = null;
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
-			BlueprintsResponse response = parser.getResponse(apikey.getAuthorization());
+			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
@@ -241,7 +241,7 @@ public class Pilot extends NeoComCharacter {
 			//		AppConnector.getDBConnector().clearInvalidRecords();
 			// Download and parse the industry jobs history.
 			IndustryJobsParser parserhist = new IndustryJobsParser();
-			IndustryJobsResponse responsehist = parserhist.getResponse(apikey.getAuthorization());
+			IndustryJobsResponse responsehist = parserhist.getResponse(this.getAuthorization());
 			if (null != responsehist) {
 				Set<IndustryJob> jobs = responsehist.getAll();
 				jobsCacheTime = new Instant(responsehist.getCachedUntil());
@@ -294,7 +294,7 @@ public class Pilot extends NeoComCharacter {
 		try {
 			// Download and parse the market orders.
 			MarketOrdersParser parser = new MarketOrdersParser();
-			final MarketOrdersResponse response = parser.getResponse(apikey.getAuthorization());
+			final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				Set<MarketOrder> orders = response.getAll();
 				for (final MarketOrder eveorder : orders) {
@@ -359,22 +359,22 @@ public class Pilot extends NeoComCharacter {
 			// Go to the API and get more information for this character.
 			// Balance information
 			AccountBalanceParser balanceparser = new AccountBalanceParser();
-			AccountBalanceResponse balanceresponse = balanceparser.getResponse(apikey.getAuthorization());
+			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
 			if (null != balanceresponse) {
 				Set<EveAccountBalance> balance = balanceresponse.getAll();
 				if (balance.size() > 0) this.setAccountBalance(balance.iterator().next().getBalance());
 			}
 			// Character sheet information
 			CharacterSheetParser sheetparser = new CharacterSheetParser();
-			CharacterSheetResponse sheetresponse = sheetparser.getResponse(apikey.getAuthorization());
+			CharacterSheetResponse sheetresponse = sheetparser.getResponse(this.getAuthorization());
 			if (null != sheetresponse) this.setCharacterSheet(sheetresponse);
 			// Skill list
 			SkillQueueParser skillparser = new SkillQueueParser();
-			SkillQueueResponse skillresponse = skillparser.getResponse(apikey.getAuthorization());
+			SkillQueueResponse skillresponse = skillparser.getResponse(this.getAuthorization());
 			if (null != skillresponse) this.setSkillQueue(skillresponse.getAll());
 			// Skill in training
 			SkillInTrainingParser trainingparser = new SkillInTrainingParser();
-			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(apikey.getAuthorization());
+			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(this.getAuthorization());
 			if (null != skillresponse) this.setSkillInTraining(trainingresponse);
 			// Full list of assets from database.
 			this.accessAllAssets();

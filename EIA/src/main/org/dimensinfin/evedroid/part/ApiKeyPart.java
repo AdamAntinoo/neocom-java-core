@@ -21,9 +21,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.render.ApiKeyRender;
 
@@ -55,18 +53,15 @@ public class ApiKeyPart extends EveAbstractPart implements OnClickListener {
 	public ArrayList<AbstractAndroidPart> collaborate2View() {
 		ApiKeyPart.logger.info(">> [ApiKeyPart.collaborate2View]");
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<AbstractPropertyChanger> ch = this.getChildren();
-		for (AbstractPropertyChanger nodePart : ch)
-			// Check if the element is visible
-			if (nodePart instanceof AbstractNeoComNode) {
-				AbstractNeoComNode neocomModel = (AbstractNeoComNode) nodePart;
-				if (neocomModel.renderWhenEmpty()) {
-					ApiKeyPart.logger.info("-- [ApiKeyPart.collaborate2View]> Adding node: " + neocomModel);
+		// If the node is expanded then give the children the opportunity to also be added.
+		if (this.isExpanded()) {
+			Vector<AbstractPropertyChanger> ch = this.getChildren();
+			for (AbstractPropertyChanger nodePart : ch)
+				if (nodePart instanceof AbstractAndroidPart) if (((AbstractAndroidPart) nodePart).renderWhenEmpty()) {
 					result.add((AbstractAndroidPart) nodePart);
-					// If the node is added to the result then give the children the opportinity to also be added.
 					result.addAll(((AbstractAndroidPart) nodePart).collaborate2View());
 				}
-			}
+		}
 		ApiKeyPart.logger.info("<< [ApiKeyPart.collaborate2View]");
 		return result;
 	}
@@ -139,10 +134,11 @@ public class ApiKeyPart extends EveAbstractPart implements OnClickListener {
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		// Get the proper holder set for the render mode.
-		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new ApiKeyRender(this, _activity);
-		// If holder not located return a default view for a sample and modeless Part.
-		return super.selectHolder();
+		return new ApiKeyRender(this, _activity);
+		//		// Get the proper holder set for the render mode.
+		//		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new ApiKeyRender(this, _activity);
+		//		// If holder not located return a default view for a sample and modeless Part.
+		//		return super.selectHolder();
 	}
 }
 

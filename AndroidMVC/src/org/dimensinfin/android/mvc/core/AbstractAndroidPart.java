@@ -74,7 +74,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	 * comes from the model while in the old comes from the design structures but both are compatible.
 	 */
 	public ArrayList<AbstractAndroidPart> collaborate2View() {
-		return getPartChildren();
+		return this.getPartChildren();
 	}
 
 	/**
@@ -86,7 +86,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 		if (null == _fragment)
 			return _activity;
 		else
-			return getFragment().getActivity();
+			return this.getFragment().getActivity();
 	}
 
 	public Fragment getFragment() {
@@ -98,14 +98,14 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 
 	public AbstractHolder getHolder(final Activity activity) {
 		_activity = activity;
-		return selectHolder();
+		return this.selectHolder();
 	}
 
 	@Deprecated
 	public AbstractHolder getHolder(final Fragment fragment) {
 		_fragment = fragment;
 		_activity = fragment.getActivity();
-		return selectHolder();
+		return this.selectHolder();
 	}
 
 	/**
@@ -129,7 +129,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartChildren() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<AbstractPropertyChanger> ch = getChildren();
+		Vector<AbstractPropertyChanger> ch = this.getChildren();
 		for (AbstractPropertyChanger node : ch) {
 			// Convert the node to a part.
 			AbstractAndroidPart part = (AbstractAndroidPart) node;
@@ -157,17 +157,23 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	}
 
 	public void invalidate() {
-		if (null != _view) {
-			//			_view.invalidate();
-			needsRedraw();
-		}
+		if (null != _view) //			_view.invalidate();
+			this.needsRedraw();
 	}
 
 	public boolean isExpanded() {
 		// Check the model type.
-		if (getModel() instanceof AbstractComplexNode) {
-			return ((AbstractComplexNode) getModel()).isExpanded();
-		} else
+		if (this.getModel() instanceof AbstractComplexNode)
+			return ((AbstractComplexNode) this.getModel()).isExpanded();
+		else
+			return true;
+	}
+
+	public boolean isRenderWhenEmpty() {
+		// Check the model type.
+		if (this.getModel() instanceof AbstractComplexNode)
+			return ((AbstractComplexNode) this.getModel()).renderWhenEmpty();
+		else
 			return true;
 	}
 
@@ -176,13 +182,21 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 		_view = null;
 	}
 
+	public boolean renderWhenEmpty() {
+		// Check the model type.
+		if (this.getModel() instanceof AbstractComplexNode)
+			return ((AbstractComplexNode) this.getModel()).renderWhenEmpty();
+		else
+			return true;
+	}
+
 	public void setDownloaded() {
 		downloaded = true;
 	}
 
 	public AbstractPropertyChanger setRenderMode(final int renderMode) {
 		this.renderMode = renderMode;
-		needsRedraw();
+		this.needsRedraw();
 		return this;
 	}
 
@@ -191,9 +205,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	}
 
 	public void toggleExpanded() {
-		if (getModel() instanceof AbstractComplexNode) {
-			((AbstractComplexNode) getModel()).toggleExpanded();
-		}
+		if (this.getModel() instanceof AbstractComplexNode) ((AbstractComplexNode) this.getModel()).toggleExpanded();
 	}
 
 	/**
@@ -206,12 +218,10 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	//		}
 	@Override
 	protected IEditPart createChild(final Object model) {
-		IPartFactory factory = getRoot().getPartFactory();
+		IPartFactory factory = this.getRoot().getPartFactory();
 		IEditPart part = factory.createPart((IGEFNode) model);
 		// If the factory is unable to create the Part then skip this element or wait to be replaced by a dummy
-		if (null != part) {
-			part.setParent(this);
-		}
+		if (null != part) part.setParent(this);
 		return part;
 	}
 
@@ -221,7 +231,7 @@ public abstract class AbstractAndroidPart extends AbstractCorePart implements IV
 	@Override
 	protected void removeChildVisual(final IEditPart child) {
 		this.invalidate();
-		this._view = null;
+		_view = null;
 	}
 
 	protected abstract AbstractHolder selectHolder();

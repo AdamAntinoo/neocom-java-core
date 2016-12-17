@@ -20,7 +20,6 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.Pilot;
@@ -52,7 +51,7 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 	@Override
 	public ArrayList<AbstractAndroidPart> collaborate2View() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		result.add(this);
+		//		result.add(this);
 		return result;
 	}
 
@@ -104,10 +103,11 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		// Get the proper holder set for the render mode.
-		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new PilotInfoHolder(this, _activity);
-		// If holder not located return a default view for a sample and modeless Part.
-		return super.selectHolder();
+		return new PilotInfoHolder(this, _activity);
+		//		// Get the proper holder set for the render mode.
+		//		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new PilotInfoHolder(this, _activity);
+		//		// If holder not located return a default view for a sample and modeless Part.
+		//		return super.selectHolder();
 	}
 }
 

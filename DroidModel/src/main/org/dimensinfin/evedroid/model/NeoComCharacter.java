@@ -39,7 +39,9 @@ import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.KeyType;
 import com.beimin.eveapi.model.shared.Location;
 import com.beimin.eveapi.model.shared.MarketOrder;
+import com.beimin.eveapi.parser.ApiAuthorization;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
+import com.beimin.eveapi.parser.eve.CharacterInfoParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
@@ -70,41 +72,58 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	private static Corporation createCorporation(final Character coreChar, final NeoComApiKey apikey)
 			throws ApiException {
 		Corporation newcorp = new Corporation();
+		newcorp.setApiKey(apikey);
+		// Copy the authorization and add to it the characterID
+		ApiAuthorization authcopy = new ApiAuthorization(apikey.getKey(), coreChar.getCharacterID(),
+				apikey.getValidationCode());
+		newcorp.setAuthorization(authcopy);
 		newcorp.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
 		// Balance information
 		AccountBalanceParser balanceparser = new AccountBalanceParser();
-		AccountBalanceResponse balanceresponse = balanceparser.getResponse(apikey.getAuthorization());
+		AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
 		if (null != balanceresponse) {
 			Set<EveAccountBalance> balance = balanceresponse.getAll();
 			if (balance.size() > 0) newcorp.setAccountBalance(balance.iterator().next().getBalance());
 		}
+		// Character information
+		CharacterInfoParser infoparser = new CharacterInfoParser();
+		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
+		if (null != inforesponse) newcorp.characterInfo = inforesponse;
 		return newcorp;
 	}
 
 	private static Pilot createPilot(final Character coreChar, final NeoComApiKey apikey) throws ApiException {
 		Pilot newchar = new Pilot();
 		newchar.setApiKey(apikey);
+		// Copy the authorization and add to it the characterID
+		ApiAuthorization authcopy = new ApiAuthorization(apikey.getKey(), coreChar.getCharacterID(),
+				apikey.getValidationCode());
+		newchar.setAuthorization(authcopy);
 		newchar.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
 		// Balance information
 		AccountBalanceParser balanceparser = new AccountBalanceParser();
-		AccountBalanceResponse balanceresponse = balanceparser.getResponse(apikey.getAuthorization());
+		AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
 		if (null != balanceresponse) {
 			Set<EveAccountBalance> balance = balanceresponse.getAll();
 			if (balance.size() > 0) newchar.setAccountBalance(balance.iterator().next().getBalance());
 		}
+		// Character information
+		CharacterInfoParser infoparser = new CharacterInfoParser();
+		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
+		if (null != inforesponse) newcorp.characterInfo = inforesponse;
 		// Character sheet information
 		CharacterSheetParser sheetparser = new CharacterSheetParser();
-		CharacterSheetResponse sheetresponse = sheetparser.getResponse(apikey.getAuthorization());
+		CharacterSheetResponse sheetresponse = sheetparser.getResponse(authcopy);
 		if (null != sheetresponse) newchar.setCharacterSheet(sheetresponse);
 		// Skill list
 		SkillQueueParser skillparser = new SkillQueueParser();
-		SkillQueueResponse skillresponse = skillparser.getResponse(apikey.getAuthorization());
+		SkillQueueResponse skillresponse = skillparser.getResponse(authcopy);
 		if (null != skillresponse) newchar.setSkillQueue(skillresponse.getAll());
 		// Skill in training
 		SkillInTrainingParser trainingparser = new SkillInTrainingParser();
-		SkillInTrainingResponse trainingresponse = trainingparser.getResponse(apikey.getAuthorization());
+		SkillInTrainingResponse trainingresponse = trainingparser.getResponse(authcopy);
 		if (null != skillresponse) newchar.setSkillInTraining(trainingresponse);
 		// Full list of assets from database.
 		newchar.accessAllAssets();
@@ -114,6 +133,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the delegated core eveapi Character */
 	protected NeoComApiKey										apikey							= null;
+	private ApiAuthorization									authorization				= null;
 	protected transient Character							delegatedCharacter	= null;
 	protected transient CharacterInfoResponse	characterInfo				= null;
 	private final boolean											active							= true;
@@ -295,6 +315,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return assetsManager;
 	}
 
+	public ApiAuthorization getAuthorization() {
+		return authorization;
+	}
+
 	public long getCharacterID() {
 		return delegatedCharacter.getCharacterID();
 	}
@@ -472,12 +496,16 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		assetsManager = manager;
 	}
 
+	public void setAuthorization(final ApiAuthorization authorization) {
+		this.authorization = authorization;
+	}
+
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("EveChar [");
-		buffer.append(super.toString()).append(" ");
+		final StringBuffer buffer = new StringBuffer("NeoComCharacter [");
 		buffer.append("assets:").append(this.getAssetCount()).append(" ");
 		buffer.append("]");
+		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
 
@@ -632,7 +660,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		ids.add(assetID);
 		try {
 			final LocationsParser parser = new LocationsParser();
-			final LocationsResponse response = parser.getResponse(apikey.getAuthorization(), ids);
+			final LocationsResponse response = parser.getResponse(this.getAuthorization(), ids);
 			if (null != response) {
 				Set<Location> userNames = response.getAll();
 				if (userNames.size() > 0) return userNames.iterator().next().getItemName();

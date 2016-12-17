@@ -102,7 +102,7 @@ public class Corporation extends NeoComCharacter {
 			//				}
 			//			} else {
 			AssetListParser parser = new AssetListParser();
-			AssetListResponse response = parser.getResponse(apikey.getAuthorization());
+			AssetListResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
@@ -151,7 +151,7 @@ public class Corporation extends NeoComCharacter {
 			//			BlueprintListResponse response = null;
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
-			BlueprintsResponse response = parser.getResponse(apikey.getAuthorization());
+			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
@@ -194,7 +194,7 @@ public class Corporation extends NeoComCharacter {
 			//		AppConnector.getDBConnector().clearInvalidRecords();
 			// Download and parse the industry jobs history.
 			IndustryJobsParser parserhist = new IndustryJobsParser();
-			IndustryJobsResponse responsehist = parserhist.getResponse(apikey.getAuthorization());
+			IndustryJobsResponse responsehist = parserhist.getResponse(this.getAuthorization());
 			if (null != responsehist) {
 				Set<IndustryJob> jobs = responsehist.getAll();
 				jobsCacheTime = new Instant(responsehist.getCachedUntil());
@@ -248,7 +248,7 @@ public class Corporation extends NeoComCharacter {
 		try {
 			// Download and parse the market orders.
 			MarketOrdersParser parser = new MarketOrdersParser();
-			final MarketOrdersResponse response = parser.getResponse(apikey.getAuthorization());
+			final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				Set<MarketOrder> orders = response.getAll();
 				for (final MarketOrder eveorder : orders) {
@@ -279,12 +279,13 @@ public class Corporation extends NeoComCharacter {
 	 * After this update we will have access to all the direct properties of a character. Other multiple value
 	 * properties like assets or derived lists will be updated when needed by using other update calls.
 	 */
+	@Override
 	public synchronized void updateCharacterInfo() {
 		try {
 			// Go to the API and get more information for this character.
 			// Balance information
 			AccountBalanceParser balanceparser = new AccountBalanceParser();
-			AccountBalanceResponse balanceresponse = balanceparser.getResponse(apikey.getAuthorization());
+			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
 			if (null != balanceresponse) {
 				Set<EveAccountBalance> balance = balanceresponse.getAll();
 				if (balance.size() > 0) this.setAccountBalance(balance.iterator().next().getBalance());
