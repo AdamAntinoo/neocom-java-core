@@ -56,8 +56,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import com.beimin.eveapi.connectors.ApiConnector;
-
 import android.app.Activity;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -576,7 +574,7 @@ public class EVEDroidApp extends Application implements IConnector {
 		super.onCreate();
 		EVEDroidApp.daysFace = Typeface.createFromAsset(this.getApplicationContext().getAssets(), "fonts/Days.otf");
 		// Remove the secure XML access and configure the ApiConnector.
-		ApiConnector.setSecureXmlProcessing(false);
+		//		ApiConnector.setSecureXmlProcessing(false);
 		EVEDroidApp.logger.info("<< [EVEDroidApp.onCreate]");
 	}
 

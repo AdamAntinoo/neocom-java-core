@@ -8,8 +8,10 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.core;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -69,9 +71,20 @@ public class NeoComConnector extends ApiConnector {
 			}
 			wr.write(data.toString());
 			wr.flush();
-			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+			if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				// FIXME Read the input stream data to check its values
+				boolean flag = false;
+				if (flag) {
+					StringBuffer output = new StringBuffer("");
+					InputStream stream = conn.getInputStream();
+
+					BufferedReader buffer = new BufferedReader(new InputStreamReader(stream));
+					String s = "";
+					while ((s = buffer.readLine()) != null)
+						output.append(s);
+				}
 				return conn.getInputStream();
-			else
+			} else
 				return conn.getErrorStream();
 		} catch (Exception e) {
 			throw new ApiException(e);

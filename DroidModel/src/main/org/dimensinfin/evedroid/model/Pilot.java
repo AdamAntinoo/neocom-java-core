@@ -29,11 +29,11 @@ import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
-import com.beimin.eveapi.parser.corporation.AssetListParser;
 import com.beimin.eveapi.parser.pilot.BlueprintsParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.IndustryJobsParser;
 import com.beimin.eveapi.parser.pilot.MarketOrdersParser;
+import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
@@ -148,7 +148,7 @@ public class Pilot extends NeoComCharacter {
 			//					}
 			//				}
 			//			} else {
-			AssetListParser parser = new AssetListParser();
+			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();

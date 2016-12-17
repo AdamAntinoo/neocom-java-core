@@ -112,7 +112,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		// Character information
 		CharacterInfoParser infoparser = new CharacterInfoParser();
 		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
-		if (null != inforesponse) newcorp.characterInfo = inforesponse;
+		if (null != inforesponse) newchar.characterInfo = inforesponse;
 		// Character sheet information
 		CharacterSheetParser sheetparser = new CharacterSheetParser();
 		CharacterSheetResponse sheetresponse = sheetparser.getResponse(authcopy);
