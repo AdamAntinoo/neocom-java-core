@@ -62,7 +62,7 @@ public abstract class AbstractPagerActivity extends Activity {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		final MenuInflater inflater = getMenuInflater();
+		final MenuInflater inflater = this.getMenuInflater();
 		inflater.inflate(R.menu.eiabasemenu, menu);
 		EVEDroidApp.getAppStore().setAppMenu(menu);
 		return super.onCreateOptionsMenu(menu);
@@ -83,15 +83,20 @@ public abstract class AbstractPagerActivity extends Activity {
 				return true;
 			case R.id.action_settings:
 				final Intent intent = new Intent(this, SettingsActivity.class);
-				startActivity(intent);
+				this.startActivity(intent);
 				return false;
 			case R.id.action_fullreload:
-				startActivity(new Intent(this, SplashActivity.class));
+				this.startActivity(new Intent(this, SplashActivity.class));
 				return true;
 			case R.id.action_downloadlocations:
 				// Insert into the download queue the action to download the locations.
 				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
 				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+				break;
+			case R.id.action_updateaccounts:
+				// Refresh the store data
+				AppModelStore.initialize();
+				break;
 			case R.id.action_createFitting:
 				// Create demo fittings to test the save/restore and continue the development.
 				Fitting onConstructionFit = new Fitting();
@@ -130,14 +135,13 @@ public abstract class AbstractPagerActivity extends Activity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position)) {
+					if ("" == _pageAdapter.getSubTitle(position))
 						_actionBar.setSubtitle(null);
-					} else {
+					else
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
-					}
 				}
 			});
-		} else {
+		} else
 			_pageContainer.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
 				public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
@@ -149,54 +153,44 @@ public abstract class AbstractPagerActivity extends Activity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position)) {
+					if ("" == _pageAdapter.getSubTitle(position))
 						_actionBar.setSubtitle(null);
-					} else {
+					else
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
-					}
 				}
 			});
-		}
 	}
 
 	protected void addPage(final AbstractNewPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
-		final TitledFragment frag = (TitledFragment) getFragmentManager()
+		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
 				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-		if (null == frag) {
+		if (null == frag)
 			_pageAdapter.addPage(newFrag);
-		} else {
+		else
 			_pageAdapter.addPage(frag);
-		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
-		if (_pageAdapter.getCount() > 1) {
-			activateIndicator();
-		}
+		if (_pageAdapter.getCount() > 1) this.activateIndicator();
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
 	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
-		final TitledFragment frag = (TitledFragment) getFragmentManager()
+		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
 				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-		if (null == frag) {
+		if (null == frag)
 			_pageAdapter.addPage(newFrag);
-		} else {
+		else
 			_pageAdapter.addPage(frag);
-		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
-		if (_pageAdapter.getCount() > 1) {
-			activateIndicator();
-		}
+		if (_pageAdapter.getCount() > 1) this.activateIndicator();
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
 	protected void disableIndicator() {
-		if (null != _indicator) {
-			_indicator.setVisibility(View.GONE);
-		}
+		if (null != _indicator) _indicator.setVisibility(View.GONE);
 	}
 
 	protected EvePagerAdapter getPageAdapter() {
@@ -207,29 +201,25 @@ public abstract class AbstractPagerActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i("EVEI", ">> AbstractPagerActivity.onCreate"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pager);
+		this.setContentView(R.layout.activity_pager);
 		try {
 			// Gets the activity's default ActionBar
-			_actionBar = getActionBar();
+			_actionBar = this.getActionBar();
 			_actionBar.show();
 			_actionBar.setDisplayHomeAsUpEnabled(true);
 
 			// Locate the elements of the page and store in global data.
-			_pageContainer = (ViewPager) findViewById(R.id.pager);
-			_back = (ImageView) findViewById(R.id.backgroundFrame);
-			_indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+			_pageContainer = (ViewPager) this.findViewById(R.id.pager);
+			_back = (ImageView) this.findViewById(R.id.backgroundFrame);
+			_indicator = (CirclePageIndicator) this.findViewById(R.id.indicator);
 			// Check page structure.
-			if (null == _pageContainer) {
-				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			}
-			if (null == _back) {
-				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			}
+			if (null == _pageContainer) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			if (null == _back) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 
 			// Add the adapter for the page switching.
-			_pageAdapter = new EvePagerAdapter(getFragmentManager(), _pageContainer.getId());
+			_pageAdapter = new EvePagerAdapter(this.getFragmentManager(), _pageContainer.getId());
 			_pageContainer.setAdapter(_pageAdapter);
-			disableIndicator();
+			this.disableIndicator();
 
 			// // Process the parameters into the context.
 			// final Bundle extras = getIntent().getExtras();
@@ -249,7 +239,7 @@ public abstract class AbstractPagerActivity extends Activity {
 		} catch (final Exception rtex) {
 			Log.e("EVEI", "RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage()));
 		}
 		Log.i("EVEI", "<< AbstractPagerActivity.onCreate"); //$NON-NLS-1$
 	}
@@ -282,11 +272,11 @@ public abstract class AbstractPagerActivity extends Activity {
 		final Intent intent = new Intent(this, SplashActivity.class);
 		// Pass the user message to the activity for display.
 		intent.putExtra(AppWideConstants.extras.EXTRA_EXCEPTIONMESSAGE, exception.getMessage());
-		startActivity(intent);
+		this.startActivity(intent);
 	}
 
 	protected void updateInitialTitle() {
-		TitledFragment firstFragment = (TitledFragment) getPageAdapter().getInitialPage();
+		TitledFragment firstFragment = (TitledFragment) this.getPageAdapter().getInitialPage();
 		_actionBar.setTitle(firstFragment.getTitle());
 		_actionBar.setSubtitle(firstFragment.getSubtitle());
 	}

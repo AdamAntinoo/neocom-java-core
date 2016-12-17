@@ -44,6 +44,7 @@ import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.eve.CharacterInfoParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.LocationsParser;
+import com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
@@ -103,7 +104,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		newchar.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
 		// Balance information
-		AccountBalanceParser balanceparser = new AccountBalanceParser();
+		PilotAccountBalanceParser balanceparser = new PilotAccountBalanceParser();
 		AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
 		if (null != balanceresponse) {
 			Set<EveAccountBalance> balance = balanceresponse.getAll();

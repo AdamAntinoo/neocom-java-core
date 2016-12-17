@@ -134,20 +134,6 @@ public class Pilot extends NeoComCharacter {
 		try {
 			// Clear any previous record with owner -1 from database.
 			AppConnector.getDBConnector().clearInvalidRecords();
-			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
-			//			AssetListResponse response = null;
-			//			if (getName().equalsIgnoreCase("Corporation")) {
-			//				AssetListParser parser = com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance();
-			//				response = parser.getResponse(getAuthorization());
-			//				if (null != response) {
-			//					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-			//					assetsCacheTime = new Instant(response.getCachedUntil());
-			//					// Assets may be parent of other assets so process them recursively.
-			//					for (final EveAsset eveAsset : assets) {
-			//						processAsset(eveAsset, null);
-			//					}
-			//				}
-			//			} else {
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
