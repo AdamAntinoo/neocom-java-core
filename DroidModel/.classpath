@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/dimensinfin/evedroid/model/ModuleCard.java|org/dimensinfin/evedroid/model/manufacture/BuildResourceList.java|org/dimensinfin/evedroid/industry/TimeLine.java|org/dimensinfin/evedroid/model/jobs/JobDefinition.java|org/dimensinfin/evedroid/constant/ResourceStrings.java|org/dimensinfin/evedroid/model/market/ExternalModuleDatabase.java|org/dimensinfin/evedroid/model/market/ModuleBlock.java|org/dimensinfin/evedroid/connector/ICache.java|org/dimensinfin/evedroid/model/ApiStation.java|org/dimensinfin/evedroid/model/APIKeyCore.java|org/dimensinfin/evedroid/model/EveCharCore.java|android/support/v4/util/LongSparseArray.java|org/dimensinfin/evedroid/core/AbstractNeoComNode.java" kind="src" path="src/main">
+	<classpathentry excluding="org/dimensinfin/evedroid/model/ModuleCard.java|org/dimensinfin/evedroid/model/manufacture/BuildResourceList.java|org/dimensinfin/evedroid/industry/TimeLine.java|org/dimensinfin/evedroid/model/jobs/JobDefinition.java|org/dimensinfin/evedroid/constant/ResourceStrings.java|org/dimensinfin/evedroid/model/market/ExternalModuleDatabase.java|org/dimensinfin/evedroid/model/market/ModuleBlock.java|org/dimensinfin/evedroid/connector/ICache.java|org/dimensinfin/evedroid/model/ApiStation.java|org/dimensinfin/evedroid/model/APIKeyCore.java|org/dimensinfin/evedroid/model/EveCharCore.java|android/support/v4/util/LongSparseArray.java" kind="src" path="src/main">
 		<attributes>
 			<attribute name="ignore_optional_problems" value="true"/>
 		</attributes>

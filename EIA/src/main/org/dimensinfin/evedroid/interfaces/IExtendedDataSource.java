@@ -13,19 +13,18 @@ import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
-import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IExtendedDataSource extends IDataSource {
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public RootNode collaborate2Model();
+	//	public RootNode collaborate2Model();
 
 	@Deprecated
 	public void connect(DataSourceManager dataSourceManager);
 
-	public void createContentHierarchy();
+	//	public void createContentHierarchy();
 
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getBodyParts();

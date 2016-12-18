@@ -47,8 +47,11 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 		for (AbstractAndroidPart part : _root) {
 			result.add(part);
 			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) for (IPart child : part.collaborate2View())
-				result.add((AbstractAndroidPart) child);
+			if (part.isExpanded()) {
+				for (IPart child : part.collaborate2View()) {
+					result.add((AbstractAndroidPart) child);
+				}
+			}
 		}
 		_adapterData = result;
 		return result;

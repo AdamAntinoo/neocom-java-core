@@ -1,14 +1,16 @@
-//	PROJECT:        AndroidMVC
+//	PROJECT:        NeoCom.MVC (NEOC.MVC)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Library that defines a generic Model View Controller core classes to be used
+//									on Android projects. Defines the Part factory and the Part core methods to manage
+//									the extended GEF model into the Android View to be used on ListViews.
 package org.dimensinfin.android.mvc.core;
 
 // - IMPORT SECTION .........................................................................................
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.R;
@@ -18,6 +20,7 @@ import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import android.app.Activity;
 import android.app.Fragment;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,14 +32,14 @@ import android.widget.TextView;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class DataSourceAdapter extends BaseAdapter implements PropertyChangeListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger														logger					= Logger.getLogger("DataSourceAdapter");
+	private static Logger													logger					= Logger.getLogger("DataSourceAdapter");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected Activity															_context				= null;
-	protected IDataSource														_datasource			= null;
-	protected final ArrayList<AbstractAndroidPart>	_hierarchy			= new ArrayList<AbstractAndroidPart>();
-	private Fragment																_fragment				= null;
-	private final HashMap<Integer, View>						_hierarchyViews	= new HashMap<Integer, View>();
+	private Activity															_context				= null;
+	private IDataSource														_datasource			= null;
+	private final ArrayList<AbstractAndroidPart>	_hierarchy			= new ArrayList<AbstractAndroidPart>();
+	private Fragment															_fragment				= null;
+	private final SparseArray<View>								_hierarchyViews	= new SparseArray<View>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -49,14 +52,12 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 	 * @param datasource
 	 *          the source for the data to be represented on the view structures.
 	 */
-	public DataSourceAdapter(final AbstractContextActivity activity, final IDataSource datasource) {
+	public DataSourceAdapter(final Activity activity, final IDataSource datasource) {
 		super();
 		_context = activity;
 		_datasource = datasource;
-		if (_datasource instanceof AbstractDataSource) {
-			((AbstractDataSource) _datasource).addPropertyChangeListener(this);
-		}
-		setModel(_datasource.getPartHierarchy());
+		_datasource.addPropertyChangeListener(this);
+		this.setModel(_datasource.getBodyParts());
 	}
 
 	/**
@@ -74,10 +75,8 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 		_fragment = fragment;
 		_context = _fragment.getActivity();
 		_datasource = datasource;
-		if (_datasource instanceof AbstractDataSource) {
-			((AbstractDataSource) _datasource).addPropertyChangeListener(this);
-		}
-		setModel(_datasource.getPartHierarchy());
+		_datasource.addPropertyChangeListener(this);
+		this.setModel(_datasource.getBodyParts());
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -107,10 +106,10 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 		//		logger.info("-- Getting view [" + position + "]");
 		try {
 			// If the request is new we are sure this has to be created.
-			AbstractAndroidPart item = getCastedItem(position);
+			AbstractAndroidPart item = this.getCastedItem(position);
 			if (null == convertView) {
 				Log.i("DataSourceAdapter", "-- Getting view [" + position + "]");
-				AbstractHolder holder = getCastedItem(position).getHolder(getContext());
+				AbstractHolder holder = this.getCastedItem(position).getHolder(this.getContext());
 				holder.initializeViews();
 				convertView = holder.getView();
 				convertView.setTag(item);
@@ -122,7 +121,7 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 				if (null == cachedView) {
 					Log.i("DataSourceAdapter", "-- Getting view [" + position + "]");
 					// Recreate the view.
-					AbstractHolder holder = getCastedItem(position).getHolder(getContext());
+					AbstractHolder holder = this.getCastedItem(position).getHolder(this.getContext());
 					holder.initializeViews();
 					convertView = holder.getView();
 					convertView.setTag(item);
@@ -152,10 +151,11 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 		} catch (RuntimeException rtex) {
 			String message = rtex.getMessage();
 			if (null == message) message = "NullPointerException detected.";
-			logger.severe("R> Runtime Exception on DataSourceAdapter.getView." + message);
+			DataSourceAdapter.logger.severe("R> Runtime Exception on DataSourceAdapter.getView." + message);
 			rtex.printStackTrace();
 			//DEBUG Add exception registration to the exception page.
-			final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			final LayoutInflater mInflater = (LayoutInflater) this.getContext()
+					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 			// The view is a new view. We have to fill all the items
 			convertView = mInflater.inflate(R.layout.exception_4list, null);
 			TextView exceptionMessage = (TextView) convertView.findViewById(R.id.exceptionMessage);
@@ -168,11 +168,14 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 	public boolean hasStableIds() {
 		return true;
 	}
-/**
- * Update the Part list from the model. It should have been already updated by the detection of the structure change.
- */
+
+	/**
+	 * Update the Part list from the model. It should have been already updated by the detection of the
+	 * structure change.
+	 */
+	@Override
 	public void notifyDataSetChanged() {
-		setModel(_datasource.getPartHierarchy());
+		this.setModel(_datasource.getBodyParts());
 		super.notifyDataSetChanged();
 	}
 
@@ -182,9 +185,8 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 	 * code.
 	 */
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES)) {
-			notifyDataSetChanged();
-		}
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES))
+			this.notifyDataSetChanged();
 	}
 
 	protected Activity getContext() {
@@ -207,7 +209,7 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 	 * @return
 	 */
 	private View searchCachedView(final int position, final View convertView) {
-		AbstractAndroidPart item = getCastedItem(position);
+		AbstractAndroidPart item = this.getCastedItem(position);
 		long modelid = item.getModelID();
 		View hit = _hierarchyViews.get(position);
 		if (null != hit) {
@@ -217,10 +219,9 @@ public class DataSourceAdapter extends BaseAdapter implements PropertyChangeList
 				long viewModelid = ((AbstractAndroidPart) tag).getModelID();
 				if (modelid == viewModelid)
 					return hit;
-				else {
+				else
 					// Clear this element on the cache because does not match.
 					_hierarchyViews.remove(position);
-				}
 			}
 		}
 		return null;
