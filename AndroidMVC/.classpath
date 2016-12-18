@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/dimensinfin/android/mvc/core/AbstractComplexGEFNode.java" kind="src" path="src"/>
+	<classpathentry excluding="org/dimensinfin/android/mvc/core/AbstractComplexGEFNode.java|org/dimensinfin/android/mvc/core/AbstractCorePart.java|org/dimensinfin/android/mvc/interfaces/IViewSupportPart.java|org/dimensinfin/android/mvc/core/AbstractEditPart.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>

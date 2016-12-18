@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.dimensinfin.android.mvc.core;
 
-import java.beans.PropertyChangeEvent;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -19,7 +18,6 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.core.model.RootNode;
 
 /**
  * The baseline implementation for the {@link IEditPart} interface.
@@ -35,7 +33,7 @@ import org.dimensinfin.core.model.RootNode;
  * AbstractEditPart provides support for children. All AbstractEditPart's can potentially be containers for
  * other EditParts.
  */
-public abstract class AbstractEditPart extends AbstractPropertyChanger implements IEditPart {
+public abstract class AbstractEditPart extends AbstractPart implements IEditPart {
 	private static final long									serialVersionUID	= 4934501535877351327L;
 	public static Logger											logger						= Logger.getLogger("AbstractEditPart");
 	/**
@@ -51,11 +49,11 @@ public abstract class AbstractEditPart extends AbstractPropertyChanger implement
 	 * The left-most bit that is reserved by this class for setting flags. Subclasses may define additional
 	 * flags starting at <code>(MAX_FLAG << 1)</code>.
 	 */
-	protected static final int								MAX_FLAG					= FLAG_FOCUS;
+	protected static final int								MAX_FLAG					= AbstractEditPart.FLAG_FOCUS;
 
-	private IGEFNode													model;
+	//	private IGEFNode													model;
 	private int																flags;
-	private IEditPart													parent;
+	//	private IEditPart													parent;
 	private int																selected;
 
 	/**
@@ -63,96 +61,98 @@ public abstract class AbstractEditPart extends AbstractPropertyChanger implement
 	 */
 	protected Vector<AbstractPropertyChanger>	children					= new Vector<AbstractPropertyChanger>();
 
-	public AbstractEditPart() {
-	}
+	//	public AbstractEditPart() {
+	//	}
 
-	public AbstractEditPart(IGEFNode model) {
-		this.model = model;
-	}
+	//	public AbstractEditPart(final IGEFNode model) {
+	//		this.model = model;
+	//	}
+	//
+	//	public AbstractEditPart(final RootNode node) {
+	//		model = node;
+	//	}
 
-	public AbstractEditPart(RootNode node) {
-		this.model = node;
-	}
+	//	public void addChild(final AbstractPropertyChanger child) {
+	//		children.add(child);
+	//	}
 
-	public void addChild(final AbstractPropertyChanger child) {
-		children.add(child);
-	}
+	//	/**
+	//	 * Adds a child <code>EditPart</code> to this EditPart. This method is called from
+	//	 * {@link #refreshChildren()}. The following events occur in the order listed:
+	//	 * <OL>
+	//	 * <LI>The child is added to the {@link #children} List, and its parent is set to <code>this</code>
+	//	 * <LI>{@link #addChildVisual(IEditPart, int)} is called to add the child's visual
+	//	 * <LI>{@link IEditPart#addNotify()} is called on the child.
+	//	 * <LI><code>activate()</code> is called if this part is active
+	//	 * <LI><code>EditPartListeners</code> are notified that the child has been added.
+	//	 * </OL>
+	//	 * <P>
+	//	 * Subclasses should implement {@link #addChildVisual(IEditPart, int)}.
+	//	 * 
+	//	 * @param child
+	//	 *          The <code>EditPart</code> to add
+	//	 * @param index
+	//	 *          The index
+	//	 * @see #addChildVisual(IEditPart, int)
+	//	 * @see #removeChild(IEditPart)
+	//	 * @see #reorderChild(IEditPart,int)
+	//	 */
+	//	public void addChild(final AbstractPropertyChanger child, int index) {
+	//		//		Assert.isNotNull(child);
+	//		if (index == -1) index = this.getChildren().size();
+	//		if (children == null) children = new Vector<AbstractPropertyChanger>(2);
+	//
+	//		children.add(index, child);
+	//		((IEditPart) child).setParent(this);
+	//		//		addChildVisual(child, index);
+	//		//		child.addNotify();
+	//
+	//		//		if (isActive()) child.activate();
+	//		//		fireChildAdded(child, index);
+	//	}
 
-	/**
-	 * Adds a child <code>EditPart</code> to this EditPart. This method is called from
-	 * {@link #refreshChildren()}. The following events occur in the order listed:
-	 * <OL>
-	 * <LI>The child is added to the {@link #children} List, and its parent is set to <code>this</code>
-	 * <LI>{@link #addChildVisual(IEditPart, int)} is called to add the child's visual
-	 * <LI>{@link IEditPart#addNotify()} is called on the child.
-	 * <LI><code>activate()</code> is called if this part is active
-	 * <LI><code>EditPartListeners</code> are notified that the child has been added.
-	 * </OL>
-	 * <P>
-	 * Subclasses should implement {@link #addChildVisual(IEditPart, int)}.
-	 * 
-	 * @param child
-	 *          The <code>EditPart</code> to add
-	 * @param index
-	 *          The index
-	 * @see #addChildVisual(IEditPart, int)
-	 * @see #removeChild(IEditPart)
-	 * @see #reorderChild(IEditPart,int)
-	 */
-	public void addChild(final AbstractPropertyChanger child, int index) {
-		//		Assert.isNotNull(child);
-		if (index == -1) index = getChildren().size();
-		if (children == null) children = new Vector<AbstractPropertyChanger>(2);
+	//	/**
+	//	 * @return
+	//	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getChildren()
+	//	 */
+	//	@Override
+	//	public Vector<AbstractPropertyChanger> getChildren() {
+	//		if (children == null) return (Vector<AbstractPropertyChanger>) Collections.EMPTY_LIST;
+	//		return children;
+	//	}
 
-		children.add(index, child);
-		((IEditPart) child).setParent(this);
-		//		addChildVisual(child, index);
-		//		child.addNotify();
+	//	/**
+	//	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getModel()
+	//	 */
+	//	public IGEFNode getModel() {
+	//		return model;
+	//	}
 
-		//		if (isActive()) child.activate();
-		//		fireChildAdded(child, index);
-	}
+	//	/**
+	//	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getParent()
+	//	 */
+	//	public IEditPart getParentPart() {
+	//		return parent;
+	//	}
 
-	/**
-	 * @return
-	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getChildren()
-	 */
-	public Vector<AbstractPropertyChanger> getChildren() {
-		if (children == null) return (Vector<AbstractPropertyChanger>) Collections.EMPTY_LIST;
-		return children;
-	}
+	//	/**
+	//	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getRoot()
+	//	 */
+	//	public RootPart getRoot() {
+	//		if (this.getParentPart() == null) return null;
+	//		return this.getParentPart().getRoot();
+	//	}
 
-	/**
-	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getModel()
-	 */
-	public IGEFNode getModel() {
-		return model;
-	}
+	//	/**
+	//	 * @return <code>true</code> if this EditPart is active.
+	//	 */
+	//	public boolean isActive() {
+	//		return this.getFlag(AbstractEditPart.FLAG_ACTIVE);
+	//	}
 
-	/**
-	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getParent()
-	 */
-	public IEditPart getParentPart() {
-		return parent;
-	}
-
-	/**
-	 * @see org.dimensinfin.android.mvc.core.IEditPart.gef.EditPart#getRoot()
-	 */
-	public RootPart getRoot() {
-		if (getParentPart() == null) return null;
-		return getParentPart().getRoot();
-	}
-
-	/**
-	 * @return <code>true</code> if this EditPart is active.
-	 */
-	public boolean isActive() {
-		return getFlag(FLAG_ACTIVE);
-	}
-
-	public void propertyChange(PropertyChangeEvent evt) {
-	}
+	//	@Override
+	//	public void propertyChange(final PropertyChangeEvent evt) {
+	//	}
 
 	//	/**
 	//	 * Updates the set of children EditParts so that it is in sync with the model children. This method is
@@ -239,49 +239,49 @@ public abstract class AbstractEditPart extends AbstractPropertyChanger implement
 	//		}
 	//	}
 
-	/**
-	 * Set the primary model object that this EditPart represents. This method is used by an
-	 * <code>EditPartFactory</code> when creating an EditPart.
-	 * 
-	 * @see IEditPart#setModel(Object)
-	 */
-	public void setModel(final Object model) {
-		this.model = (IGEFNode) model;
-	}
+	//	/**
+	//	 * Set the primary model object that this EditPart represents. This method is used by an
+	//	 * <code>EditPartFactory</code> when creating an EditPart.
+	//	 * 
+	//	 * @see IEditPart#setModel(Object)
+	//	 */
+	//	public void setModel(final Object model) {
+	//		this.model = (IGEFNode) model;
+	//	}
+	//
+	//	/**
+	//	 * Sets the parent EditPart. There is no reason to override this method.
+	//	 * 
+	//	 * @see IEditPart#setParent(IEditPart)
+	//	 */
+	//	public void setParent(final IEditPart parent) {
+	//		this.parent = parent;
+	//	}
 
-	/**
-	 * Sets the parent EditPart. There is no reason to override this method.
-	 * 
-	 * @see IEditPart#setParent(IEditPart)
-	 */
-	public void setParent(final IEditPart parent) {
-		this.parent = parent;
-	}
+	//	/**
+	//	 * Describes this EditPart for developmental debugging purposes.
+	//	 * 
+	//	 * @return a description
+	//	 */
+	//	@Override
+	//	public String toString() {
+	//		String c = this.getClass().getName();
+	//		c = c.substring(c.lastIndexOf('.') + 1);
+	//		return c + "( " + this.getModel() + " )";//$NON-NLS-2$//$NON-NLS-1$
+	//	}
 
-	/**
-	 * Describes this EditPart for developmental debugging purposes.
-	 * 
-	 * @return a description
-	 */
-	@Override
-	public String toString() {
-		String c = getClass().getName();
-		c = c.substring(c.lastIndexOf('.') + 1);
-		return c + "( " + getModel() + " )";//$NON-NLS-2$//$NON-NLS-1$
-	}
-
-	/**
-	 * Returns a <code>List</code> containing the children model objects. If this EditPart's model is a
-	 * container, this method should be overridden to returns its children. This is what causes children
-	 * EditParts to be created.
-	 * <P>
-	 * Callers must not modify the returned List. Must not return <code>null</code>.
-	 * 
-	 * @return the List of children
-	 */
-	protected List<IGEFNode> collaborate2Model() {
-		return Collections.EMPTY_LIST;
-	}
+//	/**
+//	 * Returns a <code>List</code> containing the children model objects. If this EditPart's model is a
+//	 * container, this method should be overridden to returns its children. This is what causes children
+//	 * EditParts to be created.
+//	 * <P>
+//	 * Callers must not modify the returned List. Must not return <code>null</code>.
+//	 * 
+//	 * @return the List of children
+//	 */
+//	protected List<IGEFNode> collaborate2Model() {
+//		return Collections.EMPTY_LIST;
+//	}
 
 	//	/**
 	//	 * Creates the initial EditPolicies and/or reserves slots for dynamic ones. Should be implemented to install
@@ -325,106 +325,60 @@ public abstract class AbstractEditPart extends AbstractPropertyChanger implement
 	//	protected final void debugFeedback(final String message) {
 	//	}
 
-	/**
-	 * Create the child <code>EditPart</code> for the given model object. This method is called from
-	 * {@link #refreshChildren()}.
-	 * <P>
-	 * By default, the implementation will delegate to the <code>EditPartViewer</code>'s {@link EditPartFactory}
-	 * . Subclasses may override this method instead of using a Factory.
-	 * 
-	 * @param model
-	 *          the Child model object
-	 * @return The child EditPart
-	 */
-	// REFACTOR maybe this method should be reimplemented to allow the dynamic creation of childs from inside the part
-	//	protected IEditPart createChild(final Object model) {
-	//		return getEditPartFactory().createPart(this, model);
-	//	}
-	protected abstract IEditPart createChild(final Object model);
+//	/**
+//	 * Create the child <code>EditPart</code> for the given model object. This method is called from
+//	 * {@link #refreshChildren()}.
+//	 * <P>
+//	 * By default, the implementation will delegate to the <code>EditPartViewer</code>'s {@link EditPartFactory}
+//	 * . Subclasses may override this method instead of using a Factory.
+//	 * 
+//	 * @param model
+//	 *          the Child model object
+//	 * @return The child EditPart
+//	 */
+//	// REFACTOR maybe this method should be reimplemented to allow the dynamic creation of childs from inside the part
+//	//	protected IEditPart createChild(final Object model) {
+//	//		return getEditPartFactory().createPart(this, model);
+//	//	}
+//	protected abstract IEditPart createChild(final Object model);
 	//	public abstract RootPart getRoot() ;
 
-	/**
-	 * Returns the boolean value of the given flag. Specifically, returns <code>true</code> if the bitwise AND
-	 * of the specified flag and the internal flags field is non-zero.
-	 * 
-	 * @param flag
-	 *          Bitmask indicating which flag to return
-	 * @return the requested flag's value
-	 * @see #setFlag(int,boolean)
-	 */
-	protected final boolean getFlag(final int flag) {
-		return (flags & flag) != 0;
-	}
+	//	/**
+	//	 * Returns the boolean value of the given flag. Specifically, returns <code>true</code> if the bitwise AND
+	//	 * of the specified flag and the internal flags field is non-zero.
+	//	 * 
+	//	 * @param flag
+	//	 *          Bitmask indicating which flag to return
+	//	 * @return the requested flag's value
+	//	 * @see #setFlag(int,boolean)
+	//	 */
+	//	protected final boolean getFlag(final int flag) {
+	//		return (flags & flag) != 0;
+	//	}
 
-	/**
-	 * Removes a child <code>EditPart</code>. This method is called from {@link #refreshChildren()}. The
-	 * following events occur in the order listed:
-	 * <OL>
-	 * <LI><code>EditPartListeners</code> are notified that the child is being removed
-	 * <LI><code>deactivate()</code> is called if the child is active
-	 * <LI>{@link IEditPart#removeNotify()} is called on the child.
-	 * <LI>{@link #removeChildVisual(IEditPart)} is called to remove the child's visual object.
-	 * <LI>The child's parent is set to <code>null</code>
-	 * </OL>
-	 * <P>
-	 * Subclasses should implement {@link #removeChildVisual(IEditPart)}.
-	 * 
-	 * @param child
-	 *          EditPart being removed
-	 * @see #addChild(IEditPart,int)
-	 */
-	protected void removeChild(final IEditPart child) {
-		//		Assert.isNotNull(child);
-		int index = getChildren().indexOf(child);
-		if (index < 0) return;
-		//		fireRemovingChild(child, index);
-		//		if (isActive()) child.deactivate();
-		//		child.removeNotify();
-		removeChildVisual(child);
-		child.setParent(null);
-		getChildren().remove(child);
-	}
+	//	/**
+	//	 * Removes the childs visual from this EditPart's visual. Subclasses should implement this method to support
+	//	 * the visual type they introduce, such as Figures or TreeItems.
+	//	 * 
+	//	 * @param child
+	//	 *          the child EditPart
+	//	 */
+	//	protected abstract void removeChildVisual(IEditPart child);
 
-	/**
-	 * Removes the childs visual from this EditPart's visual. Subclasses should implement this method to support
-	 * the visual type they introduce, such as Figures or TreeItems.
-	 * 
-	 * @param child
-	 *          the child EditPart
-	 */
-	protected abstract void removeChildVisual(IEditPart child);
-
-	/**
-	 * Moves a child <code>EditPart</code> into a lower index than it currently occupies. This method is called
-	 * from {@link #refreshChildren()}.
-	 * 
-	 * @param editpart
-	 *          the child being reordered
-	 * @param index
-	 *          new index for the child
-	 */
-	protected void reorderChild(final IEditPart editpart, final int index) {
-		removeChildVisual(editpart);
-		List children = getChildren();
-		children.remove(editpart);
-		children.add(index, editpart);
-		//		addChildVisual(editpart, index);
-	}
-
-	/**
-	 * Sets the value of the specified flag. Flag values are decalared as static constants. Subclasses may
-	 * define additional constants above {@link #MAX_FLAG}.
-	 * 
-	 * @param flag
-	 *          Flag being set
-	 * @param value
-	 *          Value of the flag to be set
-	 * @see #getFlag(int)
-	 */
-	protected final void setFlag(final int flag, final boolean value) {
-		if (value)
-			flags |= flag;
-		else
-			flags &= ~flag;
-	}
+	//	/**
+	//	 * Sets the value of the specified flag. Flag values are decalared as static constants. Subclasses may
+	//	 * define additional constants above {@link #MAX_FLAG}.
+	//	 * 
+	//	 * @param flag
+	//	 *          Flag being set
+	//	 * @param value
+	//	 *          Value of the flag to be set
+	//	 * @see #getFlag(int)
+	//	 */
+	//	protected final void setFlag(final int flag, final boolean value) {
+	//		if (value)
+	//			flags |= flag;
+	//		else
+	//			flags &= ~flag;
+	//	}
 }

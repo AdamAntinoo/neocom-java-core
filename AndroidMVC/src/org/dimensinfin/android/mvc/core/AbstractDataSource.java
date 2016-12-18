@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 
 import android.os.Bundle;
@@ -40,15 +41,14 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 			return 0;
 	}
 
+	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractAndroidPart part : _root) {
 			result.add(part);
 			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-				result.addAll(grand);
-			}
+			if (part.isExpanded()) for (IPart child : part.collaborate2View())
+				result.add((AbstractAndroidPart) child);
 		}
 		_adapterData = result;
 		return result;
