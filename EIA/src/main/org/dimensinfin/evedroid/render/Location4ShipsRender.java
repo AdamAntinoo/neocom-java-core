@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.render;
 
 // - IMPORT SECTION .........................................................................................
@@ -11,9 +13,8 @@ import java.util.ArrayList;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.model.Property;
-import org.dimensinfin.evedroid.part.LocationIndustryPart;
+import org.dimensinfin.evedroid.part.LocationShipsPart;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -23,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Location4IndustryRender extends EveAbstractHolder {
+public class Location4ShipsRender extends EveAbstractHolder {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -43,14 +44,14 @@ public class Location4IndustryRender extends EveAbstractHolder {
 	// - L A Y O U T   L A B E L S
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Location4IndustryRender(final EveAbstractPart target, final Activity context) {
+	public Location4ShipsRender(final LocationShipsPart target, final Activity context) {
 		super(target, context);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
-	public LocationIndustryPart getPart() {
-		return (LocationIndustryPart) super.getPart();
+	public LocationShipsPart getPart() {
+		return (LocationShipsPart) super.getPart();
 	}
 
 	@Override

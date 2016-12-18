@@ -204,6 +204,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	 * multifragment activities) . Otherwise return the Id of the fragment that would be generated on the layout
 	 * XML.
 	 */
+	@Deprecated
 	public int getIdentifier() {
 		if (_fragmentID > 0)
 			return _fragmentID;

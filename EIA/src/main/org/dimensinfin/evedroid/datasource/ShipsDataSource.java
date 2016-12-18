@@ -8,6 +8,7 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -65,9 +66,9 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	public RootNode collaborate2Model() {
-		SpecialDataSource.logger.info(">> ShipsDatasource.collaborate2Model");
+		SpecialDataSource.logger.info(">> [ShipsDatasource.collaborate2Model]");
 		try {
-			AppModelStore store = EVEDroidApp.getAppStore();
+			AppModelStore store = AppModelStore.getSingleton();
 			// Get the complete list of ships. Compare it to the current list if it exists.
 			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
@@ -117,7 +118,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		// Check if the location is already on the array.
 		ShipLocation hit = _locations.get(locationid);
 		if (null == hit) {
-			hit = new ShipLocation(ship.getLocation());
+			hit = ShipLocation.createFromLocation(ship.getLocation());
 			// Add the new location to the list of locations and to the Regions
 			this.add2Region(hit);
 			_locations.put(locationid, hit);

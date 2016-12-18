@@ -8,30 +8,16 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
-import org.dimensinfin.android.mvc.interfaces.IPartFactory;
-import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.ShipsDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.evedroid.factory.ShipPartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.Region;
-import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.part.GroupPart;
-import org.dimensinfin.evedroid.part.LocationIndustryPart;
-import org.dimensinfin.evedroid.part.RegionPart;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipsFragment extends AbstractNewPagerFragment {
@@ -56,94 +42,50 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * Creates the structures when the fragment is about to be shown. It will inflate the layout where the
-	 * generic fragment will be layered to show the content. It will get the Activity functionality for single
-	 * page activities.
-	 */
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> ShipsFragment.onCreateView");
-		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-		try {
-			this.setIdentifier(_variant.hashCode());
-		} catch (final RuntimeException rtex) {
-			Log.e("NEOCOM", "RTEX> ShipsFragment.onCreateView - " + rtex.getMessage());
-			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onCreateView - " + rtex.getMessage()));
-		}
-		Log.i("NEOCOM", "<< ShipsFragment.onCreateView");
-		return theView;
-	}
+	//	/**
+	//	 * Creates the structures when the fragment is about to be shown. It will inflate the layout where the
+	//	 * generic fragment will be layered to show the content. It will get the Activity functionality for single
+	//	 * page activities.
+	//	 */
+	//	@Override
+	//	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	//		Log.i("NEOCOM", ">> ShipsFragment.onCreateView");
+	//		final View theView = super.onCreateView(inflater, container, savedInstanceState);
+	//		try {
+	//			this.setIdentifier(_variant.hashCode());
+	//		} catch (final RuntimeException rtex) {
+	//			Log.e("NEOCOM", "RTEX> ShipsFragment.onCreateView - " + rtex.getMessage());
+	//			rtex.printStackTrace();
+	//			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onCreateView - " + rtex.getMessage()));
+	//		}
+	//		Log.i("NEOCOM", "<< ShipsFragment.onCreateView");
+	//		return theView;
+	//	}
 
 	@Override
 	public void onStart() {
-		Log.i("NEOCOM", ">> ShipsFragment.onStart");
+		Log.i("NEOCOM", ">> [ShipsFragment.onStart]");
 		try {
-			// Check the datasource status and create a new one if still does not exists.
-			if (this.checkDSState()) this.registerDataSource();
+			//		this.setIdentifier(_variant.hashCode());
+			this.registerDataSource();
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> ShipsFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
 			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
-		Log.i("NEOCOM", "<< ShipsFragment.onStart");
+		Log.i("NEOCOM", "<< [ShipsFragment.onStart]");
 	}
 
 	private void registerDataSource() {
-		Log.i("NEOCOM", ">> ShipsFragment.registerDataSource");
+		Log.i("NEOCOM", ">> [ShipsFragment.registerDataSource]");
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getPilotName())
 				.addIdentifier(_variant.name());
 		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(_variant));
 		ds.setVariant(_variant);
 		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
-		this.setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
-		Log.i("NEOCOM", "<< ShipsFragment.registerDataSource");
-	}
-}
-
-// - CLASS IMPLEMENTATION ...................................................................................
-final class ShipPartFactory implements IPartFactory {
-	// - S T A T I C - S E C T I O N ..........................................................................
-
-	// - F I E L D - S E C T I O N ............................................................................
-	private EVARIANT variant = EVARIANT.DEFAULT_VARIANT;
-
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ShipPartFactory(final EVARIANT variantSelected) {
-		variant = variantSelected;
-	}
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * The method should create the matching part for the model received but there is no other place where we
-	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
-	 */
-	public IEditPart createPart(final IGEFNode node) {
-		if (node instanceof Region) {
-			AbstractCorePart part = new RegionPart((Region) node);
-			((AbstractAndroidPart) part).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-			part.setFactory(this);
-			return part;
-		}
-		if (node instanceof EveLocation) {
-			AbstractCorePart part = new LocationIndustryPart((EveLocation) node);
-			((AbstractAndroidPart) part).setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
-			part.setFactory(this);
-			return part;
-		}
-		if (node instanceof Separator) {
-			AbstractCorePart part = new GroupPart((Separator) node);
-			//			((AbstractAndroidPart) part).setRenderMode(AppWideConstants.rendermodes.FRAGMENT_ASS);
-			part.setFactory(this);
-			return part;
-		}
-		return null;
-	}
-
-	public String getVariant() {
-		return variant.name();
+		this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
+		Log.i("NEOCOM", "<< [ShipsFragment.registerDataSource]");
 	}
 }
 

@@ -8,6 +8,7 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity;
 
+//- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.enums.EVARIANT;
@@ -59,13 +60,13 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> ShipDirectorActivity.onCreate"); //$NON-NLS-1$
+		Log.i("NEOCOM", ">> [ShipDirectorActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		try {// Reset the page position.
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
 			this.addPage(new ShipsFragment().setVariant(EVARIANT.SHIPS_BYLOCATION), page++);
-			//			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS), page++);
+			this.addPage(new ShipsFragment().setVariant(EVARIANT.SHIPS_BYCLASS), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -73,7 +74,7 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		}
 		// Reinitialize the tile and subtitle from the first page.
 		this.updateInitialTitle();
-		Log.i("NEOCOM", "<< ShipDirectorActivity.onCreate"); //$NON-NLS-1$
+		Log.i("NEOCOM", "<< [ShipDirectorActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
 // - UNUSED CODE ............................................................................................

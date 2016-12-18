@@ -24,6 +24,7 @@ import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;
+import org.dimensinfin.evedroid.part.LocationPart;
 import org.dimensinfin.evedroid.part.TerminatorPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -83,7 +84,7 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 		}
 
 		// Filter our all the locations that do not contain datacores.
-		for (LocationIndustryPart locationPart : locations.values()) {
+		for (LocationPart locationPart : locations.values()) {
 			long stationID = locationPart.getCastedModel().getStationID();
 			for (NeoComAsset datacore : datacores) {
 				if (datacore.getLocation().getStationID() == stationID) {

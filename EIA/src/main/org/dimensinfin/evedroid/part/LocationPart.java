@@ -170,5 +170,22 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 			stackList.put(this.getCastedModel().getID(), container);
 		}
 	}
+
+	/**
+	 * Returns the number of model part children that are the blueprints at that location. If the case on a same
+	 * station there are more than one container they will be represented as different locations.
+	 * 
+	 * @return
+	 */
+	public String get_locationContentCount() {
+		int locationAssets = getChildren().size();
+		String countString = null;
+		if (locationAssets > 1) {
+			countString = qtyFormatter.format(locationAssets) + " Stacks";
+		} else {
+			countString = qtyFormatter.format(locationAssets) + " Stack";
+		}
+		return countString;
+	}
 }
 // - UNUSED CODE ............................................................................................
