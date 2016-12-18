@@ -25,5 +25,7 @@ public interface IDataSource extends PropertyChangeListener {
 
 	public ArrayList<AbstractAndroidPart> getBodyParts();
 
+	public ArrayList<AbstractAndroidPart> getHeaderParts();
+
 	public int getItemsCount();
 }

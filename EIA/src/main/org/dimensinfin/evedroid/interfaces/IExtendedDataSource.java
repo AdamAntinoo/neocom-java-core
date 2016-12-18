@@ -26,8 +26,8 @@ public interface IExtendedDataSource extends IDataSource {
 
 	//	public void createContentHierarchy();
 
-	@Deprecated
-	public ArrayList<AbstractAndroidPart> getBodyParts();
+	//	@Deprecated
+	//	public ArrayList<AbstractAndroidPart> getBodyParts();
 
 	public DataSourceLocator getDataSourceLocator();
 

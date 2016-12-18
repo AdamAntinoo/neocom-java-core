@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
-import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 
 import android.os.Bundle;
@@ -29,10 +28,10 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void createContentHierarchy() {
-		// Clear the current list of elements.
-		_root.clear();
-	}
+	//	public void createContentHierarchy() {
+	//		// Clear the current list of elements.
+	//		_root.clear();
+	//	}
 
 	public int getItemsCount() {
 		if (null != _adapterData)
@@ -41,21 +40,21 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 			return 0;
 	}
 
-	@Deprecated
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractAndroidPart part : _root) {
-			result.add(part);
-			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				for (IPart child : part.collaborate2View()) {
-					result.add((AbstractAndroidPart) child);
-				}
-			}
-		}
-		_adapterData = result;
-		return result;
-	}
+	//	@Deprecated
+	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+	//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		for (AbstractAndroidPart part : _root) {
+	//			result.add(part);
+	//			// Check if the node is expanded. Then add its children.
+	//			if (part.isExpanded()) {
+	//				for (IPart child : part.collaborate2View()) {
+	//					result.add((AbstractAndroidPart) child);
+	//				}
+	//			}
+	//		}
+	//		_adapterData = result;
+	//		return result;
+	//	}
 
 	public void propertyChange(final PropertyChangeEvent event) {
 	}
