@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
@@ -108,10 +107,10 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//			// Get the list of Parts that will be used for the ListView
-			//			_bodyParts = new ArrayList<AbstractCorePart>();
-			//			// Select for the body contents only the viewable Parts from the Part model. Make it a list.
-			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			// Get the list of Parts that will be used for the ListView
+			_bodyParts = new ArrayList<AbstractCorePart>();
+			// Select for the body contents only the viewable Parts from the Part model. Make it a list.
+			_bodyParts.addAll(_partModelRoot.collaborate2View());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
