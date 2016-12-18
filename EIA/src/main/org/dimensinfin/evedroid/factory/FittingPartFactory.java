@@ -11,10 +11,9 @@ package org.dimensinfin.evedroid.factory;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.Action;
@@ -47,37 +46,36 @@ public class FittingPartFactory extends PartFactory implements IPartFactory {
 	 * DataSource.
 	 */
 	@Override
-	public IEditPart createPart(final IGEFNode node) {
+	public IPart createPart(final AbstractComplexNode node) {
 		FittingPartFactory.logger.info("-- [FittingPartFactory.createPart]> Node class: " + node.getClass().getName());
 		// Set of Parts for the list of fittings.
 		if (this.getVariant() == EVARIANT.FITTING_LIST.name()) {
 			if (node instanceof Separator) {
-				GroupPart part = (GroupPart) new GroupPart((Separator) node).setFactory(this);
+				IPart part = new GroupPart((Separator) node).setFactory(this);
 				return part;
 			}
 			if (node instanceof Fitting) {
-				FittingPart part = new FittingPart((Fitting) node);
+				IPart part = new FittingPart((Fitting) node);
 				return part;
 			}
 		}
 		// Set of Parts for the Manufacture Page for a selected fragment.
 		if (this.getVariant() == EVARIANT.FITTING_MANUFACTURE.name()) {
 			if (node instanceof Action) {
-				ActionPart part = new ActionPart((AbstractComplexNode) node);
+				IPart part = new ActionPart(node);
 				return part;
 			}
 			if (node instanceof EveTask) {
-				TaskPart part = new TaskPart((AbstractComplexNode) node);
+				IPart part = new TaskPart(node);
 				return part;
 			}
 			if (node instanceof Separator) {
-				GroupPart part = new GroupPart((Separator) node);
+				IPart part = new GroupPart((Separator) node);
 				return part;
 			}
 			// This is the part element for the Fitting that going in the head.
 			if (node instanceof Fitting) {
-				FittingPart part = (FittingPart) new FittingPart((Fitting) node)
-						.setRenderMode(AppWideConstants.rendermodes.RENDER_FITTINGHEADER);
+				IPart part = new FittingPart((Fitting) node).setRenderMode(AppWideConstants.rendermodes.RENDER_FITTINGHEADER);
 				return part;
 			}
 		}

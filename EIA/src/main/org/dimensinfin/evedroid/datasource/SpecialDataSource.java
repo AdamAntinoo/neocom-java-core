@@ -16,9 +16,9 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.core.RootPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.enums.EVARIANT;
@@ -49,9 +49,9 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	/** The root node for the Part hierarchy that matches the data model hierarchy. */
 	protected RootPart										_partModelRoot		= null;
 	/** The list of Parts to show on the viewer. This is the body section that is scrollable. */
-	protected ArrayList<AbstractCorePart>	_bodyParts				= new ArrayList<AbstractCorePart>();
+	protected ArrayList<IPart>						_bodyParts				= new ArrayList<IPart>();
 	/** The list of Parts to show on the header. */
-	protected ArrayList<AbstractCorePart>	_headParts				= new ArrayList<AbstractCorePart>();
+	protected ArrayList<IPart>						_headParts				= new ArrayList<IPart>();
 	private DataSourceManager							_dsManager;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -89,7 +89,6 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 * duplicated of the resulting Part model and we move already parts from the current model to the new model
 	 * or create new part and finally remove what is left and unused.
 	 */
-	@Override
 	public void createContentHierarchy() {
 		try {
 			SpecialDataSource.logger.info(">> [SpecialDataSource.createContentHierarchy]");
@@ -108,43 +107,39 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//			// Get the list of Parts that will be used for the ListView
-			//			_bodyParts = new ArrayList<AbstractCorePart>();
-			//			// Select for the body contents only the viewable Parts from the Part model. Make it a list.
-			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
+			// Get the list of Parts that will be used for the ListView
+			_bodyParts = new ArrayList<IPart>();
+			// Select for the body contents only the viewable Parts from the Part model. Make it a list.
+			_bodyParts.addAll(_partModelRoot.collaborate2View());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		SpecialDataSource.logger.info("<< [SpecialDataSource.createContentHierarchy]");
 	}
 
-	/**
-	 * This is the method to initialize the copy of the model structures on the datasource. Every time this
-	 * method is called, the complete model is recreated. There are two ways to recreate it, comparing with the
-	 * old copy and inserting/deleting different nodes or recreating completely the new model copy. Once this
-	 * method is called we can create the depending part hierarchy. <br>
-	 * I have to search for a better name for this method. This is not clear and currently the
-	 * <code>initModel</code> is already on use by the class but can be reused later.
-	 */
-	@Deprecated
-	public void createPartsHierarchy() {
-	}
+	//	/**
+	//	 * This is the method to initialize the copy of the model structures on the datasource. Every time this
+	//	 * method is called, the complete model is recreated. There are two ways to recreate it, comparing with the
+	//	 * old copy and inserting/deleting different nodes or recreating completely the new model copy. Once this
+	//	 * method is called we can create the depending part hierarchy. <br>
+	//	 * I have to search for a better name for this method. This is not clear and currently the
+	//	 * <code>initModel</code> is already on use by the class but can be reused later.
+	//	 */
+	//	@Deprecated
+	//	public void createPartsHierarchy() {
+	//	}
 
 	/**
-	 * Return just the list of viewable Parts. That list is generated on the fly at the call to this method
-	 * instead that stored for later use. During the composition of the list we transform it of class because we
-	 * should change the final class level returned to the higher level possible and now for compatibility we
-	 * keep the <code>AbstractAndroidPart</code>.
+	 * Return just the list of viewable Parts. During the composition of the list we transform it of class
+	 * because we should change the final class level returned to the higher level possible and now for
+	 * compatibility we keep the <code>AbstractAndroidPart</code>.
 	 */
-	@Deprecated
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		// Get the list of Parts that will be used for the ListView
-		_bodyParts = new ArrayList<AbstractCorePart>();
-		// Select for the body contents only the viewable Parts from the Part model. Make it a list.
-		_bodyParts.addAll(_partModelRoot.collaborate2View());
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts)
-			result.add((AbstractAndroidPart) node);
+		if (null != _bodyParts) // Transform the list of IParts to a list of AbstractAndroidParts.
+			for (IPart part : _bodyParts)
+			if (part instanceof AbstractAndroidPart) result.add((AbstractAndroidPart) part);
 		return result;
 	}
 
@@ -160,19 +155,19 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _headParts)
+		for (IPart node : _headParts)
 			result.add((AbstractAndroidPart) node);
 		return result;
 	}
 
-	@Override
-	@Deprecated
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : this.getBodyParts())
-			result.add((AbstractAndroidPart) node);
-		return result;
-	}
+	//	@Override
+	//	@Deprecated
+	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+	//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		for (AbstractAndroidPart node : this.getBodyParts())
+	//			result.add(node);
+	//		return result;
+	//	}
 
 	public EVARIANT getVariant() {
 		return _variant;
@@ -187,7 +182,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	public void propertyChange(final PropertyChangeEvent event) {
 		// The expand/collapse state has changed.
 		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts = new ArrayList<IPart>();
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());

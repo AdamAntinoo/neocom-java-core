@@ -8,12 +8,6 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.core.model;
 
-
-// - IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
-
-import org.dimensinfin.core.model.AbstractGEFNode;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractComplexNode extends AbstractGEFNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -32,6 +26,8 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 	private boolean							downloaded								= false;
 	/** If true then the node is ever on the contents list. If false then it will depend on the hierarchy. */
 	private boolean							renderWhenEmpty						= true;
+	/** Allows to control the specific visibility os a single part. Defaults to visible when not empty. */
+	private boolean							visible										= true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -74,6 +70,20 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 		return expanded;
 	}
 
+	public boolean isRenderWhenEmpty() {
+		if (!renderWhenEmpty)
+			if (this.getChildren().size() > 0)
+				return true;
+			else
+				return false;
+		else
+			return renderWhenEmpty;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
 	/**
 	 * Checks of the groups should be rendered depending of some configuration values. By default all groups are
 	 * rendered only when they have contents. If they are empty they may not be rendered. Only they can be
@@ -84,11 +94,9 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 	 * 
 	 * @return
 	 */
+	@Deprecated
 	public boolean renderWhenEmpty() {
-		if (!this.renderWhenEmpty)
-				if (getChildren().size() > 0) return true;
-				else return false;
-		else return this.renderWhenEmpty;
+		return this.isRenderWhenEmpty();
 	}
 
 	public void setDownloaded(final boolean downloaded) {
@@ -105,6 +113,10 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 		return this;
 	}
 
+	public void setVisible(final boolean visible) {
+		this.visible = visible;
+	}
+
 	/**
 	 * Tries to invert the expansion state of the node. Only expands nodes that have children and is not
 	 * operative on the other nodes.<br>
@@ -113,16 +125,15 @@ public abstract class AbstractComplexNode extends AbstractGEFNode {
 	 */
 	public void toggleExpanded() {
 		if (!expanded)
-			expand();
+			this.expand();
 		else
-			collapse();
+			this.collapse();
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("AbstractAndroidNode [");
-		buffer.append("expand/download/renderEmpty: ").append(expanded).append("/").append(downloaded).append("/")
-				.append(renderWhenEmpty);
+		buffer.append("ex/dow/emp: ").append(expanded).append("/").append(downloaded).append("/").append(renderWhenEmpty);
 		buffer.append("]");
 		return buffer.toString();
 	}
