@@ -77,10 +77,6 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 		super(model);
 	}
 
-	//	public EveAbstractPart(final AbstractGEFNode model) {
-	//		this.setModel(model);
-	//	}
-
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String generatePriceString(final double price, final boolean compress, final boolean addSuffix) {
 		// Generate different formats depending on the quantity and the compress flag.

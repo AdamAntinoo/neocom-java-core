@@ -10,7 +10,8 @@ package org.dimensinfin.android.mvc.core;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.AbstractComplexNode;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -36,6 +37,11 @@ public abstract class AbstractAndroidPart extends AbstractPart {
 	private View							_view							= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public AbstractAndroidPart(final AbstractComplexNode model) {
+		super(model);
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public Activity getActivity() {
 		if (null == _fragment)
 			return _activity;
@@ -103,7 +109,7 @@ public abstract class AbstractAndroidPart extends AbstractPart {
 		_view = null;
 	}
 
-	public AbstractPropertyChanger setRenderMode(final int renderMode) {
+	public IPart setRenderMode(final int renderMode) {
 		this.renderMode = renderMode;
 		this.needsRedraw();
 		return this;

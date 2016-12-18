@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class NeoComAbstractPart extends AbstractAndroidPart {
@@ -24,7 +25,8 @@ public abstract class NeoComAbstractPart extends AbstractAndroidPart {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComAbstractPart() {
+	public NeoComAbstractPart(final AbstractComplexNode model) {
+		super(model);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

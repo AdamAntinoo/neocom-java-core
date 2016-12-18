@@ -42,6 +42,8 @@ public interface IPart extends PropertyChangeListener {
 
 	public Vector<IPart> runPolicies(Vector<IPart> targets);
 
+	public IPart setFactory(final IPartFactory partFactory);
+
 	public void setModel(final AbstractComplexNode model);
 
 	public void setParent(final IPart parent);

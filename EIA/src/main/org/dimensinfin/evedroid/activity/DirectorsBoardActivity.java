@@ -12,7 +12,6 @@ package org.dimensinfin.evedroid.activity;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.activity.PagerFragment;
-import org.dimensinfin.android.mvc.core.AbstractContextActivity;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.SettingsActivity;
@@ -43,7 +42,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class DirectorsBoardActivity extends AbstractContextActivity {
+public class DirectorsBoardActivity extends Activity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	enum EDirectorCode {
 		ASSETDIRECTOR, SHIPDIRECTOR, INDUSTRYDIRECTOR, MARKETDIRECTOR, JOBDIRECTOR, MININGDIRECTOR, FITDIRECTOR

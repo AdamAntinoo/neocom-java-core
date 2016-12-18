@@ -33,25 +33,25 @@ import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
  */
 public abstract class SpecialDataSource extends AbstractDataSource implements IExtendedDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long							serialVersionUID	= -9083587546700227219L;
-	public static Logger									logger						= Logger.getLogger("SpecialDataSource");
+	private static final long									serialVersionUID	= -9083587546700227219L;
+	public static Logger											logger						= Logger.getLogger("SpecialDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private DataSourceLocator							_locator					= null;
-	private EVARIANT											_variant					= EVARIANT.DEFAULT_VARIANT;
-	private boolean												_cacheable				= true;
-	private final HashMap<String, Object>	_parameters				= new HashMap<String, Object>();
-	protected IPartFactory								_partFactory			= null;
+	private DataSourceLocator									_locator					= null;
+	private EVARIANT													_variant					= EVARIANT.DEFAULT_VARIANT;
+	private boolean														_cacheable				= true;
+	private final HashMap<String, Object>			_parameters				= new HashMap<String, Object>();
+	protected IPartFactory										_partFactory			= null;
 
 	/** The initial node where to store the model. Model elements are children of this root. */
-	protected RootNode										_dataModelRoot		= null;
+	protected RootNode												_dataModelRoot		= null;
 	/** The root node for the Part hierarchy that matches the data model hierarchy. */
-	protected RootPart										_partModelRoot		= null;
+	protected RootPart												_partModelRoot		= null;
 	/** The list of Parts to show on the viewer. This is the body section that is scrollable. */
-	protected ArrayList<AbstractCorePart>	_bodyParts				= new ArrayList<AbstractCorePart>();
+	protected ArrayList<AbstractAndroidPart>	_bodyParts				= new ArrayList<AbstractAndroidPart>();
 	/** The list of Parts to show on the header. */
-	protected ArrayList<AbstractCorePart>	_headParts				= new ArrayList<AbstractCorePart>();
-	private DataSourceManager							_dsManager;
+	protected ArrayList<AbstractAndroidPart>	_headParts				= new ArrayList<AbstractAndroidPart>();
+	private DataSourceManager									_dsManager;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public SpecialDataSource(final DataSourceLocator locator, final IPartFactory factory) {
@@ -108,7 +108,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 				e.printStackTrace();
 			}
 			// Get the list of Parts that will be used for the ListView
-			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts = new ArrayList<AbstractAndroidPart>();
 			// Select for the body contents only the viewable Parts from the Part model. Make it a list.
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
 		} catch (Exception e) {
@@ -135,16 +135,12 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 * should change the final class level returned to the higher level possible and now for compatibility we
 	 * keep the <code>AbstractAndroidPart</code>.
 	 */
-	@Deprecated
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		// Get the list of Parts that will be used for the ListView
-		_bodyParts = new ArrayList<AbstractCorePart>();
-		// Select for the body contents only the viewable Parts from the Part model. Make it a list.
-		_bodyParts.addAll(_partModelRoot.collaborate2View());
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts)
-			result.add((AbstractAndroidPart) node);
-		return result;
+		if (null == _bodyParts)
+			return new ArrayList<AbstractAndroidPart>();
+		else
+			return _bodyParts;
 	}
 
 	public DataSourceLocator getDataSourceLocator() {
@@ -159,8 +155,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _headParts)
-			result.add((AbstractAndroidPart) node);
+		for (AbstractAndroidPart node : _headParts)
+			result.add(node);
 		return result;
 	}
 
@@ -168,8 +164,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : this.getBodyParts())
-			result.add((AbstractAndroidPart) node);
+		for (AbstractAndroidPart node : this.getBodyParts())
+			result.add(node);
 		return result;
 	}
 
@@ -186,7 +182,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	public void propertyChange(final PropertyChangeEvent event) {
 		// The expand/collapse state has changed.
 		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts = new ArrayList<AbstractAndroidPart>();
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());

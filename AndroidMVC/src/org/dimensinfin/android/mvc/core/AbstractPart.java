@@ -267,12 +267,12 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		this.active = active;
 	}
 
-	public AbstractPart setDataStore(final AbstractDataSource ds) {
+	public IPart setDataStore(final AbstractDataSource ds) {
 		_dataSource = ds;
 		return this;
 	}
 
-	public AbstractPart setFactory(final IPartFactory partFactory) {
+	public IPart setFactory(final IPartFactory partFactory) {
 		_factory = partFactory;
 		return this;
 	}

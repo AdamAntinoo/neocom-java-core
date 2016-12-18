@@ -9,8 +9,7 @@
 package org.dimensinfin.evedroid.fragment;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
@@ -120,21 +119,21 @@ final class ShipPartFactory implements IPartFactory {
 	 * The method should create the matching part for the model received but there is no other place where we
 	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
 	 */
-	public IEditPart createPart(final IGEFNode node) {
+	public IPart createPart(final IGEFNode node) {
 		if (node instanceof Region) {
-			AbstractCorePart part = new RegionPart((Region) node);
+			IPart part = new RegionPart((Region) node);
 			((AbstractAndroidPart) part).setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
 			part.setFactory(this);
 			return part;
 		}
 		if (node instanceof EveLocation) {
-			AbstractCorePart part = new LocationIndustryPart((EveLocation) node);
+			IPart part = new LocationIndustryPart((EveLocation) node);
 			((AbstractAndroidPart) part).setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
 			part.setFactory(this);
 			return part;
 		}
 		if (node instanceof Separator) {
-			AbstractCorePart part = new GroupPart((Separator) node);
+			IPart part = new GroupPart((Separator) node);
 			//			((AbstractAndroidPart) part).setRenderMode(AppWideConstants.rendermodes.FRAGMENT_ASS);
 			part.setFactory(this);
 			return part;
