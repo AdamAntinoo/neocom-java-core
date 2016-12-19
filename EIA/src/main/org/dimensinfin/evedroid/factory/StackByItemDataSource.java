@@ -9,10 +9,13 @@ package org.dimensinfin.evedroid.factory;
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
+import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
+import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.EveItem;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -35,10 +38,15 @@ public class StackByItemDataSource extends AbstractIndustryDataSource {
 		super(store);
 	}
 
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public void createContentHierarchy() {
-		logger.info(">> StackByItemDataSource.createHierarchy");
+		AbstractDataSource.logger.info(">> StackByItemDataSource.createHierarchy");
 		// Clear the current list of elements.
 		_root.clear();
 
@@ -53,9 +61,15 @@ public class StackByItemDataSource extends AbstractIndustryDataSource {
 			}
 		} catch (RuntimeException rtex) {
 			rtex.printStackTrace();
-			logger.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
+			AbstractDataSource.logger
+					.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		logger.info("<< StackByItemDataSource.createHierarchy [" + _root.size() + "]");
+		AbstractDataSource.logger.info("<< StackByItemDataSource.createHierarchy [" + _root.size() + "]");
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public StackByItemDataSource setItem(final EveItem item) {

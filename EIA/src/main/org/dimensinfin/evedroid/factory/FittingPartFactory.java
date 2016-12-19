@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.fragment.FittingListFragment.EFittingFragmentVariants;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Fitting;
@@ -49,7 +49,7 @@ public class FittingPartFactory extends PartFactory implements IPartFactory {
 	public IPart createPart(final AbstractComplexNode node) {
 		FittingPartFactory.logger.info("-- [FittingPartFactory.createPart]> Node class: " + node.getClass().getName());
 		// Set of Parts for the list of fittings.
-		if (this.getVariant() == EFittingFragmentVariants.FITTING_LIST.name()) {
+		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
 			if (node instanceof Separator) {
 				IPart part = new GroupPart((Separator) node).setFactory(this);
 				return part;
@@ -60,7 +60,7 @@ public class FittingPartFactory extends PartFactory implements IPartFactory {
 			}
 		}
 		// Set of Parts for the Manufacture Page for a selected fragment.
-		if (this.getVariant() == EFittingFragmentVariants.FITTING_MANUFACTURE.name()) {
+		if (this.getVariant() == EFittingVariants.FITTING_MANUFACTURE.name()) {
 			if (node instanceof Action) {
 				IPart part = new ActionPart(node);
 				return part;

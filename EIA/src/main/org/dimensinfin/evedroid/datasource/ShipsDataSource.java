@@ -169,13 +169,13 @@ public class ShipsDataSource extends SpecialDataSource {
 			_dataModelRoot = new RootNode();
 		else
 			_dataModelRoot.clean();
-		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION) if (this.ifGroupLocations())
+		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION.name()) if (this.ifGroupLocations())
 			for (Region node : _regions.values())
 				_dataModelRoot.addChild(node);
 		else
 			for (ShipLocation node : _locations.values())
 				_dataModelRoot.addChild(node);
-		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS) for (Separator node : _categories.values())
+		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS.name()) for (Separator node : _categories.values())
 			_dataModelRoot.addChild(node);
 	}
 

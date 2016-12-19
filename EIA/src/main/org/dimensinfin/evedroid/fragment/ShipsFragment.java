@@ -10,7 +10,7 @@ package org.dimensinfin.evedroid.fragment;
 
 import java.util.logging.Logger;
 
-import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsFragmentVariants;
+import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
@@ -34,8 +34,8 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	@Override
 	public String getSubtitle() {
 		String st = "";
-		if (this.getVariant() == EShipsFragmentVariants.SHIPS_BYLOCATION.name()) st = "Ships - by Location";
-		if (this.getVariant() == EShipsFragmentVariants.SHIPS_BYCLASS.name()) st = "Ships - by Class";
+		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) st = "Ships - by Location";
+		if (this.getVariant() == EShipsVariants.SHIPS_BYCLASS.name()) st = "Ships - by Class";
 		return st;
 	}
 

@@ -14,6 +14,9 @@ import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
+import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
@@ -53,6 +56,11 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsMaterialsDataSource(final AppModelStore store) {
 		super(store);
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -144,49 +152,54 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 			}
 		} catch (RuntimeException sqle) {
 			sqle.printStackTrace();
-			logger.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
+			AbstractDataSource.logger
+					.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
 		}
 		try {
-			AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
 		} catch (RuntimeException sqle) {
 			sqle.printStackTrace();
-			logger.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
+			AbstractDataSource.logger
+					.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
 		}
 		Log.i("DataSource", "<< AssetsMaterialsDataSource.createHierarchy [" + _root.size() + "]");
 	}
 
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		logger.info(">> AssetsMaterialsDataSource.getPartHierarchy");
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		AbstractDataSource.logger.info(">> AssetsMaterialsDataSource.getPartHierarchy");
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
 			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
-					continue;
-				}
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
 				result.add(node);
 				// Check if the node is expanded. Then add its children.
 				if (node.isExpanded()) {
-					ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-					Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-					result.addAll(grand);
+					ArrayList<IPart> grand = node.collaborate2View();
+					Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+					for (IPart part : node.collaborate2View())
+						result.add((AbstractAndroidPart) part);
 				}
 			}
 		} catch (RuntimeException rtex) {
 			rtex.printStackTrace();
 		}
 		_adapterData = result;
-		logger.info("<< AssetsMaterialsDataSource.getPartHierarchy");
+		AbstractDataSource.logger.info("<< AssetsMaterialsDataSource.getPartHierarchy");
 		return result;
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 	}
 }
 // - UNUSED CODE ............................................................................................

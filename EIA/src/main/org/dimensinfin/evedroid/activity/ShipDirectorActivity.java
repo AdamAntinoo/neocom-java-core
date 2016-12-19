@@ -20,7 +20,7 @@ import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipDirectorActivity extends PilotPagerActivity implements INeoComDirector {
-	public enum EShipsFragmentVariants {
+	public enum EShipsVariants {
 		SHIPS_BYLOCATION, SHIPS_BYCLASS
 	}
 
@@ -68,8 +68,8 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		try {// Reset the page position.
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			this.addPage(new ShipsFragment().setVariant(EShipsFragmentVariants.SHIPS_BYLOCATION.name()), page++);
-			this.addPage(new ShipsFragment().setVariant(EShipsFragmentVariants.SHIPS_BYCLASS.name()), page++);
+			this.addPage(new ShipsFragment().setVariant(EShipsVariants.SHIPS_BYLOCATION.name()), page++);
+			this.addPage(new ShipsFragment().setVariant(EShipsVariants.SHIPS_BYCLASS.name()), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

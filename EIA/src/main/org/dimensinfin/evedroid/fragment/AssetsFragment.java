@@ -174,7 +174,7 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 		this.createContentModel();
 		try {
 			// Get the list of Locations for this Pilot.
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 
 			// Get access to the location data for this character.
 			locations = manager.getLocations();
@@ -211,7 +211,7 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 		modelSource.clear();
 		try {
 			// Get the list of Locations for this Pilot.
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 
 			// Get access to the location data for this character.
 			locations = manager.getLocations();
@@ -308,6 +308,7 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 	}
 }
 
+
 //- CLASS IMPLEMENTATION ...................................................................................
 final class AssetsShipsDataSource extends AbstractIndustryDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -335,7 +336,7 @@ final class AssetsShipsDataSource extends AbstractIndustryDataSource {
 
 		// Get the list of Locations for this Pilot.
 		try {
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
 			final ArrayList<NeoComAsset> assetsShips = manager.searchAsset4Category("Ship");
 			for (final NeoComAsset asset : assetsShips)

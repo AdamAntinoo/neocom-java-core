@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.fragment.ShipsFragment.EShipsFragmentVariants;
+import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
@@ -44,25 +44,25 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 	@Override
 	public IPart createPart(final AbstractComplexNode node) {
 		ShipPartFactory.logger.info("-- [ShipPartFactory.createPart]> Node class: " + node.getClass().getName());
-		if (this.getVariant() == EShipsFragmentVariants.SHIPS_BYLOCATION.name()) {
+		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
 			if (node instanceof Region) {
 				IPart part = new RegionPart((Separator) node).setFactory(this)
-						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
 				return part;
 			}
 			if (node instanceof ShipLocation) {
 				IPart part = new LocationShipsPart((ShipLocation) node).setFactory(this)
-						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
 				return part;
 			}
 			if (node instanceof Separator) {
 				IPart part = new GroupPart((Separator) node).setFactory(this)
-						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
 				return part;
 			}
 			if (node instanceof NeoComAsset) {
 				IPart part = new AssetPart((NeoComAsset) node).setFactory(this)
-						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
 				return part;
 			}
 		}
