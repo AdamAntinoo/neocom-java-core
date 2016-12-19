@@ -12,8 +12,8 @@ package org.dimensinfin.evedroid.activity;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.R;
+import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.FittingFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -62,7 +62,8 @@ public class FittingActivity extends PilotPagerActivity implements INeoComDirect
 			// Get the parameters from the bundle. If not defined then use the demo.
 			final Bundle extras = this.getIntent().getExtras();
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			this.addPage(new FittingFragment().setVariant(EVARIANT.FITTING_MANUFACTURE).setExtras(extras), page++);
+			this.addPage(new FittingFragment().setVariant(EFittingVariants.FITTING_MANUFACTURE.name()).setExtras(extras),
+					page++);
 			//			} else {
 			//				addPage(new FittingFragment().setVariant(AppWideConstants.EFragment.FITTING_MANUFACTURE), page++);
 			//			}

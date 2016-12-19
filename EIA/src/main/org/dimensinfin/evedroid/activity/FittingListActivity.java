@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.FittingListFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -23,6 +22,10 @@ import android.util.Log;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 public class FittingListActivity extends PilotPagerActivity implements INeoComDirector {
+	public enum EFittingVariants {
+		FITTING_LIST, FITTING_MANUFACTURE
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
 	public static Logger logger = Logger.getLogger("FittingListActivity");
 
@@ -63,7 +66,8 @@ public class FittingListActivity extends PilotPagerActivity implements INeoComDi
 			// Get the parameters from the bundle. If not defined then use the demo.
 			final Bundle extras = this.getIntent().getExtras();
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			this.addPage(new FittingListFragment().setVariant(EVARIANT.FITTING_LIST).setExtras(extras), page++);
+			this.addPage(new FittingListFragment().setVariant(EFittingVariants.FITTING_LIST.name()).setExtras(extras),
+					page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> FittingListActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

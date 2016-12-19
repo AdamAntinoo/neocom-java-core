@@ -25,10 +25,6 @@ import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotListFragment extends AbstractNewPagerFragment {
-	public enum EAccountsFragmentVariants {
-		CAPSULEER_LIST
-	}
-
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("PilotListFragment");
 

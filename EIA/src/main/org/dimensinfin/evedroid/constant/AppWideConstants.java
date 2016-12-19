@@ -84,7 +84,7 @@ public class AppWideConstants {
 		public static final String	EXTRA_EXCEPTIONMESSAGE				= "EXTRA_EXCEPTIONMESSAGE";
 		public static final String	EXTRA_MODULEMARKETCARD_SIDE		= "EXTRA_MODULEMARKETCARD_SIDE";
 		public static final String	EXTRA_MODULEMARKETCARD_ITEMID	= "EXTRA_MODULEMARKETCARD_ITEMID";
-		public static final String	EXTRA_EVECHARACTERID					= "EXTRA_EVECHARACTERID";
+		//		public static final String	EXTRA_EVECHARACTERID					= "EXTRA_EVECHARACTERID";
 		public static final String	EXTRA_EVEITEMID								= "EXTRA_EVEITEMID";
 		public static final String	EXTRA_CHARACTER_LOCALIZER			= "EXTRA_CHARACTER_LOCALIZER";
 		public static final String	EXTRA_MARKETDATA_LOCALIZER		= "EXTRA_MARKETDATA_LOCALIZER";
