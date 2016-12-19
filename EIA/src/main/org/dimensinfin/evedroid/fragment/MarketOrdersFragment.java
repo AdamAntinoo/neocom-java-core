@@ -16,6 +16,7 @@ import java.util.Collections;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;
@@ -189,7 +190,7 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
 			}
 			if (node instanceof NeoComMarketOrder)
-				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((AbstractGEFNode) node)
+				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((AbstractComplexNode) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
 			if (node instanceof Resource) hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
 					.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));

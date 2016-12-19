@@ -4,7 +4,7 @@
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
 
-package org.dimensinfin.evedroid.storage;
+package org.dimensinfin.evedroid.datasource;
 
 // - IMPORT SECTION .........................................................................................
 import java.beans.PropertyChangeEvent;
@@ -16,7 +16,8 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.core.AppContext;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -30,6 +31,7 @@ import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.GroupPart;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -60,6 +62,11 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 	public IndustryT2ManufactureDataSource(final AppModelStore store) {
 		super();
 		if (null != store) _store = store;
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -106,7 +113,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 		}
 
 		// Process the actions and set each one on the matching group.
-		for (AbstractPropertyChanger action : _bppart.getChildren())
+		for (IPart action : _bppart.getChildren())
 			if (action instanceof ActionPart) {
 				String category = ((ActionPart) action).get_category();
 				String group = ((ActionPart) action).get_group();
@@ -147,28 +154,6 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 		AbstractDataSource.logger.info("<< IndustryT2ManufactureDataSource.createHierarchy [" + _root.size() + "]");
 	}
 
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		AbstractDataSource.logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		try {
-			Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
-			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
-				result.add(node);
-				// Check if the node is expanded. Then add its children.
-				if (node.isExpanded()) {
-					ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-					result.addAll(grand);
-				}
-			}
-		} catch (RuntimeException rtex) {
-		}
-		_adapterData = result;
-		AbstractDataSource.logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
-		return result;
-	}
-
 	//	/**
 	//	 * This datasource expects an asset id to retrieve the blueprint.
 	//	 */
@@ -185,6 +170,31 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 	//		} else
 	//			throw new RuntimeException("Unable to continue. Required parameters not define on Extras.");
 	//	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		AbstractDataSource.logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		try {
+			Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
+			for (AbstractAndroidPart node : _root) {
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
+				result.add(node);
+				// Check if the node is expanded. Then add its children.
+				if (node.isExpanded()) for (IPart part : node.collaborate2View())
+					result.add((AbstractAndroidPart) part);
+			}
+		} catch (RuntimeException rtex) {
+		}
+		_adapterData = result;
+		AbstractDataSource.logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
+		return result;
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
