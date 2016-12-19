@@ -10,9 +10,9 @@ package org.dimensinfin.evedroid.fragment;
 
 import java.util.logging.Logger;
 
+import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsFragmentVariants;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.CVariant;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.ShipsDataSource;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
@@ -24,17 +24,9 @@ import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipsFragment extends AbstractNewPagerFragment {
-	public enum EShipsFragmentVariants {
-		SHIPS_BYLOCATION, SHIPS_BYCLASS
-	}
-
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("ShipsFragment");
-	static {
-		CVariant.register(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode(),
-				EShipsFragmentVariants.SHIPS_BYLOCATION.name());
-		CVariant.register(EShipsFragmentVariants.SHIPS_BYCLASS.hashCode(), EShipsFragmentVariants.SHIPS_BYCLASS.name());
-	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................

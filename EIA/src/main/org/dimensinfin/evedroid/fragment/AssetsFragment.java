@@ -17,7 +17,9 @@ import java.util.HashMap;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -145,6 +147,11 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 		super(store);
 	}
 
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This method will initialize the Part hierarchy on the base root part element that will be accessed from
@@ -233,7 +240,7 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 	}
 
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		AbstractDataSource.logger.info(">> AssetsFragment.AssetsByLocationDataSource.getPartHierarchy");
 		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
@@ -253,7 +260,12 @@ final class AssetsByLocationDataSource extends AbstractIndustryDataSource {
 		//		}
 		//		_adapterData = result;
 		AbstractDataSource.logger.info("<< AssetsDirectorActivity.AssetsByLocationDataSource.getPartHierarchy");
-		return super.getPartHierarchy();
+		return super.getBodyParts();
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -309,6 +321,11 @@ final class AssetsShipsDataSource extends AbstractIndustryDataSource {
 		super(store);
 	}
 
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public void createContentHierarchy() {
@@ -341,21 +358,25 @@ final class AssetsShipsDataSource extends AbstractIndustryDataSource {
 	}
 
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		AbstractDataSource.logger.info(">> AssetsDirectorActivity.AssetsShipsDataSource.getPartHierarchy");
 		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (final AbstractAndroidPart node : _root) {
 			result.add(node);
 			// Check if the node is expanded. Then add its children.
-			if (node.isExpanded()) {
-				final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-				result.addAll(grand);
-			}
+			if (node.isExpanded()) //				final ArrayList<AbstractAndroidPart> grand = ;
+				for (IPart part : node.collaborate2View())
+				result.add((AbstractAndroidPart) part);
 		}
 		_adapterData = result;
 		AbstractDataSource.logger.info("<< AssetsDirectorActivity.AssetsShipsDataSource.getPartHierarchy");
 		return result;
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

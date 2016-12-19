@@ -18,6 +18,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EVARIANT;
@@ -103,6 +104,11 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 		if (null != store) _store = store;
 	}
 
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The hierarchy contains two levels of elements. The first level are the market hubs where the user has to
@@ -121,6 +127,37 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 		final MarketOrderAnalyticalGroup scheduledSellGroup = _store.getPilot().accessModules4Sell();
 		analyticalGroups.add(scheduledSellGroup);
 		Log.i("EVEI", "<< MarketOrdersDataSource.createHierarchy");
+	}
+
+	/**
+	 * Generate the part hierarchy to be displayed on the ListView. This comes from the current model where all
+	 * the objects have generated their corresponding model elements that are the current model structures. Any
+	 * change to the model will be updated and then generates a new model that is rendered again to the Part
+	 * list.
+	 */
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		// Update the model structures and hierarchy before creating the Part hierarchy.
+		this.updateModel();
+
+		// Create the hierarchy from the model list.
+		final ArrayList<AbstractAndroidPart> hierarchy = new ArrayList<AbstractAndroidPart>();
+		for (final IGEFNode node : modelList) {
+			if (node instanceof MarketOrderAnalyticalGroup) {
+				MarketOrderAnalyticalGroupPart mopart = new MarketOrderAnalyticalGroupPart((MarketOrderAnalyticalGroup) node);
+				hierarchy
+						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
+			}
+			if (node instanceof NeoComMarketOrder)
+				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((NeoComMarketOrder) node)
+						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
+			if (node instanceof Resource) hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
+			if (node instanceof Separator) hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
+		}
+		_adapterData = hierarchy;
+		return hierarchy;
 	}
 
 	/**
@@ -163,35 +200,9 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 		return hierarchy;
 	}
 
-	/**
-	 * Generate the part hierarchy to be displayed on the ListView. This comes from the current model where all
-	 * the objects have generated their corresponding model elements that are the current model structures. Any
-	 * change to the model will be updated and then generates a new model that is rendered again to the Part
-	 * list.
-	 */
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		// Update the model structures and hierarchy before creating the Part hierarchy.
-		this.updateModel();
-
-		// Create the hierarchy from the model list.
-		final ArrayList<AbstractAndroidPart> hierarchy = new ArrayList<AbstractAndroidPart>();
-		for (final IGEFNode node : modelList) {
-			if (node instanceof MarketOrderAnalyticalGroup) {
-				MarketOrderAnalyticalGroupPart mopart = new MarketOrderAnalyticalGroupPart((MarketOrderAnalyticalGroup) node);
-				hierarchy
-						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
-			}
-			if (node instanceof NeoComMarketOrder)
-				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((NeoComMarketOrder) node)
-						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
-			if (node instanceof Resource) hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
-			if (node instanceof Separator) hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
-		}
-		_adapterData = hierarchy;
-		return hierarchy;
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -204,9 +215,9 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH))
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
-			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-					event.getNewValue());
+		//		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
+		//			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		//					event.getNewValue());
 	}
 
 	protected void updateModel() {

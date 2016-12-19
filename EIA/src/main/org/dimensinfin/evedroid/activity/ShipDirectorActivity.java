@@ -11,7 +11,6 @@ package org.dimensinfin.evedroid.activity;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.fragment.ShipsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -21,6 +20,10 @@ import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipDirectorActivity extends PilotPagerActivity implements INeoComDirector {
+	public enum EShipsFragmentVariants {
+		SHIPS_BYLOCATION, SHIPS_BYCLASS
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -65,8 +68,8 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		try {// Reset the page position.
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			this.addPage(new ShipsFragment().setVariant(EVARIANT.SHIPS_BYLOCATION), page++);
-			this.addPage(new ShipsFragment().setVariant(EVARIANT.SHIPS_BYCLASS), page++);
+			this.addPage(new ShipsFragment().setVariant(EShipsFragmentVariants.SHIPS_BYLOCATION.name()), page++);
+			this.addPage(new ShipsFragment().setVariant(EShipsFragmentVariants.SHIPS_BYCLASS.name()), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

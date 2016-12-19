@@ -16,6 +16,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
+import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -212,19 +213,19 @@ public abstract class AbstractPagerActivity extends Activity {
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
-	//	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
-	//		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
-	//		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
-	//				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-	//		if (null == frag)
-	//			_pageAdapter.addPage(newFrag);
-	//		else
-	//			_pageAdapter.addPage(frag);
-	//		// Check the number of pages to activate the indicator when more the
-	//		// one.
-	//		if (_pageAdapter.getCount() > 1) this.activateIndicator();
-	//		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
-	//	}
+	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
+		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
+		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
+				.findFragmentByTag(_pageAdapter.getFragmentId(position));
+		if (null == frag)
+			_pageAdapter.addPage(newFrag);
+		else
+			_pageAdapter.addPage(frag);
+		// Check the number of pages to activate the indicator when more the
+		// one.
+		if (_pageAdapter.getCount() > 1) this.activateIndicator();
+		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
+	}
 
 	protected void disableIndicator() {
 		if (null != _indicator) _indicator.setVisibility(View.GONE);
