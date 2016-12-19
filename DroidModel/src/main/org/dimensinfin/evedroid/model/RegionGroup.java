@@ -75,9 +75,8 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
 			locations.put(newOrder.getOrderLocationID(), hit);
-		} else {
+		} else
 			hit.add(newOrder);
-		}
 	}
 
 	/**
@@ -92,17 +91,13 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	public ArrayList<AbstractGEFNode> collaborate2Model() {
 		final ArrayList<AbstractGEFNode> results = new ArrayList<AbstractGEFNode>();
 		// If the groups has no elements then check the flag to determinate if it is shown or not.
-		if (renderWhenEmpty()) {
-			results.add(this);
-		}
+		if (this.isRenderWhenEmpty()) results.add(this);
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
-		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
+		Vector<AbstractPropertyChanger> orders = this.aggregate(this.getChildren());
 		Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractPropertyChanger node : orders)
-			if (node instanceof NeoComMarketOrder) {
-				results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
-			}
+			if (node instanceof NeoComMarketOrder) results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
 		return results;
 	}
 
@@ -111,12 +106,8 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	 */
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (renderWhenEmpty()) {
-			results.add(this);
-		}
-		if (isExpanded()) {
-			results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-		}
+		if (this.isRenderWhenEmpty()) results.add(this);
+		if (this.isExpanded()) results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
 		return results;
 	}
 
@@ -125,7 +116,7 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	}
 
 	public Vector<IGEFNode> getOrders() {
-		return getChildren();
+		return this.getChildren();
 	}
 
 	public int getQuantity() {
@@ -144,9 +135,9 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	 * @return
 	 */
 	@Override
-	public boolean renderWhenEmpty() {
+	public boolean isRenderWhenEmpty() {
 		// Is not empty the render.
-		if (getChildren().size() > 0) return true;
+		if (this.getChildren().size() > 0) return true;
 		return renderIfEmpty;
 	}
 
@@ -154,14 +145,13 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("RegionGroup [");
 		//		buffer.append(getWeight()).append(" ");
-		buffer.append(getTitle()).append(" ");
-		buffer.append("expanded:").append(isExpanded());
-		buffer.append("childs:").append(childrenCount());
-		if (childrenCount() > 0) {
+		buffer.append(this.getTitle()).append(" ");
+		buffer.append("expanded:").append(this.isExpanded());
+		buffer.append("childs:").append(this.childrenCount());
+		if (this.childrenCount() > 0) {
 			buffer.append("children:[\n");
-			for (IGEFNode child : getChildren()) {
+			for (IGEFNode child : this.getChildren())
 				buffer.append(child.toString());
-			}
 		}
 		buffer.append("]");
 		return buffer.toString();
@@ -173,18 +163,17 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 			if (node instanceof NeoComMarketOrder) {
 				final NeoComMarketOrder order = (NeoComMarketOrder) node;
 				final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
-				if (null == hit) {
+				if (null == hit)
 					datamap.put(new Integer(order.getItemTypeID()), order);
-				} else {
+				else
 					hit.setVolEntered(hit.getVolEntered() + order.getVolEntered());
-				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
 		return new Vector<AbstractPropertyChanger>(datamap.values());
 	}
 
 	private int childrenCount() {
-		return getChildren().size();
+		return this.getChildren().size();
 	}
 
 }

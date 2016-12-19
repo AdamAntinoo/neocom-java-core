@@ -73,9 +73,8 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
 			locations.put(newOrder.getOrderLocationID(), hit);
-		} else {
+		} else
 			hit.add(newOrder);
-		}
 	}
 
 	/**
@@ -87,20 +86,16 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	 * 
 	 * @return
 	 */
-	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		// If the groups has no elements then check the flag to determinate if it is shown or not.
-		if (renderWhenEmpty()) {
-			results.add(this);
-		}
+		if (this.isRenderWhenEmpty()) results.add(this);
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
-		Vector<AbstractPropertyChanger> orders = aggregate(getChildren());
+		Vector<AbstractPropertyChanger> orders = this.aggregate(this.getChildren());
 		Collections.sort(orders, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
 		for (final AbstractPropertyChanger node : orders)
-			if (node instanceof NeoComMarketOrder) {
-				results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
-			}
+			if (node instanceof NeoComMarketOrder) results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
 		return results;
 	}
 
@@ -116,7 +111,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	}
 
 	public Vector<IGEFNode> getOrders() {
-		return getChildren();
+		return this.getChildren();
 	}
 
 	public int getQuantity() {
@@ -135,17 +130,17 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	 * @return
 	 */
 	@Override
-	public boolean renderWhenEmpty() {
+	public boolean isRenderWhenEmpty() {
 		// Is not empty the render.
-		if (getChildren().size() > 0) return true;
+		if (this.getChildren().size() > 0) return true;
 		return renderIfEmpty;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("MarketOrderAnalyticalGroup [");
-		buffer.append(getWeight()).append(" ");
-		buffer.append(getTitle()).append(" ");
+		buffer.append(this.getWeight()).append(" ");
+		buffer.append(this.getTitle()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -156,11 +151,10 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 			if (node instanceof MarketOrder) {
 				final NeoComMarketOrder order = (NeoComMarketOrder) node;
 				final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
-				if (null == hit) {
+				if (null == hit)
 					datamap.put(new Integer(order.getItemTypeID()), order);
-				} else {
+				else
 					hit.setVolEntered(hit.getVolEntered() + order.getVolEntered());
-				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
 		return new Vector<AbstractPropertyChanger>(datamap.values());
