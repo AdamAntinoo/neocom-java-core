@@ -26,7 +26,7 @@ import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
 import org.dimensinfin.evedroid.factory.AssetsMaterialsDataSource;
 import org.dimensinfin.evedroid.factory.DataSourceFactory;
-import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
+import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.NeoComAsset;
@@ -47,7 +47,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetsFragment extends AbstractNewPagerFragment {
+public class AssetsFragment extends AbstractPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -66,7 +66,7 @@ public class AssetsFragment extends AbstractNewPagerFragment {
 
 	@Override
 	public String getTitle() {
-		return getPilotName();
+		return this.getPilotName();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -75,11 +75,11 @@ public class AssetsFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", ">> AssetsFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(_filter);
+			this.setIdentifier(_filter);
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> AssetsFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> AssetsFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AssetsFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< AssetsFragment.onCreateView");
 		return theView;
@@ -92,14 +92,15 @@ public class AssetsFragment extends AbstractNewPagerFragment {
 		// If the fragment is already initialized then skip this initialization
 		if (!_alreadyInitialized) try {
 			if (_filter == AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION)
-				setDataSource(new AssetsByLocationDataSource(store));
-			if (_filter == AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS) setDataSource(new AssetsShipsDataSource(store));
+				this.setDataSource(new AssetsByLocationDataSource(store));
+			if (_filter == AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS)
+				this.setDataSource(new AssetsShipsDataSource(store));
 			if (_filter == AppWideConstants.fragment.FRAGMENT_ASSETSMATERIALS)
-				setDataSource(new AssetsMaterialsDataSource(store));
+				this.setDataSource(new AssetsMaterialsDataSource(store));
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> AssetsFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> AssetsFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AssetsFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< AssetsFragment.onStart");

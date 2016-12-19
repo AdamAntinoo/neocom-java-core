@@ -20,7 +20,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.CVariant;
@@ -328,7 +328,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(AbstractComplexNode.EVENT_EXPANDCOLLAPSENODE))
+		if (event.getPropertyName().equalsIgnoreCase(ECoreModelEvents.EVENT_EXPANDCOLLAPSENODE.name()))
 			new StructureChangeTask(this).execute();
 	}
 
