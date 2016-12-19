@@ -19,13 +19,13 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.EDataBlock;
 import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;

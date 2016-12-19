@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -20,7 +21,6 @@ import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 
 import com.j256.ormlite.dao.Dao;

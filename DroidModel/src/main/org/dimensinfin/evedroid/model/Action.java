@@ -15,13 +15,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**

@@ -16,13 +16,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.enums.EComparatorField;
 import org.dimensinfin.evedroid.factory.ComparatorFactory;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

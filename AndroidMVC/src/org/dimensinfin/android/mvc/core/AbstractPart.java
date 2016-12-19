@@ -17,10 +17,10 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractPart extends AbstractPropertyChanger implements IPart {

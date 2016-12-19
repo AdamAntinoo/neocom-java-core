@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 /**
  * This class encapsulates the core Eve Online model into the adapter for the Android MVC implementation. This

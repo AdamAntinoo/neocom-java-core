@@ -12,8 +12,8 @@ package org.dimensinfin.evedroid.core;
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractNeoComNode extends AbstractComplexNode implements INeoComNode {
