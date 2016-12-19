@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EIndustryGroup;
@@ -30,7 +29,6 @@ import org.dimensinfin.evedroid.render.ResourceRender;
 import org.dimensinfin.evedroid.render.SkillResourceRender;
 import org.joda.time.DateTime;
 
-import android.content.Intent;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -162,12 +160,13 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 	public void onClick(final View v) {
 		Log.i("EVEI", ">> ResourcePart.onClick");
 		// Activate only for some elements.
+		// REFACTOR Access to ItemDetail removed until revision
 		if ((this.getRenderMode() == AppWideConstants.rendermodes.RENDER_RESOURCECOMPONENTJOB)
 				|| (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTJOB)) {
-			Intent intent = new Intent(this.getActivity(), ItemDetailsActivity.class);
-			intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
-			intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, this.getCastedModel().getTypeID());
-			this.getActivity().startActivity(intent);
+			//			Intent intent = new Intent(this.getActivity(), ItemDetailsActivity.class);
+			//			intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
+			//			intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, this.getCastedModel().getTypeID());
+			//			this.getActivity().startActivity(intent);
 		}
 		Log.i("EVEI", "<< ResourcePart.onClick");
 	}

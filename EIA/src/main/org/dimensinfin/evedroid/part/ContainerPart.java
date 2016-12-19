@@ -6,15 +6,12 @@
 
 package org.dimensinfin.evedroid.part;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Vector;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
@@ -62,25 +59,6 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 		return this.get_assetName();
 	}
 
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartChildren() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<AbstractPropertyChanger> ch = this.getChildren();
-		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-
-		for (AbstractPropertyChanger node : ch) {
-			// Convert the node to a part.
-			AbstractAndroidPart part = (AbstractAndroidPart) node;
-			result.add(part);
-			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-				result.addAll(grand);
-			}
-		}
-		return result;
-	}
-
 	public int getTypeID() {
 		return this.getCastedModel().getTypeID();
 	}
@@ -94,6 +72,34 @@ public class ContainerPart extends AssetPart implements OnClickListener {
 
 	public boolean onLongClick(final View target) {
 		return false;
+	}
+
+	//	@Override
+	//	public ArrayList<AbstractAndroidPart> getPartChildren() {
+	//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		Vector<AbstractPropertyChanger> ch = this.getChildren();
+	//
+	//		for (AbstractPropertyChanger node : ch) {
+	//			// Convert the node to a part.
+	//			AbstractAndroidPart part = (AbstractAndroidPart) node;
+	//			result.add(part);
+	//			// Check if the node is expanded. Then add its children.
+	//			if (part.isExpanded()) {
+	//				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
+	//				result.addAll(grand);
+	//			}
+	//		}
+	//		return result;
+	//	}
+	/**
+	 * The default actions inside this method usually are the sorting of the children nodes. Sort the container
+	 * contents by name.
+	 */
+	@Override
+	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
+		// Order the contents by alphabetical name.
+		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		return targets;
 	}
 
 	@Override

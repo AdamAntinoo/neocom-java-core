@@ -34,30 +34,30 @@ public class JobActionsFragment extends AbstractPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public String getSubtitle() {
+		return "Industry - Job Actions";
+	}
+
+	@Override
+	public String getTitle() {
+		return this.getPilotName();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 		Log.i("NEOCOM", ">> JobActionsFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBACTIONS);
+			this.setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBACTIONS);
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> JobActionsFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> JobActionsFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> JobActionsFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< JobActionsFragment.onCreateView");
 		return theView;
-	}
-
-	@Override
-	public String getTitle() {
-		return getPilotName();
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "Industry - Job Actions";
 	}
 
 	@Override
@@ -65,28 +65,27 @@ public class JobActionsFragment extends AbstractPagerFragment {
 		Log.i("NEOCOM", ">> JobActionsFragment.onStart");
 		try {
 			if (!_alreadyInitialized) {
-				final long bpassetid = _extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
-				final int activity = _extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
-				final NeoComBlueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				final long bpassetid = _extras.getLong(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name());
+				final int activity = _extras.getInt(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name());
+				final NeoComBlueprint blueprint = _store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
 				// Create the key element for this activity. All data to be shown comes from this single element.
 				final BlueprintPart bppart = new BlueprintPart(blueprint);
 				bppart.setActivity(activity);
 
 				// First create the data fragment that contains the model.
-				final IndustryJobActionsDataSource ds = new IndustryJobActionsDataSource(this._store);
+				final IndustryJobActionsDataSource ds = new IndustryJobActionsDataSource(_store);
 				ds.setBlueprint(bppart);
-				setDataSource(ds);
+				this.setDataSource(ds);
 
 				// This fragment has a header. Populate it with the datasource header contents.
 				ArrayList<AbstractAndroidPart> headerData = ds.getHeaderPartHierarchy();
-				for (AbstractAndroidPart headerPart : headerData) {
-					addtoHeader(headerPart);
-				}
+				for (AbstractAndroidPart headerPart : headerData)
+					this.addtoHeader(headerPart);
 			}
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> JobActionsFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> JobActionsFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> JobActionsFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< JobActionsFragment.onStart");

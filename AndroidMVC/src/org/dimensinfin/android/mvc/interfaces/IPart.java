@@ -40,6 +40,8 @@ public interface IPart extends PropertyChangeListener {
 
 	public boolean isRenderWhenEmpty();
 
+	public boolean isVisible();
+
 	public void refreshChildren();
 
 	public Vector<IPart> runPolicies(Vector<IPart> targets);

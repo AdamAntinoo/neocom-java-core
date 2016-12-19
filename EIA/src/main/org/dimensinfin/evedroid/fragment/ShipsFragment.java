@@ -66,7 +66,7 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 				.addIdentifier(this.getVariant());
 		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(this.getVariant()));
 		ds.setVariant(this.getVariant());
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
+		ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 		this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		ShipsFragment.logger.info("<< [ShipsFragment.registerDataSource]");
 	}

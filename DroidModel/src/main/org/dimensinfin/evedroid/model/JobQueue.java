@@ -6,13 +6,12 @@
 
 package org.dimensinfin.evedroid.model;
 
-// - IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.joda.time.Instant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class JobQueue extends AbstractGEFNode {
+public class JobQueue extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 8572698611282203983L;
 
@@ -45,10 +44,11 @@ public class JobQueue extends AbstractGEFNode {
 	public void setJob(final Job relatedJob) {
 		job = relatedJob;
 	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("JobQueue [");
-		if(null!=job)buffer.append(job.toString());
+		if (null != job) buffer.append(job.toString());
 		buffer.append("]");
 		return super.toString();
 	}

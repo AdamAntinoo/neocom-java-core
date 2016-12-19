@@ -13,7 +13,7 @@ import java.util.Date;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -36,18 +36,15 @@ import android.view.View;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionTarget, IDateTimeComparator {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -216430970914075462L;
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private boolean						canBeLaunched			= false;
 	private DateTime					newStartTime			= new DateTime(DateTimeZone.UTC);
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
-	public JobPart(final AbstractGEFNode job) {
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public JobPart(final AbstractComplexNode job) {
 		super(job);
 	}
 
@@ -55,61 +52,52 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 		return canBeLaunched;
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
-	//	@Override
-	//	public boolean expand() {
-	//		expanded = !expanded;
-	//		return expanded;
-	//	}
-
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_jobDuration() {
-		return generateTimeString(getCastedModel().getTimeInSeconds() * 1000);
+		return EveAbstractPart.generateTimeString(this.getCastedModel().getTimeInSeconds() * 1000);
 	}
 
 	public String get_jobEnd() {
-		return generateDateString(getCastedModel().getEndDate().getTime());
+		return this.generateDateString(this.getCastedModel().getEndDate().getTime());
 	}
 
 	public Spanned get_jobLocation() {
 		StringBuffer htmlLocation = new StringBuffer();
-		EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(getCastedModel().getBlueprintLocationID());
+		EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(this.getCastedModel().getBlueprintLocationID());
 		String security = loc.getSecurity();
-		String secColor = securityLevels.get(security);
-		if (null == secColor) {
-			secColor = "#2FEFEF";
-		}
+		String secColor = EveAbstractPart.securityLevels.get(security);
+		if (null == secColor) secColor = "#2FEFEF";
 		// Append the Region -> system
 		htmlLocation.append(loc.getRegion()).append(AppWideConstants.FLOW_ARROW_RIGHT).append(loc.getConstellation())
 				.append(AppWideConstants.FLOW_ARROW_RIGHT);
 		htmlLocation.append("<font color='").append(secColor).append("'>")
-				.append(securityFormatter.format(loc.getSecurityValue())).append("</font>");
+				.append(EveAbstractPart.securityFormatter.format(loc.getSecurityValue())).append("</font>");
 		htmlLocation.append(" ").append(loc.getStation());
 		return Html.fromHtml(htmlLocation.toString());
 	}
 
 	public String get_jobModule() {
-		return getCastedModel().getModuleName();
+		return this.getCastedModel().getModuleName();
 	}
 
 	public String get_jobStart() {
-		return generateDateString(getCastedModel().getStartDate().getTime());
+		return this.generateDateString(this.getCastedModel().getStartDate().getTime());
 	}
 
 	public String get_runCount() {
-		return new Long(getCastedModel().getRuns()).toString();
+		return new Long(this.getCastedModel().getRuns()).toString();
 	}
 
 	public Job getCastedModel() {
-		return (Job) getModel();
+		return (Job) this.getModel();
 	}
 
 	public DateTime getComparableDate() {
-		return new DateTime(getCastedModel().getEndDate());
+		return new DateTime(this.getCastedModel().getEndDate());
 	}
 
 	public Date getEndDate() {
-		return getCastedModel().getEndDate();
+		return this.getCastedModel().getEndDate();
 	}
 
 	public DateTime getFirstStartTime() {
@@ -117,15 +105,15 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	}
 
 	public int getJobActivity() {
-		return getCastedModel().getActivityID();
+		return this.getCastedModel().getActivityID();
 	}
 
 	public String getJobClass() {
-		return getCastedModel().getJobType();
+		return this.getCastedModel().getJobType();
 	}
 
 	public double getJobCost() {
-		return getCastedModel().getCost();
+		return this.getCastedModel().getCost();
 	}
 
 	/**
@@ -137,39 +125,39 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	 * @return
 	 */
 	public EveLocation getJobLocation() {
-		return getCastedModel().getJobLocation();
+		return this.getCastedModel().getJobLocation();
 	}
 
 	public int getJobStatus() {
-		return getCastedModel().getStatus();
+		return this.getCastedModel().getStatus();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getBlueprintID();
+		return this.getCastedModel().getBlueprintID();
 	}
 
 	public String getName() {
-		return getCastedModel().getBlueprintName();
+		return this.getCastedModel().getBlueprintName();
 	}
 
 	public int getRuns() {
-		return getCastedModel().getRuns();
+		return this.getCastedModel().getRuns();
 	}
 
 	public Date getStartDate() {
-		return getCastedModel().getStartDate();
+		return this.getCastedModel().getStartDate();
 	}
 
 	public int getTimeInSeconds() {
-		return getCastedModel().getTimeInSeconds();
+		return this.getCastedModel().getTimeInSeconds();
 	}
 
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> JobPart.onClick");
 		// Toggle location to show its contents.
-		toggleExpanded();
-		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+		this.toggleExpanded();
+		this.fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 		Log.i("EVEI", "<< JobPart.onClick");
 	}
 
@@ -179,10 +167,10 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	 */
 	public boolean onContextItemSelected(final MenuItem item) {
 		try {
-			AppConnector.getDBConnector().getJobDAO().delete(getCastedModel());
+			AppConnector.getDBConnector().getJobDAO().delete(this.getCastedModel());
 			// Clear the cache in memory
-			getPilot().cleanJobs();
-			fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH, this, this);
+			this.getPilot().cleanJobs();
+			this.fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH, this, this);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -192,9 +180,8 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		Log.i("EVEI", ">> JobPart.onCreateContextMenu");
 		// Create the menu only for user generated jobs.
-		if (!getCastedModel().getJobType().equalsIgnoreCase("CCP")) {
-			getActivity().getMenuInflater().inflate(R.menu.jobactions_menu, menu);
-		}
+		if (!this.getCastedModel().getJobType().equalsIgnoreCase("CCP"))
+			this.getActivity().getMenuInflater().inflate(R.menu.jobactions_menu, menu);
 		Log.i("EVEI", "<< JobPart.onCreateContextMenu");
 	}
 
@@ -208,7 +195,7 @@ public class JobPart extends EveAbstractPart implements INamedPart, IMenuActionT
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST) return new JobRender(this, _activity);
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_JOB4LIST) return new JobRender(this, _activity);
 		return new JobRender(this, _activity);
 	}
 }

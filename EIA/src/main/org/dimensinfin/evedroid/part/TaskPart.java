@@ -13,9 +13,10 @@ import java.text.DecimalFormat;
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.dialog.BuyQtyDialog;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -38,27 +39,23 @@ import android.view.View;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class TaskPart extends MarketDataPart implements IMenuActionTarget {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 2556476507087279363L;
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
-	public TaskPart(final AbstractGEFNode node) {
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public TaskPart(final AbstractComplexNode node) {
 		super(node);
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public NeoComMarketOrder generateOrder(final int quantity) {
 		final DateTime now = new DateTime(DateTimeZone.UTC);
-		item = getCastedModel().getItem();
+		item = this.getCastedModel().getItem();
 		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(now.getMillis());
 		try {
-			newMarketOrder.setOwnerID(getPilot().getCharacterID());
+			newMarketOrder.setOwnerID(this.getPilot().getCharacterID());
 			newMarketOrder.setStationID(item.getLowestSellerPrice().getLocation().getID());
 			newMarketOrder.setVolEntered(quantity);
 			newMarketOrder.setVolRemaining(0);
@@ -88,26 +85,24 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	}
 
 	public String get_action() {
-		final ETaskType action = getCastedModel().getTaskType();
+		final ETaskType action = this.getCastedModel().getTaskType();
 		return action.toString();
 	}
 
 	public Spanned get_assetLocation() {
 		final StringBuffer htmlLocation = new StringBuffer();
-		final String security = getCastedModel().getLocation().getSecurity();
-		String secColor = securityLevels.get(security);
-		if (null == secColor) {
-			secColor = "#2FEFEF";
-		}
+		final String security = this.getCastedModel().getLocation().getSecurity();
+		String secColor = EveAbstractPart.securityLevels.get(security);
+		if (null == secColor) secColor = "#2FEFEF";
 		htmlLocation.append("<font color='").append(secColor).append("'>")
-				.append(getCastedModel().getLocation().getSecurity()).append("</font>");
-		htmlLocation.append(" ").append(getCastedModel().getLocation().getStation());
+				.append(this.getCastedModel().getLocation().getSecurity()).append("</font>");
+		htmlLocation.append(" ").append(this.getCastedModel().getLocation().getStation());
 		return Html.fromHtml(htmlLocation.toString());
 	}
 
 	public String get_balance() {
-		final double price = getCastedModel().getPrice();
-		final double bal = (price * getCastedModel().getQty()) / 1000.0;
+		final double price = this.getCastedModel().getPrice();
+		final double bal = (price * this.getCastedModel().getQty()) / 1000.0;
 		if (bal > 1000000.0) {
 			final DecimalFormat formatter = new DecimalFormat("###,###M ISK");
 			final String balanceString = formatter.format(bal / 1000.0);
@@ -122,11 +117,11 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	 * Presents on the UI with the cost to obtain of the resources missing to manufacture the schedule count.
 	 */
 	public String get_budget() {
-		return generatePriceString(getSellerPrice() * getCastedModel().getQty(), true, true);
+		return this.generatePriceString(this.getSellerPrice() * this.getCastedModel().getQty(), true, true);
 	}
 
 	public String get_cost() {
-		final double price = getCastedModel().getPrice();
+		final double price = this.getCastedModel().getPrice();
 		final DecimalFormat formatter = new DecimalFormat("###,###.0# ISK");
 		final String costString = formatter.format(price);
 		return costString;
@@ -137,87 +132,82 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	 */
 	public String get_destination() {
 		// If the location comes from the Market then there is no station
-		return getCastedModel().getDestination().getStation();
+		return this.getCastedModel().getDestination().getStation();
 	}
 
 	public Spanned get_fromtoLocation() {
 		final StringBuffer htmlLocation = new StringBuffer();
 		// Compose the FROM
-		EveLocation loc = getCastedModel().getLocation();
+		EveLocation loc = this.getCastedModel().getLocation();
 		String security = loc.getSecurity();
-		String secColor = securityLevels.get(security);
-		if (null == secColor) {
-			secColor = "#2FEFEF";
-		}
+		String secColor = EveAbstractPart.securityLevels.get(security);
+		if (null == secColor) secColor = "#2FEFEF";
 		htmlLocation.append("<font color='").append(secColor).append("'>")
-				.append(securityFormatter.format(loc.getSecurityValue())).append("</font>");
+				.append(EveAbstractPart.securityFormatter.format(loc.getSecurityValue())).append("</font>");
 		htmlLocation.append(" ").append(loc.getSystem());
 		htmlLocation.append(AppWideConstants.FLOW_ARROW_RIGHT);
 		// Compose the TO
-		loc = getCastedModel().getDestination();
+		loc = this.getCastedModel().getDestination();
 		security = loc.getSecurity();
-		secColor = securityLevels.get(security);
-		if (null == secColor) {
-			secColor = "#2FEFEF";
-		}
+		secColor = EveAbstractPart.securityLevels.get(security);
+		if (null == secColor) secColor = "#2FEFEF";
 		htmlLocation.append("<font color='").append(secColor).append("'>")
-				.append(securityFormatter.format(loc.getSecurityValue())).append("</font>");
+				.append(EveAbstractPart.securityFormatter.format(loc.getSecurityValue())).append("</font>");
 		htmlLocation.append(" ").append(loc.getSystem());
 		return Html.fromHtml(htmlLocation.toString());
 	}
 
 	public String get_itemName() {
-		return getCastedModel().getItemName();
+		return this.getCastedModel().getItemName();
 	}
 
 	public Spanned get_manufacturelocation() {
 		final StringBuffer htmlLocation = new StringBuffer();
 		// Compose the FROM
-		final EveLocation loc = getCastedModel().getLocation();
+		final EveLocation loc = this.getCastedModel().getLocation();
 		final String security = loc.getSecurity();
-		String secColor = securityLevels.get(security);
-		if (null == secColor) {
-			secColor = "#2FEFEF";
-		}
+		String secColor = EveAbstractPart.securityLevels.get(security);
+		if (null == secColor) secColor = "#2FEFEF";
 		htmlLocation.append("<font color='").append(secColor).append("'>").append(loc.getSecurity()).append("</font>");
 		htmlLocation.append(" ").append(loc.getSystem());
 		return Html.fromHtml(htmlLocation.toString());
 	}
 
 	public String get_qtyAvailable() {
-		return get_qtyRequired();
+		return this.get_qtyRequired();
 	}
 
 	public String get_qtyRequired() {
-		final long quantity = getCastedModel().getQty();
+		final long quantity = this.getCastedModel().getQty();
 		final DecimalFormat formatter = new DecimalFormat("x###,##0");
 		final String qtyString = formatter.format(quantity);
 		return qtyString;
 	}
 
 	public String get_volume() {
-		return volumeFormatter.format(getCastedModel().getItem().getVolume() * getCastedModel().getQty()) + " m3";
+		return EveAbstractPart.volumeFormatter
+				.format(this.getCastedModel().getItem().getVolume() * this.getCastedModel().getQty()) + " m3";
 	}
 
 	public ETaskType getActionCode() {
-		return getCastedModel().getTaskType();
+		return this.getCastedModel().getTaskType();
 	}
 
 	public EveTask getCastedModel() {
-		return (EveTask) getModel();
+		return (EveTask) this.getModel();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getTypeID();
+		return this.getCastedModel().getTypeID();
 	}
 
 	public int getQuantity() {
-		return getCastedModel().getQty();
+		return this.getCastedModel().getQty();
 	}
 
 	public EveLocation getSourceLocation() {
-		return getCastedModel().getLocation();
+		return this.getCastedModel().getLocation();
 	}
 
 	public boolean onContextItemSelected(final MenuItem item) {
@@ -231,7 +221,7 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		Log.i("EVEI", ">> TaskPart.onCreateContextMenu");
 		// For blueprints the menu depends on the renderer selected.
-		if ((getActionCode() == ETaskType.BUY) || (getActionCode() == ETaskType.MOVE)) {
+		if ((this.getActionCode() == ETaskType.BUY) || (this.getActionCode() == ETaskType.MOVE)) {
 			final BuyQtyDialog dialog = new BuyQtyDialog();
 			dialog.setPart(this);
 			dialog.setDialogCallback(new ADialogCallback() {
@@ -244,14 +234,14 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 				public void onDialogPositiveClick(final DialogFragment dialog) {
 					// Get the number of runs selected by the user.
 					final int quantity = ((BuyQtyDialog) dialog).getQuantity();
-					generateOrder(quantity);
+					TaskPart.this.generateOrder(quantity);
 					Log.i("EVEI", "<< TaskPart.onCreateContextMenu - BUY request for [" + quantity + "]");
 					// Recalculate the current view.
-					invalidate();
-					fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+					TaskPart.this.invalidate();
+					TaskPart.this.fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
 				}
 			});
-			dialog.show(getActivity().getFragmentManager(), "BuyQtyDialog");
+			dialog.show(this.getActivity().getFragmentManager(), "BuyQtyDialog");
 		}
 		Log.i("EVEI", "<< TaskPart.onCreateContextMenu");
 	}
@@ -259,16 +249,16 @@ public class TaskPart extends MarketDataPart implements IMenuActionTarget {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("TaskPart [");
-		buffer.append(getCastedModel().toString()).append(" ");
+		buffer.append(this.getCastedModel().toString()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
 
 	@Override
 	protected void initialize() {
-		item = getCastedModel().getItem();
+		item = this.getCastedModel().getItem();
 		if (null == item)
-			throw new RuntimeException("RT> TaskPart - The task item is not defined. " + getCastedModel().getItemName());
+			throw new RuntimeException("RT> TaskPart - The task item is not defined. " + this.getCastedModel().getItemName());
 	}
 
 	@Override

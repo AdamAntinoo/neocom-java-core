@@ -11,7 +11,6 @@ package org.dimensinfin.android.mvc.core;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
@@ -106,11 +105,11 @@ public class RootPart extends AbstractPart {
 		return null;
 	}
 
-	/**
-	 * A RooPart has no visuals, but other Parts may have.
-	 */
-	protected void removeChildVisual(final IEditPart child) {
-	}
+	//	/**
+	//	 * A RooPart has no visuals, but other Parts may have.
+	//	 */
+	//	protected void removeChildVisual(final IEditPart child) {
+	//	}
 
 	// public String get_title() {
 	// return getCastedModel().getTitle();

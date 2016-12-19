@@ -8,14 +8,14 @@ package org.dimensinfin.evedroid.part;
 
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.render.ItemHeaderRender;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -36,23 +36,11 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 	 * 
 	 * @param item
 	 */
-	public ItemHeader4IndustryPart(final AbstractGEFNode node) {
+	public ItemHeader4IndustryPart(final AbstractComplexNode node) {
 		super(node);
-		bpid = AppConnector.getDBConnector().searchBlueprint4Module(getCastedModel().getTypeID());
+		bpid = AppConnector.getDBConnector().searchBlueprint4Module(this.getCastedModel().getTypeID());
 		// TODO Check this validation. There are more items that are manufacturable and also item made with reactions.
 		if (-1 != bpid) manufacturable = true;
-	}
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public String getGroup() {
-		return getCastedModel().getGroupName();
-	}
-	public String getCategory() {
-		return  getCastedModel().getCategory();
-	}
-
-	public String getName() {
-		return getCastedModel().getName();
 	}
 
 	/**
@@ -65,45 +53,60 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 	 * @return
 	 */
 	public String get_manufactureCost() {
-		double cost = getJobProcess().getJobCost();
+		double cost = this.getJobProcess().getJobCost();
 		//		double sellprice = getSellData().getPrice();
 		// Start with the white color
 		String secColor = "#FFFFFF";
-		if ((cost * 1.1) < getSellerPrice()) secColor = "#6CC417";
-		if (cost >= getSellerPrice()) secColor = "#F62217";
+		if ((cost * 1.1) < this.getSellerPrice()) secColor = "#6CC417";
+		if (cost >= this.getSellerPrice()) secColor = "#F62217";
 		StringBuffer htmlPrice = new StringBuffer();
-		htmlPrice.append("<font color='").append(secColor).append("'>").append(generatePriceString(cost, true, true))
+		htmlPrice.append("<font color='").append(secColor).append("'>").append(this.generatePriceString(cost, true, true))
 				.append("</font>");
 		return htmlPrice.toString();
 	}
 
-	public int getProfitIndex() {
-		return getJobProcess().getProfitIndex();
-	}
-
-	public double getMultiplier() {
-		return getJobProcess().getMultiplier();
-	}
-
 	public EveItem getCastedModel() {
-		return (EveItem) getModel();
+		return (EveItem) this.getModel();
+	}
+
+	public String getCategory() {
+		return this.getCastedModel().getCategory();
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public String getGroup() {
+		return this.getCastedModel().getGroupName();
 	}
 
 	public double getManufactureCost() {
-		return getJobProcess().getJobCost();
+		return this.getJobProcess().getJobCost();
 	}
 
+	@Override
 	public long getModelID() {
-		return getCastedModel().getItemID();
+		return this.getCastedModel().getItemID();
+	}
+
+	public double getMultiplier() {
+		return this.getJobProcess().getMultiplier();
+	}
+
+	public String getName() {
+		return this.getCastedModel().getName();
+	}
+
+	public int getProfitIndex() {
+		return this.getJobProcess().getProfitIndex();
 	}
 
 	public boolean isManufacturable() {
 		return manufacturable;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("ItemHeader4IndustryPart [");
-		buffer.append(getCastedModel()).append(" ");
+		buffer.append(this.getCastedModel()).append(" ");
 		buffer.append("[").append(bpid).append("]").append(" ");
 		buffer.append(" ]");
 		return buffer.toString();
@@ -114,19 +117,20 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 	//		return this;
 	//	}
 
+	@Override
 	protected void initialize() {
-		item = getCastedModel();
+		item = this.getCastedModel();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
 		return new ItemHeaderRender(this, _activity);
 	}
 
 	private IJobProcess getJobProcess() {
-		if (null == process)
-			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), new NeoComBlueprint(bpid),
-					EJobClasses.MANUFACTURE);
+		if (null == process) process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(),
+				new NeoComBlueprint(bpid), EJobClasses.MANUFACTURE);
 		return process;
 	}
 }

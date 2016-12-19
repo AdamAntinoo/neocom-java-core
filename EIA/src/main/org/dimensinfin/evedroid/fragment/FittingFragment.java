@@ -128,16 +128,16 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		long capsuleerid = 0;
 		String fittingLabel = "Purifier";
 		if (null != extras) {
-			capsuleerid = extras.getLong(AppWideConstants.EExtras.CAPSULEERID.name());
-			fittingLabel = extras.getString(AppWideConstants.EExtras.FITTINGID.name());
+			capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+			fittingLabel = extras.getString(AppWideConstants.EExtras.EXTRA_FITTINGID.name());
 		}
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid)
 				.addIdentifier(fittingLabel);
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(this.getVariant()));
 		ds.setVariant(this.getVariant());
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
-		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
+		ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
+		ds.addParameter(AppWideConstants.EExtras.EXTRA_FITTINGID.name(), fittingLabel);
 		ds = (SpecialDataSource) AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds);
 		this.setDataSource(ds);
 	}

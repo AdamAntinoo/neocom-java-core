@@ -13,10 +13,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
@@ -49,9 +48,8 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 	 * usage of this part at the Pilot List Activity we just expand to itself.
 	 */
 	@Override
-	public ArrayList<AbstractAndroidPart> collaborate2View() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		//		result.add(this);
+	public ArrayList<IPart> collaborate2View() {
+		ArrayList<IPart> result = new ArrayList<IPart>();
 		return result;
 	}
 
@@ -95,8 +93,8 @@ public class PilotInfoPart extends EveAbstractPart implements INamedPart, OnClic
 			final NeoComCharacter pilot = ((PilotInfoPart) pilotPart).getCastedModel();
 			AppModelStore.getSingleton().activatePilot(pilot.getCharacterID());
 			final Intent intent = new Intent(this.getActivity(), DirectorsBoardActivity.class);
-			intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, pilot.getCharacterID());
-			EVEDroidApp.getAppStore().getActivity().startActivity(intent);
+			intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), pilot.getCharacterID());
+			AppModelStore.getSingleton().getActivity().startActivity(intent);
 		}
 		PilotInfoPart.logger.info("<< [PilotInfoPart.onClick]");
 	}

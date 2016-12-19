@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -25,7 +23,6 @@ import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Separator;
 
 import android.text.Html;
 import android.text.Spanned;
@@ -51,6 +48,22 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public ArrayList accessLocationFunction() {
 		return this.getPilot().getLocationRoles(this.getCastedModel().getID(), "-NO-FUNCTION-");
+	}
+
+	/**
+	 * Returns the number of model part children that are the blueprints at that location. If the case on a same
+	 * station there are more than one container they will be represented as different locations.
+	 * 
+	 * @return
+	 */
+	public String get_locationContentCount() {
+		int locationAssets = this.getChildren().size();
+		String countString = null;
+		if (locationAssets > 1)
+			countString = EveAbstractPart.qtyFormatter.format(locationAssets) + " Stacks";
+		else
+			countString = EveAbstractPart.qtyFormatter.format(locationAssets) + " Stack";
+		return countString;
 	}
 
 	public long get_locationID() {
@@ -88,26 +101,35 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 		return this.getCastedModel().getName();
 	}
 
+	//	@Override
+	//	public ArrayList<AbstractAndroidPart> getPartChildren() {
+	//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		Vector<AbstractPropertyChanger> ch = this.getChildren();
+	//		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+	//		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
+	//
+	//		for (AbstractPropertyChanger node : ch) {
+	//			// Convert the node to a part.
+	//			AbstractAndroidPart part = (AbstractAndroidPart) node;
+	//			result.add(part);
+	//			// Check if the node is expanded. Then add its children.
+	//			if (part.isExpanded()) {
+	//				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
+	//				result.addAll(grand);
+	//				// Add a separator.
+	//				result.add(new TerminatorPart(new Separator("")));
+	//			}
+	//		}
+	//		return result;
+	//	}
+	/**
+	 * The policies for locations are two sorts. The first one by name the second by item type.
+	 */
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartChildren() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		Vector<AbstractPropertyChanger> ch = this.getChildren();
-		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
-
-		for (AbstractPropertyChanger node : ch) {
-			// Convert the node to a part.
-			AbstractAndroidPart part = (AbstractAndroidPart) node;
-			result.add(part);
-			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-				result.addAll(grand);
-				// Add a separator.
-				result.add(new TerminatorPart(new Separator("")));
-			}
-		}
-		return result;
+	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
+		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
+		return targets;
 	}
 
 	public int searchStationType() {
@@ -160,32 +182,15 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 			} else {
 				// Add a new stack for this type to the current container.
 				container.put(type, apart);
-				this.addChild((IEditPart) apart);
+				this.addChild(apart);
 			}
 		} else {
 			// There is no container also with this stack.
 			container = new HashMap<Integer, AssetPart>();
 			container.put(type, apart);
-			this.addChild((IEditPart) apart);
+			this.addChild(apart);
 			stackList.put(this.getCastedModel().getID(), container);
 		}
-	}
-
-	/**
-	 * Returns the number of model part children that are the blueprints at that location. If the case on a same
-	 * station there are more than one container they will be represented as different locations.
-	 * 
-	 * @return
-	 */
-	public String get_locationContentCount() {
-		int locationAssets = getChildren().size();
-		String countString = null;
-		if (locationAssets > 1) {
-			countString = qtyFormatter.format(locationAssets) + " Stacks";
-		} else {
-			countString = qtyFormatter.format(locationAssets) + " Stack";
-		}
-		return countString;
 	}
 }
 // - UNUSED CODE ............................................................................................

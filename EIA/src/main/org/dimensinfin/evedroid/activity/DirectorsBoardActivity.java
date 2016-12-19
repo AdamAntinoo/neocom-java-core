@@ -111,9 +111,9 @@ public class DirectorsBoardActivity extends Activity {
 			if (null == extras) throw new RuntimeException(
 					"RT DirectorsBoardActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
 			// Instantiate the pilot from the characterID.
-			final long characterid = extras.getLong(AppWideConstants.EExtras.CAPSULEERID.name());
+			final long characterid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
 			Log.i("DirectorsBoardActivity", "-- DirectorsBoardActivity.onCreate -- Detected "
-					+ AppWideConstants.EExtras.CAPSULEERID.name() + "=" + characterid);
+					+ AppWideConstants.EExtras.EXTRA_CAPSULEERID.name() + "=" + characterid);
 			if (characterid > 0) {
 				_store = AppModelStore.getSingleton();
 				_store.activatePilot(characterid);
@@ -221,7 +221,7 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, adirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
 								}
@@ -244,7 +244,7 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, sdirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
 								}
@@ -267,7 +267,7 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, thedirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.INDUSTRYDIRECTOR.onClick");
 								}
@@ -290,7 +290,7 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, jdirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 								}
 							});
@@ -310,7 +310,7 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, director.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 								}
 							});
@@ -329,7 +329,7 @@ public class DirectorsBoardActivity extends Activity {
 									// Activate the manager.
 									final Intent intent = new Intent(parentActivity, fdirector.getClass());
 									// Send the pilot id and transfer it to the next Activity
-									intent.putExtra(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 								}
 							});
@@ -352,7 +352,7 @@ public class DirectorsBoardActivity extends Activity {
 		Log.i("DirectorsBoardActivity", ">> DirectorsBoardActivity.onSaveInstanceState"); //$NON-NLS-1$
 		super.onSaveInstanceState(savedInstanceState);
 		// Add current model data dependencies. EVECHARACTERID
-		savedInstanceState.putLong(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 		// _store.save();
 		Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.onSaveInstanceState"); //$NON-NLS-1$
 	}

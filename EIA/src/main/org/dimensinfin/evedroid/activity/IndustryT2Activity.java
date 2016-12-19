@@ -71,17 +71,16 @@ public class IndustryT2Activity extends PilotPagerActivity {
 		try {
 			//REFACTOR Review the RT messages and the catch clause.
 			// Instantiate the blueprint from the ID.
-			final Bundle extras = getIntent().getExtras();
-			final long bpassetid = extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
+			final Bundle extras = this.getIntent().getExtras();
+			final long bpassetid = extras.getLong(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name());
 			//		final int activity = extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
 			if (bpassetid > 0) {
-				final NeoComBlueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
-				if (null == blueprint)
-					throw new RuntimeException(
-							"RT IndustryT2Activity.onCreate - Unable to continue. Expected blueprint not located.");
+				final NeoComBlueprint blueprint = _store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				if (null == blueprint) throw new RuntimeException(
+						"RT IndustryT2Activity.onCreate - Unable to continue. Expected blueprint not located.");
 
 				// Initialize the list of assets with the real assets and then remove the resources used by the pending jobs.
-				JobManager.initializeAssets(this._store.getPilot());
+				JobManager.initializeAssets(_store.getPilot());
 				// Create the pages that form this Activity. Each page implemented by a Fragment.
 				int page = 0;
 				//
@@ -89,19 +88,19 @@ public class IndustryT2Activity extends PilotPagerActivity {
 				JobActionsFragment frag = new JobActionsFragment();
 				frag.setStore(_store);
 				frag.setExtras(extras);
-				addPage(frag, page++);
+				this.addPage(frag, page++);
 				// Create the Manufacture/Invention Resources Page.
-				addPage(new ManufactureLOMFragment(_store).setExtras(extras), page++);
+				this.addPage(new ManufactureLOMFragment(_store).setExtras(extras), page++);
 			} else
 				throw new RuntimeException(
 						"RT IndustryT2Activity.onCreate - Unable to continue. Required parameters not defined on Extras.");
 		} catch (final Exception rtex) {
 			Log.e("EVEI", "R> Runtime Exception on IndustryT2Activity.onCreate." + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(rtex);
+			this.stopActivity(rtex);
 		}
 		// Reinitialize the tile and subtitle from the first page.
-		updateInitialTitle();
+		this.updateInitialTitle();
 		Log.i("EVEI", "<< IndustryT2Activity.onCreate"); //$NON-NLS-1$
 	}
 }

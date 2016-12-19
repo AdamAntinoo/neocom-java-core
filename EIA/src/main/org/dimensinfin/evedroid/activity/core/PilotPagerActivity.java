@@ -47,7 +47,7 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 			if (null == extras) throw new RuntimeException(
 					"RT IndustryDirectorActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
 			//Instantiate the pilot from the characterID.
-			final long characterid = extras.getLong(AppWideConstants.EExtras.CAPSULEERID.name());
+			final long characterid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
 			if (characterid > 0) {
 				// Initialize the access to the global structures.
 				_store = EVEDroidApp.getAppStore();
@@ -80,7 +80,7 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
 		super.onSaveInstanceState(savedInstanceState);
 		// Add current model data dependencies. EVECHARACTERID
-		savedInstanceState.putLong(AppWideConstants.EExtras.CAPSULEERID.name(), _store.getPilot().getCharacterID());
+		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
 		_store.save();
 		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
 	}

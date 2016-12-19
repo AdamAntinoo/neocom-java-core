@@ -88,14 +88,14 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
-		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.EExtras.CAPSULEERID.name());
+		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid);
 		// This part of the code may depend on the variant so surround it with the detector.
 		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
 			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
 			SpecialDataSource ds = new FittingListDataSource(locator, new FittingPartFactory(this.getVariant()));
 			ds.setVariant(this.getVariant());
-			ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
+			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 			//			ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
 			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		}

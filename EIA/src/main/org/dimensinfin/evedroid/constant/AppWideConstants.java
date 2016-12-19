@@ -29,11 +29,12 @@ public class AppWideConstants {
 		// public static final int COMPARATOR_CREATIONDATE = COMPARATOR_NAME +
 		// 9;
 		public static final int	COMPARATOR_TIMEPENDING			= comparators.COMPARATOR_NAME + 10;
+		public static final int	COMPARATOR_GROUPNAME				= comparators.COMPARATOR_NAME + 20;
 	}
 
 	// - E X T R A S   M E S S A G E S
 	public enum EExtras {
-		CAPSULEERID, FITTINGID
+		EXTRA_CAPSULEERID, EXTRA_FITTINGID, EXTRA_BLUEPRINTID, EXTRA_BLUEPRINTACTIVITY
 	}
 
 	// - F R A G M E N T   I D E N T I F I E R S
@@ -88,8 +89,8 @@ public class AppWideConstants {
 		public static final String	EXTRA_EVEITEMID								= "EXTRA_EVEITEMID";
 		public static final String	EXTRA_CHARACTER_LOCALIZER			= "EXTRA_CHARACTER_LOCALIZER";
 		public static final String	EXTRA_MARKETDATA_LOCALIZER		= "EXTRA_MARKETDATA_LOCALIZER";
-		public static final String	EXTRA_BLUEPRINTID							= "EXTRA_T2BLUEPRINTID";
-		public static final String	EXTRA_BLUEPRINTACTIVITY				= "EXTRA_BLUEPRINTACTIVITY";
+		//		public static final String	EXTRA_BLUEPRINTID							= "EXTRA_T2BLUEPRINTID";
+		//		public static final String	EXTRA_BLUEPRINTACTIVITY				= "EXTRA_BLUEPRINTACTIVITY";
 	}
 
 	// - F R A G M E N T   I D E N T I F I E R S

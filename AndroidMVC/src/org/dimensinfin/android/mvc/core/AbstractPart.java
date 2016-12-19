@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.interfaces.INeoComNode;
@@ -36,6 +35,7 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		CEventPart.register(EPARTEVENT.ADD_CHILD.hashCode(), EPARTEVENT.ADD_CHILD.name());
 		CEventPart.register(EPARTEVENT.REMOVE_CHILD.hashCode(), EPARTEVENT.REMOVE_CHILD.name());
 	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 	private Vector<IPart>				children		= new Vector<IPart>();
 	private AbstractComplexNode	model;
@@ -95,9 +95,10 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	}
 
 	/**
-	 * By default until all parts are reviewed this method calls the original and now deprecated
-	 * <code>getPartChildren</code> to it gets collected the part that conform the model. On the new design this
-	 * comes from the model while in the old comes from the design structures but both are compatible.
+	 * The goal of this method is to return the list of Parts on the children list that should be visible and
+	 * that collaborates to the ListView population. The default behavior for this method is to check if the
+	 * Model behind the Part is expanded, in that case the children have the opportunity to be added to the
+	 * visible list.
 	 */
 	public ArrayList<IPart> collaborate2View() {
 		ArrayList<IPart> result = new ArrayList<IPart>();
@@ -107,7 +108,7 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			Vector<IPart> ch = this.runPolicies(this.getChildren());
 			// --- End of policies
 			for (IPart part : ch) {
-				if (part.isRenderWhenEmpty()) result.add(part);
+				if (part.isVisible()) if (part.isRenderWhenEmpty()) result.add(part);
 				result.addAll(part.collaborate2View());
 			}
 		}
@@ -179,6 +180,10 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 
 	public boolean isRenderWhenEmpty() {
 		return model.isRenderWhenEmpty();
+	}
+
+	public boolean isVisible() {
+		return model.isVisible();
 	}
 
 	public void propertyChange(final PropertyChangeEvent evt) {
@@ -301,6 +306,14 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		this.renderMode = renderMode;
 		//		this.needsRedraw();
 		return this;
+	}
+
+	public boolean toggleExpanded() {
+		return model.toggleExpanded();
+	}
+
+	public boolean toggleVisible() {
+		return model.toggleVisible();
 	}
 
 	/**

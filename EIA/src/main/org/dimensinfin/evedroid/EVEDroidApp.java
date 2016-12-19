@@ -375,6 +375,43 @@ public class EVEDroidApp extends Application implements IConnector {
 					}
 				};
 				break;
+			case AppWideConstants.comparators.COMPARATOR_GROUPNAME:
+				comparator = new Comparator<IPart>() {
+					public int compare(final IPart left, final IPart right) {
+						String leftField = null;
+						String rightField = null;
+						if (left instanceof AssetPart) leftField = ((AssetPart) left).getCastedModel().getGroupName();
+						if (right instanceof AssetPart) rightField = ((AssetPart) right).getCastedModel().getGroupName();
+
+						if (null == leftField) return 1;
+						if (null == rightField) return -1;
+						if ("" == leftField) return 1;
+						if ("" == rightField) return -1;
+						return leftField.compareTo(rightField);
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_ITEM_TYPE:
+				comparator = new Comparator<IPart>() {
+					public int compare(final IPart left, final IPart right) {
+						int leftField = -1;
+						int rightField = -1;
+						// if (left instanceof BlueprintPart) leftField = 100;
+						if (left instanceof AssetPart) leftField = 0;
+						if (left instanceof ShipPart) leftField = 200;
+						if (left instanceof ContainerPart) leftField = -300;
+
+						// if (right instanceof BlueprintPart) rightField = 100;
+						if (right instanceof AssetPart) rightField = 0;
+						if (right instanceof ShipPart) rightField = 200;
+						if (right instanceof ContainerPart) rightField = -300;
+
+						if (leftField < rightField) return -1;
+						if (leftField > rightField) return 1;
+						return 0;
+					}
+				};
+				break;
 			case AppWideConstants.comparators.COMPARATOR_CARD_RATIO:
 				comparator = new Comparator<IPart>() {
 					public int compare(final IPart left, final IPart right) {

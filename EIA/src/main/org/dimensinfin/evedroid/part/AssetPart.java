@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Asset4CategoryHolder;
 import org.dimensinfin.evedroid.holder.AssetHolder;
@@ -20,7 +19,6 @@ import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetLineRender;
 
-import android.content.Intent;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
@@ -104,10 +102,11 @@ public class AssetPart extends MarketDataPart implements INamedPart, OnClickList
 
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> AssetPart.onClick");
-		Intent intent = new Intent(this.getActivity(), ItemDetailsActivity.class);
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, this.getCastedModel().getTypeID());
-		this.getActivity().startActivity(intent);
+		// REFACTOR Call to ItemDetails Activity disabled because that activity was not supported.
+		//		Intent intent = new Intent(this.getActivity(), ItemDetailsActivity.class);
+		//		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
+		//		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, this.getCastedModel().getTypeID());
+		//		this.getActivity().startActivity(intent);
 		Log.i("EVEI", "<< AssetPart.onClick");
 	}
 

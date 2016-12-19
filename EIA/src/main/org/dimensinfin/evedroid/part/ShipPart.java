@@ -17,6 +17,7 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
@@ -186,7 +187,7 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 				ShipPart.logger.info("-- [ShipPart.onContextItemSelected]> New for for hull: " + this.getCastedModel());
 				fit.addHull(this.getCastedModel().getTypeID());
 				// Add part children as Fitting content.
-				for (AbstractPropertyChanger node : children)
+				for (IPart node : this.getChildren())
 					if (node instanceof AssetPart) {
 						int flag = ((AssetPart) node).getCastedModel().getFlag();
 						if ((flag > 10) && (flag < 19))
@@ -212,7 +213,7 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 				// Open the Fitting Activity
 				final Intent intent = new Intent(this.getActivity(), FittingActivity.class);
 				intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
-				intent.putExtra(AppWideConstants.EExtras.FITTINGID.name(), label);
+				intent.putExtra(AppWideConstants.EExtras.EXTRA_FITTINGID.name(), label);
 				this.getActivity().startActivity(intent);
 				break;
 
