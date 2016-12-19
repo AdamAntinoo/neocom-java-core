@@ -61,29 +61,5 @@ public final class PilotListDataSource extends SpecialDataSource {
 		SpecialDataSource.logger.info("<< [PilotListDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
-	//[01]
-
-	@Override
-	@Deprecated
-	public void createPartsHierarchy() {
-		this.createContentHierarchy();
-	}
 }
 // - UNUSED CODE ............................................................................................
-//[01]
-//	@Override
-//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-//		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-//		Collections.sort(this._root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_APIID_DESC));
-//		for (final AbstractAndroidPart node : this._root) {
-//			result.add(node);
-//			// Check if the node is expanded but test the model. Then add its
-//			// children.
-//			if (node.isExpanded()) {
-//				final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-//				result.addAll(grand);
-//			}
-//		}
-//		this._adapterData = result;
-//		return result;
-//	}

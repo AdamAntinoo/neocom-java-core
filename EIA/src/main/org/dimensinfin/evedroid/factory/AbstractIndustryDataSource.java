@@ -13,7 +13,6 @@ import java.util.Vector;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.part.GroupPart;
@@ -35,10 +34,12 @@ public abstract class AbstractIndustryDataSource extends AbstractDataSource {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public void createContentHierarchy() {
 		super.createContentHierarchy();
 	}
 
+	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		return super.getBodyParts();
 	}
@@ -73,9 +74,9 @@ public abstract class AbstractIndustryDataSource extends AbstractDataSource {
 					group.addChild((IPart) action);
 	}
 
-	protected void classifyResources(final Vector<AbstractPropertyChanger> nodes) {
+	protected void classifyResources(final Vector<IPart> nodes) {
 		// Process the actions and set each one on the matching group.
-		for (AbstractPropertyChanger node : nodes)
+		for (IPart node : nodes)
 			if (node instanceof IItemPart) {
 				IItemPart action = (IItemPart) node;
 				this.add2Group(action, action.getIndustryGroup());

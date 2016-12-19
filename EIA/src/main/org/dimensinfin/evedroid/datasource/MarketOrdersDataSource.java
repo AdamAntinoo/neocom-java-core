@@ -14,7 +14,9 @@ import java.util.Collections;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EVARIANT;
@@ -52,6 +54,11 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		super(store);
 	}
 
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The hierarchy contains two levels of elements. The first level are the market hubs where the user has to
@@ -70,6 +77,13 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		final MarketOrderAnalyticalGroup scheduledSellGroup = _store.getPilot().accessModules4Sell();
 		analyticalGroups.add(scheduledSellGroup);
 		Log.i("EVEI", "<< MarketOrdersDataSource.createHierarchy");
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		_adapterData = result;
+		return result;
 	}
 
 	/**
@@ -113,25 +127,14 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		return hierarchy;
 	}
 
-	@Override
-	public ArrayList<AbstractAndroidPart> getHeaderPartsHierarchy(final int panelMarketordersbody) {
-		return new ArrayList<AbstractAndroidPart>();
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		//		for (final AbstractAndroidPart node : this._root) {
-		//			final ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-		//			if (grand.size() > 0) {
-		//				result.add(node);
-		//				// Do specific sorting for scheduled and finished
-		//				Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
-		//				result.addAll(grand);
-		//			}
-		//		}
-		_adapterData = result;
-		return result;
+	public ArrayList<AbstractAndroidPart> getHeaderPartsHierarchy(final int panelMarketordersbody) {
+		return new ArrayList<AbstractAndroidPart>();
 	}
 
 	@Override
@@ -139,7 +142,7 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH))
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
+		if (event.getPropertyName().equalsIgnoreCase(ECoreModelEvents.EVENT_CHILD_REMOVEDPROP.name()))
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 	}

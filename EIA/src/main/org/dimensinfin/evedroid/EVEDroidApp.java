@@ -22,6 +22,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.connector.IConnector;
@@ -305,18 +306,7 @@ public class EVEDroidApp extends Application implements IConnector {
 					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
 						double leftField = 0.0;
 						double rightField = 0.0;
-						// if (left instanceof ModulePart) {
-						// ModuleCard intermediate = ((ModulePart)
-						// left).getCastedModel();
-						// leftField = intermediate.getModuleIndex();
-						// }
 						if (left instanceof BlueprintPart) leftField = ((BlueprintPart) left).getProfitIndex();
-
-						// if (right instanceof ModulePart) {
-						// ModuleCard intermediate = ((ModulePart)
-						// right).getCastedModel();
-						// rightField = intermediate.getModuleIndex();
-						// }
 						if (right instanceof BlueprintPart) rightField = ((BlueprintPart) right).getProfitIndex();
 
 						if (leftField > rightField)
@@ -353,6 +343,65 @@ public class EVEDroidApp extends Application implements IConnector {
 							return 1;
 						else
 							return -1;
+					}
+				};
+				break;
+		}
+		return comparator;
+	}
+
+	public static Comparator<IPart> createPartComparator(final int code) {
+		Comparator<IPart> comparator = new Comparator<IPart>() {
+			public int compare(final IPart left, final IPart right) {
+				return 0;
+			}
+		};
+		switch (code) {
+			case AppWideConstants.comparators.COMPARATOR_NAME:
+				comparator = new Comparator<IPart>() {
+					public int compare(final IPart left, final IPart right) {
+						String leftField = null;
+						String rightField = null;
+						if (left instanceof INamedPart) leftField = ((INamedPart) left).getName();
+						if (right instanceof INamedPart) rightField = ((INamedPart) right).getName();
+						if (left instanceof INamed) leftField = ((INamed) left).getOrderingName();
+						if (right instanceof INamed) rightField = ((INamed) right).getOrderingName();
+
+						if (null == leftField) return 1;
+						if (null == rightField) return -1;
+						if ("" == leftField) return 1;
+						if ("" == rightField) return -1;
+						return leftField.compareTo(rightField);
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_CARD_RATIO:
+				comparator = new Comparator<IPart>() {
+					public int compare(final IPart left, final IPart right) {
+						double leftField = 0.0;
+						double rightField = 0.0;
+						if (left instanceof BlueprintPart) leftField = ((BlueprintPart) left).getProfitIndex();
+						if (right instanceof BlueprintPart) rightField = ((BlueprintPart) right).getProfitIndex();
+
+						if (leftField > rightField)
+							return -1;
+						else if (leftField == rightField) return 0;
+						return 1;
+					}
+				};
+				break;
+			case AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT:
+				comparator = new Comparator<IPart>() {
+					public int compare(final IPart left, final IPart right) {
+						DateTime leftField = new DateTime(DateTimeZone.UTC);
+						DateTime rightField = new DateTime(DateTimeZone.UTC);
+						if (left instanceof IDateTimeComparator) leftField = ((IDateTimeComparator) left).getComparableDate();
+						if (right instanceof IDateTimeComparator) rightField = ((IDateTimeComparator) right).getComparableDate();
+
+						if (leftField.isAfter(rightField))
+							return -1;
+						else
+							return 1;
 					}
 				};
 				break;
