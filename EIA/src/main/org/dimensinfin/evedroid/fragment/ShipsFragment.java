@@ -8,6 +8,9 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.fragment;
 
+import java.util.logging.Logger;
+
+//- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.ShipsDataSource;
@@ -21,9 +24,8 @@ import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipsFragment extends AbstractNewPagerFragment {
-
 	// - S T A T I C - S E C T I O N ..........................................................................
-
+	private static Logger logger = Logger.getLogger("ShipsFragment");
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -42,29 +44,9 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	/**
-	//	 * Creates the structures when the fragment is about to be shown. It will inflate the layout where the
-	//	 * generic fragment will be layered to show the content. It will get the Activity functionality for single
-	//	 * page activities.
-	//	 */
-	//	@Override
-	//	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-	//		Log.i("NEOCOM", ">> ShipsFragment.onCreateView");
-	//		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-	//		try {
-	//			this.setIdentifier(_variant.hashCode());
-	//		} catch (final RuntimeException rtex) {
-	//			Log.e("NEOCOM", "RTEX> ShipsFragment.onCreateView - " + rtex.getMessage());
-	//			rtex.printStackTrace();
-	//			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onCreateView - " + rtex.getMessage()));
-	//		}
-	//		Log.i("NEOCOM", "<< ShipsFragment.onCreateView");
-	//		return theView;
-	//	}
-
 	@Override
 	public void onStart() {
-		Log.i("NEOCOM", ">> [ShipsFragment.onStart]");
+		ShipsFragment.logger.info(">> [ShipsFragment.onStart]");
 		try {
 			//		this.setIdentifier(_variant.hashCode());
 			this.registerDataSource();
@@ -74,18 +56,18 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 			this.stopActivity(new RuntimeException("RTEX> ShipsFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
-		Log.i("NEOCOM", "<< [ShipsFragment.onStart]");
+		ShipsFragment.logger.info("<< [ShipsFragment.onStart]");
 	}
 
 	private void registerDataSource() {
-		Log.i("NEOCOM", ">> [ShipsFragment.registerDataSource]");
+		ShipsFragment.logger.info(">> [ShipsFragment.registerDataSource]");
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getPilotName())
 				.addIdentifier(_variant.name());
 		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(_variant));
 		ds.setVariant(_variant);
 		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
 		this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
-		Log.i("NEOCOM", "<< [ShipsFragment.registerDataSource]");
+		ShipsFragment.logger.info("<< ShipsFragment.registerDataSource");
 	}
 }
 

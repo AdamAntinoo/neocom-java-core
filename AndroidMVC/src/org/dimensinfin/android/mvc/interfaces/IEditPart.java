@@ -11,12 +11,8 @@
 package org.dimensinfin.android.mvc.interfaces;
 
 import java.beans.PropertyChangeListener;
-import java.util.List;
-import java.util.Vector;
 
-import org.dimensinfin.android.mvc.core.RootPart;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
-import org.dimensinfin.core.model.IGEFNode;
+import android.app.DownloadManager.Request;
 
 /**
  * EditParts are the building blocks of GEF Viewers. As the <I>Controller</I>, an EditPart ties the
@@ -36,7 +32,8 @@ import org.dimensinfin.core.model.IGEFNode;
  * change the model.
  * <p>
  * IMPORTANT: This interface is <EM>not</EM> intended to be implemented by clients. Clients should inherit
- * from {@link org.dimensinfin.android.mvc.core.eclipse.gef.editparts.AbstractEditPart}. New methods may be added in the future.
+ * from {@link org.dimensinfin.android.mvc.core.eclipse.gef.editparts.AbstractEditPart}. New methods may be
+ * added in the future.
  */
 public interface IEditPart extends PropertyChangeListener {
 
@@ -73,7 +70,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * its <i>source connections</i>.
 	 * </UL>
 	 */
-//	void activate();
+	//	void activate();
 
 	/**
 	 * Adds a listener to the EditPart. Duplicate calls result in duplicate notification.
@@ -87,7 +84,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * Called <em>after</em> the EditPart has been added to its parent. This is used to indicate to the EditPart
 	 * that it should refresh itself for the first time.
 	 */
-//	void addNotify();
+	//	void addNotify();
 
 	/**
 	 * Deactivates the EditPart. EditParts that observe a dynamic model or support editing must be <i>active</i>
@@ -105,7 +102,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * <code>GraphicalEditParts</code>, its <i>source connections</i>.
 	 * </UL>
 	 */
-//	void deactivate();
+	//	void deactivate();
 
 	/**
 	 * Erases <i>source</i> feedback for the specified {@link Request}. A Request is used to describe the type
@@ -127,7 +124,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 */
 	//	void eraseTargetFeedback(Request request);
 
-	Vector <AbstractPropertyChanger> getChildren();
+	//	Vector <AbstractPropertyChanger> getChildren();
 
 	/**
 	 * Returns the {@link Command} to perform the specified Request or <code>null</code>.
@@ -165,7 +162,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * 
 	 * @return <code>null</code> or the primary model object
 	 */
-	Object getModel();
+	//	Object getModel();
 
 	/**
 	 * Returns the parent <code>EditPart</code>. This method should only be called internally or by helpers such
@@ -173,7 +170,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * 
 	 * @return <code>null</code> or the parent {@link IEditPart}
 	 */
-	IEditPart getParentPart();
+	//	IEditPart getParentPart();
 
 	/**
 	 * Returns the {@link RootEditPart}. This method should only be called internally or by helpers such as edit
@@ -181,7 +178,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * 
 	 * @return <code>null</code> or the {@link RootEditPart}
 	 */
-	RootPart getRoot();
+	//	RootPart getRoot();
 
 	/**
 	 * Returns the selected state of this EditPart. This method should only be called internally or by helpers
@@ -194,7 +191,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 *         <LI>{@link #SELECTED_PRIMARY}
 	 *         </UL>
 	 */
-//	int getSelected();
+	//	int getSelected();
 
 	/**
 	 * Return the <code>EditPart</code> that should be used as the <i>target</i> for the specified
@@ -222,7 +219,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * @see EditPartViewer#getFocusEditPart()
 	 * @return true if the EditPart has focus
 	 */
-//	boolean hasFocus();
+	//	boolean hasFocus();
 
 	/**
 	 * Installs an EditPolicy for a specified <i>role</i>. A <i>role</i> is is simply an Object used to identify
@@ -242,7 +239,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * 
 	 * @return <code>true</code> when active
 	 */
-//	boolean isActive();
+	//	boolean isActive();
 
 	/**
 	 * Returns <code>true</code> if the EditPart is selectable. A selectable EditPart may be selected as a
@@ -251,7 +248,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * 
 	 * @return <code>true</code> if the receiver can be selected
 	 */
-//	boolean isSelectable();
+	//	boolean isSelectable();
 
 	/**
 	 * Performs the specified Request. This method can be used to send a generic message to an EditPart. If the
@@ -268,7 +265,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * Called to force a refresh of this EditPart. All visuals properties will be updated, as well as structural
 	 * features like children.
 	 */
-//	void refresh();
+	//	void refresh();
 
 	/**
 	 * Removes the first occurance of the specified listener from the list of listeners. Does nothing if the
@@ -309,7 +306,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 * @param hasFocus
 	 *          boolean indicating if this part has focus
 	 */
-//	void setFocus(boolean hasFocus);
+	//	void setFocus(boolean hasFocus);
 
 	/**
 	 * <img src="doc-files/dblack.gif"/>Sets the model. This method is made public to facilitate the use of
@@ -342,7 +339,7 @@ public interface IEditPart extends PropertyChangeListener {
 	 *          an enum indicating the selected state
 	 * @see #getSelected()
 	 */
-//	void setSelected(int value);
+	//	void setSelected(int value);
 
 	/**
 	 * Shows or updates source feedback for the given request. This method may be called multiple times so that

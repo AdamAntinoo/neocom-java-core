@@ -10,10 +10,8 @@ package org.dimensinfin.evedroid.core;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
@@ -27,7 +25,7 @@ import android.text.Html;
 import android.text.Spanned;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class EveAbstractPart extends AbstractAndroidPart {
+public abstract class EveAbstractPart extends NeoComAbstractPart {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID					= -2988276062110424930L;
 	private static final long									ONEMINUTE									= 60 * 1000;
@@ -77,10 +75,6 @@ public abstract class EveAbstractPart extends AbstractAndroidPart {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveAbstractPart(final AbstractComplexNode model) {
 		super(model);
-	}
-
-	public EveAbstractPart(final AbstractGEFNode model) {
-		this.setModel(model);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

@@ -7,15 +7,46 @@
 //									the extended GEF model into the Android View to be used on ListViews.
 package org.dimensinfin.android.mvc.interfaces;
 
-//- IMPORT SECTION .........................................................................................
+// - IMPORT SECTION .........................................................................................
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Vector;
+
+import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface IPartFactory {
+public interface IPart extends PropertyChangeListener {
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public IPart createPart(AbstractComplexNode model);
+	public ArrayList<IPart> collaborate2View();
 
-	public String getVariant();
+	public Vector<IPart> getChildren();
+
+	public AbstractComplexNode getModel();
+
+	public IPart getParentPart();
+
+	public IPartFactory getPartFactory();
+
+	public RootPart getRoot();
+
+	public boolean isActive();
+
+	public boolean isDownloaded();
+
+	public boolean isExpanded();
+
+	public boolean isRenderWhenEmpty();
+
+	public void refreshChildren();
+
+	public Vector<IPart> runPolicies(Vector<IPart> targets);
+
+	public IPart setFactory(final IPartFactory partFactory);
+
+	public void setModel(final AbstractComplexNode model);
+
+	public void setParent(final IPart parent);
 }
 
 // - UNUSED CODE ............................................................................................

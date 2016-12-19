@@ -9,7 +9,6 @@ package org.dimensinfin.evedroid.activity.core;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractContextActivity;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
@@ -18,6 +17,7 @@ import org.dimensinfin.evedroid.core.EvePagerAdapter;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -35,7 +35,7 @@ import android.widget.ImageView;
  * 
  * @author Adam Antinoo
  */
-public abstract class DefaultPagerActivity extends AbstractContextActivity {
+public abstract class DefaultPagerActivity extends Activity {
 	// - S T A T I C - S E C T I O N
 	// ..........................................................................
 	public static Logger			logger					= Logger.getLogger("DefaultPagerActivity");
@@ -53,7 +53,7 @@ public abstract class DefaultPagerActivity extends AbstractContextActivity {
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	public NeoComCharacter getPilot() {
-		return (NeoComCharacter) EVEDroidApp.getAppStore().getPilot();
+		return EVEDroidApp.getAppStore().getPilot();
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public abstract class DefaultPagerActivity extends AbstractContextActivity {
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		logger.info(">> DefaultPagerActivity.onCreate"); //$NON-NLS-1$
+		DefaultPagerActivity.logger.info(">> DefaultPagerActivity.onCreate"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		// Debug.startMethodTracing("EAI");
 		setContentView(R.layout.activity_pager);
@@ -106,12 +106,8 @@ public abstract class DefaultPagerActivity extends AbstractContextActivity {
 			_pageContainer = (ViewPager) findViewById(R.id.pager);
 			_back = (ImageView) findViewById(R.id.backgroundFrame);
 			// Check page structure.
-			if (null == _pageContainer) {
-				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			}
-			if (null == _back) {
-				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			}
+			if (null == _pageContainer) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			if (null == _back) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 
 			// Add the adapter for the page switching.
 			_pageAdapter = new EvePagerAdapter(getFragmentManager());
@@ -127,22 +123,21 @@ public abstract class DefaultPagerActivity extends AbstractContextActivity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position)) {
+					if ("" == _pageAdapter.getSubTitle(position))
 						_actionBar.setSubtitle(null);
-					} else {
+					else
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
-					}
 				}
 			});
 
 			// Change the background image of the page depending on theme
 			// _back.setImageDrawable(EVEDroidApp.getAppContext().getTheme().getThemeBackground());
 		} catch (final Exception rtex) {
-			logger.severe("R> Runtime Exception on DefaultPagerActivity.onCreate." + rtex.getMessage());
+			DefaultPagerActivity.logger.severe("R> Runtime Exception on DefaultPagerActivity.onCreate." + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(rtex);
+			this.stopActivity(rtex);
 		}
-		logger.info("<< DefaultPagerActivity.onCreate"); //$NON-NLS-1$
+		DefaultPagerActivity.logger.info("<< DefaultPagerActivity.onCreate"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -155,7 +150,7 @@ public abstract class DefaultPagerActivity extends AbstractContextActivity {
 	protected void onRestart() {
 		// TODO Auto-generated method stub
 		super.onRestart();
-		logger.info(">> DefaultPagerActivity.onRestart"); //$NON-NLS-1$
+		DefaultPagerActivity.logger.info(">> DefaultPagerActivity.onRestart"); //$NON-NLS-1$
 	}
 
 	@Override

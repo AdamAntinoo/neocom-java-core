@@ -11,11 +11,9 @@ package org.dimensinfin.evedroid.factory;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.Corporation;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
@@ -41,19 +39,19 @@ public class PilotPartFactory extends PartFactory implements IPartFactory {
 	 * should create the next levels of the hierarchy. So we will create the part transformations here.
 	 */
 	@Override
-	public IEditPart createPart(final IGEFNode node) {
+	public IPart createPart(final AbstractComplexNode node) {
 		PilotPartFactory.logger.info("-- [PilotPartFactory.createPart]> Node class: " + node.getClass().getName());
 		if (this.getVariant() == EVARIANT.CAPSULEER_LIST.name()) {
 			if (node instanceof NeoComApiKey) {
-				AbstractCorePart part = new ApiKeyPart((AbstractComplexNode) node).setFactory(this);
+				IPart part = new ApiKeyPart(node).setFactory(this);
 				return part;
 			}
 			if (node instanceof Pilot) {
-				AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
+				IPart part = new PilotInfoPart(node).setFactory(this);
 				return part;
 			}
 			if (node instanceof Corporation) {
-				AbstractCorePart part = new PilotInfoPart((AbstractComplexNode) node).setFactory(this);
+				IPart part = new PilotInfoPart(node).setFactory(this);
 				return part;
 			}
 		}
