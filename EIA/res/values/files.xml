@@ -5,7 +5,7 @@
     <string name="drawablecachefoldername">drawablecache</string>
     <string name="marketdatacachefoldername">marketdata</string>
     <string name="ccpdatabasefilename">eve.db</string>
-    <string name="appdatabasefilename">evedroid-070.db</string>
+    <string name="appdatabasefilename">evedroid-071.db</string>
     <string name="userdatamodelfilename">userdata.s</string>
     <string name="apikeysfilename">api_keys.txt</string>
     <string name="fittingsfilename">FitRequirements.txt</string>

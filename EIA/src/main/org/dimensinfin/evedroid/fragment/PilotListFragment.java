@@ -25,6 +25,10 @@ import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotListFragment extends AbstractNewPagerFragment {
+	public enum EAccountsFragmentVariants {
+		CAPSULEER_LIST
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("PilotListFragment");
 
@@ -46,7 +50,7 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", ">> PilotListFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			this.setIdentifier(_variant.hashCode());
+			//			this.setIdentifier(_variant.hashCode());
 			this.registerDataSource();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> PilotListFragment.onCreateView - " + rtex.getMessage());
@@ -57,32 +61,15 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 		return theView;
 	}
 
-	//	@Override
-	//	public void onStart() {
-	//		Log.i("NEOCOM", ">> PilotListFragment.onStart");
-	//		try {
-	//			// Check the datasource status and create a new one if still does not exists.
-	//			if (checkDSState()) {
-	//				registerDataSource();
-	//			}
-	//		} catch (final RuntimeException rtex) {
-	//			Log.e("EVEI", "RTEX> PilotListFragment.onCreateView - " + rtex.getMessage());
-	//			rtex.printStackTrace();
-	//			stopActivity(new RuntimeException("RTEX> PilotListFragment.onCreateView - " + rtex.getMessage()));
-	//		}
-	//		super.onStart();
-	//		Log.i("NEOCOM", "<< PilotListFragment.onStart");
-	//	}
-
 	private void registerDataSource() {
 		PilotListFragment.logger.info(">> [PilotListFragment.registerDataSource]");
 		// Create a unique identifier to locate this DataSource that can be cached.
-		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name());
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant());
 		// Register the datasource. If this same datasource is already at the manager we get it
 		// instead creating a new one.
-		SpecialDataSource ds = new PilotListDataSource(locator, new PilotPartFactory(_variant));
+		SpecialDataSource ds = new PilotListDataSource(locator, new PilotPartFactory(this.getVariant()));
 		ds = (SpecialDataSource) AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds);
-		ds.setVariant(_variant);
+		ds.setVariant(this.getVariant());
 		ds.setCacheable(true);
 		this.setDataSource(ds);
 	}

@@ -11,20 +11,18 @@ package org.dimensinfin.evedroid.factory;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
-import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.fragment.ShipsFragment.EShipsFragmentVariants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.ShipLocation;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.GroupPart;
-import org.dimensinfin.evedroid.part.RegionPart;
 import org.dimensinfin.evedroid.part.LocationShipsPart;
+import org.dimensinfin.evedroid.part.RegionPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipPartFactory extends PartFactory implements IPartFactory {
@@ -34,7 +32,7 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ShipPartFactory(final EVARIANT variantSelected) {
+	public ShipPartFactory(final String variantSelected) {
 		super(variantSelected);
 	}
 
@@ -44,28 +42,32 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 	 * should create the next levels of the hierarchy. So we will create the part transformationes here.
 	 */
 	@Override
-	public IEditPart createPart(final IGEFNode node) {
-		if (node instanceof Region) {
-			AbstractCorePart part = new RegionPart((Separator) node).setFactory(this);
-			((AbstractAndroidPart) part).setRenderMode(EVARIANT.SHIPS_BYLOCATION.hashCode());
-			return part;
+	public IPart createPart(final AbstractComplexNode node) {
+		ShipPartFactory.logger.info("-- [ShipPartFactory.createPart]> Node class: " + node.getClass().getName());
+		if (this.getVariant() == EShipsFragmentVariants.SHIPS_BYLOCATION.name()) {
+			if (node instanceof Region) {
+				IPart part = new RegionPart((Separator) node).setFactory(this)
+						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+				return part;
+			}
+			if (node instanceof ShipLocation) {
+				IPart part = new LocationShipsPart((ShipLocation) node).setFactory(this)
+						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+				return part;
+			}
+			if (node instanceof Separator) {
+				IPart part = new GroupPart((Separator) node).setFactory(this)
+						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+				return part;
+			}
+			if (node instanceof NeoComAsset) {
+				IPart part = new AssetPart((NeoComAsset) node).setFactory(this)
+						.setRenderMode(EShipsFragmentVariants.SHIPS_BYLOCATION.hashCode());
+				return part;
+			}
 		}
-		if (node instanceof ShipLocation) {
-			AbstractCorePart part = new LocationShipsPart((ShipLocation) node).setFactory(this);
-			((AbstractAndroidPart) part).setRenderMode(EVARIANT.SHIPS_BYLOCATION.hashCode());
-			return part;
-		}
-		if (node instanceof Separator) {
-			AbstractCorePart part = new GroupPart((Separator) node).setFactory(this);
-			((AbstractAndroidPart) part).setRenderMode(EVARIANT.SHIPS_BYLOCATION.hashCode());
-			return part;
-		}
-		if (node instanceof NeoComAsset) {
-			AbstractCorePart part = new AssetPart((NeoComAsset) node).setFactory(this);
-			((AbstractAndroidPart) part).setRenderMode(EVARIANT.SHIPS_BYLOCATION.hashCode());
-			return part;
-		}
-		return null;
+		// If no part is trapped then call the parent chain until one is found.
+		return super.createPart(node);
 	}
 }
 

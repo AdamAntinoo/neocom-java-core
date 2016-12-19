@@ -22,14 +22,14 @@ public abstract class AbstractHolder {
 	// - F I E L D - S E C T I O N ............................................................................
 	protected View												_convertView	= null;
 	private Activity											_context			= null;
-	private AbstractAndroidPart						_part					= null;
+	private AbstractPart						_part					= null;
 	private final HashMap<String, Object>	_extras				= new HashMap<String, Object>();
 
 	//- L A Y O U T   F I E L D S
 	protected ImageView										_rightArrow		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractHolder(final AbstractAndroidPart newPart, final Activity context) {
+	public AbstractHolder(final AbstractPart newPart, final Activity context) {
 		super();
 		_part = newPart;
 		setContext(context);
@@ -49,7 +49,7 @@ public abstract class AbstractHolder {
 			return 0;
 	}
 
-	public AbstractAndroidPart getPart() {
+	public AbstractPart getPart() {
 		return _part;
 	}
 

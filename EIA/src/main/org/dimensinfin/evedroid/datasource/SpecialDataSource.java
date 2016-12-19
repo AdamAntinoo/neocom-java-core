@@ -21,6 +21,8 @@ import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.evedroid.constant.CVariant;
+import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 
@@ -39,7 +41,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private DataSourceLocator							_locator					= null;
-	private EVARIANT											_variant					= EVARIANT.DEFAULT_VARIANT;
+	private String												_variant					= CVariant
+			.getName4Variant(EDefaultVariant.DEFAULT_VARIANT.hashCode());
 	private boolean												_cacheable				= true;
 	private final HashMap<String, Object>	_parameters				= new HashMap<String, Object>();
 	protected IPartFactory								_partFactory			= null;
@@ -206,7 +209,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		_dataModelRoot = root;
 	}
 
-	public SpecialDataSource setVariant(final EVARIANT variant) {
+	public SpecialDataSource setVariant(final String variant) {
 		_variant = variant;
 		return this;
 	}

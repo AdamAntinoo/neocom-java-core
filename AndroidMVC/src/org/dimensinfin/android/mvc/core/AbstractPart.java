@@ -44,6 +44,7 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	private boolean							active			= true;
 	private IPartFactory				_factory		= null;
 	private AbstractDataSource	_dataSource	= null;
+	protected int								renderMode	= 1000;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractPart() {
@@ -153,6 +154,10 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			return this.getParentPart().getPartFactory();
 		else
 			return _factory;
+	}
+
+	public int getRenderMode() {
+		return renderMode;
 	}
 
 	public RootPart getRoot() {
@@ -290,6 +295,12 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	 */
 	public void setParent(final IPart parent) {
 		this.parent = parent;
+	}
+
+	public IPart setRenderMode(final int renderMode) {
+		this.renderMode = renderMode;
+		//		this.needsRedraw();
+		return this;
 	}
 
 	/**

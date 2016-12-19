@@ -23,7 +23,8 @@ import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.evedroid.constant.CVariant;
+import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 
@@ -170,7 +171,8 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	protected DataSourceAdapter									_adapter					= null;
 	// REFACTOR Set back to private after the PagerFragment is removed
 	protected final Vector<AbstractAndroidPart>	_headerContents		= new Vector<AbstractAndroidPart>();
-	protected EVARIANT													_variant					= EVARIANT.DEFAULT_VARIANT;
+	private String															_variant					= CVariant
+			.getName4Variant(EDefaultVariant.DEFAULT_VARIANT.hashCode());
 
 	// - U I    F I E L D S
 	protected ViewGroup													_container				= null;
@@ -354,7 +356,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		if (null != callback) _listCallback = callback;
 	}
 
-	public AbstractNewPagerFragment setVariant(final EVARIANT selectedVariant) {
+	public AbstractNewPagerFragment setVariant(final String selectedVariant) {
 		_variant = selectedVariant;
 		return this;
 	}
@@ -379,7 +381,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		}
 	}
 
-	protected EVARIANT getVariant() {
+	protected String getVariant() {
 		return _variant;
 	}
 

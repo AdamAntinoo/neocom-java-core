@@ -12,7 +12,6 @@ package org.dimensinfin.evedroid.factory;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.GroupPart;
 
@@ -21,10 +20,10 @@ public abstract class PartFactory implements IPartFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final EVARIANT variant;
+	private final String variant;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PartFactory(final EVARIANT selectedVariant) {
+	public PartFactory(final String selectedVariant) {
 		variant = selectedVariant;
 	}
 
@@ -35,7 +34,7 @@ public abstract class PartFactory implements IPartFactory {
 	}
 
 	public String getVariant() {
-		return variant.name();
+		return variant;
 	}
 }
 
