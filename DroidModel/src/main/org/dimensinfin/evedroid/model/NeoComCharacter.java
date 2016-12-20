@@ -85,12 +85,16 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
 		if (null != balanceresponse) {
 			Set<EveAccountBalance> balance = balanceresponse.getAll();
-			if (balance.size() > 0) newcorp.setAccountBalance(balance.iterator().next().getBalance());
+			if (balance.size() > 0) {
+				newcorp.setAccountBalance(balance.iterator().next().getBalance());
+			}
 		}
 		// Character information
 		CharacterInfoParser infoparser = new CharacterInfoParser();
 		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
-		if (null != inforesponse) newcorp.characterInfo = inforesponse;
+		if (null != inforesponse) {
+			newcorp.characterInfo = inforesponse;
+		}
 		return newcorp;
 	}
 
@@ -108,24 +112,34 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
 		if (null != balanceresponse) {
 			Set<EveAccountBalance> balance = balanceresponse.getAll();
-			if (balance.size() > 0) newchar.setAccountBalance(balance.iterator().next().getBalance());
+			if (balance.size() > 0) {
+				newchar.setAccountBalance(balance.iterator().next().getBalance());
+			}
 		}
 		// Character information
 		CharacterInfoParser infoparser = new CharacterInfoParser();
 		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
-		if (null != inforesponse) newchar.characterInfo = inforesponse;
+		if (null != inforesponse) {
+			newchar.characterInfo = inforesponse;
+		}
 		// Character sheet information
 		CharacterSheetParser sheetparser = new CharacterSheetParser();
 		CharacterSheetResponse sheetresponse = sheetparser.getResponse(authcopy);
-		if (null != sheetresponse) newchar.setCharacterSheet(sheetresponse);
+		if (null != sheetresponse) {
+			newchar.setCharacterSheet(sheetresponse);
+		}
 		// Skill list
 		SkillQueueParser skillparser = new SkillQueueParser();
 		SkillQueueResponse skillresponse = skillparser.getResponse(authcopy);
-		if (null != skillresponse) newchar.setSkillQueue(skillresponse.getAll());
+		if (null != skillresponse) {
+			newchar.setSkillQueue(skillresponse.getAll());
+		}
 		// Skill in training
 		SkillInTrainingParser trainingparser = new SkillInTrainingParser();
 		SkillInTrainingResponse trainingresponse = trainingparser.getResponse(authcopy);
-		if (null != skillresponse) newchar.setSkillInTraining(trainingresponse);
+		if (null != skillresponse) {
+			newchar.setSkillInTraining(trainingresponse);
+		}
 		// Full list of assets from database.
 		newchar.accessAllAssets();
 		return newchar;
@@ -139,7 +153,6 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	protected transient CharacterInfoResponse	characterInfo				= null;
 	private final boolean											active							= true;
 	private double														accountBalance			= 0.0;
-	//	private long															totalAssets					= -1;
 
 	// - T R A N S I E N T   D A T A
 	protected transient Instant								lastCCPAccessTime		= null;
@@ -186,10 +199,11 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			}
 			// Detect buys and sells.				
 			final boolean bid = order.getBid();
-			if (bid)
+			if (bid) {
 				buyGroup.addChild(order);
-			else
+			} else {
 				sellGroup.addChild(order);
+			}
 		}
 		// Compose the output.
 		final ArrayList<MarketOrderAnalyticalGroup> result = new ArrayList<MarketOrderAnalyticalGroup>();
@@ -222,8 +236,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
-		if (null == locationRoles) this.accessLocationRoles();
-		if (locationRoles.size() < 1) this.accessLocationRoles();
+		if (null == locationRoles) {
+			this.accessLocationRoles();
+		}
+		if (locationRoles.size() < 1) {
+			this.accessLocationRoles();
+		}
 		Property hit = new Property(EPropertyTypes.LOCATIONROLE);
 		hit.setOwnerID(delegatedCharacter.getCharacterID());
 		hit.setNumericValue(theSelectedLocation.getID());
@@ -262,17 +280,20 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @param theSelectedLocation
 	 */
 	public void clearLocationRoles(final EveLocation theSelectedLocation) {
-		if (null == locationRoles) this.accessLocationRoles();
+		if (null == locationRoles) {
+			this.accessLocationRoles();
+		}
 		for (Property role : locationRoles)
-			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getID())) //		Property hit = locationRoles.get(theSelectedLocation.getID());
+			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getID())) {
 				//		if (null != hit) {
 				try {
-				Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
-				propertyDao.delete(role);
-				locationRoles = null;
+					Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
+					propertyDao.delete(role);
+					locationRoles = null;
 				} catch (final SQLException sqle) {
-				sqle.printStackTrace();
+					sqle.printStackTrace();
 				}
+			}
 	}
 
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
@@ -296,7 +317,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public HashMap<Long, Property> getActions() {
-		if (null == actions4Character) this.accessActionList();
+		if (null == actions4Character) {
+			this.accessActionList();
+		}
 		return actions4Character;
 	}
 
@@ -310,7 +333,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public AssetsManager getAssetsManager() {
-		if (null == assetsManager) assetsManager = new AssetsManager(this);
+		if (null == assetsManager) {
+			assetsManager = new AssetsManager(this);
+		}
 		// Make sure the Manager is already connected to the Pilot.
 		assetsManager.setPilot(this);
 		return assetsManager;
@@ -335,7 +360,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public ArrayList<Job> getIndustryJobs() {
-		if (null == jobList) jobList = this.searchIndustryJobs();
+		if (null == jobList) {
+			jobList = this.searchIndustryJobs();
+		}
 		return jobList;
 	}
 
@@ -347,7 +374,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @return
 	 */
 	public EveLocation getLocation4Role(final String matchingRole) {
-		if (null == locationRoles) this.accessLocationRoles();
+		if (null == locationRoles) {
+			this.accessLocationRoles();
+		}
 		for (Property role : locationRoles) {
 			String value = role.getPropertyType().toString();
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole))
@@ -390,9 +419,13 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 */
 	public ArrayList<Property> getLocationRoles(final long targetLocationID, final String defaultValue) {
 		ArrayList<Property> roles = new ArrayList<Property>();
-		if (null == locationRoles) this.accessLocationRoles();
+		if (null == locationRoles) {
+			this.accessLocationRoles();
+		}
 		for (Property role : locationRoles)
-			if (role.getNumericValue() == Double.valueOf(targetLocationID)) roles.add(role);
+			if (role.getNumericValue() == Double.valueOf(targetLocationID)) {
+				roles.add(role);
+			}
 		//		Property hit = locationRoles.get(targetLocationID);
 		//		if (null == hit)
 		//			return defaultValue;
@@ -454,7 +487,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @param taskName
 	 */
 	public void putAction4Item(final int typeID, final String taskName) {
-		if (null == actions4Character) this.accessActionList();
+		if (null == actions4Character) {
+			this.accessActionList();
+		}
 		Property hit = actions4Character.get(typeID);
 		if (null == hit) {
 			hit = new Property(EPropertyTypes.MANUFACTUREACTION);
@@ -560,20 +595,26 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		//			@SuppressWarnings("unused")
 		//			int i = 1; // stop point
 		//		}
-		if (null != assetloc) newAsset.setLocationID(eveAsset.getLocationID());
+		if (null != assetloc) {
+			newAsset.setLocationID(eveAsset.getLocationID());
+		}
 		newAsset.setQuantity(eveAsset.getQuantity());
 		newAsset.setFlag(eveAsset.getFlag());
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
 		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
-		if (null != item) try {
-			newAsset.setName(item.getName());
-			newAsset.setCategory(item.getCategory());
-			newAsset.setGroupName(item.getGroupName());
-			newAsset.setTech(item.getTech());
-			if (item.isBlueprint()) newAsset.setBlueprintType(eveAsset.getRawQuantity());
-		} catch (RuntimeException rtex) {
+		if (null != item) {
+			try {
+				newAsset.setName(item.getName());
+				newAsset.setCategory(item.getCategory());
+				newAsset.setGroupName(item.getGroupName());
+				newAsset.setTech(item.getTech());
+				if (item.isBlueprint()) {
+					newAsset.setBlueprintType(eveAsset.getRawQuantity());
+				}
+			} catch (RuntimeException rtex) {
+			}
 		}
 		// Add the asset value to the database.
 		newAsset.setIskvalue(this.calculateAssetValue(newAsset));
@@ -594,7 +635,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		newBlueprint.setPackaged((eveBlue.getQuantity() == -1) ? true : false);
 
 		// Detect if BPO or BPC and set the flag.
-		if (eveBlue.getRuns() == -1) newBlueprint.setBpo(true);
+		if (eveBlue.getRuns() == -1) {
+			newBlueprint.setBpo(true);
+		}
 		return newBlueprint;
 	}
 
@@ -685,21 +728,34 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			myasset.setParent(parent);
 			myasset.setParentContainer(parent);
 			// Set the location to the parent's location is not set.
-			if (myasset.getLocationID() == -1) myasset.setLocationID(parent.getLocationID());
+			if (myasset.getLocationID() == -1) {
+				myasset.setLocationID(parent.getLocationID());
+			}
 		}
 		// Only search names for containers and ships.
-		if (myasset.isShip()) myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
-		if (myasset.isContainer()) myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+		if (myasset.isShip()) {
+			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+		}
+		if (myasset.isContainer()) {
+			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+		}
 		try {
 			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
 			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
-			if (children.size() > 0) myasset.setContainer(true);
-			if (myasset.getCategory().equalsIgnoreCase("Ship")) myasset.setShip(true);
+			if (children.size() > 0) {
+				myasset.setContainer(true);
+			}
+			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
+				myasset.setShip(true);
+			}
 			assetDao.create(myasset);
 
 			// Process all the children and convert them to assets.
-			if (children.size() > 0) for (final Asset childAsset : children)
-				this.processAsset(childAsset, myasset);
+			if (children.size() > 0) {
+				for (final Asset childAsset : children) {
+					this.processAsset(childAsset, myasset);
+				}
+			}
 			NeoComCharacter.logger.finest("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
 		} catch (final SQLException sqle) {
 			NeoComCharacter.logger
@@ -771,9 +827,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		}
 		// Process the returned list and store in the character.
 		actions4Character = new HashMap<Long, Property>();
-		for (Property property : actionList)
+		for (Property property : actionList) {
 			// The type selected for the action is stored as the property key.
 			actions4Character.put(Double.valueOf(property.getNumericValue()).longValue(), property);
+		}
 	}
 
 	private void accessLocationRoles() {
@@ -805,7 +862,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 				this.cleanJobs();
 				AppConnector.addCharacterUpdateRequest(this.getCharacterID());
 			}
-			if (section.equalsIgnoreCase("MARKETORDERS")) AppConnector.addCharacterUpdateRequest(this.getCharacterID());
+			if (section.equalsIgnoreCase("MARKETORDERS")) {
+				AppConnector.addCharacterUpdateRequest(this.getCharacterID());
+			}
 		}
 	}
 
@@ -838,7 +897,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	private Instant getAssetsCacheTime() {
-		if (null == assetsCacheTime) assetsCacheTime = new Instant(0);
+		if (null == assetsCacheTime) {
+			assetsCacheTime = new Instant(0);
+		}
 		return assetsCacheTime;
 	}
 }
