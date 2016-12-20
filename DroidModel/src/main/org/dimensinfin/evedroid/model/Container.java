@@ -13,20 +13,18 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.core.AbstractNeoComNode;
-import org.dimensinfin.evedroid.interfaces.IAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Container extends AbstractNeoComNode implements IAsset {
+public class Container extends NeoComAsset /* implements IAsset */ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger	logger		= Logger.getLogger("org.dimensinfin.evedroid.model");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private IAsset				delegate	= null;
+	private NeoComAsset		delegate	= null;
 	private long					pilotID		= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Container(long pilot) {
+	public Container(final long pilot) {
 		pilotID = pilot;
 	}
 
@@ -47,48 +45,58 @@ public class Container extends AbstractNeoComNode implements IAsset {
 		return result;
 	}
 
-	public Container copyFrom(final IAsset asset) {
+	public Container copyFrom(final NeoComAsset asset) {
 		// Install the original asset in this instance as the delegate.
 		delegate = asset;
 		return this;
 	}
 
+	@Override
 	public long getAssetID() {
 		return delegate.getAssetID();
 	}
 
+	@Override
 	public double getIskvalue() {
 		return delegate.getIskvalue();
 	}
 
+	@Override
 	public long getLocationID() {
 		return delegate.getLocationID();
 	}
 
+	@Override
 	public String getOrderingName() {
 		return delegate.getOrderingName();
 	}
 
+	@Override
 	public NeoComAsset getParentContainer() {
 		return delegate.getParentContainer();
 	}
 
+	@Override
 	public long getParentContainerId() {
 		return delegate.getParentContainerId();
 	}
 
+	@Override
 	public boolean hasParent() {
 		return delegate.hasParent();
 	}
 
+	@Override
 	public boolean isContainer() {
 		return delegate.isContainer();
 	}
 
+	@Override
 	public boolean isPackaged() {
 		return delegate.isPackaged();
 	}
 
+	@Override
 	public boolean isShip() {
 		return delegate.isShip();
 	}

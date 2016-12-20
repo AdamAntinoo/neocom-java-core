@@ -14,7 +14,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface IAsset extends INamed {
+public interface IAsset {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public ArrayList<AbstractComplexNode> collaborate2Model(String string);

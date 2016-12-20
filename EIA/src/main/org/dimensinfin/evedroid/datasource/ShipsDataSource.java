@@ -8,8 +8,7 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
-//- IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
@@ -19,7 +18,6 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EVARIANT;
-import org.dimensinfin.evedroid.factory.DataSourceFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
@@ -35,7 +33,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 7810087592108417570L;
 
-	private ArrayList<NeoComAsset>						ships							= null;
+	//	private ArrayList<NeoComAsset>						ships							= null;
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
 	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
@@ -68,22 +66,23 @@ public class ShipsDataSource extends SpecialDataSource {
 	public RootNode collaborate2Model() {
 		SpecialDataSource.logger.info(">> [ShipsDatasource.collaborate2Model]");
 		try {
-			AppModelStore store = AppModelStore.getSingleton();
+			//			AppModelStore store = AppModelStore.getSingleton();
 			// Get the complete list of ships. Compare it to the current list if it exists.
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
-			final ArrayList<NeoComAsset> assetsShips = manager.searchAsset4Category("Ship");
-			if (null == ships) {
-				// Transform the list of assets into a list of ships.
-				ships = assetsShips;
-				// Process the list into the classifiers.
-				for (NeoComAsset ship : assetsShips) {
-					long locid = ship.getLocationID();
-					String category = ship.getGroupName();
-					this.add2Location(locid, ship);
-					this.add2Category(category, ship);
-				}
+			Collection<NeoComAsset> assetsShips = manager.accessShips();
+			//			final ArrayList<NeoComAsset> assetsShips = manager.searchAsset4Category("Ship");
+			//			if (null == ships) {
+			// Transform the list of assets into a list of ships.
+			//					ships = assetsShips;
+			// Process the list into the classifiers.
+			for (NeoComAsset ship : assetsShips) {
+				long locid = ship.getLocationID();
+				String category = ship.getGroupName();
+				this.add2Location(locid, ship);
+				this.add2Category(category, ship);
 			}
+			//			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			SpecialDataSource.logger.severe(
@@ -165,18 +164,25 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * </ul>
 	 */
 	private void setupOutputModel() {
-		if (null == _dataModelRoot)
+		if (null == _dataModelRoot) {
 			_dataModelRoot = new RootNode();
-		else
+		} else {
 			_dataModelRoot.clean();
-		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION.name()) if (this.ifGroupLocations())
-			for (Region node : _regions.values())
+		}
+		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION.name()) if (this.ifGroupLocations()) {
+			for (Region node : _regions.values()) {
 				_dataModelRoot.addChild(node);
-		else
-			for (ShipLocation node : _locations.values())
+			}
+		} else {
+			for (ShipLocation node : _locations.values()) {
 				_dataModelRoot.addChild(node);
-		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS.name()) for (Separator node : _categories.values())
-			_dataModelRoot.addChild(node);
+			}
+		}
+		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS.name()) {
+			for (Separator node : _categories.values()) {
+				_dataModelRoot.addChild(node);
+			}
+		}
 	}
 
 	//	@Override

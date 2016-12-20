@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.interfaces.IAsset;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.interfaces.INamed;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -39,7 +39,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
+public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -107,6 +107,7 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	 * Assets should collaborate to the model adding their children. Most of the assets will not have children
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());

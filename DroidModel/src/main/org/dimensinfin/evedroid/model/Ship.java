@@ -13,25 +13,30 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.interfaces.IAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Ship extends NeoComAsset implements IAsset {
+public class Ship extends NeoComAsset /* implements IAsset */ {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger			logger			= Logger.getLogger("org.dimensinfin.evedroid.model");
+	private static Logger		logger			= Logger.getLogger("org.dimensinfin.evedroid.model");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	//	private final IAsset			delegate		= null;
-	private final NeoComAsset	reference		= null;
-	private long							pilotID			= 0;
-	private final Separator		highModules	= new Separator("HIGH");
-	private final Separator		medModules	= new Separator("MED");
-	private final Separator		lowModules	= new Separator("LOW");
-	private final Separator		rigs				= new Separator("RIGS");
-	private final Separator		drones			= new Separator("DRONES");
-	private final Separator		cargo				= new Separator("CARGO HOLD");
+	//	private final NeoComAsset	reference		= null;
+	private long						pilotID			= 0;
+	private final Separator	highModules	= new Separator("HIGH");
+	private final Separator	medModules	= new Separator("MED");
+	private final Separator	lowModules	= new Separator("LOW");
+	private final Separator	rigs				= new Separator("RIGS");
+	private final Separator	drones			= new Separator("DRONES");
+	private final Separator	cargo				= new Separator("CARGO HOLD");
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/**
+	 * Get the Pilot when the ship is created to be able to search for its contents. Check if this value matches
+	 * the owner ID.
+	 * 
+	 * @param pilot
+	 */
 	public Ship(final long pilot) {
 		pilotID = pilot;
 	}

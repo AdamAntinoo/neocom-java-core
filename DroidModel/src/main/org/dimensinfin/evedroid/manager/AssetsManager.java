@@ -13,6 +13,7 @@ package org.dimensinfin.evedroid.manager;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,11 +21,10 @@ import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.interfaces.IAsset;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.model.Container;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
@@ -148,6 +148,13 @@ public class AssetsManager implements Serializable {
 			AssetsManager.logger.severe(
 					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
+	}
+
+	public Collection<NeoComAsset> accessShips() {
+		if (null == ships)
+			return new ArrayList<NeoComAsset>();
+		else
+			return ships.values();
 	}
 
 	/**
@@ -304,6 +311,15 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
+	//	public HashSet<String> queryT2ModuleNames() {
+	//		HashSet<String> names = new HashSet<String>();
+	//		ArrayList<Asset> modules = searchT2Modules();
+	//		for (Asset mod : modules) {
+	//			names.add(mod.getName());
+	//		}
+	//		return names;
+	//	}
+
 	public ArrayList<NeoComAsset> searchAsset4Location(final EveLocation location) {
 		AssetsManager.logger.info(">> AssetsManager.searchAsset4Location");
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
@@ -334,15 +350,6 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	//	public HashSet<String> queryT2ModuleNames() {
-	//		HashSet<String> names = new HashSet<String>();
-	//		ArrayList<Asset> modules = searchT2Modules();
-	//		for (Asset mod : modules) {
-	//			names.add(mod.getName());
-	//		}
-	//		return names;
-	//	}
-
 	public NeoComBlueprint searchBlueprintByID(final long assetid) {
 		for (NeoComBlueprint bp : this.getBlueprints()) {
 			String refs = bp.getStackIDRefences();
@@ -361,21 +368,6 @@ public class AssetsManager implements Serializable {
 		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
 		for (NeoComBlueprint bp : this.getBlueprints())
 			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				blueprintList.add(bp);
-			}
-		return blueprintList;
-	}
-
-	/**
-	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
-	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	 * 
-	 * @return list of T2 blueprints.
-	 */
-	public ArrayList<NeoComBlueprint> searchT2Blueprints() {
-		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
-		for (NeoComBlueprint bp : this.getBlueprints())
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 				blueprintList.add(bp);
 			}
 		return blueprintList;
@@ -404,6 +396,21 @@ public class AssetsManager implements Serializable {
 	//		if (null == t2blueprints) getPilot().updateBlueprints();
 	//		return t2blueprints;
 	//	}
+
+	/**
+	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
+	 * blueprints. We expect this is not cost intensive because this function is called few times.
+	 * 
+	 * @return list of T2 blueprints.
+	 */
+	public ArrayList<NeoComBlueprint> searchT2Blueprints() {
+		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
+		for (NeoComBlueprint bp : this.getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+				blueprintList.add(bp);
+			}
+		return blueprintList;
+	}
 
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
@@ -435,16 +442,16 @@ public class AssetsManager implements Serializable {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	public void setPilot(final NeoComCharacter newPilot) {
-		pilot = newPilot;
-	}
-
 	//	/**
 	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
 	//	 * structures.
 	//	 */
 	//	public void reinstantiate() {
 	//	}
+
+	public void setPilot(final NeoComCharacter newPilot) {
+		pilot = newPilot;
+	}
 
 	/**
 	 * Retrieves from the database all the stacks for an specific item type id. The method stores the results
@@ -563,7 +570,7 @@ public class AssetsManager implements Serializable {
 	 * 
 	 * @param apart
 	 */
-	private void add2Container(final IAsset asset) {
+	private void add2Container(final NeoComAsset asset) {
 		AssetsManager.logger.info(">> LocationAssetsPart.add2Container");
 		// Locate the container if already added to the location.
 		NeoComAsset cont = asset.getParentContainer();
@@ -594,7 +601,7 @@ public class AssetsManager implements Serializable {
 		// This is an Unknown location that should be a Custom Office
 	}
 
-	private void add2Location(final IAsset asset) {
+	private void add2Location(final NeoComAsset asset) {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
 		if (null == target) {
@@ -653,7 +660,7 @@ public class AssetsManager implements Serializable {
 	 * 
 	 * @param asset
 	 */
-	private void processElement(final IAsset asset) {
+	private void processElement(final NeoComAsset asset) {
 		// Remove the element from the map.
 		assetMap.remove(asset.getAssetID());
 		// Add the asset to the verification count.
@@ -665,7 +672,7 @@ public class AssetsManager implements Serializable {
 			// Check if the ship is packaged. If packaged leave it as a simple asset.
 			if (!asset.isPackaged()) {
 				// Transform the asset to a ship.
-				Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom((NeoComAsset) asset);
+				Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
 				ships.put(ship.getAssetID(), ship);
 				// The ship is a container so add it and forget about this asset.
 				if (ship.hasParent()) {
@@ -674,16 +681,11 @@ public class AssetsManager implements Serializable {
 				this.add2Location(ship);
 				// Remove all the assets contained because they will be added in the call to collaborate2Model
 				// REFACTOR set the default variant as a constant even that information if defined at other project
-				ArrayList<AbstractComplexNode> removable = asset.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
-				for (AbstractComplexNode node : removable) {
-					assetMap.remove(((IAsset) node).getAssetID());
-					// Remove also the nodes collaborated by it.
-					for (IGEFNode child : node.getChildren())
-						if (child instanceof IAsset) {
-							assetMap.remove(((IAsset) child).getAssetID());
-						}
+				ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+				// The list returned is not the real list of assets contained but the list of Separators
+				for (AbstractComplexNode node : removableList) {
+					this.removeNode(node);
 				}
-				//	}
 			} else {
 				this.add2Location(asset);
 			}
@@ -694,29 +696,55 @@ public class AssetsManager implements Serializable {
 			if (!asset.isPackaged()) {
 				// Transform the asset to a ship.
 				Container container = new Container(this.getPilot().getCharacterID()).copyFrom(asset);
-				//			asset = container;
+				containers.put(container.getAssetID(), container);
 				// The container is a container so add it and forget about this asset.
 				if (container.hasParent()) {
 					this.processElement(container.getParentContainer());
-				} else {
-					this.add2Location(container);
+				} // else {
+				this.add2Location(container);
+				// Remove all the assets contained because they will be added in the call to collaborate2Model
+				// REFACTOR set the default variant as a constant even that information if defined at other project
+				ArrayList<AbstractComplexNode> removableList = container
+						.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+				// The list returned is not the real list of assets contained but the list of Separators
+				for (AbstractComplexNode node : removableList) {
+					this.removeNode(node);
 				}
 			} else {
 				this.add2Location(asset);
-				// Remove all the assets contained because they will be added in the call to collaborate2Model
-				ArrayList<AbstractComplexNode> removable = asset.collaborate2Model("REPLACE");
-				for (AbstractComplexNode node : removable) {
-					assetMap.remove(((IAsset) node).getAssetID());
-				}
 			}
+			//				// Remove all the assets contained because they will be added in the call to collaborate2Model
+			//				ArrayList<AbstractComplexNode> removable = asset.collaborate2Model("REPLACE");
+			//				for (AbstractComplexNode node : removable) {
+			//					assetMap.remove(((Container) node).getAssetID());
+			//				}
+			//	}
 			return;
 		}
-
 		// Process the asset parent if this is the case because we should add first parent to the hierarchy
 		if (asset.hasParent()) {
 			this.processElement(asset.getParentContainer());
 		} else {
 			this.add2Location(asset);
+		}
+	}
+
+	/**
+	 * Remove the nodes collaborated and their own collaborations recursively from the list of assets to
+	 * process.
+	 */
+	private void removeNode(final AbstractComplexNode node) {
+		// Check that the class of the item is an Asset. Anyway check for its collaboration.
+		if (node instanceof AbstractNeoComNode) {
+			// Try to remove the asset if found
+			if (node instanceof NeoComAsset) {
+				assetMap.remove(((NeoComAsset) node).getAssetID());
+			}
+			// Remove also the nodes collaborated by it.
+			for (AbstractComplexNode child : ((AbstractNeoComNode) node)
+					.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name())) {
+				this.removeNode(child);
+			}
 		}
 	}
 
