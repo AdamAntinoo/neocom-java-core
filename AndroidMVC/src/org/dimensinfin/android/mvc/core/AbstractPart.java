@@ -47,15 +47,32 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	protected int								renderMode	= 1000;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractPart() {
-	}
-
+	//	public AbstractPart() {
+	//	}
+	/**
+	 * Parts are special elements. The root element that is a AbstractPropertyChanger is not responsible to
+	 * store the model but needs it as reference to set a parent for notifications. So do not forget to pass the
+	 * reference up and store the model at the same time.
+	 * 
+	 * @param model
+	 *          the Data model linked to this part.
+	 */
 	public AbstractPart(final AbstractComplexNode model) {
+		super(model);
 		this.model = model;
 	}
 
+	/**
+	 * Parts are special elements. The root element that is a AbstractPropertyChanger is not responsible to
+	 * store the model but needs it as reference to set a parent for notifications. So do not forget to pass the
+	 * reference up and store the model at the same time.
+	 * 
+	 * @param model
+	 *          the Data model linked to this part.
+	 */
 	public AbstractPart(final RootNode model, final IPartFactory factory) {
 		super(model);
+		this.model = model;
 		_factory = factory;
 	}
 
@@ -206,19 +223,16 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	 */
 	public void refreshChildren() {
 		AbstractPart.logger.info(">> [AbstractPart.refreshChildren]");
-		//		int i=0;
-		//		Object model;
-
 		// Get the list of children for this Part.
 		Vector<IPart> selfChildren = this.getChildren();
 		int size = selfChildren.size();
+		AbstractPart.logger.info("-- [AbstractPart.refreshChildren]> Current children size: " + size);
 		// This variable has the list of Parts pointed by their corresponding model.
 		HashMap<AbstractComplexNode, IPart> modelToEditPart = new HashMap<AbstractComplexNode, IPart>(size + 1);
-		if (size > 0) //			modelToEditPart = new HashMap<AbstractComplexNode, IPart>(size);
-			for (int i = 0; i < size; i++) {
+		if (size > 0) for (int i = 0; i < size; i++) {
 			IPart editPart = selfChildren.get(i);
 			modelToEditPart.put(editPart.getModel(), editPart);
-			}
+		}
 
 		// Get the list of model elements that collaborate to the Part model. This is the complex-simple model transformation.
 		INeoComNode partModel = (INeoComNode) this.getModel();

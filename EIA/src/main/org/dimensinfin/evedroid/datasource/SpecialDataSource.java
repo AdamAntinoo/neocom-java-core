@@ -117,6 +117,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		SpecialDataSource.logger
+				.info("-- [SpecialDataSource.createContentHierarchy]> _bodyParts.size: " + _bodyParts.size());
 		SpecialDataSource.logger.info("<< [SpecialDataSource.createContentHierarchy]");
 	}
 
@@ -139,11 +141,13 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 */
 	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		SpecialDataSource.logger.info(">> [SpecialDataSource.getBodyParts]");
 		// Get the list of Parts that will be used for the ListView
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		if (null != _bodyParts) // Transform the list of IParts to a list of AbstractAndroidParts.
 			for (IPart part : _bodyParts)
 			if (part instanceof AbstractAndroidPart) result.add((AbstractAndroidPart) part);
+		SpecialDataSource.logger.info("<< [SpecialDataSource.getBodyParts]> result.size: " + result.size());
 		return result;
 	}
 

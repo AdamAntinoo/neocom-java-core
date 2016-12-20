@@ -372,12 +372,12 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		try {
 			// Check the validity of the data source.
 			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
-			Log.i("NEOCOM", "-- AbstractPageFragment.createParts - Launching CreatePartsTask");
+			Log.i("NEOCOM", "-- AbstractNewPagerFragment.createParts - Launching CreatePartsTask");
 			new CreatePartsTask(this).execute();
 		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onStart - " + rtex.getMessage());
+			Log.e("NEOCOM", "RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage());
 			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage()));
 		}
 	}
 

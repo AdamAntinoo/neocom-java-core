@@ -58,7 +58,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import net.nikr.eve.jeveasset.data.Citadel;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -95,7 +94,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		 */
 		@Override
 		protected Void doInBackground(final Void... arg0) {
-			logger.info(">> [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]");
+			TimeTickReceiver.logger.info(">> [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]");
 			String destination = "https://stop.hammerti.me.uk/api/citadel/all";
 			// Create a trust manager that does not validate certificate chains
 			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -137,11 +136,12 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				}
 				Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
 				});
-				if (results != null) { //Updated OK
+				if (results != null) {
 					for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
 						// Convert each Citadel to a new Location and update the database if needed.
 						EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
-						logger.info("-- [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]> Created location: " + loc);
+						TimeTickReceiver.logger
+								.info("-- [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]> Created location: " + loc);
 					}
 				}
 			} catch (Exception ex) {
@@ -157,7 +157,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 					}
 				}
 			}
-			logger.info("<< [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]");
+			TimeTickReceiver.logger.info("<< [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]");
 			return null;
 		}
 	}
@@ -183,7 +183,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		 */
 		@Override
 		protected Void doInBackground(final Void... arg0) {
-			logger.info(">> [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]");
+			TimeTickReceiver.logger.info(">> [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]");
 			try {
 				//				StationListResponse response = null;
 				ConquerableStationListParser parser = new ConquerableStationListParser();
@@ -193,7 +193,8 @@ public class TimeTickReceiver extends BroadcastReceiver {
 					for (Long stationid : stations.keySet()) {
 						// Convert the station to an EveLocation
 						EveLocation loc = new EveLocation(stations.get(stationid));
-						logger.info("-- [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]> Created location: " + loc);
+						TimeTickReceiver.logger
+								.info("-- [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]> Created location: " + loc);
 					}
 				}
 			} catch (final RuntimeException rtex) {
@@ -202,7 +203,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
-			logger.info("<< [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]");
+			TimeTickReceiver.logger.info("<< [TimeTicketReceiver.UpdateOutpostsTask.doInBackground]");
 			return null;
 		}
 	}
@@ -213,11 +214,8 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		}
 	}
 
-	//- S T A T I C - S E C T I O N ..........................................................................
-	private static Logger		logger					= Logger.getLogger("TimeTickReceiver");
-
 	// - S T A T I C - S E C T I O N ..........................................................................
-	//private static Logger		logger					= Logger.getLogger("TimeTickReceiver");
+	private static Logger		logger					= Logger.getLogger("TimeTickReceiver");
 	private static boolean	BLOCKED_STATUS	= false;
 	private static int			LAUNCH_LIMIT		= 30;
 
@@ -243,11 +241,11 @@ public class TimeTickReceiver extends BroadcastReceiver {
 	 */
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		Log.i("EVEI Service", ">> TimeTickReceiver.onReceive");
+		TimeTickReceiver.logger.info(">> TimeTickReceiver.onReceive");
 		// Run only if the network is active.
 		if (!EVEDroidApp.checkNetworkAccess()) return;
 		// Or if the service is disables by configuration.
-		if (blockedDownload()) return;
+		if (this.blockedDownload()) return;
 
 		// STEP 01. Pending Market Data Requests
 		// Get requests pending from the queue service.
@@ -259,19 +257,18 @@ public class TimeTickReceiver extends BroadcastReceiver {
 
 			// Process request by priority. Additions to queue are limited.
 			limit = 0;
-			for (PendingRequestEntry entry : requests) {
+			for (PendingRequestEntry entry : requests)
 				if (entry.state == ERequestState.PENDING) {
 					// Filter only MARKETDATA requests.
-					if (entry.reqClass == ERequestClass.MARKETDATA) if (limit <= LAUNCH_LIMIT) {
-						if (blockedMarket())
-							return;
+					if (entry.reqClass == ERequestClass.MARKETDATA)
+						if (limit <= TimeTickReceiver.LAUNCH_LIMIT) if (this.blockedMarket())
+						return;
 						else {
-							launchMarketUpdate(entry);
+						this.launchMarketUpdate(entry);
 						}
-					}
 					// Filter the rest of the character data to be updated
 					if (entry.reqClass == ERequestClass.CHARACTERUPDATE) {
-						launchCharacterDataUpdate(entry);
+						this.launchCharacterDataUpdate(entry);
 					}
 					if (entry.reqClass == ERequestClass.CITADELUPDATE) {
 						// Launch the update and remove the event from the queue.
@@ -284,7 +281,6 @@ public class TimeTickReceiver extends BroadcastReceiver {
 						EVEDroidApp.getTheCacheConnector().clearPendingRequest(entry.getIdentifier());
 					}
 				}
-			}
 		}
 
 		// STEP 02. Check characters for pending structures to update.
@@ -292,8 +288,8 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		for (NeoComCharacter eveChar : characters) {
 			EDataBlock updateCode = eveChar.needsUpdate();
 			if (updateCode != EDataBlock.READY) {
-				Log.i("EVEI Service",
-						".. TimeTickReceiver.onReceive.EDataBlock to update: " + eveChar.getName() + " - " + updateCode);
+				TimeTickReceiver.logger
+						.info(".. TimeTickReceiver.onReceive.EDataBlock to update: " + eveChar.getName() + " - " + updateCode);
 				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(eveChar.getCharacterID());
 			}
 		}
@@ -305,8 +301,8 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				}
 			});
 		}
-		Log.i("EVEI Service", "<< TimeTickReceiver.onReceive [" + requests.size() + " - " + EVEDroidApp.marketCounter + "/"
-				+ EVEDroidApp.topCounter + "]");
+		TimeTickReceiver.logger.info("<< TimeTickReceiver.onReceive [" + requests.size() + " - " + EVEDroidApp.marketCounter
+				+ "/" + EVEDroidApp.topCounter + "]");
 	}
 
 	private boolean blockedDownload() {
@@ -324,7 +320,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 	}
 
 	private void citadelLocationUpdate() {
-		logger.info(">> [TimeTicketReceiver.citadelLocationUpdate]> Citadels updating");
+		TimeTickReceiver.logger.info(">> [TimeTicketReceiver.citadelLocationUpdate]> Citadels updating");
 		String destination = "https://stop.hammerti.me.uk/api/citadel/all";
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
@@ -359,7 +355,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 			URL url = new URL(destination);
 			URLConnection con = url.openConnection();
 			con.setRequestProperty("Accept-Encoding", "gzip");
-			long contentLength = con.getContentLength();
+			//			long contentLength = con.getContentLength();
 			String contentEncoding = con.getContentEncoding();
 			InputStream inputStream = con.getInputStream();
 			if ("gzip".equals(contentEncoding)) {
@@ -373,18 +369,10 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
 					// Convert each Citadel to a new Location and update the database if needed.
 					EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
-					//					citadelSettings.put(entry.getKey(), entry.getValue());
-					//					saveCitadel(entry.getKey(), entry.getValue());
+					TimeTickReceiver.logger
+							.info("-- [TimeTicketReceiver.UpdateCitadelsTask.doInBackground]> Created location: " + loc);
 				}
 			}
-
-			//			final Reader reader = new InputStreamReader(con.getInputStream());
-			//			final BufferedReader br = new BufferedReader(reader);
-			//			String line = "";
-			//			while ((line = br.readLine()) != null) {
-			//				System.out.println(line);
-			//			}
-			//			br.close();
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
@@ -398,63 +386,12 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				}
 			}
 		}
-
-		//		 CitadelSettings	citadelSettings	= new CitadelSettings();
-		//		if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
-		//			//				if (updateTask != null) {
-		//			//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
-		//			//				}
-		//			logger.info("	Citadels failed to update (NOT ALLOWED YET)");
-		//			return;
-		//		}
-		// Update citadel
-		//		InputStream in = null;
-		//		try { //Update from API
-		//			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
-		//			URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
-		//			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-		//			con.setRequestProperty("Accept-Encoding", "gzip");
-		//
-		//			long contentLength = con.getContentLength();
-		//			String contentEncoding = con.getContentEncoding();
-		//			InputStream inputStream = con.getInputStream();
-		//			if ("gzip".equals(contentEncoding)) {
-		//				in = new GZIPInputStream(inputStream);
-		//			} else {
-		//				in = inputStream;
-		//			}
-		//			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
-		//			});
-		//			if (results != null) { //Updated OK
-		//				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
-		//					// Convert each Citadel to a new Location and update the database if needed.
-		//					EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
-		//					//					citadelSettings.put(entry.getKey(), entry.getValue());
-		//					//					saveCitadel(entry.getKey(), entry.getValue());
-		//				}
-		//			}
-		//			//			citadelSettings.setNextUpdate();
-		//			//				saveCitadel(citadelSettings);
-		//			logger.info("	Updated citadels for jEveAssets");
-		//		} catch (IOException ex) {
-		//			//				if (updateTask != null) {
-		//			//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
-		//			//				}
-		//			//				logger.("	Citadels failed to update", ex);
-		//		} finally {
-		//			if (in != null) {
-		//				try {
-		//					in.close();
-		//				} catch (IOException ex) {
-		//					//No problem...
-		//				}
-		//			}
-		//		}
+		//[02]
 	}
 
 	private void launchCharacterDataUpdate(final PendingRequestEntry entry) {
-		Log.i("EVEI Service",
-				".. TimeTickReceiver.launchCharacterDataUpdate Character Update Request Class [" + entry.reqClass + "]");
+		TimeTickReceiver.logger.info(
+				"-- [TimeTickReceiver.launchCharacterDataUpdate]> Character Update Request Class [" + entry.reqClass + "]");
 		Intent serialService = new Intent(_context, CharacterUpdaterService.class);
 		Number content = entry.getContent();
 		serialService.putExtra(AppWideConstants.extras.EXTRA_CHARACTER_LOCALIZER, content.longValue());
@@ -467,11 +404,13 @@ public class TimeTickReceiver extends BroadcastReceiver {
 	}
 
 	private void launchMarketUpdate(final PendingRequestEntry entry) {
-		Log.i("EVEI Service", "-- TimeTickReceiver.launchService Market Update Request Class [" + entry.reqClass + "]");
+		TimeTickReceiver.logger
+				.info("-- [TimeTickReceiver.launchService Market]> Update Request Class [" + entry.reqClass + "]");
 		if (null != _context) {
 			Intent serialService = new Intent(_context, MarketUpdaterService.class);
 			Number content = entry.getContent();
-			Log.i("EVEI Service", ".. TimeTickReceiver.launchMarketUpdate Posting update. Item ID [" + content + "]");
+			TimeTickReceiver.logger
+					.info("-- [TimeTickReceiver.launchMarketUpdate]> Posting update. Item ID [" + content + "]");
 			serialService.putExtra(AppWideConstants.extras.EXTRA_MARKETDATA_LOCALIZER, content.intValue());
 			_context.startService(serialService);
 			entry.state = ERequestState.ON_PROGRESS;
@@ -485,7 +424,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		// Check if the outpotst already loaded.
 		//	if ((null == outpostsCache) || (outpostsCache.size() < 1)) {
 		// Making a request to url and getting response
-		String jsonStr = readJsonData();
+		String jsonStr = this.readJsonData();
 		try {
 			JSONObject jsonObj = new JSONObject(jsonStr);
 			// Getting JSON Array node
@@ -509,7 +448,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 
 				// Create the part with the Outpost
 				EveLocation loc = new EveLocation(o);
-				Log.i("DataSource", ".. Part counter " + counter++);
+				TimeTickReceiver.logger.info("-- Part counter " + counter++);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -552,3 +491,55 @@ public class TimeTickReceiver extends BroadcastReceiver {
 }
 
 // - UNUSED CODE ............................................................................................
+//[02]
+//		 CitadelSettings	citadelSettings	= new CitadelSettings();
+//		if (citadelSettings.getNextUpdate().after(new Date()) && true && true) { //Check if we can update now
+//			//				if (updateTask != null) {
+//			//					updateTask.addError(DialoguesUpdate.get().citadel(), "Not allowed yet.\r\n(Fix: Just wait a bit)");
+//			//				}
+//			logger.info("	Citadels failed to update (NOT ALLOWED YET)");
+//			return;
+//		}
+// Update citadel
+//		InputStream in = null;
+//		try { //Update from API
+//			ObjectMapper mapper = new ObjectMapper(); //create once, reuse
+//			URL url = new URL("https://stop.hammerti.me.uk/api/citadel/all");
+//			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+//			con.setRequestProperty("Accept-Encoding", "gzip");
+//
+//			long contentLength = con.getContentLength();
+//			String contentEncoding = con.getContentEncoding();
+//			InputStream inputStream = con.getInputStream();
+//			if ("gzip".equals(contentEncoding)) {
+//				in = new GZIPInputStream(inputStream);
+//			} else {
+//				in = inputStream;
+//			}
+//			Map<Long, Citadel> results = mapper.readValue(in, new TypeReference<Map<Long, Citadel>>() {
+//			});
+//			if (results != null) { //Updated OK
+//				for (Map.Entry<Long, Citadel> entry : results.entrySet()) {
+//					// Convert each Citadel to a new Location and update the database if needed.
+//					EveLocation loc = new EveLocation(entry.getKey(), entry.getValue());
+//					//					citadelSettings.put(entry.getKey(), entry.getValue());
+//					//					saveCitadel(entry.getKey(), entry.getValue());
+//				}
+//			}
+//			//			citadelSettings.setNextUpdate();
+//			//				saveCitadel(citadelSettings);
+//			logger.info("	Updated citadels for jEveAssets");
+//		} catch (IOException ex) {
+//			//				if (updateTask != null) {
+//			//					updateTask.addError(DialoguesUpdate.get().citadel(), ex.getMessage());
+//			//				}
+//			//				logger.("	Citadels failed to update", ex);
+//		} finally {
+//			if (in != null) {
+//				try {
+//					in.close();
+//				} catch (IOException ex) {
+//					//No problem...
+//				}
+//			}
+//		}
