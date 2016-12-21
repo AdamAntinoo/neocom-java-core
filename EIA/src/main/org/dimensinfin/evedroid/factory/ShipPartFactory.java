@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
@@ -41,12 +40,14 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The method should create the matching part for the model received but there is no other place where we
-	 * should create the next levels of the hierarchy. So we will create the part transformationes here.
+	 * should create the next levels of the hierarchy. So we will create the part transformations here. <br>
+	 * WARNING: Do not forget to setup the filter in the order most restrictive/less restrictive because some
+	 * nodes will fall on multiple categories. The most higher level category should be first. Like
+	 * Ship/Asset/Node.
 	 */
 	@Override
 	public IPart createPart(final AbstractComplexNode node) {
 		ShipPartFactory.logger.info("-- [ShipPartFactory.createPart]> Node class: " + node.getClass().getName());
-		//		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
 		if (node instanceof Region) {
 			IPart part = new RegionPart((Separator) node).setFactory(this)
 					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
@@ -62,17 +63,23 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
 			return part;
 		}
+		if (node instanceof Ship) {
+			// There are two renders for Ship. Fitted that are ShipParts and packaged that are AssetParts.
+			if (((Ship) node).isPackaged()) {
+				IPart part = new ShipPart((NeoComAsset) node).setFactory(this)
+						.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+				return part;
+			} else {
+				IPart part = new AssetPart((NeoComAsset) node).setFactory(this)
+						.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+				return part;
+			}
+		}
 		if (node instanceof NeoComAsset) {
 			IPart part = new AssetPart((NeoComAsset) node).setFactory(this)
 					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
 			return part;
 		}
-		if (node instanceof Ship) {
-			IPart part = new ShipPart((NeoComAsset) node).setFactory(this)
-					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
-			return part;
-		}
-		//		}
 		// If no part is trapped then call the parent chain until one is found.
 		return super.createPart(node);
 	}

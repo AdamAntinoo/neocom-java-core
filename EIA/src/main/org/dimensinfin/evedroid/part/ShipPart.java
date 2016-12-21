@@ -21,6 +21,7 @@ import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.FittingActivity;
+import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
 import org.dimensinfin.evedroid.holder.Ship4PilotInfoHolder;
@@ -95,22 +96,23 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 			int flag;
 			if (node instanceof AssetPart) {
 				flag = ((AssetPart) node).getCastedModel().getFlag();
-				if ((flag > 10) && (flag < 19))
+				if ((flag > 10) && (flag < 19)) {
 					lowslotGroup.addChild(node);
-				else if ((flag > 18) && (flag < 27))
+				} else if ((flag > 18) && (flag < 27)) {
 					midslotGroup.addChild(node);
-				else if ((flag > 26) && (flag < 35))
+				} else if ((flag > 26) && (flag < 35)) {
 					hislotGroup.addChild(node);
-				else if ((flag > 91) && (flag < 100))
+				} else if ((flag > 91) && (flag < 100)) {
 					rigslotGroup.addChild(node);
-				else {
+				} else {
 					// Contents on ships do not support expansion but when added to the cargohold.
 					cargoGroup.addChild(node);
 					AbstractAndroidPart part = (AbstractAndroidPart) node;
 					if (part.isExpanded()) {
 						ArrayList<IPart> grand = part.collaborate2View();
-						for (IPart gpart : grand)
+						for (IPart gpart : grand) {
 							cargoGroup.addChild(gpart);
+						}
 					}
 				}
 			}
@@ -188,23 +190,26 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 				for (IPart node : this.getChildren())
 					if (node instanceof AssetPart) {
 						int flag = ((AssetPart) node).getCastedModel().getFlag();
-						if ((flag > 10) && (flag < 19))
+						if ((flag > 10) && (flag < 19)) {
 							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-						else if ((flag > 18) && (flag < 27))
+						} else if ((flag > 18) && (flag < 27)) {
 							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-						else if ((flag > 26) && (flag < 35))
+						} else if ((flag > 26) && (flag < 35)) {
 							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-						else if ((flag > 91) && (flag < 100))
+						} else if ((flag > 91) && (flag < 100)) {
 							fit.fitRig(((AssetPart) node).getCastedModel().getTypeID());
-						else
+						} else {
 							// Contents on ships go to the cargohold.
 							fit.addCargo(((AssetPart) node).getCastedModel().getTypeID(),
 									((AssetPart) node).getCastedModel().getQuantity());
+						}
 					}
 				// Activate the fitting Activity with this fit as reference. And the pilot
 				AppModelStore store = EVEDroidApp.getAppStore();
 				String label = this.getCastedModel().getUserLabel();
-				if (null == label) label = this.getCastedModel().getItemName();
+				if (null == label) {
+					label = this.getCastedModel().getItemName();
+				}
 				fit.setName(label);
 				store.addFitting(fit, label);
 
@@ -254,6 +259,8 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 		if (this.getRenderMode() == AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS)
 			return new Ship4AssetHolder(this, _activity);
 		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_SHIP4ASSETSBYLOCATION)
+			return new Ship4AssetHolder(this, _activity);
+		if (this.getRenderMode() == EShipsVariants.SHIPS_BYLOCATION.hashCode())
 			return new Ship4AssetHolder(this, _activity);
 		return new Ship4AssetHolder(this, _activity);
 	}

@@ -111,6 +111,7 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 		this.setContainer(asset.isContainer());
 		return this;
 	}
+
 	//
 	//	@Override
 	//	public long getAssetID() {
@@ -161,6 +162,22 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 	//	public boolean isShip() {
 	//		return delegate.isShip();
 	//	}
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer("Ship [");
+		buffer.append("#").append(this.getTypeID()).append(" - ").append(this.getName()).append(" ");
+		if (null != this.getUserLabel()) {
+			buffer.append("[").append(this.getUserLabel()).append("] ");
+		}
+		buffer.append("itemID:").append(this.getAssetID()).append(" ");
+		//		buffer.append("typeID:")..append(" ");
+		buffer.append("locationID:").append(this.getLocationID()).append(" ");
+		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
+		//	buffer.append("quantity:").append(this.getQuantity()).append(" ");
+		buffer.append("]\n");
+		return buffer.toString();
+		//		return super.toString();
+	}
 }
 
 // - UNUSED CODE ............................................................................................
