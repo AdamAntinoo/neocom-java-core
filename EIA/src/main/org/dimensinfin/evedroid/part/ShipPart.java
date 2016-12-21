@@ -8,16 +8,11 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.part;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.FittingActivity;
@@ -27,7 +22,7 @@ import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
 import org.dimensinfin.evedroid.holder.Ship4PilotInfoHolder;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.evedroid.model.Ship;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.content.Intent;
@@ -55,98 +50,14 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 		this.getCastedModel().setExpanded(false);
 	}
 
-	//		public boolean onLongClick(final View target) {
-	//			Log.i("EVEI", ">> ShipPart.onClick");
-	//			Asset asset = getCastedModel();
-	//			EVEDroidApp.getAppContext().setItem(asset.getItem());
-	//			//TODO This should open another detailes ship page
-	//			Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
-	//			intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getAssetID());
-	//			Log.i("EVEI", "<< ShipPart.onClick");
-	//			return false;
-	//		}
-	/**
-	 * Return the items contained on this ship. There are some grouping for that contents. Use the group
-	 * containers to aggregate them into that block to simplify the UI presentation and separate fitted items
-	 * from stored items..
-	 * 
-	 * @return list of parts that are accessible for this node.
-	 */
-	@Override
-	public ArrayList<IPart> collaborate2View() {
-		ArrayList<IPart> result = new ArrayList<IPart>();
-		// If the node is expanded then give the children the opportunity to also be added.
-		if (this.isExpanded()) {
-			Vector<IPart> ch = this.getChildren();
-			// Create the groups and then classify the contents of each of them.
-			GroupPart hislotGroup = (GroupPart) new GroupPart(new Separator("HISLOT"))
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-			hislotGroup.setIconReference(R.drawable.hislot);
-			GroupPart midslotGroup = (GroupPart) new GroupPart(new Separator("MEDSLOT"))
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-			midslotGroup.setIconReference(R.drawable.midslot);
-			GroupPart lowslotGroup = (GroupPart) new GroupPart(new Separator("LOWSLOT"))
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-			lowslotGroup.setIconReference(R.drawable.lowslot);
-			GroupPart rigslotGroup = (GroupPart) new GroupPart(new Separator("RIGS"))
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-			rigslotGroup.setIconReference(R.drawable.rigslot);
-			GroupPart cargoGroup = (GroupPart) new GroupPart(new Separator("CARGO HOLD"))
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-			cargoGroup.setIconReference(R.drawable.cargohold);
-			for (IPart node : ch) {
-				int flag;
-				if (node instanceof AssetPart) {
-					flag = ((AssetPart) node).getCastedModel().getFlag();
-					if ((flag > 10) && (flag < 19)) {
-						lowslotGroup.addChild(node);
-					} else if ((flag > 18) && (flag < 27)) {
-						midslotGroup.addChild(node);
-					} else if ((flag > 26) && (flag < 35)) {
-						hislotGroup.addChild(node);
-					} else if ((flag > 91) && (flag < 100)) {
-						rigslotGroup.addChild(node);
-					} else {
-						// Contents on ships do not support expansion but when added to the cargohold.
-						cargoGroup.addChild(node);
-						AbstractAndroidPart part = (AbstractAndroidPart) node;
-						if (part.isExpanded()) {
-							ArrayList<IPart> grand = part.collaborate2View();
-							for (IPart gpart : grand) {
-								cargoGroup.addChild(gpart);
-							}
-						}
-					}
-				}
-			}
-			// Add all non empty groups to the result list.
-			if (cargoGroup.getChildren().size() > 0) {
-				result.add(cargoGroup);
-				result.addAll(cargoGroup.collaborate2View());
-			}
-			if (hislotGroup.getChildren().size() > 0) {
-				result.add(hislotGroup);
-				result.addAll(hislotGroup.collaborate2View());
-			}
-			if (midslotGroup.getChildren().size() > 0) {
-				result.add(midslotGroup);
-				result.addAll(midslotGroup.collaborate2View());
-			}
-			if (lowslotGroup.getChildren().size() > 0) {
-				result.add(lowslotGroup);
-				result.addAll(lowslotGroup.collaborate2View());
-			}
-			if (rigslotGroup.getChildren().size() > 0) {
-				result.add(rigslotGroup);
-				result.addAll(rigslotGroup.collaborate2View());
-			}
-		}
-		return result;
-	}
-
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_shipClassGroup() {
 		return this.getCastedModel().getName() + " - " + this.getCastedModel().getGroupName();
+	}
+
+	@Override
+	public Ship getCastedModel() {
+		return (Ship) super.getModel();
 	}
 
 	/**
@@ -157,11 +68,6 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 	@Override
 	public String getName() {
 		return this.get_shipClassGroup();
-		//		String userName = getCastedModel().getUserLabel();
-		//		if (null == userName)
-		//			return "#" + getCastedModel().getAssetID();
-		//		else
-		//			return userName;
 	}
 
 	@Override
@@ -187,26 +93,45 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 			case R.id.addshipasfitting:
 				// Add this ship as a fitting.
 				Fitting fit = new Fitting(this.getPilot().getAssetsManager());
-				ShipPart.logger.info("-- [ShipPart.onContextItemSelected]> New for for hull: " + this.getCastedModel());
-				fit.addHull(this.getCastedModel().getTypeID());
-				// Add part children as Fitting content.
-				for (IPart node : this.getChildren())
-					if (node instanceof AssetPart) {
-						int flag = ((AssetPart) node).getCastedModel().getFlag();
-						if ((flag > 10) && (flag < 19)) {
-							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-						} else if ((flag > 18) && (flag < 27)) {
-							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-						} else if ((flag > 26) && (flag < 35)) {
-							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-						} else if ((flag > 91) && (flag < 100)) {
-							fit.fitRig(((AssetPart) node).getCastedModel().getTypeID());
-						} else {
-							// Contents on ships go to the cargohold.
-							fit.addCargo(((AssetPart) node).getCastedModel().getTypeID(),
-									((AssetPart) node).getCastedModel().getQuantity());
-						}
-					}
+				// Copy ship items to the fitting.
+				Ship ship = this.getCastedModel();
+				// Copy ship items to the fitting.
+				fit.addHull(ship.getTypeID());
+				for (NeoComAsset module : ship.getModules()) {
+					fit.fitModule(module.getTypeID());
+				}
+				for (NeoComAsset module : ship.getRigs()) {
+					fit.fitModule(module.getTypeID());
+				}
+				for (NeoComAsset module : ship.getDrones()) {
+					fit.fitModule(module.getTypeID());
+				}
+				for (NeoComAsset module : ship.getCargo()) {
+					fit.fitModule(module.getTypeID());
+				}
+				//				
+				//				
+				//				
+				//				ShipPart.logger.info("-- [ShipPart.onContextItemSelected]> New for for hull: " + this.getCastedModel());
+				//				fit.addHull(this.getCastedModel().getTypeID());
+				//				// Add part children as Fitting content.
+				//				for (IPart node : this.getChildren())
+				//					if (node instanceof AssetPart) {
+				//						int flag = ((AssetPart) node).getCastedModel().getFlag();
+				//						if ((flag > 10) && (flag < 19)) {
+				//							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
+				//						} else if ((flag > 18) && (flag < 27)) {
+				//							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
+				//						} else if ((flag > 26) && (flag < 35)) {
+				//							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
+				//						} else if ((flag > 91) && (flag < 100)) {
+				//							fit.fitRig(((AssetPart) node).getCastedModel().getTypeID());
+				//						} else {
+				//							// Contents on ships go to the cargohold.
+				//							fit.addCargo(((AssetPart) node).getCastedModel().getTypeID(),
+				//									((AssetPart) node).getCastedModel().getQuantity());
+				//						}
+				//					}
 				// Activate the fitting Activity with this fit as reference. And the pilot
 				AppModelStore store = EVEDroidApp.getAppStore();
 				String label = this.getCastedModel().getUserLabel();
