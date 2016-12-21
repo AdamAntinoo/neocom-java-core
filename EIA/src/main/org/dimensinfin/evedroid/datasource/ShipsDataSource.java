@@ -66,15 +66,10 @@ public class ShipsDataSource extends SpecialDataSource {
 	public RootNode collaborate2Model() {
 		SpecialDataSource.logger.info(">> [ShipsDatasource.collaborate2Model]");
 		try {
-			//			AppModelStore store = AppModelStore.getSingleton();
 			// Get the complete list of ships. Compare it to the current list if it exists.
 			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
 			Collection<NeoComAsset> assetsShips = manager.accessShips();
-			//			final ArrayList<NeoComAsset> assetsShips = manager.searchAsset4Category("Ship");
-			//			if (null == ships) {
-			// Transform the list of assets into a list of ships.
-			//					ships = assetsShips;
 			// Process the list into the classifiers.
 			for (NeoComAsset ship : assetsShips) {
 				long locid = ship.getLocationID();
@@ -82,7 +77,6 @@ public class ShipsDataSource extends SpecialDataSource {
 				this.add2Location(locid, ship);
 				this.add2Category(category, ship);
 			}
-			//			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			SpecialDataSource.logger.severe(

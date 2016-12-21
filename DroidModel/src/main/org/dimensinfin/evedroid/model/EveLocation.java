@@ -221,13 +221,15 @@ public class EveLocation extends AbstractComplexNode {
 
 	@Override
 	public void setDirty(final boolean state) {
-		if (state) try {
-			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
-			locationDao.update(this);
-			//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
-		} catch (final SQLException sqle) {
-			//		logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
-			sqle.printStackTrace();
+		if (state) {
+			try {
+				Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+				locationDao.update(this);
+				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
+			} catch (final SQLException sqle) {
+				//		logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
+				sqle.printStackTrace();
+			}
 		}
 	}
 
@@ -281,11 +283,16 @@ public class EveLocation extends AbstractComplexNode {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("Location [");
+		StringBuffer buffer = new StringBuffer("NeoComLocation [");
 		buffer.append("#").append(this.getID()).append(" ");
+		buffer.append("(").append(this.getChildren().size()).append(") ");
 		buffer.append("[").append(this.getRegion()).append("] ");
-		if (null != system) buffer.append("system: ").append(system).append(" ");
-		if (null != station) buffer.append("station: ").append(station).append(" ");
+		if (null != system) {
+			buffer.append("system: ").append(system).append(" ");
+		}
+		if (null != station) {
+			buffer.append("station: ").append(station).append(" ");
+		}
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -313,10 +320,11 @@ public class EveLocation extends AbstractComplexNode {
 	}
 
 	private void updateLocationID() {
-		if (citadel)
+		if (citadel) {
 			id = stationID;
-		else
+		} else {
 			id = this.getID();
+		}
 	}
 }
 

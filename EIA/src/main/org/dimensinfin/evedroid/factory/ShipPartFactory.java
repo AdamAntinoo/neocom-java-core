@@ -18,11 +18,13 @@ import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.evedroid.model.Ship;
 import org.dimensinfin.evedroid.model.ShipLocation;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.LocationShipsPart;
 import org.dimensinfin.evedroid.part.RegionPart;
+import org.dimensinfin.evedroid.part.ShipPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipPartFactory extends PartFactory implements IPartFactory {
@@ -44,28 +46,33 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 	@Override
 	public IPart createPart(final AbstractComplexNode node) {
 		ShipPartFactory.logger.info("-- [ShipPartFactory.createPart]> Node class: " + node.getClass().getName());
-		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
-			if (node instanceof Region) {
-				IPart part = new RegionPart((Separator) node).setFactory(this)
-						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
-				return part;
-			}
-			if (node instanceof ShipLocation) {
-				IPart part = new LocationShipsPart((ShipLocation) node).setFactory(this)
-						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
-				return part;
-			}
-			if (node instanceof Separator) {
-				IPart part = new GroupPart((Separator) node).setFactory(this)
-						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
-				return part;
-			}
-			if (node instanceof NeoComAsset) {
-				IPart part = new AssetPart((NeoComAsset) node).setFactory(this)
-						.setRenderMode(EShipsVariants.SHIPS_BYLOCATION.hashCode());
-				return part;
-			}
+		//		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
+		if (node instanceof Region) {
+			IPart part = new RegionPart((Separator) node).setFactory(this)
+					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+			return part;
 		}
+		if (node instanceof ShipLocation) {
+			IPart part = new LocationShipsPart((ShipLocation) node).setFactory(this)
+					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+			return part;
+		}
+		if (node instanceof Separator) {
+			IPart part = new GroupPart((Separator) node).setFactory(this)
+					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+			return part;
+		}
+		if (node instanceof NeoComAsset) {
+			IPart part = new AssetPart((NeoComAsset) node).setFactory(this)
+					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+			return part;
+		}
+		if (node instanceof Ship) {
+			IPart part = new ShipPart((NeoComAsset) node).setFactory(this)
+					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+			return part;
+		}
+		//		}
 		// If no part is trapped then call the parent chain until one is found.
 		return super.createPart(node);
 	}

@@ -103,6 +103,8 @@ public class AssetsManager implements Serializable {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
 		this.setPilot(pilot);
+		// Reinitialize the list of assets for this pilot.
+		this.accessAllAssets();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

@@ -336,8 +336,11 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("Asset [");
+		final StringBuffer buffer = new StringBuffer("NeoComAsset [");
 		buffer.append("#").append(typeID).append(" - ").append(this.getName()).append(" ");
+		if (null != this.getUserLabel()) {
+			buffer.append("[").append(this.getUserLabel()).append("] ");
+		}
 		buffer.append("itemID:").append(this.getAssetID()).append(" ");
 		//		buffer.append("typeID:")..append(" ");
 		buffer.append("locationID:").append(locationID).append(" ");
