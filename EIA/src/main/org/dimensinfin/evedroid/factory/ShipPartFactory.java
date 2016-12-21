@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;

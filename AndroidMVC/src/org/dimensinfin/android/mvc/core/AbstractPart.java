@@ -99,8 +99,12 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	 */
 	public void addChild(final IPart child, int index) {
 		//		Assert.isNotNull(child);
-		if (index == -1) index = this.getChildren().size();
-		if (children == null) children = new Vector<IPart>(2);
+		if (index == -1) {
+			index = this.getChildren().size();
+		}
+		if (children == null) {
+			children = new Vector<IPart>(2);
+		}
 
 		children.add(index, child);
 		child.setParent(this);
@@ -125,8 +129,11 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			Vector<IPart> ch = this.runPolicies(this.getChildren());
 			// --- End of policies
 			for (IPart part : ch) {
-				if (part.isVisible()) if (part.isRenderWhenEmpty()) result.add(part);
-				result.addAll(part.collaborate2View());
+				if (part.isVisible()) if (part.isRenderWhenEmpty()) {
+					result.add(part);
+				}
+				ArrayList<IPart> collaboration = part.collaborate2View();
+				result.addAll(collaboration);
 			}
 		}
 		return result;
@@ -229,9 +236,11 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		AbstractPart.logger.info("-- [AbstractPart.refreshChildren]> Current children size: " + size);
 		// This variable has the list of Parts pointed by their corresponding model.
 		HashMap<AbstractComplexNode, IPart> modelToEditPart = new HashMap<AbstractComplexNode, IPart>(size + 1);
-		if (size > 0) for (int i = 0; i < size; i++) {
-			IPart editPart = selfChildren.get(i);
-			modelToEditPart.put(editPart.getModel(), editPart);
+		if (size > 0) {
+			for (int i = 0; i < size; i++) {
+				IPart editPart = selfChildren.get(i);
+				modelToEditPart.put(editPart.getModel(), editPart);
+			}
 		}
 
 		// Get the list of model elements that collaborate to the Part model. This is the complex-simple model transformation.
@@ -250,7 +259,9 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			if ((i < selfChildren.size()) && (selfChildren.get(i).getModel() == nodemodel)) {
 				// But in any case try to update all the children
 				AbstractPart.logger.info("-- [AbstractEditPart.refreshChildren]> model matches. Refreshing children.");
-				if (editPart != null) editPart.refreshChildren();
+				if (editPart != null) {
+					editPart.refreshChildren();
+				}
 				continue;
 			}
 
@@ -276,8 +287,9 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		size = selfChildren.size();
 		if (i < size) {
 			Vector<IPart> trash = new Vector<IPart>(size - i);
-			for (; i < size; i++)
+			for (; i < size; i++) {
 				trash.add(selfChildren.get(i));
+			}
 			for (i = 0; i < trash.size(); i++) {
 				IPart ep = trash.get(i);
 				this.removeChild(ep);
@@ -350,7 +362,9 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		IPartFactory factory = this.getRoot().getPartFactory();
 		IPart part = factory.createPart(model);
 		// If the factory is unable to create the Part then skip this element or wait to be replaced by a dummy
-		if (null != part) part.setParent(this);
+		if (null != part) {
+			part.setParent(this);
+		}
 		return part;
 	}
 

@@ -75,68 +75,71 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 	@Override
 	public ArrayList<IPart> collaborate2View() {
 		ArrayList<IPart> result = new ArrayList<IPart>();
-		Vector<IPart> ch = this.getChildren();
-		// Create the groups and then classify the contents of each of them.
-		GroupPart hislotGroup = (GroupPart) new GroupPart(new Separator("HISLOT"))
-				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-		hislotGroup.setIconReference(R.drawable.hislot);
-		GroupPart midslotGroup = (GroupPart) new GroupPart(new Separator("MEDSLOT"))
-				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-		midslotGroup.setIconReference(R.drawable.midslot);
-		GroupPart lowslotGroup = (GroupPart) new GroupPart(new Separator("LOWSLOT"))
-				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-		lowslotGroup.setIconReference(R.drawable.lowslot);
-		GroupPart rigslotGroup = (GroupPart) new GroupPart(new Separator("RIGS"))
-				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-		rigslotGroup.setIconReference(R.drawable.rigslot);
-		GroupPart cargoGroup = (GroupPart) new GroupPart(new Separator("CARGO HOLD"))
-				.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
-		cargoGroup.setIconReference(R.drawable.cargohold);
-		for (IPart node : ch) {
-			int flag;
-			if (node instanceof AssetPart) {
-				flag = ((AssetPart) node).getCastedModel().getFlag();
-				if ((flag > 10) && (flag < 19)) {
-					lowslotGroup.addChild(node);
-				} else if ((flag > 18) && (flag < 27)) {
-					midslotGroup.addChild(node);
-				} else if ((flag > 26) && (flag < 35)) {
-					hislotGroup.addChild(node);
-				} else if ((flag > 91) && (flag < 100)) {
-					rigslotGroup.addChild(node);
-				} else {
-					// Contents on ships do not support expansion but when added to the cargohold.
-					cargoGroup.addChild(node);
-					AbstractAndroidPart part = (AbstractAndroidPart) node;
-					if (part.isExpanded()) {
-						ArrayList<IPart> grand = part.collaborate2View();
-						for (IPart gpart : grand) {
-							cargoGroup.addChild(gpart);
+		// If the node is expanded then give the children the opportunity to also be added.
+		if (this.isExpanded()) {
+			Vector<IPart> ch = this.getChildren();
+			// Create the groups and then classify the contents of each of them.
+			GroupPart hislotGroup = (GroupPart) new GroupPart(new Separator("HISLOT"))
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+			hislotGroup.setIconReference(R.drawable.hislot);
+			GroupPart midslotGroup = (GroupPart) new GroupPart(new Separator("MEDSLOT"))
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+			midslotGroup.setIconReference(R.drawable.midslot);
+			GroupPart lowslotGroup = (GroupPart) new GroupPart(new Separator("LOWSLOT"))
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+			lowslotGroup.setIconReference(R.drawable.lowslot);
+			GroupPart rigslotGroup = (GroupPart) new GroupPart(new Separator("RIGS"))
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+			rigslotGroup.setIconReference(R.drawable.rigslot);
+			GroupPart cargoGroup = (GroupPart) new GroupPart(new Separator("CARGO HOLD"))
+					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+			cargoGroup.setIconReference(R.drawable.cargohold);
+			for (IPart node : ch) {
+				int flag;
+				if (node instanceof AssetPart) {
+					flag = ((AssetPart) node).getCastedModel().getFlag();
+					if ((flag > 10) && (flag < 19)) {
+						lowslotGroup.addChild(node);
+					} else if ((flag > 18) && (flag < 27)) {
+						midslotGroup.addChild(node);
+					} else if ((flag > 26) && (flag < 35)) {
+						hislotGroup.addChild(node);
+					} else if ((flag > 91) && (flag < 100)) {
+						rigslotGroup.addChild(node);
+					} else {
+						// Contents on ships do not support expansion but when added to the cargohold.
+						cargoGroup.addChild(node);
+						AbstractAndroidPart part = (AbstractAndroidPart) node;
+						if (part.isExpanded()) {
+							ArrayList<IPart> grand = part.collaborate2View();
+							for (IPart gpart : grand) {
+								cargoGroup.addChild(gpart);
+							}
 						}
 					}
 				}
 			}
-		}
-		// Add all non empty groups to the result list.
-		if (cargoGroup.getChildren().size() > 0) {
-			result.add(cargoGroup);
-			result.addAll(cargoGroup.collaborate2View());
-		}
-		if (hislotGroup.getChildren().size() > 0) {
-			result.add(hislotGroup);
-			result.addAll(hislotGroup.collaborate2View());
-		}
-		if (midslotGroup.getChildren().size() > 0) {
-			result.add(midslotGroup);
-			result.addAll(midslotGroup.collaborate2View());
-		}
-		if (lowslotGroup.getChildren().size() > 0) {
-			result.add(lowslotGroup);
-			result.addAll(lowslotGroup.collaborate2View());
-		}
-		if (rigslotGroup.getChildren().size() > 0) {
-			result.add(rigslotGroup);
-			result.addAll(rigslotGroup.collaborate2View());
+			// Add all non empty groups to the result list.
+			if (cargoGroup.getChildren().size() > 0) {
+				result.add(cargoGroup);
+				result.addAll(cargoGroup.collaborate2View());
+			}
+			if (hislotGroup.getChildren().size() > 0) {
+				result.add(hislotGroup);
+				result.addAll(hislotGroup.collaborate2View());
+			}
+			if (midslotGroup.getChildren().size() > 0) {
+				result.add(midslotGroup);
+				result.addAll(midslotGroup.collaborate2View());
+			}
+			if (lowslotGroup.getChildren().size() > 0) {
+				result.add(lowslotGroup);
+				result.addAll(lowslotGroup.collaborate2View());
+			}
+			if (rigslotGroup.getChildren().size() > 0) {
+				result.add(rigslotGroup);
+				result.addAll(rigslotGroup.collaborate2View());
+			}
 		}
 		return result;
 	}
