@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.FittingActivity;
 import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
@@ -109,37 +108,13 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 				for (NeoComAsset module : ship.getCargo()) {
 					fit.fitModule(module.getTypeID());
 				}
-				//				
-				//				
-				//				
-				//				ShipPart.logger.info("-- [ShipPart.onContextItemSelected]> New for for hull: " + this.getCastedModel());
-				//				fit.addHull(this.getCastedModel().getTypeID());
-				//				// Add part children as Fitting content.
-				//				for (IPart node : this.getChildren())
-				//					if (node instanceof AssetPart) {
-				//						int flag = ((AssetPart) node).getCastedModel().getFlag();
-				//						if ((flag > 10) && (flag < 19)) {
-				//							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-				//						} else if ((flag > 18) && (flag < 27)) {
-				//							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-				//						} else if ((flag > 26) && (flag < 35)) {
-				//							fit.fitModule(((AssetPart) node).getCastedModel().getTypeID());
-				//						} else if ((flag > 91) && (flag < 100)) {
-				//							fit.fitRig(((AssetPart) node).getCastedModel().getTypeID());
-				//						} else {
-				//							// Contents on ships go to the cargohold.
-				//							fit.addCargo(((AssetPart) node).getCastedModel().getTypeID(),
-				//									((AssetPart) node).getCastedModel().getQuantity());
-				//						}
-				//					}
 				// Activate the fitting Activity with this fit as reference. And the pilot
-				AppModelStore store = EVEDroidApp.getAppStore();
 				String label = this.getCastedModel().getUserLabel();
 				if (null == label) {
 					label = this.getCastedModel().getItemName();
 				}
 				fit.setName(label);
-				store.addFitting(fit, label);
+				AppModelStore.getSingleton().addFitting(fit, label);
 
 				// Open the Fitting Activity
 				final Intent intent = new Intent(this.getActivity(), FittingActivity.class);

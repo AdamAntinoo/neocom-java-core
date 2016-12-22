@@ -34,8 +34,12 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	@Override
 	public String getSubtitle() {
 		String st = "";
-		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) st = "Ships - by Location";
-		if (this.getVariant() == EShipsVariants.SHIPS_BYCLASS.name()) st = "Ships - by Class";
+		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
+			st = "Ships - by Location";
+		}
+		if (this.getVariant() == EShipsVariants.SHIPS_BYCLASS.name()) {
+			st = "Ships - by Class";
+		}
 		return st;
 	}
 
@@ -60,8 +64,14 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 		ShipsFragment.logger.info("<< [ShipsFragment.onStart]");
 	}
 
+	/**
+	 * This is a special RegiterDataSource because we can use the fragment in more than one page but the
+	 * DataSource can be valid for both variants. So the variant information is not valid because we have a
+	 * single DS and multiple usages.
+	 */
 	private void registerDataSource() {
 		ShipsFragment.logger.info(">> [ShipsFragment.registerDataSource]");
+		// This is an special case. A single DataSource serves both variants
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getPilotName())
 				.addIdentifier(this.getVariant());
 		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(this.getVariant()));
