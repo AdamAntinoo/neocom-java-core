@@ -14,7 +14,9 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
+import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
@@ -60,8 +62,38 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 			return part;
 		}
 		if (node instanceof Separator) {
-			IPart part = new GroupPart((Separator) node).setFactory(this)
-					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
+			// These special separators can configure an specific icon.
+			IPart part = null;
+			switch (((Separator) node).getType()) {
+				case SHIPSECTION_HIGH:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.filtericonhighslot).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPSECTION_MED:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.filtericonmediumslot).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPSECTION_LOW:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.filtericonlowslot).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPSECTION_RIGS:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.filtericonrigslot).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPSECTION_DRONES:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.filtericondrones).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPSECTION_CARGO:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.itemhangar).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				default:
+					part = new GroupPart((Separator) node).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+
+			}
 			return part;
 		}
 		if (node instanceof Ship) {

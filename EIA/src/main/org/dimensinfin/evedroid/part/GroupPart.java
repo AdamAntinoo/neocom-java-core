@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.part;
 
 import java.util.Collections;
@@ -40,15 +42,6 @@ public class GroupPart extends EveAbstractPart {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	/**
-	//	 * This is the new view generation method that replaces the <code>getPartChildren</code>.
-	//	 */
-	//	@Override
-	//	public ArrayList<AbstractAndroidPart> collaborate2View() {
-	//		Vector<AbstractPropertyChanger> ch = getChildren();
-	//		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-	//		return super.getPartChildren();
-	//	}
 	public String get_counter() {
 		return EveAbstractPart.qtyFormatter.format(this.getChildren().size());
 	}
@@ -70,14 +63,6 @@ public class GroupPart extends EveAbstractPart {
 		return GregorianCalendar.getInstance().getTimeInMillis();
 	}
 
-	//	@Deprecated
-	//	@Override
-	//	public ArrayList<AbstractAndroidPart> getPartChildren() {
-	//		Vector<AbstractPropertyChanger> ch = this.getChildren();
-	//		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-	//		return super.getPartChildren();
-	//	}
-
 	public String getTitle() {
 		return this.getCastedModel().getTitle();
 	}
@@ -93,9 +78,10 @@ public class GroupPart extends EveAbstractPart {
 		return targets;
 	}
 
-	public void setIconReference(final int ref) {
+	public GroupPart setIconReference(final int ref) {
 		Log.i("REMOVE", "-- GroupPart.setIconReference - " + this.toString() + " change value to: " + ref);
 		iconReference = ref;
+		return this;
 	}
 
 	public EveAbstractPart setPriority(final int pri) {

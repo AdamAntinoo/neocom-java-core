@@ -14,22 +14,21 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.evedroid.model.Separator.ESeparatorType;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Ship extends NeoComAsset /* implements IAsset */ {
+public class Ship extends NeoComAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger		logger			= Logger.getLogger("org.dimensinfin.evedroid.model");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	//	private final IAsset			delegate		= null;
-	//	private final NeoComAsset	reference		= null;
 	private long						pilotID			= 0;
-	private final Separator	highModules	= new Separator("HIGH");
-	private final Separator	medModules	= new Separator("MED");
-	private final Separator	lowModules	= new Separator("LOW");
-	private final Separator	rigs				= new Separator("RIGS");
-	private final Separator	drones			= new Separator("DRONES");
-	private final Separator	cargo				= new Separator("CARGO HOLD");
+	private final Separator	highModules	= new Separator("HIGH").setType(ESeparatorType.SHIPSECTION_HIGH);
+	private final Separator	medModules	= new Separator("MED").setType(ESeparatorType.SHIPSECTION_MED);
+	private final Separator	lowModules	= new Separator("LOW").setType(ESeparatorType.SHIPSECTION_LOW);
+	private final Separator	rigs				= new Separator("RIGS").setType(ESeparatorType.SHIPSECTION_RIGS);
+	private final Separator	drones			= new Separator("DRONES").setType(ESeparatorType.SHIPSECTION_DRONES);
+	private final Separator	cargo				= new Separator("CARGO HOLD").setType(ESeparatorType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -40,38 +39,52 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 	 */
 	public Ship(final long pilot) {
 		pilotID = pilot;
+		this.setDownloaded(false);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The collaboration of the ship is different form the one of an asset. I will generate some groups to store
 	 * under them the different modules fitted and the cargo contents. <br>
-	 * The ship should access the database to get its contents.
+	 * The ship should access the database to get its contents. <br>
+	 * This should be done once to avoid the multiple calls to the database as an optimization. The clear of the
+	 * fields have removed the bug that caused the same ships to be processed multiple times by different DS.
+	 * Use the downloaded flag for this purpose.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		ArrayList<NeoComAsset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID, this.getAssetID());
-		// Classify the contents
-		for (NeoComAsset node : contents) {
-			int flag = node.getFlag();
-			if ((flag > 10) && (flag < 19)) {
-				highModules.addChild(node);
-			} else if ((flag > 18) && (flag < 27)) {
-				medModules.addChild(node);
-			} else if ((flag > 26) && (flag < 35)) {
-				lowModules.addChild(node);
-			} else if ((flag > 91) && (flag < 100)) {
-				rigs.addChild(node);
-			} else {
-				// Check for drones
-				if (node.getCategory().equalsIgnoreCase("Drones")) {
-					drones.addChild(node);
+		if (!this.isDownloaded()) {
+			ArrayList<NeoComAsset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID,
+					this.getAssetID());
+			highModules.clean();
+			medModules.clean();
+			lowModules.clean();
+			rigs.clean();
+			drones.clean();
+			cargo.clean();
+			// Classify the contents
+			for (NeoComAsset node : contents) {
+				int flag = node.getFlag();
+				if ((flag > 10) && (flag < 19)) {
+					highModules.addChild(node);
+				} else if ((flag > 18) && (flag < 27)) {
+					medModules.addChild(node);
+				} else if ((flag > 26) && (flag < 35)) {
+					lowModules.addChild(node);
+				} else if ((flag > 91) && (flag < 100)) {
+					rigs.addChild(node);
 				} else {
-					// Contents on ships go to the cargohold.
-					cargo.addChild(node);
+					// Check for drones
+					if (node.getCategory().equalsIgnoreCase("Drones")) {
+						drones.addChild(node);
+					} else {
+						// Contents on ships go to the cargohold.
+						cargo.addChild(node);
+					}
 				}
 			}
+			this.setDownloaded(true);
 		}
 		result.add(highModules);
 		result.add(medModules);
@@ -115,12 +128,6 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 
 	public ArrayList<NeoComAsset> getCargo() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		//		private final Separator	highModules	= new Separator("HIGH");
-		//		private final Separator	medModules	= new Separator("MED");
-		//		private final Separator	lowModules	= new Separator("LOW");
-		//		private final Separator	rigs				= new Separator("RIGS");
-		//		private final Separator	drones			= new Separator("DRONES");
-		//		private final Separator	cargo				= new Separator("CARGO HOLD");
 		for (IGEFNode node : cargo.getChildren()) {
 			result.add((NeoComAsset) node);
 		}
@@ -129,12 +136,6 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 
 	public ArrayList<NeoComAsset> getDrones() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		//		private final Separator	highModules	= new Separator("HIGH");
-		//		private final Separator	medModules	= new Separator("MED");
-		//		private final Separator	lowModules	= new Separator("LOW");
-		//		private final Separator	rigs				= new Separator("RIGS");
-		//		private final Separator	drones			= new Separator("DRONES");
-		//		private final Separator	cargo				= new Separator("CARGO HOLD");
 		for (IGEFNode node : drones.getChildren()) {
 			result.add((NeoComAsset) node);
 		}
@@ -148,12 +149,6 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 	 */
 	public ArrayList<NeoComAsset> getModules() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		//		private final Separator	highModules	= new Separator("HIGH");
-		//		private final Separator	medModules	= new Separator("MED");
-		//		private final Separator	lowModules	= new Separator("LOW");
-		//		private final Separator	rigs				= new Separator("RIGS");
-		//		private final Separator	drones			= new Separator("DRONES");
-		//		private final Separator	cargo				= new Separator("CARGO HOLD");
 		for (IGEFNode node : highModules.getChildren()) {
 			result.add((NeoComAsset) node);
 		}
@@ -168,12 +163,6 @@ public class Ship extends NeoComAsset /* implements IAsset */ {
 
 	public ArrayList<NeoComAsset> getRigs() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		//		private final Separator	highModules	= new Separator("HIGH");
-		//		private final Separator	medModules	= new Separator("MED");
-		//		private final Separator	lowModules	= new Separator("LOW");
-		//		private final Separator	rigs				= new Separator("RIGS");
-		//		private final Separator	drones			= new Separator("DRONES");
-		//		private final Separator	cargo				= new Separator("CARGO HOLD");
 		for (IGEFNode node : rigs.getChildren()) {
 			result.add((NeoComAsset) node);
 		}
