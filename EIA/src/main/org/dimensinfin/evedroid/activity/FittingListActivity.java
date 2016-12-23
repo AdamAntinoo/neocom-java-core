@@ -18,7 +18,6 @@ import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
-import android.util.Log;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 public class FittingListActivity extends PilotPagerActivity implements INeoComDirector {
@@ -69,7 +68,7 @@ public class FittingListActivity extends PilotPagerActivity implements INeoComDi
 			this.addPage(new FittingListFragment().setVariant(EFittingVariants.FITTING_LIST.name()).setExtras(extras),
 					page++);
 		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> FittingListActivity.onCreate - " + rtex.getMessage());
+			FittingListActivity.logger.warning("RTEX> FittingListActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
 			this.stopActivity(new RuntimeException("RTEX> FittingListActivity.onCreate - " + rtex.getMessage()));
 		}

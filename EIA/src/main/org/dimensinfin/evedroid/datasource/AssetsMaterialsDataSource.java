@@ -1,10 +1,12 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
-package org.dimensinfin.evedroid.factory;
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
+package org.dimensinfin.evedroid.datasource;
 
 // - IMPORT SECTION .........................................................................................
 import java.beans.PropertyChangeEvent;
@@ -21,6 +23,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.enums.EIndustryGroup;
+import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Separator;
@@ -172,14 +175,17 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
 			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
+					continue;
+				}
 				result.add(node);
 				// Check if the node is expanded. Then add its children.
 				if (node.isExpanded()) {
 					ArrayList<IPart> grand = node.collaborate2View();
 					Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-					for (IPart part : node.collaborate2View())
+					for (IPart part : node.collaborate2View()) {
 						result.add((AbstractAndroidPart) part);
+					}
 				}
 			}
 		} catch (RuntimeException rtex) {
@@ -197,9 +203,10 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
+		}
 	}
 }
 // - UNUSED CODE ............................................................................................

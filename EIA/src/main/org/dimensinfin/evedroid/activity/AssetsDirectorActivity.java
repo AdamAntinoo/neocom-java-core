@@ -1,25 +1,32 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity;
+
+import java.util.logging.Logger;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.fragment.AssetsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
-import android.util.Log;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 public class AssetsDirectorActivity extends PilotPagerActivity implements INeoComDirector {
+	public enum EAssetVariants {
+		ASSETS_BYLOCATION, ASSETS_BYCATEGORY, ASSETS_MATERIALS
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
+	public static Logger logger = Logger.getLogger("AssetsDirectorActivity");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -52,23 +59,23 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> AssetsDirectorActivity.onCreate"); //$NON-NLS-1$
+		AssetsDirectorActivity.logger.info(">> [AssetsDirectorActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		try {
-			// Create the pages that form this Activity. Each page implemented
-			// by a Fragment.
 			int page = 0;
-			this.addPage(new AssetsFragment().setFilter(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION), page++);
-			this.addPage(new AssetsFragment().setFilter(AppWideConstants.fragment.FRAGMENT_ASSETSARESHIPS), page++);
-			this.addPage(new AssetsFragment().setFilter(AppWideConstants.fragment.FRAGMENT_ASSETSMATERIALS), page++);
+			// Get the parameters from the bundle. If not defined then use the demo.
+			final Bundle extras = this.getIntent().getExtras();
+			// Create the pages that form this Activity. Each page implemented by a Fragment.
+			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_BYLOCATION.name()).setExtras(extras), page++);
+			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_MATERIALS.name()).setExtras(extras), page++);
 		} catch (Exception rtex) {
-			Log.e("NEOCOM", "RTEX> AssetsDirectorActivity.onCreate - " + rtex.getMessage());
+			AssetsDirectorActivity.logger.warning("RTEX> AssetsDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
 			this.stopActivity(new RuntimeException("RTEX> AssetsDirectorActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
 		this.updateInitialTitle();
-		Log.i("NEOCOM", "<< AssetsDirectorActivity.onCreate"); //$NON-NLS-1$
+		AssetsDirectorActivity.logger.info("<< [AssetsDirectorActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
 // - UNUSED CODE

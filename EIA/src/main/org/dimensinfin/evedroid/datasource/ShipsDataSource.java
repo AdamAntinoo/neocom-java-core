@@ -33,12 +33,10 @@ public class ShipsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 7810087592108417570L;
 
-	//	private ArrayList<NeoComAsset>						ships							= null;
+	// - F I E L D - S E C T I O N ............................................................................
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
 	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
-
-	//	private int																				_version					= 0;;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public ShipsDataSource(final DataSourceLocator locator, final IPartFactory factory) {

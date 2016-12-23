@@ -26,7 +26,6 @@ import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.os.Bundle;
-import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -72,7 +71,7 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 			// This fragment has a header. Populate it with the datasource header contents.
 			this.setHeaderContents();
 		} catch (final RuntimeException rtex) {
-			Log.e("EVEI", "RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
+			FittingListFragment.logger.warning("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
 			this.stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
 		}
@@ -88,7 +87,9 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
-		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		if (null != extras) {
+			capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		}
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid);
 		// This part of the code may depend on the variant so surround it with the detector.
 		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
@@ -153,16 +154,21 @@ final class FittingListDataSource extends SpecialDataSource {
 				FittingListDataSource.logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
 				// Classify the fitting.
 				ExpandableGroup targetGroup = groups.get(fit.getHull().getGroupName());
-				if (null == targetGroup)
+				if (null == targetGroup) {
 					defaultGroup.addChild(fit);
-				else
+				} else {
 					targetGroup.addChild(fit);
+				}
 			}
 			// Link the non empty hull groups into the Data model root.
 			for (ExpandableGroup group : groups.values())
-				if (group.getChildren().size() > 0) _dataModelRoot.addChild(group);
+				if (group.getChildren().size() > 0) {
+					_dataModelRoot.addChild(group);
+				}
 			// Add the default group if not empty.
-			if (defaultGroup.getChildren().size() > 0) _dataModelRoot.addChild(defaultGroup);
+			if (defaultGroup.getChildren().size() > 0) {
+				_dataModelRoot.addChild(defaultGroup);
+			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			FittingListDataSource.logger
