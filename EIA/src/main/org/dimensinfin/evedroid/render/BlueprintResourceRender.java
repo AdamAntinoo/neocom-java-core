@@ -10,6 +10,7 @@ package org.dimensinfin.evedroid.render;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.part.ResourcePart;
 
 import android.app.Activity;
@@ -30,16 +31,18 @@ public class BlueprintResourceRender extends ResourceRender {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public void updateContent() {
 		super.updateContent();
-		itemName.setText(getPart().getName());
-		if (AppWideConstants.DEVELOPMENT) itemName.setText(getPart().getName() + " [#" + getPart().getTypeID() + "]");
-		String category = getPart().getCategory();
+		itemName.setText(this.getPart().getName());
+		if (AppWideConstants.DEVELOPMENT)
+			itemName.setText(this.getPart().getName() + " [#" + this.getPart().getTypeID() + "]");
+		String category = this.getPart().getCategory();
 		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			itemPrice.setVisibility(View.GONE);
 			// Check for blueprint level 2
-			if (getPart().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-				balance.setText(getPart().get_inventionCost());
+			if (this.getPart().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+				balance.setText(this.getPart().get_inventionCost());
 				balance.setVisibility(View.VISIBLE);
 			} else {
 				balance.setText("N/A");
@@ -47,14 +50,14 @@ public class BlueprintResourceRender extends ResourceRender {
 			}
 			totalItems.setText("x1");
 		} else {
-			if (getPart().getQuantity() == 1) itemPrice.setVisibility(View.GONE);
-			itemPrice.setText(generatePriceString(getPart().getSellerPrice(), true, true));
-			balance.setText(generatePriceString(getPart().getBalance(), true, true));
-			totalItems.setText("x" + qtyFormatter.format(getPart().getQuantity()));
+			if (this.getPart().getQuantity() == 1) itemPrice.setVisibility(View.GONE);
+			itemPrice.setText(this.generatePriceString(this.getPart().getSellerPrice(), true, true));
+			balance.setText(this.generatePriceString(this.getPart().getBalance(), true, true));
+			totalItems.setText("x" + EveAbstractHolder.qtyFormatter.format(this.getPart().getQuantity()));
 		}
 
-		loadEveIcon((ImageView) _convertView.findViewById(R.id.itemIcon), getPart().getCastedModel().getTypeID());
-		_convertView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.topwhiteline));
+		this.loadEveIcon((ImageView) _convertView.findViewById(R.id.itemIcon), this.getPart().getCastedModel().getTypeID());
+		_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(R.drawable.topwhiteline));
 	}
 }
 

@@ -6,29 +6,31 @@
 
 package org.dimensinfin.evedroid.connector;
 
-//- IMPORT SECTION .........................................................................................
+import org.dimensinfin.evedroid.core.INeoComModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IConnector {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public void addCharacterUpdateRequest(long characterID);
+
 	public boolean checkExpiration(final long timestamp, final long window);
 
 	public String getAppFilePath(int fileresourceid);
 
 	public String getAppFilePath(String fileresourceid);
 
-	//	public ICache getCacheConnector();
-
 	public IDatabaseConnector getDBConnector();
 
+	public INeoComModelStore getModelStore();
+
 	public String getResourceString(int reference);
+
+	public IConnector getSingleton();
 
 	public IStorageConnector getStorageConnector();
 
 	public boolean sdcardAvailable();
-
-	public IConnector getSingleton();
 }
 
 // - UNUSED CODE ............................................................................................

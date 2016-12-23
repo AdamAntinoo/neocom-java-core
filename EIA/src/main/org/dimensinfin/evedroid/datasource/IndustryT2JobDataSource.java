@@ -16,16 +16,16 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.core.AppContext;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
@@ -65,10 +65,13 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT2JobDataSource(final AppModelStore store, final int flavor) {
-		if (null != store) {
-			_store = store;
-		}
+		if (null != store) _store = store;
 		_flavor = flavor;
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -89,22 +92,18 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 			for (Action action : actions) {
 				ActionPart apart = new ActionPart(action);
 				apart.setBlueprintID(_bppart.getCastedModel().getAssetID());
-				if (action instanceof Skill) {
-					apart.setRenderMode(AppWideConstants.rendermodes.RENDER_SKILLACTION);
-				}
+				if (action instanceof Skill) apart.setRenderMode(AppWideConstants.rendermodes.RENDER_SKILLACTION);
 				apart.createHierarchy();
 				_bppart.addChild(apart);
 			}
 		}
 
 		// Depending on fragment generate the corresponding model.
-		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBHEADER) {
-			_root.add(
-					(AbstractAndroidPart) _bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
-		}
+		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBHEADER) _root
+				.add((AbstractAndroidPart) _bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER));
 		if (_flavor == AppWideConstants.fragment.FRAGMENT_INDUSTRYJOBACTIONS) {
 			// Get the module item that is going to be produced.
-			Blueprint blueprint = _bppart.getCastedModel();
+			NeoComBlueprint blueprint = _bppart.getCastedModel();
 			// Add the manufacture time section.
 			JobTimePart time = new JobTimePart(new Separator(""));
 			time.setRunTime(_bppart.getCycleTime());
@@ -116,65 +115,63 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 			GroupPart output = (GroupPart) new GroupPart(new Separator(EIndustryGroup.OUTPUT.toString())).setPriority(100);
 			_root.add(output);
 			// Add the rest of the groups.
-			doGroupInit();
+			this.doGroupInit();
 			// To the Output group add the resource part that represents the output.
 			int productID = _bppart.getProductID();
 			ResourcePart outputResource = new ResourcePart(new Resource(productID, _bppart.getPossibleRuns()));
 			// Set the render depending on the blueprint job activity.
-			if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING) {
+			if (_bppart.getJobActivity() == ModelWideConstants.activities.MANUFACTURING)
 				outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTJOB);
-			}
-			if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION) {
+			if (_bppart.getJobActivity() == ModelWideConstants.activities.INVENTION)
 				outputResource.setRenderMode(AppWideConstants.rendermodes.RENDER_RESOURCEOUTPUTBLUEPRINT);
-			}
 			output.addChild(outputResource);
 			// Now classify each resource in their Industry group.
-			classifyResources(_bppart.getChildren());
+			this.classifyResources(_bppart.getChildren());
 		}
 		Log.i("DataSource", "<< IndustryT2ManufactureDataSource.createHierarchy [" + _root.size() + "]");
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		AbstractDataSource.logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		try {
+			//		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
+			for (AbstractAndroidPart node : _root) {
+				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
+				result.add(node);
+				// Check if the node is expanded. Then add its children.
+				if (node.isExpanded()) for (IPart part : node.collaborate2View())
+					result.add((AbstractAndroidPart) part);
+			}
+		} catch (RuntimeException rtex) {
+		}
+		_adapterData = result;
+		AbstractDataSource.logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
+		return result;
 	}
 
 	public BlueprintPart getBPPart() {
 		return _bppart;
 	}
 
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		try {
-			//		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
-			for (AbstractAndroidPart node : _root) {
-				if (node instanceof GroupPart) if (node.getChildren().size() == 0) {
-					continue;
-				}
-				result.add(node);
-				// Check if the node is expanded. Then add its children.
-				if (node.isExpanded()) {
-					ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-					result.addAll(grand);
-				}
-			}
-		} catch (RuntimeException rtex) {
-		}
-		_adapterData = result;
-		logger.info("<< IndustryT2ManufactureDataSource.getPartHierarchy");
-		return result;
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
 			// Clean all asset managers before restarting the action list.
 			_bppart.clean();
 			JobManager.initializeAssets(_store.getPilot());
 			_bppart.setActivity(_bppart.getJobActivity());
-			createContentHierarchy();
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			this.createContentHierarchy();
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 		}
 	}
@@ -184,23 +181,19 @@ public class IndustryT2JobDataSource extends AbstractDataSource {
 	}
 
 	protected void add2Group(final IItemPart action, final EIndustryGroup igroup) {
-		for (AbstractAndroidPart group : _root) {
-			if (group instanceof GroupPart) {
-				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
-					group.addChild((IEditPart) action);
-				}
-			}
-		}
+		for (AbstractAndroidPart group : _root)
+			if (group instanceof GroupPart)
+				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString()))
+					group.addChild((IPart) action);
 	}
 
-	protected void classifyResources(final Vector<AbstractPropertyChanger> vector) {
+	protected void classifyResources(final Vector<IPart> vector) {
 		// Process the actions and set each one on the matching group.
-		for (AbstractPropertyChanger node : vector) {
+		for (IPart node : vector)
 			if (node instanceof IItemPart) {
 				IItemPart action = (IItemPart) node;
-				add2Group(action, action.getIndustryGroup());
+				this.add2Group(action, action.getIndustryGroup());
 			}
-		}
 	}
 
 	private void doGroupInit() {

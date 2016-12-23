@@ -9,8 +9,9 @@ package org.dimensinfin.evedroid.service;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.EDataBlock;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.enums.EDataBlock;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -41,7 +42,7 @@ public class CharacterUpdaterService extends IntentService {
 		Long localizer = (Long) intent.getSerializableExtra(AppWideConstants.extras.EXTRA_CHARACTER_LOCALIZER);
 		// Be sure we have access to the network. Otherwise intercept the exceptions.
 		if (EVEDroidApp.checkNetworkAccess()) {
-			EveChar pilot = EVEDroidApp.getAppStore().searchCharacter(localizer);
+			NeoComCharacter pilot = AppModelStore.getSingleton().searchCharacter(localizer);
 			if (null != pilot) {
 				// Pilot signaled for update. Locate the next data set to update because its cache has expired.
 				EDataBlock datacode = pilot.needsUpdate();
@@ -56,18 +57,18 @@ public class CharacterUpdaterService extends IntentService {
 							break;
 						case ASSETDATA:
 						case BLUEPRINTDATA:
-							pilot.updateAssets();
-							pilot.updateBlueprints();
+							pilot.downloadAssets();
+							pilot.downloadBlueprints();
 							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
 							EVEDroidApp.topCounter--;
 							break;
 						case INDUSTRYJOBS:
-							pilot.updateIndustryJobs();
+							pilot.downloadIndustryJobs();
 							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
 							EVEDroidApp.topCounter--;
 							break;
 						case MARKETORDERS:
-							pilot.updateMarketOrders();
+							pilot.downloadMarketOrders();
 							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
 							EVEDroidApp.topCounter--;
 							break;
@@ -76,9 +77,7 @@ public class CharacterUpdaterService extends IntentService {
 							break;
 					}
 					// Clean the top counter if completed.
-					if (EVEDroidApp.topCounter < 0) {
-						EVEDroidApp.topCounter = 0;
-					}
+					if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
 				} catch (RuntimeException rtex) {
 				}
 			}

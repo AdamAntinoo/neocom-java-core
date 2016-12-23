@@ -16,19 +16,20 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.core.AbstractCorePart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
-import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.core.RootPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
-import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.AppWideConstants.EFragment;
+import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.evedroid.constant.CVariant;
+import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
+import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
- * This class implements the most common code and flow for all datasources to allow the best code
- * generalisation. The datasource methods implement a generic process that calls the specific datasource
- * callback methods for specialization when rendering object in an specific way. That shuld be rare cases.
+ * This class implements the most common code and flow for all DataSources to allow the best code
+ * generalization. This class has the common code to make the model transformation to the Part hierarchy and
+ * from it to the list of Parts used to renden the view.
  * 
  * @author Adam Antinoo
  */
@@ -39,21 +40,21 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private DataSourceLocator							_locator					= null;
-	//	protected AppModelStore		_store						= null;
-	//	private final int					_version					= 0;
-	protected RootNode										_dataModelRoot		= null;
-	/** Part hierarchy that matches the data model hierarchy. */
-	protected RootPart										_partModelRoot		= null;
-	protected ArrayList<AbstractCorePart>	_bodyParts				= new ArrayList<AbstractCorePart>();
-	protected ArrayList<AbstractCorePart>	_headParts				= new ArrayList<AbstractCorePart>();
-
-	private EFragment											_variant					= AppWideConstants.EFragment.UNDEFINED_FRAGMENT;
-
+	private String												_variant					= CVariant
+			.getName4Variant(EDefaultVariant.DEFAULT_VARIANT.hashCode());
+	private boolean												_cacheable				= true;
 	private final HashMap<String, Object>	_parameters				= new HashMap<String, Object>();
-
-	private DataSourceManager							_dsManager;
-
 	protected IPartFactory								_partFactory			= null;
+
+	/** The initial node where to store the model. Model elements are children of this root. */
+	protected RootNode										_dataModelRoot		= null;
+	/** The root node for the Part hierarchy that matches the data model hierarchy. */
+	protected RootPart										_partModelRoot		= null;
+	/** The list of Parts to show on the viewer. This is the body section that is scrollable. */
+	protected ArrayList<IPart>						_bodyParts				= new ArrayList<IPart>();
+	/** The list of Parts to show on the header. */
+	protected ArrayList<IPart>						_headParts				= new ArrayList<IPart>();
+	private DataSourceManager							_dsManager;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public SpecialDataSource(final DataSourceLocator locator, final IPartFactory factory) {
@@ -61,6 +62,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		_partFactory = factory;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public SpecialDataSource addParameter(final String name, final int value) {
 		_parameters.put(name, Integer.valueOf(value));
 		return this;
@@ -76,7 +78,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		return this;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	@Deprecated
 	public void connect(final DataSourceManager dataSourceManager) {
 		_dsManager = dataSourceManager;
 	}
@@ -92,16 +94,15 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Override
 	public void createContentHierarchy() {
 		try {
-			logger.info(">> [SpecialDataSource.createContentHierarchy]");
+			SpecialDataSource.logger.info(">> [SpecialDataSource.createContentHierarchy]");
 			// Check if we have already a Part model.
 			// But do not forget to associate the new Data model even of the old exists.
-			if (null == _partModelRoot) {
+			if (null == _partModelRoot)
 				_partModelRoot = new RootPart(_dataModelRoot, _partFactory);
-			} else {
+			else
 				_partModelRoot.setModel(_dataModelRoot);
-			}
 
-			logger.info(
+			SpecialDataSource.logger.info(
 					"-- [SpecialDataSource.createContentHierarchy]> Initiating the refreshChildren() for the _partModelRoot");
 			// Intercept any exception on the creation of the model but do not cut the progress of the already added items
 			try {
@@ -110,60 +111,43 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 				e.printStackTrace();
 			}
 			// Get the list of Parts that will be used for the ListView
-			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts = new ArrayList<IPart>();
+			// Select for the body contents only the viewable Parts from the Part model. Make it a list.
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			logger.info("<< [SpecialDataSource.createContentHierarchy]");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		SpecialDataSource.logger
+				.info("-- [SpecialDataSource.createContentHierarchy]> _bodyParts.size: " + _bodyParts.size());
+		SpecialDataSource.logger.info("<< [SpecialDataSource.createContentHierarchy]");
 	}
-
-	//	public AppModelStore getStore() {
-	//		return _store;
-	//	}
-
-	//	public int getVersion() {
-	//		return _version;
-	//	}
 
 	//	/**
-	//	 * Sets the initial values for this datasource. This should be done only the first time the datasource is
-	//	 * used because after that the model gets populated from the already seeded elements.<br>
-	//	 * The initial list in empty because there can be locations or categories.
+	//	 * This is the method to initialize the copy of the model structures on the datasource. Every time this
+	//	 * method is called, the complete model is recreated. There are two ways to recreate it, comparing with the
+	//	 * old copy and inserting/deleting different nodes or recreating completely the new model copy. Once this
+	//	 * method is called we can create the depending part hierarchy. <br>
+	//	 * I have to search for a better name for this method. This is not clear and currently the
+	//	 * <code>initModel</code> is already on use by the class but can be reused later.
 	//	 */
-	//	public abstract void initModel();
-
-	/**
-	 * This is the method to initialize the copy of the model structures on the datasource. Every time this
-	 * method is called, the complete model is recreated. There are two ways to recreate it, comparing with the
-	 * old copy and inserting/deleting different nodes or recreating completely the new model copy. Once this
-	 * method is called we can create the depending part hierarchy. <br>
-	 * I have to search for a better name for this method. This is not clear and currently the
-	 * <code>initModel</code> is already on use by the class but can be reused later.
-	 */
-	@Deprecated
-	public void createPartsHierarchy() {
-	}
-	//	{
-	//		Log.i("NEOCOM", ">> SpecialDataSource.createPartsHierarchy");
-	//		if (_modelRoot.size() < 1) initModel();
-	//
-	//		// Process the model and generate the list of model elements that are visible.
-	//		_modelContents.clear();
-	//		for (AbstractAndroidNode node : _modelRoot)
-	//			_modelContents.addAll(node.collaborate2Model(_version));
-	//
-	//		// Create the part list from the updated model list.
-	//		_bodyParts.clear();
-	//		for (final AbstractAndroidNode node : _modelContents)
-	//			createPart4Node(node);
+	//	@Deprecated
+	//	public void createPartsHierarchy() {
 	//	}
 
+	/**
+	 * Return just the list of viewable Parts. During the composition of the list we transform it of class
+	 * because we should change the final class level returned to the higher level possible and now for
+	 * compatibility we keep the <code>AbstractAndroidPart</code>.
+	 */
+	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		SpecialDataSource.logger.info(">> [SpecialDataSource.getBodyParts]");
+		// Get the list of Parts that will be used for the ListView
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts) {
-			result.add((AbstractAndroidPart) node);
-		}
+		if (null != _bodyParts) // Transform the list of IParts to a list of AbstractAndroidParts.
+			for (IPart part : _bodyParts)
+			if (part instanceof AbstractAndroidPart) result.add((AbstractAndroidPart) part);
+		SpecialDataSource.logger.info("<< [SpecialDataSource.getBodyParts]> result.size: " + result.size());
 		return result;
 	}
 
@@ -171,24 +155,29 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		return _locator;
 	}
 
+	/**
+	 * This method is also deprecated because the Part generation for the header is kept outside the DataSource.
+	 * The management of the header is now performed at the Fragment level and once it is changed to another
+	 * level we can check this code. This method is kept for backward compatibility.
+	 */
+	@Deprecated
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _headParts) {
+		for (IPart node : _headParts)
 			result.add((AbstractAndroidPart) node);
-		}
 		return result;
 	}
 
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractCorePart node : _bodyParts) {
-			result.add((AbstractAndroidPart) node);
-		}
-		return result;
-	}
+	//	@Override
+	//	@Deprecated
+	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+	//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+	//		for (AbstractAndroidPart node : this.getBodyParts())
+	//			result.add(node);
+	//		return result;
+	//	}
 
-	public EFragment getVariant() {
+	public String getVariant() {
 		return _variant;
 	}
 
@@ -199,52 +188,33 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 */
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
+		// The expand/collapse state has changed.
 		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			_bodyParts = new ArrayList<AbstractCorePart>();
+			_bodyParts = new ArrayList<IPart>();
 			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
+			return;
 		}
+		// TODO Check if we should get this event and fire it again.
 		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES)) {
-			// The DataSourceAdapter will call getPartHierarchy() and this will return the list of parts on the body. So update the list.
-			// But we have changes a key value, so recalculate the model
-			// Just activate the refresh because some  refresh.
-			//			_bodyParts = new ArrayList<AbstractCorePart>();
-			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
+			return;
 		}
-		// THis event is when the user changes the preferred action so I have to calculate the model again.
-		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE)) {
-			collaborate2Model();
-			createContentHierarchy();
-			//			_bodyParts = new ArrayList<AbstractCorePart>();
-			//			_bodyParts.addAll(_partModelRoot.collaborate2View());
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-					event.getNewValue());
-		}
+		super.propertyChange(event);
 	}
 
-	//	@Deprecated
-	//	public void createPart4Node(final AbstractAndroidNode node) {
-	//		if (node instanceof ShipLocation) {
-	//			LocationIndustryPart locpart = new LocationIndustryPart(node);
-	//			locpart.setContainerLocation(false);
-	//			_bodyParts.add(locpart);
-	//			return;
-	//		}
-	//		if (node instanceof Separator) {
-	//			TerminatorPart gp = new TerminatorPart(node);
-	//			gp.setRenderMode(getVersion());
-	//			_bodyParts.add(gp);
-	//			return;
-	//		}
-	//	}
+	public void setCacheable(final boolean cacheState) {
+		_cacheable = cacheState;
+	}
+
+	//[01]
 	public void setDataModel(final RootNode root) {
 		_dataModelRoot = root;
 	}
 
-	public SpecialDataSource setVariant(final EFragment variant) {
+	public SpecialDataSource setVariant(final String variant) {
 		_variant = variant;
 		return this;
 	}
@@ -269,3 +239,19 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 }
 
 // - UNUSED CODE ............................................................................................
+//[01]
+//	@Deprecated
+//	public void createPart4Node(final AbstractAndroidNode node) {
+//		if (node instanceof ShipLocation) {
+//			LocationIndustryPart locpart = new LocationIndustryPart(node);
+//			locpart.setContainerLocation(false);
+//			_bodyParts.add(locpart);
+//			return;
+//		}
+//		if (node instanceof Separator) {
+//			TerminatorPart gp = new TerminatorPart(node);
+//			gp.setRenderMode(getVersion());
+//			_bodyParts.add(gp);
+//			return;
+//		}
+//	}

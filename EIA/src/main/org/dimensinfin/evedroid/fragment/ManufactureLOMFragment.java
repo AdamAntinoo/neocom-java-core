@@ -14,8 +14,8 @@ import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.IndustryLOMResourcesDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
-import org.dimensinfin.evedroid.model.Blueprint;
 import org.dimensinfin.evedroid.model.EveItem;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -34,8 +34,18 @@ public class ManufactureLOMFragment extends AbstractPagerFragment {
 	private Bundle				_extras	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ManufactureLOMFragment(AppModelStore store) {
+	public ManufactureLOMFragment(final AppModelStore store) {
 		_store = store;
+	}
+
+	@Override
+	public String getSubtitle() {
+		return "Manufacture - Job Resources";
+	}
+
+	@Override
+	public String getTitle() {
+		return this.getPilotName();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -44,29 +54,14 @@ public class ManufactureLOMFragment extends AbstractPagerFragment {
 		Log.i("NEOCOM", ">> ManufactureLOMFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYLOMRESOURCES);
+			this.setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYLOMRESOURCES);
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> ManufactureLOMFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> ManufactureLOMFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> ManufactureLOMFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< ManufactureLOMFragment.onCreateView");
 		return theView;
-	}
-
-	@Override
-	public String getTitle() {
-		return getPilotName();
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "Manufacture - Job Resources";
-	}
-
-	public AbstractPagerFragment setExtras(final Bundle extras) {
-		_extras = extras;
-		return this;
 	}
 
 	@Override
@@ -75,32 +70,36 @@ public class ManufactureLOMFragment extends AbstractPagerFragment {
 		try {
 			if (!_alreadyInitialized) {
 				// Get the product created by the job from the blueprint part process.
-				final long bpassetid = _extras.getLong(AppWideConstants.extras.EXTRA_BLUEPRINTID);
-				final int activity = _extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
-				final Blueprint blueprint = this._store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				final long bpassetid = _extras.getLong(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name());
+				final int activity = _extras.getInt(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name());
+				final NeoComBlueprint blueprint = _store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
 				final BlueprintPart bppart = new BlueprintPart(blueprint);
 				bppart.setActivity(activity);
 				// REFACTOR This piece of code may be optimized to return the item identifier for the matching activity of a blueprint.
 				final int productID = bppart.getProductID();
 				final EveItem productItem = AppConnector.getDBConnector().searchItembyID(productID);
-				final IndustryLOMResourcesDataSource ds = new IndustryLOMResourcesDataSource(this._store);
+				final IndustryLOMResourcesDataSource ds = new IndustryLOMResourcesDataSource(_store);
 				ds.setBlueprint(bppart);
 
 				// This fragment has a header. Populate it with the datasource header contents.
 				ArrayList<AbstractAndroidPart> headerData = ds.getHeaderPartHierarchy();
-				for (AbstractAndroidPart headerPart : headerData) {
-					addtoHeader(headerPart);
-				}
+				for (AbstractAndroidPart headerPart : headerData)
+					this.addtoHeader(headerPart);
 
-				setDataSource(ds);
+				this.setDataSource(ds);
 			}
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> ManufactureLOMFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> ManufactureLOMFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> ManufactureLOMFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< ManufactureLOMFragment.onStart");
+	}
+
+	public AbstractPagerFragment setExtras(final Bundle extras) {
+		_extras = extras;
+		return this;
 	}
 }
 

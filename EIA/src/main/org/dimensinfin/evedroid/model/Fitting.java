@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.INodeModel;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -31,7 +31,7 @@ import com.j256.ormlite.stmt.Where;
 import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Fitting extends AbstractManufactureProcess implements INodeModel {
+public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long				serialVersionUID	= 6740483226926234807L;
 	private static Logger						logger						= Logger.getLogger("Fitting");
@@ -45,6 +45,15 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	private final Vector<Resource>	drones						= new Vector<Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/**
+	 * This constructor just creates the data structures. If should not be used but for testing because a
+	 * Fitting requires an asset manager to be able to perform the Industry activities.
+	 */
+	// TODO The Fitting should not have the dependency on the industry until the moment the model need to get generated.
+	@Deprecated
+	public Fitting() {
+	}
+
 	/**
 	 * Initializes a fitting. A Fitting is a complex objects that performs manufactuting actions and that should
 	 * have a reference to the current selected pilot because the resources required for manufacturing are
@@ -98,11 +107,28 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		if (AppWideConstants.EFragment.valueOf(variant) == AppWideConstants.EFragment.FITTING_MANUFACTURE) {
 			// Copy the list of actions to the result.
-			for (Action node : getManufacturingResources()) {
+			for (Action node : this.getManufacturingResources()) {
 				result.add(node);
 			}
 		}
 		return result;
+	}
+
+	public void fitDrone(final int moduleId) {
+		this.fitDrone(moduleId, 1);
+	}
+
+	/**
+	 * Adds the selected module to the fit the number of times specified. By default it add the module once.
+	 * 
+	 * @param moduleId
+	 * @param times
+	 */
+	public void fitDrone(final int moduleId, int times) {
+		if (times < 1) {
+			times = 1;
+		}
+		drones.add(new Resource(moduleId, times));
 	}
 
 	public void fitModule(final int moduleId) {
@@ -167,7 +193,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
 			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
 			Where<Property, String> where = queryBuilder.where();
-			where.eq("ownerID", getPilot().getCharacterID());
+			where.eq("ownerID", this.getPilot().getCharacterID());
 			where.and();
 			where.eq("propertyType", EPropertyTypes.LOCATIONROLE);
 			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
@@ -183,7 +209,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	 * the right Location role type.
 	 */
 	private EveLocation getLocation4Role(final EPropertyTypes matchingRole, final String locationType) {
-		ArrayList<Property> locationRoles = accessLocationRoles();
+		ArrayList<Property> locationRoles = this.accessLocationRoles();
 		for (Property role : locationRoles) {
 			//			String value = role.getPropertyType().name();
 			if (role.getPropertyType() == matchingRole) {
@@ -207,11 +233,11 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 	 * @return
 	 */
 	private ArrayList<Action> getManufacturingResources() {
-		logger.info(">> Fitting.getManufacturingResources");
+		Fitting.logger.info(">> Fitting.getManufacturingResources");
 		// Initialize models.
 		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
 		// Manufacturing location set to the predefined location and defaults to current pilot location.
-		manufactureLocation = getLocation4Role(EPropertyTypes.LOCATIONROLE, "FITTING");
+		manufactureLocation = this.getLocation4Role(EPropertyTypes.LOCATIONROLE, "FITTING");
 		if (null == manufactureLocation) {
 			manufactureLocation = pilot.getDefaultLocation();
 		}
@@ -265,7 +291,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 				// Check resources that are Skills. Give them an special treatment.
 				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 					currentAction = new Skill(resource);
-					registerAction(currentAction);
+					this.registerAction(currentAction);
 					continue;
 				}
 				currentAction = new Action(resource);
@@ -273,8 +299,8 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.
 				// This has no impact on data since we use pointers to the global structures.
-				registerAction(currentAction);
-				processRequest(newTask);
+				this.registerAction(currentAction);
+				this.processRequest(newTask);
 			} while (pointer < (requirements.size() - 1));
 		} catch (RuntimeException rtex) {
 			Log.e("RTEXCEPTION.CODE",
@@ -282,7 +308,7 @@ public class Fitting extends AbstractManufactureProcess implements INodeModel {
 			rtex.printStackTrace();
 		}
 		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
-		return getActions();
+		return this.getActions();
 	}
 
 	//	private void test() {

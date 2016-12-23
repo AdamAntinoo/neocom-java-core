@@ -5,11 +5,11 @@
 package org.dimensinfin.evedroid.interfaces;
 
 // - IMPORT SECTION .........................................................................................
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IDirector {
-	public abstract boolean checkActivation(EveChar pilot);
+	public abstract boolean checkActivation(NeoComCharacter pilot);
 
 	//	public abstract String getDescription();
 	//

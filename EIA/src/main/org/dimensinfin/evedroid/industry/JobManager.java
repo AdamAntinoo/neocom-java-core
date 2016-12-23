@@ -15,13 +15,13 @@ import java.util.HashMap;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -63,7 +63,7 @@ public class JobManager implements Serializable {
 		industryAssetsManager = null;
 	}
 
-	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target,
+	public static IJobProcess generateJobProcess(final NeoComCharacter thePilot, final NeoComBlueprint target,
 			final EJobClasses action) {
 		if (null == thePilot) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
@@ -141,7 +141,7 @@ public class JobManager implements Serializable {
 	 * so next action will not found "reserved" resources as available. Blueprints are an exception because they
 	 * are already segregated into different virtual stacks, some of them visible to Industry and some not.
 	 */
-	public static void initializeAssets(final EveChar pilot) {
+	public static void initializeAssets(final NeoComCharacter pilot) {
 		Log.i("EVEI", ">> JobManager.initializeAssets");
 		if (null != pilot) {
 			industryAssetsManager = new AssetsManager(pilot);
@@ -151,7 +151,7 @@ public class JobManager implements Serializable {
 			Log.i("EVEI", "-- JobManager.initializeAssets.userjobs:" + userjobs);
 			for (final Job job : userjobs) {
 				// Get the unique blueprint used on the job and generate the jobs tasks.
-				final Blueprint blueprint = industryAssetsManager.searchBlueprintByID(job.getBlueprintID());
+				final NeoComBlueprint blueprint = industryAssetsManager.searchBlueprintByID(job.getBlueprintID());
 				// If the blueprint if not found then the job has been started on real. Drop the job
 				if (null == blueprint) {
 					try {
@@ -163,7 +163,7 @@ public class JobManager implements Serializable {
 					continue;
 				}
 				// Create a new blueprint for the processing adjusting the thread count to 1.
-				final Blueprint bp = new Blueprint(blueprint.getAssetID());
+				final NeoComBlueprint bp = new NeoComBlueprint(blueprint.getAssetID());
 				bp.setRuns(job.getRuns());
 				final IJobProcess process = JobManager.generateJobProcess(pilot, bp,
 						EJobClasses.decodeActivity(job.getActivityID()));
@@ -192,10 +192,11 @@ public class JobManager implements Serializable {
 	 * @param activityID
 	 *          the code of the activity. Maybe manufacture or invention or whatever.
 	 */
-	public static void launchJob(final EveChar pilot, final BlueprintPart part, final int runs, final int activityID) {
+	public static void launchJob(final NeoComCharacter pilot, final BlueprintPart part, final int runs,
+			final int activityID) {
 		Log.i("EVEI", ">> JobManager.launchJob.Blueprint:" + part + " [" + runs + "]");
 		// Get the list of blueprint assets stacked on this part.
-		final Blueprint blueprint = part.getCastedModel();
+		final NeoComBlueprint blueprint = part.getCastedModel();
 		final String refList = blueprint.getStackIDRefences();
 		final String[] refs = refList.split(ModelWideConstants.STACKID_SEPARATOR);
 		int refPosition = 0;
@@ -271,7 +272,7 @@ public class JobManager implements Serializable {
 	 * @param target
 	 * @return
 	 */
-	private static IJobProcess checkCache(final String tech, final EveChar pilot, final Blueprint target) {
+	private static IJobProcess checkCache(final String tech, final NeoComCharacter pilot, final NeoComBlueprint target) {
 		final String jobid = tech + "." + Long.valueOf(pilot.getCharacterID()).toString() + "."
 				+ Long.valueOf(target.getTypeID()).toString();
 		final IJobProcess hit = jobprocesscache.get(jobid);

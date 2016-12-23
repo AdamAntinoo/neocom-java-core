@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 
 import android.os.Bundle;
@@ -28,9 +29,26 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * Used to initialize the model. This code is deprecated and the DataSources should not depend on other
+	 * classes for initialization in a generic implementation.
+	 */
+	// REFACTOR This code should be removed.
 	public void createContentHierarchy() {
 		// Clear the current list of elements.
 		_root.clear();
+	}
+
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		for (AbstractAndroidPart part : _root) {
+			result.add(part);
+			// Check if the node is expanded. Then add its children.
+			if (part.isExpanded()) for (IPart child : part.collaborate2View())
+				result.add((AbstractAndroidPart) child);
+		}
+		_adapterData = result;
+		return result;
 	}
 
 	public int getItemsCount() {
@@ -38,20 +56,6 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 			return _adapterData.size();
 		else
 			return 0;
-	}
-
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractAndroidPart part : _root) {
-			result.add(part);
-			// Check if the node is expanded. Then add its children.
-			if (part.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-				result.addAll(grand);
-			}
-		}
-		_adapterData = result;
-		return result;
 	}
 
 	public void propertyChange(final PropertyChangeEvent event) {

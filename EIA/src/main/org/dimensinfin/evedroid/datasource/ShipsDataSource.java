@@ -8,18 +8,18 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.datasource;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
-import org.dimensinfin.android.mvc.core.RootNode;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
+import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.factory.DataSourceFactory;
-import org.dimensinfin.evedroid.factory.PartFactory;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.ShipLocation;
@@ -33,7 +33,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 7810087592108417570L;
 
-	private ArrayList<Asset>									ships							= null;
+	//	private ArrayList<NeoComAsset>						ships							= null;
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
 	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
@@ -41,7 +41,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	//	private int																				_version					= 0;;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
-	public ShipsDataSource(final DataSourceLocator locator, final PartFactory factory) {
+	public ShipsDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		super(locator, factory);
 	}
 
@@ -53,7 +53,7 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * The DataSource keeps the list of ships and compares it to the current list so if it is the same then we
 	 * do not do any processing. <br>
 	 * There are two models that can be returned, the ships by Location model and also the ship by Category.
-	 * Both are enerated at the same time. <br>
+	 * Depending on the variant we calculate one or the other. <br>
 	 * The first action is to go to the Pilot asset list and get all the assets with the Category Ship. This
 	 * will return a list of Assets we can transform into Ships. There are two classes for this. The packaged
 	 * ships are simple assets that will not expand to anything else while the other class, the active ships can
@@ -64,66 +64,56 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	public RootNode collaborate2Model() {
-		logger.info(">> ShipsDatasource.collaborate2Model");
+		SpecialDataSource.logger.info(">> [ShipsDatasource.collaborate2Model]");
 		try {
-			AppModelStore store = EVEDroidApp.getAppStore();
 			// Get the complete list of ships. Compare it to the current list if it exists.
-			final AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
+			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
 			// Depending on the Setting group Locations into Regions
-			final ArrayList<Asset> assetsShips = manager.searchAsset4Category("Ship");
-			if (null == ships) {
-				// Transform the list of assets into a list of ships.
-				this.ships = assetsShips;
-				// Process the list into the classifiers.
-				for (Asset ship : assetsShips) {
+			Collection<NeoComAsset> assetsShips = manager.accessShips();
+			// Process the list into the classifiers.
+			for (NeoComAsset ship : assetsShips) {
+				if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
 					long locid = ship.getLocationID();
+					this.add2Location(locid, ship);
+				}
+				if (this.getVariant() == EShipsVariants.SHIPS_BYCLASS.name()) {
 					String category = ship.getGroupName();
-					add2Location(locid, ship);
-					add2Category(category, ship);
+					this.add2Category(category, ship);
 				}
 			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			logger.severe(
+			SpecialDataSource.logger.severe(
 					"RTEX> ShipsDatasource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		setupOutputModel();
-		// [01]
-		logger.info("<< ShipsDatasource.collaborate2Model");
-		return _dataModelRoot;
-	}
-
-	/**
-	 * Sets up the model that should be connected to the model root. We can return 3 different models:
-	 * <ul>
-	 * <li>The list of Regions if the Region aggregation is activated and the variant is the Ships By Location
-	 * fragment.</li>
-	 * <li>The list of Locations also if the variant is the Ships By Location fragment.</li>
-	 * <li>The list of Categories if the variant is the Ships By Category.</li>
-	 * </ul>
-	 */
-	private void setupOutputModel() {
-		if (null == _dataModelRoot) {
-			_dataModelRoot = new RootNode();
+		_dataModelRoot = new RootNode();
+		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) if (this.ifGroupLocations()) {
+			for (Region node : _regions.values()) {
+				_dataModelRoot.addChild(node);
+			}
 		} else {
-			_dataModelRoot.clean();
-		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYLOCATION) {
-			if (ifGroupLocations()) {
-				for (Region node : _regions.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			} else {
-				for (ShipLocation node : _locations.values()) {
-					_dataModelRoot.addChild(node);
-				}
+			for (ShipLocation node : _locations.values()) {
+				_dataModelRoot.addChild(node);
 			}
 		}
-		if (getVariant() == AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS) {
+		if (this.getVariant() == EShipsVariants.SHIPS_BYCLASS.name()) {
 			for (Separator node : _categories.values()) {
 				_dataModelRoot.addChild(node);
 			}
 		}
+		// [01]
+		SpecialDataSource.logger.info("<< ShipsDatasource.collaborate2Model");
+		return _dataModelRoot;
+	}
+
+	private void add2Category(final String category, final NeoComAsset ship) {
+		// Check if the location is already on the array.
+		Separator hit = _categories.get(category);
+		if (null == hit) {
+			hit = new Separator(category);
+			_categories.put(category, hit);
+		}
+		hit.addChild(ship);
 	}
 
 	/**
@@ -135,13 +125,13 @@ public class ShipsDataSource extends SpecialDataSource {
 	 * @param ship
 	 *          part to be added to the locations. May be an asset or a container.
 	 */
-	private void add2Location(final long locationid, final Asset ship) {
+	private void add2Location(final long locationid, final NeoComAsset ship) {
 		// Check if the location is already on the array.
 		ShipLocation hit = _locations.get(locationid);
 		if (null == hit) {
-			hit = new ShipLocation(ship.getLocation());
+			hit = ShipLocation.createFromLocation(ship.getLocation());
 			// Add the new location to the list of locations and to the Regions
-			add2Region(hit);
+			this.add2Region(hit);
 			_locations.put(locationid, hit);
 		}
 		hit.addChild(ship);
@@ -176,15 +166,36 @@ public class ShipsDataSource extends SpecialDataSource {
 			return false;
 	}
 
-	private void add2Category(final String category, final Asset ship) {
-		// Check if the location is already on the array.
-		Separator hit = _categories.get(category);
-		if (null == hit) {
-			hit = new Separator(category);
-			_categories.put(category, hit);
-		}
-		hit.addChild(ship);
-	}
+	//	/**
+	//	 * Sets up the model that should be connected to the model root. We can return 3 different models:
+	//	 * <ul>
+	//	 * <li>The list of Regions if the Region aggregation is activated and the variant is the Ships By Location
+	//	 * fragment.</li>
+	//	 * <li>The list of Locations also if the variant is the Ships By Location fragment.</li>
+	//	 * <li>The list of Categories if the variant is the Ships By Category.</li>
+	//	 * </ul>
+	//	 */
+	//	private void setupOutputModel() {
+	//		if (null == _dataModelRoot) {
+	//			_dataModelRoot = new RootNode();
+	//		} else {
+	//			_dataModelRoot.clean();
+	//		}
+	//		if (this.getVariant() == EVARIANT.SHIPS_BYLOCATION.name()) if (this.ifGroupLocations()) {
+	//			for (Region node : _regions.values()) {
+	//				_dataModelRoot.addChild(node);
+	//			}
+	//		} else {
+	//			for (ShipLocation node : _locations.values()) {
+	//				_dataModelRoot.addChild(node);
+	//			}
+	//		}
+	//		if (this.getVariant() == EVARIANT.SHIPS_BYCLASS.name()) {
+	//			for (Separator node : _categories.values()) {
+	//				_dataModelRoot.addChild(node);
+	//			}
+	//		}
+	//	}
 
 	//	@Override
 	//	public ArrayList<AbstractAndroidPart> getPartHierarchy() {

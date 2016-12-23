@@ -16,9 +16,8 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.part.LocationMarketPart;
-import org.dimensinfin.evedroid.part.StackPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -54,9 +53,9 @@ public class Modules4SellDataSource extends AbstractIndustryDataSource {
 
 		// Get the list of T2 modules for this Pilot. Make it unique
 		//		AssetsManager manager = DataSourceFactory.getPilot().getAssetsManager();
-		final ArrayList<Asset> modules = this._store.getPilot().getAssetsManager().searchT2Modules();
+		final ArrayList<NeoComAsset> modules = this._store.getPilot().getAssetsManager().searchT2Modules();
 		final HashMap<String, StackPart> mods = new HashMap<String, StackPart>();
-		for (final Asset mc : modules) {
+		for (final NeoComAsset mc : modules) {
 			// Check if the item is already on the list.
 			final boolean hit = mods.containsKey(mc.getItemName());
 			// Only add to sell list the stacks with more than 9 elements.

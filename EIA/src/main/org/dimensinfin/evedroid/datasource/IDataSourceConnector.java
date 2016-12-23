@@ -7,6 +7,8 @@
 
 package org.dimensinfin.evedroid.datasource;
 
+import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IDataSourceConnector {
 

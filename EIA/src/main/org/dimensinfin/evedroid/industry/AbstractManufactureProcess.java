@@ -17,18 +17,18 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.EveTask;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Property;
 
 import com.j256.ormlite.dao.Dao;
@@ -50,9 +50,9 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** The main element used for the manufacture job. */
-	protected Blueprint												blueprint								= null;
+	protected NeoComBlueprint									blueprint								= null;
 	/** The Pilot owner of the job and blueprint. Required to get the characterID. */
-	protected EveChar													pilot										= null;
+	protected NeoComCharacter									pilot										= null;
 	/** New and locally used AssetsManager used to process the job requests. */
 	protected AssetsManager										industryAssetsManager		= null;
 	protected int															bpid										= -1;
@@ -75,13 +75,17 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	protected int															threads									= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/** Test only constructor. NOt to be used */
+	@Deprecated
+	public AbstractManufactureProcess() {
+	}
+
 	public AbstractManufactureProcess(final AssetsManager manager) {
 		super();
-		if (null == manager) {
+		if (null == manager)
 			industryAssetsManager = new AssetsManager(null);
-		} else {
+		else
 			industryAssetsManager = manager;
-		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -103,26 +107,18 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			final ArrayList<Resource> resourceList = AppConnector.getDBConnector().searchListOfMaterials(bpid);
 			for (final Resource resource : resourceList) {
 				// Remove blueprints from the list of assets.
-				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-					continue;
-				}
-				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-					continue;
-				}
+				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) continue;
+				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) continue;
 				// Get the corresponding resource quantity from the location.
-				final ArrayList<Asset> available = getAsset4Type(resource.getTypeID());
+				final ArrayList<NeoComAsset> available = this.getAsset4Type(resource.getTypeID());
 				Log.i("EVEI", "-- T2ManufactureProcess.getManufacturableCount - available:" + available);
 				int resourceCount = 0;
-				for (final Asset asset : available)
-					if (asset.getLocationID() == location.getID()) {
-						resourceCount += asset.getQuantity();
-					}
+				for (final NeoComAsset asset : available)
+					if (asset.getLocationID() == location.getID()) resourceCount += asset.getQuantity();
 				Log.i("EVEI",
 						"-- T2ManufactureProcess.getManufacturableCount - resource count " + resource + " [" + resourceCount + "]");
 				final int range = resourceCount / resource.getQuantity();
-				if (range < count) {
-					count = range;
-				}
+				if (range < count) count = range;
 			}
 			totalManufacturable = count;
 			totalcalculated = true;
@@ -147,14 +143,13 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	public void setAssetsManager(final AssetsManager iam) {
 		industryAssetsManager = iam;
 		totalcalculated = false;
-		if (null != industryAssetsManager) {
-			industryAssetsManager.setPilot(getPilot());
-		} else {
-			industryAssetsManager = new AssetsManager(getPilot());
-		}
+		if (null != industryAssetsManager)
+			industryAssetsManager.setPilot(this.getPilot());
+		else
+			industryAssetsManager = new AssetsManager(this.getPilot());
 	}
 
-	public void setPilot(final EveChar pilot) {
+	public void setPilot(final NeoComCharacter pilot) {
 		this.pilot = pilot;
 		industryAssetsManager.setPilot(pilot);
 	}
@@ -177,9 +172,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 	protected ArrayList<Action> getActions() {
 		final ArrayList<Action> result = new ArrayList<Action>();
-		for (final Action action : actionsRegistered.values()) {
+		for (final Action action : actionsRegistered.values())
 			result.add(action);
-		}
 		return result;
 	}
 
@@ -192,8 +186,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param typeID
 	 * @return
 	 */
-	protected ArrayList<Asset> getAsset4Type(final int typeID) {
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(Long.valueOf(typeID));
+	protected ArrayList<NeoComAsset> getAsset4Type(final int typeID) {
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(Long.valueOf(typeID));
 		if (null == hit) {
 			hit = AppConnector.getDBConnector().searchAsset4Type(pilot.getCharacterID(), typeID);
 			industryAssetsManager.assetCache.put(Long.valueOf(typeID), hit);
@@ -201,12 +195,12 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		return hit;
 	}
 
-	protected EveChar getPilot() {
+	protected NeoComCharacter getPilot() {
 		return pilot;
 	}
 
 	protected void processAction(final EveTask newTask) {
-		logger.info(">> [AbstractManufactureProcess.processAction]> " + newTask);
+		AbstractManufactureProcess.logger.info(">> [AbstractManufactureProcess.processAction]> " + newTask);
 		final String category = newTask.getItem().getCategory();
 		// Check the special case for T2 BPC to transform them to default INVENTION.
 		if (newTask.getTaskType() == ETaskType.REQUEST)
@@ -215,7 +209,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 			Log.i("EVEI", "-- AbstractManufactureProcess.processRequest T2 Blueprint - request INVENTION");
 			newTask.setTaskType(ETaskType.INVENTION);
-			processRequest(newTask);
+			this.processRequest(newTask);
 			return;
 			}
 			// If we request a T1 blueprint then we have to check if we can create copies. This is a default
@@ -226,7 +220,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetID());
 			//						if (bp.isBpo()) {
 			newTask.setTaskType(ETaskType.COPY);
-			processRequest(newTask);
+			this.processRequest(newTask);
 			return;
 			//						}
 			//					}
@@ -242,23 +236,19 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			// Store the action on the Task for later presentation.
 			currentAction.setUserAction(action.getStringValue());
 			// New code to handle reactions.
-			if (newTask.getItem().getIndustryGroup() == EIndustryGroup.REACTIONMATERIALS) {
-				processReaction(newTask);
-			}
+			if (newTask.getItem().getIndustryGroup() == EIndustryGroup.REACTIONMATERIALS) this.processReaction(newTask);
 			if (category.equalsIgnoreCase("Planetary Commodities")) // Action is limited to PRODUCE or BUY
 				if (action.getStringValue().equalsIgnoreCase("PRODUCE")) {
 				final EveLocation planetaryLocation = pilot.getLocation4Role("PLANETARY PROCESSING", region);
 				newTask.setTaskType(ETaskType.PRODUCE);
-				if (null != planetaryLocation) {
-				newTask.setLocation(planetaryLocation);
-				}
+				if (null != planetaryLocation) newTask.setLocation(planetaryLocation);
 				newTask.setDestination(manufactureLocation);
-				registerTask(500, newTask);
+				this.registerTask(500, newTask);
 				return;
 				}
 			if (category.equalsIgnoreCase("Material")) // Action is limited to EXTRACT or BUY
 				if (action.getStringValue().equalsIgnoreCase("MATERIAL REFINE")) {
-				processRefine(newTask);
+				this.processRefine(newTask);
 				return;
 				}
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
@@ -266,17 +256,13 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 				final String tech = newTask.getItem().getTech();
 				if (tech.equalsIgnoreCase("Tech I")) {
 					final EveLocation copyLocation = pilot.getLocation4Role("COPY", region);
-					logger.info("-- COPY location searched at " + copyLocation);
+					AbstractManufactureProcess.logger.info("-- COPY location searched at " + copyLocation);
 					newTask.setTaskType(ETaskType.COPY);
-					if (null != copyLocation) {
-						newTask.setLocation(copyLocation);
-					}
+					if (null != copyLocation) newTask.setLocation(copyLocation);
 					final EveLocation inventLocation = pilot.getLocation4Role("INVENT", region);
-					logger.info("-- INVENT location searched at " + inventLocation);
-					if (null != inventLocation) {
-						newTask.setDestination(manufactureLocation);
-					}
-					registerTask(400, newTask);
+					AbstractManufactureProcess.logger.info("-- INVENT location searched at " + inventLocation);
+					if (null != inventLocation) newTask.setDestination(manufactureLocation);
+					this.registerTask(400, newTask);
 					return;
 				}
 			}
@@ -284,17 +270,17 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 					|| (category.equalsIgnoreCase("Charge"))) // Action is limited to BUILD.
 				if (action.getStringValue().equalsIgnoreCase("BUILD")) {
 				// Schedule a manufacture request.
-				processBuild(newTask);
+				this.processBuild(newTask);
 				return;
 				}
 			if (category.equalsIgnoreCase("Ship")) // Action is limited to BUILD.
 				if (action.getStringValue().equalsIgnoreCase("BUILD")) {
 				// Schedule a manufacture request.
-				processBuild(newTask);
+				this.processBuild(newTask);
 				return;
 				}
 		}
-		processBuy(newTask);
+		this.processBuy(newTask);
 	}
 
 	protected void processBuild(final EveTask newTask) {
@@ -304,8 +290,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		final int bpid = AppConnector.getDBConnector().searchBlueprint4Module(itemID);
 		// Check if there is a blueprint of this type on the belongings for this character.
 		boolean blueprintExists = false;
-		final ArrayList<Asset> bpsofType = AppConnector.getDBConnector().searchAsset4Type(getPilot().getCharacterID(),
-				bpid);
+		final ArrayList<NeoComAsset> bpsofType = AppConnector.getDBConnector()
+				.searchAsset4Type(this.getPilot().getCharacterID(), bpid);
 		EveLocation loc = manufactureLocation;
 		if (bpsofType.size() > 0) {
 			blueprintExists = true;
@@ -313,17 +299,18 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		}
 		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfMaterials(bpid);
 		for (final Resource resource : lom) {
-			logger.info("-- [AbstractManufactureProcess.processRequest]> Processing Resource of LOM: " + resource);
+			AbstractManufactureProcess.logger
+					.info("-- [AbstractManufactureProcess.processRequest]> Processing Resource of LOM: " + resource);
 			final int runs = newTask.getQty();
 			resource.setQuantity(resource.getQuantity());
 			resource.setAdaptiveStackSize(runs);
 			// Add the resource to the set of required resources. This is the original list.
-			addResource(resource);
+			this.addResource(resource);
 		}
 		newTask.setTaskType(ETaskType.BUILD);
 		// Change the source location to the blueprint location if found. Otherwise use the manufacture location.
 		newTask.setLocation(loc);
-		registerTask(450, newTask);
+		this.registerTask(450, newTask);
 	}
 
 	/**
@@ -336,9 +323,9 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param newTask
 	 */
 	protected void processBuy(final EveTask newTask) {
-		final ArrayList<MarketOrder> scheduledOrders = accessScheduledOrders();
+		final ArrayList<NeoComMarketOrder> scheduledOrders = this.accessScheduledOrders();
 		// Search for an order for this type.
-		for (final MarketOrder marketOrder : scheduledOrders)
+		for (final NeoComMarketOrder marketOrder : scheduledOrders)
 			if (marketOrder.getItemTypeID() == newTask.getTypeID()) { //if (marketOrder.getQuantity() < newTask.getQty()) {
 				final int taskQty = newTask.getQty();
 				final int orderQty = marketOrder.getQuantity();
@@ -347,23 +334,23 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 				newTask.setTaskType(ETaskType.BUYCOVERED);
 				newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
 				newTask.setQty(Math.min(taskQty, orderQty));
-				registerTask(300, newTask);
+				this.registerTask(300, newTask);
 				final int diff = taskQty - orderQty;
 				if (diff > 0) {
 					final EveTask partialTask = new EveTask(ETaskType.BUY, newTask.getResource());
 					partialTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
 					partialTask.setQty(diff);
-					registerTask(300, partialTask);
+					this.registerTask(300, partialTask);
 				}
 				return;
 			}
 		newTask.setTaskType(ETaskType.BUY);
 		newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
-		registerTask(300, newTask);
+		this.registerTask(300, newTask);
 	}
 
 	protected void processInvent(final EveTask newTask) {
-		registerTask(500, newTask);
+		this.registerTask(500, newTask);
 	}
 
 	//	protected void processSell() {
@@ -388,7 +375,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	//		}
 	//	}
 
-	protected void processMove(final Asset asset, final EveTask newTask) {
+	protected void processMove(final NeoComAsset asset, final EveTask newTask) {
 		final EveLocation loc = asset.getLocation();
 		final int requestQty = newTask.getQty();
 		final int qty = asset.getQuantity();
@@ -402,15 +389,13 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			if (manufactureLocation.getID() == loc.getID()) {
 				// Convert the move to AVAILABLE because the locations match.
 				// If the owner is -1 than this resource comes from a reprocessing.
-				if (asset.getOwnerID() == -1) {
+				if (asset.getOwnerID() == -1)
 					moveTask.setTaskType(ETaskType.EXTRACT);
-				} else {
+				else
 					moveTask.setTaskType(ETaskType.AVAILABLE);
-				}
-				registerTask(90, moveTask, asset);
-			} else {
-				registerTask(400, moveTask, asset);
-			}
+				this.registerTask(90, moveTask, asset);
+			} else
+				this.registerTask(400, moveTask, asset);
 			return;
 		} else {
 			// We need more locations to complete the request.
@@ -422,18 +407,16 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			// Treat the special case of assets already present on the Manufacture location.
 			if (manufactureLocation.getID() == loc.getID()) {
 				// If the owner is -1 than this resource comes from a reprocessing.
-				if (asset.getOwnerID() == -1) {
+				if (asset.getOwnerID() == -1)
 					moveTask.setTaskType(ETaskType.EXTRACT);
-				} else {
+				else
 					moveTask.setTaskType(ETaskType.AVAILABLE);
-				}
-				registerTask(90, moveTask, asset);
-			} else {
-				registerTask(400, moveTask, asset);
-			}
+				this.registerTask(90, moveTask, asset);
+			} else
+				this.registerTask(400, moveTask, asset);
 			final EveTask newRequest = new EveTask(ETaskType.REQUEST, newTask.getResource());
 			newRequest.setQty(requestQty - qty);
-			processRequest(newRequest);
+			this.processRequest(newRequest);
 			return;
 		}
 	}
@@ -444,18 +427,18 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		final int outputMultiplier = AppConnector.getDBConnector().searchReactionOutputMultiplier(itemID);
 		final ArrayList<Resource> lom = AppConnector.getDBConnector().searchListOfReaction(itemID);
 		for (final Resource resource : lom) {
-			logger.info("-- Processing Resource of LOM: " + resource);
+			AbstractManufactureProcess.logger.info("-- Processing Resource of LOM: " + resource);
 			final int runs = newTask.getQty();
 			double inputQty = (Math.ceil(runs / outputMultiplier) + 1) * resource.getQuantity();
 			resource.setQuantity(Double.valueOf(inputQty).intValue());
 			//			resource.setAdaptiveStackSize(1);
 			// Add the resource to the set of required resources.
-			addResource(resource);
+			this.addResource(resource);
 		}
 		newTask.setTaskType(ETaskType.BUILD);
 		// Change the source location to the blueprint location if found. Otherwise use the manufacture location.
 		//		newTask.setLocation(loc);
-		registerTask(450, newTask);
+		this.registerTask(450, newTask);
 	}
 
 	/**
@@ -476,21 +459,19 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		final int mineralCode = newTask.getTypeID();
 		final int mineralRequested = newTask.getQty();
 		int mineralObtained = 0;
-		final Asset oreSelected = searchOREAsset(newTask);
+		final NeoComAsset oreSelected = this.searchOREAsset(newTask);
 		if (null != oreSelected) {
 			// Get access to the refining parameters
 			final ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(oreSelected.getTypeID());
 			// Refine the asteroid stack and generate the new minerals.
 			for (final Resource rc : refineParameters) {
-				final double mineral = Math.floor(
-						Math.floor(oreSelected.getQuantity() / rc.getStackSize()) * (rc.getBaseQuantity() * REFINING_EFFICIENCY));
-				if (rc.getTypeID() == mineralCode) {
-					mineralObtained = Double.valueOf(mineral).intValue();
-				}
-				registerAssetChange(mineral, rc.item.getTypeID(), oreSelected.getLocationID());
+				final double mineral = Math.floor(Math.floor(oreSelected.getQuantity() / rc.getStackSize())
+						* (rc.getBaseQuantity() * AbstractManufactureProcess.REFINING_EFFICIENCY));
+				if (rc.getTypeID() == mineralCode) mineralObtained = Double.valueOf(mineral).intValue();
+				this.registerAssetChange(mineral, rc.item.getTypeID(), oreSelected.getLocationID());
 			}
 			// Generate the Action changes.
-			addResource(new Resource(oreSelected.getTypeID(), oreSelected.getQuantity()));
+			this.addResource(new Resource(oreSelected.getTypeID(), oreSelected.getQuantity()));
 			// Remove the resource from the available list to not be reprocessed again and again.
 			oreSelected.setQuantity(0);
 
@@ -498,16 +479,15 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			if (mineralObtained < mineralRequested) {
 				// Process again like a AVAILABLE move with the new mineral. But special
 				newTask.setQty(mineralRequested);
-				processRequest(newTask);
+				this.processRequest(newTask);
 				return;
 			} else {
 				// Refine completed.
-				processRequest(newTask);
+				this.processRequest(newTask);
 				return;
 			}
-		} else {
-			processBuy(newTask);
-		}
+		} else
+			this.processBuy(newTask);
 	}
 
 	/**
@@ -528,7 +508,8 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 			Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Processing state> " + ETaskType.REQUEST + " [x"
 					+ requestQty + "]");
 			final String category = newTask.getItem().getCategory();
-			logger.info("-- [AbstractManufactureProcess.processRequest]-Checking special case of Asteroids > " + category);
+			AbstractManufactureProcess.logger
+					.info("-- [AbstractManufactureProcess.processRequest]-Checking special case of Asteroids > " + category);
 			// If the resource is an asteroid then we can Refine it.
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
 				//				Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Asteroid - request COMPLETED");
@@ -538,88 +519,83 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 				final ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(newTask.getTypeID());
 				for (final Resource rc : refineParameters) {
 					final double mineral = Math.floor(Math.floor(newTask.getResource().getQuantity() / rc.getStackSize())
-							* (rc.getBaseQuantity() * REFINING_EFFICIENCY));
+							* (rc.getBaseQuantity() * AbstractManufactureProcess.REFINING_EFFICIENCY));
 					final EveTask refineTask = new EveTask(ETaskType.PRODUCE,
 							new Resource(rc.item.getItemID(), Double.valueOf(mineral).intValue()));
 					refineTask.setQty(Double.valueOf(mineral).intValue());
 					refineTask.setLocation(newTask.getLocation());
-					registerTask(90, refineTask);
+					this.registerTask(90, refineTask);
 				}
 				return;
 			}
 		}
 		if (newTask.getTaskType() == ETaskType.INVENTION) {
 			// TODO Implement the process invention
-			processInvent(newTask);
+			this.processInvent(newTask);
 			return;
 		}
 		// Get the Assets that match the current type id.
-		final ArrayList<Asset> available = getAsset4Type(newTask.resource.item.getItemID());
+		final ArrayList<NeoComAsset> available = this.getAsset4Type(newTask.resource.item.getItemID());
 		Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Available assets: " + available);
 		// See if there are assets of this type on the manufacture location before moving assets.
 		// MOVE - manufacture location
-		for (final Asset asset : available) {
+		for (final NeoComAsset asset : available) {
 			// Removed assets with no count
-			if (asset.getQuantity() < 1) {
-				continue;
-			}
+			if (asset.getQuantity() < 1) continue;
 			// Check location on this region.
 			final EveLocation loc = asset.getLocation();
 			if (loc.toString().equalsIgnoreCase(manufactureLocation.toString())) {
-				processMove(asset, newTask);
+				this.processMove(asset, newTask);
 				return;
 			}
 		}
 		// Check the MOVE flag to control if the user allows to search for assets at other locations
-		logger.info("-- [AbstractManufactureProcess.processRequest]-Checking Move Allowed flag > " + moveAllowed());
-		if (moveAllowed()) {
+		AbstractManufactureProcess.logger
+				.info("-- [AbstractManufactureProcess.processRequest]-Checking Move Allowed flag > " + this.moveAllowed());
+		if (this.moveAllowed()) {
 			// See if we have that resource elsewhere ready for transportation.
 			// MOVE - manufacture region
-			for (final Asset asset : available) {
+			for (final NeoComAsset asset : available) {
 				// Removed assets with no count
-				if (asset.getQuantity() < 1) {
-					continue;
-				}
+				if (asset.getQuantity() < 1) continue;
 				// Check location on this region.
 				final EveLocation loc = asset.getLocation();
 				if (loc.getRegion().equalsIgnoreCase(region)) {
-					processMove(asset, newTask);
+					this.processMove(asset, newTask);
 					return;
 				}
 			}
 
 			// Assets not in same region or not found. Try without region limits.
 			// MOVE - rest of universe
-			for (final Asset asset : available) {
-				if (asset.getQuantity() < 1) {
-					continue;
-				}
-				processMove(asset, newTask);
+			for (final NeoComAsset asset : available) {
+				if (asset.getQuantity() < 1) continue;
+				this.processMove(asset, newTask);
 				return;
 			}
 		}
 
 		// If we reach this point we are sure that all other intents have been processed.
 		// Continue processing a BUY request or its decomposition.
-		logger.info("-- [AbstractManufactureProcess.processRequest]-Delegating processing to [processAction]");
-		processAction(newTask);
+		AbstractManufactureProcess.logger
+				.info("-- [AbstractManufactureProcess.processRequest]-Delegating processing to [processAction]");
+		this.processAction(newTask);
 	}
 
 	protected void registerAction(final Action action) {
 		// Test if already an action of the same item.
 		final Action hit = actionsRegistered.get(action.getTypeID());
-		if (null != hit) {
+		if (null != hit)
 			currentAction = action;
-		} else {
+		else
 			actionsRegistered.put(action.getTypeID(), action);
-		}
 	}
 
-	protected Asset searchResourceAtLocation(final Resource resource, final EveLocation location) {
+	protected NeoComAsset searchResourceAtLocation(final Resource resource, final EveLocation location) {
 		final int targetid = resource.getTypeID();
 		//	int targetqty = resource.getQuantity();
-		final ArrayList<Asset> available = getAssetsAtLocation(location);
-		for (final Asset asset : available) {
+		final ArrayList<NeoComAsset> available = this.getAssetsAtLocation(location);
+		for (final NeoComAsset asset : available) {
 			final int id = asset.getTypeID();
 			if (id == targetid) return asset;
 		}
@@ -636,28 +612,25 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	//		return hit;
 	//	}
 
-	private ArrayList<MarketOrder> accessScheduledOrders() {
+	private ArrayList<NeoComMarketOrder> accessScheduledOrders() {
 		// Search for an scheduled buy and get its quantity.
-		final ArrayList<MarketOrder> allorders = getPilot().searchMarketOrders();
-		final ArrayList<MarketOrder> orders = new ArrayList<MarketOrder>();
-		for (final MarketOrder order : allorders)
-			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
-				orders.add(order);
-			}
-		return aggregate(orders);
+		final ArrayList<NeoComMarketOrder> allorders = this.getPilot().searchMarketOrders();
+		final ArrayList<NeoComMarketOrder> orders = new ArrayList<NeoComMarketOrder>();
+		for (final NeoComMarketOrder order : allorders)
+			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) orders.add(order);
+		return this.aggregate(orders);
 	}
 
 	private void addResource(final Resource resource) {
 		for (final Resource current : requirements)
 			if (resource.item.getItemID() == current.item.getItemID()) {
 				// Do special processing for skill. They are not added but the level maxed.
-				if (current.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+				if (current.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill))
 					current.setQuantity(Math.max(resource.getQuantity(), current.getQuantity()));
-				} else {
+				else
 					current.setQuantity(resource.getQuantity() + current.getQuantity());
-				}
 				current.setStackSize(1);
-				logger.info("-- Incrementing Resource requirements: " + current);
+				AbstractManufactureProcess.logger.info("-- Incrementing Resource requirements: " + current);
 				return;
 			}
 		Log.i("EVEI", "-- AbstractManufactureProcess.addResource - Adding new resource to list. " + resource);
@@ -665,18 +638,17 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	}
 
 	@SuppressLint("UseValueOf")
-	private ArrayList<MarketOrder> aggregate(final ArrayList<MarketOrder> sourcenodes) {
-		final HashMap<Integer, MarketOrder> datamap = new HashMap<Integer, MarketOrder>();
-		for (final MarketOrder order : sourcenodes) {
-			final MarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
-			if (null == hit) {
+	private ArrayList<NeoComMarketOrder> aggregate(final ArrayList<NeoComMarketOrder> sourcenodes) {
+		final HashMap<Integer, NeoComMarketOrder> datamap = new HashMap<Integer, NeoComMarketOrder>();
+		for (final NeoComMarketOrder order : sourcenodes) {
+			final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
+			if (null == hit)
 				datamap.put(new Integer(order.getItemTypeID()), order);
-			} else {
+			else
 				hit.setVolEntered(hit.getVolEntered() + order.getVolEntered());
-			}
 		}
 		// Unpack the data map into a new list with the quantities aggregated
-		return new ArrayList<MarketOrder>(datamap.values());
+		return new ArrayList<NeoComMarketOrder>(datamap.values());
 	}
 
 	/**
@@ -686,28 +658,28 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param category
 	 * @return
 	 */
-	private ArrayList<Asset> getAsset4Category(final String category) {
+	private ArrayList<NeoComAsset> getAsset4Category(final String category) {
 		final long hash = category.hashCode();
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(hash);
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(hash);
 		if (null == hit) {
-			hit = searchAsset4Category(pilot.getCharacterID(), category);
+			hit = this.searchAsset4Category(pilot.getCharacterID(), category);
 			industryAssetsManager.assetCache.put(hash, hit);
 		}
 		return hit;
 	}
 
-	private ArrayList<Asset> getAsset4Group(final String groupName) {
+	private ArrayList<NeoComAsset> getAsset4Group(final String groupName) {
 		final long hash = groupName.hashCode();
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(hash);
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(hash);
 		if (null == hit) {
-			hit = getPilot().getAssetsManager().searchAsset4Group(groupName);
+			hit = this.getPilot().getAssetsManager().searchAsset4Group(groupName);
 			industryAssetsManager.assetCache.put(hash, hit);
 		}
 		return hit;
 	}
 
-	private ArrayList<Asset> getAssetsAtLocation(final EveLocation location) {
-		ArrayList<Asset> hit = industryAssetsManager.assetCache.get(location.getID());
+	private ArrayList<NeoComAsset> getAssetsAtLocation(final EveLocation location) {
+		ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(location.getID());
 		if (null == hit) {
 			hit = industryAssetsManager.searchAsset4Location(location);
 			industryAssetsManager.assetCache.put(location.getID(), hit);
@@ -721,7 +693,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param task
 	 * @param targetAsset
 	 */
-	private void performTask(final EveTask task, final Asset targetAsset) {
+	private void performTask(final EveTask task, final NeoComAsset targetAsset) {
 		final ETaskType type = task.getTaskType();
 		switch (type) {
 			case MOVE:
@@ -751,16 +723,16 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @param location
 	 */
 	private void registerAssetChange(final double qty, final int itemID, final long location) {
-		final ArrayList<Asset> hit = industryAssetsManager.assetCache.get(Long.valueOf(itemID));
+		final ArrayList<NeoComAsset> hit = industryAssetsManager.assetCache.get(Long.valueOf(itemID));
 		if (null == hit) {
 			// Force a database access and try again.
-			getAsset4Type(itemID);
-			registerAssetChange(qty, itemID, location);
+			this.getAsset4Type(itemID);
+			this.registerAssetChange(qty, itemID, location);
 		} else {
 			final EveItem item = AppConnector.getDBConnector().searchItembyID(itemID);
-			final Asset newAsset = new Asset();
+			final NeoComAsset newAsset = new NeoComAsset();
 			//		newAsset.setItem(AppConnector.getDBConnector().searchItembyID(itemID));
-			newAsset.setAssetID(GENERATED_ASSETCOUNTER++);
+			newAsset.setAssetID(AbstractManufactureProcess.GENERATED_ASSETCOUNTER++);
 			newAsset.setTypeID(itemID);
 			newAsset.setName(item.getName());
 			newAsset.setLocationID(location);
@@ -780,30 +752,14 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 */
 	private synchronized void registerTask(final int pri, final EveTask task) {
 		// Check for completed tasks.
-		if (task.getTaskType() == ETaskType.AVAILABLE) {
-			currentAction.setCompleted(ETaskCompletion.COMPLETED, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.EXTRACT) {
-			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.SELL) {
-			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.REFINE) {
-			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.MOVE) {
-			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.BUILD) {
-			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.BUY) {
-			currentAction.setCompleted(ETaskCompletion.MARKET, task.getQty());
-		}
-		if (task.getTaskType() == ETaskType.BUYCOVERED) {
-			currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
-		}
+		if (task.getTaskType() == ETaskType.AVAILABLE) currentAction.setCompleted(ETaskCompletion.COMPLETED, task.getQty());
+		if (task.getTaskType() == ETaskType.EXTRACT) currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+		if (task.getTaskType() == ETaskType.SELL) currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+		if (task.getTaskType() == ETaskType.REFINE) currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+		if (task.getTaskType() == ETaskType.MOVE) currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+		if (task.getTaskType() == ETaskType.BUILD) currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
+		if (task.getTaskType() == ETaskType.BUY) currentAction.setCompleted(ETaskCompletion.MARKET, task.getQty());
+		if (task.getTaskType() == ETaskType.BUYCOVERED) currentAction.setCompleted(ETaskCompletion.PENDING, task.getQty());
 		currentAction.registerTask(pri, task);
 	}
 
@@ -820,30 +776,30 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 *          other resources. This is used to change the memory copy of the asset so next actions will found
 	 *          an scenery similar to the one in real life and not an infinite number of resources.
 	 */
-	private void registerTask(final int pri, final EveTask task, final Asset targetAsset) {
-		logger.info("-- Registering task request [" + pri + "] " + task);
-		performTask(task, targetAsset);
+	private void registerTask(final int pri, final EveTask task, final NeoComAsset targetAsset) {
+		AbstractManufactureProcess.logger.info("-- Registering task request [" + pri + "] " + task);
+		this.performTask(task, targetAsset);
 		//Also add the asset as a reference to the task. Useful when activating links.
 		task.registerAsset(targetAsset);
-		registerTask(pri, task);
+		this.registerTask(pri, task);
 	}
 
-	private ArrayList<Asset> searchAsset4Category(final long characterID, final String category) {
+	private ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {
 		//	Select assets for the owner and woth an specific type id.
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			final Dao<Asset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			final QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			final Where<Asset, String> where = queryBuilder.where();
+			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			final Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
 			where.and();
 			where.eq("category", category);
-			final PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			final PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 		} catch (final java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return (ArrayList<Asset>) assetList;
+		return (ArrayList<NeoComAsset>) assetList;
 
 	}
 
@@ -861,44 +817,37 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 	 * @return an <code>Asset</code> that complies to cover the requested mineral request or at least a part of
 	 *         it.
 	 */
-	private Asset searchOREAsset(final EveTask newTask) {
+	private NeoComAsset searchOREAsset(final EveTask newTask) {
 		// Try to cache the list of assets related to asteroids at partiicualr locations.
-		ArrayList<Asset> asteroids = industryAssetsManager.asteroidCache.get(manufactureLocation.getID());
-		final EveLocation refineLocation = getPilot().getLocation4Role(ModelWideConstants.locationroles.REFINE);
-		if (null == asteroids) if (null != refineLocation) {
-			asteroids = industryAssetsManager.asteroidCache.get(refineLocation.getID());
-		}
+		ArrayList<NeoComAsset> asteroids = industryAssetsManager.asteroidCache.get(manufactureLocation.getID());
+		final EveLocation refineLocation = this.getPilot().getLocation4Role(ModelWideConstants.locationroles.REFINE);
+		if (null == asteroids)
+			if (null != refineLocation) asteroids = industryAssetsManager.asteroidCache.get(refineLocation.getID());
 		if (null == asteroids) {
 			// Get the list of assets that are asteroids at the manufacture location.
-			ArrayList<Asset> stacks = getAssetsAtLocation(manufactureLocation);
-			asteroids = new ArrayList<Asset>();
-			for (final Asset asset : stacks)
+			ArrayList<NeoComAsset> stacks = this.getAssetsAtLocation(manufactureLocation);
+			asteroids = new ArrayList<NeoComAsset>();
+			for (final NeoComAsset asset : stacks)
 				// Filter out the non asteroid stacks
-				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
-					asteroids.add(asset);
-				}
+				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) asteroids.add(asset);
 			industryAssetsManager.asteroidCache.put(manufactureLocation.getID(), asteroids);
 
 			if (asteroids.size() < 1) // If the list is empty do the same for the stacks at the refining location if exists.
 				if (null != refineLocation) {
-				stacks = getAssetsAtLocation(refineLocation);
-				asteroids = new ArrayList<Asset>();
-				for (final Asset asset : stacks)
+				stacks = this.getAssetsAtLocation(refineLocation);
+				asteroids = new ArrayList<NeoComAsset>();
+				for (final NeoComAsset asset : stacks)
 				// Filter out the non asteroid stacks
-				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
-				asteroids.add(asset);
-				}
+				if (asset.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) asteroids.add(asset);
 				industryAssetsManager.asteroidCache.put(manufactureLocation.getID(), asteroids);
 				}
 		}
 
 		// Scan each stack for the required mineral. Order the asteroids by their ore name first.
 		Collections.sort(asteroids, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		for (final Asset asteroid : asteroids) {
+		for (final NeoComAsset asteroid : asteroids) {
 			// Filter out all ore with quantity less that the portion size (100)
-			if (asteroid.getQuantity() < 100) {
-				continue;
-			}
+			if (asteroid.getQuantity() < 100) continue;
 			// Get the list of minerals resulting from this refining.
 			final ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(asteroid.getTypeID());
 			for (final Resource resource : refineParameters)

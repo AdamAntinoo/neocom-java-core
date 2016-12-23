@@ -9,10 +9,13 @@ package org.dimensinfin.evedroid.factory;
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
+import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
+import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
 import org.dimensinfin.evedroid.model.EveItem;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -35,27 +38,38 @@ public class StackByItemDataSource extends AbstractIndustryDataSource {
 		super(store);
 	}
 
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public void createContentHierarchy() {
-		logger.info(">> StackByItemDataSource.createHierarchy");
+		AbstractDataSource.logger.info(">> StackByItemDataSource.createHierarchy");
 		// Clear the current list of elements.
 		_root.clear();
 
 		// Get the list of Locations for this Pilot.
 		try {
 			AssetsManager manager = _store.getPilot().getAssetsManager();
-			ArrayList<Asset> assets = manager.stacks4Item(item);
-			for (Asset as : assets) {
+			ArrayList<NeoComAsset> assets = manager.stacks4Item(item);
+			for (NeoComAsset as : assets) {
 				AssetPart part = (AssetPart) new AssetPart(as)
 						.setRenderMode(AppWideConstants.fragment.FRAGMENT_ITEMMODULESTACKS);
 				_root.add(part);
 			}
 		} catch (RuntimeException rtex) {
 			rtex.printStackTrace();
-			logger.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
+			AbstractDataSource.logger
+					.severe("E> There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		logger.info("<< StackByItemDataSource.createHierarchy [" + _root.size() + "]");
+		AbstractDataSource.logger.info("<< StackByItemDataSource.createHierarchy [" + _root.size() + "]");
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public StackByItemDataSource setItem(final EveItem item) {

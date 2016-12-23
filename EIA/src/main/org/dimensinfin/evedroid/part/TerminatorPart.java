@@ -10,14 +10,14 @@ package org.dimensinfin.evedroid.part;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.evedroid.core.NeoComAbstractPart;
 import org.dimensinfin.evedroid.holder.TerminatorHolder;
 import org.dimensinfin.evedroid.model.Separator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class TerminatorPart extends AbstractAndroidPart {
+public class TerminatorPart extends NeoComAbstractPart {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -8085543451527813221L;
 	private static Logger			logger						= Logger.getLogger("TerminatorPart");
@@ -32,7 +32,7 @@ public class TerminatorPart extends AbstractAndroidPart {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public Separator getCastedModel() {
-		return (Separator) getModel();
+		return (Separator) this.getModel();
 	}
 
 	@Override

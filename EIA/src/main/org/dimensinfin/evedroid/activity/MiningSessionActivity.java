@@ -24,7 +24,7 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.IDirector;
 import org.dimensinfin.evedroid.fragment.MiningSessionFragment;
 import org.dimensinfin.evedroid.model.Asteroid;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.part.AsteroidOnProgressPart;
 import org.dimensinfin.evedroid.theme.ITheme;
@@ -124,7 +124,7 @@ public class MiningSessionActivity extends AbstractContextActivity implements ID
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public boolean checkActivation(final EveChar pilot) {
+	public boolean checkActivation(final NeoComCharacter pilot) {
 		return true;
 	}
 
@@ -263,7 +263,7 @@ public class MiningSessionActivity extends AbstractContextActivity implements ID
 		return EVEDroidApp.getAppContext().getItem();
 	}
 
-	private EveChar getPilot() {
+	private NeoComCharacter getPilot() {
 		return EVEDroidApp.getAppContext().getPilot();
 	}
 }

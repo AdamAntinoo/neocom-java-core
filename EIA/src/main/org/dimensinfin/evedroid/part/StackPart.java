@@ -12,10 +12,8 @@ import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.INamedPart;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.render.MarketOrderResourceRender;
 
 import android.content.Intent;
 import android.text.Html;
@@ -63,7 +61,6 @@ public class StackPart extends MarketDataPart implements INamedPart, OnLongClick
 		return getCastedModel().item.getItemID();
 	}
 
-	@Override
 	public String getName() {
 		return getCastedModel().getName();
 	}

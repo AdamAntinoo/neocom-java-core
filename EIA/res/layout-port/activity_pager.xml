@@ -8,7 +8,7 @@
     <ImageView
         android:id="@+id/backgroundFrame"
         style="@style/AppTheme.ActivityBackground"
-        android:src="@drawable/dimmedbackground60" />
+        android:src="@drawable/galaxy" />
 
     <LinearLayout
         android:layout_width="fill_parent"

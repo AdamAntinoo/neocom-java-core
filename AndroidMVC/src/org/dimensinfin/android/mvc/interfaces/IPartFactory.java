@@ -1,22 +1,21 @@
-//	PROJECT:        NeoCom.android
+//	PROJECT:        NeoCom.MVC (NEOC.MVC)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
 //	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API15.
-//	DESCRIPTION:		Application to get access to character data from Eve Online. Specialized on
-//									industrial management.
-
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Library that defines a generic Model View Controller core classes to be used
+//									on Android projects. Defines the Part factory and the Part core methods to manage
+//									the extended GEF model into the Android View to be used on ListViews.
 package org.dimensinfin.android.mvc.interfaces;
 
 //- IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IPartFactory {
 	// - M E T H O D - S E C T I O N ..........................................................................
-//	public AbstractCorePart createPart(AbstractDataSource context, IGEFNode node);
-//
-//public IEditPart createPart(AbstractCorePart abstractCorePart, IGEFNode model);
-public IEditPart createPart(IGEFNode model);
+	public IPart createPart(AbstractComplexNode model);
+
+	public String getVariant();
 }
 
 // - UNUSED CODE ............................................................................................

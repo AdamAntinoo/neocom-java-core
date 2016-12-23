@@ -10,11 +10,11 @@ package org.dimensinfin.evedroid.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveTask extends AbstractComplexNode implements INeoComNode{
@@ -28,7 +28,7 @@ public class EveTask extends AbstractComplexNode implements INeoComNode{
 	private EveLocation				location					= null;
 	private EveLocation				destination				= null;
 	private String						action						= null;
-	private Asset							assetRef					= null;
+	private NeoComAsset							assetRef					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveTask(final ETaskType newType, final Resource newresource) {
@@ -72,7 +72,7 @@ public class EveTask extends AbstractComplexNode implements INeoComNode{
 	 * 
 	 * @return
 	 */
-	public Asset getReferencedAsset() {
+	public NeoComAsset getReferencedAsset() {
 		return this.assetRef;
 	}
 
@@ -88,7 +88,7 @@ public class EveTask extends AbstractComplexNode implements INeoComNode{
 		return this.resource.getTypeID();
 	}
 
-	public void registerAsset(final Asset targetAsset) {
+	public void registerAsset(final NeoComAsset targetAsset) {
 		this.assetRef = targetAsset;
 	}
 

@@ -67,32 +67,36 @@ public class ResourceRender extends EveAbstractHolder {
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		itemName.setText(getPart().getName());
-		if (AppWideConstants.DEVELOPMENT) itemName.setText(getPart().getName() + " [#" + getPart().getTypeID() + "]");
-		String category = getPart().getCategory();
+		itemName.setText(this.getPart().getName());
+		if (AppWideConstants.DEVELOPMENT)
+			itemName.setText(this.getPart().getName() + " [#" + this.getPart().getTypeID() + "]");
+		String category = this.getPart().getCategory();
 		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			itemPrice.setVisibility(View.GONE);
 			balance.setVisibility(View.GONE);
 			totalItems.setText("x1");
 		} else {
 			// For minerals use other price
-			if (getPart().getGroup().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
-				itemPrice.setText(generatePriceString(getPart().getBuyerPrice(), true, true));
-				balance.setText(generatePriceString(getPart().getQuantity() * getPart().getBuyerPrice(), true, true));
+			if (this.getPart().getGroup().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
+				itemPrice.setText(this.generatePriceString(this.getPart().getBuyerPrice(), true, true));
+				balance.setText(
+						this.generatePriceString(this.getPart().getQuantity() * this.getPart().getBuyerPrice(), true, true));
 			} else {
-				itemPrice.setText(generatePriceString(getPart().getSellerPrice(), true, true));
-				balance.setText(generatePriceString(getPart().getQuantity() * getPart().getSellerPrice(), true, true));
+				itemPrice.setText(this.generatePriceString(this.getPart().getSellerPrice(), true, true));
+				balance.setText(
+						this.generatePriceString(this.getPart().getQuantity() * this.getPart().getSellerPrice(), true, true));
 			}
-			totalItems.setText("x" + qtyFormatter.format(getPart().getQuantity()));
+			totalItems.setText("x" + EveAbstractHolder.qtyFormatter.format(this.getPart().getQuantity()));
 		}
 
-		loadEveIcon((ImageView) _convertView.findViewById(R.id.itemIcon), getPart().getCastedModel().getTypeID());
-		_convertView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.topwhiteline));
+		this.loadEveIcon((ImageView) _convertView.findViewById(R.id.itemIcon), this.getPart().getCastedModel().getTypeID());
+		_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(R.drawable.topwhiteline));
 	}
 
 	@Override
 	protected void createView() {
-		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater mInflater = (LayoutInflater) this.getContext()
+				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		_convertView = mInflater.inflate(R.layout.resource4industryresource, null);
 		_convertView.setTag(this);
 	}

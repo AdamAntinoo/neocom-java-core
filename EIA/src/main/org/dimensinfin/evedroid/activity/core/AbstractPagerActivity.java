@@ -1,9 +1,11 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity.core;
 
 //- IMPORT SECTION .........................................................................................
@@ -11,15 +13,19 @@ import org.dimensinfin.android.mvc.activity.TitledFragment;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
+import org.dimensinfin.evedroid.model.Fitting;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
@@ -42,26 +48,59 @@ import android.widget.ImageView;
  * @author Adam Antinoo
  */
 public abstract class AbstractPagerActivity extends Activity {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	/**
+	 * Asynchronous task to perform actions out of main thread when a menu item is selected.
+	 * 
+	 * @author Adam Antinoo
+	 */
+	//- CLASS IMPLEMENTATION ...................................................................................
+	private class BackgroundMenuAction extends AsyncTask<Void, Void, Boolean> {
+		private static final boolean	showProgress	= false;
+		// - F I E L D - S E C T I O N ............................................................................
+		private Activity							_activity			= null;
+		int														action				= 0;
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+		// - C O N S T R U C T O R - S E C T I O N ................................................................
+		public BackgroundMenuAction(final Activity act, final int action) {
+			_activity = act;
+			this.action = action;
+		}
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		/**
+		 * This is the main method where we do the application data initialization. The process has some steps
+		 * that are listed below:
+		 * <ol>
+		 * <li>STEP 01. Check required files availability on app directory.</li>
+		 * <li>STEP 02. Check existence of required files.</li>
+		 * <li>STEP 03. Initialize the Model store and force a refresh from the api list file.</li>
+		 * </ol>
+		 */
+		@Override
+		protected Boolean doInBackground(final Void... entry) {
+			switch (action) {
+				case R.id.action_updateaccounts:
+					AppModelStore.initialize();
+					break;
+			}
+			return true;
+		}
+	}
+	// - S T A T I C - S E C T I O N ..........................................................................
+
+	// - F I E L D - S E C T I O N ............................................................................
 	protected ActionBar					_actionBar			= null;
 	private ViewPager						_pageContainer	= null;
 	private EvePagerAdapter			_pageAdapter		= null;
 	private ImageView						_back						= null;
-	// private AppModelStore _store = null;
 	private CirclePageIndicator	_indicator			= null;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
-		final MenuInflater inflater = getMenuInflater();
+		final MenuInflater inflater = this.getMenuInflater();
 		inflater.inflate(R.menu.eiabasemenu, menu);
 		EVEDroidApp.getAppStore().setAppMenu(menu);
 		return super.onCreateOptionsMenu(menu);
@@ -82,10 +121,37 @@ public abstract class AbstractPagerActivity extends Activity {
 				return true;
 			case R.id.action_settings:
 				final Intent intent = new Intent(this, SettingsActivity.class);
-				startActivity(intent);
+				this.startActivity(intent);
 				return false;
 			case R.id.action_fullreload:
-				startActivity(new Intent(this, SplashActivity.class));
+				this.startActivity(new Intent(this, SplashActivity.class));
+				return true;
+			case R.id.action_downloadlocations:
+				// Insert into the download queue the action to download the locations.
+				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
+				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+				break;
+			case R.id.action_updateaccounts:
+				// Refresh the store data
+				new BackgroundMenuAction(this, R.id.action_updateaccounts).execute();
+				break;
+			case R.id.action_createFitting:
+				// Create demo fittings to test the save/restore and continue the development.
+				Fitting onConstructionFit = new Fitting();
+				onConstructionFit.setName("Testing - Crusader");
+				onConstructionFit.addHull(11184);
+				onConstructionFit.fitModule(6719, 4);
+				onConstructionFit.fitModule(5973);
+				onConstructionFit.fitModule(5405);
+				onConstructionFit.fitModule(5839);
+				onConstructionFit.fitModule(5849);
+				onConstructionFit.fitModule(11563);
+				onConstructionFit.fitModule(33076);
+				onConstructionFit.fitRig(26929);
+				onConstructionFit.fitRig(26929);
+				onConstructionFit.addCargo(244, 4);
+				onConstructionFit.addCargo(240, 4);
+				AppModelStore.getSingleton().addFitting(onConstructionFit, onConstructionFit.getName());
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -107,14 +173,13 @@ public abstract class AbstractPagerActivity extends Activity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position)) {
+					if ("" == _pageAdapter.getSubTitle(position))
 						_actionBar.setSubtitle(null);
-					} else {
+					else
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
-					}
 				}
 			});
-		} else {
+		} else
 			_pageContainer.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
 				public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
@@ -126,54 +191,44 @@ public abstract class AbstractPagerActivity extends Activity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position)) {
+					if ("" == _pageAdapter.getSubTitle(position))
 						_actionBar.setSubtitle(null);
-					} else {
+					else
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
-					}
 				}
 			});
-		}
 	}
 
 	protected void addPage(final AbstractNewPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
-		final TitledFragment frag = (TitledFragment) getFragmentManager()
+		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
 				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-		if (null == frag) {
+		if (null == frag)
 			_pageAdapter.addPage(newFrag);
-		} else {
+		else
 			_pageAdapter.addPage(frag);
-		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
-		if (_pageAdapter.getCount() > 1) {
-			activateIndicator();
-		}
+		if (_pageAdapter.getCount() > 1) this.activateIndicator();
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
 	protected void addPage(final AbstractPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
-		final TitledFragment frag = (TitledFragment) getFragmentManager()
+		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
 				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-		if (null == frag) {
+		if (null == frag)
 			_pageAdapter.addPage(newFrag);
-		} else {
+		else
 			_pageAdapter.addPage(frag);
-		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
-		if (_pageAdapter.getCount() > 1) {
-			activateIndicator();
-		}
+		if (_pageAdapter.getCount() > 1) this.activateIndicator();
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
 	protected void disableIndicator() {
-		if (null != _indicator) {
-			_indicator.setVisibility(View.GONE);
-		}
+		if (null != _indicator) _indicator.setVisibility(View.GONE);
 	}
 
 	protected EvePagerAdapter getPageAdapter() {
@@ -184,29 +239,25 @@ public abstract class AbstractPagerActivity extends Activity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i("EVEI", ">> AbstractPagerActivity.onCreate"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pager);
+		this.setContentView(R.layout.activity_pager);
 		try {
 			// Gets the activity's default ActionBar
-			_actionBar = getActionBar();
+			_actionBar = this.getActionBar();
 			_actionBar.show();
 			_actionBar.setDisplayHomeAsUpEnabled(true);
 
 			// Locate the elements of the page and store in global data.
-			_pageContainer = (ViewPager) findViewById(R.id.pager);
-			_back = (ImageView) findViewById(R.id.backgroundFrame);
-			_indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+			_pageContainer = (ViewPager) this.findViewById(R.id.pager);
+			_back = (ImageView) this.findViewById(R.id.backgroundFrame);
+			_indicator = (CirclePageIndicator) this.findViewById(R.id.indicator);
 			// Check page structure.
-			if (null == _pageContainer) {
-				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			}
-			if (null == _back) {
-				stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			}
+			if (null == _pageContainer) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			if (null == _back) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
 
 			// Add the adapter for the page switching.
-			_pageAdapter = new EvePagerAdapter(getFragmentManager(), _pageContainer.getId());
+			_pageAdapter = new EvePagerAdapter(this.getFragmentManager(), _pageContainer.getId());
 			_pageContainer.setAdapter(_pageAdapter);
-			disableIndicator();
+			this.disableIndicator();
 
 			// // Process the parameters into the context.
 			// final Bundle extras = getIntent().getExtras();
@@ -226,7 +277,7 @@ public abstract class AbstractPagerActivity extends Activity {
 		} catch (final Exception rtex) {
 			Log.e("EVEI", "RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage()));
 		}
 		Log.i("EVEI", "<< AbstractPagerActivity.onCreate"); //$NON-NLS-1$
 	}
@@ -259,11 +310,11 @@ public abstract class AbstractPagerActivity extends Activity {
 		final Intent intent = new Intent(this, SplashActivity.class);
 		// Pass the user message to the activity for display.
 		intent.putExtra(AppWideConstants.extras.EXTRA_EXCEPTIONMESSAGE, exception.getMessage());
-		startActivity(intent);
+		this.startActivity(intent);
 	}
 
 	protected void updateInitialTitle() {
-		TitledFragment firstFragment = (TitledFragment) getPageAdapter().getInitialPage();
+		TitledFragment firstFragment = (TitledFragment) this.getPageAdapter().getInitialPage();
 		_actionBar.setTitle(firstFragment.getTitle());
 		_actionBar.setSubtitle(firstFragment.getSubtitle());
 	}

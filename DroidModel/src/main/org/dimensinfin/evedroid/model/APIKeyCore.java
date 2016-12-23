@@ -1,17 +1,18 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.evedroid.model;
 
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.enums.EAPIKeyTypes;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
@@ -19,18 +20,20 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class APIKeyCore extends AbstractNeoComNode {
+public abstract class APIKeyCore extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1891959457883171631L;
 	private static Logger			logger						= Logger.getLogger("APIKey");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Instant			lastCCPAccessTime	= new Instant(0);
-//	private boolean						expanded					= true;
+	//	private ApiKeyInfo				coreKeyInfo				= null;
+	//
+	//	private final Instant			lastCCPAccessTime	= new Instant(0);
+	//	private boolean						expanded					= true;
 
 	// - P R O P E R T I E S
-	protected int							keyID							= -1;
-	protected String					verificationCode	= null;
+	//	protected int							keyID							= -1;
+	//	protected String					verificationCode	= null;
 	protected EAPIKeyTypes		type							= EAPIKeyTypes.Character;
 	private Instant						paidUntil					= new Instant(0);
 
@@ -57,26 +60,26 @@ public abstract class APIKeyCore extends AbstractNeoComNode {
 		return verificationCode;
 	}
 
-//	/**
-//	 * If the account is expired then return it on the collapsed state. Otherwise return the default and user
-//	 * set state.
-//	 * 
-//	 * @return expand value.
-//	 */
-//	public boolean isExpanded() {
-//		// Check if expired.
-//		final Instant expires = getTimeLeft();
-//		Instant now = new Instant();
-//		if (expires.isBefore(now))
-//			return false;
-//		else
-//			return expanded;
-//	}
-//
-//	public boolean setExpanded(final boolean b) {
-//		expanded = b;
-//		return expanded;
-//	}
+	//	/**
+	//	 * If the account is expired then return it on the collapsed state. Otherwise return the default and user
+	//	 * set state.
+	//	 * 
+	//	 * @return expand value.
+	//	 */
+	//	public boolean isExpanded() {
+	//		// Check if expired.
+	//		final Instant expires = getTimeLeft();
+	//		Instant now = new Instant();
+	//		if (expires.isBefore(now))
+	//			return false;
+	//		else
+	//			return expanded;
+	//	}
+	//
+	//	public boolean setExpanded(final boolean b) {
+	//		expanded = b;
+	//		return expanded;
+	//	}
 
 	@Override
 	public String toString() {

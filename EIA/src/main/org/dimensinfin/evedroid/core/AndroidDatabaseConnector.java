@@ -23,12 +23,12 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.model.MarketOrder;
+import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Outpost;
 import org.dimensinfin.evedroid.model.Property;
 import org.json.JSONArray;
@@ -58,8 +58,7 @@ import net.nikr.eve.jeveasset.io.online.CitadelGetter;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AndroidDatabaseConnector implements IDatabaseConnector {
 
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger				logger										= Logger.getLogger("AndroidDatabaseConnector");
 
 	private static final String	SELECT_ITEM_BYID					= "SELECT it.typeID AS typeID, it.typeName AS typeName"
@@ -131,8 +130,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		return new MyLocation(locationID);
 	}
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private Context														_context						= null;
 	private SQLiteDatabase										staticDatabase			= null;
 	private SQLiteDatabase										ccpDatabase					= null;
@@ -142,16 +140,14 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	private final SparseArray<MarketDataSet>	sellMarketDataCache	= new SparseArray<MarketDataSet>();
 	private final SparseArray<Outpost>				outpostsCache				= new SparseArray<Outpost>();;
 
-	private final HashMap<Long, Asset>				containerCache			= new HashMap<Long, Asset>();
+	private final HashMap<Long, NeoComAsset>				containerCache			= new HashMap<Long, NeoComAsset>();
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AndroidDatabaseConnector(final Context app) {
 		_context = app;
 	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkInvention(final int typeID) {
 		return checkRecordExistence(typeID, CHECK_INVENTION);
 	}
@@ -203,14 +199,14 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		ccpDatabase = null;
 	}
 
-	public Dao<Asset, String> getAssetDAO() throws java.sql.SQLException {
+	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
 			openDAO();
 		}
 		return appDatabaseHelper.getAssetDAO();
 	}
 
-	public Dao<Blueprint, String> getBlueprintDAO() throws java.sql.SQLException {
+	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
 			openDAO();
 		}
@@ -231,7 +227,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		return appDatabaseHelper.getLocationDAO();
 	}
 
-	public Dao<MarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
+	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
 			openDAO();
 		}
@@ -431,36 +427,36 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		}
 	}
 
-	public ArrayList<Asset> searchAsset4Type(final long characterID, final int typeID) {
+	public ArrayList<NeoComAsset> searchAsset4Type(final long characterID, final int typeID) {
 		// Select assets for the owner and with an specific type id.
-		List<Asset> assetList = new ArrayList<Asset>();
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<Asset, String> assetDao = getAssetDAO();
-			QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-			Where<Asset, String> where = queryBuilder.where();
+			Dao<NeoComAsset, String> assetDao = getAssetDAO();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
 			where.and();
 			where.eq("typeID", typeID);
-			PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		return (ArrayList<Asset>) assetList;
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	public Asset searchAssetByID(final long assetID) {
+	public NeoComAsset searchAssetByID(final long assetID) {
 		// search for the asset on the cache. Usually searching for containers.
-		Asset hit = containerCache.get(assetID);
+		NeoComAsset hit = containerCache.get(assetID);
 		if (null == hit) {
 			// Select assets for the owner and with an specific type id.
-			List<Asset> assetList = new ArrayList<Asset>();
+			List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 			try {
-				Dao<Asset, String> assetDao = getAssetDAO();
-				QueryBuilder<Asset, String> queryBuilder = assetDao.queryBuilder();
-				Where<Asset, String> where = queryBuilder.where();
+				Dao<NeoComAsset, String> assetDao = getAssetDAO();
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("assetID", assetID);
-				PreparedQuery<Asset> preparedQuery = queryBuilder.prepare();
+				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
 				if (assetList.size() > 0) {
 					hit = assetList.get(0);
@@ -471,6 +467,24 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			}
 		}
 		return hit;
+	}
+
+	public ArrayList<NeoComAsset> searchAssetContainedAt(final long characterID, final long containerId) {
+		// Select assets for the owner and with an specific type id.
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		try {
+			Dao<NeoComAsset, String> assetDao = getAssetDAO();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("ownerID", characterID);
+			where.and();
+			where.eq("parentAssetID", containerId);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			assetList = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
 	/**
@@ -806,9 +820,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	}
 
 	/**
-	 * Loates the system and other information for a location based on the ID received as a parameter. New
-	 * implementation use this ID to calculate if this matches a corporation outpost or a corporation office
-	 * hangar.
+	 * <<<<<<< HEAD Loates the system and other information for a location based on the ID received as a
+	 * parameter. New ======= Loates the systema nd other information for a location based on the ID received as
+	 * a parameter. New >>>>>>> 0.6.2-NewEveapi implementation use this ID to calculate if this matches a
+	 * corporation outpost or a corporation office hangar.
 	 */
 	public EveLocation searchLocationbyID(final long locationID) {
 		// Try to get that id from the cache tables
@@ -1254,5 +1269,4 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 }
 
-// - UNUSED CODE
-// ............................................................................................
+// - UNUSED CODE ............................................................................................

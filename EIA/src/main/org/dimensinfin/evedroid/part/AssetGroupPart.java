@@ -9,10 +9,10 @@ package org.dimensinfin.evedroid.part;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.Asset;
+import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetGroupRender;
 
 import android.view.View;
@@ -26,72 +26,67 @@ public class AssetGroupPart extends EveAbstractPart implements INamedPart, OnCli
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetGroupPart(final Asset node) {
+	public AssetGroupPart(final NeoComAsset node) {
 		super(node);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_contentCount() {
-		return itemCountFormatter.format(getChildren().size());
+		return EveAbstractPart.itemCountFormatter.format(this.getChildren().size());
 	}
 
 	public String get_itemCount() {
 		int qty = 0;
-		for (AbstractPropertyChanger node : getChildren()) {
-			if (node instanceof AssetPart) {
-				qty += ((AssetPart) node).getCastedModel().getQuantity();
-			}
-		}
-		return itemCountFormatter.format(qty);
+		for (IPart node : this.getChildren())
+			if (node instanceof AssetPart) qty += ((AssetPart) node).getCastedModel().getQuantity();
+		return EveAbstractPart.itemCountFormatter.format(qty);
 	}
 
 	public String get_name() {
-		return getCastedModel().getName();
+		return this.getCastedModel().getName();
 	}
 
 	public String get_sellValue() {
 		double value = 0.0;
-		for (AbstractPropertyChanger node : getChildren()) {
+		for (IPart node : this.getChildren())
 			if (node instanceof AssetPart) {
-				Asset ass = ((AssetPart) node).getCastedModel();
+				NeoComAsset ass = ((AssetPart) node).getCastedModel();
 				long count = ass.getQuantity();
 				double price = ass.getItem().getHighestBuyerPrice().getPrice();
 				value += count * price;
 			}
-		}
-		return generatePriceString(value, true, false);
+		return this.generatePriceString(value, true, false);
 	}
 
 	public String get_volume() {
 		double volume = 0.0;
-		for (AbstractPropertyChanger node : getChildren()) {
+		for (IPart node : this.getChildren())
 			if (node instanceof AssetPart) {
-				Asset ass = ((AssetPart) node).getCastedModel();
+				NeoComAsset ass = ((AssetPart) node).getCastedModel();
 				long count = ass.getQuantity();
 				double vol = ass.getItem().getVolume();
 				volume += count * vol;
 			}
-		}
-		return itemCountFormatter.format(volume);
+		return EveAbstractPart.itemCountFormatter.format(volume);
 	}
 
-	public Asset getCastedModel() {
-		return (Asset) getModel();
+	public NeoComAsset getCastedModel() {
+		return (NeoComAsset) this.getModel();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getAssetID();
+		return this.getCastedModel().getAssetID();
 	}
 
 	public String getName() {
-		return getCastedModel().getName();
+		return this.getCastedModel().getName();
 	}
 
 	public void onClick(final View view) {
 		// Toggle location to show its contents.
-		toggleExpanded();
-		fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
+		this.toggleExpanded();
+		this.fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
 	@Override

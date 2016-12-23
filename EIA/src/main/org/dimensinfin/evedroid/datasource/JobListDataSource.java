@@ -14,11 +14,15 @@ import java.util.Collections;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.model.Job;
 import org.dimensinfin.evedroid.model.JobQueue;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.model.Pilot;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.JobPart;
@@ -54,9 +58,12 @@ public class JobListDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public JobListDataSource(final AppModelStore store) {
-		if (null != store) {
-			_store = store;
-		}
+		if (null != store) _store = store;
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -75,8 +82,8 @@ public class JobListDataSource extends AbstractDataSource {
 		super.createContentHierarchy();
 
 		// Get the character's jobs.
-		ArrayList<Job> jobs = filterOutActivity(_store.getPilot().getIndustryJobs());
-		ArrayList<JobQueue> queues = generateQueues(jobs);
+		ArrayList<Job> jobs = this.filterOutActivity(_store.getPilot().getIndustryJobs());
+		ArrayList<JobQueue> queues = this.generateQueues(jobs);
 		Log.i("EVEI", "-- JobListDataSource.createContentHierarchy - jobs count " + jobs.size());
 		Log.i("EVEI", "-- JobListDataSource.createContentHierarchy - queues count " + queues.size());
 		// Create the groups for the jobs.
@@ -94,8 +101,14 @@ public class JobListDataSource extends AbstractDataSource {
 		_root.add(completedJobGroup);
 
 		// Get the queue status information.
-		int maxMan = _store.getPilot().calculateManufactureQueues();
-		int maxInv = _store.getPilot().calculateInventionQueues();
+		// Check that the character is a pilot and then get the number of queues from the skills trained
+		NeoComCharacter pilot = _store.getPilot();
+		int maxMan = 0;
+		int maxInv = 0;
+		if (pilot instanceof Pilot) {
+			maxMan = ((Pilot) pilot).calculateManufactureQueues();
+			maxInv = ((Pilot) pilot).calculateInventionQueues();
+		}
 		int queueManufacture = 0;
 		int queueInvention = 0;
 		for (Job currentjob : jobs) {
@@ -103,23 +116,16 @@ public class JobListDataSource extends AbstractDataSource {
 			// Add to the corresponding group.
 			if (currentjob.getStatus() == ModelWideConstants.jobstatus.ACTIVE) {
 				activeJobGroup.addChild(jobpart);
-				if (currentjob.getActivityID() == ModelWideConstants.activities.MANUFACTURING) {
+				if (currentjob.getActivityID() == ModelWideConstants.activities.MANUFACTURING)
 					queueManufacture++;
-				} else {
+				else
 					queueInvention++;
-				}
 			}
-			if (currentjob.getStatus() == ModelWideConstants.jobstatus.SCHEDULED) {
-				continue;
-			}
-			if (currentjob.getStatus() == ModelWideConstants.jobstatus.READY) {
-				deliveryGroup.addChild(jobpart);
-			}
-			if (currentjob.getStatus() == ModelWideConstants.jobstatus.DELIVERED) {
-				completedJobGroup.addChild(jobpart);
-			}
+			if (currentjob.getStatus() == ModelWideConstants.jobstatus.SCHEDULED) continue;
+			if (currentjob.getStatus() == ModelWideConstants.jobstatus.READY) deliveryGroup.addChild(jobpart);
+			if (currentjob.getStatus() == ModelWideConstants.jobstatus.DELIVERED) completedJobGroup.addChild(jobpart);
 		}
-		for (Job currentjob : jobs) {
+		for (Job currentjob : jobs)
 			if (currentjob.getStatus() == ModelWideConstants.jobstatus.SCHEDULED) {
 				JobPart jobpart = (JobPart) new JobPart(currentjob).setRenderMode(AppWideConstants.rendermodes.RENDER_JOB4LIST);
 				// Adapt the scheduled if there are free queues.
@@ -128,15 +134,12 @@ public class JobListDataSource extends AbstractDataSource {
 						jobpart.setLaunchable(true);
 						jobpart.setFirstStartTime(earliestEndTime);
 					}
-				} else {
-					if (queueInvention < maxInv) {
-						jobpart.setLaunchable(true);
-						jobpart.setFirstStartTime(earliestEndTime);
-					}
+				} else if (queueInvention < maxInv) {
+					jobpart.setLaunchable(true);
+					jobpart.setFirstStartTime(earliestEndTime);
 				}
 				scheduledJobGroup.addChild(jobpart);
 			}
-		}
 		//		}
 		Log.i("DS", "<< JobListDataSource.createContentHierarchy");
 	}
@@ -145,50 +148,50 @@ public class JobListDataSource extends AbstractDataSource {
 		return _activityFilter;
 	}
 
-	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
-		createHeaderContents();
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (AbstractAndroidPart node : headerContents) {
-			result.add(node);
-			// Check if the node is expanded. Then add its children.
-			if (node.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-				result.addAll(grand);
-			}
-		}
-		return result;
-	}
-
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_QUEUESHEADER) return super.getPartHierarchy();
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_JOBLISTBODY) {
 		for (AbstractAndroidPart node : _root) {
-			ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
+			ArrayList<IPart> grand = node.collaborate2View();
 			// Order jobs by end date.
-			Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
+			Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
 			if (grand.size() > 0) {
 				result.add(node);
-				result.addAll(grand);
+				for (IPart part : grand)
+					result.add((AbstractAndroidPart) part);
 			}
-			//			}
 		}
-		//		}
 		_adapterData = result;
 		return result;
 	}
 
+	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
+		this.createHeaderContents();
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		for (AbstractAndroidPart node : headerContents) {
+			result.add(node);
+			// Check if the node is expanded. Then add its children.
+			if (node.isExpanded()) for (IPart part : node.collaborate2View())
+				result.add((AbstractAndroidPart) part);
+		}
+		return result;
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
-		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 	}
 
 	public void setActivityFilter(final int _activityFilter) {
@@ -197,8 +200,8 @@ public class JobListDataSource extends AbstractDataSource {
 
 	private void createHeaderContents() {
 		// Get the character's jobs.
-		ArrayList<Job> jobs = filterOutActivity(_store.getPilot().getIndustryJobs());
-		ArrayList<JobQueue> queues = generateQueues(jobs);
+		ArrayList<Job> jobs = this.filterOutActivity(_store.getPilot().getIndustryJobs());
+		ArrayList<JobQueue> queues = this.generateQueues(jobs);
 		Log.i("EVEI", "-- JobListDataSource.createContentHierarchy - jobs count " + jobs.size());
 		Log.i("EVEI", "-- JobListDataSource.createContentHierarchy - queues count " + queues.size());
 
@@ -207,8 +210,14 @@ public class JobListDataSource extends AbstractDataSource {
 		headerContents.add(queueAnalytics);
 		Collections.sort(queues, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_TIMEPENDING));
 		// There is a min number and a max number, the last one depending on skills trained.
-		int maxMan = _store.getPilot().calculateManufactureQueues();
-		int maxInv = _store.getPilot().calculateInventionQueues();
+		// Check that the character is a pilot and then get the number of queues from the skills trained
+		NeoComCharacter pilot = _store.getPilot();
+		int maxMan = 0;
+		int maxInv = 0;
+		if (pilot instanceof Pilot) {
+			maxMan = ((Pilot) pilot).calculateManufactureQueues();
+			maxInv = ((Pilot) pilot).calculateInventionQueues();
+		}
 		int queueCounter = 1;
 		int mnum = 0;
 		int inum = 0;
@@ -221,11 +230,10 @@ public class JobListDataSource extends AbstractDataSource {
 				headerContents.add(qp);
 				queueCounter++;
 				// Add the counter to the right queue type.
-				if (jobQueue.getJob().getActivityID() == ModelWideConstants.activities.MANUFACTURING) {
+				if (jobQueue.getJob().getActivityID() == ModelWideConstants.activities.MANUFACTURING)
 					mnum++;
-				} else {
+				else
 					inum++;
-				}
 			}
 		}
 		queueAnalytics.setLimits(maxMan, maxInv);
@@ -240,15 +248,10 @@ public class JobListDataSource extends AbstractDataSource {
 	 */
 	private ArrayList<Job> filterOutActivity(final ArrayList<Job> industryJobs) {
 		ArrayList<Job> result = new ArrayList<Job>();
-		for (Job job : industryJobs) {
+		for (Job job : industryJobs)
 			if (_activityFilter == ModelWideConstants.activities.MANUFACTURING) {
-				if (job.getActivityID() == ModelWideConstants.activities.MANUFACTURING) {
-					result.add(job);
-				}
-			} else if (job.getActivityID() != ModelWideConstants.activities.MANUFACTURING) {
-				result.add(job);
-			}
-		}
+				if (job.getActivityID() == ModelWideConstants.activities.MANUFACTURING) result.add(job);
+			} else if (job.getActivityID() != ModelWideConstants.activities.MANUFACTURING) result.add(job);
 		return result;
 	}
 
@@ -260,7 +263,7 @@ public class JobListDataSource extends AbstractDataSource {
 	 */
 	private ArrayList<JobQueue> generateQueues(final ArrayList<Job> jobs) {
 		ArrayList<JobQueue> queues = new ArrayList<JobQueue>();
-		for (Job job : jobs) {
+		for (Job job : jobs)
 			if ((job.getStatus() == ModelWideConstants.jobstatus.ACTIVE)
 					|| (job.getStatus() == ModelWideConstants.jobstatus.READY)) {
 				// The job is running and using a queue or still pending for delivery.
@@ -268,11 +271,8 @@ public class JobListDataSource extends AbstractDataSource {
 				queue.setJob(job);
 				queues.add(queue);
 				// Update the earliest end time
-				if (earliestEndTime.isAfter(new DateTime(job.getEndDate()))) {
-					earliestEndTime = new DateTime(job.getEndDate());
-				}
+				if (earliestEndTime.isAfter(new DateTime(job.getEndDate()))) earliestEndTime = new DateTime(job.getEndDate());
 			}
-		}
 		return queues;
 	}
 }

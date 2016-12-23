@@ -10,8 +10,6 @@ package org.dimensinfin.evedroid.part;
 import java.util.Date;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.model.JobQueue;
 import org.dimensinfin.evedroid.render.QueueRender;
@@ -28,30 +26,30 @@ public class QueuePart extends EveAbstractPart {
 	private int								number						= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public QueuePart(final AbstractComplexNode node) {
+	public QueuePart(final JobQueue node) {
 		super(node);
 	}
 
-	public QueuePart(final AbstractGEFNode node) {
-		super(node);
-	}
+	//	public QueuePart(final AbstractGEFNode node) {
+	//		super(node);
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public JobQueue getCastedModel() {
-		return (JobQueue) getModel();
+		return (JobQueue) this.getModel();
 	}
 
 	public Date getEndDate() {
-		return getCastedModel().getJob().getEndDate();
+		return this.getCastedModel().getJob().getEndDate();
 	}
 
 	public int getJobActivity() {
-		return getCastedModel().getJob().getActivityID();
+		return this.getCastedModel().getJob().getActivityID();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getJob().getJobID();
+		return this.getCastedModel().getJob().getJobID();
 	}
 
 	public int getNumber() {
@@ -59,16 +57,16 @@ public class QueuePart extends EveAbstractPart {
 	}
 
 	public Date getStartDate() {
-		return getCastedModel().getJob().getStartDate();
+		return this.getCastedModel().getJob().getStartDate();
 	}
 
 	public int getTime() {
-		return getCastedModel().getJob().getTimeInSeconds();
+		return this.getCastedModel().getJob().getTimeInSeconds();
 	}
 
 	public boolean isQueueActive() {
 		DateTime now = new DateTime(DateTimeZone.UTC);
-		final Instant endinstant = new Instant(getEndDate());
+		final Instant endinstant = new Instant(this.getEndDate());
 		long togomillis = endinstant.getMillis() - now.getMillis();
 		if (togomillis < 1)
 			return false;

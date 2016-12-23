@@ -1,30 +1,41 @@
-//	PROJECT:        EveIndustrialAssistant (EIA)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Minery and mainly on Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.storage;
 
-// - IMPORT SECTION .........................................................................................
+//- IMPORT SECTION .........................................................................................
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
+import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.INeoComModelStore;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
-import org.dimensinfin.evedroid.model.APIKey;
-import org.dimensinfin.evedroid.model.EveChar;
 import org.dimensinfin.evedroid.model.Fitting;
+import org.dimensinfin.evedroid.model.NeoComApiKey;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
+
+import com.beimin.eveapi.exception.ApiException;
 
 import android.app.Activity;
-import android.util.Log;
 import android.view.Menu;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -37,11 +48,11 @@ import android.view.Menu;
  * local database as the fastest way to have ready data while the lengthy download processes update most of
  * that information.<br>
  * <br>
- * The class is a singleton with two main structures, the list of api keys and the list of eve characters
- * identified by that keys. Both sets have to contain unique identifiers so any addition of a duplicated one
- * will only replace the older one. The persistence mechanics are delegated to a new PersistenceManager that
- * will have access to a SQLite database to keep track of this data structures, so all input/output should be
- * handled by that Manager.<br>
+ * The class is a singleton with two main structures, the list of api keys and the list of user defined
+ * fittings. Both sets have to contain unique identifiers so any addition of a duplicated one will only
+ * replace the older one. The persistence mechanics are delegated to a new PersistenceManager that will have
+ * access to a SQLite database to keep track of this data structures, so all input/output should be handled by
+ * that Manager.<br>
  * <br>
  * There should be some type of notification mechanism to report the UI about changes on the data contents
  * performed with background tasks. This is integrated on the GEF model hierarchy but has to be reviewed
@@ -49,29 +60,105 @@ import android.view.Menu;
  * 
  * @author Adam Antinoo
  */
-public class AppModelStore extends AbstractModelStore {
+public class AppModelStore extends AbstractModelStore implements INeoComModelStore {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID	= 8777607802616543118L;
-	private static Logger											logger						= Logger.getLogger("AppModelStore");
+	private static final long			serialVersionUID	= 8777607802616543118L;
+	private static Logger					logger						= Logger.getLogger("AppModelStore");
+	private static AppModelStore	singleton					= null;
+
+	/**
+	 * Returns the single global instance of the Store to be used as an instance. In case the instance does not
+	 * exists then we initiate the initialization process trying to create the most recent instance we have
+	 * recorded or recreate it from scratch from the api_list file.
+	 * 
+	 * @return the single global instance
+	 */
+	public static AppModelStore getSingleton() {
+		if (null == AppModelStore.singleton) {
+			// Initiate the recovery.
+			// Try to read from persistence file.
+			AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
+			AppModelStore.singleton.restore();
+			if (!AppModelStore.singleton.isRestored()) // Create a new from scratch. Read the api key list.
+				AppModelStore.readApiKeys();
+		}
+		return AppModelStore.singleton;
+	}
+
+	/**
+	 * Forces the initialization of the Model store from the api list file. Instead reading the data from the
+	 * store file it will process the api list and reload all the character information from scratch.
+	 */
+	public static void initialize() {
+		// Create a new from scratch. Read the api key list.
+		AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
+		AppModelStore.readApiKeys();
+
+		// Make sure we get the characters on a thread out of the main one.
+		AppModelStore.getSingleton().getCharacters();
+	}
+
+	private static void readApiKeys() {
+		AppModelStore.logger.info(">> [AppModelStore.readApiKeys]");
+		try {
+			// Read the contents of the character information.
+			final File characterFile = AppConnector.getStorageConnector()
+					.accessAppStorage(AppConnector.getResourceString(R.string.apikeysfilename));
+			InputStream is = new BufferedInputStream(new FileInputStream(characterFile));
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			String line = br.readLine();
+			while (null != line) {
+				try {
+					String[] parts = line.split(":");
+					String key = parts[0];
+					String validationcode = parts[1];
+					int keynumber = Integer.parseInt(key);
+					AppModelStore.logger.info("-- Inserting API key " + keynumber);
+					NeoComApiKey api = NeoComApiKey.build(keynumber, validationcode);
+					if (null != AppModelStore.singleton) AppModelStore.singleton.addApiKey(api);
+				} catch (NumberFormatException nfex) {
+				} catch (ArrayIndexOutOfBoundsException aioofe) {
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+				line = br.readLine();
+			}
+			if (null != br) br.close();
+		} catch (FileNotFoundException fnfe) {
+			// TODO Auto-generated catch block
+			fnfe.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		AppModelStore.logger.info("<< [AppModelStore.readApiKeys]");
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private transient Menu										_appMenu					= null;
-	private HashMap<Integer, APIKey>					apiKeys						= new HashMap<Integer, APIKey>();
-	private transient HashMap<Long, EveChar>	charCache					= null;
-	private final long												lastCCPAccessTime	= 0;
-	private transient EveChar									_pilot						= null;
-	private transient Activity								_activity					= null;
-	private transient DataSourceManager				dsManager					= null;
-	private HashMap<String, Fitting>					fittings					= new HashMap<String, Fitting>();
+	/** Reference to the application menu to make it accessible to any level. */
+	private transient Menu									_appMenu	= null;
+	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
+	private transient Activity							_activity	= null;
+	private transient NeoComCharacter				_pilot		= null;
+	/** Check to verify if the recovery process is successful. */
+	private boolean													recovered	= false;
+
+	/** List of registered DataSources. This data is not stored on switch or termination. */
+	private transient DataSourceManager			dsManager	= null;
+	private HashMap<Integer, NeoComApiKey>	apiKeys		= new HashMap<Integer, NeoComApiKey>();
+	/** List of fittings by name. This is the source for the Fittings DataSource. */
+	private HashMap<String, Fitting>				fittings	= new HashMap<String, Fitting>();
+	//	private transient HashMap<Long, EveChar>	charCache					= null;
+	//	private final long											lastCCPAccessTime	= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AppModelStore(final IPersistentHandler storageHandler) {
+	private AppModelStore(final IPersistentHandler storageHandler) {
 		super();
 		// On creation we can set the proper model persistence handler.
 		try {
-			setPersistentStorage(storageHandler);
-			setAutomaticUpdate(true);
+			this.setPersistentStorage(storageHandler);
+			this.setAutomaticUpdate(true);
 		} catch (final Exception ex) {
 			// TODO This is a quite serious error because invalidates any storage of the model data
 			ex.printStackTrace();
@@ -86,22 +173,17 @@ public class AppModelStore extends AbstractModelStore {
 	 */
 	public void activateActivity(final Activity currentActivity) {
 		_activity = currentActivity;
-		//		// REFACTOR Remove this after we have completed the transformation
-		//		EVEDroidApp.getAppContext().setCurrentActivity(currentActivity);
 	}
 
 	/**
 	 * Searches for the pilot on the character list active after the API key processing and copies it to the
-	 * store slot. If there is an AssetsManager it is connected to the character, otherwise a new AssetsManager
-	 * is created empty.
+	 * store slot.
 	 * 
 	 * @param characterid
+	 *          id of the character to activate and select for work with.
 	 */
 	public void activatePilot(final long characterid) {
-		//		if (null == _userdata)
-		//			throw new RuntimeException(
-		//					"RT CharacterStore.activatePilot - The UserData is not defined. Problem of initialization.");
-		_pilot = searchCharacter(characterid);
+		_pilot = this.searchCharacter(characterid);
 		if (null == _pilot)
 			throw new RuntimeException("RT AppModelStore.activatePilot - Pilot not located. Problem of initialization.");
 		// Link the pilot to the store for dirty processing.
@@ -113,32 +195,35 @@ public class AppModelStore extends AbstractModelStore {
 	 * 
 	 * @param newKey
 	 */
-	public void addApiKey(final APIKey newKey) {
+	public void addApiKey(final NeoComApiKey newKey) {
 		if (null != newKey) {
-			//			HashMap<Integer, APIKey> oldState = (HashMap<Integer, APIKey>) apiKeys.clone();
 			newKey.setParent(this);
-			// First update the key to avoid adding invalid keys.
-			newKey.update();
-			apiKeys.put(newKey.getKeyID(), newKey);
-			//		fireStructureChange(BundlesAndMessages.events.EVENTSTR_APIKEY, oldState, apiKeys);
-			setDirty(true);
+			apiKeys.put(newKey.getKey(), newKey);
+			this.setDirty(true);
 		}
 	}
 
+	/**
+	 * Adds a new fitting to the list of stored ones and persists the data structures.
+	 * 
+	 * @param fit
+	 * @param label
+	 */
 	public void addFitting(final Fitting fit, final String label) {
 		fittings.put(label, fit);
-		setDirty(true);
+		this.setDirty(true);
 	}
 
+	@Deprecated
 	public boolean checkStorage() {
 		return AppConnector.sdcardAvailable();
 	}
 
 	@Override
+	@Deprecated
 	public void clean() {
-		apiKeys = new HashMap<Integer, APIKey>();
+		apiKeys = new HashMap<Integer, NeoComApiKey>();
 		fittings = new HashMap<String, Fitting>();
-		//		characters = new HashMap<Long, EveChar>();
 	}
 
 	/**
@@ -147,13 +232,11 @@ public class AppModelStore extends AbstractModelStore {
 	 * 
 	 * @return
 	 */
-	public ArrayList<EveChar> getActiveCharacters() {
+	public ArrayList<NeoComCharacter> getActiveCharacters() {
 		// Iterate the list of pilots and accumulate the active ones.
-		final ArrayList<EveChar> activePilots = new ArrayList<EveChar>();
-		for (final EveChar pilot : getCharacters().values())
-			if (pilot.isActive()) {
-				activePilots.add(pilot);
-			}
+		final ArrayList<NeoComCharacter> activePilots = new ArrayList<NeoComCharacter>();
+		for (final NeoComCharacter pilot : this.getCharacters().values())
+			if (pilot.isActive()) activePilots.add(pilot);
 		return activePilots;
 	}
 
@@ -161,31 +244,17 @@ public class AppModelStore extends AbstractModelStore {
 		return _activity;
 	}
 
-	public HashMap<Integer, APIKey> getApiKeys() {
+	public HashMap<Integer, NeoComApiKey> getApiKeys() {
 		return apiKeys;
 	}
 
+	@Deprecated
 	public Menu getAppMenu() {
 		return _appMenu;
 	}
 
-	public HashMap<Long, EveChar> getCharacters() {
-		if (null == charCache) {
-			charCache = new HashMap<Long, EveChar>();
-			for (final APIKey key : apiKeys.values()) {
-				final Collection<EveChar> chars = key.getCharacters().values();
-				for (final EveChar eveChar : chars) {
-					charCache.put(eveChar.getCharacterID(), eveChar);
-				}
-			}
-		}
-		return charCache;
-	}
-
 	public IDataSourceConnector getDataSourceConector() {
-		if (null == dsManager) {
-			dsManager = new DataSourceManager();
-		}
+		if (null == dsManager) dsManager = new DataSourceManager();
 		return dsManager;
 	}
 
@@ -193,7 +262,7 @@ public class AppModelStore extends AbstractModelStore {
 		return fittings;
 	}
 
-	public EveChar getPilot() {
+	public NeoComCharacter getPilot() {
 		if (null == _pilot)
 			throw new RuntimeException("RT CharacterStore - Pilot access cannot be completed. Pilot is NULL");
 		return _pilot;
@@ -210,22 +279,6 @@ public class AppModelStore extends AbstractModelStore {
 	}
 
 	/**
-	 * Checks if there is a need to retrieve again from the servers the user data.
-	 * 
-	 * @return
-	 */
-	public boolean needsUpdate() {
-		return AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS3);
-	}
-
-	public String printReport() {
-		final StringBuffer buffer = new StringBuffer("[UserModelStore (");
-		buffer.append("keys: ").append(apiKeys).append(" ");
-		buffer.append("]");
-		return buffer.toString();
-	}
-
-	/**
 	 * Restores the stored state from the disk file. If there any problem the method returns true.
 	 * 
 	 * @return <code>true</code> if there is a problem and the restore was not executed.
@@ -233,18 +286,40 @@ public class AppModelStore extends AbstractModelStore {
 	@Override
 	public boolean restore() {
 		AppConnector.startChrono();
-		final boolean state = super.restore();
-		// REFACTOR - Optimize the outpost by forcing a read at this point.
-		//		AppConnector.getDBConnector().searchLocationbyID(61000890);
-		if (state) {
-			Log.i("AppModelStore", "~~ Time lapse for APPSTORE[RESTORE] - " + AppConnector.timeLapse());
-			return state;
+		recovered = super.restore();
+		if (recovered) {
+			AppModelStore.logger.info("~~ Time lapse for APPSTORE[RESTORE] - " + AppConnector.timeLapse());
+			return recovered;
 		} else {
 			// The handler was not able to retrieve the file. Possibly because there was no file.
-			setDirty(true);
+			this.setDirty(true);
 			return false;
 		}
 	}
+
+	//	/**
+	//	 * Checks if there is a need to retrieve again from the servers the user data.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public boolean needsUpdate() {
+	//		return AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS3);
+	//	}
+
+	//	public String printReport() {
+	//		final StringBuffer buffer = new StringBuffer("[UserModelStore (");
+	//		buffer.append("keys: ").append(apiKeys).append(" ");
+	//		buffer.append("]");
+	//		return buffer.toString();
+	//	}
+
+	//	/**
+	//	 * Refreshes the api keys and all other depending structures from the api list file. Keeps as much of the
+	//	 * current information as possible while updating the list of keys.
+	//	 */
+	//	public void refresh() {
+	//		// TODO Auto-generated method stub
+	//	}
 
 	/**
 	 * Save data to disk only when we have detected it has changed.
@@ -252,43 +327,46 @@ public class AppModelStore extends AbstractModelStore {
 	 */
 	@Override
 	public boolean save() {
-		if (isDirty()) {
+		if (this.isDirty()) {
 			// Clean the dirty flag.
-			setDirty(false);
+			this.setDirty(false);
+			recovered = true;
 			AppConnector.startChrono();
 			final boolean state = super.save();
-			Log.i("AppModelStore", "~~ Time lapse for APPSTORE[SAVE] - " + AppConnector.timeLapse());
+			AppModelStore.logger.info("~~ Time lapse for APPSTORE[SAVE] - " + AppConnector.timeLapse());
 			return state;
 		} else
 			return false;
 	}
 
 	/**
-	 * Search for the specified character id in the list of api keys and on the characters defined or available
-	 * for each of that keys. To speed up that we create a precached list of characters on the first call with
-	 * all the current defined characters. That list will be cleared when the background actions modify the list
-	 * of keys or update them.
+	 * Search for the specified character id in the list of api keys.
 	 * 
 	 * @param characterID
 	 * @return
 	 */
-	public EveChar searchCharacter(final long characterID) {
-		return getCharacters().get(characterID);
+	public NeoComCharacter searchCharacter(final long characterID) {
+		return this.getCharacters().get(characterID);
 	}
 
 	public Fitting searchFitting(final String fittingLabel) {
 		return fittings.get(fittingLabel);
 	}
 
-	public void setApiKeys(final HashMap<Integer, APIKey> newkeys) {
+	/**
+	 * Stored the keys on the store fields from the persistence store. This code should reconnect pointers to
+	 * fields not stored and marked as transient.
+	 * 
+	 * @param newkeys
+	 */
+	public void setApiKeys(final HashMap<Integer, NeoComApiKey> newkeys) {
 		apiKeys = newkeys;
 		// we have to reparent the new data because this is not stored on the serialization.
 		// Also reinitialize transient fields that are not saved
-		final Iterator<APIKey> eit = apiKeys.values().iterator();
+		final Iterator<NeoComApiKey> eit = apiKeys.values().iterator();
 		while (eit.hasNext()) {
-			final APIKey apiKey = eit.next();
+			final NeoComApiKey apiKey = eit.next();
 			apiKey.setParent(this);
-			//			apiKey.initialize();
 		}
 	}
 
@@ -302,11 +380,32 @@ public class AppModelStore extends AbstractModelStore {
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("[AppModelStore");
+		final StringBuffer buffer = new StringBuffer("AppModelStore [");
 		buffer.append(" apiKeys(").append(apiKeys.size()).append("): ").append(apiKeys);
-		//		buffer.append(" characters: ").append(characters.size());
+		buffer.append(" fittings(").append(fittings.size()).append("): ").append(fittings.size());
 		buffer.append(" ]");
 		return buffer.toString();
+	}
+
+	/**
+	 * Get a complete list of the characters available indexed by the character id.
+	 * 
+	 * @return
+	 */
+	private HashMap<Long, NeoComCharacter> getCharacters() {
+		HashMap<Long, NeoComCharacter> charCache = new HashMap<Long, NeoComCharacter>();
+		for (final NeoComApiKey key : apiKeys.values())
+			try {
+				for (final NeoComCharacter eveChar : key.getApiCharacters())
+					charCache.put(eveChar.getCharacterID(), eveChar);
+			} catch (ApiException apiex) {
+				apiex.printStackTrace();
+			}
+		return charCache;
+	}
+
+	private boolean isRestored() {
+		return recovered;
 	}
 }
 

@@ -12,13 +12,12 @@ package org.dimensinfin.evedroid.datasource;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.core.RootNode;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Fitting;
@@ -48,48 +47,30 @@ public class FittingDataSource extends SpecialDataSource {
 	// - F I E L D - S E C T I O N ............................................................................
 	private Fitting						fit								= null;
 
-	//	private final ArrayList<Asset>						ships							= null;
-
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public FittingDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		super(locator, factory);
-		// Get access to the fit as soon as possible
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public RootNode collaborate2Model() {
-		logger.info(">> [FittingDataSource.collaborate2Model]");
+		FittingDataSource.logger.info(">> [FittingDataSource.collaborate2Model]");
 		try {
-			initDataSourceModel();
-			//			AppModelStore store = EVEDroidApp.getAppStore();
-			//			// Get the parameters to check if demo or coming from a ship0.
-			//			long capsuleerId = getParameterLong(AppWideConstants.EExtras.CAPSULEERID.name());
-			//			String fittingLabel = getParameterString(AppWideConstants.EExtras.FITTINGID.name());
-			//			// Get the complete list of ships. Compare it to the current list if it exists.
-			//			final AssetsManager manager = store.getPilot().getAssetsManager();
-			//			// Create the testing fit from the list of predefined modules. This should be replaced by the Fitting locator.
-			//			// If the pilot is 0 then use the demo
-			//			if (capsuleerId == 0) {
-			//				fit = createTestFitting(manager);
-			//			} else {
-			//				fit = store.searchFitting(fittingLabel);
-			//			}
-			//			if (null == fit) {
-			//				fit = createTestFitting(manager);
-			//			}
+			this.initDataSourceModel();
 
 			// Add the classification groups and the get the first level model. The model elements are added to the
 			// right group depending on their properties.
 			_dataModelRoot = new RootNode();
-			doGroupInit();
+			this.doGroupInit();
 			ArrayList<AbstractComplexNode> modelList = fit
 					.collaborate2Model(AppWideConstants.EFragment.FITTING_MANUFACTURE.name());
-			classifyModel(modelList);
+			this.classifyModel(modelList);
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			logger.severe(
+			FittingDataSource.logger.severe(
 					"RTEX> FittingDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
-		logger.info("<< [FittingDataSource.collaborate2Model]");
+		FittingDataSource.logger.info("<< [FittingDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
 
@@ -98,20 +79,16 @@ public class FittingDataSource extends SpecialDataSource {
 	 * For this implementation we just return the fitting that is the only element to include on the head.
 	 */
 	public RootNode getHeaderModel() {
-		initDataSourceModel();
+		this.initDataSourceModel();
 		RootNode root = new RootNode();
 		root.addChild(fit);
 		return root;
 	}
 
 	private void add2Group(final AbstractComplexNode action, final EIndustryGroup igroup) {
-		for (IGEFNode group : _dataModelRoot.getChildren()) {
-			if (group instanceof Separator) {
-				if (((Separator) group).getTitle().equalsIgnoreCase(igroup.toString())) {
-					group.addChild(action);
-				}
-			}
-		}
+		for (IGEFNode group : _dataModelRoot.getChildren())
+			if (group instanceof Separator)
+				if (((Separator) group).getTitle().equalsIgnoreCase(igroup.toString())) group.addChild(action);
 	}
 
 	/**
@@ -121,14 +98,13 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	private void classifyModel(final ArrayList<AbstractComplexNode> modelList) {
-		logger.info(">> [FittingDataSource.classifyModel]");
-		for (AbstractComplexNode node : modelList) {
+		FittingDataSource.logger.info(">> [FittingDataSource.classifyModel]");
+		for (AbstractComplexNode node : modelList)
 			if (node instanceof Action) {
 				Action action = (Action) node;
-				add2Group(action, action.getResource().getItem().getIndustryGroup());
+				this.add2Group(action, action.getResource().getItem().getIndustryGroup());
 			}
-		}
-		logger.info("<< [FittingDataSource.classifyModel]");
+		FittingDataSource.logger.info("<< [FittingDataSource.classifyModel]");
 	}
 
 	private Fitting createTestFitting(final AssetsManager manager) {
@@ -170,7 +146,6 @@ public class FittingDataSource extends SpecialDataSource {
 		_dataModelRoot.addChild(new Separator(EIndustryGroup.UNDEFINED.name()).setRenderWhenEmpty(renderEmptyState));
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The data model exported by this method can have two or three levels. If the region grouping is off then
 	 * we return the list of locations that contain ships. If the Region grouping is on then we return the list
@@ -178,7 +153,7 @@ public class FittingDataSource extends SpecialDataSource {
 	 * The DataSource keeps the list of ships and compares it to the current list so if it is the same then we
 	 * do not do any processing. <br>
 	 * There are two models that can be returned, the ships by Location model and also the ship by Category.
-	 * Both are enerated at the same time. <br>
+	 * Both are generated at the same time. <br>
 	 * The first action is to go to the Pilot asset list and get all the assets with the Category Ship. This
 	 * will return a list of Assets we can transform into Ships. There are two classes for this. The packaged
 	 * ships are simple assets that will not expand to anything else while the other class, the active ships can
@@ -189,18 +164,15 @@ public class FittingDataSource extends SpecialDataSource {
 	 * @return
 	 */
 	private void initDataSourceModel() {
-		AppModelStore store = EVEDroidApp.getAppStore();
-		long capsuleerId = getParameterLong(AppWideConstants.EExtras.CAPSULEERID.name());
-		String fittingLabel = getParameterString(AppWideConstants.EExtras.FITTINGID.name());
+		AppModelStore store = AppModelStore.getSingleton();
+		long capsuleerId = this.getParameterLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		String fittingLabel = this.getParameterString(AppWideConstants.EExtras.EXTRA_FITTINGID.name());
 		final AssetsManager manager = store.getPilot().getAssetsManager();
-		if (capsuleerId == 0) {
-			fit = createTestFitting(manager);
-		} else {
+		if (capsuleerId == 0)
+			fit = this.createTestFitting(manager);
+		else
 			fit = store.searchFitting(fittingLabel);
-		}
-		if (null == fit) {
-			fit = createTestFitting(manager);
-		}
+		if (null == fit) fit = this.createTestFitting(manager);
 	}
 }
 // - UNUSED CODE ............................................................................................

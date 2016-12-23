@@ -15,15 +15,18 @@ import java.util.HashMap;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Asset;
-import org.dimensinfin.evedroid.model.Blueprint;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;
+import org.dimensinfin.evedroid.part.LocationPart;
 import org.dimensinfin.evedroid.part.TerminatorPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -47,9 +50,12 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT2InventionDataSource(final AppModelStore store) {
-		if (null != store) {
-			_store = store;
-		}
+		if (null != store) _store = store;
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -64,64 +70,63 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 
 		// Get the blueprints through the Store. And also the datacores.
 		AssetsManager manager = _store.getPilot().getAssetsManager();
-		ArrayList<Asset> datacores = manager.searchAsset4Group(ModelWideConstants.eveglobal.Datacores);
-		ArrayList<Blueprint> bps = manager.searchT1Blueprints();
-		for (Blueprint currentbpc : bps) {
+		ArrayList<NeoComAsset> datacores = manager.searchAsset4Group(ModelWideConstants.eveglobal.Datacores);
+		ArrayList<NeoComBlueprint> bps = manager.searchT1Blueprints();
+		for (NeoComBlueprint currentbpc : bps)
 			// Check if the bp has the invention feature.
 			if (currentbpc.getItem().hasInvention()) {
 				long locid = currentbpc.getLocationID();
-				Asset parent = currentbpc.getParentContainer();
+				NeoComAsset parent = currentbpc.getParentContainer();
 				BlueprintPart bppart = new BlueprintPart(currentbpc);
 				bppart.setActivity(ModelWideConstants.activities.MANUFACTURING);
 				bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION);
-				if (null == parent) {
-					add2Location(locid, bppart);
-				} else {
-					add2Container(parent, bppart);
-				}
+				if (null == parent)
+					this.add2Location(locid, bppart);
+				else
+					this.add2Container(parent, bppart);
 			}
-		}
 
 		// Filter our all the locations that do not contain datacores.
-		for (LocationIndustryPart locationPart : locations.values()) {
+		for (LocationPart locationPart : locations.values()) {
 			long stationID = locationPart.getCastedModel().getStationID();
-			for (Asset datacore : datacores) {
+			for (NeoComAsset datacore : datacores)
 				if (datacore.getLocation().getStationID() == stationID) {
 					_root.add(locationPart);
 					break;
 				}
-			}
 		}
 		Log.i("EVEI", "<< IndustryT2InventionDataSource.createContentHierarchy [" + _root.size() + "]");
 	}
 
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		logger.info(">> IndustryT1Blueprints.getPartHierarchy");
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		AbstractDataSource.logger.info(">> IndustryT1Blueprints.getPartHierarchy");
 		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractAndroidPart node : _root) {
 			result.add(node);
 			// Check if the node is expanded. Then add its children.
 			if (node.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-				// Order the list of blueprints by their profit
-				//				Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_CARD_RATIO));
-				result.addAll(grand);
+				for (IPart part : node.collaborate2View())
+					result.add((AbstractAndroidPart) part);
 				result.add(new TerminatorPart(new Separator("")));
 			}
 		}
 		_adapterData = result;
-		logger.info("<< IndustryT1Blueprints.getPartHierarchy");
+		AbstractDataSource.logger.info("<< IndustryT1Blueprints.getPartHierarchy");
 		return result;
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 	}
 
 	/**
@@ -133,7 +138,7 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 	 * @param container
 	 * @param part
 	 */
-	private void add2Container(final Asset container, final BlueprintPart part) {
+	private void add2Container(final NeoComAsset container, final BlueprintPart part) {
 		long cid = container.getDAOID();
 		LocationIndustryPart lochit = locations.get(cid);
 		if (null == lochit) {
@@ -141,11 +146,10 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 					.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
 			lochit.setContainerLocation(true);
 			String containername = container.getUserLabel();
-			if (null == containername) {
+			if (null == containername)
 				lochit.setContainerName("#" + container.getAssetID());
-			} else {
+			else
 				lochit.setContainerName(containername);
-			}
 			locations.put(cid, lochit);
 		}
 		lochit.addChild(part);

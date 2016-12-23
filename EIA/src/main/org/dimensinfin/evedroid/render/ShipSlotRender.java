@@ -44,23 +44,23 @@ public class ShipSlotRender extends EveAbstractHolder {
 		groupIcon = (ImageView) _convertView.findViewById(R.id.groupIcon);
 		title = (TextView) _convertView.findViewById(R.id.title);
 		count = (TextView) _convertView.findViewById(R.id.count);
-		//		count.setVisibility(View.INVISIBLE);
 	}
 
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		title.setText(getPart().getTitle());
-		count.setText(qtyFormatter.format(getPart().getChildrenCount()));
-		Log.i("REMOVE", "-- ShipSlotRender.updateContent - " + getPart().toString() + " iconvalue: "
-				+ getPart().getIconReference());
-		groupIcon.setImageResource(getPart().getIconReference());
+		title.setText(this.getPart().getTitle());
+		count.setText(EveAbstractHolder.qtyFormatter.format(this.getPart().getChildrenCount()));
+		Log.i("REMOVE", "-- ShipSlotRender.updateContent - " + this.getPart().toString() + " iconvalue: "
+				+ this.getPart().getIconReference());
+		groupIcon.setImageResource(this.getPart().getIconReference());
 		_convertView.setBackgroundResource(R.drawable.bluetraslucent60);
 	}
 
 	@Override
 	protected void createView() {
-		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater mInflater = (LayoutInflater) this.getContext()
+				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		_convertView = mInflater.inflate(R.layout.group4manufacture, null);
 		_convertView.setTag(this);
 	}

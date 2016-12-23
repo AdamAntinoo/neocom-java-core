@@ -15,8 +15,8 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.fragment.IndustryBlueprintsFragment;
 import org.dimensinfin.evedroid.fragment.InventionBlueprintsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.model.NeoComCharacter;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -52,11 +52,11 @@ public class IndustryDirectorActivity extends PilotPagerActivity implements INeo
 	 * The BPOManager need that there are at least one BPO on the list of assets
 	 * of the pilot.
 	 */
-	public boolean checkActivation(final EveChar checkPilot) {
-		final ArrayList<Blueprint> bps = checkPilot.getAssetsManager().getBlueprints();
+	public boolean checkActivation(final NeoComCharacter checkPilot) {
+		final ArrayList<NeoComBlueprint> bps = checkPilot.getAssetsManager().getBlueprints();
 		if (bps.size() > 0) {
 			// Get the counts of the different blueprint categories.
-			for (final Blueprint blueprint : bps) {
+			for (final NeoComBlueprint blueprint : bps) {
 				if (blueprint.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
 					this._T1Count++;
 				}

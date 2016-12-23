@@ -6,7 +6,7 @@
 
 package org.dimensinfin.evedroid.interfaces;
 
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 
 //- IMPORT SECTION .........................................................................................
 

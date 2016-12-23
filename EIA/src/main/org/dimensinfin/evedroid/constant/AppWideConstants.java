@@ -15,36 +15,42 @@ public class AppWideConstants {
 	// - C O M P A R A T O R S
 	public static final class comparators {
 		public static final int	COMPARATOR_NAME							= 100;
-		public static final int	COMPARATOR_ASSET_COUNT			= COMPARATOR_NAME + 1;
-		public static final int	COMPARATOR_ITEM_TYPE				= COMPARATOR_NAME + 2;
-		public static final int	COMPARATOR_RESOURCE_TYPE		= COMPARATOR_NAME + 3;
-		public static final int	COMPARATOR_APIID_ASC				= COMPARATOR_NAME + 4;
-		public static final int	COMPARATOR_APIID_DESC				= COMPARATOR_NAME + 5;
-		public static final int	COMPARATOR_PRIORITY					= COMPARATOR_NAME + 6;
-		public static final int	COMPARATOR_WEIGHT						= COMPARATOR_NAME + 16;
-		public static final int	COMPARATOR_NEWESTDATESORT		= COMPARATOR_NAME + 7;
-		public static final int	COMPARATOR_OLDESTDATESORT		= COMPARATOR_NAME + 8;
-		public static final int	COMPARATOR_REQUEST_PRIORITY	= COMPARATOR_NAME + 17;
-		public static final int	COMPARATOR_CARD_RATIO				= COMPARATOR_NAME + 18;
+		public static final int	COMPARATOR_ASSET_COUNT			= comparators.COMPARATOR_NAME + 1;
+		public static final int	COMPARATOR_ITEM_TYPE				= comparators.COMPARATOR_NAME + 2;
+		public static final int	COMPARATOR_RESOURCE_TYPE		= comparators.COMPARATOR_NAME + 3;
+		public static final int	COMPARATOR_APIID_ASC				= comparators.COMPARATOR_NAME + 4;
+		public static final int	COMPARATOR_APIID_DESC				= comparators.COMPARATOR_NAME + 5;
+		public static final int	COMPARATOR_PRIORITY					= comparators.COMPARATOR_NAME + 6;
+		public static final int	COMPARATOR_WEIGHT						= comparators.COMPARATOR_NAME + 16;
+		public static final int	COMPARATOR_NEWESTDATESORT		= comparators.COMPARATOR_NAME + 7;
+		public static final int	COMPARATOR_OLDESTDATESORT		= comparators.COMPARATOR_NAME + 8;
+		public static final int	COMPARATOR_REQUEST_PRIORITY	= comparators.COMPARATOR_NAME + 17;
+		public static final int	COMPARATOR_CARD_RATIO				= comparators.COMPARATOR_NAME + 18;
 		// public static final int COMPARATOR_CREATIONDATE = COMPARATOR_NAME +
 		// 9;
-		public static final int	COMPARATOR_TIMEPENDING			= COMPARATOR_NAME + 10;
+		public static final int	COMPARATOR_TIMEPENDING			= comparators.COMPARATOR_NAME + 10;
+		public static final int	COMPARATOR_GROUPNAME				= comparators.COMPARATOR_NAME + 20;
 	}
 
 	// - E X T R A S   M E S S A G E S
 	public enum EExtras {
-		CAPSULEERID, FITTINGID
+		EXTRA_CAPSULEERID, EXTRA_FITTINGID, EXTRA_BLUEPRINTID, EXTRA_BLUEPRINTACTIVITY
 	}
 
 	// - F R A G M E N T   I D E N T I F I E R S
 	public enum EFragment {
-		UNDEFINED_FRAGMENT, CAPSULEER_LIST, FITTING_MODULES, FITTING_MANUFACTURE, FRAGMENT_SHIPSBYLOCATION, FRAGMENT_SHIPSBYCLASS
+		DEFAULT_VARIANT, CAPSULEER_LIST, FITTING_LIST, FITTING_MODULES, FITTING_MANUFACTURE, FRAGMENT_SHIPSBYLOCATION, FRAGMENT_SHIPSBYCLASS
 	}
 
 	// - R E N D E R   M O D E S
 	public enum ERenders {
 		RENDER_FITTINGHEADER
 	}
+
+	// - M V C   V A R I A N T S
+	//	public enum EVARIANT {
+	//		DEFAULT_VARIANT, CAPSULEER_LIST, FITTING_LIST, FITTING_MODULES, FITTING_MANUFACTURE, SHIPS_BYLOCATION, SHIPS_BYCLASS
+	//	}
 
 	// - B A C K G R O U N D   U P D A T E   R E Q U E S T
 	//	public enum ERequest {
@@ -79,45 +85,45 @@ public class AppWideConstants {
 		public static final String	EXTRA_EXCEPTIONMESSAGE				= "EXTRA_EXCEPTIONMESSAGE";
 		public static final String	EXTRA_MODULEMARKETCARD_SIDE		= "EXTRA_MODULEMARKETCARD_SIDE";
 		public static final String	EXTRA_MODULEMARKETCARD_ITEMID	= "EXTRA_MODULEMARKETCARD_ITEMID";
-		public static final String	EXTRA_EVECHARACTERID					= "EXTRA_EVECHARACTERID";
+		//		public static final String	EXTRA_EVECHARACTERID					= "EXTRA_EVECHARACTERID";
 		public static final String	EXTRA_EVEITEMID								= "EXTRA_EVEITEMID";
 		public static final String	EXTRA_CHARACTER_LOCALIZER			= "EXTRA_CHARACTER_LOCALIZER";
 		public static final String	EXTRA_MARKETDATA_LOCALIZER		= "EXTRA_MARKETDATA_LOCALIZER";
-		public static final String	EXTRA_BLUEPRINTID							= "EXTRA_T2BLUEPRINTID";
-		public static final String	EXTRA_BLUEPRINTACTIVITY				= "EXTRA_BLUEPRINTACTIVITY";
+		//		public static final String	EXTRA_BLUEPRINTID							= "EXTRA_T2BLUEPRINTID";
+		//		public static final String	EXTRA_BLUEPRINTACTIVITY				= "EXTRA_BLUEPRINTACTIVITY";
 	}
 
 	// - F R A G M E N T   I D E N T I F I E R S
 	public static final class fragment {
 		public static final int	FRAGMENT_DEFAULTID_EMPTY							= 0;
 		public static final int	FRAGMENT_PILOTLIST										= 100;
-		public static final int	FRAGMENT_MARKETORDERS									= FRAGMENT_DEFAULTID_EMPTY + 510;
-		public static final int	FRAGMENT_MANUFACTUREJOBS							= FRAGMENT_DEFAULTID_EMPTY + 610;
-		public static final int	FRAGMENT_INVENTIONJOBS								= FRAGMENT_DEFAULTID_EMPTY + 620;
-		public static final int	FRAGMENT_INDUSTRYJOBACTIONS						= FRAGMENT_DEFAULTID_EMPTY + 304;
-		public static final int	FRAGMENT_SHIPSBYLOCATION							= FRAGMENT_DEFAULTID_EMPTY + 400;
-		public static final int	FRAGMENT_SHIPSBYCLASS									= FRAGMENT_DEFAULTID_EMPTY + 410;
+		public static final int	FRAGMENT_MARKETORDERS									= fragment.FRAGMENT_DEFAULTID_EMPTY + 510;
+		public static final int	FRAGMENT_MANUFACTUREJOBS							= fragment.FRAGMENT_DEFAULTID_EMPTY + 610;
+		public static final int	FRAGMENT_INVENTIONJOBS								= fragment.FRAGMENT_DEFAULTID_EMPTY + 620;
+		public static final int	FRAGMENT_INDUSTRYJOBACTIONS						= fragment.FRAGMENT_DEFAULTID_EMPTY + 304;
+		public static final int	FRAGMENT_SHIPSBYLOCATION							= fragment.FRAGMENT_DEFAULTID_EMPTY + 400;
+		public static final int	FRAGMENT_SHIPSBYCLASS									= fragment.FRAGMENT_DEFAULTID_EMPTY + 410;
 
-		public static final int	FRAGMENT_PILOTINFO_INFO								= FRAGMENT_PILOTLIST + 1;
-		public static final int	FRAGMENT_PILOTINFO_T24SELL						= FRAGMENT_PILOTLIST + 2;
-		public static final int	FRAGMENT_PILOTINFO_SHIPS							= FRAGMENT_PILOTLIST + 3;
-		public static final int	FRAGMENT_PILOTINFO_BPCT2							= FRAGMENT_PILOTLIST + 4;
-		public static final int	FRAGMENT_ASSETSBYLOCATION							= FRAGMENT_DEFAULTID_EMPTY + 200;
-		public static final int	FRAGMENT_ASSETSBYCATEGORY							= FRAGMENT_DEFAULTID_EMPTY + 201;
-		public static final int	FRAGMENT_ASSETSBYTYPE									= FRAGMENT_DEFAULTID_EMPTY + 202;
-		public static final int	FRAGMENT_ASSETSMATERIALS							= FRAGMENT_DEFAULTID_EMPTY + 203;
-		public static final int	FRAGMENT_ASSETSAREASTEROIDS						= FRAGMENT_DEFAULTID_EMPTY + 204;
-		public static final int	FRAGMENT_ASSETSAREPLANETARY						= FRAGMENT_DEFAULTID_EMPTY + 205;
-		public static final int	FRAGMENT_ASSETSARESHIPS								= FRAGMENT_DEFAULTID_EMPTY + 206;
-		public static final int	FRAGMENT_INDUSTRYT1BLUEPRINTS					= FRAGMENT_DEFAULTID_EMPTY + 300;
-		public static final int	FRAGMENT_INDUSTRYT2BLUEPRINTS					= FRAGMENT_DEFAULTID_EMPTY + 301;
-		public static final int	FRAGMENT_INDUSTRYT3BLUEPRINTS					= FRAGMENT_DEFAULTID_EMPTY + 302;
-		public static final int	FRAGMENT_INDUSTRYT1MANUFACTURE				= FRAGMENT_DEFAULTID_EMPTY + 303;
-		public static final int	FRAGMENT_INDUSTRYJOBHEADER						= FRAGMENT_DEFAULTID_EMPTY + 1304;
-		public static final int	FRAGMENT_INDUSTRYLOMRESOURCES					= FRAGMENT_DEFAULTID_EMPTY + 305;
-		public static final int	FRAGMENT_INDUSTRYT2MANUFACTUREHEADER	= FRAGMENT_DEFAULTID_EMPTY + 306;
-		public static final int	FRAGMENT_INDUSTRYT2INVENTION					= FRAGMENT_DEFAULTID_EMPTY + 307;
-		public static final int	FRAGMENT_INDUSTRYJOBACTIONSDATASOURCE	= FRAGMENT_DEFAULTID_EMPTY + 308;
+		public static final int	FRAGMENT_PILOTINFO_INFO								= fragment.FRAGMENT_PILOTLIST + 1;
+		public static final int	FRAGMENT_PILOTINFO_T24SELL						= fragment.FRAGMENT_PILOTLIST + 2;
+		public static final int	FRAGMENT_PILOTINFO_SHIPS							= fragment.FRAGMENT_PILOTLIST + 3;
+		public static final int	FRAGMENT_PILOTINFO_BPCT2							= fragment.FRAGMENT_PILOTLIST + 4;
+		public static final int	FRAGMENT_ASSETSBYLOCATION							= fragment.FRAGMENT_DEFAULTID_EMPTY + 200;
+		public static final int	FRAGMENT_ASSETSBYCATEGORY							= fragment.FRAGMENT_DEFAULTID_EMPTY + 201;
+		public static final int	FRAGMENT_ASSETSBYTYPE									= fragment.FRAGMENT_DEFAULTID_EMPTY + 202;
+		public static final int	FRAGMENT_ASSETSMATERIALS							= fragment.FRAGMENT_DEFAULTID_EMPTY + 203;
+		public static final int	FRAGMENT_ASSETSAREASTEROIDS						= fragment.FRAGMENT_DEFAULTID_EMPTY + 204;
+		public static final int	FRAGMENT_ASSETSAREPLANETARY						= fragment.FRAGMENT_DEFAULTID_EMPTY + 205;
+		public static final int	FRAGMENT_ASSETSARESHIPS								= fragment.FRAGMENT_DEFAULTID_EMPTY + 206;
+		public static final int	FRAGMENT_INDUSTRYT1BLUEPRINTS					= fragment.FRAGMENT_DEFAULTID_EMPTY + 300;
+		public static final int	FRAGMENT_INDUSTRYT2BLUEPRINTS					= fragment.FRAGMENT_DEFAULTID_EMPTY + 301;
+		public static final int	FRAGMENT_INDUSTRYT3BLUEPRINTS					= fragment.FRAGMENT_DEFAULTID_EMPTY + 302;
+		public static final int	FRAGMENT_INDUSTRYT1MANUFACTURE				= fragment.FRAGMENT_DEFAULTID_EMPTY + 303;
+		public static final int	FRAGMENT_INDUSTRYJOBHEADER						= fragment.FRAGMENT_DEFAULTID_EMPTY + 1304;
+		public static final int	FRAGMENT_INDUSTRYLOMRESOURCES					= fragment.FRAGMENT_DEFAULTID_EMPTY + 305;
+		public static final int	FRAGMENT_INDUSTRYT2MANUFACTUREHEADER	= fragment.FRAGMENT_DEFAULTID_EMPTY + 306;
+		public static final int	FRAGMENT_INDUSTRYT2INVENTION					= fragment.FRAGMENT_DEFAULTID_EMPTY + 307;
+		public static final int	FRAGMENT_INDUSTRYJOBACTIONSDATASOURCE	= fragment.FRAGMENT_DEFAULTID_EMPTY + 308;
 		// public static final int FRAGMENT_BUYS = FRAGMENT_DEFAULTID_EMPTY +
 		// 500;
 		// public static final int FRAGMENT_SELLS = FRAGMENT_DEFAULTID_EMPTY +
@@ -128,8 +134,8 @@ public class AppWideConstants {
 		// FRAGMENT_DEFAULTID_EMPTY + 503;
 		// public static final int FRAGMENT_MARKETSELLS =
 		// FRAGMENT_DEFAULTID_EMPTY + 504;
-		public static final int	FRAGMENT_QUEUESHEADER									= FRAGMENT_DEFAULTID_EMPTY + 601;
-		public static final int	FRAGMENT_JOBLISTBODY									= FRAGMENT_DEFAULTID_EMPTY + 602;
+		public static final int	FRAGMENT_QUEUESHEADER									= fragment.FRAGMENT_DEFAULTID_EMPTY + 601;
+		public static final int	FRAGMENT_JOBLISTBODY									= fragment.FRAGMENT_DEFAULTID_EMPTY + 602;
 
 		public static final int	FRAGMENT_ITEMMODULESTACKS							= 591;
 		public static final int	FRAGMENT_ITEMMODULERESOURCES					= 592;
@@ -159,9 +165,9 @@ public class AppWideConstants {
 	// - P A N E L S   I D E N T I F I E R S
 	public static final class panel {
 		public static final int	PANEL_EMPTY								= 20000;
-		public static final int	PANEL_MARKETORDERSBODY		= PANEL_EMPTY + 10;
-		public static final int	PANEL_INDUSTRYJOBSHEADER	= PANEL_EMPTY + 20;
-		public static final int	PANEL_INDUSTRYJOBSBODY		= PANEL_EMPTY + 21;
+		public static final int	PANEL_MARKETORDERSBODY		= panel.PANEL_EMPTY + 10;
+		public static final int	PANEL_INDUSTRYJOBSHEADER	= panel.PANEL_EMPTY + 20;
+		public static final int	PANEL_INDUSTRYJOBSBODY		= panel.PANEL_EMPTY + 21;
 	}
 
 	// - P R E F E R E N C E S
@@ -171,41 +177,42 @@ public class AppWideConstants {
 		public static final String	PREF_ALLOWMOVEREQUESTS		= "prefkey_AllowMoveRequests";
 		public static final String	PREF_CALCULATEASSETVALUE	= "prefkey_AssetValueCalculation";
 		public static final String	PREF_BLOCKDOWNLOAD				= "prefkey_BlockDownloads";
+		public static final String	PREF_BLOCKMARKET					= "prefkey_BlockMarket";
 	}
 
 	public static final class rendermodes {
 		public static final int	NORMALRENDER										= 1000;
-		public static final int	RENDER_RESOURCECOMPONENTJOB			= NORMALRENDER + 2;
-		public static final int	RENDER_RESOURCEOUTPUTJOB				= NORMALRENDER + 4;
-		public static final int	RENDER_RESOURCEOUTPUTBLUEPRINT	= NORMALRENDER + 6;
-		public static final int	RENDER_RESOURCESKILLJOB					= NORMALRENDER + 8;
-		public static final int	RENDER_RESOURCEBLUEPRINTJOB			= NORMALRENDER + 10;
-		public static final int	RENDER_RESOURCESCHEDULEDSELL		= NORMALRENDER + 11;
-		public static final int	RENDER_BLUEPRINTINDUSTRYHEADER	= NORMALRENDER + 12;
-		public static final int	RENDER_BLUEPRINTINVENTIONHEADER	= NORMALRENDER + 14;
-		public static final int	RENDER_BLUEPRINTINDUSTRY				= NORMALRENDER + 16;
-		public static final int	RENDER_BLUEPRINTT2INVENTION			= NORMALRENDER + 18;
-		public static final int	RENDER_SKILLACTION							= NORMALRENDER + 20;
-		public static final int	RENDER_JOB4LIST									= NORMALRENDER + 22;
-		public static final int	RENDER_RUNNINGJOB								= NORMALRENDER + 24;
-		public static final int	RENDER_JOBEXTENSION							= NORMALRENDER + 26;
-		public static final int	RENDER_LOCATIONMODE							= NORMALRENDER + 28;
-		public static final int	RENDER_LOCATIONMAKETHUB					= NORMALRENDER + 30;
-		public static final int	RENDER_GROUPMARKETSIDE					= NORMALRENDER + 60;
-		public static final int	RENDER_GROUPJOBSTATE						= NORMALRENDER + 61;
-		public static final int	RENDER_GROUPSHIPFITTING					= NORMALRENDER + 62;
-		public static final int	RENDER_GROUPMARKETANALYTICAL		= NORMALRENDER + 63;
-		public static final int	RENDER_GROUPMARKETORDERREGION		= NORMALRENDER + 64;
-		public static final int	RENDER_SHIP4ASSETSBYLOCATION		= NORMALRENDER + 70;
-		public static final int	RENDER_MARKETORDER							= NORMALRENDER + 80;
-		public static final int	RENDER_MARKETORDERSCHEDULEDSELL	= NORMALRENDER + 81;
-		public static final int	RENDER_FITTINGHEADER						= NORMALRENDER + 101;
+		public static final int	RENDER_RESOURCECOMPONENTJOB			= rendermodes.NORMALRENDER + 2;
+		public static final int	RENDER_RESOURCEOUTPUTJOB				= rendermodes.NORMALRENDER + 4;
+		public static final int	RENDER_RESOURCEOUTPUTBLUEPRINT	= rendermodes.NORMALRENDER + 6;
+		public static final int	RENDER_RESOURCESKILLJOB					= rendermodes.NORMALRENDER + 8;
+		public static final int	RENDER_RESOURCEBLUEPRINTJOB			= rendermodes.NORMALRENDER + 10;
+		public static final int	RENDER_RESOURCESCHEDULEDSELL		= rendermodes.NORMALRENDER + 11;
+		public static final int	RENDER_BLUEPRINTINDUSTRYHEADER	= rendermodes.NORMALRENDER + 12;
+		public static final int	RENDER_BLUEPRINTINVENTIONHEADER	= rendermodes.NORMALRENDER + 14;
+		public static final int	RENDER_BLUEPRINTINDUSTRY				= rendermodes.NORMALRENDER + 16;
+		public static final int	RENDER_BLUEPRINTT2INVENTION			= rendermodes.NORMALRENDER + 18;
+		public static final int	RENDER_SKILLACTION							= rendermodes.NORMALRENDER + 20;
+		public static final int	RENDER_JOB4LIST									= rendermodes.NORMALRENDER + 22;
+		public static final int	RENDER_RUNNINGJOB								= rendermodes.NORMALRENDER + 24;
+		public static final int	RENDER_JOBEXTENSION							= rendermodes.NORMALRENDER + 26;
+		public static final int	RENDER_LOCATIONMODE							= rendermodes.NORMALRENDER + 28;
+		public static final int	RENDER_LOCATIONMAKETHUB					= rendermodes.NORMALRENDER + 30;
+		public static final int	RENDER_GROUPMARKETSIDE					= rendermodes.NORMALRENDER + 60;
+		public static final int	RENDER_GROUPJOBSTATE						= rendermodes.NORMALRENDER + 61;
+		public static final int	RENDER_GROUPSHIPFITTING					= rendermodes.NORMALRENDER + 62;
+		public static final int	RENDER_GROUPMARKETANALYTICAL		= rendermodes.NORMALRENDER + 63;
+		public static final int	RENDER_GROUPMARKETORDERREGION		= rendermodes.NORMALRENDER + 64;
+		public static final int	RENDER_SHIP4ASSETSBYLOCATION		= rendermodes.NORMALRENDER + 70;
+		public static final int	RENDER_MARKETORDER							= rendermodes.NORMALRENDER + 80;
+		public static final int	RENDER_MARKETORDERSCHEDULEDSELL	= rendermodes.NORMALRENDER + 81;
+		public static final int	RENDER_FITTINGHEADER						= rendermodes.NORMALRENDER + 101;
 	}
 
 	// - E X P I R A T I O N   T I M E S
 	public static final class times {
-		public static final long	HOURS2	= 2 * HOURS1;
-		public static final long	HOURS12	= 12 * HOURS1;
+		public static final long	HOURS2	= 2 * AppWideConstants.HOURS1;
+		public static final long	HOURS12	= 12 * AppWideConstants.HOURS1;
 	}
 
 	// - S T A T I C - S E C T I O N
@@ -234,15 +241,15 @@ public class AppWideConstants {
 	public static final String	EXTRA_MARKETDATA_LOCALIZER	= "EXTRA_MARKETDATA_LOCALIZER";
 
 	public static final long		SECONDS1										= 1 * 1000;
-	public static final long		SECONDS5										= 5 * SECONDS1;
-	public static final long		MINUTES1										= 1 * 60 * SECONDS1;
-	public static final long		MINUTES15										= 15 * MINUTES1;
-	public static final long		MINUTES30										= 30 * MINUTES1;
-	public static final long		MINUTES45										= 45 * MINUTES1;
-	public static final long		MINUTES60										= 60 * MINUTES1;
-	public static final long		HOURS1											= 1 * 60 * MINUTES1;
-	public static final long		HOURS3											= 3 * HOURS1;
-	public static final long		HOURS24											= 24 * HOURS1;
+	public static final long		SECONDS5										= 5 * AppWideConstants.SECONDS1;
+	public static final long		MINUTES1										= 1 * 60 * AppWideConstants.SECONDS1;
+	public static final long		MINUTES15										= 15 * AppWideConstants.MINUTES1;
+	public static final long		MINUTES30										= 30 * AppWideConstants.MINUTES1;
+	public static final long		MINUTES45										= 45 * AppWideConstants.MINUTES1;
+	public static final long		MINUTES60										= 60 * AppWideConstants.MINUTES1;
+	public static final long		HOURS1											= 1 * 60 * AppWideConstants.MINUTES1;
+	public static final long		HOURS3											= 3 * AppWideConstants.HOURS1;
+	public static final long		HOURS24											= 24 * AppWideConstants.HOURS1;
 
 }
 

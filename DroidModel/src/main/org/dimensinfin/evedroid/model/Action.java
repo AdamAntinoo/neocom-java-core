@@ -1,9 +1,11 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.model;
 
 // - IMPORT SECTION .........................................................................................
@@ -13,13 +15,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
+import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -195,7 +197,7 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 		return buffer.toString();
 	}
 
-	private void performTask(final EveTask task, final Asset targetAsset) {
+	private void performTask(final EveTask task, final NeoComAsset targetAsset) {
 		ETaskType type = task.getTaskType();
 		switch (type) {
 			case MOVE:
@@ -223,7 +225,7 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 	 *          other resources. This is used to change the memory copy of the asset so next actions will found
 	 *          an scenery similar to the one in real life and not an infinite number of resources.
 	 */
-	private synchronized void registerTask(final int pri, final EveTask task, final Asset targetAsset) {
+	private synchronized void registerTask(final int pri, final EveTask task, final NeoComAsset targetAsset) {
 		logger.info("-- Registering task request [" + pri + "] " + task);
 		performTask(task, targetAsset);
 		// Filter out assets already on the final location
