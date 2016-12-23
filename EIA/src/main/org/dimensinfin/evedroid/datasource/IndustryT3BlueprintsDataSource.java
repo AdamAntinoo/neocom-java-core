@@ -15,6 +15,8 @@ import java.util.HashMap;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -52,9 +54,12 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public IndustryT3BlueprintsDataSource(final AppModelStore store) {
-		if (null != store) {
-			_store = store;
-		}
+		if (null != store) _store = store;
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -92,42 +97,46 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 			BlueprintPart bppart = new BlueprintPart(currentbpc);
 			bppart.setActivity(ModelWideConstants.activities.MANUFACTURING);
 			bppart.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
-			if (null == parent) {
-				add2Location(locid, bppart);
-			} else {
-				add2Container(parent, bppart);
-			}
+			if (null == parent)
+				this.add2Location(locid, bppart);
+			else
+				this.add2Container(parent, bppart);
 		}
 		Log.i("IndustryT2Blueprints", "<< IndustryT2Blueprints.createContentHierarchy [" + _root.size() + "]");
 	}
 
 	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		logger.info(">> IndustryT2Blueprints.getPartHierarchy");
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		AbstractDataSource.logger.info(">> IndustryT2Blueprints.getPartHierarchy");
 		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractAndroidPart node : _root) {
 			result.add(node);
 			// Check if the node is expanded. Then add its children.
 			if (node.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
+				ArrayList<IPart> grand = node.collaborate2View();
 				// Order the list of blueprints by their profit
-				Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_CARD_RATIO));
-				result.addAll(grand);
+				Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_CARD_RATIO));
+				for (IPart part : grand)
+					result.add((AbstractAndroidPart) part);
 				result.add(new TerminatorPart(new Separator("")));
 			}
 		}
 		_adapterData = result;
-		logger.info("<< IndustryT2Blueprints.getPartHierarchy");
+		AbstractDataSource.logger.info("<< IndustryT2Blueprints.getPartHierarchy");
 		return result;
+	}
+
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-			fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE))
+			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		}
 	}
 
 	/**
@@ -147,11 +156,10 @@ public class IndustryT3BlueprintsDataSource extends AbstractDataSource {
 					.setRenderMode(AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY);
 			lochit.setContainerLocation(true);
 			String containername = container.getUserLabel();
-			if (null == containername) {
+			if (null == containername)
 				lochit.setContainerName("#" + container.getAssetID());
-			} else {
+			else
 				lochit.setContainerName(containername);
-			}
 			locations.put(cid, lochit);
 			_root.add(lochit);
 		}

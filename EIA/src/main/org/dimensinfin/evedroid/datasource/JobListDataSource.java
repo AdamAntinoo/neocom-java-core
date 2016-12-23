@@ -14,6 +14,8 @@ import java.util.Collections;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -57,6 +59,11 @@ public class JobListDataSource extends AbstractDataSource {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public JobListDataSource(final AppModelStore store) {
 		if (null != store) _store = store;
+	}
+
+	public RootNode collaborate2Model() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -141,38 +148,40 @@ public class JobListDataSource extends AbstractDataSource {
 		return _activityFilter;
 	}
 
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_QUEUESHEADER) return super.getPartHierarchy();
+		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
+		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_JOBLISTBODY) {
+		for (AbstractAndroidPart node : _root) {
+			ArrayList<IPart> grand = node.collaborate2View();
+			// Order jobs by end date.
+			Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
+			if (grand.size() > 0) {
+				result.add(node);
+				for (IPart part : grand)
+					result.add((AbstractAndroidPart) part);
+			}
+		}
+		_adapterData = result;
+		return result;
+	}
+
 	public ArrayList<AbstractAndroidPart> getHeaderPartHierarchy() {
 		this.createHeaderContents();
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractAndroidPart node : headerContents) {
 			result.add(node);
 			// Check if the node is expanded. Then add its children.
-			if (node.isExpanded()) {
-				ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-				result.addAll(grand);
-			}
+			if (node.isExpanded()) for (IPart part : node.collaborate2View())
+				result.add((AbstractAndroidPart) part);
 		}
 		return result;
 	}
 
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartHierarchy() {
-		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_QUEUESHEADER) return super.getPartHierarchy();
-		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		//		if (_flavor == AppWideConstants.fragment.FRAGMENT_JOBLISTBODY) {
-		for (AbstractAndroidPart node : _root) {
-			ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-			// Order jobs by end date.
-			Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
-			if (grand.size() > 0) {
-				result.add(node);
-				result.addAll(grand);
-			}
-			//			}
-		}
-		//		}
-		_adapterData = result;
-		return result;
+	public ArrayList<AbstractAndroidPart> getHeaderParts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

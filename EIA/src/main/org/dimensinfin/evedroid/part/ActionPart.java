@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.IndustryT2Activity;
 import org.dimensinfin.evedroid.connector.AppConnector;
@@ -144,28 +143,6 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 		return this.getCastedModel().getItemName();
 	}
 
-	@Deprecated
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartChildren() {
-		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		//		result.add(this);
-		// Add the children only if the model is expanded.
-		if (this.isExpanded()) {
-			Vector<AbstractPropertyChanger> ch = this.getChildren();
-			for (final AbstractPropertyChanger node : ch) {
-				// Convert the node to a part.
-				final AbstractAndroidPart part = (AbstractAndroidPart) node;
-				result.add(part);
-				// Check if the node is expanded. Then add its children.
-				if (part.isExpanded()) {
-					final ArrayList<AbstractAndroidPart> grand = part.getPartChildren();
-					result.addAll(grand);
-				}
-			}
-		}
-		return result;
-	}
-
 	public int getRequestQty() {
 		return this.getCastedModel().getRequestQty();
 	}
@@ -273,10 +250,11 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 					if (targetbpassetid.size() > 0) {
 						final NeoComAsset targetAsset = targetbpassetid.get(0);
 						final Intent intent = new Intent(this.getActivity(), IndustryT2Activity.class);
-						intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
-						intent.putExtra(AppWideConstants.extras.EXTRA_BLUEPRINTID,
+						intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
+						intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name(),
 								Long.valueOf(targetAsset.getAssetID()).longValue());
-						intent.putExtra(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY, ModelWideConstants.activities.INVENTION);
+						intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name(),
+								ModelWideConstants.activities.INVENTION);
 						this.getActivity().startActivity(intent);
 
 						// Event consumed. Override the click.
@@ -320,6 +298,35 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 			default:
 				break;
 		}
+	}
+
+	//	@Override
+	//	public ArrayList<IPart> collaborate2View() {
+	//		final ArrayList<IPart> result = new ArrayList<IPart>();
+	//		//		result.add(this);
+	//		// Add the children only if the model is expanded.
+	//		if (this.isExpanded()) {
+	//			Vector<IPart> ch = this.getChildren();
+	//			for (final AbstractPropertyChanger node : ch) {
+	//				// Convert the node to a part.
+	//				final AbstractAndroidPart part = (AbstractAndroidPart) node;
+	//				result.add(part);
+	//				// Check if the node is expanded. Then add its children.
+	//				if (part.isExpanded()) {
+	//					final ArrayList<AbstractAndroidPart> grand = part.collaborate2View();
+	//					result.addAll(grand);
+	//				}
+	//			}
+	//		}
+	//		return result;
+	//	}
+	/**
+	 * The default actions inside this method usually are the sorting of the children nodes. For actions there
+	 * is not sorting required so do nothing with the input.
+	 */
+	@Override
+	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
+		return targets;
 	}
 
 	public void setBlueprintID(final long assetID) {

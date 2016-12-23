@@ -13,20 +13,17 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.core.AbstractNeoComNode;
-import org.dimensinfin.evedroid.interfaces.IAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Container extends AbstractNeoComNode implements IAsset {
+public class Container extends NeoComAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger		= Logger.getLogger("org.dimensinfin.evedroid.model");
+	private static Logger	logger	= Logger.getLogger("org.dimensinfin.evedroid.model");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private IAsset				delegate	= null;
-	private long					pilotID		= 0;
+	private long					pilotID	= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Container(long pilot) {
+	public Container(final long pilot) {
 		pilotID = pilot;
 	}
 
@@ -34,12 +31,13 @@ public class Container extends AbstractNeoComNode implements IAsset {
 	/**
 	 * The collaboration of the container is different form the one of an asset. It will aggregate to the output
 	 * the list of the contents. <br>
-	 * The Container can access the database to get its contents
+	 * The Container can access the database to get its contents.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		ArrayList<NeoComAsset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID, this.getAssetID());
+		this.clean();
 		// Classify the contents
 		for (NeoComAsset node : contents) {
 			result.add(node);
@@ -47,52 +45,36 @@ public class Container extends AbstractNeoComNode implements IAsset {
 		return result;
 	}
 
-	public Container copyFrom(final IAsset asset) {
-		// Install the original asset in this instance as the delegate.
-		delegate = asset;
+	/**
+	 * Even this object inherits from the asset structure, it is a new instance of the object and we should copy
+	 * the data from the original reference to this instance instead using delegates that will not work when
+	 * accessing directly to fields.
+	 * 
+	 * @return this same instance updated with the reference data.
+	 */
+	public Container copyFrom(final NeoComAsset asset) {
+		// REFACTOR Get access to the unique asset identifier.
+		this.setAssetID(asset.getAssetID());
+		this.setLocationID(asset.getLocationID());
+		this.setTypeID(asset.getTypeID());
+		this.setQuantity(asset.getQuantity());
+		//	this.flag = reference.flag;
+		this.setSingleton(asset.isPackaged());
+		// REFACTOR Get access to the unique asset identifier.
+		//		this.parentAssetID = reference.parentAssetID;
+
+		//- D E R I V E D   F I E L D S
+		this.setOwnerID(asset.getOwnerID());
+		this.setName(asset.getName());
+		this.setCategory(asset.getCategory());
+		this.setGroupName(asset.getGroupName());
+		this.setTech(asset.getTech());
+		//		this.blueprintFlag = reference.blueprintFlag;
+		this.setUserLabel(asset.getUserLabel());
+		this.setShip(asset.isShip());
+		this.setContainer(asset.isContainer());
 		return this;
 	}
-
-	public long getAssetID() {
-		return delegate.getAssetID();
-	}
-
-	public double getIskvalue() {
-		return delegate.getIskvalue();
-	}
-
-	public long getLocationID() {
-		return delegate.getLocationID();
-	}
-
-	public String getOrderingName() {
-		return delegate.getOrderingName();
-	}
-
-	public NeoComAsset getParentContainer() {
-		return delegate.getParentContainer();
-	}
-
-	public long getParentContainerId() {
-		return delegate.getParentContainerId();
-	}
-
-	public boolean hasParent() {
-		return delegate.hasParent();
-	}
-
-	public boolean isContainer() {
-		return delegate.isContainer();
-	}
-
-	public boolean isPackaged() {
-		return delegate.isPackaged();
-	}
-
-	public boolean isShip() {
-		return delegate.isShip();
-	}
-
 }
 
 // - UNUSED CODE ............................................................................................

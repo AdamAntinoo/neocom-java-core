@@ -6,13 +6,13 @@
 
 package org.dimensinfin.evedroid.factory;
 
+import java.util.ArrayList;
 // - IMPORT SECTION .........................................................................................
 import java.util.Vector;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.part.GroupPart;
@@ -30,13 +30,19 @@ public abstract class AbstractIndustryDataSource extends AbstractDataSource {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractIndustryDataSource(final AppModelStore store) {
 		super();
-		if (null != store) {
-			_store = store;
-		}
+		if (null != store) _store = store;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	public void createContentHierarchy() {
+	@Override
+	public void createContentHierarchy() {
+		super.createContentHierarchy();
+	}
+
+	@Override
+	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		return super.getBodyParts();
+	}
 	//		// Clear the current list of elements.
 	//		_root.clear();
 	//
@@ -62,23 +68,19 @@ public abstract class AbstractIndustryDataSource extends AbstractDataSource {
 	//	}
 
 	protected void add2Group(final IItemPart action, final EIndustryGroup igroup) {
-		for (AbstractAndroidPart group : _root) {
-			if (group instanceof GroupPart) {
-				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString())) {
-					group.addChild((IEditPart) action);
-				}
-			}
-		}
+		for (AbstractAndroidPart group : _root)
+			if (group instanceof GroupPart)
+				if (((GroupPart) group).getCastedModel().getTitle().equalsIgnoreCase(igroup.toString()))
+					group.addChild((IPart) action);
 	}
 
-	protected void classifyResources(final Vector<AbstractPropertyChanger> nodes) {
+	protected void classifyResources(final Vector<IPart> nodes) {
 		// Process the actions and set each one on the matching group.
-		for (AbstractPropertyChanger node : nodes) {
+		for (IPart node : nodes)
 			if (node instanceof IItemPart) {
 				IItemPart action = (IItemPart) node;
-				add2Group(action, action.getIndustryGroup());
+				this.add2Group(action, action.getIndustryGroup());
 			}
-		}
 	}
 }
 // - UNUSED CODE ............................................................................................

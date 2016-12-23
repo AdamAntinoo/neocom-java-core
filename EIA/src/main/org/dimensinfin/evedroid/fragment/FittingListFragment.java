@@ -14,11 +14,10 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
+import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.SpecialDataSource;
-import org.dimensinfin.evedroid.enums.EVARIANT;
 import org.dimensinfin.evedroid.factory.FittingPartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.interfaces.IPagerFragment;
@@ -68,7 +67,7 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	public void onStart() {
 		FittingListFragment.logger.info(">> [FittingListFragment.onStart]");
 		try {
-			this.setIdentifier(_variant.hashCode());
+			//			this.setIdentifier(_variant.hashCode());
 			this.registerDataSource();
 			// This fragment has a header. Populate it with the datasource header contents.
 			this.setHeaderContents();
@@ -89,16 +88,16 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
-		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
-		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name()).addIdentifier(capsuleerid);
+		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid);
 		// This part of the code may depend on the variant so surround it with the detector.
-		if (this.getVariant() == EVARIANT.FITTING_LIST) {
+		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
 			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-			SpecialDataSource ds = new FittingListDataSource(locator, new FittingPartFactory(_variant));
-			ds.setVariant(_variant);
-			ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), this.getPilot().getCharacterID());
+			SpecialDataSource ds = new FittingListDataSource(locator, new FittingPartFactory(this.getVariant()));
+			ds.setVariant(this.getVariant());
+			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 			//			ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
-			this.setDataSource(EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds));
+			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		}
 		FittingListFragment.logger.info("<< [FittingListFragment.registerDataSource]");
 	}

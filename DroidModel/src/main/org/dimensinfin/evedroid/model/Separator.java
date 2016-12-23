@@ -18,6 +18,10 @@ import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Separator extends AbstractNeoComNode {
+	public enum ESeparatorType {
+		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7064637836405461264L;
 	//	private static Logger			logger						= Logger.getLogger("Separator");
@@ -25,6 +29,7 @@ public class Separator extends AbstractNeoComNode {
 	// - F I E L D - S E C T I O N ............................................................................
 	private String						title							= "TITLE";
 	private String						content						= "";
+	private ESeparatorType		type							= ESeparatorType.DEFAULT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Separator(final String title) {
@@ -35,14 +40,10 @@ public class Separator extends AbstractNeoComNode {
 	/**
 	 * Check if the Separator has children and then add all them to the model.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		//		if (renderWhenEmpty()) {
-		//			results.add(this);
-		//		}
-		//		if (isExpanded()) {
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
-		//		}
+		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
 		return results;
 	}
 
@@ -54,6 +55,10 @@ public class Separator extends AbstractNeoComNode {
 		return title;
 	}
 
+	public ESeparatorType getType() {
+		return type;
+	}
+
 	public void setContent(final String content) {
 		this.content = content;
 	}
@@ -62,13 +67,18 @@ public class Separator extends AbstractNeoComNode {
 		this.title = title;
 	}
 
+	public Separator setType(final ESeparatorType type) {
+		this.type = type;
+		return this;
+	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Separator [");
 		buffer.append(title).append("\n");
 		//		buffer.append(title).append(" - ").append(content).append(" ");
 		// Add the contents temporarily
-		buffer.append(getChildren());
+		buffer.append(this.getChildren());
 		buffer.append(" ]");
 		return buffer.toString();
 	}

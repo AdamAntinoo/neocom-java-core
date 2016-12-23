@@ -21,7 +21,8 @@ import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.evedroid.constant.CVariant;
+import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -39,7 +40,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private DataSourceLocator							_locator					= null;
-	private EVARIANT											_variant					= EVARIANT.DEFAULT_VARIANT;
+	private String												_variant					= CVariant
+			.getName4Variant(EDefaultVariant.DEFAULT_VARIANT.hashCode());
 	private boolean												_cacheable				= true;
 	private final HashMap<String, Object>	_parameters				= new HashMap<String, Object>();
 	protected IPartFactory								_partFactory			= null;
@@ -89,6 +91,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 * duplicated of the resulting Part model and we move already parts from the current model to the new model
 	 * or create new part and finally remove what is left and unused.
 	 */
+	@Override
 	public void createContentHierarchy() {
 		try {
 			SpecialDataSource.logger.info(">> [SpecialDataSource.createContentHierarchy]");
@@ -114,6 +117,8 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		SpecialDataSource.logger
+				.info("-- [SpecialDataSource.createContentHierarchy]> _bodyParts.size: " + _bodyParts.size());
 		SpecialDataSource.logger.info("<< [SpecialDataSource.createContentHierarchy]");
 	}
 
@@ -134,12 +139,15 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 * because we should change the final class level returned to the higher level possible and now for
 	 * compatibility we keep the <code>AbstractAndroidPart</code>.
 	 */
+	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
+		SpecialDataSource.logger.info(">> [SpecialDataSource.getBodyParts]");
 		// Get the list of Parts that will be used for the ListView
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		if (null != _bodyParts) // Transform the list of IParts to a list of AbstractAndroidParts.
 			for (IPart part : _bodyParts)
 			if (part instanceof AbstractAndroidPart) result.add((AbstractAndroidPart) part);
+		SpecialDataSource.logger.info("<< [SpecialDataSource.getBodyParts]> result.size: " + result.size());
 		return result;
 	}
 
@@ -169,7 +177,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	//		return result;
 	//	}
 
-	public EVARIANT getVariant() {
+	public String getVariant() {
 		return _variant;
 	}
 
@@ -206,7 +214,7 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 		_dataModelRoot = root;
 	}
 
-	public SpecialDataSource setVariant(final EVARIANT variant) {
+	public SpecialDataSource setVariant(final String variant) {
 		_variant = variant;
 		return this;
 	}

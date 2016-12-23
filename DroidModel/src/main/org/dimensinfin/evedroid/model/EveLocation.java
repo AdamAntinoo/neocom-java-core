@@ -44,7 +44,7 @@ public class EveLocation extends AbstractComplexNode {
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true, index = true)
 	private long							id								= -2;
-	private transient String	location					= "<LOCATION-UNDEFINED>";
+	//	private transient String	location					= "<LOCATION-UNDEFINED>";
 	@DatabaseField
 	private long							stationID					= -1;
 	@DatabaseField
@@ -64,8 +64,8 @@ public class EveLocation extends AbstractComplexNode {
 	@DatabaseField
 	private String						security					= "0.0";
 	@DatabaseField
-	private int								typeID						= -1;
-	private boolean						citadel						= false;
+	protected int							typeID						= -1;
+	protected boolean					citadel						= false;
 	//	private final boolean empty=true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -77,55 +77,55 @@ public class EveLocation extends AbstractComplexNode {
 	}
 
 	//		public EveLocation(Citadel citadel) {
-	public EveLocation(long citadelid, Citadel cit) {
+	public EveLocation(final long citadelid, final Citadel cit) {
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
-			updateFromCitadel(citadelid, cit);
+			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-			setDirty(true);
+			this.setDirty(true);
 		}
 	}
 
-	public EveLocation(Outpost out) {
+	public EveLocation(final Outpost out) {
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
-			updateFromSystem(out.getSolarSystem());
+			this.updateFromSystem(out.getSolarSystem());
 			id = out.getFacilityID();
-			setStation(out.getName());
+			this.setStation(out.getName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-			setDirty(true);
+			this.setDirty(true);
 		}
 	}
 
-	public EveLocation(Station station) {
+	public EveLocation(final Station station) {
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
-			updateFromSystem(station.getSolarSystemID());
+			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
-			setStation(station.getStationName());
+			this.setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-			setDirty(true);
+			this.setDirty(true);
 		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean equals(final EveLocation obj) {
-		if (!getRegion().equalsIgnoreCase(obj.getRegion())) return false;
-		if (!getSystem().equalsIgnoreCase(obj.getSystem())) return false;
-		if (!getStation().equalsIgnoreCase(obj.getStation())) return false;
+		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
+		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
+		if (!this.getStation().equalsIgnoreCase(obj.getStation())) return false;
 		return true;
 	}
 
@@ -139,6 +139,10 @@ public class EveLocation extends AbstractComplexNode {
 
 	public String getFullLocation() {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	public long getID() {
@@ -196,15 +200,15 @@ public class EveLocation extends AbstractComplexNode {
 	}
 
 	public final boolean isRegion() {
-		return ((getStationID() == 0) && (getSystemID() == 0) && (getRegionID() != 0));
+		return ((this.getStationID() == 0) && (this.getSystemID() == 0) && (this.getRegionID() != 0));
 	}
 
 	public final boolean isStation() {
-		return ((getStationID() != 0) && (getSystemID() != 0) && (getRegionID() != 0));
+		return ((this.getStationID() != 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
 	}
 
 	public final boolean isSystem() {
-		return ((getStationID() == 0) && (getSystemID() != 0) && (getRegionID() != 0));
+		return ((this.getStationID() == 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
 	}
 
 	public void setConstellation(final String constellation) {
@@ -227,6 +231,10 @@ public class EveLocation extends AbstractComplexNode {
 				sqle.printStackTrace();
 			}
 		}
+	}
+
+	public void setId(final long newid) {
+		id = newid;
 	}
 
 	public void setLocationID(final long stationID) {
@@ -254,6 +262,10 @@ public class EveLocation extends AbstractComplexNode {
 		//		setDirty(true);
 	}
 
+	public void setStationID(final long stationID) {
+		this.stationID = stationID;
+	}
+
 	public void setSystem(final String system) {
 		this.system = system;
 		//		setDirty(true);
@@ -271,26 +283,31 @@ public class EveLocation extends AbstractComplexNode {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("Location [");
-		buffer.append("#").append(getID()).append(" ");
-		buffer.append("[").append(getRegion()).append("] ");
-		if (null != system) buffer.append("system: ").append(system).append(" ");
-		if (null != station) buffer.append("station: ").append(station).append(" ");
+		StringBuffer buffer = new StringBuffer("NeoComLocation [");
+		buffer.append("#").append(this.getID()).append(" ");
+		buffer.append("(").append(this.getChildren().size()).append(") ");
+		buffer.append("[").append(this.getRegion()).append("] ");
+		if (null != system) {
+			buffer.append("system: ").append(system).append(" ");
+		}
+		if (null != station) {
+			buffer.append("station: ").append(station).append(" ");
+		}
 		buffer.append("]");
 		return buffer.toString();
 	}
 
-	private void updateFromCitadel(long id, Citadel cit) {
-		updateFromSystem(cit.systemId);
+	private void updateFromCitadel(final long id, final Citadel cit) {
+		this.updateFromSystem(cit.systemId);
 		//MyLocation myloc = citadel.getLocation(id);
 		// Copy the data from the citadel location.
 		stationID = id;
 		station = cit.name;
 		systemID = cit.systemId;
-		this.citadel = true;
+		citadel = true;
 	}
 
-	private void updateFromSystem(long id) {
+	private void updateFromSystem(final long id) {
 		// Get the system information from the CCP location tables.
 		EveLocation systemLocation = AppConnector.getDBConnector().searchLocationbyID(id);
 		systemID = systemLocation.getSystemID();
@@ -303,10 +320,11 @@ public class EveLocation extends AbstractComplexNode {
 	}
 
 	private void updateLocationID() {
-		if (citadel)
+		if (citadel) {
 			id = stationID;
-		else
-			id = getID();
+		} else {
+			id = this.getID();
+		}
 	}
 }
 

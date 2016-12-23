@@ -38,8 +38,7 @@ public abstract class NeoComAbstractPart extends AbstractAndroidPart {
 
 	@Override
 	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
-		// TODO Auto-generated method stub
-		return null;
+		return targets;
 	}
 
 	@Override

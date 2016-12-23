@@ -11,6 +11,7 @@ import org.dimensinfin.android.mvc.R;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.android.mvc.core.AbstractPart;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
@@ -144,7 +145,7 @@ public class PagerFragment extends TitledFragment {
 		//		logger.info(">> ManufactureContextFragment.onContextItemSelected"); //$NON-NLS-1$
 		final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		final int menuItemIndex = item.getItemId();
-		AbstractAndroidPart part = (AbstractAndroidPart) info.targetView.getTag();
+		AbstractPart part = (AbstractPart) info.targetView.getTag();
 		if (part instanceof IMenuActionTarget)
 			return ((IMenuActionTarget) part).onContextItemSelected(item);
 		else
@@ -159,7 +160,7 @@ public class PagerFragment extends TitledFragment {
 		// Check parameters to detect the item selected for menu target.
 		if (view == _headerContainer) {
 			//			 Check if this fragment has the callback configured
-			AbstractAndroidPart part = _headerContents.firstElement();
+			AbstractPart part = _headerContents.firstElement();
 			if (part instanceof IMenuActionTarget) {
 				((IMenuActionTarget) part).onCreateContextMenu(menu, view, menuInfo);
 			}

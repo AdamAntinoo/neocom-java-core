@@ -10,11 +10,11 @@ package org.dimensinfin.evedroid.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveTask extends AbstractComplexNode implements INeoComNode{

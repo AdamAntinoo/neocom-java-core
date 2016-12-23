@@ -43,21 +43,21 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		//		setContentView(R.layout.activity_pager);
 		try {
 			// Process the parameters into the context.
-			final Bundle extras = getIntent().getExtras();
+			final Bundle extras = this.getIntent().getExtras();
 			if (null == extras) throw new RuntimeException(
 					"RT IndustryDirectorActivity.onCreate - Unable to continue. Required parameters not defined on Extras.");
 			//Instantiate the pilot from the characterID.
-			final long characterid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
+			final long characterid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
 			if (characterid > 0) {
 				// Initialize the access to the global structures.
-				this._store = EVEDroidApp.getAppStore();
-				this._store.activatePilot(characterid);
-				this._store.activateActivity(this);
+				_store = EVEDroidApp.getAppStore();
+				_store.activatePilot(characterid);
+				_store.activateActivity(this);
 			}
 		} catch (final Exception rtex) {
 			Log.e("EVEI", "RTEX> PilotPagerActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> PilotPagerActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> PilotPagerActivity.onCreate - " + rtex.getMessage()));
 		}
 		Log.i("EVEI", "<< PilotPagerActivity.onCreate"); //$NON-NLS-1$
 	}
@@ -70,9 +70,7 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	protected void onPause() {
 		Log.i("NEOCOM", ">> PilotPagerActivity.onPause");
 		// Check store state and update cache on disk if it has changed.
-		if (this._store.isDirty()) {
-			this._store.save();
-		}
+		if (_store.isDirty()) _store.save();
 		super.onPause();
 		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
 	}
@@ -82,8 +80,8 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
 		super.onSaveInstanceState(savedInstanceState);
 		// Add current model data dependencies. EVECHARACTERID
-		savedInstanceState.putLong(AppWideConstants.extras.EXTRA_EVECHARACTERID, this._store.getPilot().getCharacterID());
-		this._store.save();
+		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+		_store.save();
 		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
 	}
 }

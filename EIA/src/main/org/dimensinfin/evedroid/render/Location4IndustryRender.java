@@ -71,20 +71,19 @@ public class Location4IndustryRender extends EveAbstractHolder {
 	@Override
 	public void updateContent() {
 		super.updateContent();
-		locationSystem.setText(getPart().get_locationSystem());
-		locationRegion.setText(getPart().get_locationRegion());
-		locationStation.setText(getPart().get_locationStation());
-		childCount.setText(getPart().get_locationContentCount());
+		locationSystem.setText(this.getPart().get_locationSystem());
+		locationRegion.setText(this.getPart().get_locationRegion());
+		locationStation.setText(this.getPart().get_locationStation());
+		childCount.setText(this.getPart().get_locationContentCount());
 
 		// Control the ROLE block
-		ArrayList<Property> roleList = getPart().accessLocationFunction();
+		ArrayList<Property> roleList = this.getPart().accessLocationFunction();
 		roles.setVisibility(View.GONE);
 		rolesLabel.setVisibility(View.GONE);
 		if ((null != roleList) && (roleList.size() > 0)) {
 			String functionName = "";
-			for (Property role : roleList) {
+			for (Property role : roleList)
 				functionName = functionName + " " + role.getStringValue();
-			}
 			roles.setVisibility(View.VISIBLE);
 			rolesLabel.setVisibility(View.VISIBLE);
 			roles.setText(functionName);
@@ -92,18 +91,19 @@ public class Location4IndustryRender extends EveAbstractHolder {
 
 		// If the location has a container then show the Container info.
 		containerBlock.setVisibility(View.GONE);
-		if (getPart().hasContainer()) {
+		if (this.getPart().hasContainer()) {
 			containerBlock.setVisibility(View.VISIBLE);
-			containerName.setText(getPart().getContainerName());
-			loadEveIcon(containerIcon, 17366);
+			containerName.setText(this.getPart().getContainerName());
+			this.loadEveIcon(containerIcon, 17366);
 		}
-		loadEveIcon((ImageView) _convertView.findViewById(R.id.itemIcon), getPart().searchStationType(), true);
+		this.loadEveIcon((ImageView) _convertView.findViewById(R.id.itemIcon), this.getPart().searchStationType(), true);
 		_convertView.setBackgroundResource(R.drawable.topwhiteline);
 	}
 
 	@Override
 	protected void createView() {
-		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+		final LayoutInflater mInflater = (LayoutInflater) this.getContext()
+				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 		// The view is a new view. We have to fill all the items
 		_convertView = mInflater.inflate(R.layout.location4industry, null);
 		_convertView.setTag(this);

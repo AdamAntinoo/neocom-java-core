@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.evedroid.activity.PilotListActivity.EAccountsVariants;
 import org.dimensinfin.evedroid.model.Corporation;
 import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.model.Pilot;
@@ -29,7 +29,7 @@ public class PilotPartFactory extends PartFactory implements IPartFactory {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotPartFactory(final EVARIANT variantSelected) {
+	public PilotPartFactory(final String variantSelected) {
 		super(variantSelected);
 	}
 
@@ -41,7 +41,7 @@ public class PilotPartFactory extends PartFactory implements IPartFactory {
 	@Override
 	public IPart createPart(final AbstractComplexNode node) {
 		PilotPartFactory.logger.info("-- [PilotPartFactory.createPart]> Node class: " + node.getClass().getName());
-		if (this.getVariant() == EVARIANT.CAPSULEER_LIST.name()) {
+		if (this.getVariant() == EAccountsVariants.CAPSULEER_LIST.name()) {
 			if (node instanceof NeoComApiKey) {
 				IPart part = new ApiKeyPart(node).setFactory(this);
 				return part;

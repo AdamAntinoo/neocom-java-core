@@ -28,6 +28,8 @@ public interface IPart extends PropertyChangeListener {
 
 	public IPartFactory getPartFactory();
 
+	public int getRenderMode();
+
 	public RootPart getRoot();
 
 	public boolean isActive();
@@ -38,6 +40,8 @@ public interface IPart extends PropertyChangeListener {
 
 	public boolean isRenderWhenEmpty();
 
+	public boolean isVisible();
+
 	public void refreshChildren();
 
 	public Vector<IPart> runPolicies(Vector<IPart> targets);
@@ -47,6 +51,8 @@ public interface IPart extends PropertyChangeListener {
 	public void setModel(final AbstractComplexNode model);
 
 	public void setParent(final IPart parent);
+
+	public IPart setRenderMode(final int renderMode);
 }
 
 // - UNUSED CODE ............................................................................................

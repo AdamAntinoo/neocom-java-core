@@ -14,13 +14,12 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractPart extends AbstractPropertyChanger implements IPart {
@@ -36,6 +35,7 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		CEventPart.register(EPARTEVENT.ADD_CHILD.hashCode(), EPARTEVENT.ADD_CHILD.name());
 		CEventPart.register(EPARTEVENT.REMOVE_CHILD.hashCode(), EPARTEVENT.REMOVE_CHILD.name());
 	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 	private Vector<IPart>				children		= new Vector<IPart>();
 	private AbstractComplexNode	model;
@@ -44,17 +44,35 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	private boolean							active			= true;
 	private IPartFactory				_factory		= null;
 	private AbstractDataSource	_dataSource	= null;
+	protected int								renderMode	= 1000;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractPart() {
-	}
-
+	//	public AbstractPart() {
+	//	}
+	/**
+	 * Parts are special elements. The root element that is a AbstractPropertyChanger is not responsible to
+	 * store the model but needs it as reference to set a parent for notifications. So do not forget to pass the
+	 * reference up and store the model at the same time.
+	 * 
+	 * @param model
+	 *          the Data model linked to this part.
+	 */
 	public AbstractPart(final AbstractComplexNode model) {
+		super(model);
 		this.model = model;
 	}
 
+	/**
+	 * Parts are special elements. The root element that is a AbstractPropertyChanger is not responsible to
+	 * store the model but needs it as reference to set a parent for notifications. So do not forget to pass the
+	 * reference up and store the model at the same time.
+	 * 
+	 * @param model
+	 *          the Data model linked to this part.
+	 */
 	public AbstractPart(final RootNode model, final IPartFactory factory) {
 		super(model);
+		this.model = model;
 		_factory = factory;
 	}
 
@@ -81,8 +99,12 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	 */
 	public void addChild(final IPart child, int index) {
 		//		Assert.isNotNull(child);
-		if (index == -1) index = this.getChildren().size();
-		if (children == null) children = new Vector<IPart>(2);
+		if (index == -1) {
+			index = this.getChildren().size();
+		}
+		if (children == null) {
+			children = new Vector<IPart>(2);
+		}
 
 		children.add(index, child);
 		child.setParent(this);
@@ -94,9 +116,10 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	}
 
 	/**
-	 * By default until all parts are reviewed this method calls the original and now deprecated
-	 * <code>getPartChildren</code> to it gets collected the part that conform the model. On the new design this
-	 * comes from the model while in the old comes from the design structures but both are compatible.
+	 * The goal of this method is to return the list of Parts on the children list that should be visible and
+	 * that collaborates to the ListView population. The default behavior for this method is to check if the
+	 * Model behind the Part is expanded, in that case the children have the opportunity to be added to the
+	 * visible list.
 	 */
 	public ArrayList<IPart> collaborate2View() {
 		ArrayList<IPart> result = new ArrayList<IPart>();
@@ -106,8 +129,11 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			Vector<IPart> ch = this.runPolicies(this.getChildren());
 			// --- End of policies
 			for (IPart part : ch) {
-				if (part.isRenderWhenEmpty()) result.add(part);
-				result.addAll(part.collaborate2View());
+				if (part.isVisible()) if (part.isRenderWhenEmpty()) {
+					result.add(part);
+				}
+				ArrayList<IPart> collaboration = part.collaborate2View();
+				result.addAll(collaboration);
 			}
 		}
 		return result;
@@ -155,6 +181,10 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			return _factory;
 	}
 
+	public int getRenderMode() {
+		return renderMode;
+	}
+
 	public RootPart getRoot() {
 		if (this.getParentPart() == null) return null;
 		return this.getParentPart().getRoot();
@@ -174,6 +204,10 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 
 	public boolean isRenderWhenEmpty() {
 		return model.isRenderWhenEmpty();
+	}
+
+	public boolean isVisible() {
+		return model.isVisible();
 	}
 
 	public void propertyChange(final PropertyChangeEvent evt) {
@@ -196,19 +230,18 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 	 */
 	public void refreshChildren() {
 		AbstractPart.logger.info(">> [AbstractPart.refreshChildren]");
-		//		int i=0;
-		//		Object model;
-
 		// Get the list of children for this Part.
 		Vector<IPart> selfChildren = this.getChildren();
 		int size = selfChildren.size();
+		AbstractPart.logger.info("-- [AbstractPart.refreshChildren]> Current children size: " + size);
 		// This variable has the list of Parts pointed by their corresponding model.
 		HashMap<AbstractComplexNode, IPart> modelToEditPart = new HashMap<AbstractComplexNode, IPart>(size + 1);
-		if (size > 0) //			modelToEditPart = new HashMap<AbstractComplexNode, IPart>(size);
+		if (size > 0) {
 			for (int i = 0; i < size; i++) {
-			IPart editPart = selfChildren.get(i);
-			modelToEditPart.put(editPart.getModel(), editPart);
+				IPart editPart = selfChildren.get(i);
+				modelToEditPart.put(editPart.getModel(), editPart);
 			}
+		}
 
 		// Get the list of model elements that collaborate to the Part model. This is the complex-simple model transformation.
 		INeoComNode partModel = (INeoComNode) this.getModel();
@@ -226,7 +259,9 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 			if ((i < selfChildren.size()) && (selfChildren.get(i).getModel() == nodemodel)) {
 				// But in any case try to update all the children
 				AbstractPart.logger.info("-- [AbstractEditPart.refreshChildren]> model matches. Refreshing children.");
-				if (editPart != null) editPart.refreshChildren();
+				if (editPart != null) {
+					editPart.refreshChildren();
+				}
 				continue;
 			}
 
@@ -252,8 +287,9 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		size = selfChildren.size();
 		if (i < size) {
 			Vector<IPart> trash = new Vector<IPart>(size - i);
-			for (; i < size; i++)
+			for (; i < size; i++) {
 				trash.add(selfChildren.get(i));
+			}
 			for (i = 0; i < trash.size(); i++) {
 				IPart ep = trash.get(i);
 				this.removeChild(ep);
@@ -292,6 +328,20 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		this.parent = parent;
 	}
 
+	public IPart setRenderMode(final int renderMode) {
+		this.renderMode = renderMode;
+		//		this.needsRedraw();
+		return this;
+	}
+
+	public boolean toggleExpanded() {
+		return model.toggleExpanded();
+	}
+
+	public boolean toggleVisible() {
+		return model.toggleVisible();
+	}
+
 	/**
 	 * Describes this EditPart for developmental debugging purposes.
 	 * 
@@ -312,7 +362,9 @@ public abstract class AbstractPart extends AbstractPropertyChanger implements IP
 		IPartFactory factory = this.getRoot().getPartFactory();
 		IPart part = factory.createPart(model);
 		// If the factory is unable to create the Part then skip this element or wait to be replaced by a dummy
-		if (null != part) part.setParent(this);
+		if (null != part) {
+			part.setParent(this);
+		}
 		return part;
 	}
 

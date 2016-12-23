@@ -10,7 +10,6 @@ package org.dimensinfin.android.mvc.core;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 
 import android.app.Activity;
@@ -30,8 +29,6 @@ public abstract class AbstractAndroidPart extends AbstractPart {
 	private static final long	serialVersionUID	= 7467855028114565679L;
 	private static Logger			logger						= Logger.getLogger("AbstractAndroidPart");
 
-	// - F I E L D - S E C T I O N ............................................................................
-	protected int							renderMode				= 1000;
 	protected Activity				_activity					= null;
 	protected Fragment				_fragment					= null;
 	private View							_view							= null;
@@ -93,10 +90,6 @@ public abstract class AbstractAndroidPart extends AbstractPart {
 		return this.getHolder(fragment);
 	}
 
-	public int getRenderMode() {
-		return renderMode;
-	}
-
 	public View getView() {
 		return _view;
 	}
@@ -107,12 +100,6 @@ public abstract class AbstractAndroidPart extends AbstractPart {
 
 	public void needsRedraw() {
 		_view = null;
-	}
-
-	public IPart setRenderMode(final int renderMode) {
-		this.renderMode = renderMode;
-		this.needsRedraw();
-		return this;
 	}
 
 	public void setView(final View convertView) {

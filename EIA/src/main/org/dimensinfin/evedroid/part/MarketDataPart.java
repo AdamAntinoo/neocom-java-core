@@ -7,7 +7,6 @@
 package org.dimensinfin.evedroid.part;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.model.EveItem;
 
@@ -24,33 +23,33 @@ public abstract class MarketDataPart extends EveAbstractPart {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketDataPart(final AbstractComplexNode node) {
 		super(node);
-		initialize();
+		this.initialize();
 	}
 
-	public MarketDataPart(final AbstractGEFNode node) {
-		super(node);
-		initialize();
-	}
+	//	public MarketDataPart(final AbstractGEFNode node) {
+	//		super(node);
+	//		initialize();
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public Spanned display_BuyerLocation() {
-		return colorFormatLocation(getItem().getHighestBuyerPrice().getLocation());
+		return this.colorFormatLocation(this.getItem().getHighestBuyerPrice().getLocation());
 	}
 
 	public Spanned display_SellerLocation() {
-		return colorFormatLocation(getItem().getLowestSellerPrice().getLocation());
+		return this.colorFormatLocation(this.getItem().getLowestSellerPrice().getLocation());
 	}
 
 	public String get_highestBuyerPrice() {
-		return generatePriceString(getItem().getHighestBuyerPrice().getPrice(), false, false);
+		return this.generatePriceString(this.getItem().getHighestBuyerPrice().getPrice(), false, false);
 	}
 
 	public String get_lowestSellerPrice() {
-		return generatePriceString(getItem().getLowestSellerPrice().getPrice(), false, false);
+		return this.generatePriceString(this.getItem().getLowestSellerPrice().getPrice(), false, false);
 	}
 
 	public double getBuyerPrice() {
-		return getItem().getHighestBuyerPrice().getPrice();
+		return this.getItem().getHighestBuyerPrice().getPrice();
 	}
 
 	public EveItem getItem() {
@@ -59,7 +58,7 @@ public abstract class MarketDataPart extends EveAbstractPart {
 	}
 
 	public double getSellerPrice() {
-		return getItem().getLowestSellerPrice().getPrice();
+		return this.getItem().getLowestSellerPrice().getPrice();
 	}
 
 	protected abstract void initialize();

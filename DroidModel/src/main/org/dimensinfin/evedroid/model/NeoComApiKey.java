@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.NeoComConnector;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;

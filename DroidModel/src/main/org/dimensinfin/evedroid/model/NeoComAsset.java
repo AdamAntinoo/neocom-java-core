@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.interfaces.IAsset;
+import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 import org.dimensinfin.evedroid.interfaces.INamed;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -39,7 +39,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
+public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -107,9 +107,10 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	 * Assets should collaborate to the model adding their children. Most of the assets will not have children
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) getChildren());
+		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
 		return results;
 	}
 
@@ -145,16 +146,20 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	 * @return
 	 */
 	public EveItem getItem() {
-		if (null == itemCache) itemCache = AppConnector.getDBConnector().searchItembyID(typeID);
+		if (null == itemCache) {
+			itemCache = AppConnector.getDBConnector().searchItembyID(typeID);
+		}
 		return itemCache;
 	}
 
 	public String getItemName() {
-		return getItem().getName();
+		return this.getItem().getName();
 	}
 
 	public EveLocation getLocation() {
-		if (null == locationCache) locationCache = AppConnector.getDBConnector().searchLocationbyID(locationID);
+		if (null == locationCache) {
+			locationCache = AppConnector.getDBConnector().searchLocationbyID(locationID);
+		}
 		return locationCache;
 	}
 
@@ -175,8 +180,9 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	}
 
 	public NeoComAsset getParentContainer() {
-		if (parentAssetID > 0)
-			if (null == parentAssetCache) parentAssetCache = AppConnector.getDBConnector().searchAssetByID(parentAssetID);
+		if (parentAssetID > 0) if (null == parentAssetCache) {
+			parentAssetCache = AppConnector.getDBConnector().searchAssetByID(parentAssetID);
+		}
 		return parentAssetCache;
 	}
 
@@ -185,7 +191,7 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	}
 
 	public double getPrice() {
-		return getItem().getPrice();
+		return this.getItem().getPrice();
 	}
 
 	public int getQuantity() {
@@ -193,11 +199,11 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	}
 
 	public String getRegion() {
-		return getLocation().getRegion();
+		return this.getLocation().getRegion();
 	}
 
 	public String getTech() {
-		return getItem().getTech();
+		return this.getItem().getTech();
 	}
 
 	public int getTypeID() {
@@ -220,8 +226,8 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	}
 
 	public boolean isContainer() {
-		if (isBlueprint()) return false;
-		if (getName().contains("Container"))
+		if (this.isBlueprint()) return false;
+		if (this.getName().contains("Container"))
 			return true;
 		else
 			return false;
@@ -232,6 +238,10 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 	}
 
 	public boolean isShip() {
+		return shipFlag;
+	}
+
+	public boolean isShipFlag() {
 		return shipFlag;
 	}
 
@@ -250,7 +260,9 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 
 	public void setCategory(final String category) {
 		this.category = category;
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship)) shipFlag = true;
+		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship)) {
+			shipFlag = true;
+		}
 	}
 
 	public void setContainer(final boolean value) {
@@ -265,7 +277,11 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 		groupName = name;
 	}
 
-	public void setIskvalue(double iskvalue) {
+	public void setId(final long id) {
+		this.id = id;
+	}
+
+	public void setIskvalue(final double iskvalue) {
 		this.iskvalue = iskvalue;
 	}
 
@@ -296,6 +312,10 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 		shipFlag = value;
 	}
 
+	public void setShipFlag(final boolean shipFlag) {
+		this.shipFlag = shipFlag;
+	}
+
 	public void setSingleton(final boolean newSingleton) {
 		singleton = newSingleton;
 	}
@@ -316,12 +336,15 @@ public class NeoComAsset extends AbstractComplexNode implements IAsset, INamed {
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("Asset [");
+		final StringBuffer buffer = new StringBuffer("NeoComAsset [");
 		buffer.append("#").append(typeID).append(" - ").append(this.getName()).append(" ");
-		buffer.append("itemID:").append(getAssetID()).append(" ");
+		if (null != this.getUserLabel()) {
+			buffer.append("[").append(this.getUserLabel()).append("] ");
+		}
+		buffer.append("itemID:").append(this.getAssetID()).append(" ");
 		//		buffer.append("typeID:")..append(" ");
 		buffer.append("locationID:").append(locationID).append(" ");
-		buffer.append("ownerID:").append(getOwnerID()).append(" ");
+		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
 		buffer.append("quantity:").append(this.getQuantity()).append(" ");
 		buffer.append("]\n");
 		return buffer.toString();

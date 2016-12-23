@@ -165,8 +165,8 @@ public class FittingDataSource extends SpecialDataSource {
 	 */
 	private void initDataSourceModel() {
 		AppModelStore store = AppModelStore.getSingleton();
-		long capsuleerId = this.getParameterLong(AppWideConstants.EExtras.CAPSULEERID.name());
-		String fittingLabel = this.getParameterString(AppWideConstants.EExtras.FITTINGID.name());
+		long capsuleerId = this.getParameterLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		String fittingLabel = this.getParameterString(AppWideConstants.EExtras.EXTRA_FITTINGID.name());
 		final AssetsManager manager = store.getPilot().getAssetsManager();
 		if (capsuleerId == 0)
 			fit = this.createTestFitting(manager);

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -20,7 +21,6 @@ import org.dimensinfin.evedroid.enums.EPropertyTypes;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
 import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.interfaces.INeoComNode;
 import org.dimensinfin.evedroid.manager.AssetsManager;
 
 import com.j256.ormlite.dao.Dao;
@@ -107,11 +107,28 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		if (AppWideConstants.EFragment.valueOf(variant) == AppWideConstants.EFragment.FITTING_MANUFACTURE) {
 			// Copy the list of actions to the result.
-			for (Action node : getManufacturingResources()) {
+			for (Action node : this.getManufacturingResources()) {
 				result.add(node);
 			}
 		}
 		return result;
+	}
+
+	public void fitDrone(final int moduleId) {
+		this.fitDrone(moduleId, 1);
+	}
+
+	/**
+	 * Adds the selected module to the fit the number of times specified. By default it add the module once.
+	 * 
+	 * @param moduleId
+	 * @param times
+	 */
+	public void fitDrone(final int moduleId, int times) {
+		if (times < 1) {
+			times = 1;
+		}
+		drones.add(new Resource(moduleId, times));
 	}
 
 	public void fitModule(final int moduleId) {
@@ -176,7 +193,7 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
 			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
 			Where<Property, String> where = queryBuilder.where();
-			where.eq("ownerID", getPilot().getCharacterID());
+			where.eq("ownerID", this.getPilot().getCharacterID());
 			where.and();
 			where.eq("propertyType", EPropertyTypes.LOCATIONROLE);
 			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
@@ -192,7 +209,7 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	 * the right Location role type.
 	 */
 	private EveLocation getLocation4Role(final EPropertyTypes matchingRole, final String locationType) {
-		ArrayList<Property> locationRoles = accessLocationRoles();
+		ArrayList<Property> locationRoles = this.accessLocationRoles();
 		for (Property role : locationRoles) {
 			//			String value = role.getPropertyType().name();
 			if (role.getPropertyType() == matchingRole) {
@@ -216,11 +233,11 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	 * @return
 	 */
 	private ArrayList<Action> getManufacturingResources() {
-		logger.info(">> Fitting.getManufacturingResources");
+		Fitting.logger.info(">> Fitting.getManufacturingResources");
 		// Initialize models.
 		// Set the location where to setup the manufacturing jobs. Detects if assets should move.
 		// Manufacturing location set to the predefined location and defaults to current pilot location.
-		manufactureLocation = getLocation4Role(EPropertyTypes.LOCATIONROLE, "FITTING");
+		manufactureLocation = this.getLocation4Role(EPropertyTypes.LOCATIONROLE, "FITTING");
 		if (null == manufactureLocation) {
 			manufactureLocation = pilot.getDefaultLocation();
 		}
@@ -274,7 +291,7 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 				// Check resources that are Skills. Give them an special treatment.
 				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 					currentAction = new Skill(resource);
-					registerAction(currentAction);
+					this.registerAction(currentAction);
 					continue;
 				}
 				currentAction = new Action(resource);
@@ -282,8 +299,8 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 				newTask.setQty(resource.getQuantity());
 				// We register the action before to get erased on restarts.
 				// This has no impact on data since we use pointers to the global structures.
-				registerAction(currentAction);
-				processRequest(newTask);
+				this.registerAction(currentAction);
+				this.processRequest(newTask);
 			} while (pointer < (requirements.size() - 1));
 		} catch (RuntimeException rtex) {
 			Log.e("RTEXCEPTION.CODE",
@@ -291,7 +308,7 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 			rtex.printStackTrace();
 		}
 		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
-		return getActions();
+		return this.getActions();
 	}
 
 	//	private void test() {

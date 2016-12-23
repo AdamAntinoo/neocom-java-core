@@ -7,8 +7,8 @@
 //									the extended GEF model into the Android View to be used on ListViews.
 package org.dimensinfin.android.mvc.core;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.HashMap;
-// - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -33,8 +33,8 @@ public class CEventPart {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public CEventPart() {
-	}
+	//	public CEventPart() {
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 }

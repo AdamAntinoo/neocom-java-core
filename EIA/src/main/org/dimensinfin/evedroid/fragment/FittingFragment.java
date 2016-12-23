@@ -12,12 +12,10 @@ package org.dimensinfin.evedroid.fragment;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.android.mvc.interfaces.IEditPart;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.DataSourceLocator;
 import org.dimensinfin.evedroid.datasource.FittingDataSource;
@@ -25,6 +23,7 @@ import org.dimensinfin.evedroid.datasource.SpecialDataSource;
 import org.dimensinfin.evedroid.factory.FittingPartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -72,12 +71,12 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(_variant.hashCode());
-			registerDataSource();
+			//			setIdentifier(_variant.hashCode());
+			this.registerDataSource();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
 		return theView;
@@ -90,21 +89,21 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	public void onStart() {
 		Log.i("NEOCOM", ">> FittingFragment.onStart");
 		try {
-			registerDataSource();
+			this.registerDataSource();
 			// This fragment has a header. Populate it with the datasource header contents.
-			setHeaderContents();
+			this.setHeaderContents();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< FittingFragment.onStart");
 	}
 
-	private AbstractAndroidPart createPart(final AbstractGEFNode model) {
-		IPartFactory factory = getFactory();
-		IEditPart part = factory.createPart(model);
+	private AbstractAndroidPart createPart(final AbstractComplexNode model) {
+		IPartFactory factory = this.getFactory();
+		IPart part = factory.createPart(model);
 		part.setParent(null);
 		return (AbstractAndroidPart) part;
 	}
@@ -114,9 +113,7 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	}
 
 	private IPartFactory getFactory() {
-		if (null == factory) {
-			factory = new FittingPartFactory(_variant);
-		}
+		if (null == factory) factory = new FittingPartFactory(this.getVariant());
 		return factory;
 	}
 
@@ -127,31 +124,31 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	 */
 	private void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
-		Bundle extras = getExtras();
+		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
 		String fittingLabel = "Purifier";
 		if (null != extras) {
-			capsuleerid = extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
-			fittingLabel = extras.getString(AppWideConstants.EExtras.FITTINGID.name());
+			capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+			fittingLabel = extras.getString(AppWideConstants.EExtras.EXTRA_FITTINGID.name());
 		}
-		DataSourceLocator locator = new DataSourceLocator().addIdentifier(_variant.name()).addIdentifier(capsuleerid)
+		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid)
 				.addIdentifier(fittingLabel);
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(_variant));
-		ds.setVariant(_variant);
-		ds.addParameter(AppWideConstants.EExtras.CAPSULEERID.name(), getPilot().getCharacterID());
-		ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
-		ds = (SpecialDataSource) EVEDroidApp.getAppStore().getDataSourceConector().registerDataSource(ds);
-		setDataSource(ds);
+		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(this.getVariant()));
+		ds.setVariant(this.getVariant());
+		ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
+		ds.addParameter(AppWideConstants.EExtras.EXTRA_FITTINGID.name(), fittingLabel);
+		ds = (SpecialDataSource) AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds);
+		this.setDataSource(ds);
 	}
 
 	private void setHeaderContents() {
-		RootNode headModel = ((FittingDataSource) getDataSource()).getHeaderModel();
-		for (AbstractComplexNode model : headModel.collaborate2Model(_variant.name())) {
+		RootNode headModel = ((FittingDataSource) this.getDataSource()).getHeaderModel();
+		for (AbstractComplexNode model : headModel.collaborate2Model(this.getVariant())) {
 			// Set the datasource as the listener for this parts events.
-			AbstractAndroidPart pt = createPart(model);
-			pt.addPropertyChangeListener(getDataSource());
-			addtoHeader(pt);
+			AbstractAndroidPart pt = this.createPart(model);
+			pt.addPropertyChangeListener(this.getDataSource());
+			this.addtoHeader(pt);
 		}
 	}
 }

@@ -12,9 +12,7 @@ import java.sql.SQLException;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
@@ -25,7 +23,6 @@ import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.render.MarketOrderRender;
 import org.joda.time.DateTime;
 
-import android.content.Intent;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -39,71 +36,68 @@ public class MarketOrderPart extends EveAbstractPart
 		implements IMenuActionTarget, OnClickListener, IDateTimeComparator {
 	private static final long serialVersionUID = 5816353740185144480L;
 
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketOrderPart(final AbstractComplexNode node) {
 		super(node);
 	}
 
-	public MarketOrderPart(final AbstractGEFNode node) {
-		super(node);
-	}
+	//	public MarketOrderPart(final AbstractGEFNode node) {
+	//		super(node);
+	//	}
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public NeoComMarketOrder getCastedModel() {
-		return (NeoComMarketOrder) getModel();
+		return (NeoComMarketOrder) this.getModel();
 	}
 
 	public DateTime getComparableDate() {
-		return new DateTime(getCastedModel().getIssuedDate());
+		return new DateTime(this.getCastedModel().getIssuedDate());
 	}
 
 	public int getEntered() {
-		return getCastedModel().getVolEntered();
+		return this.getCastedModel().getVolEntered();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getOrderID();
+		return this.getCastedModel().getOrderID();
 	}
 
 	public String getName() {
-		return getCastedModel().getItem().getName();
+		return this.getCastedModel().getItem().getName();
 	}
 
 	public EveLocation getOrderLocation() {
-		return getCastedModel().getOrderLocation();
+		return this.getCastedModel().getOrderLocation();
 	}
 
 	public int getOrderState() {
-		return getCastedModel().getOrderState();
+		return this.getCastedModel().getOrderState();
 	}
 
 	public double getPrice() {
-		return getCastedModel().getPrice();
+		return this.getCastedModel().getPrice();
 	}
 
 	public int getRemaining() {
-		return getCastedModel().getVolRemaining();
+		return this.getCastedModel().getVolRemaining();
 	}
 
 	public int getTypeID() {
-		return getCastedModel().getItemTypeID();
+		return this.getCastedModel().getItemTypeID();
 	}
 
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> StackPart.onClick");
-		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getItemTypeID());
-		getActivity().startActivity(intent);
+		// REFACTOR Access to ItemDetail Activity removed until that actiity is rewritten
+		//		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
+		//		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
+		//		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getItemTypeID());
+		//		getActivity().startActivity(intent);
 		Log.i("EVEI", "<< StackPart.onClick");
 	}
 
@@ -114,16 +108,16 @@ public class MarketOrderPart extends EveAbstractPart
 		switch (menuItemIndex) {
 			case R.id.deletemarketOrderActionMenuID:
 				try {
-					AppConnector.getDBConnector().getMarketOrderDAO().delete(getCastedModel());
+					AppConnector.getDBConnector().getMarketOrderDAO().delete(this.getCastedModel());
 					// Clear the cache in memory
-					getPilot().cleanOrders();
+					this.getPilot().cleanOrders();
 					// Remove from parent and clear the view to force a redraw.
 					// TODO Check if this is required. We should not manipulate the
 					// structures directly but send update signals.
 					// ((AbstractGEFNode) getParent()).removeChild(this);
 					this.invalidate();
 					// TODO Added the firing of the signal to force the update.
-					fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
+					this.fireStructureChange(AppWideConstants.events.EVENTSTRUCTURE_RECALCULATE, this, this);
 				} catch (SQLException sqle) {
 					sqle.printStackTrace();
 				}
@@ -136,16 +130,15 @@ public class MarketOrderPart extends EveAbstractPart
 
 	public void onCreateContextMenu(final ContextMenu menu, final View view, final ContextMenuInfo menuInfo) {
 		// Activate the menu only of the order is scheduled.
-		if (getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
-			getActivity().getMenuInflater().inflate(R.menu.marketorder_menu, menu);
-		}
+		if (this.getOrderState() == ModelWideConstants.orderstates.SCHEDULED)
+			this.getActivity().getMenuInflater().inflate(R.menu.marketorder_menu, menu);
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("MarketOrderPart [");
-		buffer.append(getName()).append(" ");
-		buffer.append("Qtys:").append(getEntered()).append("/").append(getRemaining()).append(" ");
+		buffer.append(this.getName()).append(" ");
+		buffer.append("Qtys:").append(this.getEntered()).append("/").append(this.getRemaining()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}

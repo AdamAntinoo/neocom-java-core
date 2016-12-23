@@ -1,20 +1,19 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
+//	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.part;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 
-import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
@@ -39,30 +38,20 @@ public class GroupPart extends EveAbstractPart {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public GroupPart(final Separator node) {
 		super(node);
-		getCastedModel().setExpanded(true);
-	}
-
-	/**
-	 * This is the new view generation method that replaces the <code>getPartChildren</code>.
-	 */
-	@Override
-	public ArrayList<AbstractAndroidPart> collaborate2View() {
-		Vector<AbstractPropertyChanger> ch = getChildren();
-		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		return super.getPartChildren();
+		this.getCastedModel().setExpanded(true);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_counter() {
-		return qtyFormatter.format(getChildren().size());
+		return EveAbstractPart.qtyFormatter.format(this.getChildren().size());
 	}
 
 	public Separator getCastedModel() {
-		return (Separator) getModel();
+		return (Separator) this.getModel();
 	}
 
 	public int getChildrenCount() {
-		return getChildren().size();
+		return this.getChildren().size();
 	}
 
 	public int getIconReference() {
@@ -74,21 +63,25 @@ public class GroupPart extends EveAbstractPart {
 		return GregorianCalendar.getInstance().getTimeInMillis();
 	}
 
-	@Deprecated
-	@Override
-	public ArrayList<AbstractAndroidPart> getPartChildren() {
-		Vector<AbstractPropertyChanger> ch = getChildren();
-		Collections.sort(ch, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		return super.getPartChildren();
-	}
-
 	public String getTitle() {
-		return getCastedModel().getTitle();
+		return this.getCastedModel().getTitle();
 	}
 
-	public void setIconReference(final int ref) {
+	/**
+	 * The default actions inside this method usually are the sorting of the children nodes. Sort the container
+	 * contents by name.
+	 */
+	@Override
+	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
+		// Order the contents by alphabetical name.
+		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		return targets;
+	}
+
+	public GroupPart setIconReference(final int ref) {
 		Log.i("REMOVE", "-- GroupPart.setIconReference - " + this.toString() + " change value to: " + ref);
 		iconReference = ref;
+		return this;
 	}
 
 	public EveAbstractPart setPriority(final int pri) {
@@ -99,20 +92,20 @@ public class GroupPart extends EveAbstractPart {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("GroupPart [");
-		buffer.append(getTitle()).append(" ");
+		buffer.append(this.getTitle()).append(" ");
 		buffer.append(priority).append(" ");
-		buffer.append("chCount: ").append(getChildren().size()).append(" ");
+		buffer.append("chCount: ").append(this.getChildren().size()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE)
 			return new MarketSideRender(this, _activity);
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPJOBSTATE)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPJOBSTATE)
 			return new JobStateRender(this, _activity);
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING)
 			return new ShipSlotRender(this, _activity);
 		return new IndustryGroupRender(this, _activity);
 	}

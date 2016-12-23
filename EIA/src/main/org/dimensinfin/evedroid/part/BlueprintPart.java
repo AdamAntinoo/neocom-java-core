@@ -12,13 +12,15 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.activity.IndustryT2Activity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.constant.ModelWideConstants;
+import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.EJobClasses;
 import org.dimensinfin.evedroid.industry.IJobProcess;
@@ -69,10 +71,10 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	// private int bpcmanufacturable = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public BlueprintPart(final AbstractGEFNode node) {
+	public BlueprintPart(final AbstractComplexNode node) {
 		super(node);
-		bpccount = getCastedModel().getQuantity();
-		runCount = bpccount * getCastedModel().getRuns();
+		bpccount = this.getCastedModel().getQuantity();
+		runCount = bpccount * this.getCastedModel().getRuns();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -81,7 +83,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public int get_assetTypeID() {
-		return getCastedModel().getModuleTypeID();
+		return this.getCastedModel().getModuleTypeID();
 	}
 
 	/**
@@ -90,16 +92,16 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 * @return
 	 */
 	public String get_blueprintCount() {
-		final int count = getCastedModel().getQuantity();
+		final int count = this.getCastedModel().getQuantity();
 		if (count > 1)
-			return qtyFormatter.format(count) + " blueprints";
+			return EveAbstractPart.qtyFormatter.format(count) + " blueprints";
 		else
-			return qtyFormatter.format(count) + " blueprint";
+			return EveAbstractPart.qtyFormatter.format(count) + " blueprint";
 	}
 
 	public String get_blueprintMETE() {
-		return qtyFormatter.format(getCastedModel().getMaterialEfficiency()) + " / "
-				+ qtyFormatter.format(getCastedModel().getTimeEfficiency());
+		return EveAbstractPart.qtyFormatter.format(this.getCastedModel().getMaterialEfficiency()) + " / "
+				+ EveAbstractPart.qtyFormatter.format(this.getCastedModel().getTimeEfficiency());
 	}
 
 	// public String get_blueprintName() {
@@ -121,15 +123,11 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	public Spanned get_bpccounts() {
 		// Get the number of total copies manufacturable to set the color.
 		String pctcolor = "#FFFFFF";
-		if (getMaxRuns() < runCount) {
-			pctcolor = "#FFA500";
-		}
-		if (getMaxRuns() == 0) {
-			pctcolor = "#F00000";
-		}
+		if (this.getMaxRuns() < runCount) pctcolor = "#FFA500";
+		if (this.getMaxRuns() == 0) pctcolor = "#F00000";
 		final StringBuffer htmlCountString = new StringBuffer();
 		htmlCountString.append("<font color='").append(pctcolor).append("'>");
-		htmlCountString.append(bpccount).append(" BPCs [").append(getMaxRuns()).append(" copies]");
+		htmlCountString.append(bpccount).append(" BPCs [").append(this.getMaxRuns()).append(" copies]");
 		htmlCountString.append("</font>");
 		return Html.fromHtml(htmlCountString.toString());
 	}
@@ -147,7 +145,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public String get_jobsParameter(final int jobsnumber) {
-		return qtyFormatter.format(jobsnumber) + " jobs";
+		return EveAbstractPart.qtyFormatter.format(jobsnumber) + " jobs";
 	}
 
 	// public String get_jobs() {
@@ -155,7 +153,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	// }
 
 	public String get_manufactureIndex() {
-		return moduleIndexFormatter.format(getProfitIndex());
+		return EveAbstractPart.moduleIndexFormatter.format(this.getProfitIndex());
 	}
 
 	/**
@@ -171,11 +169,13 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 */
 	public String get_stackRuns() {
 		// Calculate again the max number of manufacturable runs.
-		final IJobProcess process = JobManager.generateJobProcess(getPilot(), getCastedModel(), EJobClasses.MANUFACTURE);
+		final IJobProcess process = JobManager.generateJobProcess(this.getPilot(), this.getCastedModel(),
+				EJobClasses.MANUFACTURE);
 		final int maxRuns = process.getManufacturableCount();
-		if (getCastedModel().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI))
-			return qtyFormatter.format(getCastedModel().getRuns()) + " / " + qtyFormatter.format(maxRuns);
-		return qtyFormatter.format(runCount) + " / " + qtyFormatter.format(maxRuns);
+		if (this.getCastedModel().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI))
+			return EveAbstractPart.qtyFormatter.format(this.getCastedModel().getRuns()) + " / "
+					+ EveAbstractPart.qtyFormatter.format(maxRuns);
+		return EveAbstractPart.qtyFormatter.format(runCount) + " / " + EveAbstractPart.qtyFormatter.format(maxRuns);
 	}
 
 	// public Spanned get_profit() {
@@ -191,7 +191,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	// }
 
 	public String get_totalJobDuration(final int runs) {
-		return generateTimeString(getCycleTime() * runs * 1000);
+		return EveAbstractPart.generateTimeString(this.getCycleTime() * runs * 1000);
 	}
 
 	public int getBlueprintCount() {
@@ -208,15 +208,13 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	public double getBudget() {
 		// Get the Actions and the BUY tasks from them.
 		double budget = 0.0;
-		Vector<AbstractPropertyChanger> actions = getChildren();
-		for (final AbstractPropertyChanger action : actions) {
+		Vector<IPart> actions = this.getChildren();
+		for (final IPart action : actions) {
 			Vector<IGEFNode> tasks = ((AbstractGEFNode) action).getChildren();
 			for (final IGEFNode node : tasks)
 				if (node instanceof TaskPart) {
 					final TaskPart task = (TaskPart) node;
-					if (task.getCastedModel().getItem().isBlueprint()) {
-						continue;
-					}
+					if (task.getCastedModel().getItem().isBlueprint()) continue;
 					if (task.getCastedModel().getTaskType() == ETaskType.BUY) {
 						budget += task.getCastedModel().getQty() * task.getCastedModel().getPrice();
 						Log.i("EVEI", "-- Incrementing budget by " + budget);
@@ -227,7 +225,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public NeoComBlueprint getCastedModel() {
-		return (NeoComBlueprint) getModel();
+		return (NeoComBlueprint) this.getModel();
 	}
 
 	public int getCycleTime() {
@@ -235,7 +233,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public String getGroupCategory() {
-		return getCastedModel().getModuleGroup();
+		return this.getCastedModel().getModuleGroup();
 	}
 
 	// /**
@@ -264,7 +262,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	// }
 
 	public double getInventionCost() {
-		process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), getCastedModel(),
+		process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this.getCastedModel(),
 				EJobClasses.INVENTION);
 		return process.getJobCost();
 	}
@@ -274,9 +272,10 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public int getJobs() {
-		final IJobProcess process = JobManager.generateJobProcess(getPilot(), getCastedModel(), EJobClasses.MANUFACTURE);
+		final IJobProcess process = JobManager.generateJobProcess(this.getPilot(), this.getCastedModel(),
+				EJobClasses.MANUFACTURE);
 		final int maxRuns = process.getManufacturableCount();
-		final double intermediate = (1.0 * maxRuns) / (1.0 * getCastedModel().getRuns());
+		final double intermediate = (1.0 * maxRuns) / (1.0 * this.getCastedModel().getRuns());
 		final int jobs = Math.min(Double.valueOf(Math.ceil(intermediate)).intValue(), bpccount);
 		return jobs;
 	}
@@ -294,20 +293,20 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 * @return
 	 */
 	public double getManufactureCost() {
-		return getCastedModel().getJobProductionCost();
+		return this.getCastedModel().getJobProductionCost();
 	}
 
 	public int getMaxRuns() {
-		return getCastedModel().getManufacturableCount();
+		return this.getCastedModel().getManufacturableCount();
 	}
 
 	@Override
 	public long getModelID() {
-		return getCastedModel().getAssetID();
+		return this.getCastedModel().getAssetID();
 	}
 
 	public String getName() {
-		return getCastedModel().getName();
+		return this.getCastedModel().getName();
 	}
 
 	/**
@@ -317,7 +316,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 * @return
 	 */
 	public int getPossibleRuns() {
-		return Math.min(getCastedModel().getRuns(), getMaxRuns());
+		return Math.min(this.getCastedModel().getRuns(), this.getMaxRuns());
 	}
 
 	/** Return the type id of the job product. */
@@ -326,7 +325,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public int getProfitIndex() {
-		return getCastedModel().getManufactureIndex();
+		return this.getCastedModel().getManufactureIndex();
 	}
 
 	public int getRunCount() {
@@ -334,7 +333,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public int getRuns() {
-		return getCastedModel().getRuns();
+		return this.getCastedModel().getRuns();
 	}
 
 	/**
@@ -345,7 +344,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 * @return
 	 */
 	public int getRunTime() {
-		return getPossibleRuns() * process.getCycleDuration();
+		return this.getPossibleRuns() * process.getCycleDuration();
 	}
 
 	/**
@@ -354,7 +353,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 * @return
 	 */
 	public int getStackSize() {
-		return getCastedModel().getQuantity();
+		return this.getCastedModel().getQuantity();
 	}
 
 	public String getSubtitle() {
@@ -362,11 +361,11 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	}
 
 	public int getTypeID() {
-		return getCastedModel().getTypeID();
+		return this.getCastedModel().getTypeID();
 	}
 
 	public void incrementStack() {
-		getCastedModel().setQuantity(getCastedModel().getQuantity() + 1);
+		this.getCastedModel().setQuantity(this.getCastedModel().getQuantity() + 1);
 	}
 
 	/**
@@ -377,15 +376,14 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	 */
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> BlueprintPart.onClick");
-		final Intent intent = new Intent(getActivity(), IndustryT2Activity.class);
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-		intent.putExtra(AppWideConstants.extras.EXTRA_BLUEPRINTID, getCastedModel().getAssetID());
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION) {
-			intent.putExtra(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY, 8);
-		} else {
-			intent.putExtra(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY, 1);
-		}
-		getActivity().startActivity(intent);
+		final Intent intent = new Intent(this.getActivity(), IndustryT2Activity.class);
+		intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
+		intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name(), this.getCastedModel().getAssetID());
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION)
+			intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name(), 8);
+		else
+			intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name(), 1);
+		this.getActivity().startActivity(intent);
 		Log.i("BlueprintPart", "<< BlueprintPart.onClick");
 	}
 
@@ -453,53 +451,49 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	public void setActivity(final int newActivity) {
 		activity = newActivity;
 		// Set the processor.
-		if (activity == ModelWideConstants.activities.MANUFACTURING) {
-			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), getCastedModel(),
-					EJobClasses.MANUFACTURE);
-		}
-		if (activity == ModelWideConstants.activities.INVENTION) {
-			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), getCastedModel(),
-					EJobClasses.INVENTION);
-			// calculateRuns();
-		}
+		if (activity == ModelWideConstants.activities.MANUFACTURING) process = JobManager
+				.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this.getCastedModel(), EJobClasses.MANUFACTURE);
+		if (activity == ModelWideConstants.activities.INVENTION) process = JobManager
+				.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this.getCastedModel(), EJobClasses.INVENTION);
+		// calculateRuns();
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("BlueprintPart [");
-		buffer.append(getCastedModel().getName()).append(" ");
-		buffer.append("#").append(getCastedModel().getTypeID()).append(" ");
-		buffer.append(" x").append(getCastedModel().getQuantity()).append(" ");
-		buffer.append("Runs:").append(runCount).append("/").append(getMaxRuns()).append(" ");
+		buffer.append(this.getCastedModel().getName()).append(" ");
+		buffer.append("#").append(this.getCastedModel().getTypeID()).append(" ");
+		buffer.append(" x").append(this.getCastedModel().getQuantity()).append(" ");
+		buffer.append("Runs:").append(runCount).append("/").append(this.getMaxRuns()).append(" ");
 		// buffer.append("Budget:").append(budget).append(" ");
-		buffer.append("Actions:").append(getChildren().size()).append(" ");
+		buffer.append("Actions:").append(this.getChildren().size()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
 
 	@Override
 	protected void initialize() {
-		item = getCastedModel().getModuleItem();
-		if (null == item)
-			throw new RuntimeException("RT> BlueprintPart - The task item is not defined. " + getCastedModel().getName());
+		item = this.getCastedModel().getModuleItem();
+		if (null == item) throw new RuntimeException(
+				"RT> BlueprintPart - The task item is not defined. " + this.getCastedModel().getName());
 		// getManufacturableCount();
 	}
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRYHEADER)
 			return new Blueprint4IndustryHeaderRender(this, _activity);
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINVENTIONHEADER)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINVENTIONHEADER)
 			return new Blueprint4IndustryHeaderRender(this, _activity);
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTINDUSTRY)
 			return new Blueprint4IndustryRender(this, _activity);
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION)
 			return new Blueprint4T2InventionRender(this, _activity);
 		throw new RuntimeException("E> Undefined Render variant.");
 	}
 
 	private void calculateRuns() {
-		final double intermediate = (1.0 * getMaxRuns()) / (1.0 * getCastedModel().getRuns());
+		final double intermediate = (1.0 * this.getMaxRuns()) / (1.0 * this.getCastedModel().getRuns());
 		// Limit the jobs to the number of blueprints
 		// jobs = Math.min(Double.valueOf(Math.ceil(intermediate)).intValue(),
 		// bpccount);

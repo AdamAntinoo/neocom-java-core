@@ -20,10 +20,11 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.enums.EVARIANT;
+import org.dimensinfin.evedroid.constant.CVariant;
+import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
 
@@ -170,7 +171,8 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	protected DataSourceAdapter									_adapter					= null;
 	// REFACTOR Set back to private after the PagerFragment is removed
 	protected final Vector<AbstractAndroidPart>	_headerContents		= new Vector<AbstractAndroidPart>();
-	protected EVARIANT													_variant					= EVARIANT.DEFAULT_VARIANT;
+	private String															_variant					= CVariant
+			.getName4Variant(EDefaultVariant.DEFAULT_VARIANT.hashCode());
 
 	// - U I    F I E L D S
 	protected ViewGroup													_container				= null;
@@ -204,6 +206,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	 * multifragment activities) . Otherwise return the Id of the fragment that would be generated on the layout
 	 * XML.
 	 */
+	@Deprecated
 	public int getIdentifier() {
 		if (_fragmentID > 0)
 			return _fragmentID;
@@ -325,7 +328,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(AbstractComplexNode.EVENT_EXPANDCOLLAPSENODE))
+		if (event.getPropertyName().equalsIgnoreCase(ECoreModelEvents.EVENT_EXPANDCOLLAPSENODE.name()))
 			new StructureChangeTask(this).execute();
 	}
 
@@ -353,7 +356,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		if (null != callback) _listCallback = callback;
 	}
 
-	public AbstractNewPagerFragment setVariant(final EVARIANT selectedVariant) {
+	public AbstractNewPagerFragment setVariant(final String selectedVariant) {
 		_variant = selectedVariant;
 		return this;
 	}
@@ -369,16 +372,16 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		try {
 			// Check the validity of the data source.
 			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
-			Log.i("NEOCOM", "-- AbstractPageFragment.createParts - Launching CreatePartsTask");
+			Log.i("NEOCOM", "-- AbstractNewPagerFragment.createParts - Launching CreatePartsTask");
 			new CreatePartsTask(this).execute();
 		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onStart - " + rtex.getMessage());
+			Log.e("NEOCOM", "RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage());
 			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage()));
 		}
 	}
 
-	protected EVARIANT getVariant() {
+	protected String getVariant() {
 		return _variant;
 	}
 

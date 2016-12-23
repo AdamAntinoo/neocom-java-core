@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.evedroid.activity.ItemDetailsActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Asset4CategoryHolder;
 import org.dimensinfin.evedroid.holder.AssetHolder;
@@ -21,7 +19,6 @@ import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetLineRender;
 
-import android.content.Intent;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
@@ -40,30 +37,30 @@ public class AssetPart extends MarketDataPart implements INamedPart, OnClickList
 	//	private MarketDataSet																			mdata							= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetPart(final AbstractGEFNode node) {
+	public AssetPart(final NeoComAsset node) {
 		super(node);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public String get_assetCategory() {
-		final String assetIdentifier = getCastedModel().getAssetID() + "-" + getCastedModel().getCategory();
+		final String assetIdentifier = this.getCastedModel().getAssetID() + "-" + this.getCastedModel().getCategory();
 		return assetIdentifier;
 	}
 
 	public Spanned get_assetLocation() {
-		return colorFormatLocation(getCastedModel().getLocation());
+		return this.colorFormatLocation(this.getCastedModel().getLocation());
 	}
 
 	public String get_assetName() {
-		return getCastedModel().getName();
+		return this.getCastedModel().getName();
 	}
 
 	public int get_assetTypeID() {
-		return getCastedModel().getTypeID();
+		return this.getCastedModel().getTypeID();
 	}
 
 	public String get_count() {
-		long quantity = getCastedModel().getQuantity();
+		long quantity = this.getCastedModel().getQuantity();
 		DecimalFormat formatter = new DecimalFormat("###,###");
 		String qtyString = formatter.format(quantity);
 		return qtyString;
@@ -77,43 +74,45 @@ public class AssetPart extends MarketDataPart implements INamedPart, OnClickList
 	 * @return
 	 */
 	public String get_itemPrice() {
-		return generatePriceString(getBuyerPrice(), false, true);
+		return this.generatePriceString(this.getBuyerPrice(), false, true);
 	}
 
 	public String get_stackValue() {
-		long quantity = getCastedModel().getQuantity();
+		long quantity = this.getCastedModel().getQuantity();
 		//		double price = searchMarketData(getCastedModel().getTypeID()).getBestMarket().getPrice();
-		return generatePriceString(getBuyerPrice() * quantity, true, true);
+		return this.generatePriceString(this.getBuyerPrice() * quantity, true, true);
 	}
 
 	public long getAssetID() {
-		return getCastedModel().getAssetID();
+		return this.getCastedModel().getAssetID();
 	}
 
 	public NeoComAsset getCastedModel() {
-		return (NeoComAsset) getModel();
+		return (NeoComAsset) this.getModel();
 	}
 
+	@Override
 	public long getModelID() {
-		return getCastedModel().getDAOID();
+		return this.getCastedModel().getDAOID();
 	}
 
 	public String getName() {
-		return getCastedModel().getName();
+		return this.getCastedModel().getName();
 	}
 
 	public void onClick(final View target) {
 		Log.i("EVEI", ">> AssetPart.onClick");
-		Intent intent = new Intent(getActivity(), ItemDetailsActivity.class);
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, getPilot().getCharacterID());
-		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, getCastedModel().getTypeID());
-		getActivity().startActivity(intent);
+		// REFACTOR Call to ItemDetails Activity disabled because that activity was not supported.
+		//		Intent intent = new Intent(this.getActivity(), ItemDetailsActivity.class);
+		//		intent.putExtra(AppWideConstants.extras.EXTRA_EVECHARACTERID, this.getPilot().getCharacterID());
+		//		intent.putExtra(AppWideConstants.extras.EXTRA_EVEITEMID, this.getCastedModel().getTypeID());
+		//		this.getActivity().startActivity(intent);
 		Log.i("EVEI", "<< AssetPart.onClick");
 	}
 
 	protected void checkAssetStacking(final AssetPart apart) {
 		// Locate the stack if exists.
-		HashMap<Integer, AssetPart> container = stackList.get(getCastedModel().getDAOID());
+		HashMap<Integer, AssetPart> container = stackList.get(this.getCastedModel().getDAOID());
 		int type = apart.getCastedModel().getTypeID();
 		if (null != container) {
 			AssetPart stack = container.get(type);
@@ -127,28 +126,30 @@ public class AssetPart extends MarketDataPart implements INamedPart, OnClickList
 			} else {
 				// Add a new stack for this type to the current container.
 				container.put(type, apart);
-				addChild(apart);
+				this.addChild(apart);
 			}
 		} else {
 			// There is no container also with this stack.
 			container = new HashMap<Integer, AssetPart>();
 			container.put(type, apart);
-			addChild(apart);
-			stackList.put(getCastedModel().getDAOID(), container);
+			this.addChild(apart);
+			stackList.put(this.getCastedModel().getDAOID(), container);
 		}
 	}
 
+	@Override
 	protected void initialize() {
-		item = getCastedModel().getItem();
+		item = this.getCastedModel().getItem();
 	}
 
+	@Override
 	protected AbstractHolder selectHolder() {
 		// Get the proper holder from the render mode.
-		if (getRenderMode() == AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION)
+		if (this.getRenderMode() == AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION)
 			return new AssetHolder(this, _activity);
-		if (getRenderMode() == AppWideConstants.rendermodes.RENDER_LOCATIONMODE)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_LOCATIONMODE)
 			return new AssetLineRender(this, _activity);
-		if (getRenderMode() == AppWideConstants.fragment.FRAGMENT_ITEMMODULESTACKS)
+		if (this.getRenderMode() == AppWideConstants.fragment.FRAGMENT_ITEMMODULESTACKS)
 			return new Asset4CategoryHolder(this, _activity);
 		return new AssetHolder(this, _activity);
 	}
