@@ -10,7 +10,10 @@ package org.dimensinfin.evedroid.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
+import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.connector.AppConnector;
 
@@ -37,7 +40,7 @@ import net.nikr.eve.jeveasset.data.Citadel;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
-public class EveLocation extends AbstractComplexNode {
+public class EveLocation extends AbstractComplexNode implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1522765618286937377L;
 
@@ -119,6 +122,16 @@ public class EveLocation extends AbstractComplexNode {
 			sqle.printStackTrace();
 			this.setDirty(true);
 		}
+	}
+
+	/**
+	 * Ship locations collaborate to the model by adding all their children because we store there the items
+	 * located at the selected real location.
+	 */
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+		return results;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

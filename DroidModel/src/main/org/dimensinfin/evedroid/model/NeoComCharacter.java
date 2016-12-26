@@ -578,8 +578,13 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	/**
 	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
+	 * <br>
+	 * This method checks the location to detect if under the new flat model the location is an asset and then
+	 * we should convert it into a parent or the location is a real location. Initially this is done checking
+	 * the location id value if under 1000000000000.
 	 * 
 	 * @param eveAsset
+	 *          the original assest as downloaded from CCP api
 	 * @return
 	 */
 	protected NeoComAsset convert2Asset(final Asset eveAsset) {
@@ -587,17 +592,24 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		final NeoComAsset newAsset = new NeoComAsset();
 		newAsset.setAssetID(eveAsset.getItemID());
 		newAsset.setTypeID(eveAsset.getTypeID());
-		// Children locations have a null on this field. Set it to their parents
-		final Long assetloc = eveAsset.getLocationID();
-		// DEBUG Add a conditional breakpoint for an specific asset.
-		//		Long test = new Long(1021037093228L);
-		//		if (eveAsset.getTypeID() == 8625) {
-		//			@SuppressWarnings("unused")
-		//			int i = 1; // stop point
+		//		// Children locations have a null on this field. Set it to their parents
+		//		final Long assetloc = eveAsset.getLocationID();
+		//		if (null != assetloc) {
+		//			newAsset.setLocationID(assetloc.longValue());
+		//			//	}else {
+		//			//		newAsset.setLocationID(
 		//		}
-		if (null != assetloc) {
-			newAsset.setLocationID(eveAsset.getLocationID());
+		// Under the flat api check if the location is a real location or an asset.
+		Long locid = eveAsset.getLocationID();
+		if (locid > 1000000000000L) {
+			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
+			newAsset.setLocationID(-1);
+			newAsset.setParentId(locid);
+		} else {
+			// The location is a real location.
+			newAsset.setLocationID(locid);
 		}
+
 		newAsset.setQuantity(eveAsset.getQuantity());
 		newAsset.setFlag(eveAsset.getFlag());
 		newAsset.setSingleton(eveAsset.getSingleton());

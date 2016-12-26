@@ -46,11 +46,11 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.assetsdirector;
+		return R.drawable.assets;
 	}
 
 	public int getIconReferenceInactive() {
-		return R.drawable.assetsdirectordimmed;
+		return R.drawable.assetsdimmed;
 	}
 
 	public String getName() {
@@ -67,7 +67,7 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 			final Bundle extras = this.getIntent().getExtras();
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
 			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_BYLOCATION.name()).setExtras(extras), page++);
-			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_MATERIALS.name()).setExtras(extras), page++);
+			//			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_MATERIALS.name()).setExtras(extras), page++);
 		} catch (Exception rtex) {
 			AssetsDirectorActivity.logger.warning("RTEX> AssetsDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

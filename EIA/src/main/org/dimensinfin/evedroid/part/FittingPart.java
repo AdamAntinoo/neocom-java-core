@@ -40,11 +40,11 @@ public class FittingPart extends EveAbstractPart implements INamedPart, IMenuAct
 		super(model);
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public CharSequence get_fittingRunsCount() {
 		return Integer.valueOf(this.getCastedModel().getRuns()).toString();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public String getHullGroup() {
 		return this.getCastedModel().getHull().getItem().getGroupName();
 	}

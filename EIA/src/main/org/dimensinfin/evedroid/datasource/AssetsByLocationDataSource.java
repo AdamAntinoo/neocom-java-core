@@ -180,8 +180,7 @@ public class AssetsByLocationDataSource extends SpecialDataSource {
 
 	@Override
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<AbstractAndroidPart>();
 	}
 
 	//	@Override
