@@ -61,12 +61,12 @@
     </style>
 
     <style name="Name.Style.Clickable">
-        <item name="android:textColor">@color/clickable</item>
+        <item name="android:textColor">@color/nameClickable</item>
         <item name="android:textSize">14sp</item>
     </style>
 
     <style name="Name.Style.Clickable.14">
-        <item name="android:textColor">@color/clickable</item>
+        <item name="android:textColor">@color/nameClickable</item>
         <item name="android:textSize">14sp</item>
     </style>
 

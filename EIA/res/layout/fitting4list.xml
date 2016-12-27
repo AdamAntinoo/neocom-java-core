@@ -15,29 +15,26 @@
             style="@style/ItemIcon.Style.Size48" />
 
         <org.dimensinfin.evedroid.core.Din1451TextView
-            android:id="@+id/shipType"
+            android:id="@+id/fittingName"
             style="@style/Name.Style.Clickable.14"
             android:textStyle="bold"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/itemIcon"
             android:singleLine="true"
-            android:text="@string/default_shipname" />
+            android:text="@string/default_fittingname" />
 
         <org.dimensinfin.evedroid.core.Din1451EngTextView
-            android:id="@+id/shipName"
-            style="@style/EIA.ThemedName"
-            android:layout_below="@+id/shipType"
+            android:id="@+id/fittingClass"
+            style="@style/Name.Style.14"
+            android:layout_below="@+id/fittingName"
             android:layout_marginTop="1dp"
             android:layout_toRightOf="@+id/itemIcon"
             android:paddingRight="2dp"
             android:singleLine="true"
-            android:text="EE Oruga Syn"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:visibility="visible" />
+            android:text="@string/default_fittingclass" />
 
         <org.dimensinfin.evedroid.core.Din1451TextView
-            android:id="@+id/shipLocation"
+            android:id="@+id/fittingCost"
             style="@style/locationStationStyle"
             android:layout_below="@+id/shipName"
             android:layout_marginTop="1dp"
@@ -45,16 +42,4 @@
             android:text="0.5 Hek - Boundles Station"
             android:textSize="11sp" />
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/rightArrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/imageview_defaultcontent"
-        android:padding="-4dp"
-        android:src="@drawable/arrowleft"
-        android:visibility="visible" />
-
 </RelativeLayout>

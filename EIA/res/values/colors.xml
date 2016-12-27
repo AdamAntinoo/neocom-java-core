@@ -1,4 +1,8 @@
 <resources>
+    <!-- NeoCom UI colors. Common colors -->
+    <color name="nameClickable" alias="clickable">#FF50B71D</color>
+    
+   
     <color name="groupiconbackground" >#FFE0E0E0</color>
     
     <!-- EVE UI colors. GALENTE FACTION -->
