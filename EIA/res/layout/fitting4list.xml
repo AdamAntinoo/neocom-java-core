@@ -30,6 +30,7 @@
             android:layout_marginTop="1dp"
             android:layout_toRightOf="@+id/itemIcon"
             android:paddingRight="2dp"
+            android:textStyle="bold"
             android:singleLine="true"
             android:text="@string/default_fittingclass" />
 

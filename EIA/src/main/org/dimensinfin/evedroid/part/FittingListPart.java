@@ -11,10 +11,16 @@ package org.dimensinfin.evedroid.part;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.evedroid.activity.FittingActivity;
+import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.render.FittingListRender;
+
+import android.content.Intent;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class FittingListPart extends EveAbstractPart implements INamedPart, OnClickListener {
@@ -102,6 +108,24 @@ public class FittingListPart extends EveAbstractPart implements INamedPart, OnCl
 	//		}
 	//		FittingListPart.logger.info("<< [FittingPart.onCreateContextMenu]");
 	//	}
+
+	/**
+	 * Returns the ISK formatted string that represents the full fit cost. This is calculated by the sum of all
+	 * the fitting contents using the market sell prices.
+	 * 
+	 * @return string with the price formatted and with the ISK suffix added.
+	 */
+	public String getTransformedFittingCost() {
+		return this.generatePriceString(this.getCastedModel().getFittingCost(), true, true);
+	}
+
+	public void onClick(final View arg0) {
+		FittingListPart.logger.info(">> [FittingListPart.onClick]");
+		Intent intent = new Intent(this.getActivity(), FittingActivity.class);
+		intent.putExtra(EFittingVariants.FITTING_MANUFACTURE.name(), this.getCastedModel().getName());
+		this.getActivity().startActivity(intent);
+		FittingListPart.logger.info("<< [FittingListPart.onClick]");
+	}
 
 	@Override
 	protected AbstractHolder selectHolder() {

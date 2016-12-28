@@ -43,6 +43,7 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	private final Vector<Resource>	cargo							= new Vector<Resource>();
 	private final Vector<Resource>	rigs							= new Vector<Resource>();
 	private final Vector<Resource>	drones						= new Vector<Resource>();
+	private double									fittingCost				= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -80,7 +81,10 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 		if (times < 1) {
 			times = 1;
 		}
-		cargo.add(new Resource(itemId, times));
+		Resource res = new Resource(itemId, times);
+		cargo.add(res);
+		// Add the cost
+		fittingCost += res.getQuantity() * res.getItem().getLowestSellerPrice().getPrice();
 	}
 
 	/**
@@ -91,6 +95,8 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	public void addHull(final int hullTypeId) {
 		// Translate the if to an eve type.
 		hull = new Resource(hullTypeId);
+		// Add the cost
+		fittingCost += hull.getQuantity() * hull.getItem().getLowestSellerPrice().getPrice();
 	}
 
 	/**
@@ -128,7 +134,10 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 		if (times < 1) {
 			times = 1;
 		}
-		drones.add(new Resource(moduleId, times));
+		Resource res = new Resource(moduleId, times);
+		drones.add(res);
+		// Add the cost
+		fittingCost += res.getQuantity() * res.getItem().getLowestSellerPrice().getPrice();
 	}
 
 	public void fitModule(final int moduleId) {
@@ -145,7 +154,10 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 		if (times < 1) {
 			times = 1;
 		}
-		modules.add(new Resource(moduleId, times));
+		Resource res = new Resource(moduleId, times);
+		modules.add(res);
+		// Add the cost
+		fittingCost += res.getQuantity() * res.getItem().getLowestSellerPrice().getPrice();
 	}
 
 	/**
@@ -154,7 +166,14 @@ public class Fitting extends AbstractManufactureProcess implements INeoComNode {
 	 * @param rigTypeId
 	 */
 	public void fitRig(final int rigTypeId) {
-		rigs.add(new Resource(rigTypeId));
+		Resource res = new Resource(rigTypeId);
+		rigs.add(res);
+		// Add the cost
+		fittingCost += res.getQuantity() * res.getItem().getLowestSellerPrice().getPrice();
+	}
+
+	public double getFittingCost() {
+		return fittingCost;
 	}
 
 	public Resource getHull() {
