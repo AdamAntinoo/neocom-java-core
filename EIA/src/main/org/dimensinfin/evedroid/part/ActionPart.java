@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -61,8 +61,9 @@ public class ActionPart extends EveAbstractPart implements IItemPart, OnClickLis
 	@Deprecated
 	public void createHierarchy() {
 		this.clean();
-		for (final EveTask t : this.getCastedModel().getTasks())
+		for (final EveTask t : this.getCastedModel().getTasks()) {
 			this.addChild(new TaskPart(t));
+		}
 	}
 
 	public String get_balance() {
