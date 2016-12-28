@@ -356,7 +356,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @return
 	 */
 	public EveLocation getDefaultLocation() {
-		return this.getAssetsManager().getLocations().get(1);
+		return this.getAssetsManager().getLocations().values().iterator().next();
 	}
 
 	public ArrayList<Job> getIndustryJobs() {
