@@ -87,7 +87,7 @@
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">9sp</item>
+        <item name="android:textSize">8sp</item>
     </style>
     <style name="LabelStyle.LineUp" >
         <item name="android:background">@drawable/topwhiteline</item>
