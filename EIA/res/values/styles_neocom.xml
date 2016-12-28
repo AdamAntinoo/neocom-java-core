@@ -53,21 +53,43 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">false</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Name.Style">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Name.Style.12">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Name.Style.14">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Name.Style.14.Clickable">
+        <item name="android:textColor">@color/clickable</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="PriceStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
-
-    <style name="Name.Style.Clickable">
-        <item name="android:textColor">@color/clickable</item>
-        <item name="android:textSize">14sp</item>
+    <style name="LabelStyle">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">10sp</item>
     </style>
-
-    <style name="Name.Style.Clickable.14">
-        <item name="android:textColor">@color/clickable</item>
-        <item name="android:textSize">14sp</item>
+    <style name="LabelStyle.LineUp" >
+        <item name="android:background">@drawable/topwhiteline</item>
     </style>
-
 </resources>

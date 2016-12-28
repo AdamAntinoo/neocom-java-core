@@ -38,7 +38,9 @@
     <string name="default_shipname">Epithal - Industrial</string>
     <string name="default_grouptitle">SCHEDULED SELL</string>
     <string name="default_regionname">Tash-Murkon - Moon 22</string>
-
+    <string name="default_fittingname">HCBC Impact 1.0</string>
+    <string name="default_fittingclass">Combat Battlecruiser >> Harbinger</string>
+    
     <!-- CONTEXT MENU VALUES -->
     <string-array name="assetActions">
         <item>MOVE</item>
