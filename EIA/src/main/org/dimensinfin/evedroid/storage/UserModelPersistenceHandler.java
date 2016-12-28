@@ -78,7 +78,7 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 	 * Proper initialization needs that the access to the file be synchronized.
 	 */
 	public synchronized boolean restore() {
-		logger.info(">> UserModelPersistenceHandler.restore");
+		UserModelPersistenceHandler.logger.info(">> UserModelPersistenceHandler.restore");
 		File modelStoreFile = AppConnector.getStorageConnector()
 				.accessAppStorage(AppConnector.getResourceString(R.string.userdatamodelfilename));
 		try {
@@ -86,9 +86,9 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
-				getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
-				getStore().setFittings((HashMap<String, Fitting>) input.readObject());
-				logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
+				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
+				this.getStore().setFittings((HashMap<String, Fitting>) input.readObject());
+				UserModelPersistenceHandler.logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
 				return true;
 			} finally {
 				input.close();
@@ -97,20 +97,21 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 		} catch (final ClassNotFoundException ex) {
 			ex.printStackTrace();
 		} catch (final FileNotFoundException fnfe) {
-			logger.warning("W> " + modelStoreFile.getAbsolutePath() + " not found during restore."); //$NON-NLS-1$ //$NON-NLS-2$
-			logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
+			UserModelPersistenceHandler.logger
+					.warning("W> " + modelStoreFile.getAbsolutePath() + " not found during restore."); //$NON-NLS-1$ //$NON-NLS-2$
+			UserModelPersistenceHandler.logger.info("<< UserModelPersistencehandler.restore [FileNotFoundException]"); //$NON-NLS-1$
 			return true;
 		} catch (final IOException ex) {
 			ex.printStackTrace();
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 		}
-		logger.info("<< UserModelPersistenceHandler.restore [false]"); //$NON-NLS-1$
+		UserModelPersistenceHandler.logger.info("<< UserModelPersistenceHandler.restore [false]"); //$NON-NLS-1$
 		return false;
 	}
 
 	public synchronized boolean save() {
-		logger.info(">> UserModelPersistenceHandler.save"); //$NON-NLS-1$
+		UserModelPersistenceHandler.logger.info(">> UserModelPersistenceHandler.save"); //$NON-NLS-1$
 		try {
 			File modelStoreFile = AppConnector.getStorageConnector()
 					.accessAppStorage(AppConnector.getResourceString(R.string.userdatamodelfilename));
@@ -118,12 +119,12 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
-				output.writeObject(getStore().getApiKeys());
+				output.writeObject(this.getStore().getApiKeys());
 				//				output.writeObject(getStore().getCharacters());
-				output.writeObject(getStore().getFittings());
+				output.writeObject(this.getStore().getFittings());
 				//				output.writeObject(getStore());
 				output.flush();
-				logger.info("<< UserModelPersistenceHandler.save [true]"); //$NON-NLS-1$
+				UserModelPersistenceHandler.logger.info("<< UserModelPersistenceHandler.save [true]"); //$NON-NLS-1$
 				return true;
 			} finally {
 				output.flush();
@@ -135,7 +136,7 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 		} catch (final IOException ex) {
 			ex.printStackTrace();
 		}
-		logger.info("<< UserModelPersistenceHandler.save [false]"); //$NON-NLS-1$
+		UserModelPersistenceHandler.logger.info("<< UserModelPersistenceHandler.save [false]"); //$NON-NLS-1$
 		return false;
 	}
 

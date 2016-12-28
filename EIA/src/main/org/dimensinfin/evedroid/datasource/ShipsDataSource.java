@@ -127,7 +127,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		// Check if the location is already on the array.
 		EveLocation hit = _locations.get(locationid);
 		if (null == hit) {
-			//			hit = EveLocation.createFromLocation(ship.getLocation());
+			hit = ship.getLocation();
 			// Add the new location to the list of locations and to the Regions
 			this.add2Region(hit);
 			_locations.put(locationid, hit);
