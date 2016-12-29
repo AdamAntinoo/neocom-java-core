@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.evedroid.holder.Asset4CategoryHolder;
-import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import android.app.Activity;
 import android.app.Fragment;

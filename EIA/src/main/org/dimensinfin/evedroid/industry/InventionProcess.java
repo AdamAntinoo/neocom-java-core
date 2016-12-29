@@ -9,18 +9,20 @@ package org.dimensinfin.evedroid.industry;
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
-import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.enums.EMarketSide;
-import org.dimensinfin.evedroid.enums.ETaskType;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.EveTask;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
-import org.dimensinfin.evedroid.model.Skill;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.enums.ETaskType;
+import org.dimensinfin.eveonline.neocom.industry.IJobProcess;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.EveTask;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.model.Skill;
 
 import android.util.Log;
 

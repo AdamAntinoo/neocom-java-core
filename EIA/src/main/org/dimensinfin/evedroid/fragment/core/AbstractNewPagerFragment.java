@@ -22,11 +22,11 @@ import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.constant.CVariant;
-import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.constant.CVariant;
+import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import android.content.Intent;
 import android.os.AsyncTask;

@@ -16,7 +16,7 @@ import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.fragment.FittingFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import android.os.Bundle;
 

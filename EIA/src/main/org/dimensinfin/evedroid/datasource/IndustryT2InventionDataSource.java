@@ -19,16 +19,16 @@ import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;
 import org.dimensinfin.evedroid.part.LocationPart;
 import org.dimensinfin.evedroid.part.TerminatorPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 import android.util.Log;
 

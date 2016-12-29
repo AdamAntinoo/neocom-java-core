@@ -21,11 +21,11 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.core.SimpleDiskCache.BitmapEntry;
 import org.dimensinfin.evedroid.interfaces.ICache;
-import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.service.PendingRequestEntry;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

@@ -8,8 +8,8 @@ package org.dimensinfin.evedroid.part;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.render.Location4MarketRender;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 import android.text.Html;
 import android.text.Spanned;

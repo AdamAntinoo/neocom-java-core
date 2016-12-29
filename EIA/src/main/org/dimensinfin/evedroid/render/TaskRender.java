@@ -11,8 +11,8 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.part.TaskPart;
+import org.dimensinfin.eveonline.neocom.enums.ETaskType;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

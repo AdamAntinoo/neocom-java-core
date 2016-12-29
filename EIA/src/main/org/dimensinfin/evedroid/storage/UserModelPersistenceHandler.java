@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.NeoComApiKey;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class UserModelPersistenceHandler implements IPersistentHandler {

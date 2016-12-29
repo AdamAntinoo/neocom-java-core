@@ -8,7 +8,7 @@ package org.dimensinfin.evedroid.part;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 
 import android.text.Spanned;
 

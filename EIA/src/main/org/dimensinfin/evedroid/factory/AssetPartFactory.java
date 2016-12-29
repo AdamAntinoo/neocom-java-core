@@ -17,18 +17,18 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.AssetsDirectorActivity.EAssetVariants;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.model.Container;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Region;
-import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.model.Ship;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.ContainerPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.LocationShipsPart;
 import org.dimensinfin.evedroid.part.RegionPart;
 import org.dimensinfin.evedroid.part.ShipPart;
+import org.dimensinfin.eveonline.neocom.model.Container;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.Region;
+import org.dimensinfin.eveonline.neocom.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Ship;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AssetPartFactory extends PartFactory implements IPartFactory {

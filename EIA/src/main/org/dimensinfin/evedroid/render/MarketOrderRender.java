@@ -9,10 +9,10 @@ package org.dimensinfin.evedroid.render;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.part.MarketOrderPart;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.joda.time.Instant;
 
 import android.app.Activity;

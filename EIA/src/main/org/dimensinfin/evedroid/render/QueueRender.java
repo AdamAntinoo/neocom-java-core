@@ -8,9 +8,9 @@ package org.dimensinfin.evedroid.render;
 
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.part.QueuePart;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;

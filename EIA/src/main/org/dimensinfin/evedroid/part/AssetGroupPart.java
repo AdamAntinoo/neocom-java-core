@@ -12,8 +12,8 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetGroupRender;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import android.view.View;
 import android.view.View.OnClickListener;

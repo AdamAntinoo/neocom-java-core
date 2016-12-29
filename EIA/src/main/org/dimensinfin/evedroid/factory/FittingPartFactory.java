@@ -16,15 +16,15 @@ import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.ActionPart;
 import org.dimensinfin.evedroid.part.FittingListPart;
 import org.dimensinfin.evedroid.part.FittingPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.TaskPart;
+import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.EveTask;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class FittingPartFactory extends PartFactory implements IPartFactory {

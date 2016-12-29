@@ -10,13 +10,13 @@ package org.dimensinfin.evedroid.part;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.industry.EJobClasses;
-import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.render.ItemHeaderRender;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.industry.EJobClasses;
+import org.dimensinfin.eveonline.neocom.industry.IJobProcess;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ItemHeader4IndustryPart extends MarketDataPart {

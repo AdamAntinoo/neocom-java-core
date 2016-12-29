@@ -13,11 +13,11 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

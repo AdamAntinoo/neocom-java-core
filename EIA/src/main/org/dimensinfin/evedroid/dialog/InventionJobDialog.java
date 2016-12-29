@@ -11,11 +11,11 @@ import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.industry.EJobClasses;
-import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.industry.EJobClasses;
+import org.dimensinfin.eveonline.neocom.industry.IJobProcess;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

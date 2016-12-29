@@ -12,8 +12,8 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.fragment.JobActionsFragment;
 import org.dimensinfin.evedroid.fragment.ManufactureLOMFragment;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 import android.os.Bundle;
 import android.util.Log;

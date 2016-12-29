@@ -20,9 +20,9 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Ship4AssetHolder;
 import org.dimensinfin.evedroid.holder.Ship4PilotInfoHolder;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Ship;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.Ship;
 
 import android.content.Intent;
 import android.view.ContextMenu;

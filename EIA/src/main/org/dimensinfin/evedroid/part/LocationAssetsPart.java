@@ -18,13 +18,13 @@ import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.Location4AssetsRender;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import com.j256.ormlite.dao.Dao;
 

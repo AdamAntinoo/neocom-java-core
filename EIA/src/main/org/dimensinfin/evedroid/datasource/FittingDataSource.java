@@ -17,12 +17,12 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Action;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 /**
  * This DataSource will need some inputs to create the list of actions to be performed to complete the number

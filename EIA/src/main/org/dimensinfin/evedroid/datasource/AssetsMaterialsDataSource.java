@@ -22,15 +22,15 @@ import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.factory.AbstractIndustryDataSource;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.AssetGroupPart;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 import android.util.Log;
 

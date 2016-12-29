@@ -22,9 +22,9 @@ import org.dimensinfin.evedroid.factory.FittingPartFactory;
 import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.interfaces.IPagerFragment;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.model.Separator.ESeparatorType;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 
 import android.os.Bundle;
 

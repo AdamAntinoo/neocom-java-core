@@ -10,14 +10,14 @@ package org.dimensinfin.evedroid.fragment;
 import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.factory.IndustryLOMResourcesDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
-import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 import android.os.Bundle;
 import android.util.Log;

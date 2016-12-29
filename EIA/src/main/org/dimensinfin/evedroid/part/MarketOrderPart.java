@@ -13,14 +13,14 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.IDateTimeComparator;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.render.MarketOrderRender;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComMarketOrder;
 import org.joda.time.DateTime;
 
 import android.util.Log;

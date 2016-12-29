@@ -6,7 +6,7 @@
 
 package org.dimensinfin.evedroid.interfaces;
 
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 
 //- IMPORT SECTION .........................................................................................
 

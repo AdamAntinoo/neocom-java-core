@@ -15,14 +15,14 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import android.text.Html;
 import android.text.Spanned;

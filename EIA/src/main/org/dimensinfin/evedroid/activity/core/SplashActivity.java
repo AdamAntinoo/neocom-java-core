@@ -19,9 +19,9 @@ import java.util.logging.Logger;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 
 import android.app.Activity;
 import android.content.Intent;

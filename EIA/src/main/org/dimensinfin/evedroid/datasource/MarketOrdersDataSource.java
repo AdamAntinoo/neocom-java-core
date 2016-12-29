@@ -20,15 +20,15 @@ import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.enums.EVARIANT;
-import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.model.MarketOrderAnalyticalGroup;
-import org.dimensinfin.evedroid.model.NeoComMarketOrder;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.MarketOrderAnalyticalGroupPart;
 import org.dimensinfin.evedroid.part.MarketOrderPart;
 import org.dimensinfin.evedroid.part.ResourcePart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.MarketOrderAnalyticalGroup;
+import org.dimensinfin.eveonline.neocom.model.NeoComMarketOrder;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 import android.util.Log;
 

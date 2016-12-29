@@ -16,8 +16,8 @@ import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.Asset4CategoryHolder;
 import org.dimensinfin.evedroid.holder.AssetHolder;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.render.AssetLineRender;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import android.text.Spanned;
 import android.util.Log;

@@ -13,8 +13,8 @@ import java.util.ArrayList;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.model.Property;
 import org.dimensinfin.evedroid.part.LocationShipsPart;
+import org.dimensinfin.eveonline.neocom.model.Property;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

@@ -20,10 +20,10 @@ import org.dimensinfin.evedroid.activity.DirectorsBoardActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
-import org.dimensinfin.evedroid.model.Pilot;
 import org.dimensinfin.evedroid.render.PilotInfoHolder;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.model.Pilot;
 
 import android.content.Intent;
 import android.view.View;

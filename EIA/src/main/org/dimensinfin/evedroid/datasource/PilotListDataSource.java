@@ -13,8 +13,8 @@ import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

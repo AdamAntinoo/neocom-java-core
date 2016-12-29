@@ -18,8 +18,8 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.render.Location4ShipsRender;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 import android.util.Log;
 import android.view.View;

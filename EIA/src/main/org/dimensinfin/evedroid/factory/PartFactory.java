@@ -12,8 +12,8 @@ package org.dimensinfin.evedroid.factory;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.GroupPart;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class PartFactory implements IPartFactory {

@@ -14,8 +14,8 @@ import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class DataSourceFactory {

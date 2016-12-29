@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.datasource.JobListDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
 import android.os.Bundle;
 import android.util.Log;

@@ -13,8 +13,8 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.model.Pilot;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
+import org.dimensinfin.eveonline.neocom.model.Pilot;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;

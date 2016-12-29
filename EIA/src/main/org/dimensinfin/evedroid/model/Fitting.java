@@ -14,14 +14,19 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.enums.EPropertyTypes;
-import org.dimensinfin.evedroid.enums.ETaskType;
 import org.dimensinfin.evedroid.industry.AbstractManufactureProcess;
-import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
+import org.dimensinfin.eveonline.neocom.enums.ETaskType;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.EveTask;
+import org.dimensinfin.eveonline.neocom.model.Property;
+import org.dimensinfin.eveonline.neocom.model.Skill;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;

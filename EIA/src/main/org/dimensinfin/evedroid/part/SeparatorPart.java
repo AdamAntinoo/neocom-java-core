@@ -14,7 +14,7 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.core.NeoComAbstractPart;
 import org.dimensinfin.evedroid.holder.SeparatorHolder;
-import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SeparatorPart extends NeoComAbstractPart {

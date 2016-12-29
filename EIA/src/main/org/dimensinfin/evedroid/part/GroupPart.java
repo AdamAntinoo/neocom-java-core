@@ -18,11 +18,11 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.render.IndustryGroupRender;
 import org.dimensinfin.evedroid.render.JobStateRender;
 import org.dimensinfin.evedroid.render.MarketSideRender;
 import org.dimensinfin.evedroid.render.ShipSlotRender;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 import android.util.Log;
 

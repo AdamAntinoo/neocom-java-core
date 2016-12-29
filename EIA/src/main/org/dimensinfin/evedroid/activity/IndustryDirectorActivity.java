@@ -11,13 +11,13 @@ import java.util.ArrayList;
 
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.fragment.IndustryBlueprintsFragment;
 import org.dimensinfin.evedroid.fragment.InventionBlueprintsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import android.os.Bundle;
 import android.util.Log;

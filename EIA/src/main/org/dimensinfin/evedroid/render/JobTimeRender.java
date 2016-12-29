@@ -9,9 +9,9 @@ package org.dimensinfin.evedroid.render;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.part.JobTimePart;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

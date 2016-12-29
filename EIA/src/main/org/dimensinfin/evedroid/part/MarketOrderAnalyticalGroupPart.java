@@ -12,9 +12,9 @@ import java.util.GregorianCalendar;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.MarketOrderAnalyticalGroup;
 import org.dimensinfin.evedroid.render.AnalyticalGroupRender;
 import org.dimensinfin.evedroid.render.MarketSideRender;
+import org.dimensinfin.eveonline.neocom.model.MarketOrderAnalyticalGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class MarketOrderAnalyticalGroupPart extends EveAbstractPart {

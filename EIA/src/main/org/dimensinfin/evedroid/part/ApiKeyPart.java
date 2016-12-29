@@ -19,8 +19,8 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.NeoComApiKey;
 import org.dimensinfin.evedroid.render.ApiKeyRender;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 
 import android.view.View;
 import android.view.View.OnClickListener;

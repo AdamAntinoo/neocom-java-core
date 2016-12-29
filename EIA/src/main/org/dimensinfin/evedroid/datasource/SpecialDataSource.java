@@ -21,9 +21,9 @@ import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.constant.CVariant;
-import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
+import org.dimensinfin.eveonline.neocom.constant.CVariant;
+import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**

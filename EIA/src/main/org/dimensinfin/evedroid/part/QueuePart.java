@@ -11,8 +11,8 @@ import java.util.Date;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.JobQueue;
 import org.dimensinfin.evedroid.render.QueueRender;
+import org.dimensinfin.eveonline.neocom.model.JobQueue;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;

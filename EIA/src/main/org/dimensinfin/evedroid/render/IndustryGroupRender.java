@@ -10,9 +10,9 @@ package org.dimensinfin.evedroid.render;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.part.GroupPart;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

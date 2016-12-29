@@ -10,10 +10,10 @@ package org.dimensinfin.evedroid.part;
 import java.util.GregorianCalendar;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.render.JobTimeRender;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class JobTimePart extends EveAbstractPart {

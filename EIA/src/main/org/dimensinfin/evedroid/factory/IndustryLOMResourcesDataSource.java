@@ -15,20 +15,20 @@ import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
-import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
-import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.ItemHeader4IndustryPart;
 import org.dimensinfin.evedroid.part.JobTimePart;
 import org.dimensinfin.evedroid.part.ResourcePart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 import android.util.Log;
 

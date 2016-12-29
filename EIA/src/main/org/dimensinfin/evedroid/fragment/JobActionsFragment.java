@@ -13,9 +13,9 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.datasource.IndustryJobActionsDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 import android.os.Bundle;
 import android.util.Log;

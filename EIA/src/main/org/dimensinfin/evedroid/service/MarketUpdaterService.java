@@ -13,14 +13,14 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.enums.EMarketSide;
-import org.dimensinfin.evedroid.market.MarketDataEntry;
-import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.EveItem;
-import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evemarket.model.TrackEntry;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 import android.app.IntentService;
 import android.content.Intent;

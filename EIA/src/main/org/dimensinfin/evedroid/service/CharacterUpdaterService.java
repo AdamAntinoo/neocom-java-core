@@ -9,9 +9,9 @@ package org.dimensinfin.evedroid.service;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.enums.EDataBlock;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import android.app.IntentService;
 import android.content.Intent;

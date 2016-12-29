@@ -20,18 +20,18 @@ import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
-import org.dimensinfin.evedroid.industry.EJobClasses;
-import org.dimensinfin.evedroid.industry.IJobProcess;
 import org.dimensinfin.evedroid.industry.JobManager;
-import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.model.Skill;
 import org.dimensinfin.evedroid.part.ActionPart;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.industry.EJobClasses;
+import org.dimensinfin.eveonline.neocom.industry.IJobProcess;
+import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Skill;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**

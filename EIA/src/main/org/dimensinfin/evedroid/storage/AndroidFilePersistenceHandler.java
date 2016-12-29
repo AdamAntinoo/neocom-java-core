@@ -21,7 +21,7 @@ import java.io.ObjectOutputStream;
 
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
-import org.dimensinfin.evedroid.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 
 import android.util.Log;
 

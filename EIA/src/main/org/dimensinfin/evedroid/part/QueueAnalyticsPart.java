@@ -9,9 +9,9 @@ package org.dimensinfin.evedroid.part;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.render.QueueaAnalyticsRender;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.joda.time.DateTime;
 
 // - CLASS IMPLEMENTATION ...................................................................................

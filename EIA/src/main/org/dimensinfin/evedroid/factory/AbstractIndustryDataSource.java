@@ -13,11 +13,11 @@ import java.util.Vector;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
-import org.dimensinfin.evedroid.enums.EIndustryGroup;
 import org.dimensinfin.evedroid.interfaces.IItemPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 // - CLASS IMPLEMENTATION ...................................................................................
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractIndustryDataSource extends AbstractDataSource {

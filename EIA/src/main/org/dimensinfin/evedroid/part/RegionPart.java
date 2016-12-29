@@ -20,7 +20,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.holder.RegionHolder;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 import android.view.View;
 import android.view.View.OnClickListener;

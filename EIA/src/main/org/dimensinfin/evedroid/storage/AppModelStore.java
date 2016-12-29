@@ -25,13 +25,13 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.core.INeoComModelStore;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
 import org.dimensinfin.evedroid.model.Fitting;
-import org.dimensinfin.evedroid.model.NeoComApiKey;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import com.beimin.eveapi.exception.ApiException;
 

@@ -4,8 +4,7 @@
 
 package org.dimensinfin.evedroid.interfaces;
 
-// - IMPORT SECTION .........................................................................................
-import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IDirector {

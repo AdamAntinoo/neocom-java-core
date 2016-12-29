@@ -13,7 +13,7 @@ import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.fragment.ShipsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;
-import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import android.os.Bundle;
 import android.util.Log;

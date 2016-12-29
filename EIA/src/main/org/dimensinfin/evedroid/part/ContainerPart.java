@@ -16,7 +16,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.holder.ContainerHolder;
-import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import android.view.View;
 import android.view.View.OnClickListener;

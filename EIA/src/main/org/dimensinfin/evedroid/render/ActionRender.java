@@ -9,8 +9,8 @@ package org.dimensinfin.evedroid.render;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
-import org.dimensinfin.evedroid.enums.ETaskCompletion;
 import org.dimensinfin.evedroid.part.ActionPart;
+import org.dimensinfin.eveonline.neocom.enums.ETaskCompletion;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

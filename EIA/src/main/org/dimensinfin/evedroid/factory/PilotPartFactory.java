@@ -15,11 +15,11 @@ import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.activity.PilotListActivity.EAccountsVariants;
-import org.dimensinfin.evedroid.model.Corporation;
-import org.dimensinfin.evedroid.model.NeoComApiKey;
-import org.dimensinfin.evedroid.model.Pilot;
 import org.dimensinfin.evedroid.part.ApiKeyPart;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
+import org.dimensinfin.eveonline.neocom.model.Corporation;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
+import org.dimensinfin.eveonline.neocom.model.Pilot;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotPartFactory extends PartFactory implements IPartFactory {

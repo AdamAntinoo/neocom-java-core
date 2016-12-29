@@ -9,12 +9,12 @@ package org.dimensinfin.evedroid.fragment;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.datasource.IndustryT1BlueprintsDataSource;
 import org.dimensinfin.evedroid.datasource.IndustryT2BlueprintsDataSource;
 import org.dimensinfin.evedroid.datasource.IndustryT3BlueprintsDataSource;
 import org.dimensinfin.evedroid.fragment.core.AbstractPagerFragment;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
 import android.os.Bundle;
 import android.util.Log;
