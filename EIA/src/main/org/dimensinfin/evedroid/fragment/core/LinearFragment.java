@@ -13,7 +13,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.activity.core.SplashActivity;
 
 import android.app.DialogFragment;

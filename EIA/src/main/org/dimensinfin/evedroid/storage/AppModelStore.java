@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.datasource.DataSourceManager;
 import org.dimensinfin.evedroid.datasource.IDataSourceConnector;
 import org.dimensinfin.evedroid.model.Fitting;

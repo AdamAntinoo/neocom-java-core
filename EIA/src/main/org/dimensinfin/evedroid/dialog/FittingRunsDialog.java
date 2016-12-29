@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.dialog;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.part.FittingPart;
 
 import android.app.AlertDialog;

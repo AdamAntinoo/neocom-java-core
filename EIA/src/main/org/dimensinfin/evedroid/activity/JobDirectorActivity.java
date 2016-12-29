@@ -8,7 +8,7 @@ package org.dimensinfin.evedroid.activity;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.fragment.JobsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;

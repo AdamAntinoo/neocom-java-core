@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;

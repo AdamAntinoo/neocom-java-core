@@ -11,7 +11,7 @@ import java.util.Vector;
 
 import org.dimensinfin.android.mvc.activity.PagerFragment;
 import org.dimensinfin.android.mvc.activity.TitledFragment;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 
 import android.app.Fragment;
 import android.app.FragmentManager;

@@ -7,7 +7,7 @@
 package org.dimensinfin.evedroid.render;
 
 // - IMPORT SECTION .........................................................................................
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.part.BlueprintPart;
 import org.dimensinfin.evedroid.part.MarketDataPart;

@@ -1,6 +1,6 @@
 package org.dimensinfin.evedroid.activity.core;
 
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 
 import android.app.Activity;
 import android.os.Bundle;

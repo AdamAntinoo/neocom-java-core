@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.dialog;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.android.mvc.activity.PagerFragment;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.part.TaskPart;
 
 import android.app.AlertDialog;

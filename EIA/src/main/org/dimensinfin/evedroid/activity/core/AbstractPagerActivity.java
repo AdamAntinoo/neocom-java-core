@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.activity.core;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.activity.TitledFragment;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.ERequestClass;
 import org.dimensinfin.evedroid.core.EvePagerAdapter;

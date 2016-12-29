@@ -21,7 +21,7 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 import org.dimensinfin.eveonline.neocom.constant.CVariant;

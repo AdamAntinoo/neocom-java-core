@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.activity.PagerFragment;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.activity.core.SettingsActivity;
 import org.dimensinfin.evedroid.activity.core.SplashActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;

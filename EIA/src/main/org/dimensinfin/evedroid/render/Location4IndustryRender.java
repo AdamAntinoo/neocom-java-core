@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.render;
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.part.LocationIndustryPart;

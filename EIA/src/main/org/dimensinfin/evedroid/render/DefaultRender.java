@@ -10,7 +10,7 @@ package org.dimensinfin.evedroid.render;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 
 import android.app.Activity;
 import android.view.LayoutInflater;

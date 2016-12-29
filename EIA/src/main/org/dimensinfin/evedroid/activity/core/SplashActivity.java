@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.activity.PilotListActivity;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.storage.AppModelStore;

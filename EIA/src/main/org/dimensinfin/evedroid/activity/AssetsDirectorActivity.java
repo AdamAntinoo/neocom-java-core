@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.activity;
 import java.util.logging.Logger;
 
 //- IMPORT SECTION .........................................................................................
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.fragment.AssetsFragment;
 import org.dimensinfin.evedroid.interfaces.INeoComDirector;

@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.activity;
 //- IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.evedroid.activity.core.PilotPagerActivity;
 import org.dimensinfin.evedroid.fragment.FittingFragment;

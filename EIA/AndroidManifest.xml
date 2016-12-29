@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.dimensinfin.evedroid"
+    package="org.dimensinfin.eveonline.neocom"
     android:versionCode="72"
     android:versionName="NeoCom 0.7.2-Fitting" >
 

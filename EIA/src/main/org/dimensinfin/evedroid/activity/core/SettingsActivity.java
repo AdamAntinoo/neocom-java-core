@@ -7,7 +7,7 @@ package org.dimensinfin.evedroid.activity.core;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

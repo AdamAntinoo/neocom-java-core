@@ -20,7 +20,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.core.SimpleDiskCache.BitmapEntry;
 import org.dimensinfin.evedroid.interfaces.ICache;
 import org.dimensinfin.evedroid.service.PendingRequestEntry;

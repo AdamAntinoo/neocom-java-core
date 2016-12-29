@@ -11,7 +11,7 @@ package org.dimensinfin.evedroid.render;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.core.EveAbstractHolder;
 import org.dimensinfin.evedroid.part.PilotInfoPart;
 import org.dimensinfin.eveonline.neocom.model.Pilot;

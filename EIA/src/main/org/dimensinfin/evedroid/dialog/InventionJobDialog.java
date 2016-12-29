@@ -9,7 +9,7 @@ package org.dimensinfin.evedroid.dialog;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.eveonline.neocom.industry.EJobClasses;

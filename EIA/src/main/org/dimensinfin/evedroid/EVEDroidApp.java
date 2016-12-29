@@ -41,6 +41,7 @@ import org.dimensinfin.evedroid.part.ShipPart;
 import org.dimensinfin.evedroid.service.PendingRequestEntry;
 import org.dimensinfin.evedroid.service.TimeTickReceiver;
 import org.dimensinfin.evedroid.storage.AppModelStore;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;

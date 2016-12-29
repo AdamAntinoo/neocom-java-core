@@ -10,7 +10,7 @@ package org.dimensinfin.evedroid.theme;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evedroid.EVEDroidApp;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.evedroid.core.EThemeTransparency;
 
 import android.app.Activity;

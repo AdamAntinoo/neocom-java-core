@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.activity.IDialogListener;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.evedroid.R;
+import org.dimensinfin.eveonline.neocom.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

@@ -7,7 +7,7 @@ package org.dimensinfin.evedroid.fragment.core;
 // - IMPORT SECTION .........................................................................................
 import java.util.Vector;
 
-import org.dimensinfin.android.mvc.R;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.android.mvc.activity.SafeStopActivity;
 import org.dimensinfin.android.mvc.activity.TitledFragment;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
