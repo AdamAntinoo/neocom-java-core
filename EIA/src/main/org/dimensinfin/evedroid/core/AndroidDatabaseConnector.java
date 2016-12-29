@@ -23,11 +23,11 @@ import org.dimensinfin.evedroid.constant.ModelWideConstants;
 import org.dimensinfin.evedroid.enums.EMarketSide;
 import org.dimensinfin.evedroid.industry.Resource;
 import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.NeoComAsset;
-import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.EveItem;
 import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.Job;
+import org.dimensinfin.evedroid.model.NeoComAsset;
+import org.dimensinfin.evedroid.model.NeoComBlueprint;
 import org.dimensinfin.evedroid.model.NeoComMarketOrder;
 import org.dimensinfin.evedroid.model.Outpost;
 import org.dimensinfin.evedroid.model.Property;
@@ -140,7 +140,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	private final SparseArray<MarketDataSet>	sellMarketDataCache	= new SparseArray<MarketDataSet>();
 	private final SparseArray<Outpost>				outpostsCache				= new SparseArray<Outpost>();;
 
-	private final HashMap<Long, NeoComAsset>				containerCache			= new HashMap<Long, NeoComAsset>();
+	private final HashMap<Long, NeoComAsset>	containerCache			= new HashMap<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AndroidDatabaseConnector(final Context app) {
@@ -149,11 +149,11 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkInvention(final int typeID) {
-		return checkRecordExistence(typeID, CHECK_INVENTION);
+		return this.checkRecordExistence(typeID, AndroidDatabaseConnector.CHECK_INVENTION);
 	}
 
 	public boolean checkManufacturable(final int typeID) {
-		return checkRecordExistence(typeID, CHECK_MANUFACTURABLE);
+		return this.checkRecordExistence(typeID, AndroidDatabaseConnector.CHECK_MANUFACTURABLE);
 	}
 
 	/**
@@ -164,13 +164,13 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public synchronized void clearInvalidRecords() {
 		SQLiteDatabase database = null;
 		try {
-			database = getAppDatabase();
+			database = this.getAppDatabase();
 			synchronized (database) {
 				database.beginTransaction();
 				Log.i("", "-- clearInvalidAssets rows deleted ASSETS [OWNERID = -1] - "
 						+ database.delete("Assets", "ownerID" + "=-1", null));
-				Log.i("", "-- clearInvalidAssets rows deleted ASSETS [LOCATIONID = -1] - "
-						+ database.delete("Assets", "locationId" + "=-1", null));
+				//				Log.i("", "-- clearInvalidAssets rows deleted ASSETS [LOCATIONID = -1] - "
+				//						+ database.delete("Assets", "locationId" + "=-1", null));
 				Log.i("", "-- clearInvalidAssets rows deleted BLUEPRINTS [OWNERID = -1] - "
 						+ database.delete("Blueprints", "ownerID" + "=-1", null));
 				// Log.i("", "-- clearInvalidAssets rows deleted JOBS [OWNERID =
@@ -179,7 +179,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				database.setTransactionSuccessful();
 			}
 		} catch (final SQLiteException ex) {
-			logger.warning("W> Problem clearing invalid assets. " + ex.getMessage());
+			AndroidDatabaseConnector.logger.warning("W> Problem clearing invalid assets. " + ex.getMessage());
 		} finally {
 			if (null != database) {
 				database.endTransaction();
@@ -201,49 +201,49 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
-			openDAO();
+			this.openDAO();
 		}
 		return appDatabaseHelper.getAssetDAO();
 	}
 
 	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
-			openDAO();
+			this.openDAO();
 		}
 		return appDatabaseHelper.getBlueprintDAO();
 	}
 
 	public Dao<Job, String> getJobDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
-			openDAO();
+			this.openDAO();
 		}
 		return appDatabaseHelper.getJobDAO();
 	}
 
 	public Dao<EveLocation, String> getLocationDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
-			openDAO();
+			this.openDAO();
 		}
 		return appDatabaseHelper.getLocationDAO();
 	}
 
 	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
-			openDAO();
+			this.openDAO();
 		}
 		return appDatabaseHelper.getMarketOrderDAO();
 	}
 
 	public Dao<Property, String> getPropertyDAO() throws java.sql.SQLException {
 		if (null == appDatabaseHelper) {
-			openDAO();
+			this.openDAO();
 		}
 		return appDatabaseHelper.getPropertyDAO();
 	}
 
 	public SQLiteDatabase getStaticDatabase() throws SQLException {
 		if (null == staticDatabase) {
-			openAppDataBase();
+			this.openAppDataBase();
 		}
 		return staticDatabase;
 	}
@@ -267,8 +267,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 					return true;
 				return false;
 			} catch (final SQLException sqle) {
-				logger.severe("E> Failed to open database: " + database);
-				logger.severe("E> " + sqle.getMessage());
+				AndroidDatabaseConnector.logger.severe("E> Failed to open database: " + database);
+				AndroidDatabaseConnector.logger.severe("E> " + sqle.getMessage());
 				throw new RuntimeException("E> Failed to open database: " + database + ". " + sqle.getMessage());
 			}
 		}
@@ -288,8 +288,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 					return true;
 				return false;
 			} catch (final SQLException sqle) {
-				logger.severe("E> Failed to open database: " + database);
-				logger.severe("E> " + sqle.getMessage());
+				AndroidDatabaseConnector.logger.severe("E> Failed to open database: " + database);
+				AndroidDatabaseConnector.logger.severe("E> " + sqle.getMessage());
 			}
 		}
 		return true;
@@ -311,7 +311,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public int queryBlueprintDependencies(final int bpitemID) {
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
 			final Cursor cursor = ccpDatabase.rawQuery(
 					"SELECT parentBlueprintTypeID FROM invBlueprintTypes BT WHERE blueprintTypeID = ?",
@@ -325,7 +325,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				return parentBlueprintTypeID;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error getting T2 BPO for BP <" + bpitemID + ">.");
+			AndroidDatabaseConnector.logger.severe("E> Error getting T2 BPO for BP <" + bpitemID + ">.");
 		}
 		return -1;
 	}
@@ -333,7 +333,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public ArrayList<Resource> refineOre(final int oreID) {
 		ArrayList<Resource> results = new ArrayList<Resource>();
 		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(REFINING_ASTEROID,
+			final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidDatabaseConnector.REFINING_ASTEROID,
 					new String[] { Integer.valueOf(oreID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -348,7 +348,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				return results;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error refining <" + oreID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error refining <" + oreID + "> not found.");
 		}
 		return results;
 	}
@@ -361,7 +361,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public synchronized void replaceAssets(final long characterID) {
 		SQLiteDatabase database = null;
 		try {
-			database = getAppDatabase();
+			database = this.getAppDatabase();
 			synchronized (database) {
 				database.beginTransaction();
 				Log.i("", "-- replaceAssets rows deleted ASSETS [OWNERID = " + characterID + "] - "
@@ -373,7 +373,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			}
 		} catch (final SQLiteException ex) {
 			ex.printStackTrace();
-			logger.warning("W> Problem replacing assets for " + characterID + ". " + ex.getMessage());
+			AndroidDatabaseConnector.logger
+					.warning("W> Problem replacing assets for " + characterID + ". " + ex.getMessage());
 		} finally {
 			if (null != database) {
 				database.endTransaction();
@@ -384,7 +385,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public synchronized void replaceBlueprints(final long characterID) {
 		SQLiteDatabase database = null;
 		try {
-			database = getAppDatabase();
+			database = this.getAppDatabase();
 			synchronized (database) {
 				database.beginTransaction();
 				Log.i("", "-- replaceBlueprints rows deleted BLUEPRINTS [OWNERID = " + characterID + "] - "
@@ -396,7 +397,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			}
 		} catch (final SQLiteException ex) {
 			ex.printStackTrace();
-			logger.warning("W> Problem replacing Blueprints for " + characterID + ". " + ex.getMessage());
+			AndroidDatabaseConnector.logger
+					.warning("W> Problem replacing Blueprints for " + characterID + ". " + ex.getMessage());
 		} finally {
 			if (null != database) {
 				database.endTransaction();
@@ -407,7 +409,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public synchronized void replaceJobs(final long characterID) {
 		SQLiteDatabase database = null;
 		try {
-			database = getAppDatabase();
+			database = this.getAppDatabase();
 			synchronized (database) {
 				database.beginTransaction();
 				Log.i("", "-- replaceJobs rows deleted JOBS [OWNERID = " + characterID + "] - "
@@ -419,7 +421,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			}
 		} catch (final SQLiteException ex) {
 			ex.printStackTrace();
-			logger.warning("W> Problem replacing assets for " + characterID + ". " + ex.getMessage());
+			AndroidDatabaseConnector.logger
+					.warning("W> Problem replacing assets for " + characterID + ". " + ex.getMessage());
 		} finally {
 			if (null != database) {
 				database.endTransaction();
@@ -431,7 +434,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		// Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<NeoComAsset, String> assetDao = getAssetDAO();
+			Dao<NeoComAsset, String> assetDao = this.getAssetDAO();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
@@ -452,7 +455,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			// Select assets for the owner and with an specific type id.
 			List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 			try {
-				Dao<NeoComAsset, String> assetDao = getAssetDAO();
+				Dao<NeoComAsset, String> assetDao = this.getAssetDAO();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("assetID", assetID);
@@ -473,7 +476,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		// Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<NeoComAsset, String> assetDao = getAssetDAO();
+			Dao<NeoComAsset, String> assetDao = this.getAssetDAO();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
@@ -493,7 +496,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public int searchBlueprint4Module(final int moduleID) {
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
 			final Cursor cursor = ccpDatabase.rawQuery(
 					"SELECT typeID FROM industryActivityProducts BT WHERE productTypeID = ? AND activityID = 1",
@@ -507,7 +510,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				return productTypeID;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error locating BPO for module <" + moduleID + ">.");
+			AndroidDatabaseConnector.logger.severe("E> Error locating BPO for module <" + moduleID + ">.");
 		}
 		return -1;
 	}
@@ -518,7 +521,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		AppConnector.startChrono();
 		try {
 			// if (null == ccpDatabase) ccpDatabase = getCCPDatabase();
-			final Cursor cursor = getCCPDatabase().rawQuery(
+			final Cursor cursor = this.getCCPDatabase().rawQuery(
 					"SELECT typeID FROM industryActivityProducts WHERE productTypeID in ( " + idList + " ) AND activityID = 8",
 					null);
 			if (null != cursor) {
@@ -532,7 +535,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 						"~~ Time lapse for [SELECT PRODUCTTYPEID IN " + idList + "] - " + AppConnector.timeLapse());
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for  blueprints.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for  blueprints.");
 		}
 		Log.i("DBQUERY", "<< AndroidDatabaseConnector.searchInventionableBlueprints " + blueprintIds.size());
 		return blueprintIds;
@@ -541,7 +544,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public int searchInventionProduct(final int typeID) {
 		int product = -1;
 		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(INVENTION_PRODUCT,
+			final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidDatabaseConnector.INVENTION_PRODUCT,
 					new String[] { Integer.valueOf(typeID).toString() });
 			if (null != cursor) {
 				if (cursor.moveToFirst()) {
@@ -567,7 +570,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		if (null == hit) {
 			try {
 				hit = new EveItem();
-				final Cursor cursor = getCCPDatabase().rawQuery(SELECT_ITEM_BYID,
+				final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidDatabaseConnector.SELECT_ITEM_BYID,
 						new String[] { Integer.valueOf(typeID).toString() });
 				if (null != cursor) {
 					if (cursor.moveToFirst()) {
@@ -648,9 +651,9 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		int jobTime = ModelWideConstants.HOURS2 / 1000;
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
-			final Cursor cursor = ccpDatabase.rawQuery(JOB_COMPLETION_TIME,
+			final Cursor cursor = ccpDatabase.rawQuery(AndroidDatabaseConnector.JOB_COMPLETION_TIME,
 					new String[] { Integer.valueOf(typeID).toString(), Integer.valueOf(activityID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -661,7 +664,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				// return jobTime;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for job time <" + typeID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for job time <" + typeID + "> not found.");
 		}
 		Log.i("EVEI", "<< AndroidDatabaseConnector.searchJobExecutionTime");
 		return jobTime;
@@ -673,7 +676,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		ArrayList<Resource> inventionJob = new ArrayList<Resource>();
 		AppConnector.startChrono();
 		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(INDUSTRYACTIVITYMATERIALS,
+			final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidDatabaseConnector.INDUSTRYACTIVITYMATERIALS,
 					new String[] { Integer.valueOf(itemID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -687,7 +690,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				cursor.close();
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for material <" + itemID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
 		}
 		// Log.i("AndroidDatabaseConnector", "<<
 		// AndroidDatabaseConnector.searchListOfDatacores " +
@@ -704,9 +707,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		AppConnector.startChrono();
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
-			Cursor cursor = ccpDatabase.rawQuery(SELECT_MATERIAL_USAGE, new String[] { Integer.valueOf(itemID).toString() });
+			Cursor cursor = ccpDatabase.rawQuery(AndroidDatabaseConnector.SELECT_MATERIAL_USAGE,
+					new String[] { Integer.valueOf(itemID).toString() });
 			int blueprintId = -1;
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -746,7 +750,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				// return buildJob;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for material <" + itemID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
 		}
 		Log.i("DBQUERY.TIME",
 				"~~ Time lapse for [SELECT LOM " + itemID + "] - [" + buildJob.size() + "] " + AppConnector.timeLapse());
@@ -760,9 +764,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		AppConnector.startChrono();
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
-			Cursor cursor = ccpDatabase.rawQuery(REACTION_COMPONENTS, new String[] { Integer.valueOf(itemID).toString() });
+			Cursor cursor = ccpDatabase.rawQuery(AndroidDatabaseConnector.REACTION_COMPONENTS,
+					new String[] { Integer.valueOf(itemID).toString() });
 			// int blueprintId = -1;
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
@@ -810,7 +815,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				// return buildJob;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for material <" + itemID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
 		}
 		Log.i("DBQUERY.TIME",
 				"~~ Time lapse for [SELECT LOM " + itemID + "] - [" + buildJob.size() + "] " + AppConnector.timeLapse());
@@ -837,7 +842,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 			// Check list contents. If found we have the location. Else then check if Office
 			if (locationList.size() < 1) {
-				logger.info("-- [searchLocationbyID]> Location: " + locationID + " not found on cache.");
+				AndroidDatabaseConnector.logger
+						.info("-- [searchLocationbyID]> Location: " + locationID + " not found on cache.");
 				// Offices
 				long fixedLocationID = locationID;
 				if (fixedLocationID >= 66000000) {
@@ -849,12 +855,13 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				}
 				EveLocation hit = new EveLocation(fixedLocationID);
 				try {
-					final Cursor cursor = getCCPDatabase().rawQuery(SELECT_LOCATIONBYID,
+					final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidDatabaseConnector.SELECT_LOCATIONBYID,
 							new String[] { Long.valueOf(fixedLocationID).toString() });
 					if (null != cursor) {
 						boolean detected = false;
 						if (cursor.moveToFirst()) {
-							logger.info("-- [searchLocationbyID]> Location: " + locationID + " Obtained from CCP data.");
+							AndroidDatabaseConnector.logger
+									.info("-- [searchLocationbyID]> Location: " + locationID + " Obtained from CCP data.");
 							detected = true;
 							// Check returned values when doing the assignments.
 							long fragmentID = cursor.getLong(cursor.getColumnIndex("systemID"));
@@ -881,12 +888,13 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 							cursor.close();
 						}
 						if (!detected) {
-							logger.info("-- [searchLocationbyID]> Location: " + locationID + " not found on CCP data.");
+							AndroidDatabaseConnector.logger
+									.info("-- [searchLocationbyID]> Location: " + locationID + " not found on CCP data.");
 							hit.setSystem("ID>" + Long.valueOf(locationID).toString());
 						}
 					}
 				} catch (final Exception ex) {
-					logger.warning(
+					AndroidDatabaseConnector.logger.warning(
 							"W- [AndroidDatabaseConnector.searchLocationbyID]> Location <" + fixedLocationID + "> not found.");
 				}
 				// If the location is not cached nor in the CCP database. Return default location
@@ -951,17 +959,17 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public EveLocation searchLocationBySystem(final String name) {
 		final EveLocation newLocation = new EveLocation();
 		try {
-			final Cursor cursor = getCCPDatabase()
+			final Cursor cursor = this.getCCPDatabase()
 					.rawQuery("SELECT solarSystemID from mapSolarSystems WHERE solarSystemName = ?", new String[] { name });
 			if (null != cursor) {
 				if (cursor.moveToFirst()) {
 					int locationID = cursor.getInt(cursor.getColumnIndex("solarSystemID"));
 					cursor.close();
-					return searchLocationbyID(locationID);
+					return this.searchLocationbyID(locationID);
 				}
 			}
 		} catch (final Exception ex) {
-			logger.warning("W> Location <" + name + "> not found.");
+			AndroidDatabaseConnector.logger.warning("W> Location <" + name + "> not found.");
 		}
 		return newLocation;
 	}
@@ -1026,7 +1034,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public int searchModule4Blueprint(final int bpitemID) {
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
 			final Cursor cursor = ccpDatabase.rawQuery(
 					"SELECT productTypeID FROM industryActivityProducts BT WHERE typeID = ? AND activityID = 1",
@@ -1040,7 +1048,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				return productTypeID;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error locating module for BPO <" + bpitemID + ">.");
+			AndroidDatabaseConnector.logger.severe("E> Error locating module for BPO <" + bpitemID + ">.");
 		}
 		return -1;
 	}
@@ -1050,9 +1058,10 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		AppConnector.startChrono();
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
-			Cursor cursor = ccpDatabase.rawQuery(REACTION_COMPONENTS, new String[] { Integer.valueOf(itemID).toString() });
+			Cursor cursor = ccpDatabase.rawQuery(AndroidDatabaseConnector.REACTION_COMPONENTS,
+					new String[] { Integer.valueOf(itemID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
 					// Search for the itemid at the reaction and then return the
@@ -1106,7 +1115,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				// return buildJob;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for material <" + itemID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
 		}
 		Log.i("DBQUERY.TIME",
 				"~~ Time lapse for [SELECT LOM " + itemID + "] - [" + multiplier + "] " + AppConnector.timeLapse());
@@ -1126,7 +1135,8 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		int stationTypeID = 1529;
 		AppConnector.startChrono();
 		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(STATIONTYPE, new String[] { Long.valueOf(stationID).toString() });
+			final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidDatabaseConnector.STATIONTYPE,
+					new String[] { Long.valueOf(stationID).toString() });
 			if (null != cursor) {
 				while (cursor.moveToNext()) {
 					stationTypeID = cursor.getInt(cursor.getColumnIndex("stationTypeID"));
@@ -1134,7 +1144,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				cursor.close();
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error searching for station type <" + stationID + "> not found.");
+			AndroidDatabaseConnector.logger.severe("E> Error searching for station type <" + stationID + "> not found.");
 		}
 		// Log.i("AndroidDatabaseConnector", "<<
 		// AndroidDatabaseConnector.searchListOfDatacores " +
@@ -1146,9 +1156,9 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	public String searchTech4Blueprint(final int blueprintID) {
 		try {
 			if (null == ccpDatabase) {
-				ccpDatabase = getCCPDatabase();
+				ccpDatabase = this.getCCPDatabase();
 			}
-			final Cursor cursor = ccpDatabase.rawQuery(TECH4BLUEPRINT,
+			final Cursor cursor = ccpDatabase.rawQuery(AndroidDatabaseConnector.TECH4BLUEPRINT,
 					new String[] { Integer.valueOf(blueprintID).toString() });
 			if (null != cursor) {
 				String productTypeID = ModelWideConstants.eveglobal.TechI;
@@ -1159,7 +1169,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				return productTypeID;
 			}
 		} catch (final Exception ex) {
-			logger.severe("E> Error locating BPO for module <" + blueprintID + ">.");
+			AndroidDatabaseConnector.logger.severe("E> Error locating BPO for module <" + blueprintID + ">.");
 		}
 		return ModelWideConstants.eveglobal.TechI;
 	}
@@ -1167,7 +1177,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 	private boolean checkRecordExistence(final int typeID, final String query) {
 		int count = 0;
 		try {
-			final Cursor cursor = getCCPDatabase().rawQuery(query, new String[] { Integer.valueOf(typeID).toString() });
+			final Cursor cursor = this.getCCPDatabase().rawQuery(query, new String[] { Integer.valueOf(typeID).toString() });
 			if (null != cursor) {
 				if (cursor.moveToFirst()) {
 					count = cursor.getInt(0);
@@ -1186,14 +1196,14 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 
 	private SQLiteDatabase getAppDatabase() {
 		if (null == staticDatabase) {
-			openAppDataBase();
+			this.openAppDataBase();
 		}
 		return staticDatabase;
 	}
 
 	private SQLiteDatabase getCCPDatabase() {
 		if (null == ccpDatabase) {
-			openCCPDataBase();
+			this.openCCPDataBase();
 		}
 		return ccpDatabase;
 	}
@@ -1220,7 +1230,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		// Check if the outpotst already loaded.
 		if ((null == outpostsCache) || (outpostsCache.size() < 1)) {
 			// Making a request to url and getting response
-			String jsonStr = readJsonData();
+			String jsonStr = this.readJsonData();
 			try {
 				JSONObject jsonObj = new JSONObject(jsonStr);
 				// Getting JSON Array node
@@ -1254,7 +1264,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		Outpost hit = outpostsCache.get(Long.valueOf(locationID).intValue());
 		EveLocation location = new EveLocation(locationID);
 		if (null != hit) {
-			EveLocation systemLocation = searchLocationbyID(hit.getSolarSystem());
+			EveLocation systemLocation = this.searchLocationbyID(hit.getSolarSystem());
 			location.setStation(hit.getName());
 			location.setSystemID(hit.getSolarSystem());
 			location.setSystem(systemLocation.getSystem());

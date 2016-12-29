@@ -24,7 +24,7 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 	// - F I E L D - S E C T I O N ............................................................................
 	protected ArrayList<AbstractAndroidPart>	_root							= new ArrayList<AbstractAndroidPart>();
 	protected ArrayList<AbstractAndroidPart>	_adapterData			= null;
-	protected Bundle													_parameters				= null;
+	protected Bundle													_arguments				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -62,7 +62,7 @@ public abstract class AbstractDataSource extends AbstractPropertyChanger impleme
 	}
 
 	public void setArguments(final Bundle arguments) {
-		if (null != arguments) _parameters = arguments;
+		if (null != arguments) _arguments = arguments;
 	}
 
 	@Override

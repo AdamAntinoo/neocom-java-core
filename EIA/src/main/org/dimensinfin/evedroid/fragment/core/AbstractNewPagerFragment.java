@@ -1,7 +1,7 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
@@ -21,12 +21,12 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.constant.CVariant;
 import org.dimensinfin.evedroid.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.evedroid.interfaces.IExtendedDataSource;
 import org.dimensinfin.evedroid.model.NeoComCharacter;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -95,8 +95,9 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			if (headerContents.size() > 0) {
 				_headerContainer.removeAllViews();
 				_headerContainer.invalidate();
-				for (final AbstractAndroidPart part : headerContents)
+				for (final AbstractAndroidPart part : headerContents) {
 					fragment.addViewtoHeader(part);
+				}
 			}
 			super.onPostExecute(result);
 			Log.i("NEOCOM", "<< CreatePartsTask.onPostExecute");
@@ -155,8 +156,9 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			if (headerContents.size() > 0) {
 				_headerContainer.removeAllViews();
 				_headerContainer.invalidate();
-				for (final AbstractAndroidPart part : headerContents)
+				for (final AbstractAndroidPart part : headerContents) {
 					fragment.addViewtoHeader(part);
+				}
 			}
 			super.onPostExecute(result);
 			Log.i("NEOCOM", "<< StructureChangeTask.onPostExecute");
@@ -215,11 +217,11 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	public NeoComCharacter getPilot() {
-		return EVEDroidApp.getAppStore().getPilot();
+		return AppModelStore.getSingleton().getPilot();
 	}
 
 	public String getPilotName() {
-		return EVEDroidApp.getAppStore().getPilot().getName();
+		return this.getPilot().getName();
 	}
 
 	@Override
@@ -234,7 +236,9 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	public abstract String getTitle();
 
 	public void notifyDataSetChanged() {
-		if (null != _adapter) _adapter.notifyDataSetChanged();
+		if (null != _adapter) {
+			_adapter.notifyDataSetChanged();
+		}
 	}
 
 	@Override
@@ -259,14 +263,18 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		if (view == _headerContainer) {
 			//			 Check if this fragment has the callback configured
 			final AbstractAndroidPart part = _headerContents.firstElement();
-			if (part instanceof IMenuActionTarget) ((IMenuActionTarget) part).onCreateContextMenu(menu, view, menuInfo);
+			if (part instanceof IMenuActionTarget) {
+				((IMenuActionTarget) part).onCreateContextMenu(menu, view, menuInfo);
+			}
 		}
 		if (view == _modelContainer) {
 			// Get the tag assigned to the selected view and if implements the callback interface send it the message.
 			final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			// Check if the se4lected item is suitable for menu and select it depending on item part class.
 			AbstractAndroidPart part = (AbstractAndroidPart) info.targetView.getTag();
-			if (part instanceof IMenuActionTarget) ((IMenuActionTarget) part).onCreateContextMenu(menu, view, menuInfo);
+			if (part instanceof IMenuActionTarget) {
+				((IMenuActionTarget) part).onCreateContextMenu(menu, view, menuInfo);
+			}
 		}
 		Log.i("NEOCOM", "<< PageFragment.onCreateContextMenu"); //$NON-NLS-1$
 	}
@@ -316,8 +324,9 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			// Add the header parts once the display is initialized.
 			if (_headerContents.size() > 0) {
 				_headerContainer.removeAllViews();
-				for (final AbstractAndroidPart part : _headerContents)
+				for (final AbstractAndroidPart part : _headerContents) {
 					this.addViewtoHeader(part);
+				}
 			}
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onStart - " + rtex.getMessage());
@@ -328,12 +337,15 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	public void propertyChange(final PropertyChangeEvent event) {
-		if (event.getPropertyName().equalsIgnoreCase(ECoreModelEvents.EVENT_EXPANDCOLLAPSENODE.name()))
+		if (event.getPropertyName().equalsIgnoreCase(ECoreModelEvents.EVENT_EXPANDCOLLAPSENODE.name())) {
 			new StructureChangeTask(this).execute();
+		}
 	}
 
 	public void setDataSource(final IExtendedDataSource dataSource) {
-		if (null != dataSource) _datasource = dataSource;
+		if (null != dataSource) {
+			_datasource = dataSource;
+		}
 	}
 
 	public AbstractNewPagerFragment setExtras(final Bundle extras) {
@@ -353,7 +365,9 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	public void setListCallback(final IMenuActionTarget callback) {
-		if (null != callback) _listCallback = callback;
+		if (null != callback) {
+			_listCallback = callback;
+		}
 	}
 
 	public AbstractNewPagerFragment setVariant(final String selectedVariant) {

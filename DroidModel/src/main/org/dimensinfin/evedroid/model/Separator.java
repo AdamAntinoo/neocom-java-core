@@ -19,7 +19,7 @@ import org.dimensinfin.evedroid.core.AbstractNeoComNode;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Separator extends AbstractNeoComNode {
 	public enum ESeparatorType {
-		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS
+		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_ASSAULTFRIGATE
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................

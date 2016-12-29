@@ -82,7 +82,7 @@ public class FittingHeaderRender extends EveAbstractHolder {
 	@Override
 	protected void createView() {
 		final LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-		_convertView = mInflater.inflate(R.layout.fittingheader, null);
+		_convertView = mInflater.inflate(R.layout.fitting4header, null);
 		_convertView.setTag(this);
 	}
 }

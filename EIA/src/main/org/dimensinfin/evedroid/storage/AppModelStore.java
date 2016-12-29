@@ -80,8 +80,9 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 			// Try to read from persistence file.
 			AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
 			AppModelStore.singleton.restore();
-			if (!AppModelStore.singleton.isRestored()) // Create a new from scratch. Read the api key list.
+			if (!AppModelStore.singleton.isRestored()) {
 				AppModelStore.readApiKeys();
+			}
 		}
 		return AppModelStore.singleton;
 	}
@@ -93,6 +94,8 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	public static void initialize() {
 		// Create a new from scratch. Read the api key list.
 		AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
+		// Load any data from storage and then update the information from CCP.
+		AppModelStore.getSingleton().restore();
 		AppModelStore.readApiKeys();
 
 		// Make sure we get the characters on a thread out of the main one.
@@ -116,7 +119,9 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 					int keynumber = Integer.parseInt(key);
 					AppModelStore.logger.info("-- Inserting API key " + keynumber);
 					NeoComApiKey api = NeoComApiKey.build(keynumber, validationcode);
-					if (null != AppModelStore.singleton) AppModelStore.singleton.addApiKey(api);
+					if (null != AppModelStore.singleton) {
+						AppModelStore.singleton.addApiKey(api);
+					}
 				} catch (NumberFormatException nfex) {
 				} catch (ArrayIndexOutOfBoundsException aioofe) {
 				} catch (Exception ex) {
@@ -124,7 +129,9 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 				}
 				line = br.readLine();
 			}
-			if (null != br) br.close();
+			if (null != br) {
+				br.close();
+			}
 		} catch (FileNotFoundException fnfe) {
 			// TODO Auto-generated catch block
 			fnfe.printStackTrace();
@@ -236,7 +243,9 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 		// Iterate the list of pilots and accumulate the active ones.
 		final ArrayList<NeoComCharacter> activePilots = new ArrayList<NeoComCharacter>();
 		for (final NeoComCharacter pilot : this.getCharacters().values())
-			if (pilot.isActive()) activePilots.add(pilot);
+			if (pilot.isActive()) {
+				activePilots.add(pilot);
+			}
 		return activePilots;
 	}
 
@@ -254,7 +263,9 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	}
 
 	public IDataSourceConnector getDataSourceConector() {
-		if (null == dsManager) dsManager = new DataSourceManager();
+		if (null == dsManager) {
+			dsManager = new DataSourceManager();
+		}
 		return dsManager;
 	}
 
@@ -394,13 +405,15 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	 */
 	private HashMap<Long, NeoComCharacter> getCharacters() {
 		HashMap<Long, NeoComCharacter> charCache = new HashMap<Long, NeoComCharacter>();
-		for (final NeoComApiKey key : apiKeys.values())
+		for (final NeoComApiKey key : apiKeys.values()) {
 			try {
-				for (final NeoComCharacter eveChar : key.getApiCharacters())
+				for (final NeoComCharacter eveChar : key.getApiCharacters()) {
 					charCache.put(eveChar.getCharacterID(), eveChar);
+				}
 			} catch (ApiException apiex) {
 				apiex.printStackTrace();
 			}
+		}
 		return charCache;
 	}
 

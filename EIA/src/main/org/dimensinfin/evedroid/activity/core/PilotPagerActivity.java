@@ -8,8 +8,6 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.evedroid.activity.core;
 
-//- IMPORT SECTION .........................................................................................
-import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
@@ -31,7 +29,7 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected AppModelStore _store = null;
+	//	protected AppModelStore _store = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -50,9 +48,9 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 			final long characterid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
 			if (characterid > 0) {
 				// Initialize the access to the global structures.
-				_store = EVEDroidApp.getAppStore();
-				_store.activatePilot(characterid);
-				_store.activateActivity(this);
+				AppModelStore store = AppModelStore.getSingleton();
+				store.activatePilot(characterid);
+				store.activateActivity(this);
 			}
 		} catch (final Exception rtex) {
 			Log.e("EVEI", "RTEX> PilotPagerActivity.onCreate - " + rtex.getMessage());
@@ -62,26 +60,27 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		Log.i("EVEI", "<< PilotPagerActivity.onCreate"); //$NON-NLS-1$
 	}
 
-	/**
-	 * Save the store to their persistent file before releasing the control to another activity that will then
-	 * be able to make use of that data structures.
-	 */
-	@Override
-	protected void onPause() {
-		Log.i("NEOCOM", ">> PilotPagerActivity.onPause");
-		// Check store state and update cache on disk if it has changed.
-		if (_store.isDirty()) _store.save();
-		super.onPause();
-		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
-	}
+	//	/**
+	//	 * Save the store to their persistent file before releasing the control to another activity that will then
+	//	 * be able to make use of that data structures.
+	//	 */
+	//	@Override
+	//	protected void onPause() {
+	//		Log.i("NEOCOM", ">> PilotPagerActivity.onPause");
+	//		// Check store state and update cache on disk if it has changed.
+	//		if (_store.isDirty()) _store.save();
+	//		super.onPause();
+	//		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
+	//	}
 
 	@Override
 	protected void onSaveInstanceState(final Bundle savedInstanceState) {
 		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
 		super.onSaveInstanceState(savedInstanceState);
 		// Add current model data dependencies. EVECHARACTERID
-		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
-		_store.save();
+		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+				AppModelStore.getSingleton().getPilot().getCharacterID());
+		AppModelStore.getSingleton().save();
 		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
 	}
 }

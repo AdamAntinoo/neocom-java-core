@@ -18,7 +18,7 @@ import org.dimensinfin.evedroid.EVEDroidApp;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.core.EveAbstractPart;
 import org.dimensinfin.evedroid.interfaces.INamedPart;
-import org.dimensinfin.evedroid.model.ShipLocation;
+import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.render.Location4ShipsRender;
 
 import android.util.Log;
@@ -35,7 +35,7 @@ public class LocationShipsPart extends LocationPart implements INamedPart, OnCli
 	private String						containerName			= "Hangar";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public LocationShipsPart(final ShipLocation location) {
+	public LocationShipsPart(final EveLocation location) {
 		super(location);
 	}
 
@@ -49,16 +49,17 @@ public class LocationShipsPart extends LocationPart implements INamedPart, OnCli
 	public String get_locationContentCount() {
 		int locationAssets = this.getChildren().size();
 		String countString = null;
-		if (locationAssets > 1)
+		if (locationAssets > 1) {
 			countString = EveAbstractPart.qtyFormatter.format(locationAssets) + " Stacks";
-		else
+		} else {
 			countString = EveAbstractPart.qtyFormatter.format(locationAssets) + " Stack";
+		}
 		return countString;
 	}
 
 	@Override
-	public ShipLocation getCastedModel() {
-		return (ShipLocation) super.getCastedModel();
+	public EveLocation getCastedModel() {
+		return (EveLocation) super.getCastedModel();
 	}
 
 	public String getContainerName() {

@@ -68,7 +68,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
                     android:background="#FF202020"
-                    android:src="@drawable/assetsdirectordimmed" />
+                    android:src="@drawable/assetsdimmed" />
 
                 <TextView
                     android:id="@+id/assetsDirectorLabel"

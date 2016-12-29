@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Logger;
@@ -36,7 +35,6 @@ import org.dimensinfin.evedroid.model.Ship;
 import org.joda.time.Duration;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -69,9 +67,9 @@ public class AssetsManager implements Serializable {
 	private transient Dao<NeoComAsset, String>							assetDao								= null;
 
 	// - L O C A T I O N   M A N A G E M E N T
-	private int																							locationCount						= -1;
-	private HashSet<String>																	regionNames							= null;
-	private ArrayList<EveLocation>													locationsList						= null;
+	//	private int																							locationCount						= -1;
+	//	private HashSet<String>																	regionNames							= null;
+	//	private ArrayList<EveLocation>													locationsList						= null;
 
 	// - A S S E T   M A N A G E M E N T
 	private long																						totalAssets							= -1;
@@ -214,12 +212,12 @@ public class AssetsManager implements Serializable {
 		return blueprintCache;
 	}
 
-	public int getLocationCount() {
-		if (locationCount < 0) {
-			this.updateLocations();
-		}
-		return locationCount;
-	}
+	//	public int getLocationCount() {
+	//		if (locationCount < 0) {
+	//			this.updateLocations();
+	//		}
+	//		return locationCount;
+	//	}
 
 	/**
 	 * Returns the list of different locations where this character has assets. The locations are the unique
@@ -227,15 +225,15 @@ public class AssetsManager implements Serializable {
 	 * station or in space the number of ids that have the same system in common may be greater that 1.
 	 * 
 	 * @return
+	 * 
+	 * @return
 	 */
-	public ArrayList<EveLocation> getLocations() {
-		if (null == locationsList) {
-			this.updateLocations();
+	public HashMap<Long, EveLocation> getLocations() {
+		// If the list is empty the go to the database and get the assets
+		if (null == locations) {
+			this.accessAllAssets();
 		}
-		if (locationsList.size() < 1) {
-			this.updateLocations();
-		}
-		return locationsList;
+		return locations;
 	}
 
 	public NeoComCharacter getPilot() {
@@ -244,12 +242,14 @@ public class AssetsManager implements Serializable {
 
 	/**
 	 * Returns the list of different Regions found on the list of locations.
+	 * 
+	 * @return
 	 */
-	public HashSet<String> getRegions() {
-		if (null == regionNames) {
-			this.updateLocations();
+	public HashMap<Long, Region> getRegions() {
+		if (null == regions) {
+			this.accessAllAssets();
 		}
-		return regionNames;
+		return regions;
 	}
 
 	public ArrayList<NeoComAsset> getShips() {
@@ -541,11 +541,11 @@ public class AssetsManager implements Serializable {
 		//		if (blueprintCache.size() > 0) {
 		//			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
 		//		}
-		if (null != locationsList) {
-			buffer.append("locationsList: ").append(locationsList).append(" ");
+		if (null != locations) {
+			buffer.append("locationsList: ").append(locations).append(" ");
 		}
-		if (null != regionNames) {
-			buffer.append("regionNames: ").append(regionNames).append(" ");
+		if (null != regions) {
+			buffer.append("regionNames: ").append(regions).append(" ");
 		}
 		buffer.append("]");
 		return buffer.toString();
@@ -780,48 +780,48 @@ public class AssetsManager implements Serializable {
 		//		return (ArrayList<Blueprint>) blueprintList;
 	}
 
-	/**
-	 * Gets the list of locations for a character. It will store the results into a local variable to speed up
-	 * any other request because this is valid forever while the duration of the session because this data is
-	 * only modified when the assets are updated.
-	 * 
-	 * @param characterID
-	 * @return
-	 */
-	private synchronized void updateLocations() {
-		AssetsManager.logger.info(">> AssetsManager.updateLocations");
-		AppConnector.startChrono();
-		//	Select assets for the owner and with an specific type id.
-		List<Integer> locationIdentifierList = new ArrayList<Integer>();
-		try {
-			this.accessDao();
-			GenericRawResults<String[]> rawResults = assetDao
-					.queryRaw("SELECT DISTINCT locationID FROM Assets WHERE ownerId=" + this.getPilot().getCharacterID());
-			for (String[] resultColumns : rawResults) {
-				String idString = resultColumns[0];
-				try {
-					int locationID = Integer.parseInt(idString);
-					locationIdentifierList.add(locationID);
-				} catch (NumberFormatException nfe) {
-					nfe.printStackTrace();
-				}
-			}
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		// Be sure the regions and locations are accessible.
-		locationsList = new ArrayList<EveLocation>();
-		regionNames = new HashSet<String>();
-		for (Integer lid : locationIdentifierList) {
-			EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(lid);
-			locationsList.add(loc);
-			regionNames.add(loc.getRegion());
-		}
-		// Update counter
-		locationCount = locationsList.size();
-		// Update the dirty state to signal modification of store structures.
-		this.setDirty(true);
-		AssetsManager.logger.info("<< AssetsManager.updateLocations. " + AppConnector.timeLapse());
-	}
+	//	/**
+	//	 * Gets the list of locations for a character. It will store the results into a local variable to speed up
+	//	 * any other request because this is valid forever while the duration of the session because this data is
+	//	 * only modified when the assets are updated.
+	//	 * 
+	//	 * @param characterID
+	//	 * @return
+	//	 */
+	//	private synchronized void updateLocations() {
+	//		AssetsManager.logger.info(">> AssetsManager.updateLocations");
+	//		AppConnector.startChrono();
+	//		//	Select assets for the owner and with an specific type id.
+	//		List<Integer> locationIdentifierList = new ArrayList<Integer>();
+	//		try {
+	//			this.accessDao();
+	//			GenericRawResults<String[]> rawResults = assetDao
+	//					.queryRaw("SELECT DISTINCT locationID FROM Assets WHERE ownerId=" + this.getPilot().getCharacterID());
+	//			for (String[] resultColumns : rawResults) {
+	//				String idString = resultColumns[0];
+	//				try {
+	//					int locationID = Integer.parseInt(idString);
+	//					locationIdentifierList.add(locationID);
+	//				} catch (NumberFormatException nfe) {
+	//					nfe.printStackTrace();
+	//				}
+	//			}
+	//		} catch (SQLException sqle) {
+	//			sqle.printStackTrace();
+	//		}
+	//		// Be sure the regions and locations are accessible.
+	//		locationsList = new ArrayList<EveLocation>();
+	//		regionNames = new HashSet<String>();
+	//		for (Integer lid : locationIdentifierList) {
+	//			EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(lid);
+	//			locationsList.add(loc);
+	//			regionNames.add(loc.getRegion());
+	//		}
+	//		// Update counter
+	//		locationCount = locationsList.size();
+	//		// Update the dirty state to signal modification of store structures.
+	//		this.setDirty(true);
+	//		AssetsManager.logger.info("<< AssetsManager.updateLocations. " + AppConnector.timeLapse());
+	//	}
 }
 // - UNUSED CODE ............................................................................................

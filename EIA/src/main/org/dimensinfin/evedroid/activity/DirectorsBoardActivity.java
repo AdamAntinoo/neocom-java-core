@@ -135,9 +135,15 @@ public class DirectorsBoardActivity extends Activity {
 			_fragmentContainer = (ViewGroup) this.findViewById(R.id.fragmentContainer);
 			_back = (ImageView) this.findViewById(R.id.backgroundFrame);
 			// Check page structure.
-			if (null == _directorContainer) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			if (null == _fragmentContainer) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			if (null == _back) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			if (null == _directorContainer) {
+				this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			}
+			if (null == _fragmentContainer) {
+				this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			}
+			if (null == _back) {
+				this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			}
 		} catch (final Exception rtex) {
 			DirectorsBoardActivity.logger
 					.severe("R> Runtime Exception on DirectorsBoardActivity.onCreate." + rtex.getMessage());
@@ -221,7 +227,8 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, adirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+											_store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
 								}
@@ -244,7 +251,8 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, sdirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+											_store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.ASSETDIRECTOR.onClick");
 								}
@@ -267,7 +275,8 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, thedirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+											_store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 									Log.i("DirectorsBoardActivity", "<< DirectorsBoardActivity.INDUSTRYDIRECTOR.onClick");
 								}
@@ -290,7 +299,8 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, jdirector.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+											_store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 								}
 							});
@@ -310,7 +320,8 @@ public class DirectorsBoardActivity extends Activity {
 									final Intent intent = new Intent(parentActivity, director.getClass());
 									// Send the pilot id and transfer it to the next
 									// Activity
-									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+											_store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 								}
 							});
@@ -329,7 +340,8 @@ public class DirectorsBoardActivity extends Activity {
 									// Activate the manager.
 									final Intent intent = new Intent(parentActivity, fdirector.getClass());
 									// Send the pilot id and transfer it to the next Activity
-									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), _store.getPilot().getCharacterID());
+									intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+											_store.getPilot().getCharacterID());
 									DirectorsBoardActivity.this.startActivity(intent);
 								}
 							});
@@ -369,7 +381,7 @@ public class DirectorsBoardActivity extends Activity {
 		DirectorsBoardActivity.logger.info(">> DirectorsBoardActivity.onStart");
 		super.onStart();
 		ImageView directorButton = (ImageView) this.findViewById(R.id.assetsDirectorIcon);
-		directorButton.setImageDrawable(this.getDrawable(R.drawable.assetsdirectordimmed));
+		directorButton.setImageDrawable(this.getDrawable(R.drawable.assetsdimmed));
 		directorButton.setClickable(false);
 
 		directorButton = (ImageView) this.findViewById(R.id.industryDirectorIcon);

@@ -13,6 +13,7 @@ import org.dimensinfin.evedroid.fragment.JobActionsFragment;
 import org.dimensinfin.evedroid.fragment.ManufactureLOMFragment;
 import org.dimensinfin.evedroid.industry.JobManager;
 import org.dimensinfin.evedroid.model.NeoComBlueprint;
+import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -75,22 +76,23 @@ public class IndustryT2Activity extends PilotPagerActivity {
 			final long bpassetid = extras.getLong(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name());
 			//		final int activity = extras.getInt(AppWideConstants.extras.EXTRA_BLUEPRINTACTIVITY);
 			if (bpassetid > 0) {
-				final NeoComBlueprint blueprint = _store.getPilot().getAssetsManager().searchBlueprintByID(bpassetid);
+				final NeoComBlueprint blueprint = AppModelStore.getSingleton().getPilot().getAssetsManager()
+						.searchBlueprintByID(bpassetid);
 				if (null == blueprint) throw new RuntimeException(
 						"RT IndustryT2Activity.onCreate - Unable to continue. Expected blueprint not located.");
 
 				// Initialize the list of assets with the real assets and then remove the resources used by the pending jobs.
-				JobManager.initializeAssets(_store.getPilot());
+				JobManager.initializeAssets(AppModelStore.getSingleton().getPilot());
 				// Create the pages that form this Activity. Each page implemented by a Fragment.
 				int page = 0;
 				//
 				// Create the Manufacture/Invention Job Page.
 				JobActionsFragment frag = new JobActionsFragment();
-				frag.setStore(_store);
+				frag.setStore(AppModelStore.getSingleton());
 				frag.setExtras(extras);
 				this.addPage(frag, page++);
 				// Create the Manufacture/Invention Resources Page.
-				this.addPage(new ManufactureLOMFragment(_store).setExtras(extras), page++);
+				this.addPage(new ManufactureLOMFragment(AppModelStore.getSingleton()).setExtras(extras), page++);
 			} else
 				throw new RuntimeException(
 						"RT IndustryT2Activity.onCreate - Unable to continue. Required parameters not defined on Extras.");

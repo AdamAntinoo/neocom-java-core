@@ -21,6 +21,7 @@ import org.dimensinfin.evedroid.model.EveTask;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.part.ActionPart;
+import org.dimensinfin.evedroid.part.FittingListPart;
 import org.dimensinfin.evedroid.part.FittingPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.TaskPart;
@@ -55,7 +56,7 @@ public class FittingPartFactory extends PartFactory implements IPartFactory {
 				return part;
 			}
 			if (node instanceof Fitting) {
-				IPart part = new FittingPart((Fitting) node);
+				IPart part = new FittingListPart((Fitting) node);
 				return part;
 			}
 		}
