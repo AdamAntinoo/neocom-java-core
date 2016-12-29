@@ -39,9 +39,6 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		if (checkPilot.getShips().size() > 0)
 			return true;
 		else
-			//			// Fire a forced download of the job list.
-			//			checkPilot.cleanJobs();
-			//			EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(checkPilot.getCharacterID());
 			return false;
 	}
 

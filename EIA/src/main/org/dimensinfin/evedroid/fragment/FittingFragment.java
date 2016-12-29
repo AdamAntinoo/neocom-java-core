@@ -27,9 +27,6 @@ import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -60,27 +57,27 @@ public class FittingFragment extends AbstractNewPagerFragment {
 
 	@Override
 	public String getTitle() {
-		return "Fitting - Under Test";
+		return "Fitting List";
 	}
 
-	/**
-	 * This code is identical on all Fragment implementations so can be moved to the super class.
-	 */
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
-		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-		try {
-			//			setIdentifier(_variant.hashCode());
-			this.registerDataSource();
-		} catch (final RuntimeException rtex) {
-			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
-			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
-		}
-		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
-		return theView;
-	}
+	//	/**
+	//	 * This code is identical on all Fragment implementations so can be moved to the super class.
+	//	 */
+	//	@Override
+	//	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+	//		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
+	//		final View theView = super.onCreateView(inflater, container, savedInstanceState);
+	//		try {
+	//			//			setIdentifier(_variant.hashCode());
+	//			this.registerDataSource();
+	//		} catch (final RuntimeException rtex) {
+	//			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
+	//			rtex.printStackTrace();
+	//			this.stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
+	//		}
+	//		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
+	//		return theView;
+	//	}
 
 	/**
 	 * This code is identical on all Fragment implementations so can be moved to the super class.
@@ -113,7 +110,9 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	}
 
 	private IPartFactory getFactory() {
-		if (null == factory) factory = new FittingPartFactory(this.getVariant());
+		if (null == factory) {
+			factory = new FittingPartFactory(this.getVariant());
+		}
 		return factory;
 	}
 

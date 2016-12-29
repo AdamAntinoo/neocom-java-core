@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/blacktraslucent40" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+
+        <ImageView
+            android:id="@+id/itemIcon"
+            style="@style/ItemIcon.Style.Size48" />
+
+        <org.dimensinfin.evedroid.core.Din1451TextView
+            android:id="@+id/fittingName"
+            style="@style/Name.Style.14.Clickable"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/itemIcon"
+            android:singleLine="true"
+            android:text="@string/default_fittingname"
+            android:textStyle="bold" />
+
+        <org.dimensinfin.evedroid.core.Din1451EngTextView
+            android:id="@+id/fittingClass"
+            style="@style/Name.Style.12"
+            android:layout_below="@+id/fittingName"
+            android:layout_marginTop="1dp"
+            android:layout_toRightOf="@+id/itemIcon"
+            android:paddingRight="2dp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:text="@string/default_fittingclass" />
+
+        <org.dimensinfin.evedroid.core.Din1451TextView
+            android:id="@+id/fittingCost"
+            style="@style/PriceStyle"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/fittingClass"
+            android:layout_marginTop="1dp"
+            android:text="@string/default_isk" />
+
+        <TextView
+            android:id="@+id/costLabel"
+            style="@style/LabelStyle.LineUp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/fittingCost"
+            android:layout_toRightOf="@+id/itemIcon"
+            android:gravity="right"
+            android:text="FITTING COST" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

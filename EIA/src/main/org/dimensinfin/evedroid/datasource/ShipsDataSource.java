@@ -19,10 +19,10 @@ import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.connector.AppConnector;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
 import org.dimensinfin.evedroid.manager.AssetsManager;
+import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
-import org.dimensinfin.evedroid.model.ShipLocation;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.content.SharedPreferences;
@@ -33,12 +33,10 @@ public class ShipsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 7810087592108417570L;
 
-	//	private ArrayList<NeoComAsset>						ships							= null;
+	// - F I E L D - S E C T I O N ............................................................................
 	private final HashMap<Long, Region>				_regions					= new HashMap<Long, Region>();
-	private final HashMap<Long, ShipLocation>	_locations				= new HashMap<Long, ShipLocation>();
+	private final HashMap<Long, EveLocation>	_locations				= new HashMap<Long, EveLocation>();
 	private final HashMap<String, Separator>	_categories				= new HashMap<String, Separator>();
-
-	//	private int																				_version					= 0;;
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public ShipsDataSource(final DataSourceLocator locator, final IPartFactory factory) {
@@ -92,7 +90,7 @@ public class ShipsDataSource extends SpecialDataSource {
 				_dataModelRoot.addChild(node);
 			}
 		} else {
-			for (ShipLocation node : _locations.values()) {
+			for (EveLocation node : _locations.values()) {
 				_dataModelRoot.addChild(node);
 			}
 		}
@@ -127,9 +125,9 @@ public class ShipsDataSource extends SpecialDataSource {
 	 */
 	private void add2Location(final long locationid, final NeoComAsset ship) {
 		// Check if the location is already on the array.
-		ShipLocation hit = _locations.get(locationid);
+		EveLocation hit = _locations.get(locationid);
 		if (null == hit) {
-			hit = ShipLocation.createFromLocation(ship.getLocation());
+			hit = ship.getLocation();
 			// Add the new location to the list of locations and to the Regions
 			this.add2Region(hit);
 			_locations.put(locationid, hit);
@@ -137,7 +135,7 @@ public class ShipsDataSource extends SpecialDataSource {
 		hit.addChild(ship);
 	}
 
-	private void add2Region(final ShipLocation location) {
+	private void add2Region(final EveLocation location) {
 		Region region = _regions.get(location.getID());
 		if (null == region) {
 			region = new Region(location.getRegion());

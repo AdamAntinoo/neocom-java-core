@@ -227,6 +227,32 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 
 	public boolean isContainer() {
 		if (this.isBlueprint()) return false;
+		// Use a list of types to set what is a container
+		if (this.getTypeID() == 23) return true;
+		if (this.getTypeID() == 11490) return true;
+		if (this.getTypeID() == 33003) return true;
+		if (this.getTypeID() == 24445) return true;
+		if (this.getTypeID() == 11489) return true;
+		if (this.getTypeID() == 41567) return true;
+		if (this.getTypeID() == 33005) return true;
+		if (this.getTypeID() == 11488) return true;
+		if (this.getTypeID() == 17365) return true;
+		if (this.getTypeID() == 33007) return true;
+		if (this.getTypeID() == 3465) return true;
+		if (this.getTypeID() == 3296) return true;
+		if (this.getTypeID() == 17364) return true;
+		if (this.getTypeID() == 33009) return true;
+		if (this.getTypeID() == 3466) return true;
+		if (this.getTypeID() == 3293) return true;
+		if (this.getTypeID() == 2263) return true;
+		if (this.getTypeID() == 3468) return true;
+		if (this.getTypeID() == 17363) return true;
+		if (this.getTypeID() == 33011) return true;
+		if (this.getTypeID() == 3467) return true;
+		if (this.getTypeID() == 3297) return true;
+		if (this.getTypeID() == 17366) return true;
+		if (this.getTypeID() == 17367) return true;
+		if (this.getTypeID() == 17368) return true;
 		if (this.getName().contains("Container"))
 			return true;
 		else
@@ -304,6 +330,10 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		}
 	}
 
+	public void setParentId(final long pid) {
+		parentAssetID = pid;
+	}
+
 	public void setQuantity(final int count) {
 		quantity = count;
 	}
@@ -342,8 +372,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
 		buffer.append("itemID:").append(this.getAssetID()).append(" ");
-		//		buffer.append("typeID:")..append(" ");
-		buffer.append("locationID:").append(locationID).append(" ");
+		buffer.append("locationID:").append(this.getLocationID()).append(" ");
+		buffer.append("containerID:").append(this.getParentContainerId()).append(" ");
 		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
 		buffer.append("quantity:").append(this.getQuantity()).append(" ");
 		buffer.append("]\n");

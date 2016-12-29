@@ -17,11 +17,11 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.evedroid.R;
 import org.dimensinfin.evedroid.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.evedroid.constant.AppWideConstants;
+import org.dimensinfin.evedroid.model.EveLocation;
 import org.dimensinfin.evedroid.model.NeoComAsset;
 import org.dimensinfin.evedroid.model.Region;
 import org.dimensinfin.evedroid.model.Separator;
 import org.dimensinfin.evedroid.model.Ship;
-import org.dimensinfin.evedroid.model.ShipLocation;
 import org.dimensinfin.evedroid.part.AssetPart;
 import org.dimensinfin.evedroid.part.GroupPart;
 import org.dimensinfin.evedroid.part.LocationShipsPart;
@@ -56,8 +56,8 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
 			return part;
 		}
-		if (node instanceof ShipLocation) {
-			IPart part = new LocationShipsPart((ShipLocation) node).setFactory(this)
+		if (node instanceof EveLocation) {
+			IPart part = new LocationShipsPart((EveLocation) node).setFactory(this)
 					.setRenderMode(EShipsVariants.valueOf(this.getVariant()).hashCode());
 			return part;
 		}

@@ -23,10 +23,10 @@ import org.dimensinfin.evedroid.fragment.core.AbstractNewPagerFragment;
 import org.dimensinfin.evedroid.interfaces.IPagerFragment;
 import org.dimensinfin.evedroid.model.Fitting;
 import org.dimensinfin.evedroid.model.Separator;
+import org.dimensinfin.evedroid.model.Separator.ESeparatorType;
 import org.dimensinfin.evedroid.storage.AppModelStore;
 
 import android.os.Bundle;
-import android.util.Log;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -72,7 +72,7 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 			// This fragment has a header. Populate it with the datasource header contents.
 			this.setHeaderContents();
 		} catch (final RuntimeException rtex) {
-			Log.e("EVEI", "RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
+			FittingListFragment.logger.warning("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
 			this.stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
 		}
@@ -88,7 +88,9 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
-		if (null != extras) capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		if (null != extras) {
+			capsuleerid = extras.getLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name());
+		}
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid);
 		// This part of the code may depend on the variant so surround it with the detector.
 		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
@@ -109,27 +111,25 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	}
 }
 
-final class ExpandableGroup extends Separator {
-	private static final long serialVersionUID = 1642092995030622668L;
-
-	public ExpandableGroup(final String title) {
-		super(title);
-		// TODO Auto-generated constructor stub
-	}
-}
+//final class ExpandableGroup extends Separator {
+//	private static final long serialVersionUID = 1642092995030622668L;
+//
+//	public ExpandableGroup(final String title) {
+//		super(title);
+//		// TODO Auto-generated constructor stub
+//	}
+//}
 
 //- CLASS IMPLEMENTATION ...................................................................................
 final class FittingListDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long												serialVersionUID	= 7810087592108417570L;
-	private static Logger														logger						= Logger.getLogger("FittingDataSource");
+	private static final long									serialVersionUID	= 7810087592108417570L;
+	private static Logger											logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Fitting														fit								= null;
-	private final HashMap<String, ExpandableGroup>	groups						= new HashMap<String, ExpandableGroup>();
-	private final ExpandableGroup										defaultGroup			= new ExpandableGroup("-UNDEFINED-HULL-");
-
-	//	private final ArrayList<Asset>						ships							= null;
+	private final Fitting											fit								= null;
+	private final HashMap<String, Separator>	groups						= new HashMap<String, Separator>();
+	private final Separator										defaultGroup			= new Separator("-UNDEFINED-HULL-");
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public FittingListDataSource(final DataSourceLocator locator, final IPartFactory factory) {
@@ -152,17 +152,22 @@ final class FittingListDataSource extends SpecialDataSource {
 			for (Fitting fit : fitList.values()) {
 				FittingListDataSource.logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
 				// Classify the fitting.
-				ExpandableGroup targetGroup = groups.get(fit.getHull().getGroupName());
-				if (null == targetGroup)
+				Separator targetGroup = groups.get(fit.getHull().getGroupName());
+				if (null == targetGroup) {
 					defaultGroup.addChild(fit);
-				else
+				} else {
 					targetGroup.addChild(fit);
+				}
 			}
 			// Link the non empty hull groups into the Data model root.
-			for (ExpandableGroup group : groups.values())
-				if (group.getChildren().size() > 0) _dataModelRoot.addChild(group);
+			for (Separator group : groups.values())
+				if (group.getChildren().size() > 0) {
+					_dataModelRoot.addChild(group);
+				}
 			// Add the default group if not empty.
-			if (defaultGroup.getChildren().size() > 0) _dataModelRoot.addChild(defaultGroup);
+			if (defaultGroup.getChildren().size() > 0) {
+				_dataModelRoot.addChild(defaultGroup);
+			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			FittingListDataSource.logger
@@ -187,50 +192,50 @@ final class FittingListDataSource extends SpecialDataSource {
 	 */
 	private void initGroups() {
 		groups.clear();
-		groups.put("Assault Frigate", new ExpandableGroup("Assault Frigate"));
-		groups.put("Attack Battlecruiser", new ExpandableGroup("Attack Battlecruiser"));
-		groups.put("Battleship", new ExpandableGroup("Battleship"));
-		groups.put("Black Ops", new ExpandableGroup("Black Ops"));
-		groups.put("Blockade Runner", new ExpandableGroup("Blockade Runner"));
-		groups.put("Capital Industrial Ship", new ExpandableGroup("Capital Industrial Ship"));
-		groups.put("Capsule", new ExpandableGroup("Capsule"));
-		groups.put("Carrier", new ExpandableGroup("Carrier"));
-		groups.put("Combat Battlecruiser", new ExpandableGroup("Combat Battlecruiser"));
-		groups.put("Combat Recon Ship", new ExpandableGroup("Combat Recon Ship"));
-		groups.put("Command Destroyer", new ExpandableGroup("Command Destroyer"));
-		groups.put("Command Ship", new ExpandableGroup("Command Ship"));
-		groups.put("Covert Ops", new ExpandableGroup("Covert Ops"));
-		groups.put("Cruiser", new ExpandableGroup("Cruiser"));
-		groups.put("Deep Space Transport", new ExpandableGroup("Deep Space Transport"));
-		groups.put("Destroyer", new ExpandableGroup("Destroyer"));
-		groups.put("Dreadnought", new ExpandableGroup("Dreadnought"));
-		groups.put("Electronic Attack Ship", new ExpandableGroup("Electronic Attack Ship"));
-		groups.put("Elite Battleship", new ExpandableGroup("Elite Battleship"));
-		groups.put("Exhumer", new ExpandableGroup("Exhumer"));
-		groups.put("Expedition Frigate", new ExpandableGroup("Expedition Frigate"));
-		groups.put("Force Auxiliary", new ExpandableGroup("Force Auxiliary"));
-		groups.put("Force Recon Ship", new ExpandableGroup("Force Recon Ship"));
-		groups.put("Freighter", new ExpandableGroup("Freighter"));
-		groups.put("Frigate", new ExpandableGroup("Frigate"));
-		groups.put("Heavy Assault Cruiser", new ExpandableGroup("Heavy Assault Cruiser"));
-		groups.put("Heavy Interdiction Cruiser", new ExpandableGroup("Heavy Interdiction Cruiser"));
-		groups.put("Industrial", new ExpandableGroup("Industrial"));
-		groups.put("Industrial Command Ship", new ExpandableGroup("Industrial Command Ship"));
-		groups.put("Interceptor", new ExpandableGroup("Interceptor"));
-		groups.put("Interdictor", new ExpandableGroup("Interdictor"));
-		groups.put("Jump Freighter", new ExpandableGroup("Jump Freighter"));
-		groups.put("Logistics", new ExpandableGroup("Logistics"));
-		groups.put("Logistics Frigate", new ExpandableGroup("Logistics Frigate"));
-		groups.put("Marauder", new ExpandableGroup("Marauder"));
-		groups.put("Mining Barge", new ExpandableGroup("Mining Barge"));
-		groups.put("Prototype Exploration Ship", new ExpandableGroup("Prototype Exploration Ship"));
-		groups.put("Rookie ship", new ExpandableGroup("Rookie ship"));
-		groups.put("Shuttle", new ExpandableGroup("Shuttle"));
-		groups.put("Stealth Bomber", new ExpandableGroup("Stealth Bomber"));
-		groups.put("Strategic Cruiser", new ExpandableGroup("Strategic Cruiser"));
-		groups.put("Supercarrier", new ExpandableGroup("Supercarrier"));
-		groups.put("Tactical Destroyer", new ExpandableGroup("Tactical Destroyer"));
-		groups.put("Titan", new ExpandableGroup("Titan"));
+		groups.put("Assault Frigate", new Separator("Assault Frigate").setType(ESeparatorType.SHIPTYPE_ASSAULTFRIGATE));
+		groups.put("Attack Battlecruiser", new Separator("Attack Battlecruiser"));
+		groups.put("Battleship", new Separator("Battleship"));
+		groups.put("Black Ops", new Separator("Black Ops"));
+		groups.put("Blockade Runner", new Separator("Blockade Runner"));
+		groups.put("Capital Industrial Ship", new Separator("Capital Industrial Ship"));
+		groups.put("Capsule", new Separator("Capsule"));
+		groups.put("Carrier", new Separator("Carrier"));
+		groups.put("Combat Battlecruiser", new Separator("Combat Battlecruiser"));
+		groups.put("Combat Recon Ship", new Separator("Combat Recon Ship"));
+		groups.put("Command Destroyer", new Separator("Command Destroyer"));
+		groups.put("Command Ship", new Separator("Command Ship"));
+		groups.put("Covert Ops", new Separator("Covert Ops"));
+		groups.put("Cruiser", new Separator("Cruiser"));
+		groups.put("Deep Space Transport", new Separator("Deep Space Transport"));
+		groups.put("Destroyer", new Separator("Destroyer"));
+		groups.put("Dreadnought", new Separator("Dreadnought"));
+		groups.put("Electronic Attack Ship", new Separator("Electronic Attack Ship"));
+		groups.put("Elite Battleship", new Separator("Elite Battleship"));
+		groups.put("Exhumer", new Separator("Exhumer"));
+		groups.put("Expedition Frigate", new Separator("Expedition Frigate"));
+		groups.put("Force Auxiliary", new Separator("Force Auxiliary"));
+		groups.put("Force Recon Ship", new Separator("Force Recon Ship"));
+		groups.put("Freighter", new Separator("Freighter"));
+		groups.put("Frigate", new Separator("Frigate"));
+		groups.put("Heavy Assault Cruiser", new Separator("Heavy Assault Cruiser"));
+		groups.put("Heavy Interdiction Cruiser", new Separator("Heavy Interdiction Cruiser"));
+		groups.put("Industrial", new Separator("Industrial"));
+		groups.put("Industrial Command Ship", new Separator("Industrial Command Ship"));
+		groups.put("Interceptor", new Separator("Interceptor"));
+		groups.put("Interdictor", new Separator("Interdictor"));
+		groups.put("Jump Freighter", new Separator("Jump Freighter"));
+		groups.put("Logistics", new Separator("Logistics"));
+		groups.put("Logistics Frigate", new Separator("Logistics Frigate"));
+		groups.put("Marauder", new Separator("Marauder"));
+		groups.put("Mining Barge", new Separator("Mining Barge"));
+		groups.put("Prototype Exploration Ship", new Separator("Prototype Exploration Ship"));
+		groups.put("Rookie ship", new Separator("Rookie ship"));
+		groups.put("Shuttle", new Separator("Shuttle"));
+		groups.put("Stealth Bomber", new Separator("Stealth Bomber"));
+		groups.put("Strategic Cruiser", new Separator("Strategic Cruiser"));
+		groups.put("Supercarrier", new Separator("Supercarrier"));
+		groups.put("Tactical Destroyer", new Separator("Tactical Destroyer"));
+		groups.put("Titan", new Separator("Titan"));
 	}
 }
 // - UNUSED CODE ............................................................................................
