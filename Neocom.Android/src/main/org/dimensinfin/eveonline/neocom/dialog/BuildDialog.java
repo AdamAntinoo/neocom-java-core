@@ -8,7 +8,6 @@ package org.dimensinfin.eveonline.neocom.dialog;
 
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
@@ -18,6 +17,7 @@ import org.dimensinfin.eveonline.neocom.industry.JobManager;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.part.BlueprintPart;
 import org.dimensinfin.eveonline.neocom.part.TaskPart;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -66,7 +66,7 @@ public class BuildDialog extends DialogFragment {
 
 	// - W O R K   V A R I A B L E S
 	private int							_runs								= 0;
-	private NeoComBlueprint				_blueprint					= null;
+	private NeoComBlueprint	_blueprint					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -79,27 +79,28 @@ public class BuildDialog extends DialogFragment {
 		return _runs;
 	}
 
+	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		// Create the dialog and all its elements.
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 		// Inflate and set the layout for the dialog
-		LayoutInflater inflater = getActivity().getLayoutInflater();
+		LayoutInflater inflater = this.getActivity().getLayoutInflater();
 		_dialogContainer = inflater.inflate(R.layout.dialog_jobruns, null);
 
-		initializeViews();
-		setupContents();
+		this.initializeViews();
+		this.setupContents();
 
 		// Get the martching blueprint and obtain some key information from it.
 		int typeID = _taskPart.getItem().getTypeID();
 		int bpid = AppConnector.getDBConnector().searchBlueprint4Module(typeID);
 		_blueprint = new NeoComBlueprint(bpid);
-		IJobProcess buildProcess = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), _blueprint,
+		IJobProcess buildProcess = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), _blueprint,
 				EJobClasses.MANUFACTURE);
 		_runsBuild.setText(_taskPart.getQuantity());
 		_runs = _taskPart.getQuantity();
 		_jobCount.setText("1");
-		_jobDuration.setText(EveAbstractPart.generateTimeString(buildProcess.getCycleDuration() * _taskPart.getQuantity()
-				* 1000));
+		_jobDuration
+				.setText(EveAbstractPart.generateTimeString(buildProcess.getCycleDuration() * _taskPart.getQuantity() * 1000));
 		final BuildDialog self = this;
 		// Add action buttons
 		if (null != _dialogCallback) {
@@ -124,7 +125,9 @@ public class BuildDialog extends DialogFragment {
 	}
 
 	public void setDialogCallback(final ADialogCallback callback) {
-		if (null != callback) _dialogCallback = callback;
+		if (null != callback) {
+			_dialogCallback = callback;
+		}
 	}
 
 	/**

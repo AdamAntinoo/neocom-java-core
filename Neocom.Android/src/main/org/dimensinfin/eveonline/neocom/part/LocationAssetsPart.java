@@ -16,7 +16,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
 import org.dimensinfin.android.mvc.interfaces.IPart;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
@@ -52,7 +52,7 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public LocationAssetsPart(final EveLocation location) {
 		super(location);
-		LocationAssetsPart._contextMenu = EVEDroidApp.getSingletonApp().getResources()
+		LocationAssetsPart._contextMenu = NeoComApp.getSingletonApp().getResources()
 				.getStringArray(R.array.locationFunctions);
 	}
 

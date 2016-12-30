@@ -17,7 +17,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -108,7 +108,7 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		AbstractDataSource.logger.info(">> IndustryT1Blueprints.getPartHierarchy");
-		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(_root, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		final ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (final AbstractAndroidPart node : _root) {
 			result.add(node);
@@ -116,7 +116,7 @@ public class IndustryT1BlueprintsDataSource extends AbstractDataSource {
 			// Check if the node is expanded. Then add its children.
 			if (node.isExpanded()) {
 				ArrayList<IPart> grand = node.collaborate2View();
-				Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+				Collections.sort(grand, NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 				for (IPart part : grand)
 					result.add((AbstractAndroidPart) part);
 				result.add(new TerminatorPart(new Separator("")));

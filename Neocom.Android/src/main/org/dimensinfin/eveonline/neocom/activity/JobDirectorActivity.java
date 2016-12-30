@@ -6,13 +6,14 @@
 
 package org.dimensinfin.eveonline.neocom.activity;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.core.PilotPagerActivity;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.fragment.JobsFragment;
 import org.dimensinfin.eveonline.neocom.interfaces.INeoComDirector;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -31,10 +32,9 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	/**
-	 * Checks if there are the conditions to activate this particular manager.
-	 * Each one will have it different rules to reach the activation point.<br>
-	 * The BPOManager need that there are at least one BPO on the list of assets
-	 * of the pilot.
+	 * Checks if there are the conditions to activate this particular manager. Each one will have it different
+	 * rules to reach the activation point.<br>
+	 * The BPOManager need that there are at least one BPO on the list of assets of the pilot.
 	 */
 	public boolean checkActivation(final NeoComCharacter checkPilot) {
 		if (checkPilot.getIndustryJobs().size() > 0)
@@ -42,7 +42,7 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 		else {
 			// Fire a forced download of the job list.
 			checkPilot.cleanJobs();
-			EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(checkPilot.getCharacterID());
+			NeoComApp.getTheCacheConnector().addCharacterUpdateRequest(checkPilot.getCharacterID());
 			return false;
 		}
 	}
@@ -60,30 +60,29 @@ public class JobDirectorActivity extends PilotPagerActivity implements INeoComDi
 	}
 
 	/**
-	 * Create the set of pages to manage the list of completed, running and
-	 * pending jobs including the ones that are created by the application to
-	 * simulate the Industry recommendations.
+	 * Create the set of pages to manage the list of completed, running and pending jobs including the ones that
+	 * are created by the application to simulate the Industry recommendations.
 	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i("NEOCOM", ">> JobDirectorActivity.onCreate"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
 		// Cache the list of jobs to be used on this Director session
-		EVEDroidApp.getAppStore().getPilot().cleanJobs();
-		EVEDroidApp.getAppStore().getPilot().getIndustryJobs();
+		AppModelStore.getSingleton().getPilot().cleanJobs();
+		AppModelStore.getSingleton().getPilot().getIndustryJobs();
 		try {// Reset the page position.
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented
 			// by a Fragment.
-			addPage(new JobsFragment().setActivity(ModelWideConstants.activities.MANUFACTURING), page++);
-			addPage(new JobsFragment().setActivity(ModelWideConstants.activities.INVENTION), page++);
+			this.addPage(new JobsFragment().setActivity(ModelWideConstants.activities.MANUFACTURING), page++);
+			this.addPage(new JobsFragment().setActivity(ModelWideConstants.activities.INVENTION), page++);
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> JobDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> JobDirectorActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> JobDirectorActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
-		updateInitialTitle();
+		this.updateInitialTitle();
 		Log.i("NEOCOM", "<< JobDirectorActivity.onCreate"); //$NON-NLS-1$
 	}
 }

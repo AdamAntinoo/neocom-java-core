@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
@@ -1006,7 +1006,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 				// dummy placeholder.
 				entry = new MarketDataSet(itemID, side);
 				if (true) {
-					EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
+					NeoComApp.getTheCacheConnector().addMarketDataRequest(itemID);
 				}
 			}
 			cache.put(itemID, entry);
@@ -1016,7 +1016,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 			// update and remove it from the cache.
 			long lid = entry.getBestMarket().getLocation().getID();
 			if (lid < 0) {
-				EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
+				NeoComApp.getTheCacheConnector().addMarketDataRequest(itemID);
 				cache.put(itemID, null);
 			}
 		}
@@ -1025,7 +1025,7 @@ public class AndroidDatabaseConnector implements IDatabaseConnector {
 		// return entry;
 		// else {
 		if (AppConnector.checkExpiration(entry.getTS(), ModelWideConstants.HOURS2)) if (true) {
-			EVEDroidApp.getTheCacheConnector().addMarketDataRequest(itemID);
+			NeoComApp.getTheCacheConnector().addMarketDataRequest(itemID);
 		}
 		return entry;
 		// }

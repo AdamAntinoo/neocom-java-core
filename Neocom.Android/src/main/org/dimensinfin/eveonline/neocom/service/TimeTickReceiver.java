@@ -30,7 +30,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.ERequestClass;
@@ -39,6 +39,7 @@ import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Outpost;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -243,17 +244,16 @@ public class TimeTickReceiver extends BroadcastReceiver {
 	public void onReceive(final Context context, final Intent intent) {
 		TimeTickReceiver.logger.info(">> TimeTickReceiver.onReceive");
 		// Run only if the network is active.
-		if (!EVEDroidApp.checkNetworkAccess()) return;
+		if (!NeoComApp.checkNetworkAccess()) return;
 		// Or if the service is disables by configuration.
 		if (this.blockedDownload()) return;
 
 		// STEP 01. Pending Market Data Requests
 		// Get requests pending from the queue service.
-		Vector<PendingRequestEntry> requests = EVEDroidApp.getTheCacheConnector().getPendingRequests();
+		Vector<PendingRequestEntry> requests = NeoComApp.getTheCacheConnector().getPendingRequests();
 		synchronized (requests) {
 			// Get the pending requests and order them by the priority.
-			Collections.sort(requests,
-					EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY));
+			Collections.sort(requests, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_REQUEST_PRIORITY));
 
 			// Process request by priority. Additions to queue are limited.
 			limit = 0;
@@ -273,36 +273,36 @@ public class TimeTickReceiver extends BroadcastReceiver {
 					if (entry.reqClass == ERequestClass.CITADELUPDATE) {
 						// Launch the update and remove the event from the queue.
 						new UpdateCitadelsTask().execute();
-						EVEDroidApp.getTheCacheConnector().clearPendingRequest(entry.getIdentifier());
+						NeoComApp.getTheCacheConnector().clearPendingRequest(entry.getIdentifier());
 					}
 					if (entry.reqClass == ERequestClass.OUTPOSTUPDATE) {
 						// Launch the update and remove the event from the queue.
 						new UpdateOutpostsTask().execute();
-						EVEDroidApp.getTheCacheConnector().clearPendingRequest(entry.getIdentifier());
+						NeoComApp.getTheCacheConnector().clearPendingRequest(entry.getIdentifier());
 					}
 				}
 		}
 
 		// STEP 02. Check characters for pending structures to update.
-		ArrayList<NeoComCharacter> characters = EVEDroidApp.getAppStore().getActiveCharacters();
+		ArrayList<NeoComCharacter> characters = AppModelStore.getSingleton().getActiveCharacters();
 		for (NeoComCharacter eveChar : characters) {
 			EDataBlock updateCode = eveChar.needsUpdate();
 			if (updateCode != EDataBlock.READY) {
 				TimeTickReceiver.logger
 						.info(".. TimeTickReceiver.onReceive.EDataBlock to update: " + eveChar.getName() + " - " + updateCode);
-				EVEDroidApp.getTheCacheConnector().addCharacterUpdateRequest(eveChar.getCharacterID());
+				NeoComApp.getTheCacheConnector().addCharacterUpdateRequest(eveChar.getCharacterID());
 			}
 		}
-		Activity activity = EVEDroidApp.getAppStore().getActivity();
+		Activity activity = AppModelStore.getSingleton().getActivity();
 		if (null != activity) {
 			activity.runOnUiThread(new Runnable() {
 				public void run() {
-					EVEDroidApp.updateProgressSpinner();
+					NeoComApp.updateProgressSpinner();
 				}
 			});
 		}
-		TimeTickReceiver.logger.info("<< TimeTickReceiver.onReceive [" + requests.size() + " - " + EVEDroidApp.marketCounter
-				+ "/" + EVEDroidApp.topCounter + "]");
+		TimeTickReceiver.logger.info("<< TimeTickReceiver.onReceive [" + requests.size() + " - " + NeoComApp.marketCounter
+				+ "/" + NeoComApp.topCounter + "]");
 	}
 
 	private boolean blockedDownload() {
@@ -400,7 +400,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 		}
 		entry.state = ERequestState.ON_PROGRESS;
 		// Increment the counter.
-		EVEDroidApp.topCounter++;
+		NeoComApp.topCounter++;
 	}
 
 	private void launchMarketUpdate(final PendingRequestEntry entry) {
@@ -415,7 +415,7 @@ public class TimeTickReceiver extends BroadcastReceiver {
 			_context.startService(serialService);
 			entry.state = ERequestState.ON_PROGRESS;
 			// Increment the counter.
-			EVEDroidApp.marketCounter++;
+			NeoComApp.marketCounter++;
 			limit++;
 		}
 	}

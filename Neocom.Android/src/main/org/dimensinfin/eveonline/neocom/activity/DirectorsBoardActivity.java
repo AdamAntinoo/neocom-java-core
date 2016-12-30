@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.activity;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.activity.PagerFragment;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.core.SettingsActivity;
 import org.dimensinfin.eveonline.neocom.activity.core.SplashActivity;
@@ -53,7 +53,7 @@ public class DirectorsBoardActivity extends Activity {
 			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.FITDIRECTOR };
 	//	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.FITDIRECTOR };
 	protected static Typeface							daysFace						= Typeface
-			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
+			.createFromAsset(NeoComApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private ActionBar											_actionBar					= null;
@@ -72,7 +72,7 @@ public class DirectorsBoardActivity extends Activity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = this.getMenuInflater();
 		inflater.inflate(R.menu.eiabasemenu, menu);
-		EVEDroidApp.getAppStore().setAppMenu(menu);
+		AppModelStore.getSingleton().setAppMenu(menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 

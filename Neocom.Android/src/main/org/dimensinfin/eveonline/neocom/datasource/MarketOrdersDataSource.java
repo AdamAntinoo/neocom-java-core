@@ -17,7 +17,7 @@ import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EVARIANT;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -97,7 +97,7 @@ public class MarketOrdersDataSource extends AbstractNewDataSource {
 	public ArrayList<AbstractAndroidPart> getBodyPartsHierarchy(final int panelMarketordersbody) {
 		final ArrayList<AbstractAndroidPart> hierarchy = new ArrayList<AbstractAndroidPart>();
 		// Order the groups on the defined weight order.
-		Collections.sort(analyticalGroups, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
+		Collections.sort(analyticalGroups, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
 		// Add all the collaborations to the output list
 		modelList.clear();
 		for (final MarketOrderAnalyticalGroup group : analyticalGroups)

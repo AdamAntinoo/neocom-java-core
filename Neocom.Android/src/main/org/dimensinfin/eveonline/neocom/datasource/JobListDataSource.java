@@ -16,7 +16,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.Job;
@@ -156,7 +156,7 @@ public class JobListDataSource extends AbstractDataSource {
 		for (AbstractAndroidPart node : _root) {
 			ArrayList<IPart> grand = node.collaborate2View();
 			// Order jobs by end date.
-			Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
+			Collections.sort(grand, NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NEWESTDATESORT));
 			if (grand.size() > 0) {
 				result.add(node);
 				for (IPart part : grand)
@@ -208,7 +208,7 @@ public class JobListDataSource extends AbstractDataSource {
 		QueueAnalyticsPart queueAnalytics = new QueueAnalyticsPart(new Separator("QUEUES IN USE"));
 		queueAnalytics.setJobActivity(_activityFilter);
 		headerContents.add(queueAnalytics);
-		Collections.sort(queues, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_TIMEPENDING));
+		Collections.sort(queues, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_TIMEPENDING));
 		// There is a min number and a max number, the last one depending on skills trained.
 		// Check that the character is a pilot and then get the number of queues from the skills trained
 		NeoComCharacter pilot = _store.getPilot();

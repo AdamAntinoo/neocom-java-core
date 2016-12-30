@@ -13,7 +13,6 @@ import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.ShipDirectorActivity.EShipsVariants;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -146,7 +145,7 @@ public class ShipsDataSource extends SpecialDataSource {
 
 	private boolean ifGroupLocations() {
 		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(EVEDroidApp.getAppStore().getActivity());
+				.getDefaultSharedPreferences(AppModelStore.getSingleton().getActivity());
 		final String locLimitString = prefs.getString(AppWideConstants.preference.PREF_LOCATIONSLIMIT,
 				AppConnector.getResourceString(R.string.pref_numberOfLocations_default));
 		// Check for the special value of unlimited.

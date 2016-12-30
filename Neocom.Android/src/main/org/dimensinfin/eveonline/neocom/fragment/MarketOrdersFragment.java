@@ -20,7 +20,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EVARIANT;
 import org.dimensinfin.eveonline.neocom.fragment.core.AbstractPagerFragment;
@@ -70,7 +70,9 @@ public class MarketOrdersFragment extends AbstractPagerFragment {
 	public void onStart() {
 		Log.i("NEOCOM", ">> MarketOrdersFragment.onStart");
 		try {
-			if (!_alreadyInitialized) this.setDataSource(new MarketOrdersDataSource(EVEDroidApp.getAppStore()));
+			if (!_alreadyInitialized) {
+				this.setDataSource(new MarketOrdersDataSource(AppModelStore.getSingleton()));
+			}
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> MarketOrdersFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -102,7 +104,9 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketOrdersDataSource(final AppModelStore store) {
 		super();
-		if (null != store) _store = store;
+		if (null != store) {
+			_store = store;
+		}
 	}
 
 	public RootNode collaborate2Model() {
@@ -149,13 +153,18 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 				hierarchy
 						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
 			}
-			if (node instanceof NeoComMarketOrder)
+			if (node instanceof NeoComMarketOrder) {
 				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((NeoComMarketOrder) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
-			if (node instanceof Resource) hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
-			if (node instanceof Separator) hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
+			}
+			if (node instanceof Resource) {
+				hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
+						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
+			}
+			if (node instanceof Separator) {
+				hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
+						.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
+			}
 		}
 		_adapterData = hierarchy;
 		return hierarchy;
@@ -171,11 +180,12 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 	public ArrayList<AbstractAndroidPart> getBodyPartsHierarchy(final int panelMarketordersbody) {
 		final ArrayList<AbstractAndroidPart> hierarchy = new ArrayList<AbstractAndroidPart>();
 		// Order the groups on the defined weight order.
-		Collections.sort(analyticalGroups, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
+		Collections.sort(analyticalGroups, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
 		// Add all the collaborations to the output list
 		modelList.clear();
-		for (final MarketOrderAnalyticalGroup group : analyticalGroups)
+		for (final MarketOrderAnalyticalGroup group : analyticalGroups) {
 			modelList.addAll(group.collaborate2Model(EVARIANT.DEFAULT_VARIANT.name()));
+		}
 
 		// Create the hierarchy from the model list.
 		for (final IGEFNode node : modelList) {
@@ -189,13 +199,18 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 				hierarchy
 						.add((AbstractAndroidPart) mopart.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETANALYTICAL));
 			}
-			if (node instanceof NeoComMarketOrder)
+			if (node instanceof NeoComMarketOrder) {
 				hierarchy.add((AbstractAndroidPart) new MarketOrderPart((AbstractComplexNode) node)
 						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDER));
-			if (node instanceof Resource) hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
-			if (node instanceof Separator) hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
-					.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
+			}
+			if (node instanceof Resource) {
+				hierarchy.add((AbstractAndroidPart) new ResourcePart((Resource) node)
+						.setRenderMode(AppWideConstants.rendermodes.RENDER_MARKETORDERSCHEDULEDSELL));
+			}
+			if (node instanceof Separator) {
+				hierarchy.add((AbstractAndroidPart) new GroupPart((Separator) node)
+						.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPMARKETSIDE));
+			}
 		}
 		_adapterData = hierarchy;
 		return hierarchy;
@@ -213,21 +228,23 @@ final class MarketOrdersDataSource extends AbstractDataSource {
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
 		}
-		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH))
+		if (event.getPropertyName().equalsIgnoreCase(AppWideConstants.events.EVENTSTRUCTURE_NEEDSREFRESH)) {
 			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
 					event.getNewValue());
-		//		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
-		//			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-		//					event.getNewValue());
+			//		if (event.getPropertyName().equalsIgnoreCase(AbstractGEFNode.CHILD_REMOVED_PROP))
+			//			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
+			//					event.getNewValue());
+		}
 	}
 
 	protected void updateModel() {
 		// Order the groups on the defined weight order.
-		Collections.sort(analyticalGroups, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
+		Collections.sort(analyticalGroups, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_WEIGHT));
 		// Add all the collaborations to the output list
 		modelList.clear();
-		for (final MarketOrderAnalyticalGroup group : analyticalGroups)
+		for (final MarketOrderAnalyticalGroup group : analyticalGroups) {
 			modelList.addAll(group.collaborate2Model(EVARIANT.DEFAULT_VARIANT.name()));
+		}
 	}
 
 	//@Override

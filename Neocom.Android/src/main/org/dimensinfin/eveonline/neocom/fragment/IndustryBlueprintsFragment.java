@@ -6,7 +6,6 @@
 
 package org.dimensinfin.eveonline.neocom.fragment;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datasource.IndustryT1BlueprintsDataSource;
@@ -27,43 +26,11 @@ public class IndustryBlueprintsFragment extends AbstractPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String	_tech	= ModelWideConstants.eveglobal.TechI;
+	private String _tech = ModelWideConstants.eveglobal.TechI;
 
 	// - U I    F I E L D S
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public void onStart() {
-		Log.i("NEOCOM", ">> IndustryBlueprintsFragment.onStart");
-		if (!_alreadyInitialized) {
-			try {
-				// Create the right blueprint list depending on the parametrized tech.
-				AppModelStore store = EVEDroidApp.getAppStore();
-				if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechIII)) {
-					setDataSource(new IndustryT3BlueprintsDataSource(store));
-				}
-				if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-					setDataSource(new IndustryT2BlueprintsDataSource(store));
-				}
-				if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-					setDataSource(new IndustryT1BlueprintsDataSource(store));
-				}
-			} catch (final RuntimeException rtex) {
-				Log.e("NEOCOM", "RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage());
-				rtex.printStackTrace();
-				stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage()));
-			}
-		}
-		super.onStart();
-		Log.i("NEOCOM", "<< IndustryBlueprintsFragment.onStart");
-	}
-
-	@Override
-	public String getTitle() {
-		return getPilotName();
-	}
 
 	@Override
 	public String getSubtitle() {
@@ -80,6 +47,11 @@ public class IndustryBlueprintsFragment extends AbstractPagerFragment {
 		return st;
 	}
 
+	@Override
+	public String getTitle() {
+		return this.getPilotName();
+	}
+
 	/**
 	 * Creates the structures when the fragment is about to be shown. It will inflate the layout where the
 	 * generic fragment will be layered to show the content. It will get the Activity functionality for single
@@ -91,21 +63,48 @@ public class IndustryBlueprintsFragment extends AbstractPagerFragment {
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
 			if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechIII)) {
-				setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT3BLUEPRINTS);
+				this.setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT3BLUEPRINTS);
 			}
 			if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-				setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT2BLUEPRINTS);
+				this.setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT2BLUEPRINTS);
 			}
 			if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT1BLUEPRINTS);
+				this.setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT1BLUEPRINTS);
 			}
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> IndustryBlueprintsFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< IndustryBlueprintsFragment.onCreateView");
 		return theView;
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
+	public void onStart() {
+		Log.i("NEOCOM", ">> IndustryBlueprintsFragment.onStart");
+		if (!_alreadyInitialized) {
+			try {
+				// Create the right blueprint list depending on the parametrized tech.
+				AppModelStore store = AppModelStore.getSingleton();
+				if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechIII)) {
+					this.setDataSource(new IndustryT3BlueprintsDataSource(store));
+				}
+				if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+					this.setDataSource(new IndustryT2BlueprintsDataSource(store));
+				}
+				if (_tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+					this.setDataSource(new IndustryT1BlueprintsDataSource(store));
+				}
+			} catch (final RuntimeException rtex) {
+				Log.e("NEOCOM", "RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage());
+				rtex.printStackTrace();
+				this.stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage()));
+			}
+		}
+		super.onStart();
+		Log.i("NEOCOM", "<< IndustryBlueprintsFragment.onStart");
 	}
 
 	public AbstractPagerFragment setTechLevel(final String tech) {

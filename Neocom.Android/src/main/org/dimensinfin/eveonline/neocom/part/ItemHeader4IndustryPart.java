@@ -9,7 +9,6 @@ package org.dimensinfin.eveonline.neocom.part;
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.EJobClasses;
 import org.dimensinfin.eveonline.neocom.industry.IJobProcess;
@@ -17,6 +16,7 @@ import org.dimensinfin.eveonline.neocom.industry.JobManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.render.ItemHeaderRender;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ItemHeader4IndustryPart extends MarketDataPart {
@@ -40,7 +40,9 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 		super(node);
 		bpid = AppConnector.getDBConnector().searchBlueprint4Module(this.getCastedModel().getTypeID());
 		// TODO Check this validation. There are more items that are manufacturable and also item made with reactions.
-		if (-1 != bpid) manufacturable = true;
+		if (-1 != bpid) {
+			manufacturable = true;
+		}
 	}
 
 	/**
@@ -57,8 +59,12 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 		//		double sellprice = getSellData().getPrice();
 		// Start with the white color
 		String secColor = "#FFFFFF";
-		if ((cost * 1.1) < this.getSellerPrice()) secColor = "#6CC417";
-		if (cost >= this.getSellerPrice()) secColor = "#F62217";
+		if ((cost * 1.1) < this.getSellerPrice()) {
+			secColor = "#6CC417";
+		}
+		if (cost >= this.getSellerPrice()) {
+			secColor = "#F62217";
+		}
 		StringBuffer htmlPrice = new StringBuffer();
 		htmlPrice.append("<font color='").append(secColor).append("'>").append(this.generatePriceString(cost, true, true))
 				.append("</font>");
@@ -129,8 +135,10 @@ public class ItemHeader4IndustryPart extends MarketDataPart {
 	}
 
 	private IJobProcess getJobProcess() {
-		if (null == process) process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(),
-				new NeoComBlueprint(bpid), EJobClasses.MANUFACTURE);
+		if (null == process) {
+			process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), new NeoComBlueprint(bpid),
+					EJobClasses.MANUFACTURE);
+		}
 		return process;
 	}
 }

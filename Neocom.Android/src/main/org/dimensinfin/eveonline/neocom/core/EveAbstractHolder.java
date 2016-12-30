@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.joda.time.Instant;
@@ -63,7 +63,7 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		EveAbstractHolder.securityLevels.put(0, "#F00000");
 	}
 	private static Typeface daysFace = Typeface
-			.createFromAsset(EVEDroidApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
+			.createFromAsset(NeoComApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	// protected ITheme _theme = null;
@@ -229,9 +229,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		// Check if the layout has the icon placeholder.
 		if (null != targetIcon) {
 			// If the flag signals an station change the code.
-			String link = EVEDroidApp.getTheCacheConnector().getURLForItem(typeID);
-			if (station) link = EVEDroidApp.getTheCacheConnector().getURLForStation(typeID);
-			final Drawable draw = EVEDroidApp.getTheCacheConnector().getCacheDrawable(link, targetIcon);
+			String link = NeoComApp.getTheCacheConnector().getURLForItem(typeID);
+			if (station) link = NeoComApp.getTheCacheConnector().getURLForStation(typeID);
+			final Drawable draw = NeoComApp.getTheCacheConnector().getCacheDrawable(link, targetIcon);
 			targetIcon.setImageDrawable(draw);
 		}
 	}

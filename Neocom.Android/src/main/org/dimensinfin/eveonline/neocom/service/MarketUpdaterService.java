@@ -13,7 +13,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.evemarket.model.TrackEntry;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
@@ -204,7 +204,7 @@ public class MarketUpdaterService extends IntentService {
 		Log.i("SERVICE", ">> UpdaterService.onHandleIntent");
 		final Integer localizer = (Integer) intent.getSerializableExtra(AppWideConstants.extras.EXTRA_MARKETDATA_LOCALIZER);
 		// Be sure we have access to the network. Otherwise intercept the exceptions.
-		if (EVEDroidApp.checkNetworkAccess()) {
+		if (NeoComApp.checkNetworkAccess()) {
 			final EveItem item = AppConnector.getDBConnector().searchItembyID(localizer);
 			//			if(market==EVEMARKETDATA)
 			Vector<TrackEntry> marketEntries = AppConnector.getStorageConnector().parseMarketDataEMD(item.getName(),
@@ -232,7 +232,7 @@ public class MarketUpdaterService extends IntentService {
 				AppConnector.getStorageConnector().writeDiskMarketData(reference, localizer, EMarketSide.BUYER);
 			}
 			// Create a new method to access the cache for requests and change the state
-			EVEDroidApp.getTheCacheConnector().clearPendingRequest(localizer.toString());
+			NeoComApp.getTheCacheConnector().clearPendingRequest(localizer.toString());
 		}
 		logger.info("<< UpdaterService.onHandleIntent");
 	}

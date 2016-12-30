@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.PilotListActivity;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -82,7 +82,7 @@ public class SplashActivity extends Activity {
 			AppModelStore.initialize();
 			//[03]
 			SplashActivity.logger.info("-- [EveDroidInitialization.doInBackground]> STEP 09. API list refreshed");
-			EVEDroidApp.getSingletonApp().startTimer();
+			NeoComApp.getSingletonApp().startTimer();
 			SplashActivity.logger.info("<< [EveDroidInitialization.doInBackground]");
 			return true;
 		}
@@ -192,7 +192,7 @@ public class SplashActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.activity_splash);
 		stateLabel = (TextView) this.findViewById(R.id.stateLabel);
-		stateLabel.setTypeface(EVEDroidApp.daysFace);
+		stateLabel.setTypeface(NeoComApp.daysFace);
 		SplashActivity.logger.info("<< [SplashActivity.onCreate]");
 	}
 

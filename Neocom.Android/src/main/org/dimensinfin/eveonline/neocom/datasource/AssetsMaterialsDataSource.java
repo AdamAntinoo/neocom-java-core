@@ -19,7 +19,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -182,7 +182,7 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 				// Check if the node is expanded. Then add its children.
 				if (node.isExpanded()) {
 					ArrayList<IPart> grand = node.collaborate2View();
-					Collections.sort(grand, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+					Collections.sort(grand, NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 					for (IPart part : node.collaborate2View()) {
 						result.add((AbstractAndroidPart) part);
 					}

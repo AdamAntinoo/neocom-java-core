@@ -6,7 +6,6 @@
 
 package org.dimensinfin.eveonline.neocom.fragment;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.datasource.IndustryT2InventionDataSource;
 import org.dimensinfin.eveonline.neocom.fragment.core.AbstractPagerFragment;
@@ -28,6 +27,16 @@ public class InventionBlueprintsFragment extends AbstractPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public String getSubtitle() {
+		return "T2 Invention";
+	}
+
+	@Override
+	public String getTitle() {
+		return this.getPilotName();
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Creates the structures when the fragment is about to be shown. It will inflate the layout where the
@@ -39,38 +48,28 @@ public class InventionBlueprintsFragment extends AbstractPagerFragment {
 		Log.i("NEOCOM", ">> IndustryBlueprintsFragment.onCreateView");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT2INVENTION);
+			this.setIdentifier(AppWideConstants.fragment.FRAGMENT_INDUSTRYT2INVENTION);
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> IndustryBlueprintsFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< IndustryBlueprintsFragment.onCreateView");
 		return theView;
 	}
 
 	@Override
-	public String getTitle() {
-		return getPilotName();
-	}
-
-	@Override
-	public String getSubtitle() {
-		return "T2 Invention";
-	}
-
-	@Override
 	public void onStart() {
 		Log.i("NEOCOM", ">> IndustryBlueprintsFragment.onStart");
 		try {
-			AppModelStore store = EVEDroidApp.getAppStore();
+			AppModelStore store = AppModelStore.getSingleton();
 			if (!_alreadyInitialized) {
-				setDataSource(new IndustryT2InventionDataSource(store));
+				this.setDataSource(new IndustryT2InventionDataSource(store));
 			}
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> IndustryBlueprintsFragment.onStart - " + rtex.getMessage()));
 		}
 		super.onStart();
 		Log.i("NEOCOM", "<< IndustryBlueprintsFragment.onStart");

@@ -6,7 +6,7 @@
 
 package org.dimensinfin.eveonline.neocom.service;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
@@ -40,7 +40,7 @@ public class CharacterUpdaterService extends IntentService {
 		Log.i("CharacterUpdaterService", ">> CharacterUpdaterService.onHandleIntent");
 		Long localizer = (Long) intent.getSerializableExtra(AppWideConstants.extras.EXTRA_CHARACTER_LOCALIZER);
 		// Be sure we have access to the network. Otherwise intercept the exceptions.
-		if (EVEDroidApp.checkNetworkAccess()) {
+		if (NeoComApp.checkNetworkAccess()) {
 			NeoComCharacter pilot = AppModelStore.getSingleton().searchCharacter(localizer);
 			if (null != pilot) {
 				// Pilot signaled for update. Locate the next data set to update because its cache has expired.
@@ -51,37 +51,37 @@ public class CharacterUpdaterService extends IntentService {
 					switch (datacode) {
 						case CHARACTERDATA:
 							pilot.updateCharacterInfo();
-							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-							EVEDroidApp.topCounter--;
+							NeoComApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							NeoComApp.topCounter--;
 							break;
 						case ASSETDATA:
 						case BLUEPRINTDATA:
 							pilot.downloadAssets();
 							pilot.downloadBlueprints();
-							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-							EVEDroidApp.topCounter--;
+							NeoComApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							NeoComApp.topCounter--;
 							break;
 						case INDUSTRYJOBS:
 							pilot.downloadIndustryJobs();
-							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-							EVEDroidApp.topCounter--;
+							NeoComApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							NeoComApp.topCounter--;
 							break;
 						case MARKETORDERS:
 							pilot.downloadMarketOrders();
-							EVEDroidApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
-							EVEDroidApp.topCounter--;
+							NeoComApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
+							NeoComApp.topCounter--;
 							break;
 
 						default:
 							break;
 					}
 					// Clean the top counter if completed.
-					if (EVEDroidApp.topCounter < 0) EVEDroidApp.topCounter = 0;
+					if (NeoComApp.topCounter < 0) NeoComApp.topCounter = 0;
 				} catch (RuntimeException rtex) {
 				}
 			}
 			// Relaunch more jobs if completed.
-			EVEDroidApp.runTimer();
+			NeoComApp.runTimer();
 		}
 		Log.i("CharacterUpdaterService", "<< CharacterUpdaterService.onHandleIntent");
 	}

@@ -16,7 +16,6 @@ import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.activity.IndustryT2Activity;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -32,6 +31,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.render.Blueprint4IndustryHeaderRender;
 import org.dimensinfin.eveonline.neocom.render.Blueprint4IndustryRender;
 import org.dimensinfin.eveonline.neocom.render.Blueprint4T2InventionRender;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.content.Intent;
 import android.text.Html;
@@ -123,8 +123,12 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	public Spanned get_bpccounts() {
 		// Get the number of total copies manufacturable to set the color.
 		String pctcolor = "#FFFFFF";
-		if (this.getMaxRuns() < runCount) pctcolor = "#FFA500";
-		if (this.getMaxRuns() == 0) pctcolor = "#F00000";
+		if (this.getMaxRuns() < runCount) {
+			pctcolor = "#FFA500";
+		}
+		if (this.getMaxRuns() == 0) {
+			pctcolor = "#F00000";
+		}
 		final StringBuffer htmlCountString = new StringBuffer();
 		htmlCountString.append("<font color='").append(pctcolor).append("'>");
 		htmlCountString.append(bpccount).append(" BPCs [").append(this.getMaxRuns()).append(" copies]");
@@ -214,7 +218,9 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 			for (final IGEFNode node : tasks)
 				if (node instanceof TaskPart) {
 					final TaskPart task = (TaskPart) node;
-					if (task.getCastedModel().getItem().isBlueprint()) continue;
+					if (task.getCastedModel().getItem().isBlueprint()) {
+						continue;
+					}
 					if (task.getCastedModel().getTaskType() == ETaskType.BUY) {
 						budget += task.getCastedModel().getQty() * task.getCastedModel().getPrice();
 						Log.i("EVEI", "-- Incrementing budget by " + budget);
@@ -262,7 +268,7 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	// }
 
 	public double getInventionCost() {
-		process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this.getCastedModel(),
+		process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), this.getCastedModel(),
 				EJobClasses.INVENTION);
 		return process.getJobCost();
 	}
@@ -379,10 +385,11 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 		final Intent intent = new Intent(this.getActivity(), IndustryT2Activity.class);
 		intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 		intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTID.name(), this.getCastedModel().getAssetID());
-		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION)
+		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_BLUEPRINTT2INVENTION) {
 			intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name(), 8);
-		else
+		} else {
 			intent.putExtra(AppWideConstants.EExtras.EXTRA_BLUEPRINTACTIVITY.name(), 1);
+		}
 		this.getActivity().startActivity(intent);
 		Log.i("BlueprintPart", "<< BlueprintPart.onClick");
 	}
@@ -451,11 +458,15 @@ public class BlueprintPart extends MarketDataPart implements INamedPart, OnClick
 	public void setActivity(final int newActivity) {
 		activity = newActivity;
 		// Set the processor.
-		if (activity == ModelWideConstants.activities.MANUFACTURING) process = JobManager
-				.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this.getCastedModel(), EJobClasses.MANUFACTURE);
-		if (activity == ModelWideConstants.activities.INVENTION) process = JobManager
-				.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this.getCastedModel(), EJobClasses.INVENTION);
-		// calculateRuns();
+		if (activity == ModelWideConstants.activities.MANUFACTURING) {
+			process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), this.getCastedModel(),
+					EJobClasses.MANUFACTURE);
+		}
+		if (activity == ModelWideConstants.activities.INVENTION) {
+			process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), this.getCastedModel(),
+					EJobClasses.INVENTION);
+			// calculateRuns();
+		}
 	}
 
 	@Override

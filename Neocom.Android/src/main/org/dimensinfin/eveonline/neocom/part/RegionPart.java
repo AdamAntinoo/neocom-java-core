@@ -16,7 +16,7 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IPart;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.holder.RegionHolder;
 import org.dimensinfin.eveonline.neocom.interfaces.INamedPart;
@@ -116,7 +116,7 @@ public class RegionPart extends AbstractAndroidPart implements INamedPart, OnCli
 	@Override
 	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
 		// Order the characters by alphabetical name.
-		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(targets, NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		return targets;
 	}
 

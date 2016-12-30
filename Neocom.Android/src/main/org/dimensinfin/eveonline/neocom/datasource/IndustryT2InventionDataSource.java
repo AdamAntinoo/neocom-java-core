@@ -17,7 +17,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
@@ -101,7 +101,7 @@ public class IndustryT2InventionDataSource extends AbstractDataSource {
 	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		AbstractDataSource.logger.info(">> IndustryT1Blueprints.getPartHierarchy");
-		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(_root, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		for (AbstractAndroidPart node : _root) {
 			result.add(node);

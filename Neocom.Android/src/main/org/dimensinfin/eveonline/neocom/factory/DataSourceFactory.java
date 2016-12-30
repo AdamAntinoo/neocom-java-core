@@ -12,10 +12,10 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.part.PilotInfoPart;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class DataSourceFactory {
@@ -49,7 +49,7 @@ public class DataSourceFactory {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public static NeoComCharacter getPilot() {
-		return EVEDroidApp.getAppStore().getPilot();
+		return AppModelStore.getSingleton().getPilot();
 	}
 }
 
@@ -668,7 +668,7 @@ final class PilotInfoDataSource extends AbstractDataSource {
 		AbstractDataSource.logger.info(">> PilotInfoDataSource.createHierarchy");
 		// Clear the current list of elements.
 		_root.clear();
-		_root.add(new PilotInfoPart(EVEDroidApp.getAppStore().getPilot()));
+		_root.add(new PilotInfoPart(AppModelStore.getSingleton().getPilot()));
 		AbstractDataSource.logger.info("<< PilotInfoDataSource.createHierarchy");
 	}
 

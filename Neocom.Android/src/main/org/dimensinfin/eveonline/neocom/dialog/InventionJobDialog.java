@@ -8,7 +8,6 @@ package org.dimensinfin.eveonline.neocom.dialog;
 
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.activity.ADialogCallback;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
 import org.dimensinfin.eveonline.neocom.industry.EJobClasses;
@@ -16,6 +15,7 @@ import org.dimensinfin.eveonline.neocom.industry.IJobProcess;
 import org.dimensinfin.eveonline.neocom.industry.JobManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,11 +32,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * The Dialog has access to the blueprint part with all the UI information. On
- * creation of the Dialog UI I will fill up the fields with that part data.<br>
- * The entry point to make the Dialog UI is the method
- * <code>onCreateDialog</code> that composes the dialog before launching it for
- * user interaction.
+ * The Dialog has access to the blueprint part with all the UI information. On creation of the Dialog UI I
+ * will fill up the fields with that part data.<br>
+ * The entry point to make the Dialog UI is the method <code>onCreateDialog</code> that composes the dialog
+ * before launching it for user interaction.
  */
 // - CLASS IMPLEMENTATION
 // ...................................................................................
@@ -46,34 +45,33 @@ public class InventionJobDialog extends DialogFragment {
 
 	// - F I E L D - S E C T I O N
 	// ............................................................................
-	private ADialogCallback _dialogCallback = null;
-	private View _dialogContainer = null;
-	private NeoComBlueprint _blueprint = null;
+	private ADialogCallback	_dialogCallback		= null;
+	private View						_dialogContainer	= null;
+	private NeoComBlueprint	_blueprint				= null;
 
 	// - U I F I E L D S
-	private ImageView jobTypeIcon = null;
+	private ImageView				jobTypeIcon				= null;
 	/**
-	 * The number of runs selected by the user. There is a top limit that is the
-	 * less of the manufacturable count or the number of runs available on the
-	 * blueprints.
+	 * The number of runs selected by the user. There is a top limit that is the less of the manufacturable
+	 * count or the number of runs available on the blueprints.
 	 */
-	private EditText _runsCount = null;
+	private EditText				_runsCount				= null;
 	/**
-	 * The resulting number of jobs. Calculated from the number of runs selected
-	 * by the user and the number of runs available on each blueprint.
+	 * The resulting number of jobs. Calculated from the number of runs selected by the user and the number of
+	 * runs available on each blueprint.
 	 */
-	private TextView _jobCount = null;
-	private TextView _itemName = null;
-	private TextView _blueprintCount = null;
-	private TextView _blueprintRuns = null;
-	private TextView _blueprintMETE = null;
-	private TextView _jobDuration = null;
-	private TextView _errorMessage = null;
+	private TextView				_jobCount					= null;
+	private TextView				_itemName					= null;
+	private TextView				_blueprintCount		= null;
+	private TextView				_blueprintRuns		= null;
+	private TextView				_blueprintMETE		= null;
+	private TextView				_jobDuration			= null;
+	private TextView				_errorMessage			= null;
 
 	// - W O R K V A R I A B L E S
-	private int _runs = 0;
-	private int _maxruncount = 0;
-	private int _jobs = 0;
+	private int							_runs							= 0;
+	private int							_maxruncount			= 0;
+	private int							_jobs							= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N
 	// ................................................................
@@ -81,32 +79,29 @@ public class InventionJobDialog extends DialogFragment {
 	// - M E T H O D - S E C T I O N
 	// ..........................................................................
 	public int getRuns() {
-		return this._runs;
+		return _runs;
 	}
 
 	/**
-	 * On dialog creation we identify the graphical UI elements and then set
-	 * their initial values. The number of jobs is set by default to 1 because
-	 * we are not going to allow unlimited invention jobs. So the initial is 6
-	 * and the maximun depends on the runs left on the blueprint. Because the
-	 * blueprint is a prototype and maybe not a real one, this max number is the
-	 * default of 100 copies.
+	 * On dialog creation we identify the graphical UI elements and then set their initial values. The number of
+	 * jobs is set by default to 1 because we are not going to allow unlimited invention jobs. So the initial is
+	 * 6 and the maximun depends on the runs left on the blueprint. Because the blueprint is a prototype and
+	 * maybe not a real one, this max number is the default of 100 copies.
 	 */
 	@Override
 	public Dialog onCreateDialog(final Bundle savedInstanceState) {
 		// Create the dialog and all its elements.
-		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
 		// Inflate and set the layout for the dialog
-		final LayoutInflater inflater = getActivity().getLayoutInflater();
-		this._dialogContainer = inflater.inflate(R.layout.dialog_jobruns, null);
+		final LayoutInflater inflater = this.getActivity().getLayoutInflater();
+		_dialogContainer = inflater.inflate(R.layout.dialog_jobruns, null);
 
 		// Check that the blueprint is initialized. If not then exit.
-		if (null == this._blueprint)
-			return null;
-		initializeViews();
-		setupContents();
+		if (null == _blueprint) return null;
+		this.initializeViews();
+		this.setupContents();
 		// Calculate the initial values for calculated data.
-		final IJobProcess process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), this._blueprint,
+		final IJobProcess process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), _blueprint,
 				EJobClasses.INVENTION);
 		final int jobDuration = process.getCycleDuration();
 		final int bpccount = 1;
@@ -114,37 +109,35 @@ public class InventionJobDialog extends DialogFragment {
 		// final double intermediate = (1.0 * this._blueprint.getMaxRuns()) /
 		// (1.0 * runs);
 		// Set up interface internal values.
-		this._maxruncount = 100;
-		this._runs = 6;
-		this._jobs = 1;
+		_maxruncount = 100;
+		_runs = 6;
+		_jobs = 1;
 		// Update the interface.
-		this._runsCount.setText(Integer.valueOf(this._runs).toString());
-		this._jobCount.setText(Integer.valueOf(this._jobs).toString());
-		this._jobDuration.setText(EveAbstractPart.generateTimeString(jobDuration * this._runs));
+		_runsCount.setText(Integer.valueOf(_runs).toString());
+		_jobCount.setText(Integer.valueOf(_jobs).toString());
+		_jobDuration.setText(EveAbstractPart.generateTimeString(jobDuration * _runs));
 
 		// Add event hoot to the editable text field to check validity.
-		this._runsCount.addTextChangedListener(new TextWatcher() {
+		_runsCount.addTextChangedListener(new TextWatcher() {
 			public void afterTextChanged(final Editable newValue) {
 				int currentruns = 0;
 				try {
-					currentruns = Integer.parseInt(InventionJobDialog.this._runsCount.getEditableText().toString());
+					currentruns = Integer.parseInt(_runsCount.getEditableText().toString());
 				} catch (final RuntimeException rtex) {
 					currentruns = 0;
 				}
-				if (currentruns > InventionJobDialog.this._maxruncount) {
-					InventionJobDialog.this._runsCount
-							.setText(Integer.valueOf(InventionJobDialog.this._maxruncount).toString());
+				if (currentruns > _maxruncount) {
+					_runsCount.setText(Integer.valueOf(_maxruncount).toString());
 				} else {
 					// final double intermediate = (1.0 * currentruns) / (1.0 *
 					// runs);
 					// InventionJobDialog.this._jobs =
 					// Math.min(Double.valueOf(Math.ceil(intermediate)).intValue(),
 					// bpccount);
-					InventionJobDialog.this._runs = currentruns;
+					_runs = currentruns;
 					// InventionJobDialog.this._jobCount.setText(InventionJobDialog.this._blueprint
 					// .get_jobsParameter(InventionJobDialog.this._jobs));
-					InventionJobDialog.this._jobDuration
-							.setText(EveAbstractPart.generateTimeString(jobDuration * Math.min(currentruns, runs)));
+					_jobDuration.setText(EveAbstractPart.generateTimeString(jobDuration * Math.min(currentruns, runs)));
 				}
 			}
 
@@ -156,26 +149,23 @@ public class InventionJobDialog extends DialogFragment {
 		});
 		final InventionJobDialog self = this;
 		// Add action buttons
-		if (null != this._dialogCallback) {
-			builder.setView(this._dialogContainer)
-					.setPositiveButton(R.string.setJobRuns, new DialogInterface.OnClickListener() {
-						public void onClick(final DialogInterface dialog, final int id) {
-							try {
-								if (null != InventionJobDialog.this._runsCount) {
-									InventionJobDialog.this._runs = Integer
-											.parseInt(InventionJobDialog.this._runsCount.getEditableText().toString());
-									Toast.makeText(getActivity(), "Selected Runs: " + InventionJobDialog.this._runs,
-											Toast.LENGTH_LONG);
-									InventionJobDialog.this._dialogCallback.onDialogPositiveClick(self);
-								}
-							} catch (final RuntimeException rtex) {
-							}
+		if (null != _dialogCallback) {
+			builder.setView(_dialogContainer).setPositiveButton(R.string.setJobRuns, new DialogInterface.OnClickListener() {
+				public void onClick(final DialogInterface dialog, final int id) {
+					try {
+						if (null != _runsCount) {
+							_runs = Integer.parseInt(_runsCount.getEditableText().toString());
+							Toast.makeText(InventionJobDialog.this.getActivity(), "Selected Runs: " + _runs, Toast.LENGTH_LONG);
+							_dialogCallback.onDialogPositiveClick(self);
 						}
-					}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-						public void onClick(final DialogInterface dialog, final int id) {
-							InventionJobDialog.this.getDialog().cancel();
-						}
-					});
+					} catch (final RuntimeException rtex) {
+					}
+				}
+			}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				public void onClick(final DialogInterface dialog, final int id) {
+					InventionJobDialog.this.getDialog().cancel();
+				}
+			});
 		}
 		return builder.create();
 	}
@@ -183,12 +173,12 @@ public class InventionJobDialog extends DialogFragment {
 	public void setBlueprint(final Resource bp) {
 		// REFACTOR Implemente the assignment of the resource as a blueprint.
 		// What is the received resource?.
-		this._blueprint = new NeoComBlueprint(bp.getTypeID());
+		_blueprint = new NeoComBlueprint(bp.getTypeID());
 	}
 
 	public void setDialogCallback(final ADialogCallback callback) {
 		if (null != callback) {
-			this._dialogCallback = callback;
+			_dialogCallback = callback;
 		}
 	}
 
@@ -201,25 +191,24 @@ public class InventionJobDialog extends DialogFragment {
 
 	public void setupContents() {
 		// Set the text of the informative fields from the blueprint part.
-		this._itemName.setText(this._blueprint.getName());
-		this._blueprintCount.setText("1");
-		this._blueprintRuns.setText("[" + this._blueprint.getRuns() + "]");
-		this._blueprintMETE
-				.setText(this._blueprint.getMaterialEfficiency() + " / " + this._blueprint.getTimeEfficiency());
+		_itemName.setText(_blueprint.getName());
+		_blueprintCount.setText("1");
+		_blueprintRuns.setText("[" + _blueprint.getRuns() + "]");
+		_blueprintMETE.setText(_blueprint.getMaterialEfficiency() + " / " + _blueprint.getTimeEfficiency());
 	}
 
 	private void initializeViews() {
 		// Get access to the dialog UI components.
-		this.jobTypeIcon = (ImageView) this._dialogContainer.findViewById(R.id.jobTypeIcon);
-		this.jobTypeIcon.setImageResource(R.drawable.invention);
-		this._runsCount = (EditText) this._dialogContainer.findViewById(R.id.runsCount);
-		this._itemName = (TextView) this._dialogContainer.findViewById(R.id.itemName);
-		this._blueprintCount = (TextView) this._dialogContainer.findViewById(R.id.blueprintCount);
-		this._blueprintRuns = (TextView) this._dialogContainer.findViewById(R.id.blueprintRuns);
-		this._blueprintMETE = (TextView) this._dialogContainer.findViewById(R.id.blueprintMETE);
-		this._jobCount = (TextView) this._dialogContainer.findViewById(R.id.jobCount);
-		this._jobDuration = (TextView) this._dialogContainer.findViewById(R.id.jobDuration);
-		this._errorMessage = (TextView) this._dialogContainer.findViewById(R.id.errorMessage);
+		jobTypeIcon = (ImageView) _dialogContainer.findViewById(R.id.jobTypeIcon);
+		jobTypeIcon.setImageResource(R.drawable.invention);
+		_runsCount = (EditText) _dialogContainer.findViewById(R.id.runsCount);
+		_itemName = (TextView) _dialogContainer.findViewById(R.id.itemName);
+		_blueprintCount = (TextView) _dialogContainer.findViewById(R.id.blueprintCount);
+		_blueprintRuns = (TextView) _dialogContainer.findViewById(R.id.blueprintRuns);
+		_blueprintMETE = (TextView) _dialogContainer.findViewById(R.id.blueprintMETE);
+		_jobCount = (TextView) _dialogContainer.findViewById(R.id.jobCount);
+		_jobDuration = (TextView) _dialogContainer.findViewById(R.id.jobDuration);
+		_errorMessage = (TextView) _dialogContainer.findViewById(R.id.errorMessage);
 	}
 }
 

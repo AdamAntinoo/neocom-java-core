@@ -7,8 +7,6 @@ package org.dimensinfin.eveonline.neocom.fragment.core;
 // - IMPORT SECTION .........................................................................................
 import java.util.Vector;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
-import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.android.mvc.activity.SafeStopActivity;
 import org.dimensinfin.android.mvc.activity.TitledFragment;
 import org.dimensinfin.android.mvc.constants.SystemWideConstants;
@@ -17,6 +15,8 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IDataSource;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
+import org.dimensinfin.eveonline.neocom.R;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -130,11 +130,11 @@ public class AbstractPagerFragment extends TitledFragment {
 		if (_fragmentID > 0)
 			return _fragmentID;
 		else
-			return getId();
+			return this.getId();
 	}
 
 	public String getPilotName() {
-		return EVEDroidApp.getAppStore().getPilot().getName();
+		return AppModelStore.getSingleton().getPilot().getName();
 	}
 
 	public void notifyDataSetChanged() {
@@ -198,12 +198,12 @@ public class AbstractPagerFragment extends TitledFragment {
 			_modelContainer = (ListView) _container.findViewById(R.id.listContainer);
 			_progressLayout = (ViewGroup) _container.findViewById(R.id.progressLayout);
 			// Prepare the structures for the context menu.
-			registerForContextMenu(_headerContainer);
-			registerForContextMenu(_modelContainer);
+			this.registerForContextMenu(_headerContainer);
+			this.registerForContextMenu(_modelContainer);
 		} catch (final RuntimeException rtex) {
 			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage()));
 		}
 		Log.i("NEOCOM", "<< AbstractPageFragment.onCreateView");
 		return _container;
@@ -228,15 +228,15 @@ public class AbstractPagerFragment extends TitledFragment {
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onStart - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onStart - " + rtex.getMessage()));
 		}
 		// Update the spinner counter on the actionbar.
-		getActivity().invalidateOptionsMenu();
+		this.getActivity().invalidateOptionsMenu();
 		// Add the header parts once the display is initialized.
 		if (_headerContents.size() > 0) {
 			_headerContainer.removeAllViews();
 			for (final AbstractAndroidPart part : _headerContents) {
-				addViewtoHeader(part);
+				this.addViewtoHeader(part);
 			}
 		}
 		Log.i("NEOCOM", "<< AbstractPageFragment.onStart");
@@ -276,11 +276,11 @@ public class AbstractPagerFragment extends TitledFragment {
 	 * @param exception
 	 */
 	protected void stopActivity(final Exception exception) {
-		final Intent intent = new Intent(getActivity(), SafeStopActivity.class);
+		final Intent intent = new Intent(this.getActivity(), SafeStopActivity.class);
 		// Pass the user message to the activity for display.
 		intent.putExtra(SystemWideConstants.extras.EXTRA_EXCEPTIONMESSAGE, exception.getMessage());
 		//		EVEDroidApp.getSingletonApp().init();
-		startActivity(intent);
+		this.startActivity(intent);
 	}
 
 	private void addViewtoHeader(final AbstractAndroidPart target) {

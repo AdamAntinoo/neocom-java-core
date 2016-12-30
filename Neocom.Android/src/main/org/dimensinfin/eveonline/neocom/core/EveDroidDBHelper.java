@@ -8,7 +8,7 @@ package org.dimensinfin.eveonline.neocom.core;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -222,7 +222,7 @@ public class EveDroidDBHelper extends OrmLiteSqliteOpenHelper {
 		if (oldVersion < 47) {
 			try {
 				// Delete all the CCP data tables to create then again on open.
-				EVEDroidApp.getSingletonApp().getApplicationContext().deleteDatabase(DATABASE_NAME);
+				NeoComApp.getSingletonApp().getApplicationContext().deleteDatabase(DATABASE_NAME);
 			} catch (RuntimeException rtex) {
 				logger.severe("E> Error dropping table on Database new version.");
 				rtex.printStackTrace();

@@ -10,7 +10,7 @@ package org.dimensinfin.eveonline.neocom.render;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractHolder;
 import org.dimensinfin.eveonline.neocom.model.Pilot;
@@ -79,7 +79,7 @@ public class PilotInfoHolder extends EveAbstractHolder {
 
 		if (null != pilotAvatar) {
 			String link = pilot.getURLForAvatar();
-			final Drawable draw = EVEDroidApp.getTheCacheConnector().getCacheDrawable(link, pilotAvatar);
+			final Drawable draw = NeoComApp.getTheCacheConnector().getCacheDrawable(link, pilotAvatar);
 			pilotAvatar.setImageDrawable(draw);
 		}
 		//		_convertView.invalidate();

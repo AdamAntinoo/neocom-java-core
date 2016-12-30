@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -137,7 +137,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 
 	public boolean moveAllowed() {
 		// Read the flag values from the preferences.
-		boolean moveAllowed = EVEDroidApp.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
+		boolean moveAllowed = NeoComApp.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
 		return moveAllowed;
 	}
 
@@ -845,7 +845,7 @@ public class AbstractManufactureProcess extends AbstractComplexNode {
 		}
 
 		// Scan each stack for the required mineral. Order the asteroids by their ore name first.
-		Collections.sort(asteroids, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(asteroids, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
 		for (final NeoComAsset asteroid : asteroids) {
 			// Filter out all ore with quantity less that the portion size (100)
 			if (asteroid.getQuantity() < 100) continue;

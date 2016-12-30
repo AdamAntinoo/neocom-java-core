@@ -10,7 +10,7 @@ package org.dimensinfin.eveonline.neocom.activity.core;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.android.mvc.activity.TitledFragment;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.ERequestClass;
@@ -102,7 +102,7 @@ public abstract class AbstractPagerActivity extends Activity {
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		final MenuInflater inflater = this.getMenuInflater();
 		inflater.inflate(R.menu.eiabasemenu, menu);
-		EVEDroidApp.getAppStore().setAppMenu(menu);
+		AppModelStore.getSingleton().setAppMenu(menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -128,8 +128,8 @@ public abstract class AbstractPagerActivity extends Activity {
 				return true;
 			case R.id.action_downloadlocations:
 				// Insert into the download queue the action to download the locations.
-				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
-				EVEDroidApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
+				NeoComApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.CITADELUPDATE);
+				NeoComApp.getTheCacheConnector().addLocationUpdateRequest(ERequestClass.OUTPOSTUPDATE);
 				break;
 			case R.id.action_updateaccounts:
 				// Refresh the store data
@@ -173,13 +173,14 @@ public abstract class AbstractPagerActivity extends Activity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position))
+					if ("" == _pageAdapter.getSubTitle(position)) {
 						_actionBar.setSubtitle(null);
-					else
+					} else {
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
+					}
 				}
 			});
-		} else
+		} else {
 			_pageContainer.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
 				public void onPageScrolled(final int arg0, final float arg1, final int arg2) {
@@ -191,25 +192,30 @@ public abstract class AbstractPagerActivity extends Activity {
 				public void onPageSelected(final int position) {
 					_actionBar.setTitle(_pageAdapter.getTitle(position));
 					// Clear empty subtitles.
-					if ("" == _pageAdapter.getSubTitle(position))
+					if ("" == _pageAdapter.getSubTitle(position)) {
 						_actionBar.setSubtitle(null);
-					else
+					} else {
 						_actionBar.setSubtitle(_pageAdapter.getSubTitle(position));
+					}
 				}
 			});
+		}
 	}
 
 	protected void addPage(final AbstractNewPagerFragment newFrag, final int position) {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
 		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
 				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-		if (null == frag)
+		if (null == frag) {
 			_pageAdapter.addPage(newFrag);
-		else
+		} else {
 			_pageAdapter.addPage(frag);
+		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
-		if (_pageAdapter.getCount() > 1) this.activateIndicator();
+		if (_pageAdapter.getCount() > 1) {
+			this.activateIndicator();
+		}
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
@@ -217,18 +223,23 @@ public abstract class AbstractPagerActivity extends Activity {
 		Log.i("NEOCOM", ">> AbstractPagerActivity.addPage"); //$NON-NLS-1$
 		final TitledFragment frag = (TitledFragment) this.getFragmentManager()
 				.findFragmentByTag(_pageAdapter.getFragmentId(position));
-		if (null == frag)
+		if (null == frag) {
 			_pageAdapter.addPage(newFrag);
-		else
+		} else {
 			_pageAdapter.addPage(frag);
+		}
 		// Check the number of pages to activate the indicator when more the
 		// one.
-		if (_pageAdapter.getCount() > 1) this.activateIndicator();
+		if (_pageAdapter.getCount() > 1) {
+			this.activateIndicator();
+		}
 		Log.i("NEOCOM", "<< AbstractPagerActivity.addPage"); //$NON-NLS-1$
 	}
 
 	protected void disableIndicator() {
-		if (null != _indicator) _indicator.setVisibility(View.GONE);
+		if (null != _indicator) {
+			_indicator.setVisibility(View.GONE);
+		}
 	}
 
 	protected EvePagerAdapter getPageAdapter() {
@@ -251,8 +262,12 @@ public abstract class AbstractPagerActivity extends Activity {
 			_back = (ImageView) this.findViewById(R.id.backgroundFrame);
 			_indicator = (CirclePageIndicator) this.findViewById(R.id.indicator);
 			// Check page structure.
-			if (null == _pageContainer) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
-			if (null == _back) this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			if (null == _pageContainer) {
+				this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			}
+			if (null == _back) {
+				this.stopActivity(new RuntimeException("UNXER. Expected UI element not found."));
+			}
 
 			// Add the adapter for the page switching.
 			_pageAdapter = new EvePagerAdapter(this.getFragmentManager(), _pageContainer.getId());
@@ -285,7 +300,7 @@ public abstract class AbstractPagerActivity extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		EVEDroidApp.updateProgressSpinner();
+		NeoComApp.updateProgressSpinner();
 	}
 
 	/**
@@ -296,7 +311,7 @@ public abstract class AbstractPagerActivity extends Activity {
 	@Override
 	protected void onStop() {
 		Log.i("EVEI", ">> AbstractPagerActivity.onStop"); //$NON-NLS-1$
-		EVEDroidApp.getSingletonApp().closeDB();
+		NeoComApp.getSingletonApp().closeDB();
 		super.onStop();
 	}
 

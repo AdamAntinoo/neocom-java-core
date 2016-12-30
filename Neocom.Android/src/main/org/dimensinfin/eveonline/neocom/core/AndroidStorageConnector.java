@@ -29,7 +29,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.config.DevelopmentStorageConnector;
 import org.dimensinfin.evemarket.model.TrackEntry;
@@ -94,7 +94,7 @@ public class AndroidStorageConnector implements IStorageConnector {
 		}
 		try {
 			InputStream netResource = AppConnector.getStorageConnector().accessNetworkResource(url);
-			element = EVEDroidApp.parseDOMDocument(netResource);
+			element = NeoComApp.parseDOMDocument(netResource);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -107,7 +107,7 @@ public class AndroidStorageConnector implements IStorageConnector {
 	}
 
 	public InputStream accessInternalStorage(final String resourceName) throws IOException {
-		return EVEDroidApp.getSingletonApp().getApplicationContext().getAssets().open(resourceName);
+		return NeoComApp.getSingletonApp().getApplicationContext().getAssets().open(resourceName);
 	}
 
 	public InputStream accessNetworkResource(final String link) throws IOException {
@@ -120,7 +120,7 @@ public class AndroidStorageConnector implements IStorageConnector {
 			if (null != recordFileName) {
 				// ANDROID This line cannot be changed because it is the way we get an asset on Android.
 				is = new BufferedInputStream(
-						EVEDroidApp.getSingletonApp().getApplicationContext().getAssets().open(recordFileName));
+						NeoComApp.getSingletonApp().getApplicationContext().getAssets().open(recordFileName));
 				logger.info("-- Using test file downloader.");
 			}
 		}
@@ -148,7 +148,7 @@ public class AndroidStorageConnector implements IStorageConnector {
 		if (AppWideConstants.DEVELOPMENT)
 			return accessAppStorage(AppConnector.getResourceString(R.string.cachefoldername));
 		else
-			return new File(EVEDroidApp.getSingletonApp().getApplicationContext().getCacheDir(),
+			return new File(NeoComApp.getSingletonApp().getApplicationContext().getCacheDir(),
 					AppConnector.getResourceString(R.string.cachefoldername));
 	}
 

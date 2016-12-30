@@ -18,7 +18,7 @@ import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.core.AppContext;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -176,7 +176,7 @@ public class IndustryT2ManufactureDataSource extends AbstractDataSource {
 		AbstractDataSource.logger.info(">> IndustryT2ManufactureDataSource.getPartHierarchy");
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
 		try {
-			Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
+			Collections.sort(_root, NeoComApp.createComparator(AppWideConstants.comparators.COMPARATOR_PRIORITY));
 			for (AbstractAndroidPart node : _root) {
 				if (node instanceof GroupPart) if (node.getChildren().size() == 0) continue;
 				result.add(node);

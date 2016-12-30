@@ -14,7 +14,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.interfaces.IPart;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -127,8 +127,8 @@ public abstract class LocationPart extends EveAbstractPart implements INamedPart
 	 */
 	@Override
 	public Vector<IPart> runPolicies(final Vector<IPart> targets) {
-		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-		Collections.sort(targets, EVEDroidApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
+		Collections.sort(targets, NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(targets, NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_ITEM_TYPE));
 		return targets;
 	}
 

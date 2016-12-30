@@ -19,13 +19,14 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.core.SimpleDiskCache.BitmapEntry;
 import org.dimensinfin.eveonline.neocom.interfaces.ICache;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.service.PendingRequestEntry;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -61,9 +62,9 @@ public class AndroidCacheConnector implements ICache {
 		// - M E T H O D - S E C T I O N
 		// ..........................................................................
 		public synchronized void add(final String key, final Drawable target) {
-			logger.info("-- Storing Drawable instance [" + key + "] ");
+			AndroidCacheConnector.logger.info("-- Storing Drawable instance [" + key + "] ");
 			// cacheDrawables.put(key, target);
-			writeDrawableToCache(key, target);
+			this.writeDrawableToCache(key, target);
 		}
 
 		public synchronized Drawable getByURL(final String url) {
@@ -71,7 +72,7 @@ public class AndroidCacheConnector implements ICache {
 			try {
 				final BitmapEntry bit = cacheDrawables.getBitmap(hash);
 				if (null == bit) return null;
-				final Drawable draw = new BitmapDrawable(EVEDroidApp.getSingletonApp().getApplicationContext().getResources(),
+				final Drawable draw = new BitmapDrawable(NeoComApp.getSingletonApp().getApplicationContext().getResources(),
 						bit.getBitmap());
 				return draw;
 			} catch (final IOException e) {
@@ -91,7 +92,7 @@ public class AndroidCacheConnector implements ICache {
 		}
 
 		private void writeDrawableToCache(final String urlname, final Drawable data) {
-			logger.info(">> NewCacheStorage.writeDrawableToDisk");
+			AndroidCacheConnector.logger.info(">> NewCacheStorage.writeDrawableToDisk");
 			OutputStream out = null;
 			try {
 				// Create a valid hask key from the resource URL
@@ -101,7 +102,7 @@ public class AndroidCacheConnector implements ICache {
 					out = cacheDrawables.openStream(hash, null);
 					bit.compress(mCompressFormat, mCompressQuality, out);
 				}
-				logger.info("<< NewCacheStorage.writeDrawableToDisk [true]"); //$NON-NLS-1$
+				AndroidCacheConnector.logger.info("<< NewCacheStorage.writeDrawableToDisk [true]"); //$NON-NLS-1$
 				return;
 			} catch (final IOException e) {
 				// TODO Auto-generated catch block
@@ -115,7 +116,7 @@ public class AndroidCacheConnector implements ICache {
 					e.printStackTrace();
 				}
 			}
-			logger.info("<< NewCacheStorage.writeDrawableToDisk [false]"); //$NON-NLS-1$
+			AndroidCacheConnector.logger.info("<< NewCacheStorage.writeDrawableToDisk [false]"); //$NON-NLS-1$
 		}
 	}
 
@@ -140,7 +141,7 @@ public class AndroidCacheConnector implements ICache {
 				urlConn = new URL(reference[0]).openConnection();
 				is = urlConn.getInputStream();
 				source = Drawable.createFromStream(is, "src");
-				EVEDroidApp.getTheCacheConnector().addDrawableToCache(reference[0], source);
+				NeoComApp.getTheCacheConnector().addDrawableToCache(reference[0], source);
 				return source;
 			} catch (final Exception ex) {
 			} finally {
@@ -193,7 +194,7 @@ public class AndroidCacheConnector implements ICache {
 		public synchronized void add(final EveItem item) {
 			final int id = item.getItemID();
 			final String name = item.getName();
-			logger.info("-- Storing EveItem instance [" + id + "] " + name);
+			AndroidCacheConnector.logger.info("-- Storing EveItem instance [" + id + "] " + name);
 			eveItemCachebyID.put(id, item);
 			eveItemCachebyName.put(name, item);
 		}
@@ -314,8 +315,8 @@ public class AndroidCacheConnector implements ICache {
 
 	@TargetApi(12)
 	public void addDrawableToCache(final String key, final Drawable image) {
-		getCache().add(key, image);
-		getCache().loads();
+		this.getCache().add(key, image);
+		this.getCache().loads();
 	}
 
 	// - M E T H O D - S E C T I O N
@@ -326,7 +327,7 @@ public class AndroidCacheConnector implements ICache {
 	 * trigger the update of another block.
 	 */
 	public synchronized void addLocationUpdateRequest(final ERequestClass locationClass) {
-		logger.info(">> [AndroidCacheConnector.addCharacterUpdateRequest]");
+		AndroidCacheConnector.logger.info(">> [AndroidCacheConnector.addCharacterUpdateRequest]");
 		final PendingRequestEntry request = new PendingRequestEntry(locationClass.name().hashCode());
 		request.reqClass = locationClass;
 		final int priority = 20;
@@ -339,7 +340,7 @@ public class AndroidCacheConnector implements ICache {
 			if (entryid.equalsIgnoreCase(requestid)) return;
 		}
 		_pendingRequests.put(request, priority);
-		logger.info("<< [AndroidCacheConnector.addCharacterUpdateRequest]");
+		AndroidCacheConnector.logger.info("<< [AndroidCacheConnector.addCharacterUpdateRequest]");
 	}
 
 	/**
@@ -393,7 +394,7 @@ public class AndroidCacheConnector implements ICache {
 			final String entryid = entry.getIdentifier();
 			if (entryid.equalsIgnoreCase(localizer)) {
 				entry.state = ERequestState.COMPLETED;
-				decrementMarketCounter();
+				this.decrementMarketCounter();
 			}
 		}
 	}
@@ -415,30 +416,29 @@ public class AndroidCacheConnector implements ICache {
 	 */
 	public synchronized Drawable getCacheDrawable(final String urlString, final ImageView target) {
 		// Try to get a hit from the memory cache.
-		Drawable hit = getCache().getByURL(urlString);
+		Drawable hit = this.getCache().getByURL(urlString);
 		if (null == hit) {
 			synchronized (this) {
-				hit = getCache().getByURL(urlString);
+				hit = this.getCache().getByURL(urlString);
 				if (null == hit) {
 					try {
 						// hit = readDrawableFromDisk(urlString);
 						// if (null == hit) {
 						// No luck. We have to download the data from the
 						// network.
-						postDrawableRequest(urlString, target);
-						getCache().miss();
+						this.postDrawableRequest(urlString, target);
+						this.getCache().miss();
 						// }
 					} catch (final Exception rtex) {
-						logger.info("E> Exception reading cached data. " + rtex.getMessage());
-						getCache().fault(urlString);
+						AndroidCacheConnector.logger.info("E> Exception reading cached data. " + rtex.getMessage());
+						this.getCache().fault(urlString);
 					}
 				}
 			}
 		}
-		getCache().access();
+		this.getCache().access();
 		if (null == hit) {
-			hit = EVEDroidApp.getSingletonApp().getApplicationContext().getResources()
-					.getDrawable(R.drawable.defaultitemicon);
+			hit = NeoComApp.getSingletonApp().getApplicationContext().getResources().getDrawable(R.drawable.defaultitemicon);
 		}
 		return hit;
 	}
@@ -568,15 +568,15 @@ public class AndroidCacheConnector implements ICache {
 	// }
 
 	private void decrementMarketCounter() {
-		EVEDroidApp.marketCounter--;
-		if (EVEDroidApp.marketCounter < 0) {
-			EVEDroidApp.marketCounter = 0;
+		NeoComApp.marketCounter--;
+		if (NeoComApp.marketCounter < 0) {
+			NeoComApp.marketCounter = 0;
 		}
-		final Activity activity = EVEDroidApp.getAppStore().getActivity();
+		final Activity activity = AppModelStore.getSingleton().getActivity();
 		if (null != activity) {
 			activity.runOnUiThread(new Runnable() {
 				public void run() {
-					EVEDroidApp.updateProgressSpinner();
+					NeoComApp.updateProgressSpinner();
 				}
 			});
 		}

@@ -12,10 +12,10 @@ import java.util.HashMap;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.render.DefaultRender;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 import org.joda.time.Instant;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -58,10 +58,15 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 	public static String generateTimeString(final long millis) {
 		try {
 			DateTimeFormatterBuilder timeFormatter = new DateTimeFormatterBuilder();
-			if (millis > EveAbstractPart.ONEDAY) timeFormatter.appendDayOfYear(1).appendLiteral("D ");
-			if (millis > EveAbstractPart.ONEHOUR) timeFormatter.appendHourOfDay(2).appendLiteral(":");
-			if (millis > EveAbstractPart.ONEMINUTE)
+			if (millis > EveAbstractPart.ONEDAY) {
+				timeFormatter.appendDayOfYear(1).appendLiteral("D ");
+			}
+			if (millis > EveAbstractPart.ONEHOUR) {
+				timeFormatter.appendHourOfDay(2).appendLiteral(":");
+			}
+			if (millis > EveAbstractPart.ONEMINUTE) {
 				timeFormatter.appendMinuteOfHour(2).appendLiteral(":").appendSecondOfMinute(2);
+			}
 			return timeFormatter.toFormatter().print(new Instant(millis));
 		} catch (RuntimeException rtex) {
 			return "0:00";
@@ -131,10 +136,15 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 
 	protected String generateDurationString(final long millis) {
 		DateTimeFormatterBuilder timeLeftCountdown = new DateTimeFormatterBuilder();
-		if (millis > EveAbstractPart.ONEDAY) timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
-		if (millis > EveAbstractPart.ONEHOUR) timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
-		if (millis > EveAbstractPart.ONEMINUTE)
+		if (millis > EveAbstractPart.ONEDAY) {
+			timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
+		}
+		if (millis > EveAbstractPart.ONEHOUR) {
+			timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
+		}
+		if (millis > EveAbstractPart.ONEMINUTE) {
 			timeLeftCountdown.appendMinuteOfHour(2).appendLiteral("M ").appendSecondOfMinute(2).appendLiteral('S');
+		}
 		return timeLeftCountdown.toFormatter().print(new Instant(millis));
 	}
 
@@ -142,8 +152,12 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 		StringBuffer htmlFragmentWithColor = new StringBuffer();
 		String secColor = "#F00000";
 		// Get the color from the table.
-		if (sec < 0.0) sec = 0.0;
-		if (sec > 1.0) sec = 1.0;
+		if (sec < 0.0) {
+			sec = 0.0;
+		}
+		if (sec > 1.0) {
+			sec = 1.0;
+		}
 		long secAdjust = Long.valueOf(Math.round(sec * 10.0)).intValue();
 		secColor = EveAbstractPart.securityLevels.get(Long.valueOf(secAdjust).intValue());
 		htmlFragmentWithColor.append("<font color='").append(secColor).append("'>").append(data).append("</font>");
@@ -151,7 +165,7 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 	}
 
 	protected NeoComCharacter getPilot() {
-		return EVEDroidApp.getAppStore().getPilot();
+		return AppModelStore.getSingleton().getPilot();
 	}
 
 	@Override

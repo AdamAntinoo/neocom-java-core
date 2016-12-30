@@ -10,7 +10,6 @@ package org.dimensinfin.eveonline.neocom.part;
 import java.util.ArrayList;
 
 import org.dimensinfin.android.mvc.core.AbstractHolder;
-import org.dimensinfin.eveonline.neocom.EVEDroidApp;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -27,6 +26,7 @@ import org.dimensinfin.eveonline.neocom.render.OutputResourceRender;
 import org.dimensinfin.eveonline.neocom.render.Resource4MarketOrderRender;
 import org.dimensinfin.eveonline.neocom.render.ResourceRender;
 import org.dimensinfin.eveonline.neocom.render.SkillResourceRender;
+import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 import org.joda.time.DateTime;
 
 import android.text.Html;
@@ -68,7 +68,9 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 		double cost = this.getJobProcess().getJobCost();
 		// double sellprice = ;
 		String secColor = "#F62217";
-		if (cost < this.getSellerPrice()) secColor = "#6CC417";
+		if (cost < this.getSellerPrice()) {
+			secColor = "#6CC417";
+		}
 		StringBuffer htmlPrice = new StringBuffer();
 		htmlPrice.append("<font color='").append(secColor).append("'>").append(this.generatePriceString(cost, true, true))
 				.append("</font>");
@@ -98,7 +100,9 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 		double oneprofit = this.getBuyerPrice() - this.getManufactureCost();
 		double profit = oneprofit * this.getCastedModel().getQuantity();
 		String secColor = "#6CC417";
-		if (profit < 0) secColor = "#F62217";
+		if (profit < 0) {
+			secColor = "#F62217";
+		}
 		StringBuffer htmlPrice = new StringBuffer("<font color='").append(secColor).append("'>")
 				.append(this.generatePriceString(profit, true, true)).append("</font>");
 		return Html.fromHtml(htmlPrice.toString());
@@ -133,7 +137,7 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 	public double getManufactureCost() {
 		int moduleid = this.getCastedModel().getTypeID();
 		int blueprintid = AppConnector.getDBConnector().searchBlueprint4Module(moduleid);
-		IJobProcess process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(),
+		IJobProcess process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(),
 				new NeoComBlueprint(blueprintid), EJobClasses.MANUFACTURE);
 		return process.getJobCost();
 	}
@@ -209,7 +213,7 @@ public class ResourcePart extends ItemPart implements IItemPart, OnClickListener
 		if (null == process) {
 			int moduleid = this.getCastedModel().getTypeID();
 			int blueprintid = AppConnector.getDBConnector().searchBlueprint4Module(moduleid);
-			process = JobManager.generateJobProcess(EVEDroidApp.getAppStore().getPilot(), new NeoComBlueprint(blueprintid),
+			process = JobManager.generateJobProcess(AppModelStore.getSingleton().getPilot(), new NeoComBlueprint(blueprintid),
 					EJobClasses.MANUFACTURE);
 		}
 		return process;
