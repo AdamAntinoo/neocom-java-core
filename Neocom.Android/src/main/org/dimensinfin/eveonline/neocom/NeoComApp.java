@@ -627,7 +627,7 @@ public class NeoComApp extends Application implements IConnector {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComApp() {
-		NeoComApp.logger.info(">> [EVEDroidApp.<init>]");
+		NeoComApp.logger.info(">> [NeoComApp.<init>]");
 		// Setup the referencing structures that will serve as proxy and global references.
 		// If singleton already defined this is not a first time initialization.
 		if (null == NeoComApp.singleton) {
@@ -639,7 +639,7 @@ public class NeoComApp extends Application implements IConnector {
 			Log.i("EVEDroidApp", ".. User reload requested.");
 			NeoComApp.firstTimeInitialization = false;
 		}
-		NeoComApp.logger.info("<< [EVEDroidApp.<init>]");
+		NeoComApp.logger.info("<< [NeoComApp.<init>]");
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

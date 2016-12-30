@@ -22,7 +22,7 @@
         android:logo="@drawable/evei4"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="org.dimensinfin.evedroid.activity.core.SplashActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.core.SplashActivity"
             android:icon="@drawable/splash_icon"
             android:label="NeoCom 0.8.0"
             android:noHistory="true"
@@ -35,11 +35,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.PilotListActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.PilotListActivity"
             android:label="@string/title_activity_PilotList" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.core.SettingsActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.core.SettingsActivity"
             android:label="Settings" >
         </activity>
         <activity
@@ -48,75 +48,75 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.core.NewVersionWarningActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.core.NewVersionWarningActivity"
             android:label="On Construction"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.core.StopNOSDActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.core.StopNOSDActivity"
             android:label="On Construction"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.core.AddNewAPIActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.core.AddNewAPIActivity"
             android:label="On Construction"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.DirectorsBoardActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.DirectorsBoardActivity"
             android:label="@string/title_activity_DirectorsBoard"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.AssetsDirectorActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.AssetsDirectorActivity"
             android:label="@string/title_activity_AssetsDirector" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.ShipDirectorActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.ShipDirectorActivity"
             android:label="Ships" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.IndustryDirectorActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.IndustryDirectorActivity"
             android:label="Industry Director" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.MarketDirectorActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.MarketDirectorActivity"
             android:label="Market Orders" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.IndustryT2Activity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.IndustryT2Activity"
             android:label="Industry T2 Manufacture"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.ItemDetailsActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.ItemDetailsActivity"
             android:label="Item Details"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.MiningSessionActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.MiningSessionActivity"
             android:label="Item Details"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.JobDirectorActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.JobDirectorActivity"
             android:label="JOB Planned" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.FittingActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.FittingActivity"
             android:label="JOB Planned" >
         </activity>
         <activity
-            android:name="org.dimensinfin.evedroid.activity.FittingListActivity"
+            android:name="org.dimensinfin.eveonline.neocom.activity.FittingListActivity"
             android:label="Fitting List" >
         </activity>
 
         <service
-            android:name="org.dimensinfin.evedroid.service.MarketUpdaterService"
+            android:name="org.dimensinfin.eveonline.neocom.service.MarketUpdaterService"
             android:enabled="true" >
         </service>
         <service
-            android:name="org.dimensinfin.evedroid.service.CharacterUpdaterService"
+            android:name="org.dimensinfin.eveonline.neocom.service.CharacterUpdaterService"
             android:enabled="true" >
         </service>
     </application>
