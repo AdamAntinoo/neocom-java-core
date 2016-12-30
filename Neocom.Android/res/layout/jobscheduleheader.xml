@@ -20,7 +20,7 @@
         android:layout_toRightOf="@+id/itemIcon"
         android:orientation="vertical" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/itemName"
             style="@style/NameStyle.Actionable"
             android:singleLine="false"
@@ -36,20 +36,20 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/blueprintCount"
                 style="@style/NumberStyle"
                 android:layout_alignParentLeft="true"
                 android:text="10" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/blueprintRuns"
                 style="@style/NumberStyle"
                 android:layout_toLeftOf="@+id/blueprintMETE"
                 android:gravity="right"
                 android:text="[99]" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/blueprintMETE"
                 style="@style/NumberStyle"
                 android:layout_width="50dp"
@@ -95,13 +95,13 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/stackRuns"
                 style="@style/NumberStyle"
                 android:layout_alignParentLeft="true"
                 android:text="8 / 8" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/jobs"
                 style="@style/NumberStyle"
                 android:layout_toLeftOf="@+id/meteBlock"
@@ -117,7 +117,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="2dp" >
 
-                <org.dimensinfin.evedroid.core.DaysTextView
+                <org.dimensinfin.eveonline.neocom.core.DaysTextView
                     android:id="@+id/budget"
                     style="@style/NumberStyle"
                     android:layout_width="wrap_content"

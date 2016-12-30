@@ -36,7 +36,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/itemName"
         style="@style/NameStyle.Orange"
         android:layout_alignParentTop="true"
@@ -45,7 +45,7 @@
         android:text="@string/default_itemname"
         android:textColor="@android:color/white" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/qtyRequired"
         style="@style/NumberStyle.Big"
         android:layout_width="100dp"

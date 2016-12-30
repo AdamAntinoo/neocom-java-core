@@ -30,7 +30,7 @@
         android:layout_toRightOf="@+id/jobTypeIcon"
         android:orientation="vertical" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/dialogTitle"
             style="@style/Dialog.Title"
             android:layout_width="fill_parent"
@@ -39,7 +39,7 @@
             android:layout_marginTop="16dp"
             android:text="JOB LAUNCH FORM" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/itemName"
             style="@style/NameStyle.Intense"
             android:layout_marginBottom="2dp"
@@ -54,20 +54,20 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/blueprintCount"
                 style="@style/NumberStyle"
                 android:layout_alignParentLeft="true"
                 android:text="10" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/blueprintRuns"
                 style="@style/NumberStyle"
                 android:layout_toLeftOf="@+id/blueprintMETE"
                 android:gravity="right"
                 android:text="[99]" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/blueprintMETE"
                 style="@style/NumberStyle"
                 android:layout_width="50dp"
@@ -115,14 +115,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/runsEditableLabel"
                 style="@style/Dialog.Label"
                 android:layout_width="140dp"
                 android:layout_alignBaseline="@+id/runsCount"
                 android:text="RUNS REQUESTED:" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/runsBuild"
                 style="@style/Dialog.Label"
                 android:layout_width="80dp"
@@ -150,13 +150,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/jobsPlannedLabel"
                 style="@style/Dialog.Label"
                 android:layout_width="140dp"
                 android:text="JOBS PLANNED:" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/jobCount"
                 style="@style/Dialog.Data"
                 android:text="2 jobs" />
@@ -168,13 +168,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/jobDurationLabel"
                 style="@style/Dialog.Label"
                 android:layout_width="140dp"
                 android:text="JOB DURATION:" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/jobDuration"
                 style="@style/Dialog.Data"
                 android:text="7d 14:24" />

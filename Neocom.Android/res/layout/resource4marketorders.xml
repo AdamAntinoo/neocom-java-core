@@ -10,7 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/itemName"
         style="@style/NameStyle.Actionable"
         android:layout_width="wrap_content"
@@ -21,7 +21,7 @@
         android:textSize="16sp"
         android:text="Inertia Stabilizers II or another long module name" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/volumes"
         style="@style/NumberStyle.XL"
         android:layout_alignParentRight="true"
@@ -29,7 +29,7 @@
         android:gravity="right"
         android:text="32 / 128" />
 
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/orderLocation"
         style="@style/LocationStyle"
         android:layout_width="fill_parent"
@@ -37,7 +37,7 @@
         android:layout_toRightOf="@+id/itemIcon"
         android:text="0.4 Hek - Boundless Station" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/itemPrice"
         style="@style/PriceStyle.Seller"
         android:layout_below="@+id/orderLocation"
@@ -46,7 +46,7 @@
         android:textColor="@android:color/white"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/orderDuration"
         style="@style/NumberStyle"
         android:layout_width="fill_parent"

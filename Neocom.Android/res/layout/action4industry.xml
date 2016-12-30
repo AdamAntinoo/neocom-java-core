@@ -35,7 +35,7 @@
             android:layout_marginTop="1dp" />
     </LinearLayout>
 
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/itemName"
         style="@style/NameStyle"
         android:layout_alignParentTop="true"
@@ -43,7 +43,7 @@
         android:layout_toRightOf="@+id/itemIconBlock"
         android:text="@string/default_itemname" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/qtyRequired"
         style="@style/NumberStyle.XL"
         android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
         android:text="19 / 24"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/moduleAction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

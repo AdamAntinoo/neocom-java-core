@@ -17,7 +17,7 @@
         android:contentDescription="@string/imageview_defaultcontent"
         android:src="@drawable/defaultitemicon" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/containerName"
         style="@style/NameStyle"
         android:layout_centerVertical="true"

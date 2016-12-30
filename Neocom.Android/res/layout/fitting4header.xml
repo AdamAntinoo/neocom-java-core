@@ -14,7 +14,7 @@
         android:layout_alignParentTop="true"
          android:layout_toRightOf="@+id/itemIcon"
         android:orientation="vertical" >
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/fittingName"
             style="@style/NameStyle.Actionable"
             android:singleLine="false"
@@ -27,13 +27,13 @@
             android:id="@+id/fittingInformationBlock"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/hullSlotsCount"
                 style="@style/NumberStyle"
                 android:layout_alignParentLeft="true"
                 android:text="8 / 13 / 6" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/fittingRuns"
                 style="@style/NumberStyle"
                 android:layout_alignParentRight="true"
@@ -66,12 +66,12 @@
             android:layout_width="fill_parent"
             android:layout_marginTop="15dip"
             android:layout_height="wrap_content" >
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/stackRuns"
                 style="@style/NumberStyle"
                 android:layout_alignParentLeft="true"
                 android:text="Runs:" />
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/jobs"
                 style="@style/NumberStyle"
                 android:layout_toLeftOf="@+id/meteBlock"

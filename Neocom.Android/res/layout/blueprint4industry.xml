@@ -14,14 +14,14 @@
         style="@style/ItemIconStyle.Size32"
         android:layout_marginLeft="15dp"
         android:background="@drawable/blacktraslucent80" />
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/itemName"
         style="@style/NameStyle.Actionable"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/itemIcon"
         android:text="@string/default_bponame"
         android:textSize="15sp" />
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/bpcCount"
         style="@style/NumberStyle.Big"
         android:layout_alignParentRight="true"
@@ -29,21 +29,21 @@
         android:gravity="right"
         android:paddingLeft="2dp"
         android:text="1 BPCs [36 copies]" />
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/bestSellPrice"
         style="@style/PriceStyle.Buyer"
         android:layout_alignBaseline="@+id/bpcCount"
         android:layout_below="@+id/itemName"
         android:layout_toRightOf="@+id/itemIcon"
         android:text="1.135.214,98" />
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/manufactureCost"
         style="@style/PriceStyle.Cost"
         android:layout_below="@+id/bpcCount"
         android:layout_toLeftOf="@+id/blueprintRuns"
         android:layout_toRightOf="@+id/itemIcon"
         android:text="123,456.65 ISK" />
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/manufactureIndex"
         style="@style/AppTheme.sellPriceStyle"
         android:layout_width="50dp"
@@ -54,7 +54,7 @@
         android:paddingRight="1dp"
         android:text="032"
         android:textColor="@android:color/white" />
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/blueprintRuns"
         style="@style/NumberStyle"
         android:layout_width="35dp"
@@ -62,7 +62,7 @@
         android:layout_toLeftOf="@+id/blueprintMETE"
         android:gravity="right"
         android:text="24" />
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/blueprintMETE"
         style="@style/NumberStyle"
         android:layout_width="50dp"

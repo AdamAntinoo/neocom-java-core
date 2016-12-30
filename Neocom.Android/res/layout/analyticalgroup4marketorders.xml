@@ -21,7 +21,7 @@
         android:contentDescription="@string/imageview_defaultcontent"
         android:src="@drawable/market" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/title"
         style="@style/NameStyle.White"
         android:layout_toRightOf="@+id/groupIcon"
@@ -37,7 +37,7 @@
         android:layout_toRightOf="@+id/groupIcon"
         android:orientation="horizontal" >
 
-        <org.dimensinfin.evedroid.core.Din1451BoldTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
             android:id="@+id/totalItemCount"
             style="@style/NameStyle.White"
             android:layout_width="90dp"
@@ -47,7 +47,7 @@
             android:text="@string/default_number"
             android:visibility="visible" />
 
-        <org.dimensinfin.evedroid.core.Din1451BoldTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
             android:id="@+id/budget"
             style="@style/NameStyle.White"
             android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
             android:text="@string/default_isk"
             android:visibility="visible" />
 
-        <org.dimensinfin.evedroid.core.Din1451BoldTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
             android:id="@+id/quantity"
             style="@style/NameStyle.White"
             android:layout_width="60dp"
@@ -77,7 +77,7 @@
         android:background="@drawable/topwhiteline"
         android:layout_toRightOf="@+id/groupIcon" >
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/totalItemCountlabel"
             style="@style/LabelStyle.Small"
             android:layout_width="90dp"
@@ -87,7 +87,7 @@
             android:text="TOTAL ITEMS"
             android:visibility="visible" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/budgetLabel"
             style="@style/LabelStyle.Small"
             android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
             android:layout_toLeftOf="@+id/quantityLabel"
             android:visibility="visible" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/quantityLabel"
             style="@style/LabelStyle.Small"
             android:layout_width="60dp"

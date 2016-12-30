@@ -38,7 +38,7 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/iconsBlock" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/blueprintName"
         style="@style/NameStyle.White"
         android:layout_width="wrap_content"
@@ -58,18 +58,18 @@
         android:orientation="vertical"
         android:visibility="visible" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/jobQtys"
             style="@style/NumberStyle"
             android:text="19 / 24" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/jobCost"
             style="@style/NumberStyle"
             android:text="94,381 ISK" />
     </LinearLayout>
 
-    <org.dimensinfin.evedroid.core.Din1451EngTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451EngTextView
         android:id="@+id/jobLocation"
         style="@style/LocationStyle"
         android:layout_width="fill_parent"
@@ -85,7 +85,7 @@
         android:layout_below="@+id/jobLocation"
         android:orientation="horizontal" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/jobStart"
             style="@style/NumberStyle"
             android:layout_width="140dp"
@@ -93,14 +93,14 @@
             android:gravity="left"
             android:text="2014.12.05 23:32:56" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/jobEnd"
             style="@style/NumberStyle"
             android:layout_marginRight="8dp"
             android:gravity="left"
             android:text="2014.12.06 09:32:56" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/jobDuration"
             style="@style/NumberStyle"
             android:layout_width="fill_parent"

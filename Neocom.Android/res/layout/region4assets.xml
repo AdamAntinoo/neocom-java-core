@@ -25,7 +25,7 @@
         android:text="REGION"
         android:textSize="9sp" />
 
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/region"
         style="@style/NameStyle.Region"
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         android:singleLine="true"
         android:text="@string/default_regionname" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/childCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

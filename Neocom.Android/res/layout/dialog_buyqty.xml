@@ -21,7 +21,7 @@
         android:layout_toRightOf="@+id/itemIcon"
         android:orientation="vertical" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/dialogTitle"
             style="@style/Dialog.Title"
             android:layout_width="fill_parent"
@@ -30,7 +30,7 @@
             android:layout_marginTop="10dp"
             android:text="BUY REQUEST" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/itemName"
             style="@style/NameStyle"
             android:layout_marginRight="5dp"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/qtyRequestedlabel"
                 style="@style/Dialog.Label"
                 android:layout_width="120dp"
@@ -70,13 +70,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/prieclabel"
                 style="@style/Dialog.Label"
                 android:layout_width="120dp"
                 android:text="PRICE:" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/price"
                 style="@style/Dialog.Data"
                 android:text="123,456.89 ISK" />
@@ -88,13 +88,13 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/budgetLabel"
                 style="@style/Dialog.Label"
                 android:layout_width="120dp"
                 android:text="BUDGET:" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/budget"
                 style="@style/Dialog.Data"
                 android:text="7d 14:24" />

@@ -23,7 +23,7 @@
         android:layout_toRightOf="@+id/pilotAvatar"
         android:orientation="vertical" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/pilotName"
             style="@style/NameStyle.Orange"
             android:text="Adam Antinoo" />
@@ -40,7 +40,7 @@
             android:background="@drawable/topwhiteline"
             android:text="LAST KNOWN LOCATION" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/accountBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             android:gravity="left"
             android:text="BALANCE" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/assetsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

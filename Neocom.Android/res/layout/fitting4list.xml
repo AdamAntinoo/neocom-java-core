@@ -14,7 +14,7 @@
             android:id="@+id/itemIcon"
             style="@style/ItemIcon.Style.Size48" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/fittingName"
             style="@style/Name.Style.14.Clickable"
             android:layout_alignParentTop="true"
@@ -23,7 +23,7 @@
             android:text="@string/default_fittingname"
             android:textStyle="bold" />
 
-        <org.dimensinfin.evedroid.core.Din1451EngTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451EngTextView
             android:id="@+id/fittingClass"
             style="@style/Name.Style.12"
             android:layout_below="@+id/fittingName"
@@ -34,7 +34,7 @@
             android:singleLine="true"
             android:text="@string/default_fittingclass" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/fittingCost"
             style="@style/PriceStyle"
             android:layout_alignParentRight="true"

@@ -12,7 +12,7 @@
         android:id="@+id/itemIcon"
         style="@style/ItemIconStyle" />
 
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/locationRegion"
         style="@style/NameStyle"
         android:layout_alignParentRight="true"
@@ -28,7 +28,7 @@
         android:layout_toLeftOf="@+id/rightArrow"
         android:layout_toRightOf="@+id/itemIcon" >
 
-        <org.dimensinfin.evedroid.core.Din1451BoldTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
             android:id="@+id/locationSystem"
             style="@style/NameStyle"
             android:layout_alignParentLeft="true"
@@ -44,7 +44,7 @@
             android:layout_below="@+id/locationSystem"
             android:background="@drawable/bottomwhiteline" >
 
-            <org.dimensinfin.evedroid.core.Din1451EngTextView
+            <org.dimensinfin.eveonline.neocom.core.Din1451EngTextView
                 android:id="@+id/locationStation"
                 style="@style/LocationStyle"
                 android:layout_alignBaseline="@+id/childCount"
@@ -52,7 +52,7 @@
                 android:layout_toLeftOf="@+id/childCount"
                 android:text="@string/default_location" />
 
-            <org.dimensinfin.evedroid.core.Din1451BoldTextView
+            <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
                 android:id="@+id/childCount"
                 style="@style/NumberStyle.XL"
                 android:layout_width="wrap_content"
@@ -125,14 +125,14 @@
                 android:layout_marginRight="90dp"
                 android:orientation="vertical" >
 
-                <org.dimensinfin.evedroid.core.Din1451TextView
+                <org.dimensinfin.eveonline.neocom.core.Din1451TextView
                     android:id="@+id/locationItemsValueLabel"
                     style="@style/NumberStyle.LocationData"
                     android:gravity="left"
                     android:text="ISK"
                     android:visibility="visible" />
 
-                <org.dimensinfin.evedroid.core.Din1451TextView
+                <org.dimensinfin.eveonline.neocom.core.Din1451TextView
                     android:id="@+id/locationItemsVolumeLabel"
                     style="@style/NumberStyle.LocationData"
                     android:gravity="left"
@@ -150,7 +150,7 @@
                 android:layout_toLeftOf="@+id/valueLabelBlock"
                 android:orientation="vertical" >
 
-                <org.dimensinfin.evedroid.core.Din1451TextView
+                <org.dimensinfin.eveonline.neocom.core.Din1451TextView
                     android:id="@+id/locationItemsValue"
                     style="@style/NumberStyle.LocationData"
                     android:layout_width="fill_parent"
@@ -159,7 +159,7 @@
                     android:text="-"
                     android:visibility="visible" />
 
-                <org.dimensinfin.evedroid.core.Din1451TextView
+                <org.dimensinfin.eveonline.neocom.core.Din1451TextView
                     android:id="@+id/locationItemsVolume"
                     style="@style/NumberStyle.LocationData"
                     android:layout_width="fill_parent"

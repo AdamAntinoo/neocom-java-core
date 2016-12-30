@@ -28,12 +28,12 @@
         android:orientation="horizontal"
         android:visibility="visible" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/bestSellPrice"
             style="@style/PriceStyle.Buyer"
             android:text="4.50 ISK" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/bestSellLocation"
             style="@style/LocationStyle"
             android:singleLine="false"

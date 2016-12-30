@@ -15,7 +15,7 @@
         android:orientation="horizontal" >
     </LinearLayout>
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/action"
         style="@style/Action"
         android:layout_alignParentTop="true"
@@ -23,7 +23,7 @@
         android:background="@drawable/orangeroundedbox"
         android:text="MOVE" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/volume"
         style="@style/NumberStyle"
         android:layout_alignParentTop="true"
@@ -31,7 +31,7 @@
         android:text="34.2 m3"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/qtyRequired"
         style="@style/NumberStyle.Red.Big"
         android:layout_alignParentRight="true"
@@ -41,7 +41,7 @@
         android:text="x31"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/itemName"
         style="@style/NameStyle.Orange"
         android:layout_below="@+id/action"
@@ -59,19 +59,19 @@
         android:orientation="horizontal"
         android:visibility="visible" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/bestBuyPrice"
             style="@style/PriceStyle.Seller"
             android:text="4.50 ISK" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/location"
             style="@style/LocationStyle"
             android:singleLine="false"
             android:text="0.5 Hek - Boundless Station and a very long name" />
     </LinearLayout>
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/budget"
         style="@style/NumberStyle"
         android:layout_alignParentRight="true"

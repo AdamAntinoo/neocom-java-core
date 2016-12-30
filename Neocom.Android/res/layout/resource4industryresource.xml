@@ -10,14 +10,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
-    <org.dimensinfin.evedroid.core.Din1451BoldTextView
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
         android:id="@+id/itemName"
         style="@style/NameStyle"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/itemIcon"
         android:text="@string/default_itemname" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/itemPrice"
         style="@style/PriceStyle.Seller"
         android:layout_below="@+id/itemName"
@@ -27,7 +27,7 @@
         android:textColor="@android:color/white"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/balance"
         style="@style/PriceStyle"
         android:layout_width="fill_parent"
@@ -38,7 +38,7 @@
         android:text="@string/default_isk"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/totalItems"
         style="@style/NumberStyle"
         android:layout_width="105dp"

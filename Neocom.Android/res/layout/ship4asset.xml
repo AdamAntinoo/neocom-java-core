@@ -15,7 +15,7 @@
             android:id="@+id/itemIcon"
             style="@style/ItemIconStyle.Size48" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/shipType"
             style="@style/EIA.ThemedName"
             android:textStyle="bold"
@@ -24,7 +24,7 @@
             android:singleLine="true"
             android:text="@string/default_shipname" />
 
-        <org.dimensinfin.evedroid.core.Din1451EngTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451EngTextView
             android:id="@+id/shipName"
             style="@style/EIA.ThemedName"
             android:layout_below="@+id/shipType"
@@ -37,7 +37,7 @@
             android:textSize="12sp"
             android:visibility="visible" />
 
-        <org.dimensinfin.evedroid.core.Din1451TextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
             android:id="@+id/shipLocation"
             style="@style/locationStationStyle"
             android:layout_below="@+id/shipName"

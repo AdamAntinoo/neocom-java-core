@@ -8,7 +8,7 @@
         android:id="@+id/itemIcon"
         style="@style/ItemIconStyle.Size32" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/itemName"
         style="@style/NameStyle.Actionable"
         android:layout_alignParentTop="true"
@@ -17,7 +17,7 @@
         android:singleLine="false"
         android:text="Inertia Stabilizers II or another long module name" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/totalItems"
         style="@style/NumberStyle.XL"
         android:layout_alignParentRight="true"
@@ -33,19 +33,19 @@
         android:layout_toRightOf="@+id/itemIcon"
         android:orientation="horizontal" >
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/bestBuyerPrice"
             style="@style/PriceStyle.Buyer"
             android:text="6.21 ISK" />
 
-        <org.dimensinfin.evedroid.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.DaysTextView
             android:id="@+id/bestBuyerLocation"
             style="@style/LocationStyle"
             android:text="0.5 Hek - Boundles Station"
             android:textSize="10sp" />
     </LinearLayout>
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/manufactureCost"
         style="@style/PriceStyle.Cost"
         android:layout_below="@+id/bestSell"
@@ -54,7 +54,7 @@
         android:text="134,321.98 ISK"
         android:visibility="visible" />
 
-    <org.dimensinfin.evedroid.core.DaysTextView
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
         android:id="@+id/profit"
         style="@style/NumberStyle"
         android:layout_alignBaseline="@+id/manufactureCost"
@@ -87,14 +87,14 @@
             android:layout_toRightOf="@+id/leftColumnBlock"
             android:orientation="vertical" >
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/balance"
                 style="@style/PriceStyle.Seller"
                 android:layout_gravity="right"
                 android:text="134,321.98 ISK"
                 android:visibility="visible" />
 
-            <org.dimensinfin.evedroid.core.DaysTextView
+            <org.dimensinfin.eveonline.neocom.core.DaysTextView
                 android:id="@+id/itemPrice"
                 style="@style/PriceStyle"
                 android:layout_gravity="right"
