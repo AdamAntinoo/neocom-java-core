@@ -105,6 +105,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		ApiAuthorization authcopy = new ApiAuthorization(apikey.getKey(), coreChar.getCharacterID(),
 				apikey.getValidationCode());
 		newchar.setAuthorization(authcopy);
+		// Copy the id to a non volatile field.
+		newchar.setID(coreChar.getCharacterID());
 		newchar.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
 		// Balance information
@@ -149,6 +151,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	/** Reference to the delegated core eveapi Character */
 	protected NeoComApiKey										apikey							= null;
 	private ApiAuthorization									authorization				= null;
+	private long															characterID					= -1;
 	protected transient Character							delegatedCharacter	= null;
 	protected transient CharacterInfoResponse	characterInfo				= null;
 	private final boolean											active							= true;
@@ -346,7 +349,11 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public long getCharacterID() {
-		return delegatedCharacter.getCharacterID();
+		// Delegated maybe null when read from storage. Return the copy
+		if (null == delegatedCharacter)
+			return characterID;
+		else
+			return delegatedCharacter.getCharacterID();
 	}
 
 	/**
@@ -534,6 +541,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	public void setAuthorization(final ApiAuthorization authorization) {
 		this.authorization = authorization;
+	}
+
+	public void setID(final long newid) {
+		characterID = newid;
 	}
 
 	@Override
