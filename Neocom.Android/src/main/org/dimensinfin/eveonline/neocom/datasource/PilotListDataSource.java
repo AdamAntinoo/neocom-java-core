@@ -11,8 +11,11 @@ package org.dimensinfin.eveonline.neocom.datasource;
 //- CLASS IMPLEMENTATION ...................................................................................
 import java.util.HashMap;
 
+import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
+import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
@@ -60,6 +63,16 @@ public final class PilotListDataSource extends SpecialDataSource {
 		}
 		SpecialDataSource.logger.info("<< [PilotListDataSource.collaborate2Model]");
 		return _dataModelRoot;
+	}
+
+	/**
+	 * Set the RootPart and the sort element for it.
+	 */
+	@Override
+	public void createContentHierarchy() {
+		_partModelRoot = new RootPart(_dataModelRoot, _partFactory)
+				.setSorting(NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		super.createContentHierarchy();
 	}
 }
 // - UNUSED CODE ............................................................................................

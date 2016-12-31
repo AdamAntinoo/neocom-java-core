@@ -780,7 +780,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 					this.processAsset(childAsset, myasset);
 				}
 			}
-			NeoComCharacter.logger.finest("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+			NeoComCharacter.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
 		} catch (final SQLException sqle) {
 			NeoComCharacter.logger
 					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());

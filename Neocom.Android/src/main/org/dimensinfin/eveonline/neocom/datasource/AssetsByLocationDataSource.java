@@ -13,8 +13,10 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
+import org.dimensinfin.android.mvc.core.RootPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
@@ -74,41 +76,6 @@ public class AssetsByLocationDataSource extends SpecialDataSource {
 					_dataModelRoot.addChild(location);
 				}
 			}
-			//
-			//			// Clear the current list of elements.
-			//			//		state = true;
-			//			//		super.createContentHierarchy();
-			//			//		this.createContentModel();
-			//			// Get the list of Locations for this Pilot.
-			//			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
-			//
-			//			// Get access to the location data for this character.
-			//			locations = manager.getLocations();
-			//			// Depending on the Setting group Locations into Regions
-			//			if (this.groupLocations()) {
-			//				for (final EveLocation location : locations) {
-			//					final EveAbstractPart part = (EveAbstractPart) new LocationAssetsPart(location)
-			//							.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-			//					final String regionName = location.getRegion();
-			//					AbstractAndroidPart hitRegion = regions.get(regionName);
-			//					if (null == hitRegion) {
-			//						hitRegion = (AbstractAndroidPart) new RegionPart(new Separator(regionName))
-			//								.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION);
-			//						regions.put(regionName, hitRegion);
-			//						hitRegion.addChild(part);
-			//						_root.add(hitRegion);
-			//					} else {
-			//						hitRegion.addChild(part);
-			//					}
-			//				}
-			//			} else {
-			//				// The number of locations is not enough to group them. Use the locations as the first level.
-			//				for (final EveLocation location : locations) {
-			//					_root.add((AbstractAndroidPart) new LocationAssetsPart(location)
-			//							.setRenderMode(AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION));
-			//				}
-			//			}
-			//
 		} catch (final RuntimeException rte) {
 			rte.printStackTrace();
 			AbstractDataSource.logger.severe("E> There is a problem at: AssetsByLocationDataSource.createHierarchy.");
@@ -117,91 +84,20 @@ public class AssetsByLocationDataSource extends SpecialDataSource {
 		return _dataModelRoot;
 	}
 
-	//	public void createContentModel() {
-	//		Log.i("NEOCOM", ">> AssetsByLocationDataSource.createContentModel");
-	//		// Clear the current list of elements.
-	//		modelSource.clear();
-	//		try {
-	//			// Get the list of Locations for this Pilot.
-	//			final AssetsManager manager = AppModelStore.getSingleton().getPilot().getAssetsManager();
-	//
-	//			// Get access to the location data for this character.
-	//			locations = manager.getLocations();
-	//			// Depending on the Setting group Locations into Regions
-	//			if (this.groupLocations()) {
-	//				for (final EveLocation location : locations) {
-	//					final String regionName = location.getRegion();
-	//					RegionGroup hitRegion = regionModel.get(regionName);
-	//					if (null == hitRegion) {
-	//						hitRegion = new RegionGroup(regionName);
-	//						regionModel.put(regionName, hitRegion);
-	//						hitRegion.addChild(location);
-	//						modelSource.add(hitRegion);
-	//					} else {
-	//						hitRegion.addChild(location);
-	//					}
-	//				}
-	//			} else {
-	//				// The number of locations is not enough to group them. Use the locations as the first level.
-	//				for (final EveLocation location : locations) {
-	//					modelSource.add(location);
-	//				}
-	//			}
-	//		} catch (final RuntimeException rtex) {
-	//			rtex.printStackTrace();
-	//			Log.e("NEOCOM", "RTEX> AssetsByLocationDataSource.createContentModel - " + rtex.getMessage());
-	//		}
-	//		AbstractDataSource.logger.info("<< AssetsByLocationDataSource.createContentModel [" + modelSource.size() + "]");
-	//	}
-	//
-	//	@Override
-	//	public ArrayList<AbstractAndroidPart> getBodyParts() {
-	//		AbstractDataSource.logger.info(">> AssetsFragment.AssetsByLocationDataSource.getPartHierarchy");
-	//		Collections.sort(_root, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-	//		//		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-	//		//		for (AbstractAndroidPart node : _root) {
-	//		//			// Check if the node is expanded. Then add its children.
-	//		//			if (node.isExpanded()) {
-	//		//				result.add(node);
-	//		//				result.add(new TerminatorPart(new Separator("")));
-	//		//				ArrayList<AbstractAndroidPart> grand = node.getPartChildren();
-	//		//				// Order the list of blueprints by their profit
-	//		//				Collections.sort(grand, EVEDroidApp.createComparator(AppWideConstants.comparators.COMPARATOR_NAME));
-	//		//				result.addAll(grand);
-	//		//				result.add(new TerminatorPart(new Separator("")));
-	//		//			} else {
-	//		//				result.add(node);
-	//		//			}
-	//		//		}
-	//		//		_adapterData = result;
-	//		AbstractDataSource.logger.info("<< AssetsDirectorActivity.AssetsByLocationDataSource.getPartHierarchy");
-	//		return super.getBodyParts();
-	//	}
+	/**
+	 * Set the RootPart and the sort element for it. Sort the regions or the locations by name.
+	 */
+	@Override
+	public void createContentHierarchy() {
+		_partModelRoot = new RootPart(_dataModelRoot, _partFactory)
+				.setSorting(NeoComApp.createPartComparator(AppWideConstants.comparators.COMPARATOR_NAME));
+		super.createContentHierarchy();
+	}
 
 	@Override
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		return new ArrayList<AbstractAndroidPart>();
 	}
-
-	//	@Override
-	//	public void propertyChange(final PropertyChangeEvent event) {
-	//		super.propertyChange(event);
-	//		if (event.getPropertyName().equalsIgnoreCase(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE)) {
-	//			this.fireStructureChange(SystemWideConstants.events.EVENTADAPTER_REQUESTNOTIFYCHANGES, event.getOldValue(),
-	//					event.getNewValue());
-	//		}
-	//	}
-	//
-	//	@Override
-	//	public String toString() {
-	//		final StringBuffer buffer = new StringBuffer("AssetsFragment.AssetsByLocationDataSource [");
-	//		//		buffer.append(getWeight()).append(" ");
-	//		buffer.append("state:").append(state);
-	//		buffer.append("count:").append(_root.size());
-	//		buffer.append("model count:").append(modelSource.size());
-	//		buffer.append("]");
-	//		return buffer.toString();
-	//	}
 
 	private boolean showRegions(final int numberLocations) {
 		final SharedPreferences prefs = PreferenceManager
