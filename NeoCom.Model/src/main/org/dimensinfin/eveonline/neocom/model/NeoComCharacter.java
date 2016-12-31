@@ -539,7 +539,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComCharacter [");
-		buffer.append("assets:").append(this.getAssetCount()).append(" ");
+		buffer.append("name:").append(this.getName()).append(" ");
+		buffer.append("assets#:").append(this.getAssetCount()).append(" ");
 		buffer.append("]");
 		buffer.append("->").append(super.toString());
 		return buffer.toString();

@@ -218,7 +218,7 @@ public class DirectorsBoardActivity extends Activity {
 						if (adirector.checkActivation(_store.getPilot())) {
 							DirectorsBoardActivity.logger.info("-- DirectorsBoardActivity.onResume - activated " + directorCode);
 							activator = (ImageView) this.findViewById(R.id.assetsDirectorIcon);
-							activator.setImageDrawable(this.getDrawable(R.drawable.assetsdirector));
+							activator.setImageDrawable(this.getDrawable(R.drawable.assets));
 							activator.setClickable(true);
 							activator.setOnClickListener(new View.OnClickListener() {
 								public void onClick(final View view) {
