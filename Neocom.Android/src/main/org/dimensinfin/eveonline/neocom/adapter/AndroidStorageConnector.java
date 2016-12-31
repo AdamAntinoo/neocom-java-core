@@ -4,7 +4,7 @@
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
 
-package org.dimensinfin.eveonline.neocom.core;
+package org.dimensinfin.eveonline.neocom.adapter;
 
 // - IMPORT SECTION .........................................................................................
 import java.io.BufferedInputStream;

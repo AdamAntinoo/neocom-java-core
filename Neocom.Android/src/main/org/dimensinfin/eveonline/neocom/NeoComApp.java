@@ -24,14 +24,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.eveonline.neocom.adapter.AndroidCacheConnector;
+import org.dimensinfin.eveonline.neocom.adapter.AndroidDatabaseConnector;
+import org.dimensinfin.eveonline.neocom.adapter.AndroidStorageConnector;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IStorageConnector;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
-import org.dimensinfin.eveonline.neocom.core.AndroidCacheConnector;
-import org.dimensinfin.eveonline.neocom.core.AndroidDatabaseConnector;
-import org.dimensinfin.eveonline.neocom.core.AndroidStorageConnector;
 import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.ICache;

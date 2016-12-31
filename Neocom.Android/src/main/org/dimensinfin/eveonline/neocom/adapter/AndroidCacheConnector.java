@@ -6,7 +6,7 @@
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
-package org.dimensinfin.eveonline.neocom.core;
+package org.dimensinfin.eveonline.neocom.adapter;
 
 // - IMPORT SECTION .........................................................................................
 import java.io.File;
@@ -22,6 +22,9 @@ import java.util.logging.Logger;
 import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.core.ERequestClass;
+import org.dimensinfin.eveonline.neocom.core.ERequestState;
+import org.dimensinfin.eveonline.neocom.core.SimpleDiskCache;
 import org.dimensinfin.eveonline.neocom.core.SimpleDiskCache.BitmapEntry;
 import org.dimensinfin.eveonline.neocom.interfaces.ICache;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
