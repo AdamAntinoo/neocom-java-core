@@ -73,15 +73,15 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	//		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
 	//	}
 
-	@Override
-	protected void onSaveInstanceState(final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
-		super.onSaveInstanceState(savedInstanceState);
-		// Add current model data dependencies. EVECHARACTERID
-		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
-				AppModelStore.getSingleton().getPilot().getCharacterID());
-		AppModelStore.getSingleton().save();
-		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
-	}
+	//	@Override
+	//	protected void onSaveInstanceState(final Bundle savedInstanceState) {
+	//		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
+	//		super.onSaveInstanceState(savedInstanceState);
+	//		// Add current model data dependencies. EVECHARACTERID
+	//		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
+	//				AppModelStore.getSingleton().getPilot().getCharacterID());
+	//		AppModelStore.getSingleton().save();
+	//		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
+	//	}
 }
 //- UNUSED CODE ............................................................................................

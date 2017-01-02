@@ -143,7 +143,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			newchar.setSkillInTraining(trainingresponse);
 		}
 		// Full list of assets from database.
-		//		newchar.accessAllAssets();
+		newchar.accessAllAssets();
 		return newchar;
 	}
 

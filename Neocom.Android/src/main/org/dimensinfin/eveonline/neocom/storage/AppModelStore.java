@@ -77,12 +77,14 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	public static AppModelStore getSingleton() {
 		if (null == AppModelStore.singleton) {
 			// Initiate the recovery.
-			// Try to read from persistence file.
-			AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
-			AppModelStore.singleton.restore();
-			if (!AppModelStore.singleton.isRestored()) {
-				AppModelStore.readApiKeys();
-			}
+			AppModelStore.initialize();
+			//			// Try to read from persistence file.
+			//			AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
+			//			AppModelStore.singleton.restore();
+			//			if (!AppModelStore.singleton.isRestored()) {
+			//				AppModelStore.readApiKeys();
+			//			}
+			//			}
 		}
 		return AppModelStore.singleton;
 	}
@@ -92,6 +94,7 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	 * store file it will process the api list and reload all the character information from scratch.
 	 */
 	public static void initialize() {
+		AppModelStore.logger.info(">> [AppModelStore.initialize]");
 		// Create a new from scratch. Read the api key list.
 		AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
 		// Load any data from storage and then update the information from CCP.
@@ -100,6 +103,11 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 
 		// Make sure we get the characters on a thread out of the main one.
 		AppModelStore.getSingleton().getCharacters();
+		// Set back the current pilot whose id is stored on the _pilotIdentifier
+		if (AppModelStore.getSingleton()._pilotIdentifier > 0) {
+			AppModelStore.getSingleton().activatePilot(AppModelStore.getSingleton()._pilotIdentifier);
+		}
+		AppModelStore.logger.info("<< [AppModelStore.initialize]");
 	}
 
 	private static void readApiKeys() {
@@ -142,18 +150,19 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the application menu to make it accessible to any level. */
-	private transient Menu									_appMenu	= null;
+	private transient Menu									_appMenu					= null;
 	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
-	private transient Activity							_activity	= null;
-	private transient NeoComCharacter				_pilot		= null;
+	private transient Activity							_activity					= null;
+	private transient NeoComCharacter				_pilot						= null;
+	protected long													_pilotIdentifier	= -1L;
 	/** Check to verify if the recovery process is successful. */
-	private boolean													recovered	= false;
+	private boolean													recovered					= false;
 
 	/** List of registered DataSources. This data is not stored on switch or termination. */
-	private transient DataSourceManager			dsManager	= null;
-	private HashMap<Integer, NeoComApiKey>	apiKeys		= new HashMap<Integer, NeoComApiKey>();
+	private transient DataSourceManager			dsManager					= null;
+	private HashMap<Integer, NeoComApiKey>	apiKeys						= new HashMap<Integer, NeoComApiKey>();
 	/** List of fittings by name. This is the source for the Fittings DataSource. */
-	private HashMap<String, Fitting>				fittings	= new HashMap<String, Fitting>();
+	private HashMap<String, Fitting>				fittings					= new HashMap<String, Fitting>();
 	//	private transient HashMap<Long, EveChar>	charCache					= null;
 	//	private final long											lastCCPAccessTime	= 0;
 
@@ -163,7 +172,7 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 		// On creation we can set the proper model persistence handler.
 		try {
 			this.setPersistentStorage(storageHandler);
-			this.setAutomaticUpdate(true);
+			this.setAutomaticUpdate(false);
 		} catch (final Exception ex) {
 			// TODO This is a quite serious error because invalidates any storage of the model data
 			ex.printStackTrace();
@@ -193,6 +202,7 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 			throw new RuntimeException("RT AppModelStore.activatePilot - Pilot not located. Problem of initialization.");
 		// Link the pilot to the store for dirty processing.
 		_pilot.setParent(this);
+		_pilotIdentifier = _pilot.getCharacterID();
 	}
 
 	/**
@@ -217,6 +227,7 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	public void addFitting(final Fitting fit, final String label) {
 		fittings.put(label, fit);
 		this.setDirty(true);
+		this.save();
 	}
 
 	@Deprecated

@@ -25,7 +25,6 @@ import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.model.Fitting;
-import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class UserModelPersistenceHandler implements IPersistentHandler {
@@ -41,34 +40,9 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	public void clearUpdate() {
-	//		// TODO Auto-generated method stub
-	//
-	//	}
-	//
-	//	public String getLocation() {
-	//		// TODO Auto-generated method stub
-	//		return null;
-	//	}
-
-	//	public boolean loadContents() {
-	//		// TODO Auto-generated method stub
-	//		return false;
-	//	}
-
 	public AppModelStore getStore() {
 		return store;
 	}
-
-	//	public ObjectInput prepareStorageInput() {
-	//		// TODO Auto-generated method stub
-	//		return null;
-	//	}
-	//
-	//	public ObjectOutput prepareStorageOutput() {
-	//		// TODO Auto-generated method stub
-	//		return null;
-	//	}
 
 	/**
 	 * Retrieves any information of the previous state of the model from the persistent storage. This particular
@@ -86,7 +60,7 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
-				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
+				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
 				this.getStore().setFittings((HashMap<String, Fitting>) input.readObject());
 				UserModelPersistenceHandler.logger.info("<< UserModelPersistencehandler.restore [true]"); //$NON-NLS-1$
 				return true;
@@ -119,7 +93,7 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
-				output.writeObject(this.getStore().getApiKeys());
+				//				output.writeObject(this.getStore().getApiKeys());
 				//				output.writeObject(getStore().getCharacters());
 				output.writeObject(this.getStore().getFittings());
 				//				output.writeObject(getStore());
@@ -146,9 +120,9 @@ public class UserModelPersistenceHandler implements IPersistentHandler {
 		}
 	}
 
-	private void setStore(final Object readObject) {
-		store = (AppModelStore) readObject;
-	}
+	//	private void setStore(final Object readObject) {
+	//		store = (AppModelStore) readObject;
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................

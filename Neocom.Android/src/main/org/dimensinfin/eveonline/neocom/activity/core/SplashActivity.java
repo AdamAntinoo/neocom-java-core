@@ -69,17 +69,19 @@ public class SplashActivity extends Activity {
 			this.createCacheDirectories();
 			SplashActivity.logger.info("-- [EveDroidInitialization.doInBackground]> STEP 01. App Directories created");
 			// STEP 02. Check existence of required files.
-			if (!this.checkAppFile(AppConnector.getResourceString(R.string.ccpdatabasefilename))) // Initial item database is not on place. Copy one from the assets.
+			if (!this.checkAppFile(AppConnector.getResourceString(R.string.ccpdatabasefilename))) {
 				// TODO The CCP database is not distributed with the application. If not available then close the App
 				this.copyFromAssets(R.string.ccpdatabasefilename);
+			}
 			if (AppWideConstants.DEVELOPMENT)
-				if (!this.checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) // Initial item database is not on place. Copy one from the assets.
-					this.copyFromAssets(R.string.apikeysfilename);
+				if (!this.checkAppFile(AppConnector.getResourceString(R.string.apikeysfilename))) {
+				this.copyFromAssets(R.string.apikeysfilename);
+				}
 			SplashActivity.logger.info("-- [EveDroidInitialization.doInBackground]> STEP 02. Required files on place");
 
 			this.updateStateLabel("Loading user data...");
 			// STEP 03. Initialize the Model store and force a refresh from the api list file.
-			AppModelStore.initialize();
+			AppModelStore.getSingleton();
 			//[03]
 			SplashActivity.logger.info("-- [EveDroidInitialization.doInBackground]> STEP 09. API list refreshed");
 			NeoComApp.getSingletonApp().startTimer();
@@ -92,7 +94,9 @@ public class SplashActivity extends Activity {
 		@Override
 		protected void onPostExecute(final Boolean result) {
 			// Check if we have pilots to show or we have to go to the AddAPI page.
-			if (result) SplashActivity.this.startActivity(new Intent(_activity, PilotListActivity.class));
+			if (result) {
+				SplashActivity.this.startActivity(new Intent(_activity, PilotListActivity.class));
+			}
 		}
 
 		private boolean checkAppFile(final String resourceString) {
@@ -118,8 +122,9 @@ public class SplashActivity extends Activity {
 				ostream = new FileOutputStream(destination);
 				final byte[] buffer = new byte[8192];
 				int length;
-				while ((length = istream.read(buffer)) > 0)
+				while ((length = istream.read(buffer)) > 0) {
 					ostream.write(buffer, 0, length);
+				}
 				ostream.flush();
 				SplashActivity.logger.info("-- Copied resource from assets [" + resourceName + "]");
 			} catch (final Exception e) {
@@ -127,8 +132,12 @@ public class SplashActivity extends Activity {
 				SplashActivity.logger.severe("E> Failed to copy resource: " + resourceName);
 			} finally {
 				try {
-					if (ostream != null) ostream.close();
-					if (istream != null) istream.close();
+					if (ostream != null) {
+						ostream.close();
+					}
+					if (istream != null) {
+						istream.close();
+					}
 				} catch (final IOException e) {
 				}
 			}
@@ -143,7 +152,9 @@ public class SplashActivity extends Activity {
 					AppConnector.getResourceString(R.string.appfoldername)
 							+ AppConnector.getResourceString(R.string.app_versionsuffix));
 			final boolean existence = sdcarddir.exists();
-			if (!sdcarddir.exists()) sdcarddir.mkdir();
+			if (!sdcarddir.exists()) {
+				sdcarddir.mkdir();
+			}
 			return !existence;
 		}
 
