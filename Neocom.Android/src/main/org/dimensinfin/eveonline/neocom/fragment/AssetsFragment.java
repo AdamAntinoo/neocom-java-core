@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.eveonline.neocom.activity.AssetsDirectorActivity.EAssetVariants;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.datasource.AssetsByLocationDataSource;
+import org.dimensinfin.eveonline.neocom.datasource.AssetsMaterialsDataSource;
 import org.dimensinfin.eveonline.neocom.datasource.DataSourceLocator;
 import org.dimensinfin.eveonline.neocom.datasource.SpecialDataSource;
 import org.dimensinfin.eveonline.neocom.factory.AssetPartFactory;
@@ -50,21 +51,6 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 		return this.getPilotName();
 	}
 
-	//	@Override
-	//	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-	//		Log.i("NEOCOM", ">> AssetsFragment.onCreateView");
-	//		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-	//		try {
-	//			this.setIdentifier(_filter);
-	//		} catch (final RuntimeException rtex) {
-	//			Log.e("NEOCOM", "RTEX> AssetsFragment.onCreateView - " + rtex.getMessage());
-	//			rtex.printStackTrace();
-	//			this.stopActivity(new RuntimeException("RTEX> AssetsFragment.onCreateView - " + rtex.getMessage()));
-	//		}
-	//		Log.i("NEOCOM", "<< AssetsFragment.onCreateView");
-	//		return theView;
-	//	}
-
 	@Override
 	public void onStart() {
 		AssetsFragment.logger.info(">> [AssetsFragment.onStart]");
@@ -80,11 +66,6 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 		super.onStart();
 		AssetsFragment.logger.info("<< [AssetsFragment.onStart]");
 	}
-
-	//	public AbstractPagerFragment setFilter(final int filter) {
-	//		_filter = filter;
-	//		return this;
-	//	}
 
 	public void registerDataSource() {
 		AssetsFragment.logger.info(">> [AssetsFragment.registerDataSource]");
@@ -102,13 +83,13 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		}
-		//		if (this.getVariant() == EAssetVariants.ASSETS_MATERIALS.name()) {
-		//			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-		//			SpecialDataSource ds = new AssetsMaterialsDataSource(locator, new AssetPartFactory(this.getVariant()));
-		//			ds.setVariant(this.getVariant());
-		//			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
-		//			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
-		//		}
+		if (this.getVariant() == EAssetVariants.ASSETS_MATERIALS.name()) {
+			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
+			SpecialDataSource ds = new AssetsMaterialsDataSource(locator, new AssetPartFactory(this.getVariant()));
+			ds.setVariant(this.getVariant());
+			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
+			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
+		}
 		AssetsFragment.logger.info("<< [AssetsFragment.registerDataSource]");
 	}
 

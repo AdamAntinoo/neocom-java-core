@@ -9,7 +9,6 @@
 package org.dimensinfin.eveonline.neocom.datasource;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
@@ -46,7 +45,8 @@ import android.preference.PreferenceManager;
  */
 public class AssetsByLocationDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("AssetsByLocationDataSource");
+	private static final long serialVersionUID = -7522064699765330251L;
+	//	private static Logger logger = Logger.getLogger("AssetsByLocationDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
 

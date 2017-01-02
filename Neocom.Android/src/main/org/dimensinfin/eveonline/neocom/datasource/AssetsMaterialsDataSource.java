@@ -18,12 +18,12 @@ import org.dimensinfin.android.mvc.constants.SystemWideConstants;
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractDataSource;
 import org.dimensinfin.android.mvc.interfaces.IPart;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
-import org.dimensinfin.eveonline.neocom.factory.AbstractIndustryDataSource;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Separator;
@@ -49,7 +49,7 @@ import android.util.Log;
  * 
  * @author Adam Antinoo
  */
-public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
+public class AssetsMaterialsDataSource extends SpecialDataSource {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long											serialVersionUID	= -1904434849082581300L;
 
@@ -57,13 +57,8 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 	private final HashMap<String, AssetGroupPart>	names							= new HashMap<String, AssetGroupPart>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetsMaterialsDataSource(final AppModelStore store) {
-		super(store);
-	}
-
-	public RootNode collaborate2Model() {
-		// TODO Auto-generated method stub
-		return null;
+	public AssetsMaterialsDataSource(final DataSourceLocator locator, final IPartFactory factory) {
+		super(locator, factory);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -72,10 +67,9 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 	 * the tasks to complete and fulfill those actions.
 	 */
 	@Override
-	public void createContentHierarchy() {
-		Log.i("DataSource", ">> AssetsMaterialsDataSource.createHierarchy");
-		// Clear the current list of elements.
-		_root.clear();
+	public void collaborate2Model() {
+		AbstractDataSource.logger.info(">> `[AssetsMaterialsDataSource.collaborate2Model]");
+		_dataModelRoot = new RootNode();
 
 		EveAbstractPart mineralsGroup = new GroupPart(new Separator(EIndustryGroup.MINERAL.toString())).setPriority(100);
 		EveAbstractPart refinedMaterialGroup = new GroupPart(new Separator(EIndustryGroup.REFINEDMATERIAL.toString()))
@@ -196,6 +190,7 @@ public class AssetsMaterialsDataSource extends AbstractIndustryDataSource {
 		return result;
 	}
 
+	@Override
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		// TODO Auto-generated method stub
 		return null;
