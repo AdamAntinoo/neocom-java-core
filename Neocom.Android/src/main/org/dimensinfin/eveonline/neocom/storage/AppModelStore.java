@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.eveonline.neocom.R;
+import org.dimensinfin.eveonline.neocom.activity.PilotListActivity;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
 import org.dimensinfin.eveonline.neocom.datasource.DataSourceManager;
@@ -259,6 +260,7 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 	}
 
 	public Activity getActivity() {
+		if (null == _activity) return new PilotListActivity();
 		return _activity;
 	}
 

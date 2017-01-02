@@ -210,21 +210,21 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 					sqle.printStackTrace();
 					this.setDirty(true);
 				}
-				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
-				Container container = new Container();
-				container.setAssetID(newlocationId);
-				container.setLocationID(newlocationId);
-				container.setTypeID(17366);
-				container.setQuantity(1);
-				container.setSingleton(false);
-
-				//- D E R I V E D   F I E L D S
-				container.setOwnerID(this.getOwnerID());
-				container.setName("Undefined #" + newlocationId);
-				container.setCategory("Celestial");
-				container.setGroupName("Undefined Location");
-				container.setContainer(true);
-				return container;
+				//				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
+				//				Container container = new Container();
+				//				container.setAssetID(newlocationId);
+				//				container.setLocationID(newlocationId);
+				//				container.setTypeID(17366);
+				//				container.setQuantity(1);
+				//				container.setSingleton(false);
+				//
+				//				//- D E R I V E D   F I E L D S
+				//				container.setOwnerID(this.getOwnerID());
+				//				container.setName("Undefined #" + newlocationId);
+				//				container.setCategory("Celestial");
+				//				container.setGroupName("Undefined Location");
+				//				container.setContainer(true);
+				return null;
 			}
 		}
 		return parentAssetCache;

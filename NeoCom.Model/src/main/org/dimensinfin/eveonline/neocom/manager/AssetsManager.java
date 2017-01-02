@@ -726,7 +726,12 @@ public class AssetsManager implements Serializable {
 			}
 			// Process the asset parent if this is the case because we should add first parent to the hierarchy
 			if (asset.hasParent()) {
-				this.processElement(asset.getParentContainer());
+				NeoComAsset parent = asset.getParentContainer();
+				if (null == parent) {
+					this.add2Location(asset);
+				} else {
+					this.processElement(parent);
+				}
 			} else {
 				this.add2Location(asset);
 			}
