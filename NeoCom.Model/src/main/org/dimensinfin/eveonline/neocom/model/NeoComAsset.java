@@ -165,8 +165,21 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return locationCache;
 	}
 
+	/**
+	 * Return the location id of the asset. If the asset is in a container then the location is lost and the
+	 * value is -1. In that cases we should search for the location on the parent asset if that exists.
+	 * 
+	 * @return
+	 */
 	public long getLocationID() {
-		return locationID;
+		if (locationID == -1) {
+			if (this.getParentContainerId() == -1)
+				return -1L;
+			else
+				// Get the location from the parent.
+				return this.getParentContainer().getLocationID();
+		} else
+			return locationID;
 	}
 
 	public String getName() {
