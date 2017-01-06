@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#60000000" >
+
+    <ImageView
+        android:id="@+id/assetIcon"
+        android:layout_width="@dimen/itemIcon48"
+        android:layout_height="@dimen/itemIcon48"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="2dp"
+        android:contentDescription="@string/imageview_defaultcontent"
+        android:src="@drawable/assetsdimmed" />
+
+    <TextView
+        android:id="@+id/assetName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/qtyBlock"
+        android:layout_toRightOf="@+id/assetIcon"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text="@string/default_bponame"
+        android:textColor="@color/orangeText"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/assetLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/qtyBlock"
+        android:layout_toRightOf="@+id/assetIcon"
+        android:ellipsize="marquee"
+        android:singleLine="true"
+        android:text="0.4 Hek - Boundless Station"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/assetCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/itemPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/assetLocation"
+        android:layout_toLeftOf="@+id/stackValue"
+        android:layout_toRightOf="@+id/assetIcon"
+        android:ellipsize="marquee"
+        android:gravity="left"
+        android:text="123,456.65 ISK"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/stackValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/assetLocation"
+        android:ellipsize="marquee"
+        android:gravity="right"
+        android:singleLine="true"
+        android:text="123,456.65 ISK"
+        android:textColor="@android:color/white"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/valueLabel"
+        style="@style/AppTheme.LabelUpLineStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stackValue"
+        android:layout_toRightOf="@+id/assetIcon"
+        android:gravity="right"
+        android:text="STACK VALUE" />
+
+    <LinearLayout
+        android:id="@+id/qtyBlock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="@string/default_smallnumber"
+            android:textColor="@android:color/white"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/noItemsLabel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/topwhiteline"
+            android:ellipsize="marquee"
+            android:gravity="right"
+            android:singleLine="true"
+            android:text="NO. ITEMS"
+            android:textColor="@android:color/white"
+            android:textSize="7sp" />
+    </LinearLayout>
+
+</RelativeLayout>

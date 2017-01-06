@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bluetraslucent60" >
+
+    <ImageView
+        android:id="@+id/itemIcon"
+        style="@style/ItemIconStyle.Size32"
+        android:layout_marginLeft="15dp" />
+
+    <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
+        android:id="@+id/itemName"
+        style="@style/NameStyle.Actionable"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:text="@string/default_bponame" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/bpcCount"
+        style="@style/NumberStyle.Big"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/itemName"
+        android:gravity="right"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:text="1 BPCs [36 copies]" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/inventionCost"
+        style="@style/PriceStyle.Invention"
+        android:layout_below="@+id/itemName"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:text="1.135.214,98" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/manufactureIndex"
+        style="@style/AppTheme.sellPriceStyle"
+        android:layout_width="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/bpcCount"
+        android:drawablePadding="5dp"
+        android:gravity="right"
+        android:paddingRight="1dp"
+        android:text="032"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/blueprintRuns"
+        style="@style/NumberStyle"
+        android:layout_width="35dp"
+        android:layout_below="@+id/bpcCount"
+        android:layout_toLeftOf="@+id/blueprintMETE"
+        android:gravity="right"
+        android:text="24"
+        android:visibility="gone" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/blueprintMETE"
+        style="@style/NumberStyle"
+        android:layout_width="50dp"
+        android:layout_below="@+id/bpcCount"
+        android:layout_toLeftOf="@+id/manufactureIndex"
+        android:gravity="right"
+        android:text="10 / 20"
+        android:visibility="gone" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/profit"
+        style="@style/AppTheme.sellPriceStyle"
+        android:layout_below="@+id/bpcCount"
+        android:layout_toLeftOf="@+id/blueprintRuns"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:drawableLeft="@drawable/ic_profit"
+        android:drawablePadding="5dp"
+        android:gravity="left"
+        android:paddingRight="5dp"
+        android:text="123,456.65 ISK"
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/profitLabels"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profit"
+        android:layout_toRightOf="@+id/itemIcon"
+        android:background="@drawable/topwhiteline"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/profitLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_alignParentLeft="true"
+            android:text="PROFIT BPC" />
+
+        <TextView
+            android:id="@+id/runsLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_width="35dp"
+            android:layout_toLeftOf="@+id/meteLabel"
+            android:gravity="right"
+            android:text="RUNS"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/meteLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_width="50dp"
+            android:layout_toLeftOf="@+id/manufacturableLabel"
+            android:gravity="right"
+            android:text="ME / TE"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/manufacturableLabel"
+            style="@style/LabelStyle.Small"
+            android:layout_width="50dp"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:paddingRight="1dp"
+            android:text="INDEX"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+</RelativeLayout>

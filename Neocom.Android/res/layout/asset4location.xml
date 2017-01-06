@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#60000000" >
+
+    <TextView
+        android:id="@+id/assetLocation"
+        style="@style/LocationStyle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:singleLine="false"
+        android:text="@string/default_location" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/itemPrice"
+        style="@style/NumberStyle"
+        android:layout_alignBaseline="@+id/itemCount"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/assetLocation"
+        android:paddingLeft="2dp"
+        android:text="@string/default_isk" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/stackValue"
+        style="@style/NumberStyle"
+        android:layout_alignBaseline="@+id/itemCount"
+        android:layout_below="@+id/assetLocation"
+        android:layout_toLeftOf="@+id/itemCount"
+        android:gravity="right"
+        android:text="@string/default_isk" />
+
+    <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        android:id="@+id/itemCount"
+        style="@style/NameStyle"
+        android:layout_width="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/assetLocation"
+        android:gravity="right"
+        android:minWidth="45dp"
+        android:paddingRight="3dp"
+        android:text="@string/default_smallnumber" />
+
+    <TextView
+        android:id="@+id/valueLabel"
+        style="@style/LabelStyle.Small.TopLine"
+        android:layout_width="fill_parent"
+        android:layout_below="@+id/stackValue"
+        android:layout_toLeftOf="@+id/countLabel"
+        android:gravity="right"
+        android:text="STACK VALUE" />
+
+    <TextView
+        android:id="@+id/countLabel"
+        style="@style/LabelStyle.Small.TopLine"
+        android:layout_width="100dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/stackValue"
+        android:gravity="right"
+        android:text="NR. ITEMS" />
+
+</RelativeLayout>

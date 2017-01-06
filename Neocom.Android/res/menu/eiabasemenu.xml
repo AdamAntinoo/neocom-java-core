@@ -1,0 +1,38 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="collapseActionView"
+        android:title="@string/action_settingslabel"/>
+    <item
+        android:id="@+id/action_launchUpdate"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:icon="@drawable/redprogress70"
+        android:showAsAction="always"
+        android:title="Download Data"
+        android:visible="false"/>
+    <item
+        android:id="@+id/action_fullreload"
+        android:orderInCategory="300"
+        android:showAsAction="collapseActionView"
+        android:title="Reload"/>
+    <item
+        android:id="@+id/action_downloadlocations"
+        android:orderInCategory="400"
+        android:showAsAction="collapseActionView"
+        android:title="Download Locations"/>
+    <item
+        android:id="@+id/action_updateaccounts"
+        android:icon="@drawable/recyclebuttonup"
+        android:orderInCategory="420"
+        android:showAsAction="collapseActionView"
+        android:title="Update Accounts"/>
+    <item
+        android:id="@+id/action_createFitting"
+        android:orderInCategory="500"
+        android:showAsAction="collapseActionView"
+        android:title="Create Fitting"/>
+
+</menu>
