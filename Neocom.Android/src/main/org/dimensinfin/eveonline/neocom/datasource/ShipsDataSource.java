@@ -89,28 +89,11 @@ public class ShipsDataSource extends SpecialDataSource {
 				_dataModelRoot.addChild(node);
 			}
 		} else {
-<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/datasource/ShipsDataSource.java
-			_dataModelRoot.clean();
-		}
-		if (getVariant() == AppWideConstants.EFragment.SHIPS_BYLOCATION) {
-			if (ifGroupLocations()) {
-				for (Region node : _regions.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			} else {
-				for (ShipLocation node : _locations.values()) {
-					_dataModelRoot.addChild(node);
-				}
-			}
-		}
-		if (getVariant() == AppWideConstants.EFragment.SHIPS_BYCLASS) {
-=======
 			for (EveLocation node : _locations.values()) {
 				_dataModelRoot.addChild(node);
 			}
 		}
 		if (this.getVariant() == EShipsVariants.SHIPS_BYCLASS.name()) {
->>>>>>> origin/development:Neocom.Android/src/main/org/dimensinfin/eveonline/neocom/datasource/ShipsDataSource.java
 			for (Separator node : _categories.values()) {
 				_dataModelRoot.addChild(node);
 			}

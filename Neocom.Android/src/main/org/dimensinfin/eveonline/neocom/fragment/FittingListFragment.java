@@ -49,6 +49,11 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public void createFactory() {
+		this.setFactory(new FittingPartFactory(this.getVariant()));
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public String getSubtitle() {
@@ -84,6 +89,7 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	 * This is the method to create and configure the DataSource. This code is specific for each fragment and
 	 * also for each fragment variant.
 	 */
+	@Override
 	public void registerDataSource() {
 		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
@@ -95,7 +101,7 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 		// This part of the code may depend on the variant so surround it with the detector.
 		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
 			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-			SpecialDataSource ds = new FittingListDataSource(locator, new FittingPartFactory(this.getVariant()));
+			SpecialDataSource ds = new FittingListDataSource(locator, this.getFactory());
 			ds.setVariant(this.getVariant());
 			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 			//			ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);

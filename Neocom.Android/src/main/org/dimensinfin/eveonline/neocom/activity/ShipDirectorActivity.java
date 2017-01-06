@@ -65,13 +65,8 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 		try {// Reset the page position.
 			int page = 0;
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/activity/ShipDirectorActivity.java
-			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.SHIPS_BYLOCATION), page++);
-			//			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS), page++);
-=======
 			this.addPage(new ShipsFragment().setVariant(EShipsVariants.SHIPS_BYLOCATION.name()), page++);
 			this.addPage(new ShipsFragment().setVariant(EShipsVariants.SHIPS_BYCLASS.name()), page++);
->>>>>>> origin/development:Neocom.Android/src/main/org/dimensinfin/eveonline/neocom/activity/ShipDirectorActivity.java
 		} catch (final Exception rtex) {
 			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

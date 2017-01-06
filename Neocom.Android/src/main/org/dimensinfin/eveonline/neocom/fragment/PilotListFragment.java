@@ -30,6 +30,11 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	@Override
+	public void createFactory() {
+		this.setFactory(new PilotPartFactory(this.getVariant()));
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public String getSubtitle() {
@@ -57,13 +62,14 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 		return theView;
 	}
 
-	private void registerDataSource() {
+	@Override
+	protected void registerDataSource() {
 		PilotListFragment.logger.info(">> [PilotListFragment.registerDataSource]");
 		// Create a unique identifier to locate this DataSource that can be cached.
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant());
 		// Register the datasource. If this same datasource is already at the manager we get it
 		// instead creating a new one.
-		SpecialDataSource ds = new PilotListDataSource(locator, new PilotPartFactory(this.getVariant()));
+		SpecialDataSource ds = new PilotListDataSource(locator, this.getFactory());
 		ds = (SpecialDataSource) AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds);
 		ds.setVariant(this.getVariant());
 		ds.setCacheable(true);

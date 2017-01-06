@@ -97,6 +97,10 @@ public abstract class AbstractPagerActivity extends Activity {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	public Activity getActivity() {
+		return this;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
