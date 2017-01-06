@@ -49,6 +49,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This forces the Fragment to create the PartFactory required to get all the Parts used on this fragment
 	 * set.
@@ -58,7 +59,6 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 		this.setFactory(new PilotPartFactory(this.getVariant()));
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public String getSubtitle() {
 		return "";
@@ -121,20 +121,8 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 	 * left of the view.
 	 */
 	private void setHeaderContents() {
-		//				RootNode headModel = ((FittingDataSource) getDataSource()).getHeaderModel();
-		//				for (AbstractComplexNode model : headModel.collaborate2Model(_variant.name())) {
-		//					// Set the datasource as the listener for this parts events.
-		//					AbstractAndroidPart pt = createPart(model);
-		//					pt.addPropertyChangeListener(getDataSource());
-		//					addtoHeader(pt);
-		//				}
 		for (final EDirectorCode directorCode : NeoComDashboardFragment.activeDirectors) {
 			AbstractAndroidPart dirPart = null;
-			// Set the datasource as the listener for this parts events.
-			//			AbstractAndroidPart pt = createPart(model);
-			//			pt.addPropertyChangeListener(this.getDataSource());
-			//			this.addtoHeader(pt);
-
 			switch (directorCode) {
 				case ASSETDIRECTOR:
 					// Create the part, configure it and add to the layout.
@@ -173,8 +161,6 @@ final class PilotDashboardDataSource extends SpecialDataSource {
 	// - F I E L D - S E C T I O N ............................................................................
 	private final Fitting			fit								= null;
 
-	//	private final ArrayList<Asset>						ships							= null;
-
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotDashboardDataSource(final DataSourceLocator locator, final IPartFactory factory) {
 		super(locator, factory);
@@ -185,42 +171,4 @@ final class PilotDashboardDataSource extends SpecialDataSource {
 		return _dataModelRoot;
 	}
 }
-
-////- CLASS IMPLEMENTATION ...................................................................................
-//final class PilotPartFactory extends PartFactory implements IPartFactory {
-//	// - S T A T I C - S E C T I O N ..........................................................................
-//	// - F I E L D - S E C T I O N ............................................................................
-//	// - C O N S T R U C T O R - S E C T I O N ................................................................
-//	public PilotPartFactory(final EFragment _variant) {
-//		super(_variant);
-//	}
-//
-//	// - M E T H O D - S E C T I O N ..........................................................................
-//	/**
-//	 * The method should create the matching part for the model received but there is no other place where we
-//	 * should create the next levels of the hierarchy. So we will create the part trasnformationes here.
-//	 */
-//	@Override
-//	public IEditPart createPart(final IGEFNode node) {
-//		//	if (node instanceof Action) {
-//		//		ActionPart part = new ActionPart((AbstractComplexNode) node);
-//		//		return part;
-//		//	}
-//		//	if (node instanceof EveTask) {
-//		//		TaskPart part = new TaskPart((AbstractComplexNode) node);
-//		//		return part;
-//		//	}
-//		//	if (node instanceof Separator) {
-//		//		GroupPart part = new GroupPart((Separator) node);
-//		//		return part;
-//		//	}
-//		//	// This is the part element for the Fitting that going in the head.
-//		//	if (node instanceof Fitting) {
-//		//		FittingPart part = (FittingPart) new FittingPart((Fitting) node)
-//		//				.setRenderMode(AppWideConstants.rendermodes.RENDER_FITTINGHEADER);
-//		//		return part;
-//		//	}
-//		return new GroupPart(new Separator("-NO data-"));
-//	}
-//}
 //- UNUSED CODE ............................................................................................

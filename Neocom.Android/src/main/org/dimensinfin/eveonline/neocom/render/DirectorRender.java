@@ -21,7 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class DirectorHolder extends AbstractHolder {
+public class DirectorRender extends AbstractHolder {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger	logger		= Logger.getLogger("org.dimensinfin.evedroid.render");
 
@@ -30,7 +30,7 @@ public class DirectorHolder extends AbstractHolder {
 	private TextView			menuLabel	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public DirectorHolder(final DirectorPart target, final Activity context) {
+	public DirectorRender(final DirectorPart target, final Activity context) {
 		super(target, context);
 	}
 
@@ -70,7 +70,7 @@ public class DirectorHolder extends AbstractHolder {
 	protected void createView() {
 		final LayoutInflater mInflater = (LayoutInflater) this.getContext()
 				.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-		_convertView = mInflater.inflate(R.layout.menu_neocomitem, null);
+		_convertView = mInflater.inflate(R.layout.neocomitem4menu, null);
 		_convertView.setTag(this);
 	}
 }

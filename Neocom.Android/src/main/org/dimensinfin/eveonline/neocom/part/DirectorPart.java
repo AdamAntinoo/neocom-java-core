@@ -16,7 +16,7 @@ import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.eveonline.neocom.model.Director;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-import org.dimensinfin.eveonline.neocom.render.DirectorHolder;
+import org.dimensinfin.eveonline.neocom.render.DirectorRender;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -75,7 +75,7 @@ public class DirectorPart extends AbstractAndroidPart implements OnClickListener
 
 	@Override
 	protected AbstractHolder selectHolder() {
-		return new DirectorHolder(this, _activity);
+		return new DirectorRender(this, _activity);
 	}
 
 	private Director getCastedModel() {
