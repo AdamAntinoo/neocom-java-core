@@ -51,22 +51,23 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 		return this.getPilotName();
 	}
 
-	@Override
-	public void onStart() {
-		AssetsFragment.logger.info(">> [AssetsFragment.onStart]");
-		try {
-			this.registerDataSource();
-			// This fragment has a header. Populate it with the datasource header contents.
-			this.setHeaderContents();
-		} catch (final RuntimeException rtex) {
-			AssetsFragment.logger.warning("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
-			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
-		}
-		super.onStart();
-		AssetsFragment.logger.info("<< [AssetsFragment.onStart]");
-	}
+	//	@Override
+	//	public void onStart() {
+	//		AssetsFragment.logger.info(">> [AssetsFragment.onStart]");
+	//		try {
+	//			this.registerDataSource();
+	//			// This fragment has a header. Populate it with the datasource header contents.
+	//			this.setHeaderContents();
+	//		} catch (final RuntimeException rtex) {
+	//			AssetsFragment.logger.warning("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
+	//			rtex.printStackTrace();
+	//			this.stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
+	//		}
+	//		super.onStart();
+	//		AssetsFragment.logger.info("<< [AssetsFragment.onStart]");
+	//	}
 
+	@Override
 	public void registerDataSource() {
 		AssetsFragment.logger.info(">> [AssetsFragment.registerDataSource]");
 		Bundle extras = this.getExtras();

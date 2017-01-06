@@ -8,25 +8,23 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.activity;
 
-import java.util.logging.Logger;
-
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.core.PilotPagerActivity;
-import org.dimensinfin.eveonline.neocom.fragment.AssetsFragment;
+import org.dimensinfin.eveonline.neocom.fragment.ShipsFragment;
 import org.dimensinfin.eveonline.neocom.interfaces.INeoComDirector;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import android.os.Bundle;
+import android.util.Log;
 
-//- CLASS IMPLEMENTATION ...................................................................................
-public class AssetsDirectorActivity extends PilotPagerActivity implements INeoComDirector {
-	public enum EAssetVariants {
-		ASSETS_BYLOCATION, ASSETS_BYCATEGORY, ASSETS_MATERIALS
+// - CLASS IMPLEMENTATION ...................................................................................
+public class ShipDirectorActivity extends PilotPagerActivity implements INeoComDirector {
+	public enum EShipsVariants {
+		SHIPS_BYLOCATION, SHIPS_BYCLASS
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	public static Logger logger = Logger.getLogger("AssetsDirectorActivity");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -34,48 +32,54 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
-	 * Checks if there are the conditions to activate this particular manager. Each one will have it different
-	 * rules to reach the activation point.<br>
-	 * The BPOManager need that there are at least one BPO on the list of assets of the pilot.
+	 * Checks if there are the conditions to activate this particular manager. This manager is activated if the
+	 * capsuleer has fitted ships.
 	 */
 	public boolean checkActivation(final NeoComCharacter checkPilot) {
-		if (checkPilot.getAssetCount() > 0)
+		if (checkPilot.getShips().size() > 0)
 			return true;
 		else
 			return false;
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.assets;
+		return R.drawable.shipsdirector;
 	}
 
 	public int getIconReferenceInactive() {
-		return R.drawable.assetsdimmed;
+		return R.drawable.shipsdirectordimmed;
 	}
 
 	public String getName() {
-		return "Assets";
+		return "Ships";
 	}
 
+	/**
+	 * Create the set of pages to manage the list of completed, running and pending jobs including the ones that
+	 * are created by the application to simulate the Industry recommendations.
+	 */
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
-		AssetsDirectorActivity.logger.info(">> [AssetsDirectorActivity.onCreate]"); //$NON-NLS-1$
+		Log.i("NEOCOM", ">> [ShipDirectorActivity.onCreate]"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
-		try {
+		try {// Reset the page position.
 			int page = 0;
-			// Get the parameters from the bundle. If not defined then use the demo.
-			final Bundle extras = this.getIntent().getExtras();
 			// Create the pages that form this Activity. Each page implemented by a Fragment.
-			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_BYLOCATION.name()).setExtras(extras), page++);
-			//			this.addPage(new AssetsFragment().setVariant(EAssetVariants.ASSETS_MATERIALS.name()).setExtras(extras), page++);
-		} catch (Exception rtex) {
-			AssetsDirectorActivity.logger.warning("RTEX> AssetsDirectorActivity.onCreate - " + rtex.getMessage());
+<<<<<<< HEAD:EIA/src/main/org/dimensinfin/evedroid/activity/ShipDirectorActivity.java
+			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.SHIPS_BYLOCATION), page++);
+			//			addPage(new ShipsFragment().setVariant(AppWideConstants.EFragment.FRAGMENT_SHIPSBYCLASS), page++);
+=======
+			this.addPage(new ShipsFragment().setVariant(EShipsVariants.SHIPS_BYLOCATION.name()), page++);
+			this.addPage(new ShipsFragment().setVariant(EShipsVariants.SHIPS_BYCLASS.name()), page++);
+>>>>>>> origin/development:Neocom.Android/src/main/org/dimensinfin/eveonline/neocom/activity/ShipDirectorActivity.java
+		} catch (final Exception rtex) {
+			Log.e("NEOCOM", "RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> AssetsDirectorActivity.onCreate - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> ShipDirectorActivity.onCreate - " + rtex.getMessage()));
 		}
 		// Reinitialize the tile and subtitle from the first page.
 		this.updateInitialTitle();
-		AssetsDirectorActivity.logger.info("<< [AssetsDirectorActivity.onCreate]"); //$NON-NLS-1$
+		Log.i("NEOCOM", "<< [ShipDirectorActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
 // - UNUSED CODE ............................................................................................
