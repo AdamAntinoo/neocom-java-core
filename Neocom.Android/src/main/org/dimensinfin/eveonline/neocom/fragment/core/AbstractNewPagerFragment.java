@@ -301,7 +301,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		AbstractNewPagerFragment.logger.info(">> [AbstractPageFragment.onCreateView]");
 		final View theView = this.onCreateViewSuper(R.layout.fragment_base, inflater, container, savedInstanceState);
 		try {
-			//			setIdentifier(_variant.hashCode());
+			this.createFactory();
 			this.registerDataSource();
 			// REFACTOR add the missing calls to setheadercontents
 		} catch (final RuntimeException rtex) {

@@ -49,9 +49,6 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	//	public NeoComDashboardFragment() {
-	//	}
-
 	/**
 	 * This forces the Fragment to create the PartFactory required to get all the Parts used on this fragment
 	 * set.
@@ -84,6 +81,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 		int layout = R.layout.activity_directorsboard;
 		final View theView = this.onCreateViewSuper(layout, inflater, container, savedInstanceState);
 		try {
+			this.createFactory();
 			this.registerDataSource();
 			this.setHeaderContents();
 			//			this.setDirectors();

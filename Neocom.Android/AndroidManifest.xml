@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.dimensinfin.eveonline.neocom"
-    android:versionCode="72"
+    android:versionCode="80"
     android:versionName="NeoCom 0.8.0" >
 
     <uses-permission android:name="android.permission.INTERNET" />
