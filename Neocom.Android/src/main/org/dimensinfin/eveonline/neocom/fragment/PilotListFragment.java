@@ -69,6 +69,12 @@ public class PilotListFragment extends AbstractNewPagerFragment {
 		ds.setCacheable(true);
 		this.setDataSource(ds);
 	}
+
+	@Override
+	protected void setHeaderContents() {
+		// TODO Auto-generated method stub
+
+	}
 }
 
 //// - CLASS IMPLEMENTATION ...................................................................................

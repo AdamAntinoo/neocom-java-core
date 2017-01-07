@@ -35,15 +35,10 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	public abstract String getName() ;
-	//	public abstract int getIconReferenceActive();
-	//
-	//	public abstract int getIconReferenceInactive() ;
 	@Override
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i("EVEI", ">> PilotPagerActivity.onCreate"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
-		//		setContentView(R.layout.activity_pager);
 		try {
 			// Process the parameters into the context.
 			final Bundle extras = this.getIntent().getExtras();
@@ -64,29 +59,5 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		}
 		Log.i("EVEI", "<< PilotPagerActivity.onCreate"); //$NON-NLS-1$
 	}
-
-	//	/**
-	//	 * Save the store to their persistent file before releasing the control to another activity that will then
-	//	 * be able to make use of that data structures.
-	//	 */
-	//	@Override
-	//	protected void onPause() {
-	//		Log.i("NEOCOM", ">> PilotPagerActivity.onPause");
-	//		// Check store state and update cache on disk if it has changed.
-	//		if (_store.isDirty()) _store.save();
-	//		super.onPause();
-	//		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
-	//	}
-
-	//	@Override
-	//	protected void onSaveInstanceState(final Bundle savedInstanceState) {
-	//		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
-	//		super.onSaveInstanceState(savedInstanceState);
-	//		// Add current model data dependencies. EVECHARACTERID
-	//		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
-	//				AppModelStore.getSingleton().getPilot().getCharacterID());
-	//		AppModelStore.getSingleton().save();
-	//		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
-	//	}
 }
 //- UNUSED CODE ............................................................................................

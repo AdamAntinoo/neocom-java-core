@@ -21,22 +21,36 @@
             android:src="@drawable/neomenu" />
     </LinearLayout>
 
-    <include
-        android:id="@+id/progressLayout"
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="32dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        layout="@layout/actionbar_indeterminateprogress"
-        android:padding="2dp"
-        android:visibility="visible" />
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/listContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:dividerHeight="1dp"
-        android:visibility="gone" />
+        <LinearLayout
+            android:id="@+id/pilotInfoContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible" >
+        </LinearLayout>
+
+        <include
+            android:id="@+id/progressLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="32dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            layout="@layout/actionbar_indeterminateprogress"
+            android:padding="2dp"
+            android:visibility="visible" />
+
+        <ListView
+            android:id="@+id/listContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="top"
+            android:dividerHeight="1dp"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -63,6 +63,10 @@ public class PilotPartFactory extends PartFactory implements IPartFactory {
 				IPart part = new DirectorPart((Director) node);
 				return part;
 			}
+			if (node instanceof Pilot) {
+				IPart part = new PilotInfoPart(node).setFactory(this);
+				return part;
+			}
 		}
 		// If no part is trapped then call the parent chain until one is found.
 		return super.createPart(node);

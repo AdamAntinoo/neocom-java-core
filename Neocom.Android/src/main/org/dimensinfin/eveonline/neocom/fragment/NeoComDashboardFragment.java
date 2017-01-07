@@ -12,6 +12,8 @@ package org.dimensinfin.eveonline.neocom.fragment;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
+import org.dimensinfin.android.mvc.core.AbstractHolder;
+import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.R;
@@ -41,14 +43,17 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger									logger					= Logger.getLogger("NeoComDashboardFragment");
-	private static final EDirectorCode[]	activeDirectors	= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
+	private static Logger									logger							= Logger.getLogger("NeoComDashboardFragment");
+	private static final EDirectorCode[]	activeDirectors			= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
 			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.JOBDIRECTOR, EDirectorCode.MARKETDIRECTOR,
 			EDirectorCode.FITDIRECTOR };
 
 	// - F I E L D - S E C T I O N ............................................................................
+	/** The view that represent the list view and the space managed though the adapter. */
+	private ViewGroup											pilotInfoContainer	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This forces the Fragment to create the PartFactory required to get all the Parts used on this fragment
@@ -84,7 +89,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 			this.createFactory();
 			this.registerDataSource();
 			this.setHeaderContents();
-			//			this.setDirectors();
+			this.setPilotHeadInformation(theView);
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> NeoComDashboardFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -120,7 +125,8 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 	 * This method adds the icon and button of each director to the header container that this time it is at the
 	 * left of the view.
 	 */
-	private void setHeaderContents() {
+	@Override
+	protected void setHeaderContents() {
 		for (final EDirectorCode directorCode : NeoComDashboardFragment.activeDirectors) {
 			AbstractAndroidPart dirPart = null;
 			switch (directorCode) {
@@ -147,6 +153,42 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 				dirPart.addPropertyChangeListener(this.getDataSource());
 				((DirectorPart) dirPart).setPilot(this.getPilot());
 				this.addtoHeader(dirPart);
+			}
+		}
+	}
+
+	private void addViewtoHeader(final AbstractAndroidPart target) {
+		Log.i("NEOCOM", ">> AbstractPagerFragment.addViewtoHeader");
+		try {
+			final AbstractHolder holder = target.getHolder(this);
+			holder.initializeViews();
+			holder.updateContent();
+			final View hv = holder.getView();
+			//	_headerContainer.removeAllViews();
+			_headerContainer.addView(hv);
+			_headerContainer.setVisibility(View.VISIBLE);
+		} catch (final RuntimeException rtex) {
+			Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
+			rtex.printStackTrace();
+		}
+		Log.i("NEOCOM", "<< AbstractPagerFragment.addViewtoHeader");
+	}
+
+	private void setPilotHeadInformation(final View theView) {
+		pilotInfoContainer = (ViewGroup) theView.findViewById(R.id.pilotInfoContainer);
+		if (null != pilotInfoContainer) {
+			pilotInfoContainer.removeAllViews();
+			// Add to this list the parts for the Pilot Detailed Information
+			IPart pilotPart = this.getFactory().createPart(AppModelStore.getSingleton().getPilot());
+			try {
+				final AbstractHolder holder = ((AbstractAndroidPart) pilotPart).getHolder(this);
+				holder.initializeViews();
+				holder.updateContent();
+				final View hv = holder.getView();
+				pilotInfoContainer.addView(hv);
+			} catch (final RuntimeException rtex) {
+				Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
+				rtex.printStackTrace();
 			}
 		}
 	}

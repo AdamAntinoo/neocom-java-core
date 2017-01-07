@@ -85,6 +85,12 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 		this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		ShipsFragment.logger.info("<< [ShipsFragment.registerDataSource]");
 	}
+
+	@Override
+	protected void setHeaderContents() {
+		// TODO Auto-generated method stub
+
+	}
 }
 
 // - UNUSED CODE ............................................................................................

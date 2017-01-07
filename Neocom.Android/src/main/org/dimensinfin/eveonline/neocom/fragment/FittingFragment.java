@@ -120,14 +120,8 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		this.setDataSource(ds);
 	}
 
-	private AbstractAndroidPart createPart(final AbstractComplexNode model) {
-		IPartFactory factory = this.getFactory();
-		IPart part = factory.createPart(model);
-		part.setParent(null);
-		return (AbstractAndroidPart) part;
-	}
-
-	private void setHeaderContents() {
+	@Override
+	protected void setHeaderContents() {
 		RootNode headModel = ((FittingDataSource) this.getDataSource()).getHeaderModel();
 		for (AbstractComplexNode model : headModel.collaborate2Model(this.getVariant())) {
 			// Set the datasource as the listener for this parts events.
@@ -135,6 +129,13 @@ public class FittingFragment extends AbstractNewPagerFragment {
 			pt.addPropertyChangeListener(this.getDataSource());
 			this.addtoHeader(pt);
 		}
+	}
+
+	private AbstractAndroidPart createPart(final AbstractComplexNode model) {
+		IPartFactory factory = this.getFactory();
+		IPart part = factory.createPart(model);
+		part.setParent(null);
+		return (AbstractAndroidPart) part;
 	}
 }
 // - UNUSED CODE ............................................................................................

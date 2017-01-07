@@ -214,19 +214,6 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		return _factory;
 	}
 
-	//	/**
-	//	 * If the user has set the identifier return the identifier set (This allows to use the Generic by code in
-	//	 * multifragment activities) . Otherwise return the Id of the fragment that would be generated on the layout
-	//	 * XML.
-	//	 */
-	//	@Deprecated
-	//	public int getIdentifier() {
-	//		if (_fragmentID > 0)
-	//			return _fragmentID;
-	//		else
-	//			return this.getId();
-	//	}
-
 	public NeoComCharacter getPilot() {
 		return AppModelStore.getSingleton().getPilot();
 	}
@@ -238,11 +225,6 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	@Override
 	public abstract String getSubtitle();
 
-	//	@Override
-	//	public void propertyChange(final PropertyChangeEvent arg0) {
-	//		// TODO Auto-generated method stub
-	//
-	//	}
 	@Override
 	public abstract String getTitle();
 
@@ -303,7 +285,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		try {
 			this.createFactory();
 			this.registerDataSource();
-			// REFACTOR add the missing calls to setheadercontents
+			this.setHeaderContents();
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -391,6 +373,12 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		_factory = factory;
 	}
 
+	public void setListCallback(final IMenuActionTarget callback) {
+		if (null != callback) {
+			_listCallback = callback;
+		}
+	}
+
 	//	/**
 	//	 * Stores the identifier used to register this fragment as a unique identifier for later retrieval. <br>
 	//	 * Warning: I think I am not using this method or this identifier to locate back the fragments.
@@ -401,12 +389,6 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	//	public void setIdentifier(final int id) {
 	//		_fragmentID = id;
 	//	}
-
-	public void setListCallback(final IMenuActionTarget callback) {
-		if (null != callback) {
-			_listCallback = callback;
-		}
-	}
 
 	public AbstractNewPagerFragment setVariant(final String selectedVariant) {
 		_variant = selectedVariant;
@@ -442,6 +424,8 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	protected abstract void registerDataSource();
+
+	protected abstract void setHeaderContents();
 
 	/**
 	 * For really unrecoverable or undefined exceptions the application should go to a safe spot. That spot is
