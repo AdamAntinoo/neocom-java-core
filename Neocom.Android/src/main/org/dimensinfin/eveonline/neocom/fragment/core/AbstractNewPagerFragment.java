@@ -40,6 +40,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -448,8 +449,12 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			holder.initializeViews();
 			holder.updateContent();
 			final View hv = holder.getView();
-			//	_headerContainer.removeAllViews();
 			_headerContainer.addView(hv);
+			// Add the connection to the click listener
+			if (target instanceof OnClickListener) {
+				hv.setClickable(true);
+				hv.setOnClickListener((OnClickListener) target);
+			}
 			_headerContainer.setVisibility(View.VISIBLE);
 		} catch (final RuntimeException rtex) {
 			Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());

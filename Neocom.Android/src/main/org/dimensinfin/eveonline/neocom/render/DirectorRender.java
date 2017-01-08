@@ -57,6 +57,8 @@ public class DirectorRender extends AbstractHolder {
 			// Add the click action to the icon only when the icon is active.
 			//			activator = (ImageView) findViewById(R.id.assetsDirectorIcon);
 			menuIcon.setClickable(true);
+			// TODO Chanck if this listener connection works.
+			menuIcon.setOnClickListener(this.getPart());
 		} else {
 			menuIcon.setImageDrawable(this.getContext().getResources().getDrawable(this.getPart().getDimmedIcon()));
 			menuIcon.setClickable(false);

@@ -15,6 +15,7 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.AssetsDirectorActivity;
@@ -50,7 +51,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** The view that represent the list view and the space managed though the adapter. */
-	private ViewGroup											pilotInfoContainer	= null;
+	private ViewGroup											neoComMenuContainer	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -89,7 +90,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 			this.createFactory();
 			this.registerDataSource();
 			this.setHeaderContents();
-			this.setPilotHeadInformation(theView);
+			this.setNeoComMenu(theView);
 		} catch (final RuntimeException rtex) {
 			Log.e("EVEI", "RTEX> NeoComDashboardFragment.onCreateView - " + rtex.getMessage());
 			rtex.printStackTrace();
@@ -121,74 +122,64 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 		NeoComDashboardFragment.logger.info("<< [NeoComDashboardFragment.registerDataSource]");
 	}
 
-	/**
-	 * This method adds the icon and button of each director to the header container that this time it is at the
-	 * left of the view.
-	 */
 	@Override
 	protected void setHeaderContents() {
-		for (final EDirectorCode directorCode : NeoComDashboardFragment.activeDirectors) {
-			AbstractAndroidPart dirPart = null;
-			switch (directorCode) {
-				case ASSETDIRECTOR:
-					// Create the part, configure it and add to the layout.
-					dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new AssetsDirectorActivity()));
-					break;
-				case SHIPDIRECTOR:
-					// Create the part, configure it and add to the layout.
-					dirPart = new DirectorPart(new Director(new ShipDirectorActivity()));
-					break;
-				//							case INDUSTRYDIRECTOR:
-				//								final IDirector thedirector = new IndustryDirectorActivity();
-				//							case JOBDIRECTOR:
-				//								final IDirector jdirector = new FittingActivity();
-				//							case MARKETDIRECTOR:
-				//								final IDirector director = new MarketDirectorActivity();
-				case FITDIRECTOR:
-					// Create the part, configure it and add to the layout.
-					dirPart = new DirectorPart(new Director(new FittingActivity()));
-					break;
-			}
-			if (null != dirPart) {
-				dirPart.addPropertyChangeListener(this.getDataSource());
-				((DirectorPart) dirPart).setPilot(this.getPilot());
-				this.addtoHeader(dirPart);
-			}
-		}
+		IPart pilotPart = this.getFactory().createPart(AppModelStore.getSingleton().getPilot());
+		((AbstractPropertyChanger) pilotPart).addPropertyChangeListener(this.getDataSource());
+		this.addtoHeader((AbstractAndroidPart) pilotPart);
 	}
 
-	private void addViewtoHeader(final AbstractAndroidPart target) {
-		Log.i("NEOCOM", ">> AbstractPagerFragment.addViewtoHeader");
-		try {
-			final AbstractHolder holder = target.getHolder(this);
-			holder.initializeViews();
-			holder.updateContent();
-			final View hv = holder.getView();
-			//	_headerContainer.removeAllViews();
-			_headerContainer.addView(hv);
-			_headerContainer.setVisibility(View.VISIBLE);
-		} catch (final RuntimeException rtex) {
-			Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
-			rtex.printStackTrace();
-		}
-		Log.i("NEOCOM", "<< AbstractPagerFragment.addViewtoHeader");
-	}
-
-	private void setPilotHeadInformation(final View theView) {
-		pilotInfoContainer = (ViewGroup) theView.findViewById(R.id.pilotInfoContainer);
-		if (null != pilotInfoContainer) {
-			pilotInfoContainer.removeAllViews();
-			// Add to this list the parts for the Pilot Detailed Information
-			IPart pilotPart = this.getFactory().createPart(AppModelStore.getSingleton().getPilot());
-			try {
-				final AbstractHolder holder = ((AbstractAndroidPart) pilotPart).getHolder(this);
-				holder.initializeViews();
-				holder.updateContent();
-				final View hv = holder.getView();
-				pilotInfoContainer.addView(hv);
-			} catch (final RuntimeException rtex) {
-				Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
-				rtex.printStackTrace();
+	/**
+	 * This method adds the icon and button of each director to the header container that this time it is at the
+	 * left of the view. <br>
+	 * This should be implemented as a new List View because it is the only structure able to hangle Part click
+	 * interactions.
+	 */
+	private void setNeoComMenu(final View theView) {
+		// Get access to the ListView where to connect the parts.
+		neoComMenuContainer = (ViewGroup) _container.findViewById(R.id.neocomContainer);
+		if (null != neoComMenuContainer) {
+			for (final EDirectorCode directorCode : NeoComDashboardFragment.activeDirectors) {
+				AbstractAndroidPart dirPart = null;
+				switch (directorCode) {
+					case ASSETDIRECTOR:
+						// Create the part, configure it and add to the layout.
+						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new AssetsDirectorActivity()));
+						break;
+					case SHIPDIRECTOR:
+						// Create the part, configure it and add to the layout.
+						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new ShipDirectorActivity()));
+						break;
+					//							case INDUSTRYDIRECTOR:
+					//								final IDirector thedirector = new IndustryDirectorActivity();
+					//							case JOBDIRECTOR:
+					//								final IDirector jdirector = new FittingActivity();
+					//							case MARKETDIRECTOR:
+					//								final IDirector director = new MarketDirectorActivity();
+					case FITDIRECTOR:
+						// Create the part, configure it and add to the layout.
+						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new FittingActivity()));
+						break;
+				}
+				if (null != dirPart) {
+					dirPart.addPropertyChangeListener(this.getDataSource());
+					((DirectorPart) dirPart).setPilot(this.getPilot());
+					try {
+						final AbstractHolder holder = dirPart.getHolder(this);
+						holder.initializeViews();
+						holder.updateContent();
+						final View hv = holder.getView();
+						neoComMenuContainer.addView(hv);
+						// Add the connection to the click listener
+						//						if (dirPart instanceof OnClickListener) {
+						//							hv.setClickable(true);
+						////							hv.setOnClickListener((OnClickListener) dirPart);
+						//						}
+					} catch (final RuntimeException rtex) {
+						Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
+						rtex.printStackTrace();
+					}
+				}
 			}
 		}
 	}
