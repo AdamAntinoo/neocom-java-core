@@ -38,11 +38,11 @@ public class FittingActivity extends PilotPagerActivity implements INeoComDirect
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.fitsdirector;
+		return R.drawable.fittingmanagement;
 	}
 
 	public int getIconReferenceInactive() {
-		return R.drawable.fitdirectordimmed;
+		return R.drawable.fittingmanagementdimmed;
 	}
 
 	public String getName() {

@@ -10,12 +10,12 @@
         style="@style/NeoComIconStyle"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:background="#FF303030"
         android:src="@drawable/evei4" />
 
     <TextView
         android:id="@+id/neocomEntryLabel"
         style="@style/LabelStyle.Small.NeoComLabel"
+        android:background="#80181818"
         android:text="-NeoCom-" />
 
 </RelativeLayout>

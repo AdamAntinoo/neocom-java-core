@@ -4,7 +4,7 @@
     <item>
         <bitmap
             android:scaleType="centerCrop"
-            android:src="@drawable/fitsdirector" />
+            android:src="@drawable/fittingmanagement" />
     </item>
     <item>
         <shape>
