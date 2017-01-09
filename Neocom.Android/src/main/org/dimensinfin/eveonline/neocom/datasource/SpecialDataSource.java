@@ -97,10 +97,11 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 			SpecialDataSource.logger.info(">> [SpecialDataSource.createContentHierarchy]");
 			// Check if we have already a Part model.
 			// But do not forget to associate the new Data model even of the old exists.
-			if (null == _partModelRoot)
+			if (null == _partModelRoot) {
 				_partModelRoot = new RootPart(_dataModelRoot, _partFactory);
-			else
+			} else {
 				_partModelRoot.setModel(_dataModelRoot);
+			}
 
 			SpecialDataSource.logger.info(
 					"-- [SpecialDataSource.createContentHierarchy]> Initiating the refreshChildren() for the _partModelRoot");
@@ -139,14 +140,16 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	 * because we should change the final class level returned to the higher level possible and now for
 	 * compatibility we keep the <code>AbstractAndroidPart</code>.
 	 */
-	@Override
 	public ArrayList<AbstractAndroidPart> getBodyParts() {
 		SpecialDataSource.logger.info(">> [SpecialDataSource.getBodyParts]");
 		// Get the list of Parts that will be used for the ListView
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		if (null != _bodyParts) // Transform the list of IParts to a list of AbstractAndroidParts.
+		if (null != _bodyParts) {
 			for (IPart part : _bodyParts)
-			if (part instanceof AbstractAndroidPart) result.add((AbstractAndroidPart) part);
+				if (part instanceof AbstractAndroidPart) {
+					result.add((AbstractAndroidPart) part);
+				}
+		}
 		SpecialDataSource.logger.info("<< [SpecialDataSource.getBodyParts]> result.size: " + result.size());
 		return result;
 	}
@@ -163,8 +166,9 @@ public abstract class SpecialDataSource extends AbstractDataSource implements IE
 	@Deprecated
 	public ArrayList<AbstractAndroidPart> getHeaderParts() {
 		ArrayList<AbstractAndroidPart> result = new ArrayList<AbstractAndroidPart>();
-		for (IPart node : _headParts)
+		for (IPart node : _headParts) {
 			result.add((AbstractAndroidPart) node);
+		}
 		return result;
 	}
 

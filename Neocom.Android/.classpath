@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry excluding="org/dimensinfin/eveonline/neocom/datasource/AssetsMaterialsDataSource.java" kind="src" path="src/main"/>
+	<classpathentry excluding="org/dimensinfin/eveonline/neocom/datasource/AssetsMaterialsDataSource.java|org/dimensinfin/eveonline/neocom/factory/DataSourceFactory.java" kind="src" path="src/main"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">

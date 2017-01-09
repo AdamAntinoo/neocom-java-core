@@ -34,7 +34,9 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 
 	@Override
 	public void createFactory() {
+		AssetsFragment.logger.info(">> [AssetsFragment.createFactory]");
 		this.setFactory(new AssetPartFactory(this.getVariant()));
+		AssetsFragment.logger.info("<< [AssetsFragment.createFactory]");
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -82,6 +84,7 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 		AssetsFragment.logger.info("<< [AssetsFragment.registerDataSource]");
 	}
 
+	@Override
 	public void setHeaderContents() {
 		// TODO Auto-generated method stub
 
