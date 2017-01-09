@@ -55,7 +55,7 @@ public class CharacterUpdaterService extends IntentService {
 							NeoComApp.topCounter--;
 							break;
 						case ASSETDATA:
-						case BLUEPRINTDATA:
+							//						case BLUEPRINTDATA:
 							pilot.downloadAssets();
 							pilot.downloadBlueprints();
 							NeoComApp.getTheCacheConnector().clearPendingRequest(Long.valueOf(localizer).toString());
@@ -76,7 +76,9 @@ public class CharacterUpdaterService extends IntentService {
 							break;
 					}
 					// Clean the top counter if completed.
-					if (NeoComApp.topCounter < 0) NeoComApp.topCounter = 0;
+					if (NeoComApp.topCounter < 0) {
+						NeoComApp.topCounter = 0;
+					}
 				} catch (RuntimeException rtex) {
 				}
 			}

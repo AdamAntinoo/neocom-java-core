@@ -8,7 +8,7 @@ package org.dimensinfin.eveonline.neocom.enums;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum EDataBlock {
-	READY, CHARACTERDATA, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS
+	READY, CHARACTERDATA, ASSETDATA, /* BLUEPRINTDATA, */INDUSTRYJOBS, MARKETORDERS
 }
 
 // - UNUSED CODE ............................................................................................

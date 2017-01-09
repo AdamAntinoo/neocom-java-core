@@ -481,7 +481,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		if (AppConnector.checkExpiration(assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
-		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
+		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
 	}
 
@@ -781,7 +781,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 				}
 			}
 			NeoComCharacter.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
-			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
+			//			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
 		} catch (final SQLException sqle) {
 			NeoComCharacter.logger
 					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
