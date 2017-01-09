@@ -43,6 +43,8 @@ public class DataSourceManager implements IDataSourceConnector {
 		DataSourceLocator locator = newSource.getDataSourceLocator();
 		// Search for locator on cache.
 		IExtendedDataSource found = dataSources.get(locator.getIdentity());
+		// REFACTOR Do not return cached datasources.
+		found = null;
 		if (null == found) {
 			dataSources.put(locator.getIdentity(), newSource);
 			DataSourceManager.logger
