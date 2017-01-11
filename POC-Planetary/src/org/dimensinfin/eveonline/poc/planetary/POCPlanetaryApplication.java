@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
@@ -37,6 +38,60 @@ public class POCPlanetaryApplication {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public POCPlanetaryApplication(String[] args) {
+	}
+
+	/**
+	 * This pretends to be the POC for a new Planetary Advisor that will take a character's set of Planetary
+	 * Resources (on a single and probably predefined location) and try to get the most profitable processing
+	 * and selling of the set. <br>
+	 * The input is a list of resources and a tax value to be used for taxes and the result is the list of
+	 * actions to do and the processing to setup to get that output, probably the time it get to get everything
+	 * processed and the resulting income in ISK.
+	 */
+	public void run() {
+		// Get some list of planetary resources of all kinds.
+		Vector<Resource> planetaryAssets = new Vector<Resource>();
+		Resource pa = new Resource(2268, 1000000);
+		planetaryAssets.add(pa);
+		pa = new Resource(2393, 8640);
+		planetaryAssets.add(pa);
+		pa = new Resource(2267, 1000000);
+		planetaryAssets.add(pa);
+		pa = new Resource(2329, 6520);
+		planetaryAssets.add(pa);
+		pa = new Resource(2869, 19);
+		planetaryAssets.add(pa);
+		pa = new Resource(17136, 253);
+		planetaryAssets.add(pa);
+		pa = new Resource(9838, 7484);
+		planetaryAssets.add(pa);
+		pa = new Resource(3891, 4890);
+		planetaryAssets.add(pa);
+		pa = new Resource(3693, 1445);
+		planetaryAssets.add(pa);
+		pa = new Resource(3695, 7573);
+		planetaryAssets.add(pa);
+		pa = new Resource(2287, 2000000);
+		planetaryAssets.add(pa);
+		pa = new Resource(2288, 2000000);
+		planetaryAssets.add(pa);
+		pa = new Resource(2308, 2000000);
+		planetaryAssets.add(pa);
+		pa = new Resource(3645, 69886);
+		planetaryAssets.add(pa);
+		pa = new Resource(2390, 13320);
+		planetaryAssets.add(pa);
+		pa = new Resource(2310, 2245474);
+		planetaryAssets.add(pa);
+
+		// Process Raw resources to Tier 1 and then  start to process the set.
+		for (Resource neoComAsset : planetaryAssets) {
+			if (neoComAsset.getCategory().equalsIgnoreCase("Planetary Resources")) {
+				NeoComAsset transform = processRaw(neoComAsset);
+			}
+		}
+		// Create the initial processing point and start the optimization recursively.
+		// Print the output
 	}
 
 	private double calculateAssetValue(final NeoComAsset asset) {
@@ -96,63 +151,22 @@ public class POCPlanetaryApplication {
 		return newAsset;
 	}
 
-	private NeoComAsset processRaw(NeoComAsset neoComAsset) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	/**
-	 * This pretends to be the POC for a new Planetary Advisor that will take a character's set of Planetary
-	 * Resources (on a single and probably predefined location) and try to get the most profitable processing
-	 * and selling of the set. <br>
-	 * The input is a list of resources and a tax value to be used for taxes and the result is the list of
-	 * actions to do and the processing to setup to get that output, probably the time it get to get everything
-	 * processed and the resulting income in ISK.
+	 * Converts a RAW level Planetary resource (Planetary Resources) into a Tier 1 Planetary resource and
+	 * applies the tax to the input.
+	 * 
+	 * @param neoComAsset
+	 * @return
 	 */
-	private void run() {
-		// Get some list of planetary resources of all kinds.
-		Vector<NeoComAsset> planetaryAssets = new Vector<NeoComAsset>();
-		NeoComAsset pa = createAsset(2268, 1000000);
-		planetaryAssets.add(pa);
-		pa = createAsset(2393, 8640);
-		planetaryAssets.add(pa);
-		pa = createAsset(2267, 1000000);
-		planetaryAssets.add(pa);
-		pa = createAsset(2329, 6520);
-		planetaryAssets.add(pa);
-		pa = createAsset(2869, 19);
-		planetaryAssets.add(pa);
-		pa = createAsset(17136, 253);
-		planetaryAssets.add(pa);
-		pa = createAsset(9838, 7484);
-		planetaryAssets.add(pa);
-		pa = createAsset(3891, 4890);
-		planetaryAssets.add(pa);
-		pa = createAsset(3693, 1445);
-		planetaryAssets.add(pa);
-		pa = createAsset(3695, 7573);
-		planetaryAssets.add(pa);
-		pa = createAsset(2287, 2000000);
-		planetaryAssets.add(pa);
-		pa = createAsset(2288, 2000000);
-		planetaryAssets.add(pa);
-		pa = createAsset(2308, 2000000);
-		planetaryAssets.add(pa);
-		pa = createAsset(3645, 69886);
-		planetaryAssets.add(pa);
-		pa = createAsset(2390, 13320);
-		planetaryAssets.add(pa);
-		pa = createAsset(2310, 2245474);
-		planetaryAssets.add(pa);
-
-		// Process Raw resources to Tier 1 and then  start to process the set.
-		for (NeoComAsset neoComAsset : planetaryAssets) {
-			if (neoComAsset.getCategory().equalsIgnoreCase("Planetary Resources")) {
-				NeoComAsset transform = processRaw(neoComAsset);
-			}
-		}
-		// Create the initial processing point and start the optimization recursively.
-		// Print the output
+	private ProcessingResult processRaw(Resource neoComAsset) {
+		// Calculate the quantity that we can process.
+		int resultQty = Math.floorDiv(neoComAsset.getQuantity(), 3000);
+		ProcessingResult result = new ProcessingResult();
+		// Add the remaining RAW resource not processed.
+		result.addResource(new Resource(neoComAsset.getTypeID(), neoComAsset.getQuantity() - (3000 * resultQty)));
+		// Get the equivalent processed resource from this RAW element.
+		PlanetaryProcessor.process(neoComAsset);
+		return null;
 	}
 }
 
