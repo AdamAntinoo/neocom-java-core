@@ -55,6 +55,10 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 		EveAbstractPart.securityLevels.put(0, "#F00000");
 	}
 
+	//	protected final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("yyyy/MMM/dd HH:mm");
+	protected static final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("YYYY.MM.dd HH:mm");
+	// - F I E L D - S E C T I O N ............................................................................
+
 	public static String generateTimeString(final long millis) {
 		try {
 			DateTimeFormatterBuilder timeFormatter = new DateTimeFormatterBuilder();
@@ -72,10 +76,6 @@ public abstract class EveAbstractPart extends NeoComAbstractPart {
 			return "0:00";
 		}
 	}
-
-	protected final DateTimeFormatter timePointFormatter = DateTimeFormat.forPattern("yyyy/MMM/dd HH:mm");
-
-	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveAbstractPart(final AbstractComplexNode model) {
