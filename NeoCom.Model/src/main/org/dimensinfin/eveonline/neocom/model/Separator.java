@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Separator extends AbstractNeoComNode {
 	public enum ESeparatorType {
-		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_ASSAULTFRIGATE
+		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................

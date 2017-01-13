@@ -4,7 +4,8 @@
     <string name="versionname">NeoCom 0.8.1</string>
     <string name="AppDescription">"Application to get access to CCP api information and help manage industrial activities for characters and corporations at Eve Online. The set is composed of some projects with implementation for Android and for an AngularJS web interface based on REST services on Sprint Boot Cloud."</string>
     <string name="app_versionsuffix">05</string>
-    <string name="databaseversion">65</string>
+    <string name="databaseversion">81</string>
+    <string name="databasechangeversioncomment_v081">v081 - Change in the name of the new Assets colum need to drop and recreate that Column.</string>
     <string name="databasechangeversioncomment_v065">v065 - New column on Asset to store the asset estimated value.</string>
     <string name="databasechangeversioncomment_v064">v064 - Added a nre table for the locations.</string>
     <string name="databasechangeversioncomment_v053">v053 - Changed the way Property IDs are generated. Clearing the table to create it back.</string>

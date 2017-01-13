@@ -641,7 +641,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			}
 		}
 		// Add the asset value to the database.
-		newAsset.setIskvalue(this.calculateAssetValue(newAsset));
+		newAsset.setIskValue(this.calculateAssetValue(newAsset));
 		return newAsset;
 	}
 

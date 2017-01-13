@@ -19,7 +19,7 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.AssetsDirectorActivity;
-import org.dimensinfin.eveonline.neocom.activity.FittingActivity;
+import org.dimensinfin.eveonline.neocom.activity.FittingListActivity;
 import org.dimensinfin.eveonline.neocom.activity.ShipDirectorActivity;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants.EExtras;
 import org.dimensinfin.eveonline.neocom.datasource.DataSourceLocator;
@@ -158,7 +158,7 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 					//								final IDirector director = new MarketDirectorActivity();
 					case FITDIRECTOR:
 						// Create the part, configure it and add to the layout.
-						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new FittingActivity()));
+						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new FittingListActivity()));
 						break;
 				}
 				if (null != dirPart) {
@@ -201,6 +201,7 @@ final class PilotDashboardDataSource extends SpecialDataSource {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public RootNode collaborate2Model() {
+		this.setDataModel(new RootNode());
 		return _dataModelRoot;
 	}
 }

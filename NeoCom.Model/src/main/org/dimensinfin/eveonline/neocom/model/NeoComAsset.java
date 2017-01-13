@@ -90,7 +90,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	@DatabaseField
 	private boolean								containerFlag			= false;
 	@DatabaseField
-	private double								iskvalue					= 0.0;
+	private double								iskValue					= 0.0;
 
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset	parentAssetCache	= null;
@@ -137,8 +137,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return groupName;
 	}
 
-	public double getIskvalue() {
-		return iskvalue;
+	public double getIskValue() {
+		return iskValue;
 	}
 
 	/**
@@ -369,8 +369,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		this.id = id;
 	}
 
-	public void setIskvalue(final double iskvalue) {
-		this.iskvalue = iskvalue;
+	public void setIskValue(final double iskvalue) {
+		iskValue = iskvalue;
 	}
 
 	public void setLocationID(final long location) {

@@ -669,7 +669,7 @@ public class AssetsManager implements Serializable {
 			// Add the asset to the verification count.
 			verificationAssetCount++;
 			// Add the asset value to the owner balance.
-			totalAssetsValue += asset.getIskvalue();
+			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container
 			if (asset.isShip()) {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
