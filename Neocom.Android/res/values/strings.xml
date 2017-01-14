@@ -44,7 +44,8 @@
     <string name="default_regionname">Tash-Murkon - Moon 22</string>
     <string name="default_fittingname">HCBC Impact 1.0</string>
     <string name="default_fittingclass">Combat Battlecruiser >> Harbinger</string>
-
+    <string name="default_label">-LABEL-</string>
+    
     <!-- CONTEXT MENU VALUES -->
     <string-array name="assetActions">
         <item>MOVE</item>

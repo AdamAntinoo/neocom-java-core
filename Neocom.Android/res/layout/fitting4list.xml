@@ -25,7 +25,7 @@
 
         <org.dimensinfin.eveonline.neocom.core.Din1451EngTextView
             android:id="@+id/fittingClass"
-            style="@style/Name.Style.12"
+            style="@style/Name.Style.14"
             android:layout_below="@+id/fittingName"
             android:layout_marginTop="1dp"
             android:layout_toRightOf="@+id/itemIcon"
@@ -44,7 +44,7 @@
 
         <TextView
             android:id="@+id/costLabel"
-            style="@style/LabelStyle.LineUp"
+            style="@style/AppTheme.LabelUpLineStyle"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/fittingCost"

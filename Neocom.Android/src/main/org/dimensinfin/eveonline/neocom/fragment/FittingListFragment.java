@@ -142,26 +142,35 @@ final class FittingListDataSource extends SpecialDataSource {
 		try {
 			AppModelStore store = AppModelStore.getSingleton();
 			HashMap<String, Fitting> fitList = store.getFittings();
-			// Reinitialize the DS structures all the times we enter it until we have code to optimize this.
-			this.initializeGroupList();
-			for (Fitting fit : fitList.values()) {
-				FittingListDataSource.logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
-				// Classify the fitting.
-				Separator targetGroup = groups.get(fit.getHull().getGroupName());
-				if (null == targetGroup) {
-					defaultGroup.addChild(fit);
-				} else {
-					targetGroup.addChild(fit);
+			// If the fitting list is empty then show an special message and end the DS.
+			if (fitList.size() < 1) {
+				_dataModelRoot = new RootNode();
+				_dataModelRoot.addChild(new Separator("-NO FITS DECLARED-").setType(ESeparatorType.EMPTY_FITTINGLIST));
+				FittingListDataSource.logger.info("<< [FittingListDataSource.collaborate2Model]");
+				return _dataModelRoot;
+			} else {
+				// Reinitialize the DS structures all the times we enter it until we have code to optimize this.
+				this.initializeGroupList();
+				for (Fitting fit : fitList.values()) {
+					FittingListDataSource.logger
+							.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
+					// Classify the fitting.
+					Separator targetGroup = groups.get(fit.getHull().getGroupName());
+					if (null == targetGroup) {
+						defaultGroup.addChild(fit);
+					} else {
+						targetGroup.addChild(fit);
+					}
 				}
-			}
-			// Link the non empty hull groups into the Data model root.
-			for (Separator group : groups.values())
-				if (group.getChildren().size() > 0) {
-					_dataModelRoot.addChild(group);
+				// Link the non empty hull groups into the Data model root.
+				for (Separator group : groups.values())
+					if (group.getChildren().size() > 0) {
+						_dataModelRoot.addChild(group);
+					}
+				// Add the default group if not empty.
+				if (defaultGroup.getChildren().size() > 0) {
+					_dataModelRoot.addChild(defaultGroup);
 				}
-			// Add the default group if not empty.
-			if (defaultGroup.getChildren().size() > 0) {
-				_dataModelRoot.addChild(defaultGroup);
 			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();

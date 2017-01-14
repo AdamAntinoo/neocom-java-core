@@ -115,12 +115,13 @@ public class ShipPart extends AssetPart implements OnClickListener, IMenuActionT
 				}
 				fit.setName(label);
 				AppModelStore.getSingleton().addFitting(fit, label);
+				AppModelStore.getSingleton().save();
 
 				// Open the Fitting Activity
 				final Intent intent = new Intent(this.getActivity(), FittingActivity.class);
 				intent.putExtra(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 				intent.putExtra(AppWideConstants.EExtras.EXTRA_FITTINGID.name(), label);
-				this.getActivity().startActivity(intent);
+				//				this.getActivity().startActivity(intent);
 				break;
 
 			default:

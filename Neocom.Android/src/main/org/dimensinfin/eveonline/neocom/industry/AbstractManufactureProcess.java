@@ -42,37 +42,38 @@ import android.util.Log;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AbstractManufactureProcess extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID				= 1220739885623391915L;
-	private static Logger											logger									= Logger.getLogger("AbstractManufactureProcess");
-	private static long												GENERATED_ASSETCOUNTER	= 30001;
-	private static final double								T2PE_LEVEL							= -4.0;
-	private static final double								REFINING_EFFICIENCY			= 0.52;
+	private static final long														serialVersionUID				= 1220739885623391915L;
+	private static Logger																logger									= Logger
+			.getLogger("AbstractManufactureProcess");
+	private static long																	GENERATED_ASSETCOUNTER	= 30001;
+	private static final double													T2PE_LEVEL							= -4.0;
+	private static final double													REFINING_EFFICIENCY			= 0.52;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** The main element used for the manufacture job. */
-	protected NeoComBlueprint									blueprint								= null;
+	protected NeoComBlueprint														blueprint								= null;
 	/** The Pilot owner of the job and blueprint. Required to get the characterID. */
-	protected NeoComCharacter									pilot										= null;
+	protected transient NeoComCharacter									pilot										= null;
 	/** New and locally used AssetsManager used to process the job requests. */
-	protected AssetsManager										industryAssetsManager		= null;
-	protected int															bpid										= -1;
-	protected int															moduleid								= -1;
-	protected ArrayList<Resource>							lom											= null;
-	protected double													cost										= -1.0;
-	protected int															index										= -1;
-	private boolean														totalcalculated					= false;
-	protected int															totalManufacturable			= -1;
+	protected transient AssetsManager										industryAssetsManager		= null;
+	protected int																				bpid										= -1;
+	protected int																				moduleid								= -1;
+	protected ArrayList<Resource>												lom											= null;
+	protected double																		cost										= -1.0;
+	protected int																				index										= -1;
+	private boolean																			totalcalculated					= false;
+	protected int																				totalManufacturable			= -1;
 
 	// - A C T I O N   P R O C E S S I N G
-	protected HashMap<Long, Property>					actions4Item						= null;
-	protected EveLocation											manufactureLocation			= null;
-	protected String													region									= null;
-	protected ArrayList<Resource>							requirements						= new ArrayList<Resource>();
-	protected final HashMap<Integer, Action>	actionsRegistered				= new HashMap<Integer, Action>();
-	protected Action													currentAction						= null;
-	protected int															pointer									= -1;
-	protected int															runs										= 10;
-	protected int															threads									= 1;
+	protected HashMap<Long, Property>										actions4Item						= null;
+	protected EveLocation																manufactureLocation			= null;
+	protected String																		region									= null;
+	protected ArrayList<Resource>												requirements						= new ArrayList<Resource>();
+	protected transient final HashMap<Integer, Action>	actionsRegistered				= new HashMap<Integer, Action>();
+	protected transient Action													currentAction						= null;
+	protected int																				pointer									= -1;
+	protected int																				runs										= 10;
+	protected int																				threads									= 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/** Test only constructor. NOt to be used */

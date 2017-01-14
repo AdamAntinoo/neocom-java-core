@@ -8,9 +8,9 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.io.Serializable;
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
@@ -21,7 +21,6 @@ import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.ETaskCompletion;
 import org.dimensinfin.eveonline.neocom.enums.ETaskType;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -34,8 +33,8 @@ import org.dimensinfin.core.model.AbstractComplexNode;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractComplexNode implements INeoComNode{
-	private class TaskBundle {
+public class Action extends AbstractComplexNode implements INeoComNode {
+	private class TaskBundle implements Serializable {
 		protected int			priority	= 999;
 		protected EveTask	task			= null;
 
@@ -70,12 +69,18 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 		resource = res;
 		requestQty = resource.getQuantity();
 		// Default expand state on initialization is collapsed.
-		setExpanded(false);
+		this.setExpanded(false);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addResource(final Resource rs) {
 		resource.setStackSize(resource.getStackSize() + rs.getStackSize());
+	}
+
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll(this.getTasks());
+		return results;
 	}
 
 	public String getCategory() {
@@ -88,10 +93,6 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 
 	public String getGroupName() {
 		return resource.getGroupName();
-	}
-
-	public int getTypeID() {
-		return resource.getTypeID();
 	}
 
 	public EIndustryGroup getItemIndustryGroup() {
@@ -114,6 +115,10 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 		return requestQty;
 	}
 
+	public Resource getResource() {
+		return resource;
+	}
+
 	public synchronized ArrayList<EveTask> getTasks() {
 		// Order the tasks and then extract them to a list.
 		Comparator<TaskBundle> orderbyPriority = new Comparator<TaskBundle>() {
@@ -134,6 +139,10 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 			result.add(bundle.task);
 		}
 		return result;
+	}
+
+	public int getTypeID() {
+		return resource.getTypeID();
 	}
 
 	public String getUserAction() {
@@ -172,27 +181,34 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 			//			}
 			tasksRegistered.add(bundle);
 			// Update the global priority for this Action
-			if (pri < lowerPriority) lowerPriority = pri;
-			logger.info("-- Action.registerTask. [" + tasksRegistered.size() + "] " + task);
+			if (pri < lowerPriority) {
+				lowerPriority = pri;
+			}
+			Action.logger.info("-- Action.registerTask. [" + tasksRegistered.size() + "] " + task);
 		} catch (RuntimeException rtex) {
-			logger.severe("E> Detected Runtime Exception white registering task. " + rtex.getMessage());
+			Action.logger.severe("E> Detected Runtime Exception white registering task. " + rtex.getMessage());
 			rtex.printStackTrace();
 		}
 	}
 
 	public void setCompleted(final ETaskCompletion flag, final int qty) {
 		completed = flag;
-		if (flag == ETaskCompletion.COMPLETED) completedQty += qty;
+		if (flag == ETaskCompletion.COMPLETED) {
+			completedQty += qty;
+		}
 	}
 
 	public void setUserAction(final String userPreferredAction) {
 		this.userPreferredAction = userPreferredAction;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Action [");
 		buffer.append(resource).append(" ");
-		if (tasksRegistered.size() > 0) buffer.append("\n\t").append(tasksRegistered).append("\n");
+		if (tasksRegistered.size() > 0) {
+			buffer.append("\n\t").append(tasksRegistered).append("\n");
+		}
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -204,11 +220,6 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 				targetAsset.setQuantity(targetAsset.getQuantity() - task.getQty());
 				break;
 		}
-	}
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll(getTasks());
-		return results;
 	}
 
 	/**
@@ -226,17 +237,16 @@ public class Action extends AbstractComplexNode implements INeoComNode{
 	 *          an scenery similar to the one in real life and not an infinite number of resources.
 	 */
 	private synchronized void registerTask(final int pri, final EveTask task, final NeoComAsset targetAsset) {
-		logger.info("-- Registering task request [" + pri + "] " + task);
-		performTask(task, targetAsset);
+		Action.logger.info("-- Registering task request [" + pri + "] " + task);
+		this.performTask(task, targetAsset);
 		// Filter out assets already on the final location
 		if (task.getTaskType() == ETaskType.MOVE) {
-			if (task.getLocation().getID() != task.getDestination().getID()) registerTask(pri, task);
-		} else
-			registerTask(pri, task);
-	}
-
-	public Resource getResource() {
-		return resource;
+			if (task.getLocation().getID() != task.getDestination().getID()) {
+				this.registerTask(pri, task);
+			}
+		} else {
+			this.registerTask(pri, task);
+		}
 	}
 }
 

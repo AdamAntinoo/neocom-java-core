@@ -19,6 +19,8 @@ import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
 import org.dimensinfin.eveonline.neocom.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
+import org.dimensinfin.eveonline.neocom.render.EmptySeparatorBoardRender;
 import org.dimensinfin.eveonline.neocom.render.IndustryGroupRender;
 import org.dimensinfin.eveonline.neocom.render.JobStateRender;
 import org.dimensinfin.eveonline.neocom.render.MarketSideRender;
@@ -34,6 +36,7 @@ public class GroupPart extends EveAbstractPart {
 	// - F I E L D - S E C T I O N ............................................................................
 	private int								priority					= 10;
 	private int								iconReference			= R.drawable.defaultitemicon;
+	private String						renderModeName		= "-DEFAULT-RENDER-MODE-";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public GroupPart(final Separator node) {
@@ -90,6 +93,14 @@ public class GroupPart extends EveAbstractPart {
 	}
 
 	@Override
+	public IPart setRenderMode(final String renderMode) {
+		if (null != renderMode) {
+			renderModeName = renderMode;
+		}
+		return this;
+	}
+
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("GroupPart [");
 		buffer.append(this.getTitle()).append(" ");
@@ -107,7 +118,13 @@ public class GroupPart extends EveAbstractPart {
 			return new JobStateRender(this, _activity);
 		if (this.getRenderMode() == AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING)
 			return new ShipSlotRender(this, _activity);
+		if (this.getRenderModeName() == ESeparatorType.EMPTY_FITTINGLIST.name())
+			return new EmptySeparatorBoardRender(this, _activity);
 		return new IndustryGroupRender(this, _activity);
+	}
+
+	private String getRenderModeName() {
+		return renderModeName;
 	}
 }
 

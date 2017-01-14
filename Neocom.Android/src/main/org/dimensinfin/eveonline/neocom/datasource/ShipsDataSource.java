@@ -22,6 +22,7 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.content.SharedPreferences;
@@ -107,7 +108,77 @@ public class ShipsDataSource extends SpecialDataSource {
 		// Check if the location is already on the array.
 		Separator hit = _categories.get(category);
 		if (null == hit) {
+			// Set the category icon depending on the category
 			hit = new Separator(category);
+			if (category.equalsIgnoreCase("Assault Frigate")) {
+				hit.setType(ESeparatorType.SHIPTYPE_FRIGATE);
+			}
+			if (category.equalsIgnoreCase("Attack Battlecruiser")) {
+				hit.setType(ESeparatorType.SHIPTYPE_BATTLECRUISER);
+			}
+			if (category.equalsIgnoreCase("Combat Battlecruiser")) {
+				hit.setType(ESeparatorType.SHIPTYPE_BATTLECRUISER);
+			}
+			if (category.equalsIgnoreCase("Battleship")) {
+				hit.setType(ESeparatorType.SHIPTYPE_BATTLESHIP);
+			}
+			if (category.equalsIgnoreCase("Capital Industrial Ship")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CAPITAL);
+			}
+			if (category.equalsIgnoreCase("Dreadnought")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CAPITAL);
+			}
+			if (category.equalsIgnoreCase("Carrier")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CAPITAL);
+			}
+			if (category.equalsIgnoreCase("Supercarrier")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CAPITAL);
+			}
+			if (category.equalsIgnoreCase("Titan")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CAPITAL);
+			}
+			if (category.equalsIgnoreCase("Command Destroyer")) {
+				hit.setType(ESeparatorType.SHIPTYPE_DESTROYER);
+			}
+			if (category.equalsIgnoreCase("Destroyer")) {
+				hit.setType(ESeparatorType.SHIPTYPE_DESTROYER);
+			}
+			if (category.equalsIgnoreCase("Tactical Destroyer")) {
+				hit.setType(ESeparatorType.SHIPTYPE_DESTROYER);
+			}
+			if (category.equalsIgnoreCase("Interdictor")) {
+				hit.setType(ESeparatorType.SHIPTYPE_DESTROYER);
+			}
+			if (category.equalsIgnoreCase("Cruiser")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CRUISER);
+			}
+			if (category.equalsIgnoreCase("Heavy Assault Cruiser")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CRUISER);
+			}
+			if (category.equalsIgnoreCase("Heavy Interdiction Cruiser")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CRUISER);
+			}
+			if (category.equalsIgnoreCase("Strategic Cruiser")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CRUISER);
+			}
+			if (category.equalsIgnoreCase("Expedition Frigate")) {
+				hit.setType(ESeparatorType.SHIPTYPE_FRIGATE);
+			}
+			if (category.equalsIgnoreCase("Frigate")) {
+				hit.setType(ESeparatorType.SHIPTYPE_FRIGATE);
+			}
+			if (category.equalsIgnoreCase("Interceptor")) {
+				hit.setType(ESeparatorType.SHIPTYPE_FRIGATE);
+			}
+			if (category.equalsIgnoreCase("Force Auxiliary")) {
+				hit.setType(ESeparatorType.SHIPTYPE_CAPITAL);
+			}
+			if (category.equalsIgnoreCase("Freighter")) {
+				hit.setType(ESeparatorType.SHIPTYPE_FREIGHTER);
+			}
+			if (category.equalsIgnoreCase("Jump Freighter")) {
+				hit.setType(ESeparatorType.SHIPTYPE_FREIGHTER);
+			}
 			_categories.put(category, hit);
 		}
 		hit.addChild(ship);

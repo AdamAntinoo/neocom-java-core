@@ -79,13 +79,6 @@ public class AppModelStore extends AbstractModelStore implements INeoComModelSto
 		if (null == AppModelStore.singleton) {
 			// Initiate the recovery.
 			AppModelStore.initialize();
-			//			// Try to read from persistence file.
-			//			AppModelStore.singleton = new AppModelStore(new UserModelPersistenceHandler());
-			//			AppModelStore.singleton.restore();
-			//			if (!AppModelStore.singleton.isRestored()) {
-			//				AppModelStore.readApiKeys();
-			//			}
-			//			}
 		}
 		return AppModelStore.singleton;
 	}

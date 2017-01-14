@@ -89,6 +89,34 @@ public class ShipPartFactory extends PartFactory implements IPartFactory {
 					part = new GroupPart((Separator) node).setIconReference(R.drawable.itemhangar).setFactory(this)
 							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
 					break;
+				case SHIPTYPE_BATTLECRUISER:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupbattlecruiser).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPTYPE_BATTLESHIP:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupbattleship).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPTYPE_CAPITAL:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupcapital).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPTYPE_CRUISER:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupcruiser).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPTYPE_DESTROYER:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupdestroyer).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPTYPE_FREIGHTER:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupfreighter).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
+				case SHIPTYPE_FRIGATE:
+					part = new GroupPart((Separator) node).setIconReference(R.drawable.groupfrigate).setFactory(this)
+							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+					break;
 				default:
 					part = new GroupPart((Separator) node).setFactory(this)
 							.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
