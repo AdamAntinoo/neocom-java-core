@@ -12,6 +12,7 @@ package org.dimensinfin.eveonline.neocom.fragment.core;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import org.dimensinfin.android.mvc.activity.SafeStopActivity;
 import org.dimensinfin.android.mvc.activity.TitledFragment;
@@ -20,10 +21,13 @@ import org.dimensinfin.android.mvc.core.AbstractAndroidPart;
 import org.dimensinfin.android.mvc.core.AbstractHolder;
 import org.dimensinfin.android.mvc.core.DataSourceAdapter;
 import org.dimensinfin.android.mvc.interfaces.IMenuActionTarget;
+import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.CEventModel.ECoreModelEvents;
 import org.dimensinfin.eveonline.neocom.R;
+import org.dimensinfin.eveonline.neocom.activity.PilotListActivity;
 import org.dimensinfin.eveonline.neocom.constant.CVariant;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
+import org.dimensinfin.eveonline.neocom.factory.PartFactory;
 import org.dimensinfin.eveonline.neocom.interfaces.IExtendedDataSource;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
@@ -37,9 +41,11 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 // REFACTOR Used this dependency just to maintain more code compatible with the new model.
@@ -48,7 +54,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	protected class CreatePartsTask extends AsyncTask<AbstractNewPagerFragment, Void, Void> {
 
 		// - F I E L D - S E C T I O N ............................................................................
-		private final AbstractNewPagerFragment fragment;
+		private AbstractNewPagerFragment fragment = null;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public CreatePartsTask(final AbstractNewPagerFragment fragment) {
@@ -67,7 +73,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		 */
 		@Override
 		protected Void doInBackground(final AbstractNewPagerFragment... arg0) {
-			Log.i("NEOCOM", ">> CreatePartsTask.doInBackground");
+			AbstractNewPagerFragment.logger.info(">> [AbstractPagerFragment.CreatePartsTask.doInBackground]");
 			try {
 				// Create the hierarchy structure to be used on the Adapter.
 				_datasource.collaborate2Model();
@@ -75,7 +81,7 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			} catch (final RuntimeException rtex) {
 				rtex.printStackTrace();
 			}
-			Log.i("NEOCOM", "<< CreatePartsTask.doInBackground");
+			AbstractNewPagerFragment.logger.info("<< [AbstractPagerFragment.CreatePartsTask.doInBackground]");
 			return null;
 		}
 
@@ -166,9 +172,11 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static Logger												logger						= Logger.getLogger("AbstractNewPagerFragment");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected int																_fragmentID				= -1;
+	private IPartFactory												_factory					= new PartFactory(
+			EDefaultVariant.DEFAULT_VARIANT.name());
 	protected IExtendedDataSource								_datasource				= null;
 	protected DataSourceAdapter									_adapter					= null;
 	// REFACTOR Set back to private after the PagerFragment is removed
@@ -190,30 +198,23 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addtoHeader(final AbstractAndroidPart target) {
-		Log.i("NEOCOM", ">> AbstractNewPagerFragment.addtoHeader");
+		AbstractNewPagerFragment.logger.info(">> [AbstractPagerFragment.addtoHeader]");
 		_headerContents.add(target);
-		Log.i("NEOCOM", "<< AbstractNewPagerFragment.addtoHeader");
+		AbstractNewPagerFragment.logger.info("<< [AbstractPagerFragment.addtoHeader]");
 	}
 
 	public void clearHeader() {
 		_headerContents.clear();
 	}
 
+	public abstract void createFactory();
+
 	public Bundle getExtras() {
 		return _extras;
 	}
 
-	/**
-	 * If the user has set the identifier return the identifier set (This allows to use the Generic by code in
-	 * multifragment activities) . Otherwise return the Id of the fragment that would be generated on the layout
-	 * XML.
-	 */
-	@Deprecated
-	public int getIdentifier() {
-		if (_fragmentID > 0)
-			return _fragmentID;
-		else
-			return this.getId();
+	public IPartFactory getFactory() {
+		return _factory;
 	}
 
 	public NeoComCharacter getPilot() {
@@ -227,11 +228,6 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	@Override
 	public abstract String getSubtitle();
 
-	//	@Override
-	//	public void propertyChange(final PropertyChangeEvent arg0) {
-	//		// TODO Auto-generated method stub
-	//
-	//	}
 	@Override
 	public abstract String getTitle();
 
@@ -280,17 +276,39 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	}
 
 	/**
+	 * This is the code common to all fragments. Only registers the DataSource. In the case there are no
+	 * associated DataSource then we can supersede it calling the core code at the
+	 * <code>onCreateViewSuper</code> method so the mandatory onCreateViewSuper that should be called first will
+	 * use the latest <code>onCreateView</code>.
+	 */
+	@Override
+	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+		AbstractNewPagerFragment.logger.info(">> [AbstractPagerFragment.onCreateView]");
+		final View theView = this.onCreateViewSuper(R.layout.fragment_base, inflater, container, savedInstanceState);
+		try {
+			this.createFactory();
+			this.registerDataSource();
+			this.setHeaderContents();
+		} catch (final RuntimeException rtex) {
+			Log.e("EVEI", "RTEX> AbstractPagerFragment.onCreateView - " + rtex.getMessage());
+			rtex.printStackTrace();
+			this.stopActivity(new RuntimeException("RTEX> AbstractPagerFragment.onCreateView - " + rtex.getMessage()));
+		}
+		AbstractNewPagerFragment.logger.info("<< [AbstractPagerFragment.onCreateView]");
+		return theView;
+	}
+
+	/**
 	 * Creates the structures when the fragment is about to be shown. We have to check that the parent Activity
 	 * is compatible with this kind of fragment. So the fragment has to check of it has access to a valid pilot
 	 * before returning any UI element.
 	 */
-	@Override
-	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-		Log.i("NEOCOM", ">> AbstractPageFragment.onCreateView");
+	public View onCreateViewSuper(final int layout, final LayoutInflater inflater, final ViewGroup container,
+			final Bundle savedInstanceState) {
+		AbstractNewPagerFragment.logger.info(">> [AbstractPagerFragment.onCreateViewSuper]");
 		final View theView = super.onCreateView(inflater, container, savedInstanceState);
 		try {
-			//			if (!this._alreadyInitialized)
-			_container = (ViewGroup) inflater.inflate(R.layout.fragment_base, container, false);
+			_container = (ViewGroup) inflater.inflate(layout, container, false);
 			_headerContainer = (ViewGroup) _container.findViewById(R.id.headerContainer);
 			_modelContainer = (ListView) _container.findViewById(R.id.listContainer);
 			_progressLayout = (ViewGroup) _container.findViewById(R.id.progressLayout);
@@ -298,11 +316,11 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			this.registerForContextMenu(_headerContainer);
 			this.registerForContextMenu(_modelContainer);
 		} catch (final RuntimeException rtex) {
-			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage());
+			Log.e("NEOCOM", "RTEX> AbstractPagerFragment.onCreateViewSuper - " + rtex.getMessage());
 			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onCreateView - " + rtex.getMessage()));
+			this.stopActivity(new RuntimeException("RTEX> AbstractPagerFragment.onCreateViewSuper - " + rtex.getMessage()));
 		}
-		Log.i("NEOCOM", "<< AbstractPageFragment.onCreateView");
+		AbstractNewPagerFragment.logger.info("<< [AbstractPagerFragment.onCreateViewSuper]");
 		return _container;
 	}
 
@@ -315,10 +333,15 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 	 */
 	@Override
 	public void onStart() {
-		Log.i("NEOCOM", ">> AbstractPageFragment.onStart");
+		AbstractNewPagerFragment.logger.info(">> [AbstractPagerFragment.onStart]");
 		super.onStart();
 		try {
-			this.createParts();
+			// Create the adapter to the view and connect it to the DS
+			if (null == this.getDataSource())
+				throw new RuntimeException("Datasource not initialized. Fragment: " + this.getTitle());
+			// REFACTOR This methods should change the name to a more suitable because the models are initialized
+			AbstractNewPagerFragment.logger.info("-- [AbstractPagerFragment.onStart]> - Launching CreatePartsTask");
+			new CreatePartsTask(this).execute();
 			// Update the spinner counter on the actionbar.
 			this.getActivity().invalidateOptionsMenu();
 			// Add the header parts once the display is initialized.
@@ -329,11 +352,13 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 				}
 			}
 		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> AbstractPageFragment.onStart - " + rtex.getMessage());
+			Log.e("NEOCOM", "RTEX> AbstractPagerFragment.onStart - " + rtex.getMessage());
 			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> AbstractPageFragment.onStart - " + rtex.getMessage()));
+			// Instead blocking the application drop a toast and move to the First Activity.
+			Toast.makeText(this.getActivity(), rtex.getMessage(), Toast.LENGTH_LONG).show();
+			this.goFirstActivity();
 		}
-		Log.i("NEOCOM", "<< AbstractPageFragment.onStart");
+		AbstractNewPagerFragment.logger.info("<< [AbstractPagerFragment.onStart]");
 	}
 
 	public void propertyChange(final PropertyChangeEvent event) {
@@ -353,15 +378,8 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 		return this;
 	}
 
-	/**
-	 * Stores the identifier used to register this fragment as a unique identifier for later retrieval. <br>
-	 * Warning: I think I am not using this method or this identifier to locate back the fragments.
-	 * 
-	 * @param id
-	 */
-	@Deprecated
-	public void setIdentifier(final int id) {
-		_fragmentID = id;
+	public void setFactory(final IPartFactory factory) {
+		_factory = factory;
 	}
 
 	public void setListCallback(final IMenuActionTarget callback) {
@@ -382,22 +400,34 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			return false;
 	}
 
-	protected void createParts() {
-		try {
-			// Check the validity of the data source.
-			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
-			Log.i("NEOCOM", "-- AbstractNewPagerFragment.createParts - Launching CreatePartsTask");
-			new CreatePartsTask(this).execute();
-		} catch (final Exception rtex) {
-			Log.e("NEOCOM", "RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage());
-			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage()));
-		}
+	//	protected void createParts() {
+	//		try {
+	//			// Check the validity of the data source.
+	//			if (null == _datasource) throw new RuntimeException("Datasource not defined.");
+	//			Log.i("NEOCOM", "-- AbstractNewPagerFragment.createParts - Launching CreatePartsTask");
+	//			new CreatePartsTask(this).execute();
+	//		} catch (final Exception rtex) {
+	//			Log.e("NEOCOM", "RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage());
+	//			rtex.printStackTrace();
+	//			this.stopActivity(new RuntimeException("RTEX> AbstractNewPagerFragment.createParts - " + rtex.getMessage()));
+	//		}
+	//	}
+
+	protected IExtendedDataSource getDataSource() {
+		return _datasource;
 	}
 
 	protected String getVariant() {
 		return _variant;
 	}
+
+	protected void goFirstActivity() {
+		this.startActivity(new Intent(this.getActivity(), PilotListActivity.class));
+	}
+
+	protected abstract void registerDataSource();
+
+	protected abstract void setHeaderContents();
 
 	/**
 	 * For really unrecoverable or undefined exceptions the application should go to a safe spot. That spot is
@@ -420,8 +450,12 @@ public abstract class AbstractNewPagerFragment extends TitledFragment {
 			holder.initializeViews();
 			holder.updateContent();
 			final View hv = holder.getView();
-			//	_headerContainer.removeAllViews();
 			_headerContainer.addView(hv);
+			// Add the connection to the click listener
+			if (target instanceof OnClickListener) {
+				hv.setClickable(true);
+				hv.setOnClickListener((OnClickListener) target);
+			}
 			_headerContainer.setVisibility(View.VISIBLE);
 		} catch (final RuntimeException rtex) {
 			Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());

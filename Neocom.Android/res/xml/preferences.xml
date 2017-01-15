@@ -8,10 +8,6 @@
             android:key="prefkey_BlockMarket"
             android:summary="Block the download of market data. Use to remove debug clutter"
             android:title="Block Market" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="category_Development"
-        android:title="@string/pref_category_Development" >
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="prefkey_BlockDownloads"
@@ -44,10 +40,10 @@
             android:key="prefkey_RegionCollapsed"
             android:summary="Start Region list groups collapsed."
             android:title="Collapse Regions groups" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="prefkey_AssetValueCalculation"
-            android:summary="Aggregates the sell cost for all assets found on the Location."
-            android:title="Calculate asset value" />
+<!--         <CheckBoxPreference -->
+<!--             android:defaultValue="true" -->
+<!--             android:key="prefkey_AssetValueCalculation" -->
+<!--             android:summary="Aggregates the sell cost for all assets found on the Location." -->
+<!--             android:title="Calculate asset value" /> -->
     </PreferenceCategory>
 </PreferenceScreen>

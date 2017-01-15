@@ -90,7 +90,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	@DatabaseField
 	private boolean								containerFlag			= false;
 	@DatabaseField
-	private double								iskvalue					= 0.0;
+	private double								iskValue					= 0.0;
 
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset	parentAssetCache	= null;
@@ -137,8 +137,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return groupName;
 	}
 
-	public double getIskvalue() {
-		return iskvalue;
+	public double getIskValue() {
+		return iskValue;
 	}
 
 	/**
@@ -175,9 +175,14 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		if (locationID == -1) {
 			if (this.getParentContainerId() == -1)
 				return -1L;
-			else
+			else {
 				// Get the location from the parent.
-				return this.getParentContainer().getLocationID();
+				NeoComAsset par = this.getParentContainer();
+				if (null == par)
+					return -1L;
+				else
+					return par.getLocationID();
+			}
 		} else
 			return locationID;
 	}
@@ -364,8 +369,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		this.id = id;
 	}
 
-	public void setIskvalue(final double iskvalue) {
-		this.iskvalue = iskvalue;
+	public void setIskValue(final double iskvalue) {
+		iskValue = iskvalue;
 	}
 
 	public void setLocationID(final long location) {
@@ -421,6 +426,9 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		}
 	}
 
+	/**
+	 * Try to reduce the calls to methods to compose this information since that affects the code to be run.
+	 */
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComAsset [");
@@ -428,11 +436,11 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		if (null != this.getUserLabel()) {
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
-		buffer.append("itemID:").append(this.getAssetID()).append(" ");
-		buffer.append("locationID:").append(this.getLocationID()).append(" ");
-		buffer.append("containerID:").append(this.getParentContainerId()).append(" ");
-		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
-		buffer.append("quantity:").append(this.getQuantity()).append(" ");
+		buffer.append("itemID:").append(assetID).append(" ");
+		buffer.append("locationID:").append(locationID).append(" ");
+		buffer.append("containerID:").append(parentAssetID).append(" ");
+		buffer.append("ownerID:").append(ownerID).append(" ");
+		buffer.append("quantity:").append(quantity).append(" ");
 		buffer.append("]\n");
 		return buffer.toString();
 	}

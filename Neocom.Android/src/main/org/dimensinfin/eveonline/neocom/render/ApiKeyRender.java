@@ -10,13 +10,10 @@ package org.dimensinfin.eveonline.neocom.render;
 
 // - IMPORT SECTION .........................................................................................
 import org.dimensinfin.eveonline.neocom.R;
-import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractHolder;
 import org.dimensinfin.eveonline.neocom.part.ApiKeyPart;
-import org.joda.time.Instant;
 
 import android.app.Activity;
-import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
@@ -26,12 +23,12 @@ public class ApiKeyRender extends EveAbstractHolder {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	// - L A Y O U T   F I E L D S
-	private TextView	key						= null;
-	private TextView	type					= null;
-	private TextView	timeLeft			= null;
+	private TextView	key				= null;
+	private TextView	type			= null;
+	private TextView	paidUntil	= null;
 
 	// - L A Y O U T   L A B E L S
-	private TextView	timeLeftLabel	= null;
+	//	private TextView	timeLeftLabel	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ApiKeyRender(final ApiKeyPart target, final Activity context) {
@@ -49,8 +46,8 @@ public class ApiKeyRender extends EveAbstractHolder {
 		super.initializeViews();
 		key = (TextView) _convertView.findViewById(R.id.key);
 		type = (TextView) _convertView.findViewById(R.id.type);
-		timeLeft = (TextView) _convertView.findViewById(R.id.timeLeft);
-		timeLeftLabel = (TextView) _convertView.findViewById(R.id.timeLeftLabel);
+		paidUntil = (TextView) _convertView.findViewById(R.id.timeLeft);
+		//		timeLeftLabel = (TextView) _convertView.findViewById(R.id.timeLeftLabel);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -59,33 +56,34 @@ public class ApiKeyRender extends EveAbstractHolder {
 		super.updateContent();
 		key.setText(this.getPart().getTransformedKey());
 		type.setText(this.getPart().getCastedModel().getType().name());
+		paidUntil.setText(this.getPart().getTransformedPaidUntil());
 
-		final Instant expires = new Instant(this.getPart().getCastedModel().getExpires());
-		final Instant now = new Instant();
-		if (expires.isBefore(now)) {
-			timeLeft.setText("Expired! - " + EveAbstractHolder.timePointFormatter.print(expires));
-			// Change the background to a red one
-			timeLeftLabel.setText("EXPIRATION DATE");
-			_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(R.drawable.redtraslucent60));
-		} else {
-			long millis = expires.getMillis() - now.getMillis();
-			CountDownTimer timer = new CountDownTimer(millis, AppWideConstants.SECONDS5) {
-				@Override
-				public void onFinish() {
-					timeLeft.setText("Expired! - " + EveAbstractHolder.timePointFormatter.print(expires));
-					timeLeftLabel.setText("EXPIRATION DATE");
-					_convertView.invalidate();
-				}
-
-				@Override
-				public void onTick(final long millisUntilFinished) {
-					timeLeft.setText(ApiKeyRender.this.generateDurationString(millisUntilFinished, true));
-					timeLeft.invalidate();
-					_convertView.invalidate();
-				}
-			}.start();
-			_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(R.drawable.greentraslucent20));
-		}
+		//		final Instant paid = new Instant();
+		//		final Instant now = new Instant();
+		//		if (expires.isBefore(now)) {
+		//			paidUntil.setText("Expired! - " + EveAbstractHolder.timePointFormatter.print(expires));
+		//			// Change the background to a red one
+		//			timeLeftLabel.setText("EXPIRATION DATE");
+		//			_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(R.drawable.redtraslucent60));
+		//		} else {
+		//			long millis = expires.getMillis() - now.getMillis();
+		//			CountDownTimer timer = new CountDownTimer(millis, AppWideConstants.SECONDS5) {
+		//				@Override
+		//				public void onFinish() {
+		//					paidUntil.setText("Expired! - " + EveAbstractHolder.timePointFormatter.print(expires));
+		//					timeLeftLabel.setText("EXPIRATION DATE");
+		//					_convertView.invalidate();
+		//				}
+		//
+		//				@Override
+		//				public void onTick(final long millisUntilFinished) {
+		//					paidUntil.setText(ApiKeyRender.this.generateDurationString(millisUntilFinished, true));
+		//					paidUntil.invalidate();
+		//					_convertView.invalidate();
+		//				}
+		//			}.start();
+		_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(R.drawable.greentraslucent20));
+		//		}
 		_convertView.invalidate();
 	}
 

@@ -26,7 +26,7 @@ import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.part.AssetPart;
 import org.dimensinfin.eveonline.neocom.part.ContainerPart;
 import org.dimensinfin.eveonline.neocom.part.GroupPart;
-import org.dimensinfin.eveonline.neocom.part.LocationShipsPart;
+import org.dimensinfin.eveonline.neocom.part.LocationAssetsPart;
 import org.dimensinfin.eveonline.neocom.part.RegionPart;
 import org.dimensinfin.eveonline.neocom.part.ShipPart;
 
@@ -56,7 +56,7 @@ public class AssetPartFactory extends PartFactory implements IPartFactory {
 			return part;
 		}
 		if (node instanceof EveLocation) {
-			IPart part = new LocationShipsPart((EveLocation) node)
+			IPart part = new LocationAssetsPart((EveLocation) node)
 					.setRenderMode(EAssetVariants.valueOf(this.getVariant()).hashCode()).setFactory(this);
 			return part;
 		}

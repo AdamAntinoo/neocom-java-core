@@ -14,80 +14,45 @@
         android:padding="-4dp"
         android:src="@drawable/arrowright" />
 
-    <org.dimensinfin.eveonline.neocom.core.DaysTextView
-        android:id="@+id/keyLabel"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/accountDataBlockLabels"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:singleLine="true"
-        android:text="Key:"
-        android:textColor="@android:color/white"
-        android:textSize="13sp" />
+        android:layout_toLeftOf="@+id/rightArrow" >
 
-    <org.dimensinfin.eveonline.neocom.core.DaysTextView
-        android:id="@+id/key"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/keyLabel"
-        android:layout_marginLeft="3dp"
-        android:layout_toRightOf="@+id/keyLabel"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="985643"
-        android:textColor="@android:color/white"
-        android:textSize="13sp" />
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
+            android:id="@+id/key"
+            style="@style/Name.Style.14"
+            android:layout_alignBaseline="@+id/timeLeft"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:singleLine="true"
+            android:text="@string/default_apikeynumber" />
 
-    <TextView
-        android:id="@+id/typeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/keyLabel"
-        android:singleLine="true"
-        android:text="Type:"
-        android:textColor="@android:color/white"
-        android:textSize="13sp" />
-
-    <org.dimensinfin.eveonline.neocom.core.DaysTextView
-        android:id="@+id/type"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/typeLabel"
-        android:layout_below="@+id/key"
-        android:layout_toRightOf="@+id/typeLabel"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        android:text="MultiCharacter"
-        android:textColor="@android:color/white"
-        android:textSize="11sp" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/rightArrow"
-        android:orientation="vertical" >
-
-        <org.dimensinfin.eveonline.neocom.core.DaysTextView
+        <org.dimensinfin.eveonline.neocom.core.Din1451BoldTextView
             android:id="@+id/timeLeft"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/keyLabel"
-            android:layout_marginTop="4dp"
-            android:layout_toLeftOf="@+id/rightArrow"
+            style="@style/Name.Style.12"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:gravity="right"
-            android:text="2D 03H 23M 18S"
-            android:textColor="@android:color/white"
-            android:textSize="11dp" />
+            android:text="@string/default_paiddate" />
 
         <TextView
-            android:id="@+id/timeLeftLabel"
-            style="@style/LabelStyle.Small.TopLine"
+            android:id="@+id/paidUntilLabel"
+            style="@style/AppTheme.LabelUpLineStyle"
             android:layout_width="fill_parent"
+            android:layout_alignParentRight="true"
             android:layout_below="@+id/timeLeft"
-            android:layout_toLeftOf="@+id/rightArrow"
             android:gravity="right"
-            android:text="TIME LEFT" />
-    </LinearLayout>
+            android:text="PAID UNTIL" />
+
+        <org.dimensinfin.eveonline.neocom.core.Din1451TextView
+            android:id="@+id/type"
+            style="@style/Name.Style.12"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/key"
+            android:text="@string/default_description" />
+    </RelativeLayout>
 
 </RelativeLayout>

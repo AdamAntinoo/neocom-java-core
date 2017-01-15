@@ -31,6 +31,11 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	@Override
+	public void createFactory() {
+		this.setFactory(new ShipPartFactory(this.getVariant()));
+	}
+
+	@Override
 	public String getSubtitle() {
 		String st = "";
 		if (this.getVariant() == EShipsVariants.SHIPS_BYLOCATION.name()) {
@@ -68,16 +73,23 @@ public class ShipsFragment extends AbstractNewPagerFragment {
 	 * DataSource can be valid for both variants. So the variant information is not valid because we have a
 	 * single DS and multiple usages.
 	 */
-	private void registerDataSource() {
+	@Override
+	protected void registerDataSource() {
 		ShipsFragment.logger.info(">> [ShipsFragment.registerDataSource]");
 		// This is an special case. A single DataSource serves both variants
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getPilotName())
 				.addIdentifier(this.getVariant());
-		SpecialDataSource ds = new ShipsDataSource(locator, new ShipPartFactory(this.getVariant()));
+		SpecialDataSource ds = new ShipsDataSource(locator, this.getFactory());
 		ds.setVariant(this.getVariant());
 		ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 		this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		ShipsFragment.logger.info("<< [ShipsFragment.registerDataSource]");
+	}
+
+	@Override
+	protected void setHeaderContents() {
+		// TODO Auto-generated method stub
+
 	}
 }
 

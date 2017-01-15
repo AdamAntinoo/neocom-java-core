@@ -73,7 +73,7 @@
         android:textSize="10sp" />
 
     <TextView
-        android:id="@+id/countLabel"
+        android:id="@+id/valueLabel"
         style="@style/AppTheme.LabelUpLineStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

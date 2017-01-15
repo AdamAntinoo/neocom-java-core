@@ -73,10 +73,12 @@ public class Pilot extends NeoComCharacter {
 		int queues = 1;
 		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation)
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
 				queues += apiSkill.getLevel();
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation)
+			}
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
 				queues += apiSkill.getLevel();
+			}
 		}
 		return queues;
 	}
@@ -91,9 +93,12 @@ public class Pilot extends NeoComCharacter {
 		int queues = 1;
 		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) queues += apiSkill.getLevel();
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction)
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
 				queues += apiSkill.getLevel();
+			}
+			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
+				queues += apiSkill.getLevel();
+			}
 		}
 		return queues;
 	}
@@ -140,8 +145,13 @@ public class Pilot extends NeoComCharacter {
 				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets)
-					this.processAsset(eveAsset, null);
+				for (final Asset eveAsset : assets) {
+					try {
+						this.processAsset(eveAsset, null);
+					} catch (final Exception ex) {
+						ex.printStackTrace();
+					}
+				}
 			}
 			//			}
 			AppConnector.getDBConnector().replaceAssets(this.getCharacterID());
@@ -150,6 +160,8 @@ public class Pilot extends NeoComCharacter {
 			assetsCacheTime = new Instant(response.getCachedUntil());
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
+		} catch (final Exception ex) {
+			ex.printStackTrace();
 		}
 		// Clean all user structures invalid after the reload of the assets.
 		assetsManager = null;
@@ -176,19 +188,12 @@ public class Pilot extends NeoComCharacter {
 			// Clear any previous records with owner -1 from database.
 			AppConnector.getDBConnector().clearInvalidRecords();
 			// Download and parse the blueprints using the eveapi.
-			// Set the default connector for blueprints to a cache connector.
-			//			if (null == apiCacheConnector) {
-			//				apiCacheConnector = new CachingConnector();
-			//			}
-			//			EveApi.setConnector(apiCacheConnector);
-			//			BlueprintListResponse response = null;
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
 			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
-				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
-				for (Blueprint bp : blueprints)
+				for (Blueprint bp : blueprints) {
 					try {
 						bplist.add(this.convert2Blueprint(bp));
 					} catch (final RuntimeException rtex) {
@@ -196,8 +201,8 @@ public class Pilot extends NeoComCharacter {
 						Pilot.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
 						Pilot.logger.info("W> " + bp.toString());
 					}
+				}
 			}
-			//			}
 			// Pack the blueprints and store them on the database.
 			this.getAssetsManager().storeBlueprints(bplist);
 			AppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
@@ -348,20 +353,28 @@ public class Pilot extends NeoComCharacter {
 			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
 			if (null != balanceresponse) {
 				Set<EveAccountBalance> balance = balanceresponse.getAll();
-				if (balance.size() > 0) this.setAccountBalance(balance.iterator().next().getBalance());
+				if (balance.size() > 0) {
+					this.setAccountBalance(balance.iterator().next().getBalance());
+				}
 			}
 			// Character sheet information
 			CharacterSheetParser sheetparser = new CharacterSheetParser();
 			CharacterSheetResponse sheetresponse = sheetparser.getResponse(this.getAuthorization());
-			if (null != sheetresponse) this.setCharacterSheet(sheetresponse);
+			if (null != sheetresponse) {
+				this.setCharacterSheet(sheetresponse);
+			}
 			// Skill list
 			SkillQueueParser skillparser = new SkillQueueParser();
 			SkillQueueResponse skillresponse = skillparser.getResponse(this.getAuthorization());
-			if (null != skillresponse) this.setSkillQueue(skillresponse.getAll());
+			if (null != skillresponse) {
+				this.setSkillQueue(skillresponse.getAll());
+			}
 			// Skill in training
 			SkillInTrainingParser trainingparser = new SkillInTrainingParser();
 			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(this.getAuthorization());
-			if (null != skillresponse) this.setSkillInTraining(trainingresponse);
+			if (null != skillresponse) {
+				this.setSkillInTraining(trainingresponse);
+			}
 			// Full list of assets from database.
 			this.accessAllAssets();
 		} catch (ApiException ex) {

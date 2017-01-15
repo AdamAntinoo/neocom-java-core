@@ -51,6 +51,11 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
+	public void createFactory() {
+		this.setFactory(new FittingPartFactory(this.getVariant()));
+	}
+
+	@Override
 	public String getSubtitle() {
 		return "";
 	}
@@ -84,6 +89,7 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	 * This is the method to create and configure the DataSource. This code is specific for each fragment and
 	 * also for each fragment variant.
 	 */
+	@Override
 	public void registerDataSource() {
 		FittingListFragment.logger.info(">> [FittingListFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
@@ -95,10 +101,9 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 		// This part of the code may depend on the variant so surround it with the detector.
 		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
 			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-			SpecialDataSource ds = new FittingListDataSource(locator, new FittingPartFactory(this.getVariant()));
+			SpecialDataSource ds = new FittingListDataSource(locator, this.getFactory());
 			ds.setVariant(this.getVariant());
 			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
-			//			ds.addParameter(AppWideConstants.EExtras.FITTINGID.name(), fittingLabel);
 			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		}
 		FittingListFragment.logger.info("<< [FittingListFragment.registerDataSource]");
@@ -107,18 +112,10 @@ public class FittingListFragment extends AbstractNewPagerFragment implements IPa
 	/**
 	 * This Fragment has no header contents so the implementation is empty.
 	 */
+	@Override
 	public void setHeaderContents() {
 	}
 }
-
-//final class ExpandableGroup extends Separator {
-//	private static final long serialVersionUID = 1642092995030622668L;
-//
-//	public ExpandableGroup(final String title) {
-//		super(title);
-//		// TODO Auto-generated constructor stub
-//	}
-//}
 
 //- CLASS IMPLEMENTATION ...................................................................................
 final class FittingListDataSource extends SpecialDataSource {
@@ -127,7 +124,7 @@ final class FittingListDataSource extends SpecialDataSource {
 	private static Logger											logger						= Logger.getLogger("FittingDataSource");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Fitting											fit								= null;
+	//	private final Fitting											fit								= null;
 	private final HashMap<String, Separator>	groups						= new HashMap<String, Separator>();
 	private final Separator										defaultGroup			= new Separator("-UNDEFINED-HULL-");
 
@@ -145,28 +142,35 @@ final class FittingListDataSource extends SpecialDataSource {
 		try {
 			AppModelStore store = AppModelStore.getSingleton();
 			HashMap<String, Fitting> fitList = store.getFittings();
-			// Create the list of Groups.
-			_dataModelRoot = new RootNode();
-			defaultGroup.clean();
-			this.initGroups();
-			for (Fitting fit : fitList.values()) {
-				FittingListDataSource.logger.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
-				// Classify the fitting.
-				Separator targetGroup = groups.get(fit.getHull().getGroupName());
-				if (null == targetGroup) {
-					defaultGroup.addChild(fit);
-				} else {
-					targetGroup.addChild(fit);
+			// If the fitting list is empty then show an special message and end the DS.
+			if (fitList.size() < 1) {
+				_dataModelRoot = new RootNode();
+				_dataModelRoot.addChild(new Separator("-NO FITS DECLARED-").setType(ESeparatorType.EMPTY_FITTINGLIST));
+				FittingListDataSource.logger.info("<< [FittingListDataSource.collaborate2Model]");
+				return _dataModelRoot;
+			} else {
+				// Reinitialize the DS structures all the times we enter it until we have code to optimize this.
+				this.initializeGroupList();
+				for (Fitting fit : fitList.values()) {
+					FittingListDataSource.logger
+							.info("-- [FittingListDataSource.collaborate2Model]> Classifying fitting: " + fit);
+					// Classify the fitting.
+					Separator targetGroup = groups.get(fit.getHull().getGroupName());
+					if (null == targetGroup) {
+						defaultGroup.addChild(fit);
+					} else {
+						targetGroup.addChild(fit);
+					}
 				}
-			}
-			// Link the non empty hull groups into the Data model root.
-			for (Separator group : groups.values())
-				if (group.getChildren().size() > 0) {
-					_dataModelRoot.addChild(group);
+				// Link the non empty hull groups into the Data model root.
+				for (Separator group : groups.values())
+					if (group.getChildren().size() > 0) {
+						_dataModelRoot.addChild(group);
+					}
+				// Add the default group if not empty.
+				if (defaultGroup.getChildren().size() > 0) {
+					_dataModelRoot.addChild(defaultGroup);
 				}
-			// Add the default group if not empty.
-			if (defaultGroup.getChildren().size() > 0) {
-				_dataModelRoot.addChild(defaultGroup);
 			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
@@ -191,41 +195,48 @@ final class FittingListDataSource extends SpecialDataSource {
 	 * cleared before initialization.
 	 */
 	private void initGroups() {
+	}
+
+	private void initializeGroupList() {
+		_dataModelRoot = new RootNode();
+		defaultGroup.clean();
 		groups.clear();
-		groups.put("Assault Frigate", new Separator("Assault Frigate").setType(ESeparatorType.SHIPTYPE_ASSAULTFRIGATE));
-		groups.put("Attack Battlecruiser", new Separator("Attack Battlecruiser"));
-		groups.put("Battleship", new Separator("Battleship"));
+		groups.put("Assault Frigate", new Separator("Assault Frigate").setType(ESeparatorType.SHIPTYPE_FRIGATE));
+		groups.put("Attack Battlecruiser",
+				new Separator("Attack Battlecruiser").setType(ESeparatorType.SHIPTYPE_BATTLECRUISER));
+		groups.put("Battleship", new Separator("Battleship").setType(ESeparatorType.SHIPTYPE_BATTLESHIP));
 		groups.put("Black Ops", new Separator("Black Ops"));
 		groups.put("Blockade Runner", new Separator("Blockade Runner"));
 		groups.put("Capital Industrial Ship", new Separator("Capital Industrial Ship"));
 		groups.put("Capsule", new Separator("Capsule"));
 		groups.put("Carrier", new Separator("Carrier"));
-		groups.put("Combat Battlecruiser", new Separator("Combat Battlecruiser"));
+		groups.put("Combat Battlecruiser",
+				new Separator("Combat Battlecruiser").setType(ESeparatorType.SHIPTYPE_BATTLECRUISER));
 		groups.put("Combat Recon Ship", new Separator("Combat Recon Ship"));
 		groups.put("Command Destroyer", new Separator("Command Destroyer"));
 		groups.put("Command Ship", new Separator("Command Ship"));
 		groups.put("Covert Ops", new Separator("Covert Ops"));
-		groups.put("Cruiser", new Separator("Cruiser"));
+		groups.put("Cruiser", new Separator("Cruiser").setType(ESeparatorType.SHIPTYPE_CRUISER));
 		groups.put("Deep Space Transport", new Separator("Deep Space Transport"));
 		groups.put("Destroyer", new Separator("Destroyer"));
 		groups.put("Dreadnought", new Separator("Dreadnought"));
 		groups.put("Electronic Attack Ship", new Separator("Electronic Attack Ship"));
 		groups.put("Elite Battleship", new Separator("Elite Battleship"));
 		groups.put("Exhumer", new Separator("Exhumer"));
-		groups.put("Expedition Frigate", new Separator("Expedition Frigate"));
+		groups.put("Expedition Frigate", new Separator("Expedition Frigate").setType(ESeparatorType.SHIPTYPE_FRIGATE));
 		groups.put("Force Auxiliary", new Separator("Force Auxiliary"));
 		groups.put("Force Recon Ship", new Separator("Force Recon Ship"));
 		groups.put("Freighter", new Separator("Freighter"));
-		groups.put("Frigate", new Separator("Frigate"));
+		groups.put("Frigate", new Separator("Frigate").setType(ESeparatorType.SHIPTYPE_FRIGATE));
 		groups.put("Heavy Assault Cruiser", new Separator("Heavy Assault Cruiser"));
 		groups.put("Heavy Interdiction Cruiser", new Separator("Heavy Interdiction Cruiser"));
 		groups.put("Industrial", new Separator("Industrial"));
 		groups.put("Industrial Command Ship", new Separator("Industrial Command Ship"));
-		groups.put("Interceptor", new Separator("Interceptor"));
+		groups.put("Interceptor", new Separator("Interceptor").setType(ESeparatorType.SHIPTYPE_FRIGATE));
 		groups.put("Interdictor", new Separator("Interdictor"));
 		groups.put("Jump Freighter", new Separator("Jump Freighter"));
 		groups.put("Logistics", new Separator("Logistics"));
-		groups.put("Logistics Frigate", new Separator("Logistics Frigate"));
+		groups.put("Logistics Frigate", new Separator("Logistics Frigate").setType(ESeparatorType.SHIPTYPE_FRIGATE));
 		groups.put("Marauder", new Separator("Marauder"));
 		groups.put("Mining Barge", new Separator("Mining Barge"));
 		groups.put("Prototype Exploration Ship", new Separator("Prototype Exploration Ship"));

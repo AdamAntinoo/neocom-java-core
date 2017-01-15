@@ -62,7 +62,7 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		EveAbstractHolder.securityLevels.put(1, "#D73000");
 		EveAbstractHolder.securityLevels.put(0, "#F00000");
 	}
-	private static Typeface daysFace = Typeface
+	public static Typeface daysFace = Typeface
 			.createFromAsset(NeoComApp.getSingletonApp().getApplicationContext().getAssets(), "fonts/Days.otf");
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -83,7 +83,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		final StringBuffer htmlFragment = new StringBuffer();
 		htmlFragment.append("<font color='").append(color).append("'>");
 		htmlFragment.append(data);
-		if (null != suffix) htmlFragment.append(suffix);
+		if (null != suffix) {
+			htmlFragment.append(suffix);
+		}
 		htmlFragment.append("</font>");
 		return Html.fromHtml(htmlFragment.toString());
 	}
@@ -115,8 +117,12 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		final StringBuffer htmlFragmentWithColor = new StringBuffer();
 		final String priceString = this.generatePriceString(cost, compress, suffix);
 		String color = "#FFFFFF";
-		if (cost >= (price * 0.9)) color = "#FFA500";
-		if (cost >= price) color = "#F00000";
+		if (cost >= (price * 0.9)) {
+			color = "#FFA500";
+		}
+		if (cost >= price) {
+			color = "#F00000";
+		}
 		htmlFragmentWithColor.append("<font color='").append(color).append("'>").append(priceString).append("</font>");
 		return Html.fromHtml(htmlFragmentWithColor.toString());
 	}
@@ -162,10 +168,15 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 
 	protected String generateDurationString2(final long millis) {
 		final DateTimeFormatterBuilder timeLeftCountdown = new DateTimeFormatterBuilder();
-		if (millis > EveAbstractHolder.ONEDAY) timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
-		if (millis > EveAbstractHolder.ONEHOUR) timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
-		if (millis > EveAbstractHolder.ONEMINUTE)
+		if (millis > EveAbstractHolder.ONEDAY) {
+			timeLeftCountdown.appendDayOfYear(1).appendLiteral("D ");
+		}
+		if (millis > EveAbstractHolder.ONEHOUR) {
+			timeLeftCountdown.appendHourOfDay(2).appendLiteral("H ");
+		}
+		if (millis > EveAbstractHolder.ONEMINUTE) {
 			timeLeftCountdown.appendMinuteOfHour(2).appendLiteral("M ").appendSecondOfMinute(2).appendLiteral('S');
+		}
 		return timeLeftCountdown.toFormatter().print(new Instant(millis));
 	}
 
@@ -193,8 +204,12 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		final StringBuffer htmlFragmentWithColor = new StringBuffer();
 		String secColor = "#F00000";
 		// Get the color from the table.
-		if (sec < 0.0) sec = 0.0;
-		if (sec > 1.0) sec = 1.0;
+		if (sec < 0.0) {
+			sec = 0.0;
+		}
+		if (sec > 1.0) {
+			sec = 1.0;
+		}
 		final long secAdjust = Long.valueOf(Math.round(sec * 10.0)).intValue();
 		secColor = EveAbstractHolder.securityLevels.get(Long.valueOf(secAdjust).intValue());
 		htmlFragmentWithColor.append("<font color='").append(secColor).append("'>").append(data).append("</font>");
@@ -204,10 +219,15 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	protected String generateTimeString(final long millis) {
 		try {
 			final DateTimeFormatterBuilder timeFormatter = new DateTimeFormatterBuilder();
-			if (millis > EveAbstractHolder.ONEDAY) timeFormatter.appendDayOfYear(1).appendLiteral("D ");
-			if (millis > EveAbstractHolder.ONEHOUR) timeFormatter.appendHourOfDay(2).appendLiteral(":");
-			if (millis > EveAbstractHolder.ONEMINUTE)
+			if (millis > EveAbstractHolder.ONEDAY) {
+				timeFormatter.appendDayOfYear(1).appendLiteral("D ");
+			}
+			if (millis > EveAbstractHolder.ONEHOUR) {
+				timeFormatter.appendHourOfDay(2).appendLiteral(":");
+			}
+			if (millis > EveAbstractHolder.ONEMINUTE) {
 				timeFormatter.appendMinuteOfHour(2).appendLiteral(":").appendSecondOfMinute(2);
+			}
 			return timeFormatter.toFormatter().print(new Instant(millis));
 		} catch (final RuntimeException rtex) {
 			return "0:00";
@@ -230,7 +250,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		if (null != targetIcon) {
 			// If the flag signals an station change the code.
 			String link = NeoComApp.getTheCacheConnector().getURLForItem(typeID);
-			if (station) link = NeoComApp.getTheCacheConnector().getURLForStation(typeID);
+			if (station) {
+				link = NeoComApp.getTheCacheConnector().getURLForStation(typeID);
+			}
 			final Drawable draw = NeoComApp.getTheCacheConnector().getCacheDrawable(link, targetIcon);
 			targetIcon.setImageDrawable(draw);
 		}
@@ -242,7 +264,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 		// AppConnector.getDBConnector().searchLocationbyID(getCastedModel().getBlueprintLocationID());
 		final String security = loc.getSecurity();
 		String secColor = EveAbstractHolder.securityLevels.get(security);
-		if (null == secColor) secColor = "#2FEFEF";
+		if (null == secColor) {
+			secColor = "#2FEFEF";
+		}
 		// Append the Region -> system
 		htmlLocation.append(loc.getRegion()).append(AppWideConstants.FLOW_ARROW_RIGHT).append(loc.getConstellation())
 				.append(AppWideConstants.FLOW_ARROW_RIGHT);
@@ -256,11 +280,9 @@ public abstract class EveAbstractHolder extends AbstractHolder {
 	@SuppressWarnings("deprecation")
 	protected void setBackgroundTransparency(final int resource) {
 		// Set the background form the Theme.
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			_convertView.setBackgroundDrawable(this.getContext().getResources().getDrawable(resource));
-		// } else {
-		// this._convertView.setBackground(getContext().getResources().getDrawable(resource));
-		// }
+		}
 	}
 }
 

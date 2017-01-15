@@ -14,12 +14,14 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.FittingListActivity.EFittingVariants;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.model.Action;
 import org.dimensinfin.eveonline.neocom.model.EveTask;
 import org.dimensinfin.eveonline.neocom.model.Fitting;
 import org.dimensinfin.eveonline.neocom.model.Separator;
+import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 import org.dimensinfin.eveonline.neocom.part.ActionPart;
 import org.dimensinfin.eveonline.neocom.part.FittingListPart;
 import org.dimensinfin.eveonline.neocom.part.FittingPart;
@@ -52,7 +54,46 @@ public class FittingPartFactory extends PartFactory implements IPartFactory {
 		// Set of Parts for the list of fittings.
 		if (this.getVariant() == EFittingVariants.FITTING_LIST.name()) {
 			if (node instanceof Separator) {
-				IPart part = new GroupPart((Separator) node).setFactory(this);
+				// These special separators can configure an specific icon.
+				IPart part = null;
+				switch (((Separator) node).getType()) {
+					case SHIPTYPE_BATTLECRUISER:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupbattlecruiser).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case SHIPTYPE_BATTLESHIP:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupbattleship).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case SHIPTYPE_CAPITAL:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupcapital).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case SHIPTYPE_CRUISER:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupcruiser).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case SHIPTYPE_DESTROYER:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupdestroyer).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case SHIPTYPE_FREIGHTER:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupfreighter).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case SHIPTYPE_FRIGATE:
+						part = new GroupPart((Separator) node).setIconReference(R.drawable.groupfrigate).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+						break;
+					case EMPTY_FITTINGLIST:
+						part = new GroupPart((Separator) node).setFactory(this)
+								.setRenderMode(ESeparatorType.EMPTY_FITTINGLIST.name());
+						break;
+					default:
+						part = new GroupPart((Separator) node).setFactory(this)
+								.setRenderMode(AppWideConstants.rendermodes.RENDER_GROUPSHIPFITTING);
+
+				}
 				return part;
 			}
 			if (node instanceof Fitting) {

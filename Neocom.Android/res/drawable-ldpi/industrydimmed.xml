@@ -4,11 +4,11 @@
     <item>
         <bitmap
             android:scaleType="centerCrop"
-             android:src="@drawable/shipsdirector" />
+            android:src="@drawable/industry" />
     </item>
     <item>
         <shape>
-            <solid android:color="#FF000000" />
+            <solid android:color="#D0000000" />
         </shape>
     </item>
 

@@ -22,7 +22,6 @@ import org.dimensinfin.eveonline.neocom.datasource.FittingDataSource;
 import org.dimensinfin.eveonline.neocom.datasource.SpecialDataSource;
 import org.dimensinfin.eveonline.neocom.factory.FittingPartFactory;
 import org.dimensinfin.eveonline.neocom.fragment.core.AbstractNewPagerFragment;
-import org.dimensinfin.eveonline.neocom.interfaces.IExtendedDataSource;
 import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
 import android.os.Bundle;
@@ -42,12 +41,17 @@ import android.util.Log;
  */
 public class FittingFragment extends AbstractNewPagerFragment {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger				logger	= Logger.getLogger("FittingFragment");
+	private static Logger							logger	= Logger.getLogger("FittingFragment");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private FittingPartFactory	factory	= null;
+	private final FittingPartFactory	factory	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
+	@Override
+	public void createFactory() {
+		this.setFactory(new FittingPartFactory(this.getVariant()));
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
@@ -59,25 +63,6 @@ public class FittingFragment extends AbstractNewPagerFragment {
 	public String getTitle() {
 		return "Fitting List";
 	}
-
-	//	/**
-	//	 * This code is identical on all Fragment implementations so can be moved to the super class.
-	//	 */
-	//	@Override
-	//	public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-	//		Log.i("NEOCOM", ">> FittingFragment.onCreateView");
-	//		final View theView = super.onCreateView(inflater, container, savedInstanceState);
-	//		try {
-	//			//			setIdentifier(_variant.hashCode());
-	//			this.registerDataSource();
-	//		} catch (final RuntimeException rtex) {
-	//			Log.e("EVEI", "RTEX> FittingFragment.onCreateView - " + rtex.getMessage());
-	//			rtex.printStackTrace();
-	//			this.stopActivity(new RuntimeException("RTEX> FittingFragment.onCreateView - " + rtex.getMessage()));
-	//		}
-	//		Log.i("NEOCOM", "<< FittingFragment.onCreateView");
-	//		return theView;
-	//	}
 
 	/**
 	 * This code is identical on all Fragment implementations so can be moved to the super class.
@@ -98,30 +83,24 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		Log.i("NEOCOM", "<< FittingFragment.onStart");
 	}
 
-	private AbstractAndroidPart createPart(final AbstractComplexNode model) {
-		IPartFactory factory = this.getFactory();
-		IPart part = factory.createPart(model);
-		part.setParent(null);
-		return (AbstractAndroidPart) part;
-	}
-
-	private IExtendedDataSource getDataSource() {
-		return _datasource;
-	}
-
-	private IPartFactory getFactory() {
-		if (null == factory) {
-			factory = new FittingPartFactory(this.getVariant());
-		}
-		return factory;
-	}
+	//	private IExtendedDataSource getDataSource() {
+	//		return _datasource;
+	//	}
+	//
+	//	private IPartFactory getFactory() {
+	//		if (null == factory) {
+	//			factory = new FittingPartFactory(this.getVariant());
+	//		}
+	//		return factory;
+	//	}
 
 	/**
 	 * This is the single piece f code specific for this fragment. It should create the right class DataSource
 	 * and connect it to the Fragment for their initialization during the <b>start</b> phase. <br>
 	 * Current implementation is a test code to initialize the DataSorue with a predefined and testing fitting.
 	 */
-	private void registerDataSource() {
+	@Override
+	protected void registerDataSource() {
 		Log.i("NEOCOM", ">> FittingFragment.registerDataSource");
 		Bundle extras = this.getExtras();
 		long capsuleerid = 0;
@@ -133,7 +112,7 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		DataSourceLocator locator = new DataSourceLocator().addIdentifier(this.getVariant()).addIdentifier(capsuleerid)
 				.addIdentifier(fittingLabel);
 		// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-		SpecialDataSource ds = new FittingDataSource(locator, new FittingPartFactory(this.getVariant()));
+		SpecialDataSource ds = new FittingDataSource(locator, this.getFactory());
 		ds.setVariant(this.getVariant());
 		ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 		ds.addParameter(AppWideConstants.EExtras.EXTRA_FITTINGID.name(), fittingLabel);
@@ -141,7 +120,8 @@ public class FittingFragment extends AbstractNewPagerFragment {
 		this.setDataSource(ds);
 	}
 
-	private void setHeaderContents() {
+	@Override
+	protected void setHeaderContents() {
 		RootNode headModel = ((FittingDataSource) this.getDataSource()).getHeaderModel();
 		for (AbstractComplexNode model : headModel.collaborate2Model(this.getVariant())) {
 			// Set the datasource as the listener for this parts events.
@@ -149,6 +129,13 @@ public class FittingFragment extends AbstractNewPagerFragment {
 			pt.addPropertyChangeListener(this.getDataSource());
 			this.addtoHeader(pt);
 		}
+	}
+
+	private AbstractAndroidPart createPart(final AbstractComplexNode model) {
+		IPartFactory factory = this.getFactory();
+		IPart part = factory.createPart(model);
+		part.setParent(null);
+		return (AbstractAndroidPart) part;
 	}
 }
 // - UNUSED CODE ............................................................................................

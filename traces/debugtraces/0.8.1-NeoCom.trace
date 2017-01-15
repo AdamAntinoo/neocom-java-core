@@ -1,0 +1,125 @@
+--- EXPAND <REGION>
+01-09 16:51:55.910: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:Separator [<REGION>
+01-09 16:51:55.910: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ]]
+01-09 16:51:55.914: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:RootNode [count: 7	,[[Separator [The Forge
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#60003760 (92) [The Forge] system: Jita station: Jita IV - Moon 4 - Caldari Navy Assembly Plant ]] ], Separator [Domain
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#60008494 (544) [Domain] system: Amarr station: Amarr VIII (Oris) - Emperor Family Academy ]] ], Separator [Tash-Murkon
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#60006610 (18) [Tash-Murkon] system: Esa station: Esa VIII - Moon 2 - Viziam Warehouse ], NeoComLocation [#60006220 (58) [Tash-Murkon] system: Pimebeka station: Pimebeka VII - Moon 16 - Carthum Conglomerate Factory ]] ], Separator [Verge Vendor
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#60012928 (63) [Verge Vendor] system: Reblier station: Reblier VIII - Moon 7 - DED Logistic Support ], NeoComLocation [#60014719 (3) [Verge Vendor] system: Cistuvaert station: Cistuvaert V - Moon 12 - Center for Advanced Studies School ], NeoComLocation [#60005155 (3) [Verge Vendor] system: Scolluzer station: Scolluzer XI - Republic Security Services Assembly Plant ]] ], Separator [<REGION>
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ], Separator [Syndicate
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#60014089 (7) [Syndicate] system: PVH8-0 station: PVH8-0 VI - Moon 8 - Thukker Mix Factory ], NeoComLocation [#60013549 (10) [Syndicate] system: 6-CZ49 station: 6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau ]] ], Separator [Devoid
+01-09 16:51:55.914: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]] AbstractComplexNode [ex/dow/eren/vis: [true/true/true/true]] ]]
+01-09 16:51:55.929: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:RegionPart [Separator [<REGION>
+01-09 16:51:55.929: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ] ]]
+01-09 16:51:55.929: I/model(30455): [Property:EVENTADAPTER_REQUESTNOTIFYCHANGES on object:AbstractDataSource [Parts:0 ]]
+01-09 16:51:55.929: I/SpecialDataSource(30455): >> [SpecialDataSource.getBodyParts]
+01-09 16:51:55.929: I/SpecialDataSource(30455): << [SpecialDataSource.getBodyParts]> result.size: 10
+01-09 16:51:55.943: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:Separator [<REGION>
+01-09 16:51:55.943: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ]]
+01-09 16:51:55.944: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:RootNode [count: 7	,[[Separator [The Forge
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#60003760 (92) [The Forge] system: Jita station: Jita IV - Moon 4 - Caldari Navy Assembly Plant ]] ], Separator [Domain
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#60008494 (544) [Domain] system: Amarr station: Amarr VIII (Oris) - Emperor Family Academy ]] ], Separator [Tash-Murkon
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#60006610 (18) [Tash-Murkon] system: Esa station: Esa VIII - Moon 2 - Viziam Warehouse ], NeoComLocation [#60006220 (58) [Tash-Murkon] system: Pimebeka station: Pimebeka VII - Moon 16 - Carthum Conglomerate Factory ]] ], Separator [Verge Vendor
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#60012928 (63) [Verge Vendor] system: Reblier station: Reblier VIII - Moon 7 - DED Logistic Support ], NeoComLocation [#60014719 (3) [Verge Vendor] system: Cistuvaert station: Cistuvaert V - Moon 12 - Center for Advanced Studies School ], NeoComLocation [#60005155 (3) [Verge Vendor] system: Scolluzer station: Scolluzer XI - Republic Security Services Assembly Plant ]] ], Separator [<REGION>
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ], Separator [Syndicate
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#60014089 (7) [Syndicate] system: PVH8-0 station: PVH8-0 VI - Moon 8 - Thukker Mix Factory ], NeoComLocation [#60013549 (10) [Syndicate] system: 6-CZ49 station: 6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau ]] ], Separator [Devoid
+01-09 16:51:55.944: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]] AbstractComplexNode [ex/dow/eren/vis: [true/true/true/true]] ]]
+01-09 16:51:55.972: I/DataSourceAdapter(30455): -- Getting view [0] CACHED
+01-09 16:51:55.974: I/DataSourceAdapter(30455): -- Getting view [1]
+01-09 16:51:56.089: I/DBQUERY.TIME(30455): ~~ Time lapse for [SELECT STATIONTYPEID 61000219] PT0.003S
+01-09 16:51:56.120: I/DataSourceAdapter(30455): -- Getting view [2]
+01-09 16:51:56.148: I/DBQUERY.TIME(30455): ~~ Time lapse for [SELECT STATIONTYPEID 61000796] PT0.001S
+01-09 16:51:56.160: I/DataSourceAdapter(30455): -- Getting view [3]
+01-09 16:51:56.189: I/DBQUERY.TIME(30455): ~~ Time lapse for [SELECT STATIONTYPEID -1] PT0.002S
+01-09 16:51:56.202: I/DataSourceAdapter(30455): -- Getting view [4] CACHED
+01-09 16:51:56.203: I/DataSourceAdapter(30455): -- Getting view [5] CACHED
+01-09 16:51:56.204: I/DataSourceAdapter(30455): -- Getting view [6] CACHED
+01-09 16:51:56.205: I/DataSourceAdapter(30455): -- Getting view [7] CACHED
+01-09 16:51:56.206: I/DataSourceAdapter(30455): -- Getting view [8] CACHED
+01-09 16:51:56.207: I/DataSourceAdapter(30455): -- Getting view [9] CACHED
+
+--- EXPAND LOCATION
+01-09 16:59:34.817: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ]]
+01-09 16:59:34.817: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:Separator [<REGION>
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ]]
+01-09 16:59:34.817: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:RootNode [count: 7	,[[Separator [The Forge
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#60003760 (92) [The Forge] system: Jita station: Jita IV - Moon 4 - Caldari Navy Assembly Plant ]] ], Separator [Domain
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#60008494 (544) [Domain] system: Amarr station: Amarr VIII (Oris) - Emperor Family Academy ]] ], Separator [Tash-Murkon
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#60006610 (18) [Tash-Murkon] system: Esa station: Esa VIII - Moon 2 - Viziam Warehouse ], NeoComLocation [#60006220 (58) [Tash-Murkon] system: Pimebeka station: Pimebeka VII - Moon 16 - Carthum Conglomerate Factory ]] ], Separator [Verge Vendor
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#60012928 (63) [Verge Vendor] system: Reblier station: Reblier VIII - Moon 7 - DED Logistic Support ], NeoComLocation [#60014719 (3) [Verge Vendor] system: Cistuvaert station: Cistuvaert V - Moon 12 - Center for Advanced Studies School ], NeoComLocation [#60005155 (3) [Verge Vendor] system: Scolluzer station: Scolluzer XI - Republic Security Services Assembly Plant ]] ], Separator [<REGION>
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ], Separator [Syndicate
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#60014089 (7) [Syndicate] system: PVH8-0 station: PVH8-0 VI - Moon 8 - Thukker Mix Factory ], NeoComLocation [#60013549 (10) [Syndicate] system: 6-CZ49 station: 6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau ]] ], Separator [Devoid
+01-09 16:59:34.817: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]] AbstractComplexNode [ex/dow/eren/vis: [true/true/true/true]] ]]
+01-09 16:59:34.818: I/EVEI(30455): -- true expansion to Location ID>61000796 - <STATION> [61000796]
+01-09 16:59:34.818: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:LocationPart [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ] ]]
+01-09 16:59:34.818: I/model(30455): [Property:EVENTADAPTER_REQUESTNOTIFYCHANGES on object:AbstractDataSource [Parts:0 ]]
+01-09 16:59:34.818: I/SpecialDataSource(30455): >> [SpecialDataSource.getBodyParts]
+01-09 16:59:34.818: I/SpecialDataSource(30455): << [SpecialDataSource.getBodyParts]> result.size: 13
+01-09 16:59:34.828: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ]]
+01-09 16:59:34.828: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:Separator [<REGION>
+01-09 16:59:34.828: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ]]
+01-09 16:59:34.829: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:RootNode [count: 7	,[[Separator [The Forge
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#60003760 (92) [The Forge] system: Jita station: Jita IV - Moon 4 - Caldari Navy Assembly Plant ]] ], Separator [Domain
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#60008494 (544) [Domain] system: Amarr station: Amarr VIII (Oris) - Emperor Family Academy ]] ], Separator [Tash-Murkon
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#60006610 (18) [Tash-Murkon] system: Esa station: Esa VIII - Moon 2 - Viziam Warehouse ], NeoComLocation [#60006220 (58) [Tash-Murkon] system: Pimebeka station: Pimebeka VII - Moon 16 - Carthum Conglomerate Factory ]] ], Separator [Verge Vendor
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#60012928 (63) [Verge Vendor] system: Reblier station: Reblier VIII - Moon 7 - DED Logistic Support ], NeoComLocation [#60014719 (3) [Verge Vendor] system: Cistuvaert station: Cistuvaert V - Moon 12 - Center for Advanced Studies School ], NeoComLocation [#60005155 (3) [Verge Vendor] system: Scolluzer station: Scolluzer XI - Republic Security Services Assembly Plant ]] ], Separator [<REGION>
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ], Separator [Syndicate
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#60014089 (7) [Syndicate] system: PVH8-0 station: PVH8-0 VI - Moon 8 - Thukker Mix Factory ], NeoComLocation [#60013549 (10) [Syndicate] system: 6-CZ49 station: 6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau ]] ], Separator [Devoid
+01-09 16:59:34.829: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]] AbstractComplexNode [ex/dow/eren/vis: [true/true/true/true]] ]]
+01-09 16:59:34.837: I/DataSourceAdapter(30455): -- Getting view [0] CACHED
+01-09 16:59:34.841: I/DataSourceAdapter(30455): -- Getting view [1] CACHED
+01-09 16:59:34.842: I/DataSourceAdapter(30455): -- Getting view [2] CACHED
+01-09 16:59:34.842: I/DataSourceAdapter(30455): -- Getting view [3]
+01-09 16:59:34.881: I/DataSourceAdapter(30455): -- Getting view [4]
+01-09 16:59:34.906: I/DataSourceAdapter(30455): -- Getting view [5]
+01-09 16:59:34.930: I/ndroidDatabaseConnector(30455): -- [searchLocationbyID]> Location: 61000796 not found on cache.
+01-09 16:59:34.932: I/ndroidDatabaseConnector(30455): -- [searchLocationbyID]> Location: 61000796 not found on CCP data.
+01-09 16:59:34.948: I/DataSourceAdapter(30455): -- Getting view [6] CACHED
+01-09 16:59:34.949: I/DataSourceAdapter(30455): -- Getting view [7] CACHED
+01-09 16:59:34.950: I/DataSourceAdapter(30455): -- Getting view [8] CACHED
+01-09 16:59:34.951: I/DataSourceAdapter(30455): -- Getting view [9] CACHED
+01-09 16:59:34.952: I/DataSourceAdapter(30455): -- Getting view [10] CACHED
+01-09 16:59:34.954: I/DataSourceAdapter(30455): -- Getting view [11] CACHED
+
+
+01-09 17:03:38.107: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:Separator [Devoid
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]
+01-09 17:03:38.107: I/model(30455): [Property:EVENT_EXPANDCOLLAPSENODE on object:RootNode [count: 7	,[[Separator [The Forge
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60003760 (92) [The Forge] system: Jita station: Jita IV - Moon 4 - Caldari Navy Assembly Plant ]] ], Separator [Domain
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60008494 (544) [Domain] system: Amarr station: Amarr VIII (Oris) - Emperor Family Academy ]] ], Separator [Tash-Murkon
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60006610 (18) [Tash-Murkon] system: Esa station: Esa VIII - Moon 2 - Viziam Warehouse ], NeoComLocation [#60006220 (58) [Tash-Murkon] system: Pimebeka station: Pimebeka VII - Moon 16 - Carthum Conglomerate Factory ]] ], Separator [Verge Vendor
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60012928 (63) [Verge Vendor] system: Reblier station: Reblier VIII - Moon 7 - DED Logistic Support ], NeoComLocation [#60014719 (3) [Verge Vendor] system: Cistuvaert station: Cistuvaert V - Moon 12 - Center for Advanced Studies School ], NeoComLocation [#60005155 (3) [Verge Vendor] system: Scolluzer station: Scolluzer XI - Republic Security Services Assembly Plant ]] ], Separator [<REGION>
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ], Separator [Syndicate
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60014089 (7) [Syndicate] system: PVH8-0 station: PVH8-0 VI - Moon 8 - Thukker Mix Factory ], NeoComLocation [#60013549 (10) [Syndicate] system: 6-CZ49 station: 6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau ]] ], Separator [Devoid
+01-09 17:03:38.107: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]] AbstractComplexNode [ex/dow/eren/vis: [true/true/true/true]] ]]
+01-09 17:03:38.108: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:RegionPart [Separator [Devoid
+01-09 17:03:38.108: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ] ]]
+01-09 17:03:38.108: I/model(30455): [Property:EVENTADAPTER_REQUESTNOTIFYCHANGES on object:AbstractDataSource [Parts:0 ]]
+01-09 17:03:38.108: I/SpecialDataSource(30455): >> [SpecialDataSource.getBodyParts]
+01-09 17:03:38.108: I/SpecialDataSource(30455): << [SpecialDataSource.getBodyParts]> result.size: 15
+01-09 17:03:38.109: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:Separator [Devoid
+01-09 17:03:38.109: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]
+01-09 17:03:38.110: I/model(30455): [Property:EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE on object:RootNode [count: 7	,[[Separator [The Forge
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#60003760 (92) [The Forge] system: Jita station: Jita IV - Moon 4 - Caldari Navy Assembly Plant ]] ], Separator [Domain
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#60008494 (544) [Domain] system: Amarr station: Amarr VIII (Oris) - Emperor Family Academy ]] ], Separator [Tash-Murkon
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#60006610 (18) [Tash-Murkon] system: Esa station: Esa VIII - Moon 2 - Viziam Warehouse ], NeoComLocation [#60006220 (58) [Tash-Murkon] system: Pimebeka station: Pimebeka VII - Moon 16 - Carthum Conglomerate Factory ]] ], Separator [Verge Vendor
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#60012928 (63) [Verge Vendor] system: Reblier station: Reblier VIII - Moon 7 - DED Logistic Support ], NeoComLocation [#60014719 (3) [Verge Vendor] system: Cistuvaert station: Cistuvaert V - Moon 12 - Center for Advanced Studies School ], NeoComLocation [#60005155 (3) [Verge Vendor] system: Scolluzer station: Scolluzer XI - Republic Security Services Assembly Plant ]] ], Separator [<REGION>
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#61000796 (3) [<REGION>] system: ID>61000796 station: <STATION> ], NeoComLocation [#-1 (18) [SPACE] system: Undefined station: Station#1021705628874 ], NeoComLocation [#61000219 (7) [<REGION>] system: ID>61000219 station: <STATION> ]] ], Separator [Syndicate
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#60014089 (7) [Syndicate] system: PVH8-0 station: PVH8-0 VI - Moon 8 - Thukker Mix Factory ], NeoComLocation [#60013549 (10) [Syndicate] system: 6-CZ49 station: 6-CZ49 VI - Moon 6 - Intaki Syndicate Bureau ]] ], Separator [Devoid
+01-09 17:03:38.110: I/model(30455): [NeoComLocation [#60003643 (7) [Devoid] system: Hakshma station: Hakshma VIII - Moon 13 - Caldari Business Tribunal ], NeoComLocation [#60002515 (1) [Devoid] system: Thakala station: Thakala IV - Moon 11 - Expert Distribution Warehouse ]] ]]] AbstractComplexNode [ex/dow/eren/vis: [true/true/true/true]] ]]
+01-09 17:03:38.122: I/DataSourceAdapter(30455): -- Getting view [0] CACHED
+01-09 17:03:38.126: I/DataSourceAdapter(30455): -- Getting view [1] CACHED
+01-09 17:03:38.126: I/DataSourceAdapter(30455): -- Getting view [2] CACHED
+01-09 17:03:38.127: I/DataSourceAdapter(30455): -- Getting view [3] CACHED
+01-09 17:03:38.128: I/DataSourceAdapter(30455): -- Getting view [4] CACHED
+01-09 17:03:38.128: I/DataSourceAdapter(30455): -- Getting view [5] CACHED
+01-09 17:03:38.129: I/DataSourceAdapter(30455): -- Getting view [6] CACHED
+01-09 17:03:38.135: I/DataSourceAdapter(30455): -- Getting view [7] CACHED
+01-09 17:03:38.140: I/DataSourceAdapter(30455): -- Getting view [8]
+01-09 17:03:38.196: I/DBQUERY.TIME(30455): ~~ Time lapse for [SELECT STATIONTYPEID 60003643] PT0.005S
+01-09 17:03:38.212: I/DataSourceAdapter(30455): -- Getting view [9]
+01-09 17:03:38.240: I/DBQUERY.TIME(30455): ~~ Time lapse for [SELECT STATIONTYPEID 60002515] PT0.002S
+01-09 17:03:38.298: I/DataSourceAdapter(30455): -- Getting view [10] CACHED
+01-09 17:03:39.130: I/AndroidCacheConnector(30455): -- Storing Drawable instance [http://image.eveonline.com/Render/1531_64.png] 
+01-09 17:03:39.130: I/AndroidCacheConnector(30455): >> NewCacheStorage.writeDrawableToDisk
+01-09 17:03:39.179: I/AndroidCacheConnector(30455): << NewCacheStorage.writeDrawableToDisk [true]

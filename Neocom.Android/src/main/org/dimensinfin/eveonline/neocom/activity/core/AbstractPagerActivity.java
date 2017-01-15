@@ -97,6 +97,10 @@ public abstract class AbstractPagerActivity extends Activity {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
+	public Activity getActivity() {
+		return this;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
@@ -273,22 +277,6 @@ public abstract class AbstractPagerActivity extends Activity {
 			_pageAdapter = new EvePagerAdapter(this.getFragmentManager(), _pageContainer.getId());
 			_pageContainer.setAdapter(_pageAdapter);
 			this.disableIndicator();
-
-			// // Process the parameters into the context.
-			// final Bundle extras = getIntent().getExtras();
-			// if (null == extras)
-			// throw new RuntimeException(
-			// "RT IndustryDirectorActivity.onCreate - Unable to continue.
-			// Required parameters not defined on Extras.");
-			// //Instantiate the pilot from the characterID.
-			// final long characterid =
-			// extras.getLong(AppWideConstants.extras.EXTRA_EVECHARACTERID);
-			// if (characterid > 0) {
-			// // Initialize the access to the global structures.
-			// this._store = EVEDroidApp.getAppStore();
-			// this._store.activatePilot(characterid);
-			// this._store.activateActivity(this);
-			// }
 		} catch (final Exception rtex) {
 			Log.e("EVEI", "RTEX> AbstractPagerActivity.onCreate - " + rtex.getMessage());
 			rtex.printStackTrace();

@@ -261,9 +261,9 @@ public class TimeTickReceiver extends BroadcastReceiver {
 				if (entry.state == ERequestState.PENDING) {
 					// Filter only MARKETDATA requests.
 					if (entry.reqClass == ERequestClass.MARKETDATA)
-						if (limit <= TimeTickReceiver.LAUNCH_LIMIT) if (this.blockedMarket())
-						return;
-						else {
+						if (limit <= TimeTickReceiver.LAUNCH_LIMIT) if (this.blockedMarket()) {
+						continue;
+						} else {
 						this.launchMarketUpdate(entry);
 						}
 					// Filter the rest of the character data to be updated

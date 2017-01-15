@@ -22,6 +22,7 @@ import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
 import org.dimensinfin.eveonline.neocom.interfaces.INamedPart;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.render.ApiKeyRender;
+import org.joda.time.Instant;
 
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,6 +62,10 @@ public class ApiKeyPart extends EveAbstractPart implements INamedPart, OnClickLi
 		return EveAbstractPart.keyFormatter.format(this.getCastedModel().getKey());
 	}
 
+	public String getTransformedPaidUntil() {
+		return timePointFormatter.print(new Instant(this.getCastedModel().getPaidUntil()));
+	}
+
 	/**
 	 * Manage a click on the key visible element. A click will toggle the expand/collapse state.
 	 */
@@ -92,10 +97,6 @@ public class ApiKeyPart extends EveAbstractPart implements INamedPart, OnClickLi
 	@Override
 	protected AbstractHolder selectHolder() {
 		return new ApiKeyRender(this, _activity);
-		//		// Get the proper holder set for the render mode.
-		//		if (this.getRenderMode() == EVARIANT.CAPSULEER_LIST.hashCode()) return new ApiKeyRender(this, _activity);
-		//		// If holder not located return a default view for a sample and modeless Part.
-		//		return super.selectHolder();
 	}
 }
 

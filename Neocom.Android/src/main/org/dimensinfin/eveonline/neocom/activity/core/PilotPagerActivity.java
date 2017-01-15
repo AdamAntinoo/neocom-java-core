@@ -1,13 +1,14 @@
 //	PROJECT:        NeoCom.Android (NEOC.A)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
 //									for characters and corporations at Eve Online. The set is composed of some projects
 //									with implementation for Android and for an AngularJS web interface based on REST
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.activity.core;
 
+//- IMPORT SECTION .........................................................................................
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.storage.AppModelStore;
 
@@ -38,7 +39,6 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 	protected void onCreate(final Bundle savedInstanceState) {
 		Log.i("EVEI", ">> PilotPagerActivity.onCreate"); //$NON-NLS-1$
 		super.onCreate(savedInstanceState);
-		//		setContentView(R.layout.activity_pager);
 		try {
 			// Process the parameters into the context.
 			final Bundle extras = this.getIntent().getExtras();
@@ -59,29 +59,5 @@ public abstract class PilotPagerActivity extends AbstractPagerActivity {
 		}
 		Log.i("EVEI", "<< PilotPagerActivity.onCreate"); //$NON-NLS-1$
 	}
-
-	//	/**
-	//	 * Save the store to their persistent file before releasing the control to another activity that will then
-	//	 * be able to make use of that data structures.
-	//	 */
-	//	@Override
-	//	protected void onPause() {
-	//		Log.i("NEOCOM", ">> PilotPagerActivity.onPause");
-	//		// Check store state and update cache on disk if it has changed.
-	//		if (_store.isDirty()) _store.save();
-	//		super.onPause();
-	//		Log.i("NEOCOM", "<< PilotPagerActivity.onPause");
-	//	}
-
-	//	@Override
-	//	protected void onSaveInstanceState(final Bundle savedInstanceState) {
-	//		Log.i("NEOCOM", ">> PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
-	//		super.onSaveInstanceState(savedInstanceState);
-	//		// Add current model data dependencies. EVECHARACTERID
-	//		savedInstanceState.putLong(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(),
-	//				AppModelStore.getSingleton().getPilot().getCharacterID());
-	//		AppModelStore.getSingleton().save();
-	//		Log.i("NEOCOM", "<< PilotPagerActivity.onSaveInstanceState"); //$NON-NLS-1$
-	//	}
 }
 //- UNUSED CODE ............................................................................................

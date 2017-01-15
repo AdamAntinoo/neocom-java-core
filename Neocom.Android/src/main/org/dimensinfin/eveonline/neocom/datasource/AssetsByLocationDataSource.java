@@ -80,7 +80,8 @@ public class AssetsByLocationDataSource extends SpecialDataSource {
 			rte.printStackTrace();
 			AbstractDataSource.logger.severe("E> There is a problem at: AssetsByLocationDataSource.createHierarchy.");
 		}
-		AbstractDataSource.logger.info("<< [AssetsByLocationDataSource.collaborate2Model]> model size: " + _root.size());
+		AbstractDataSource.logger
+				.info("<< [AssetsByLocationDataSource.collaborate2Model]> model size: " + _dataModelRoot.getChildren().size());
 		return _dataModelRoot;
 	}
 

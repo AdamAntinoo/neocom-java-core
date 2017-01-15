@@ -41,11 +41,11 @@ public class FittingListActivity extends PilotPagerActivity implements INeoComDi
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.fitsdirector;
+		return R.drawable.fittingmanagement;
 	}
 
 	public int getIconReferenceInactive() {
-		return R.drawable.fitdirectordimmed;
+		return R.drawable.fittingmanagementdimmed;
 	}
 
 	public String getName() {

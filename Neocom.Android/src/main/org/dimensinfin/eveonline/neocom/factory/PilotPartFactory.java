@@ -14,11 +14,14 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.android.mvc.interfaces.IPartFactory;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.eveonline.neocom.activity.DirectorsBoardActivity.EDashboardVariants;
 import org.dimensinfin.eveonline.neocom.activity.PilotListActivity.EAccountsVariants;
 import org.dimensinfin.eveonline.neocom.model.Corporation;
+import org.dimensinfin.eveonline.neocom.model.Director;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.Pilot;
 import org.dimensinfin.eveonline.neocom.part.ApiKeyPart;
+import org.dimensinfin.eveonline.neocom.part.DirectorPart;
 import org.dimensinfin.eveonline.neocom.part.PilotInfoPart;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -51,6 +54,16 @@ public class PilotPartFactory extends PartFactory implements IPartFactory {
 				return part;
 			}
 			if (node instanceof Corporation) {
+				IPart part = new PilotInfoPart(node).setFactory(this);
+				return part;
+			}
+		}
+		if (this.getVariant() == EDashboardVariants.NEOCOM_DASHBOARD.name()) {
+			if (node instanceof Director) {
+				IPart part = new DirectorPart((Director) node);
+				return part;
+			}
+			if (node instanceof Pilot) {
 				IPart part = new PilotInfoPart(node).setFactory(this);
 				return part;
 			}

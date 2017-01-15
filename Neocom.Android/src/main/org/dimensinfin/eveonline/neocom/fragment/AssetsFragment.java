@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import org.dimensinfin.eveonline.neocom.activity.AssetsDirectorActivity.EAssetVariants;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.datasource.AssetsByLocationDataSource;
-import org.dimensinfin.eveonline.neocom.datasource.AssetsMaterialsDataSource;
 import org.dimensinfin.eveonline.neocom.datasource.DataSourceLocator;
 import org.dimensinfin.eveonline.neocom.datasource.SpecialDataSource;
 import org.dimensinfin.eveonline.neocom.factory.AssetPartFactory;
@@ -32,6 +31,13 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 	//	private int _filter = AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
+	@Override
+	public void createFactory() {
+		AssetsFragment.logger.info(">> [AssetsFragment.createFactory]");
+		this.setFactory(new AssetPartFactory(this.getVariant()));
+		AssetsFragment.logger.info("<< [AssetsFragment.createFactory]");
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
@@ -52,21 +58,6 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 	}
 
 	@Override
-	public void onStart() {
-		AssetsFragment.logger.info(">> [AssetsFragment.onStart]");
-		try {
-			this.registerDataSource();
-			// This fragment has a header. Populate it with the datasource header contents.
-			this.setHeaderContents();
-		} catch (final RuntimeException rtex) {
-			AssetsFragment.logger.warning("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage());
-			rtex.printStackTrace();
-			this.stopActivity(new RuntimeException("RTEX> FittingListFragment.onCreateView - " + rtex.getMessage()));
-		}
-		super.onStart();
-		AssetsFragment.logger.info("<< [AssetsFragment.onStart]");
-	}
-
 	public void registerDataSource() {
 		AssetsFragment.logger.info(">> [AssetsFragment.registerDataSource]");
 		Bundle extras = this.getExtras();
@@ -78,21 +69,22 @@ public class AssetsFragment extends AbstractNewPagerFragment implements IPagerFr
 		// This part of the code may depend on the variant so surround it with the detector.
 		if (this.getVariant() == EAssetVariants.ASSETS_BYLOCATION.name()) {
 			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-			SpecialDataSource ds = new AssetsByLocationDataSource(locator, new AssetPartFactory(this.getVariant()));
+			SpecialDataSource ds = new AssetsByLocationDataSource(locator, this.getFactory());
 			ds.setVariant(this.getVariant());
 			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
 			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
 		}
-		if (this.getVariant() == EAssetVariants.ASSETS_MATERIALS.name()) {
-			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
-			SpecialDataSource ds = new AssetsMaterialsDataSource(locator, new AssetPartFactory(this.getVariant()));
-			ds.setVariant(this.getVariant());
-			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
-			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
-		}
+		//		if (this.getVariant() == EAssetVariants.ASSETS_MATERIALS.name()) {
+		//			// Register the datasource. If this same datasource is already at the manager we get it instead creating a new one.
+		//			SpecialDataSource ds = new AssetsMaterialsDataSource(locator, getFactory());
+		//			ds.setVariant(this.getVariant());
+		//			ds.addParameter(AppWideConstants.EExtras.EXTRA_CAPSULEERID.name(), this.getPilot().getCharacterID());
+		//			this.setDataSource(AppModelStore.getSingleton().getDataSourceConector().registerDataSource(ds));
+		//		}
 		AssetsFragment.logger.info("<< [AssetsFragment.registerDataSource]");
 	}
 
+	@Override
 	public void setHeaderContents() {
 		// TODO Auto-generated method stub
 

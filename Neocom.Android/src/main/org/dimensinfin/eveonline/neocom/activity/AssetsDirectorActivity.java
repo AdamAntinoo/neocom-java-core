@@ -78,5 +78,4 @@ public class AssetsDirectorActivity extends PilotPagerActivity implements INeoCo
 		AssetsDirectorActivity.logger.info("<< [AssetsDirectorActivity.onCreate]"); //$NON-NLS-1$
 	}
 }
-// - UNUSED CODE
-// ............................................................................................
+// - UNUSED CODE ............................................................................................

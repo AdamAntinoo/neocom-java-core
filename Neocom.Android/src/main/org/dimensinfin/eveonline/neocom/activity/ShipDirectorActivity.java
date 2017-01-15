@@ -43,11 +43,11 @@ public class ShipDirectorActivity extends PilotPagerActivity implements INeoComD
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.shipsdirector;
+		return R.drawable.isis;
 	}
 
 	public int getIconReferenceInactive() {
-		return R.drawable.shipsdirectordimmed;
+		return R.drawable.isisdimmed;
 	}
 
 	public String getName() {
