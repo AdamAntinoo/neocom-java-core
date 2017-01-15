@@ -529,7 +529,7 @@ public class AssetsManager implements Serializable {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetsManager [");
-		buffer.append("owner:").append(this.getPilot().getName());
+		buffer.append("owner:").append(this.getPilot().getName()).append(" ");
 		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
 		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
 		if (assetsAtCategoryCache.size() > 0) {
