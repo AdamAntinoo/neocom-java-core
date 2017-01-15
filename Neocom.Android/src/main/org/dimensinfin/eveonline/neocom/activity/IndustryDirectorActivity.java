@@ -30,22 +30,18 @@ import android.util.Log;
  * @author Adam Antinoo
  */
 public class IndustryDirectorActivity extends PilotPagerActivity implements INeoComDirector {
-	// - S T A T I C - S E C T I O N
-	// ..........................................................................
+	// - S T A T I C - S E C T I O N ..........................................................................
 	// public static Logger logger =
 	// Logger.getLogger("IndustryDirectorActivity");
 
-	// - F I E L D - S E C T I O N
-	// ............................................................................
+	// - F I E L D - S E C T I O N ............................................................................
 	private int	_T3Count	= 0;
 	private int	_T2Count	= 0;
 	private int	_T1Count	= 0;
 
-	// - C O N S T R U C T O R - S E C T I O N
-	// ................................................................
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
-	// - M E T H O D - S E C T I O N
-	// ..........................................................................
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Checks if there are the conditions to activate this particular manager. Each one will have it different
 	 * rules to reach the activation point.<br>
@@ -72,11 +68,11 @@ public class IndustryDirectorActivity extends PilotPagerActivity implements INeo
 	}
 
 	public int getIconReferenceActive() {
-		return R.drawable.industrydirector;
+		return R.drawable.industry;
 	}
 
 	public int getIconReferenceInactive() {
-		return R.drawable.industrydirectordimmed;
+		return R.drawable.industrydimmed;
 	}
 
 	public String getName() {

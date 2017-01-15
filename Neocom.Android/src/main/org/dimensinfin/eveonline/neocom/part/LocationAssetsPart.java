@@ -6,8 +6,6 @@
 
 package org.dimensinfin.eveonline.neocom.part;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -19,17 +17,13 @@ import org.dimensinfin.android.mvc.interfaces.IPart;
 import org.dimensinfin.eveonline.neocom.NeoComApp;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.constant.AppWideConstants;
 import org.dimensinfin.eveonline.neocom.core.EveAbstractPart;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.render.Location4AssetsRender;
 
 import com.j256.ormlite.dao.Dao;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -41,13 +35,13 @@ import android.view.View.OnClickListener;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class LocationAssetsPart extends LocationPart implements IMenuActionTarget, OnClickListener {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long										serialVersionUID	= -1226559463320336724L;
-	private static String												_contextMenuTitle	= "Select Location Role";
-	private static String[]											_contextMenu			= null;
+	private static final long													serialVersionUID	= -1226559463320336724L;
+	private static String															_contextMenuTitle	= "Select Location Role";
+	private static String[]														_contextMenu			= null;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private HashMap<Long, AbstractAndroidPart>	containerList			= new HashMap<Long, AbstractAndroidPart>();
-	private final HashMap<Long, AssetPart>			containers				= new HashMap();;
+	private final HashMap<Long, AbstractAndroidPart>	containerList			= new HashMap<Long, AbstractAndroidPart>();
+	private final HashMap<Long, AssetPart>						containers				= new HashMap();;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public LocationAssetsPart(final EveLocation location) {
@@ -68,9 +62,9 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 	@Override
 	public String get_locationContentCount() {
 		long locationAssets = 0;
-		if (this.getCastedModel().isExpanded())
+		if (this.getCastedModel().isExpanded()) {
 			locationAssets = this.getChildren().size();
-		else
+		} else {
 			try {
 				Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
 				// DEBUG I have to get access to the pilot ID for some filters. Possible set the parent the root and from it to the Pilot
@@ -80,11 +74,13 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 			} catch (java.sql.SQLException sqle) {
 				sqle.printStackTrace();
 			}
+		}
 		String countString = null;
-		if (locationAssets > 1)
+		if (locationAssets > 1) {
 			countString = EveAbstractPart.qtyFormatter.format(locationAssets) + " items";
-		else
+		} else {
 			countString = EveAbstractPart.qtyFormatter.format(locationAssets) + " item";
+		}
 		return countString;
 	}
 
@@ -106,53 +102,54 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 	 * number (expand/collapse).
 	 */
 	public void onClick(final View view) {
-		if (!this.isDownloaded()) {
-			// Generate the children of this Location and its Containers.
-			this.clean();
-			// Get the state of the configuration setting for the asset calculations.
-			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
-			boolean calculateValue = sharedPrefs.getBoolean(AppWideConstants.preference.PREF_CALCULATEASSETVALUE, true);
-			try {
-				AssetsManager manager = this.getPilot().getAssetsManager();
-				ArrayList<NeoComAsset> assetList = manager.searchAsset4Location(this.getCastedModel());
-				for (NeoComAsset asset : assetList) {
-					// Detect the type: Asset / Ship / Container
-					AssetPart apart = null;
-					if (asset.isShip()) {
-						// Check if the ship is packaged.
-						if (asset.isPackaged())
-							apart = (AssetPart) new AssetPart(asset).setRenderMode(this.getRenderMode());
-						else
-							apart = (AssetPart) new ShipPart(asset).setRenderMode(this.getRenderMode());
-					} else if (asset.isContainer())
-						// Check if the ship is packaged.
-						if (asset.isPackaged())
-						apart = (AssetPart) new AssetPart(asset).setRenderMode(this.getRenderMode());
-						else
-						apart = (AssetPart) new ContainerPart(asset).setRenderMode(this.getRenderMode());
-					else
-						apart = (AssetPart) new AssetPart(asset).setRenderMode(this.getRenderMode());
-					if (calculateValue) this.calculateValue(asset, apart);
-
-					// Assets may not contain a parent (so they are on the Hangar floor) or are inside a Container/Ship
-					NeoComAsset container = asset.getParentContainer();
-					if (null == container)
-						this.add2Location(apart);
-					else
-						this.add2Container(apart);
-				}
-				// Marks data as downloaded.
-				this.getCastedModel().setDownloaded(true);
-				// Clear current hierarchy before reloading the new.
-				containerList = new HashMap<Long, AbstractAndroidPart>();
-			} catch (RuntimeException rte) {
-				// TODO Auto-generated catch block
-				rte.printStackTrace();
-				Log.i("LocationPart.onClick", "SQL Error while rading location assets.");
-			}
-		}
+		//		if (!this.isDownloaded()) {
+		//			// Generate the children of this Location and its Containers.
+		//			this.clean();
+		//			// Get the state of the configuration setting for the asset calculations.
+		//			SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+		//			boolean calculateValue = sharedPrefs.getBoolean(AppWideConstants.preference.PREF_CALCULATEASSETVALUE, true);
+		//			try {
+		//				AssetsManager manager = this.getPilot().getAssetsManager();
+		//				ArrayList<NeoComAsset> assetList = manager.searchAsset4Location(this.getCastedModel());
+		//				for (NeoComAsset asset : assetList) {
+		//					// Detect the type: Asset / Ship / Container
+		//					AssetPart apart = null;
+		//					if (asset.isShip()) {
+		//						// Check if the ship is packaged.
+		//						if (asset.isPackaged())
+		//							apart = (AssetPart) new AssetPart(asset).setRenderMode(this.getRenderMode());
+		//						else
+		//							apart = (AssetPart) new ShipPart(asset).setRenderMode(this.getRenderMode());
+		//					} else if (asset.isContainer())
+		//						// Check if the ship is packaged.
+		//						if (asset.isPackaged())
+		//						apart = (AssetPart) new AssetPart(asset).setRenderMode(this.getRenderMode());
+		//						else
+		//						apart = (AssetPart) new ContainerPart(asset).setRenderMode(this.getRenderMode());
+		//					else
+		//						apart = (AssetPart) new AssetPart(asset).setRenderMode(this.getRenderMode());
+		//					if (calculateValue) this.calculateValue(asset, apart);
+		//
+		//					// Assets may not contain a parent (so they are on the Hangar floor) or are inside a Container/Ship
+		//					NeoComAsset container = asset.getParentContainer();
+		//					if (null == container)
+		//						this.add2Location(apart);
+		//					else
+		//						this.add2Container(apart);
+		//				}
+		//				// Marks data as downloaded.
+		//				this.getCastedModel().setDownloaded(true);
+		//				// Clear current hierarchy before reloading the new.
+		//				containerList = new HashMap<Long, AbstractAndroidPart>();
+		//			} catch (RuntimeException rte) {
+		//				// TODO Auto-generated catch block
+		//				rte.printStackTrace();
+		//				Log.i("LocationPart.onClick", "SQL Error while rading location assets.");
+		//			}
+		//		}
 		// Toggle location to show its contents.
-		this.getCastedModel().toggleExpanded();
+		this.invalidate();
+		this.toggleExpanded();
 		this.fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 	}
 
@@ -162,10 +159,11 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 		final String menuItemName = LocationAssetsPart._contextMenu[menuItemIndex];
 		final EveLocation theSelectedLocation = this.getCastedModel();
 		// Check for the role clearing.
-		if (menuItemName.equalsIgnoreCase("-CLEAR-"))
+		if (menuItemName.equalsIgnoreCase("-CLEAR-")) {
 			this.getPilot().clearLocationRoles(theSelectedLocation);
-		else
+		} else {
 			this.getPilot().addLocationRole(theSelectedLocation, menuItemName);
+		}
 		this.invalidate();
 		this.fireStructureChange(SystemWideConstants.events.EVENTSTRUCTURE_ACTIONEXPANDCOLLAPSE, this, this);
 		Log.i("NEOCOM", "<< LocationAssetsPart.onContextItemSelected"); //$NON-NLS-1$
@@ -177,8 +175,9 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 		//		String _contextMenuTitle = "Select Location Role";
 		//		String[] _contextMenu = EVEDroidApp.getSingletonApp().getResources().getStringArray(R.array.locationFunctions);
 		menu.setHeaderTitle(LocationAssetsPart._contextMenuTitle);
-		for (int i = 0; i < LocationAssetsPart._contextMenu.length; i++)
+		for (int i = 0; i < LocationAssetsPart._contextMenu.length; i++) {
 			menu.add(Menu.NONE, i, i, LocationAssetsPart._contextMenu[i]);
+		}
 		Log.i("NEOCOM", "<< LocationAssetsPart.onCreateContextMenu"); //$NON-NLS-1$
 	}
 
@@ -207,10 +206,11 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 				AssetPart check = (AssetPart) child;
 				long ccid = check.getCastedModel().getDAOID();
 				if (ccid == pcid) {
-					if (apart.getCastedModel().isBlueprint())
+					if (apart.getCastedModel().isBlueprint()) {
 						check.checkAssetStacking(apart);
-					else
+					} else {
 						check.addChild(apart);
+					}
 					Log.i("LocationAssetsPart", ".. LocationAssetsPart.add2Container added to container: " + ccid);
 					return;
 				}
@@ -218,12 +218,13 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 		// Add the container to the location and the the item to the container.
 		NeoComAsset container = apart.getCastedModel().getParentContainer();
 		AssetPart newpart = null;
-		if (container.isShip())
+		if (container.isShip()) {
 			newpart = (AssetPart) new ShipPart(container).setRenderMode(this.getRenderMode());
-		else if (container.isContainer())
+		} else if (container.isContainer()) {
 			newpart = (AssetPart) new ContainerPart(container).setRenderMode(this.getRenderMode());
-		else
+		} else {
 			newpart = (AssetPart) new AssetPart(container).setRenderMode(this.getRenderMode());
+		}
 		this.addChild(newpart);
 		newpart.addChild(apart);
 		Log.i("LocationAssetsPart", ".. LocationAssetsPart.add2Container created new container: " + container.getDAOID());
@@ -233,11 +234,12 @@ public class LocationAssetsPart extends LocationPart implements IMenuActionTarge
 		//	if (apart instanceof AssetPart) {
 		// Stacking is only for BPC
 		//	if (apart instanceof AssetPart)
-		if (apart.getCastedModel().isBlueprint())
+		if (apart.getCastedModel().isBlueprint()) {
 			this.checkAssetStacking(apart);
-		else
+		} else {
 			this.addChild(apart);
-		//	}
+			//	}
+		}
 	}
 }
 

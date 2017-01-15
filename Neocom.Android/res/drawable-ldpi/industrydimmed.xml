@@ -4,7 +4,7 @@
     <item>
         <bitmap
             android:scaleType="centerCrop"
-            android:src="@drawable/industrydirector" />
+            android:src="@drawable/industry" />
     </item>
     <item>
         <shape>

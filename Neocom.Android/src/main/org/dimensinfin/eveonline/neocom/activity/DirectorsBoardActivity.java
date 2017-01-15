@@ -39,10 +39,10 @@ public class DirectorsBoardActivity extends PilotPagerActivity {
 		ASSETDIRECTOR, SHIPDIRECTOR, INDUSTRYDIRECTOR, MARKETDIRECTOR, JOBDIRECTOR, MININGDIRECTOR, FITDIRECTOR
 	}
 
-	private static Logger									logger					= Logger.getLogger("DirectorsBoardActivity");
-	private static final EDirectorCode[]	activeDirectors	= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
-			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.JOBDIRECTOR, EDirectorCode.MARKETDIRECTOR,
-			EDirectorCode.FITDIRECTOR };
+	private static Logger logger = Logger.getLogger("DirectorsBoardActivity");
+	//	private static final EDirectorCode[]	activeDirectors	= { EDirectorCode.ASSETDIRECTOR, EDirectorCode.SHIPDIRECTOR,
+	//			EDirectorCode.INDUSTRYDIRECTOR, EDirectorCode.JOBDIRECTOR, EDirectorCode.MARKETDIRECTOR,
+	//			EDirectorCode.FITDIRECTOR };
 
 	// - F I E L D - S E C T I O N ............................................................................
 

@@ -20,6 +20,7 @@ import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.activity.AssetsDirectorActivity;
 import org.dimensinfin.eveonline.neocom.activity.FittingListActivity;
+import org.dimensinfin.eveonline.neocom.activity.IndustryDirectorActivity;
 import org.dimensinfin.eveonline.neocom.activity.ShipDirectorActivity;
 import org.dimensinfin.eveonline.neocom.constant.AppWideConstants.EExtras;
 import org.dimensinfin.eveonline.neocom.datasource.DataSourceLocator;
@@ -150,8 +151,10 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 						// Create the part, configure it and add to the layout.
 						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new ShipDirectorActivity()));
 						break;
-					//							case INDUSTRYDIRECTOR:
-					//								final IDirector thedirector = new IndustryDirectorActivity();
+					case INDUSTRYDIRECTOR:
+						// Create the part, configure it and add to the layout.
+						dirPart = (AbstractAndroidPart) this.getFactory().createPart(new Director(new IndustryDirectorActivity()));
+						break;
 					//							case JOBDIRECTOR:
 					//								final IDirector jdirector = new FittingActivity();
 					//							case MARKETDIRECTOR:
@@ -170,11 +173,6 @@ public class NeoComDashboardFragment extends AbstractNewPagerFragment {
 						holder.updateContent();
 						final View hv = holder.getView();
 						neoComMenuContainer.addView(hv);
-						// Add the connection to the click listener
-						//						if (dirPart instanceof OnClickListener) {
-						//							hv.setClickable(true);
-						////							hv.setOnClickListener((OnClickListener) dirPart);
-						//						}
 					} catch (final RuntimeException rtex) {
 						Log.e("PageFragment", "R> PageFragment.addViewtoHeader RuntimeException. " + rtex.getMessage());
 						rtex.printStackTrace();

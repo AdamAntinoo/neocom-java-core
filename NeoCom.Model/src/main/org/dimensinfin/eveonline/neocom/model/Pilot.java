@@ -188,17 +188,10 @@ public class Pilot extends NeoComCharacter {
 			// Clear any previous records with owner -1 from database.
 			AppConnector.getDBConnector().clearInvalidRecords();
 			// Download and parse the blueprints using the eveapi.
-			// Set the default connector for blueprints to a cache connector.
-			//			if (null == apiCacheConnector) {
-			//				apiCacheConnector = new CachingConnector();
-			//			}
-			//			EveApi.setConnector(apiCacheConnector);
-			//			BlueprintListResponse response = null;
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
 			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
 			if (null != response) {
-				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
 				for (Blueprint bp : blueprints) {
 					try {
@@ -210,7 +203,6 @@ public class Pilot extends NeoComCharacter {
 					}
 				}
 			}
-			//			}
 			// Pack the blueprints and store them on the database.
 			this.getAssetsManager().storeBlueprints(bplist);
 			AppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
