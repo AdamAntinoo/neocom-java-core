@@ -96,6 +96,8 @@ public interface IDatabaseConnector {
 
 	public int searchModule4Blueprint(int bpitemID);
 
+	public int searchRawPlanetaryOutput(int itemID);
+
 	public int searchReactionOutputMultiplier(int itemID);
 
 	public int searchStationType(long systemID);

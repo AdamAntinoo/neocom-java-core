@@ -5,18 +5,23 @@
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
 package org.dimensinfin.eveonline.poc.planetary;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.Vector;
-// - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.IConnector;
+import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.poc.connector.AbstractAppConnector;
+import org.dimensinfin.eveonline.poc.connector.SpringDatabaseConnector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class POCPlanetaryApplication {
+public class POCPlanetaryApplication extends AbstractAppConnector {
 	public enum ECategory {
 		PlanetaryResources
 
@@ -29,15 +34,42 @@ public class POCPlanetaryApplication {
 	public static void main(String[] args) {
 		// Create the application instance and make it run
 		singleton = new POCPlanetaryApplication(args);
+		AppConnector.setConnector(singleton);
 		singleton.run();
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private long	itemIdSequence	= 1000000000000L;
-	private long	locationID			= 20000547L;
+	private SpringDatabaseConnector	dbConnector			= null;
+	private long										itemIdSequence	= 1000000000000L;
+	private long										locationID			= 20000547L;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public POCPlanetaryApplication(String[] args) {
+	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
+	public void addCharacterUpdateRequest(long characterID) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public IDatabaseConnector getDBConnector() {
+		if (null == dbConnector) dbConnector = new SpringDatabaseConnector();
+		return dbConnector;
+	}
+
+	@Override
+	public INeoComModelStore getModelStore() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IConnector getSingleton() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -49,7 +81,7 @@ public class POCPlanetaryApplication {
 	 * processed and the resulting income in ISK.
 	 */
 	public void run() {
-		// Get some list of planetary resources of all kinds.
+		// Get some list of planetary resources of all kinds for testing.
 		Vector<Resource> planetaryAssets = new Vector<Resource>();
 		Resource pa = new Resource(2268, 1000000);
 		planetaryAssets.add(pa);
@@ -84,12 +116,10 @@ public class POCPlanetaryApplication {
 		pa = new Resource(2310, 2245474);
 		planetaryAssets.add(pa);
 
-		// Process Raw resources to Tier 1 and then  start to process the set.
-		for (Resource neoComAsset : planetaryAssets) {
-			if (neoComAsset.getCategory().equalsIgnoreCase("Planetary Resources")) {
-				NeoComAsset transform = processRaw(neoComAsset);
-			}
-		}
+		// The Planetary Advisor requires a list of Planetary Resources to be stocked to start the profit calculations.
+		PlanetaryScenery advisor = new PlanetaryScenery();
+		advisor.stock(planetaryAssets);
+
 		// Create the initial processing point and start the optimization recursively.
 		// Print the output
 	}
@@ -113,7 +143,6 @@ public class POCPlanetaryApplication {
 		return assetValueISK;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
 	 * <br>
@@ -151,23 +180,6 @@ public class POCPlanetaryApplication {
 		return newAsset;
 	}
 
-	/**
-	 * Converts a RAW level Planetary resource (Planetary Resources) into a Tier 1 Planetary resource and
-	 * applies the tax to the input.
-	 * 
-	 * @param neoComAsset
-	 * @return
-	 */
-	private ProcessingResult processRaw(Resource neoComAsset) {
-		// Calculate the quantity that we can process.
-		int resultQty = Math.floorDiv(neoComAsset.getQuantity(), 3000);
-		ProcessingResult result = new ProcessingResult();
-		// Add the remaining RAW resource not processed.
-		result.addResource(new Resource(neoComAsset.getTypeID(), neoComAsset.getQuantity() - (3000 * resultQty)));
-		// Get the equivalent processed resource from this RAW element.
-		PlanetaryProcessor.process(neoComAsset);
-		return null;
-	}
 }
 
 // - UNUSED CODE ............................................................................................
