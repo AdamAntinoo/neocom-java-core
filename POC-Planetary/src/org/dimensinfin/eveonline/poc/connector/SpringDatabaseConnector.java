@@ -24,6 +24,7 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Outpost;
+import org.dimensinfin.eveonline.neocom.model.Schematics;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SpringDatabaseConnector extends AbstractDatabaseConnector {
@@ -37,6 +38,8 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 	private static final String							SELECT_TIER2_INPUTS				= "SELECT pstmt.TYPEid, pstmt.quantity"
 			+ " FROM  planetSchematicsTypeMap pstms, planetSchematicsTypeMap pstmt" + " WHERE pstms.typeID = ?"
 			+ " AND   pstms.isInput = 0" + " AND   pstmt.schematicID = pstms.schematicID" + " AND   pstmT.isInput = 1";
+	private static final String							SELECT_SCHEMATICS_INFO		= "SELECT pstm.typeID, pstm.quantity, pstm.isInput"
+			+ " FROM   planetSchematicsTypeMap pstm" + " WHERE  schematicID = ?";
 
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\WorkStage\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
@@ -301,6 +304,34 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 			}
 		}
 		return outputResourceId;
+	}
+
+	public Schematics searchSchematics4Output(int targetId) {
+		Schematics sche = new Schematics();
+		PreparedStatement prepStmt = null;
+		ResultSet cursor = null;
+		try {
+			prepStmt = getCCPDatabase().prepareStatement(SELECT_SCHEMATICS_INFO);
+			prepStmt.setString(1, Integer.valueOf(targetId).toString());
+			cursor = prepStmt.executeQuery();
+			while (cursor.next()) {
+				sche.addData(cursor.getInt(1), cursor.getLong(2), cursor.getBoolean(3));
+			}
+		} catch (Exception ex) {
+			logger.warning("W- [SpingDatabaseConnector.searchRawPlanetaryOutput]> Database exception: " + ex.getMessage());
+		} finally {
+			try {
+				if (cursor != null) cursor.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			try {
+				if (prepStmt != null) prepStmt.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return sche;
 	}
 
 	//[03]

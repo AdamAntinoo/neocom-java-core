@@ -20,6 +20,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.Property;
+import org.dimensinfin.eveonline.neocom.model.Schematics;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -40,8 +41,6 @@ public interface IDatabaseConnector {
 	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
 
 	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException;
-
-	public Vector<Integer> getInputResources(Integer target);
 
 	public Dao<Job, String> getJobDAO() throws SQLException;
 
@@ -75,6 +74,8 @@ public interface IDatabaseConnector {
 
 	public int searchBlueprint4Module(final int moduleID);
 
+	public Vector<Integer> searchInputResources(int target);
+
 	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
 
 	public int searchInventionProduct(int typeID);
@@ -102,6 +103,8 @@ public interface IDatabaseConnector {
 	public int searchRawPlanetaryOutput(int itemID);
 
 	public int searchReactionOutputMultiplier(int itemID);
+
+	public Schematics searchSchematics4Output(int targetId);
 
 	public int searchStationType(long systemID);
 

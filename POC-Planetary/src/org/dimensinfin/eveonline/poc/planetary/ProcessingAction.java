@@ -9,7 +9,9 @@ import java.util.Vector;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.Schematics;
 import org.dimensinfin.eveonline.poc.planetary.PlanetaryResource.EPlanetaryTypes;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -31,6 +33,7 @@ public class ProcessingAction {
 	private static final int					RAWOUTPUT_MULTIPLIER		= 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private Schematics								schematics							= null;
 	private Vector<PlanetaryResource>	rawResources						= new Vector<PlanetaryResource>();
 	private Vector<PlanetaryResource>	t1Resources							= new Vector<PlanetaryResource>();
 	private Vector<PlanetaryResource>	t2Resources							= new Vector<PlanetaryResource>();
@@ -38,14 +41,45 @@ public class ProcessingAction {
 	private Vector<PlanetaryResource>	t4Resources							= new Vector<PlanetaryResource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	//	public ProcessingAction() {
-	//	}
+	/**
+	 * Instance a new <code>ProcessingAction</code> and set the target product id to be produced by this action.
+	 * This should get the schematics information so the action can process the quantities and the length of the
+	 * cycles.
+	 * 
+	 * @param targetId
+	 */
+	public ProcessingAction(int targetId) {
+		// Get the schematics information.
+		schematics = AppConnector.getDBConnector().searchSchematics4Output(targetId);
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public void addResource(PlanetaryResource resource) {
+		// Transform resource to Planetary Resource and then store on the right list.
+		//		PlanetaryResource pres = new PlanetaryResource(resource);
+		stockResource(resource);
+	}
+
 	public void addResource(Resource resource) {
 		// Transform resource to Planetary Resource and then store on the right list.
 		PlanetaryResource pres = new PlanetaryResource(resource);
 		stockResource(pres);
+	}
+
+	/**
+	 * Returns true if the action has enough input materials to run cycles. The number of cycles can be received
+	 * as a parameter but it is optional. The action has to know what is the target resource to be produced. It
+	 * should have already the schematics required for that job.
+	 * 
+	 * @return
+	 */
+	public boolean checkActionActive() {
+		return checkActionActive(1);
+	}
+
+	public boolean checkActionActive(int cycles) {
+
+		return false;
 	}
 
 	/**

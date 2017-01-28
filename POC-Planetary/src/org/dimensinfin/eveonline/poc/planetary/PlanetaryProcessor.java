@@ -139,11 +139,18 @@ public class PlanetaryProcessor {
 			// Search for Tier2 optimizations
 			for (Integer target : t2ProductList.keySet()) {
 				// Check if this can be processed with current T1 resources.
-				Vector<Integer> inputList = AppConnector.getDBConnector().getInputResources(target);
+				Vector<Integer> inputList = AppConnector.getDBConnector().searchInputResources(target);
 				// Check the list against the scenery resources.
 				Vector<PlanetaryResource> inputs = new Vector<PlanetaryResource>();
-				for (Object inputResourceId : inputList) {
+				// Try to create an action with those resources.
+				ProcessingAction action = new ProcessingAction();
+				for (int inputResourceId : inputList) {
 					inputs.addElement(scenery.getResource(inputResourceId));
+					action.addResource(scenery.getResource(inputResourceId));
+				}
+				// Validate if the action is successful, if it can deliver output resources.
+				if (action.checkActionActive()) {
+
 				}
 			}
 		}
