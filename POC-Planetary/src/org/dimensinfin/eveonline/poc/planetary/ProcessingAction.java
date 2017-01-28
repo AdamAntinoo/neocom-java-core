@@ -5,6 +5,8 @@
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
 package org.dimensinfin.eveonline.poc.planetary;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Vector;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
@@ -12,6 +14,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.Schematics;
+import org.dimensinfin.eveonline.neocom.model.Schematics.ESchematicDirection;
 import org.dimensinfin.eveonline.poc.planetary.PlanetaryResource.EPlanetaryTypes;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -27,18 +30,22 @@ import org.dimensinfin.eveonline.poc.planetary.PlanetaryResource.EPlanetaryTypes
 public class ProcessingAction {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger							logger									= Logger.getLogger("ProcessingResult");
-	private static int								RAW2TIER1_TRANSFORMQTY	= 3000;
-	private static final int					MINUTES_RAWCYCLE				= 30;
-	private static final int					RAWOUTPUT_MULTIPLIER		= 20;
+	private static Logger												logger									= Logger.getLogger("ProcessingResult");
+	private static int													RAW2TIER1_TRANSFORMQTY	= 3000;
+	private static final int										MINUTES_RAWCYCLE				= 30;
+	private static final int										RAWOUTPUT_MULTIPLIER		= 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Schematics								schematics							= null;
-	private Vector<PlanetaryResource>	rawResources						= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t1Resources							= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t2Resources							= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t3Resources							= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t4Resources							= new Vector<PlanetaryResource>();
+	private Vector<Schematics>									schematics							= new Vector();
+	private Vector<Schematics>									inputList								= new Vector<Schematics>();
+	private Schematics													output									= null;
+	private HashMap<Integer, PlanetaryResource>	actionResources					= new HashMap<Integer, PlanetaryResource>();
+
+	private Vector<PlanetaryResource>						rawResources						= new Vector<PlanetaryResource>();
+	private Vector<PlanetaryResource>						t1Resources							= new Vector<PlanetaryResource>();
+	private Vector<PlanetaryResource>						t2Resources							= new Vector<PlanetaryResource>();
+	private Vector<PlanetaryResource>						t3Resources							= new Vector<PlanetaryResource>();
+	private Vector<PlanetaryResource>						t4Resources							= new Vector<PlanetaryResource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -51,6 +58,11 @@ public class ProcessingAction {
 	public ProcessingAction(int targetId) {
 		// Get the schematics information.
 		schematics = AppConnector.getDBConnector().searchSchematics4Output(targetId);
+		// Store the inputs into another list.
+		for (Schematics sche : schematics) {
+			if (sche.getDirection() == ESchematicDirection.INPUT) inputList.add(sche);
+			if (sche.getDirection() == ESchematicDirection.OUTPUT) output = sche;
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -103,6 +115,29 @@ public class ProcessingAction {
 				addResource(new Resource(typeid, qty - (RAWOUTPUT_MULTIPLIER * cycles)));
 			}
 		}
+	}
+
+	public Vector<Schematics> getInputs() {
+		//	Vector<Integer> inputList = AppConnector.getDBConnector().searchInputResources(target);
+		return inputList;
+	}
+
+	/**
+	 * Return the number of cycles that can be run with the current quantities of input resources.
+	 * 
+	 * @return
+	 */
+	public int getPossibleCycles() {
+		int cycles = 0;
+		for (Schematics schematics : inputList) {
+			int inputType = schematics.getTypeId();
+			PlanetaryResource resource = actionResources.get(inputType);
+			if (null == resource)
+				return 0;
+			else
+				cycles = resource.getQuantity() / schematics.getQty();
+		}
+		return cycles;
 	}
 
 	/**
@@ -186,6 +221,23 @@ public class ProcessingAction {
 		if (!found) {
 			// Add the new resource to the list.
 			targetList.add(newResource);
+		}
+	}
+
+/**
+ * Return the list of resources left and new from the action processing following the current schematics. This is the result of
+ * substracting from the input resources the input quantity multiplied by the cycles and adding to the result the outpur resource
+ * quantity multiplied by the same cycles.
+ * @return
+ */
+	public Vector getActionResults() {
+		int cycles = getPossibleCycles();
+		Vector results = new Vector();
+		if(cycles >0) {
+			for (Schematics sche : inputList) {
+				
+			}
+			results.add(new Resource())
 		}
 	}
 

@@ -22,7 +22,7 @@ public class Schematics {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int									typeId		= -1;
-	private long								qty				= 0;
+	private int									qty				= 0;
 	private ESchematicDirection	direction	= ESchematicDirection.INPUT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -41,12 +41,28 @@ public class Schematics {
 	 * @param input
 	 *          input direction of true
 	 */
-	public void addData(final int typeId, final long quantity, final boolean input) {
+	public void addData(final int typeId, final int quantity, final boolean input) {
 		this.typeId = typeId;
 		qty = quantity;
 		if (!input) {
 			direction = ESchematicDirection.OUTPUT;
 		}
+	}
+
+	public ESchematicDirection getDirection() {
+		return direction;
+	}
+
+	public int getQty() {
+		return qty;
+	}
+
+	public int getTypeId() {
+		return typeId;
+	}
+
+	public void setQty(final int qty) {
+		this.qty = qty;
 	}
 
 }

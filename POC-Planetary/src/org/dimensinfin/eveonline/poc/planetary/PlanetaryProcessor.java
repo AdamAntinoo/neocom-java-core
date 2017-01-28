@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.Schematics;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryProcessor {
@@ -115,7 +115,8 @@ public class PlanetaryProcessor {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private PlanetaryScenery scenery = null;
+	private PlanetaryScenery					scenery	= null;
+	private Vector<ProcessingAction>	actions	= new Vector<ProcessingAction>();
 	//	private SQLiteDatabase				ccpDatabase				= null;
 	//
 	//	private Dao<Account, Integer>	accountDao;
@@ -137,23 +138,48 @@ public class PlanetaryProcessor {
 		// If current target is null this is then the first iteration on the search.
 		if (null == currentTarget) {
 			// Search for Tier2 optimizations
-			for (Integer target : t2ProductList.keySet()) {
+			for (int target : t2ProductList.keySet()) {
 				// Check if this can be processed with current T1 resources.
-				Vector<Integer> inputList = AppConnector.getDBConnector().searchInputResources(target);
+				//				Vector<Integer> inputList = AppConnector.getDBConnector().searchInputResources(target);
 				// Check the list against the scenery resources.
-				Vector<PlanetaryResource> inputs = new Vector<PlanetaryResource>();
+				//				Vector<PlanetaryResource> inputs = new Vector<PlanetaryResource>();
 				// Try to create an action with those resources.
-				ProcessingAction action = new ProcessingAction();
-				for (int inputResourceId : inputList) {
-					inputs.addElement(scenery.getResource(inputResourceId));
-					action.addResource(scenery.getResource(inputResourceId));
+				ProcessingAction action = new ProcessingAction(target);
+				for (Schematics input : action.getInputs()) {
+					//					inputs.addElement(scenery.getResource(input));
+					action.addResource(scenery.getResource(input.getTypeId()));
 				}
 				// Validate if the action is successful, if it can deliver output resources.
-				if (action.checkActionActive()) {
-
+				if (action.getPossibleCycles() > 0) {
+					// Record this action and evaluate the market value of the new scenery.
+					actions.add(action);
+					double marketValue = evaluateValue();
 				}
 			}
 		}
+		return null;
+	}
+
+	/**
+	 * Calculates the value on the market of the sell of all resources of the scenery after applying the
+	 * transformation actions registered on this Processor. <br>
+	 * The processing of this values requires first to remove from the list of resources all of them transformed
+	 * by an action and add to the list the result of that same action. This is done on the fly without changin
+	 * the original list of resources of the scenery.
+	 * 
+	 * @return
+	 */
+	private double evaluateValue() {
+		// Get the list of resources consumed by the actions. Those are each action input schematics.
+		Vector<Integer> consumed = new Vector();
+		Vector outputs = new Vector();
+		for (ProcessingAction action : actions) {
+			for (Schematics sche : action.getInputs()) {
+				consumed.add(sche.getTypeId());
+			}
+			outputs.addAll(action.getActionResults());
+		}
+
 		return null;
 	}
 

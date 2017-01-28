@@ -38,8 +38,9 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 	private static final String							SELECT_TIER2_INPUTS				= "SELECT pstmt.TYPEid, pstmt.quantity"
 			+ " FROM  planetSchematicsTypeMap pstms, planetSchematicsTypeMap pstmt" + " WHERE pstms.typeID = ?"
 			+ " AND   pstms.isInput = 0" + " AND   pstmt.schematicID = pstms.schematicID" + " AND   pstmT.isInput = 1";
-	private static final String							SELECT_SCHEMATICS_INFO		= "SELECT pstm.typeID, pstm.quantity, pstm.isInput"
-			+ " FROM   planetSchematicsTypeMap pstm" + " WHERE  schematicID = ?";
+	private static final String							SELECT_SCHEMATICS_INFO		= "SELECT pstms.typeID, pstms.quantity, pstms.isInput"
+			+ " FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms" + " WHERE  pstmt.typeID = ?"
+			+ " AND    pstmt.isInput = 0" + " AND    pstms.schematicID = pstmt.schematicID";
 
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\WorkStage\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
@@ -306,8 +307,8 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 		return outputResourceId;
 	}
 
-	public Schematics searchSchematics4Output(int targetId) {
-		Schematics sche = new Schematics();
+	public Vector<Schematics> searchSchematics4Output(int targetId) {
+		Vector<Schematics> scheList = Vector<Schematics>();
 		PreparedStatement prepStmt = null;
 		ResultSet cursor = null;
 		try {
@@ -315,7 +316,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 			prepStmt.setString(1, Integer.valueOf(targetId).toString());
 			cursor = prepStmt.executeQuery();
 			while (cursor.next()) {
-				sche.addData(cursor.getInt(1), cursor.getLong(2), cursor.getBoolean(3));
+			scheList.add(new Schematics().addData(cursor.getInt(1), cursor.getInt(2), cursor.getBoolean(3)));
 			}
 		} catch (Exception ex) {
 			logger.warning("W- [SpingDatabaseConnector.searchRawPlanetaryOutput]> Database exception: " + ex.getMessage());
@@ -331,7 +332,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 				ex.printStackTrace();
 			}
 		}
-		return sche;
+		return scheList;
 	}
 
 	//[03]

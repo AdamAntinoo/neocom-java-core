@@ -104,7 +104,7 @@ public interface IDatabaseConnector {
 
 	public int searchReactionOutputMultiplier(int itemID);
 
-	public Schematics searchSchematics4Output(int targetId);
+	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public int searchStationType(long systemID);
 
