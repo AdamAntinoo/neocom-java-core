@@ -25,6 +25,7 @@ public class PlanetaryScenery {
 	private static int								RAW2TIER1_TRANSFORMQTY	= 3000;
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private Vector<PlanetaryResource>	sceneryResources				= new Vector<PlanetaryResource>();
 	private Vector<PlanetaryResource>	rawResources						= new Vector<PlanetaryResource>();
 	private Vector<PlanetaryResource>	t1Resources							= new Vector<PlanetaryResource>();
 	private Vector<PlanetaryResource>	t2Resources							= new Vector<PlanetaryResource>();
@@ -37,6 +38,20 @@ public class PlanetaryScenery {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	//	public PlanetaryScenery() {
 	//	}
+
+	/**
+	 * Return the stocked Planetary Resource that matches the paramter id.
+	 * 
+	 * @param inputResourceId
+	 * @return
+	 */
+	public PlanetaryResource getResource(int inputResourceId) {
+		PlanetaryResource hit = sceneryResources.get(inputResourceId);
+		if (null == hit)
+			return new PlanetaryResource(new Resource(inputResourceId));
+		else
+			return hit;
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**

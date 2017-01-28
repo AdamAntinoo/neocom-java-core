@@ -117,10 +117,13 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 		planetaryAssets.add(pa);
 
 		// The Planetary Advisor requires a list of Planetary Resources to be stocked to start the profit calculations.
-		PlanetaryScenery advisor = new PlanetaryScenery();
-		advisor.stock(planetaryAssets);
+		PlanetaryScenery scenery = new PlanetaryScenery();
+		scenery.stock(planetaryAssets);
 
 		// Create the initial processing point and start the optimization recursively.
+		PlanetaryProcessor proc = new PlanetaryProcessor(scenery);
+		// Start running the best profit search.
+		bestScenario = proc.startProfitSearch(null);
 		// Print the output
 	}
 

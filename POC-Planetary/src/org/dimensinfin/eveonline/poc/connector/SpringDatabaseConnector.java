@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -33,6 +34,9 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 	private static final String							SELECT_RAW_PRODUCTRESULT	= "SELECT ps.schematicName AS productName, ps.cycleTime AS cycleTime, pstm.quantity AS inputQuantity"
 			+ " FROM  planetSchematicsTypeMap pstm, planetSchematics ps" + " WHERE pstm.isInput " + " AND   pstm.typeID = ?"
 			+ " AND   ps.schematicID = pstm.schematicID";
+	private static final String							SELECT_TIER2_INPUTS				= "SELECT pstmt.TYPEid, pstmt.quantity"
+			+ " FROM  planetSchematicsTypeMap pstms, planetSchematicsTypeMap pstmt" + " WHERE pstms.typeID = ?"
+			+ " AND   pstms.isInput = 0" + " AND   pstmt.schematicID = pstms.schematicID" + " AND   pstmT.isInput = 1";
 
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\WorkStage\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
@@ -119,6 +123,41 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 			logger.info("Opened database successfully");
 		}
 		return true;
+	}
+
+	/**
+	 * Gets the list of type ids for the required resources to get an output batch of the former planetary
+	 * resource.
+	 * 
+	 * @param typeID
+	 * @return
+	 */
+	public Vector<Integer> searchInputResources(int typeID) {
+		Vector<Integer> result = new Vector<Integer>();
+		PreparedStatement prepStmt = null;
+		ResultSet cursor = null;
+		try {
+			prepStmt = getCCPDatabase().prepareStatement(SELECT_TIER2_INPUTS);
+			prepStmt.setString(1, Integer.valueOf(typeID).toString());
+			cursor = prepStmt.executeQuery();
+			while (cursor.next()) {
+				result.add(cursor.getInt(1));
+			}
+		} catch (Exception ex) {
+			logger.warning("W- [SpingDatabaseConnector.searchRawPlanetaryOutput]> Database exception: " + ex.getMessage());
+		} finally {
+			try {
+				if (cursor != null) cursor.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			try {
+				if (prepStmt != null) prepStmt.close();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return result;
 	}
 
 	/**
