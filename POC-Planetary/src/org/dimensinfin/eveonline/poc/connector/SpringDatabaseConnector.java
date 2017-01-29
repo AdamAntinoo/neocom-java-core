@@ -65,6 +65,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 			+ " LEFT OUTER JOIN mapRegions mr ON mr.regionID = md.regionID"
 			+ " LEFT OUTER JOIN mapConstellations mc ON mc.constellationID = md.constellationID"
 			+ " LEFT OUTER JOIN mapSolarSystems ms ON ms.solarSystemID = md.solarSystemID" + " WHERE itemID = ?";
+	private static final String										SELECT_LOCATIONBYSYSTEM		= "SELECT solarSystemID from mapSolarSystems WHERE solarSystemName = ?";
 
 	private static final String										LOM4BLUEPRINT							= "SELECT iam.typeID, itb.typeName, iam.materialTypeID, it.typeName, ig.groupName, ic.categoryName, iam.quantity, iam.consume"
 			+ " FROM industryActivityMaterials iam, invTypes itb, invTypes it, invGroups ig, invCategories ic"
@@ -279,6 +280,54 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 			//	}
 		} catch (final Exception ex) {
 			logger.warning("Location <" + locationID + "> not found.");
+		}
+		return hit;
+	}
+
+	@Override
+	public EveLocation searchLocationBySystem(final String name) {
+		EveLocation hit = new EveLocation();
+		PreparedStatement prepStmt = null;
+		ResultSet cursor = null;
+		try {
+			prepStmt = getCCPDatabase().prepareStatement(SELECT_LOCATIONBYSYSTEM);
+			prepStmt.setString(1, name);
+			cursor = prepStmt.executeQuery();
+			boolean detected = false;
+			while (cursor.next()) {
+				//				if (cursor.moveToFirst()) {
+				detected = true;
+				// Check returned values when doing the assignments.
+				long fragmentID = cursor.getLong(5);
+				if (fragmentID > 0) {
+					hit.setSystemID(fragmentID);
+					hit.setSystem(cursor.getString(6));
+				} else {
+					hit.setSystem(cursor.getString(3));
+				}
+				fragmentID = cursor.getLong(7);
+				if (fragmentID > 0) {
+					hit.setConstellationID(fragmentID);
+					hit.setConstellation(cursor.getString(8));
+				}
+				fragmentID = cursor.getLong(9);
+				if (fragmentID > 0) {
+					hit.setRegionID(fragmentID);
+					hit.setRegion(cursor.getString(10));
+				}
+				hit.setTypeID(cursor.getInt(2));
+				hit.setStation(cursor.getString(3));
+				hit.setLocationID(cursor.getLong(1));
+				hit.setSecurity(cursor.getString(4));
+				// Update the final ID
+				hit.getID();
+				detected = true;
+			}
+			//			if (!detected) // Search the location on the list of outposts.
+			//				hit = searchOutpostbyID(locationID);
+			//	}
+		} catch (final Exception ex) {
+			logger.warning("Location <" + name + "> not found.");
 		}
 		return hit;
 	}
