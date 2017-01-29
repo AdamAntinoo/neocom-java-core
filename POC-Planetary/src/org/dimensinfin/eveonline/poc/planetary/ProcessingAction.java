@@ -99,14 +99,14 @@ public class ProcessingAction {
 	 * @return
 	 */
 	public int getPossibleCycles() {
-		int cycles = 0;
+		int cycles = Integer.MAX_VALUE;
 		for (Schematics schematics : inputList) {
 			int inputType = schematics.getTypeId();
 			Resource resource = actionResources.get(inputType);
 			if (null == resource)
 				return 0;
 			else
-				cycles = resource.getQuantity() / schematics.getQty();
+				cycles = Math.min(cycles, resource.getQuantity() / schematics.getQty());
 		}
 		return cycles;
 	}
