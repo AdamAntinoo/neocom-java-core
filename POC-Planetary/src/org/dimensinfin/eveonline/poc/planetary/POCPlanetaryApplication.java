@@ -44,29 +44,11 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	@Override
-	//	public void addCharacterUpdateRequest(long characterID) {
-	//		// TODO Auto-generated method stub
-	//
-	//	}
-
 	@Override
 	public IDatabaseConnector getDBConnector() {
 		if (null == dbConnector) dbConnector = new SpringDatabaseConnector();
 		return dbConnector;
 	}
-
-	//	@Override
-	//	public INeoComModelStore getModelStore() {
-	//		// TODO Auto-generated method stub
-	//		return null;
-	//	}
-	//
-	//	@Override
-	//	public IConnector getSingleton() {
-	//		// TODO Auto-generated method stub
-	//		return null;
-	//	}
 
 	@Override
 	public IConnector getSingleton() {
@@ -127,63 +109,6 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 		PlanetaryProcessor bestScenario = proc.startProfitSearch(null);
 		// Print the output
 	}
-
-	//	private double calculateAssetValue(final NeoComAsset asset) {
-	//		// Skip blueprints from the value calculations
-	//		double assetValueISK = 0.0;
-	//		if (null != asset) {
-	//			EveItem item = asset.getItem();
-	//			if (null != item) {
-	//				String category = item.getCategory();
-	//				String group = item.getGroupName();
-	//				if (null != category) if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-	//					// Add the value and volume of the stack to the global result.
-	//					long quantity = asset.getQuantity();
-	//					double price = asset.getItem().getHighestBuyerPrice().getPrice();
-	//					assetValueISK = price * quantity;
-	//				}
-	//			}
-	//		}
-	//		return assetValueISK;
-	//	}
-
-	//	/**
-	//	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
-	//	 * <br>
-	//	 * This method checks the location to detect if under the new flat model the location is an asset and then
-	//	 * we should convert it into a parent or the location is a real location. Initially this is done checking
-	//	 * the location id value if under 1000000000000.
-	//	 * 
-	//	 * @param eveAsset
-	//	 *          the original assest as downloaded from CCP api
-	//	 * @return
-	//	 */
-	//	private NeoComAsset createAsset(int typeID, int quantity) {
-	//		// Create the asset from the API asset.
-	//		final NeoComAsset newAsset = new NeoComAsset();
-	//		newAsset.setAssetID(itemIdSequence++);
-	//		newAsset.setTypeID(typeID);
-	//		newAsset.setLocationID(locationID);
-	//		newAsset.setParentId(-1);
-	//		newAsset.setQuantity(quantity);
-	//		newAsset.setSingleton(false);
-	//
-	//		// Get access to the Item and update the copied fields.
-	//		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
-	//		if (null != item) {
-	//			try {
-	//				newAsset.setName(item.getName());
-	//				newAsset.setCategory(item.getCategory());
-	//				newAsset.setGroupName(item.getGroupName());
-	//				newAsset.setTech(item.getTech());
-	//			} catch (RuntimeException rtex) {
-	//			}
-	//		}
-	//		// Add the asset value to the database.
-	//		newAsset.setIskvalue(this.calculateAssetValue(newAsset));
-	//		return newAsset;
-	//	}
-
 }
 
 // - UNUSED CODE ............................................................................................

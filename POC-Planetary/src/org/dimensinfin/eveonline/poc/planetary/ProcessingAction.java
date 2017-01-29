@@ -65,27 +65,8 @@ public class ProcessingAction {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addResource(Resource resource) {
-		// Transform resource to Planetary Resource and then store on the right list.
-		//		PlanetaryResource pres = new PlanetaryResource(resource);
 		stockResource(resource);
 	}
-
-	//	public void addResource(Resource resource) {
-	//		// Transform resource to Planetary Resource and then store on the right list.
-	//		PlanetaryResource pres = new PlanetaryResource(resource);
-	//		stockResource(pres);
-	//	}
-
-	//	/**
-	//	 * Returns true if the action has enough input materials to run cycles. The number of cycles can be received
-	//	 * as a parameter but it is optional. The action has to know what is the target resource to be produced. It
-	//	 * should have already the schematics required for that job.
-	//	 * 
-	//	 * @return
-	//	 */
-	//	public boolean checkActionActive() {
-	//		return checkActionActive(1);
-	//	}
 
 	/**
 	 * Return the list of resources left and new from the action processing following the current schematics.
@@ -106,37 +87,9 @@ public class ProcessingAction {
 		}
 		return results;
 	}
-
-	//	public boolean checkActionActive(int cycles) {
-	//
-	//		return false;
-	//	}
-
-	//	/**
-	//	 * Converts all the RAW resources into Tier 1 resources. Packs the cycles into the number of possible cycles
-	//	 * and stores the time and the resulting Planetary Resources.
-	//	 */
-	//	public void doRawTransformation() {
-	//		for (PlanetaryResource resource : rawResources) {
-	//			if (resource.getType() == EPlanetaryTypes.RAW) {
-	//				int typeid = resource.getResource().getTypeID();
-	//				int qty = resource.getQuantity();
-	//				int outResource = resource.getOutputId();
-	//
-	//				// Calculate the maximum number of cycles.
-	//				int cycles = Math.floorDiv(resource.getQuantity(), RAW2TIER1_TRANSFORMQTY);
-	//				int totalTime = cycles * MINUTES_RAWCYCLE;
-	//				// Get the resulting resources.
-	//				removeResource(typeid);
-	//				addResource(new Resource(outResource, RAWOUTPUT_MULTIPLIER * cycles));
-	//				// Add the rest of the RAW that was not processed.
-	//				addResource(new Resource(typeid, qty - (RAWOUTPUT_MULTIPLIER * cycles)));
-	//			}
-	//		}
-	//	}
+	//[01]
 
 	public Vector<Schematics> getInputs() {
-		//	Vector<Integer> inputList = AppConnector.getDBConnector().searchInputResources(target);
 		return inputList;
 	}
 
@@ -171,7 +124,8 @@ public class ProcessingAction {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("Schematics [");
 		buffer.append("inputs: ").append(inputList).append(" ");
-		buffer.append("output: ").append(output).append(" ");
+		buffer.append("output: ").append(output).append(" \n");
+		buffer.append("resources: ").append(actionResources).append(" ");
 		buffer.append("]");
 		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
@@ -225,6 +179,7 @@ public class ProcessingAction {
 	 *          the quantity of the resource to stack.
 	 */
 	private void stockResource(Resource newResource) {
+		//		logger.info(">> [ProcessingAction.stockResource]");
 		Resource hit = actionResources.get(newResource.getTypeID());
 		if (null == hit)
 			actionResources.put(newResource.getTypeID(), newResource);
@@ -280,3 +235,31 @@ public class ProcessingAction {
 }
 
 // - UNUSED CODE ............................................................................................
+//[01]
+//	public boolean checkActionActive(int cycles) {
+//
+//		return false;
+//	}
+
+//	/**
+//	 * Converts all the RAW resources into Tier 1 resources. Packs the cycles into the number of possible cycles
+//	 * and stores the time and the resulting Planetary Resources.
+//	 */
+//	public void doRawTransformation() {
+//		for (PlanetaryResource resource : rawResources) {
+//			if (resource.getType() == EPlanetaryTypes.RAW) {
+//				int typeid = resource.getResource().getTypeID();
+//				int qty = resource.getQuantity();
+//				int outResource = resource.getOutputId();
+//
+//				// Calculate the maximum number of cycles.
+//				int cycles = Math.floorDiv(resource.getQuantity(), RAW2TIER1_TRANSFORMQTY);
+//				int totalTime = cycles * MINUTES_RAWCYCLE;
+//				// Get the resulting resources.
+//				removeResource(typeid);
+//				addResource(new Resource(outResource, RAWOUTPUT_MULTIPLIER * cycles));
+//				// Add the rest of the RAW that was not processed.
+//				addResource(new Resource(typeid, qty - (RAWOUTPUT_MULTIPLIER * cycles)));
+//			}
+//		}
+//	}

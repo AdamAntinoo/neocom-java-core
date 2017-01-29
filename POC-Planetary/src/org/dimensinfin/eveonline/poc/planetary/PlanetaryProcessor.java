@@ -81,46 +81,10 @@ public class PlanetaryProcessor {
 		t4ProductList.put(2875, "Sterile Conduits");
 		t4ProductList.put(2876, "Wetware Mainframe");
 	}
-	//	private static final String	SELECT_RAW_PRODUCTRESULT			= "SELECT ps.schematicName AS productName, ps.cycleTime AS cycleTime, pstm.quantity AS inputQuantity"
-	//			+ " FROM  planetSchematicsTypeMap pstm, planetSchematics ps" + " WHERE pstm.isInput " + " AND   pstm.typeID = ?"
-	//			+ " AND   ps.schematicID = pstm.schematicID";
-	//
-	//	private static final String	SELECT_RAW_PRODUCTRESULT_INV	= "SELECT ps.schematicName AS productName, ps.cycleTime AS cycleTime, pstm.quantity AS inputQuantity"
-	//			+ " FROM  planetSchematicsTypeMap pstm" + " WHERE pstm.isInput AND   pstm.typeID = ?"
-	//			+ " LEFT OUTER JOIN planetSchematics ps ON ps.schematicID = pstm.schematicID";
-	//
-	//	private final static String	DATABASE_URL									= "jdbc:h2:mem:account";
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	//	public static void process(Resource inResource) {
-	//		try {
-	//			final Cursor cursor = this.getCCPDatabase().rawQuery(SELECT_RAW_PRODUCTRESULT,
-	//					new String[] { Integer.valueOf(inResource.getTypeID()).toString() });
-	//			if (null != cursor) {
-	//				while (cursor.moveToNext()) {
-	//					// The the data of the resource. Check for blueprints.
-	//					int resourceID = cursor.getInt(cursor.getColumnIndex("materialTypeID"));
-	//					int qty = cursor.getInt(cursor.getColumnIndex("quantity"));
-	//					// EveItem newItem = searchItembyID(resourceID);
-	//					// Resource resource = ;
-	//					inventionJob.add(new Resource(resourceID, qty));
-	//				}
-	//				cursor.close();
-	//			}
-	//		} catch (final Exception ex) {
-	//			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
-	//		}
-	//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private PlanetaryScenery					scenery	= null;
 	private Vector<ProcessingAction>	actions	= new Vector<ProcessingAction>();
-	//	private SQLiteDatabase				ccpDatabase				= null;
-	//
-	//	private Dao<Account, Integer>	accountDao;
-	//	String												databaseUrl				= "jdbc:h2:mem:account";
-	//	// create a connection source to our database
-	//	ConnectionSource							connectionSource	= new JdbcConnectionSource(databaseUrl);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -132,22 +96,31 @@ public class PlanetaryProcessor {
 		this.scenery = scenery;
 	}
 
+	/**
+	 * Start the recursive process of analyzing the different processing combinations to search for the most
+	 * profitable. The process gets the list of all possible Tier2 products and searched for their inputs. If
+	 * found on the list of the Scenery resources then we run a new action and get a new output. This is done
+	 * for all the Tier2 products.
+	 * 
+	 * @param currentTarget
+	 * @return
+	 */
 	public PlanetaryProcessor startProfitSearch(PlanetaryProcessor currentTarget) {
+		logger.info(">> [PlanetaryProcessor.startProfitSearch]");
 		// If current target is null this is then the first iteration on the search.
 		if (null == currentTarget) {
 			// Search for Tier2 optimizations
 			for (int target : t2ProductList.keySet()) {
-				// Check if this can be processed with current T1 resources.
-				//				Vector<Integer> inputList = AppConnector.getDBConnector().searchInputResources(target);
-				// Check the list against the scenery resources.
-				//				Vector<PlanetaryResource> inputs = new Vector<PlanetaryResource>();
-				// Try to create an action with those resources.
+				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Searching " + target);
 				ProcessingAction action = new ProcessingAction(target);
+				// Get the input resources from the Scenery if available.
 				for (Schematics input : action.getInputs()) {
-					//					inputs.addElement(scenery.getResource(input));
 					action.addResource(scenery.getResource(input.getTypeId()));
 				}
+				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Action: " + action);
 				// Validate if the action is successful, if it can deliver output resources.
+				int cycles = action.getPossibleCycles();
+				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Cycles: " + cycles);
 				if (action.getPossibleCycles() > 0) {
 					// Record this action and evaluate the market value of the new scenery.
 					actions.add(action);
@@ -155,7 +128,8 @@ public class PlanetaryProcessor {
 				}
 			}
 		}
-		return null;
+		logger.info("<< [PlanetaryProcessor.startProfitSearch]");
+		return this;
 	}
 
 	/**
