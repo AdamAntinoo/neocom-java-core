@@ -19,3 +19,11 @@ AND   pstmT.isInput = 1
 SELECT pstm.typeID, pstm.quantity, pstm.isInput
 FROM   planetSchematicsTypeMap pstm
 WHERE  schematicID = 79
+
+
+--SCHEMATICS FOR A TYPEID
+SELECT pstms.typeID, pstms.quantity, pstms.isInput
+FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms
+WHERE  pstmt.typeID = 2329
+AND    pstmt.isInput = 0
+AND    pstms.schematicID = pstmt.schematicID

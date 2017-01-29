@@ -41,12 +41,13 @@ public class Schematics {
 	 * @param input
 	 *          input direction of true
 	 */
-	public void addData(final int typeId, final int quantity, final boolean input) {
+	public Schematics addData(final int typeId, final int quantity, final boolean input) {
 		this.typeId = typeId;
 		qty = quantity;
 		if (!input) {
 			direction = ESchematicDirection.OUTPUT;
 		}
+		return this;
 	}
 
 	public ESchematicDirection getDirection() {
@@ -63,6 +64,17 @@ public class Schematics {
 
 	public void setQty(final int qty) {
 		this.qty = qty;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer("Schematics [");
+		buffer.append("#").append(this.getTypeId()).append(" ");
+		buffer.append("qty: ").append(this.getQty()).append(" ");
+		buffer.append("direction: ").append(direction.name()).append(" ");
+		buffer.append("]");
+		//		buffer.append("->").append(super.toString());
+		return buffer.toString();
 	}
 
 }

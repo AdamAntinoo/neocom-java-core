@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IStorageConnector;
+import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractAppConnector implements IConnector {
@@ -23,16 +24,15 @@ public abstract class AbstractAppConnector implements IConnector {
 	public AbstractAppConnector() {
 	}
 
+	public void addCharacterUpdateRequest(long characterID) {
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkExpiration(final long timestamp, final long window) {
 		throw new RuntimeException("Application connector not defined. Functionality 'checkExpiration' disabled.");
 	}
 
 	public String getAppFilePath(final int fileresourceid) {
-		throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-	}
-
-	public String getAppFilePath(final String fileresourcename) {
 		throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
 	}
 
@@ -44,8 +44,16 @@ public abstract class AbstractAppConnector implements IConnector {
 	//		throw new RuntimeException("Application connector not defined. Functionality 'getDataSourceConector' disabled.");
 	//	}
 
+	public String getAppFilePath(final String fileresourcename) {
+		throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
+	}
+
 	public IDatabaseConnector getDBConnector() {
 		throw new RuntimeException("Application connector not defined. Functionality 'getDBConnector' disabled.");
+	}
+
+	public INeoComModelStore getModelStore() {
+		throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
 	}
 
 	public String getResourceString(final int reference) {

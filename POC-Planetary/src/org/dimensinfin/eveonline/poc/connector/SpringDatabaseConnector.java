@@ -32,9 +32,9 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger										logger										= Logger.getLogger("AndroidDatabaseConnector");
 
-	private static final String							SELECT_RAW_PRODUCTRESULT	= "SELECT ps.schematicName AS productName, ps.cycleTime AS cycleTime, pstm.quantity AS inputQuantity"
-			+ " FROM  planetSchematicsTypeMap pstm, planetSchematics ps" + " WHERE pstm.isInput " + " AND   pstm.typeID = ?"
-			+ " AND   ps.schematicID = pstm.schematicID";
+	private static final String							SELECT_RAW_PRODUCTRESULT	= "SELECT pstmo.typeID, pstmo.quantity, pstmo.schematicID"
+			+ " FROM   planetSchematicsTypeMap pstmi, planetSchematicsTypeMap pstmo" + " WHERE  pstmi.typeID = ?"
+			+ " AND    pstmo.schematicID = pstmi.schematicID" + " AND    pstmo.isInput = 0";
 	private static final String							SELECT_TIER2_INPUTS				= "SELECT pstmt.TYPEid, pstmt.quantity"
 			+ " FROM  planetSchematicsTypeMap pstms, planetSchematicsTypeMap pstmt" + " WHERE pstms.typeID = ?"
 			+ " AND   pstms.isInput = 0" + " AND   pstmt.schematicID = pstms.schematicID" + " AND   pstmT.isInput = 1";
@@ -308,7 +308,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 	}
 
 	public Vector<Schematics> searchSchematics4Output(int targetId) {
-		Vector<Schematics> scheList = Vector<Schematics>();
+		Vector<Schematics> scheList = new Vector<Schematics>();
 		PreparedStatement prepStmt = null;
 		ResultSet cursor = null;
 		try {
@@ -316,7 +316,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 			prepStmt.setString(1, Integer.valueOf(targetId).toString());
 			cursor = prepStmt.executeQuery();
 			while (cursor.next()) {
-			scheList.add(new Schematics().addData(cursor.getInt(1), cursor.getInt(2), cursor.getBoolean(3)));
+				scheList.add(new Schematics().addData(cursor.getInt(1), cursor.getInt(2), cursor.getBoolean(3)));
 			}
 		} catch (Exception ex) {
 			logger.warning("W- [SpingDatabaseConnector.searchRawPlanetaryOutput]> Database exception: " + ex.getMessage());

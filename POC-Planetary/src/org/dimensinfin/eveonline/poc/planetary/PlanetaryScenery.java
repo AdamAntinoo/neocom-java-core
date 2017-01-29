@@ -9,6 +9,7 @@ package org.dimensinfin.eveonline.poc.planetary;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -25,12 +26,12 @@ public class PlanetaryScenery {
 	private static int								RAW2TIER1_TRANSFORMQTY	= 3000;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Vector<PlanetaryResource>	sceneryResources				= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	rawResources						= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t1Resources							= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t2Resources							= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t3Resources							= new Vector<PlanetaryResource>();
-	private Vector<PlanetaryResource>	t4Resources							= new Vector<PlanetaryResource>();
+	private Vector<Resource>					sceneryResources				= new Vector<Resource>();
+	//	private Vector<PlanetaryResource>	rawResources						= new Vector<PlanetaryResource>();
+	//	private Vector<PlanetaryResource>	t1Resources							= new Vector<PlanetaryResource>();
+	//	private Vector<PlanetaryResource>	t2Resources							= new Vector<PlanetaryResource>();
+	//	private Vector<PlanetaryResource>	t3Resources							= new Vector<PlanetaryResource>();
+	//	private Vector<PlanetaryResource>	t4Resources							= new Vector<PlanetaryResource>();
 	private Vector<ProcessingAction>	actions									= new Vector();
 	private double										inTax										= 5.0;
 	private double										outTax									= 5.0;
@@ -39,21 +40,44 @@ public class PlanetaryScenery {
 	//	public PlanetaryScenery() {
 	//	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Return the stocked Planetary Resource that matches the paramter id.
 	 * 
 	 * @param inputResourceId
 	 * @return
 	 */
-	public PlanetaryResource getResource(int inputResourceId) {
-		PlanetaryResource hit = sceneryResources.get(inputResourceId);
+	public Resource getResource(int inputResourceId) {
+		Resource hit = sceneryResources.get(inputResourceId);
 		if (null == hit)
-			return new PlanetaryResource(new Resource(inputResourceId));
+			return new Resource(inputResourceId);
 		else
 			return hit;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * Retur the list of resources stocked on this scenery.
+	 * 
+	 * @return
+	 * @return
+	 */
+	public Vector<Resource> getResources() {
+		return sceneryResources;
+	}
+
+	public void stock(Resource resource) {
+		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
+		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
+			int outputType = AppConnector.getDBConnector().searchRawPlanetaryOutput(resource.getTypeID());
+			ProcessingAction action = new ProcessingAction(outputType);
+			action.addResource(resource);
+			Vector<Resource> results = action.getActionResults();
+			for (Resource planetaryResource : results) {
+				sceneryResources.add(planetaryResource);
+			}
+		}
+	}
+
 	/**
 	 * Stocks for processing and selling evaluation the list of Planetary Resources received on the parameter.
 	 * While processing the resources it will convert them to our special variation of
@@ -67,86 +91,87 @@ public class PlanetaryScenery {
 	public void stock(Vector<Resource> planetaryAssets) {
 		// Convert Resources to Planetary and reject non Planetary.
 		for (Resource resource : planetaryAssets) {
-			String cat = resource.getCategory();
-			if ((cat.equalsIgnoreCase("Planetary Commodities")) || (cat.equalsIgnoreCase("Planetary Interaction"))
-					|| (cat.equalsIgnoreCase("Planetary Resources"))) {
-				// Process Raw resources to Tier 1 and then  start to process the set.
-				if (cat.equalsIgnoreCase("Planetary Resources")) {
-					ProcessingAction transform = processRaw(resource);
-					actions.add(transform);
-					// Add to our scenario list of resources the resources resulting from the transformation action.
-					for (PlanetaryResource res : transform.getResources()) {
-						stockResource(res);
-					}
-				} else {
-					PlanetaryResource pres = new PlanetaryResource(resource);
-					stockResource(pres);
-				}
-			}
+			stock(resource);
+			//			String cat = resource.getCategory();
+			//			if ((cat.equalsIgnoreCase("Planetary Commodities")) || (cat.equalsIgnoreCase("Planetary Interaction"))
+			//					|| (cat.equalsIgnoreCase("Planetary Resources"))) {
+			//				// Process Raw resources to Tier 1 and then  start to process the set.
+			//				if (cat.equalsIgnoreCase("Planetary Resources")) {
+			//					ProcessingAction transform = processRaw(resource);
+			//					actions.add(transform);
+			//					// Add to our scenario list of resources the resources resulting from the transformation action.
+			//					for (PlanetaryResource res : transform.getResources()) {
+			//						stockResource(res);
+			//					}
+			//				} else {
+			//					PlanetaryResource pres = new PlanetaryResource(resource);
+			//					stockResource(pres);
+			//				}
+			//			}
 		}
 	}
 
-	/**
-	 * Converts a RAW level Planetary resource (Planetary Resources) into a Tier 1 Planetary resource and
-	 * applies the tax to the input.
-	 * 
-	 * @param resource2Transform
-	 * @return
-	 */
-	private ProcessingAction processRaw(Resource resource2Transform) {
-		ProcessingAction action = new ProcessingAction();
-		// Add the resources to be transformed.
-		action.addResource(resource2Transform);
-		// Do the transformation.
-		action.doRawTransformation();
-		// Return the new action to be used as an initial state.
-		return action;
-	}
+	//	/**
+	//	 * Converts a RAW level Planetary resource (Planetary Resources) into a Tier 1 Planetary resource and
+	//	 * applies the tax to the input.
+	//	 * 
+	//	 * @param resource2Transform
+	//	 * @return
+	//	 */
+	//	private ProcessingAction processRaw(Resource resource2Transform) {
+	//		ProcessingAction action = new ProcessingAction();
+	//		// Add the resources to be transformed.
+	//		action.addResource(resource2Transform);
+	//		// Do the transformation.
+	//		action.doRawTransformation();
+	//		// Return the new action to be used as an initial state.
+	//		return action;
+	//	}
 
-	/**
-	 * Adds a new PlanetaryResource to the list of current resources stacking it to an already existing
-	 * resource. If the resource is not already in the list then we put it on the right one.
-	 * 
-	 * @param typeid
-	 *          the resource item id
-	 * @param quantity
-	 *          the quantity of the resource to stack.
-	 */
-	private void stockResource(PlanetaryResource newResource) {
-		// Get the list where I should stock the resource.
-		Vector<PlanetaryResource> targetList = null;
-		switch (newResource.getType()) {
-			case RAW:
-				targetList = rawResources;
-				break;
-			case TIER1:
-				targetList = t1Resources;
-				break;
-			case TIER2:
-				targetList = t2Resources;
-				break;
-			case TIER3:
-				targetList = t3Resources;
-				break;
-			case TIER4:
-				targetList = t4Resources;
-				break;
-
-			default:
-				break;
-		}
-		boolean found = false;
-		for (PlanetaryResource pr : targetList) {
-			if (pr.getResource().getTypeID() == newResource.getResource().getTypeID()) {
-				pr.setQuantity(pr.getQuantity() + newResource.getQuantity());
-				found = true;
-			}
-		}
-		if (!found) {
-			// Add the new resource to the list.
-			targetList.add(newResource);
-		}
-	}
+	//	/**
+	//	 * Adds a new PlanetaryResource to the list of current resources stacking it to an already existing
+	//	 * resource. If the resource is not already in the list then we put it on the right one.
+	//	 * 
+	//	 * @param typeid
+	//	 *          the resource item id
+	//	 * @param quantity
+	//	 *          the quantity of the resource to stack.
+	//	 */
+	//	private void stockResource(PlanetaryResource newResource) {
+	//		// Get the list where I should stock the resource.
+	//		Vector<PlanetaryResource> targetList = null;
+	//		switch (newResource.getType()) {
+	//			case RAW:
+	//				targetList = rawResources;
+	//				break;
+	//			case TIER1:
+	//				targetList = t1Resources;
+	//				break;
+	//			case TIER2:
+	//				targetList = t2Resources;
+	//				break;
+	//			case TIER3:
+	//				targetList = t3Resources;
+	//				break;
+	//			case TIER4:
+	//				targetList = t4Resources;
+	//				break;
+	//
+	//			default:
+	//				break;
+	//		}
+	//		boolean found = false;
+	//		for (PlanetaryResource pr : targetList) {
+	//			if (pr.getResource().getTypeID() == newResource.getResource().getTypeID()) {
+	//				pr.setQuantity(pr.getQuantity() + newResource.getQuantity());
+	//				found = true;
+	//			}
+	//		}
+	//		if (!found) {
+	//			// Add the new resource to the list.
+	//			targetList.add(newResource);
+	//		}
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................

@@ -5,8 +5,6 @@
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
 package org.dimensinfin.eveonline.poc.planetary;
 
-//- IMPORT SECTION .........................................................................................
-import java.awt.Cursor;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -94,25 +92,25 @@ public class PlanetaryProcessor {
 	//	private final static String	DATABASE_URL									= "jdbc:h2:mem:account";
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public static void process(Resource inResource) {
-		try {
-			final Cursor cursor = this.getCCPDatabase().rawQuery(SELECT_RAW_PRODUCTRESULT,
-					new String[] { Integer.valueOf(inResource.getTypeID()).toString() });
-			if (null != cursor) {
-				while (cursor.moveToNext()) {
-					// The the data of the resource. Check for blueprints.
-					int resourceID = cursor.getInt(cursor.getColumnIndex("materialTypeID"));
-					int qty = cursor.getInt(cursor.getColumnIndex("quantity"));
-					// EveItem newItem = searchItembyID(resourceID);
-					// Resource resource = ;
-					inventionJob.add(new Resource(resourceID, qty));
-				}
-				cursor.close();
-			}
-		} catch (final Exception ex) {
-			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
-		}
-	}
+	//	public static void process(Resource inResource) {
+	//		try {
+	//			final Cursor cursor = this.getCCPDatabase().rawQuery(SELECT_RAW_PRODUCTRESULT,
+	//					new String[] { Integer.valueOf(inResource.getTypeID()).toString() });
+	//			if (null != cursor) {
+	//				while (cursor.moveToNext()) {
+	//					// The the data of the resource. Check for blueprints.
+	//					int resourceID = cursor.getInt(cursor.getColumnIndex("materialTypeID"));
+	//					int qty = cursor.getInt(cursor.getColumnIndex("quantity"));
+	//					// EveItem newItem = searchItembyID(resourceID);
+	//					// Resource resource = ;
+	//					inventionJob.add(new Resource(resourceID, qty));
+	//				}
+	//				cursor.close();
+	//			}
+	//		} catch (final Exception ex) {
+	//			AndroidDatabaseConnector.logger.severe("E> Error searching for material <" + itemID + "> not found.");
+	//		}
+	//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private PlanetaryScenery					scenery	= null;
@@ -171,16 +169,28 @@ public class PlanetaryProcessor {
 	 */
 	private double evaluateValue() {
 		// Get the list of resources consumed by the actions. Those are each action input schematics.
-		Vector<Integer> consumed = new Vector();
-		Vector outputs = new Vector();
+		HashMap<Integer, Integer> consumed = new HashMap<Integer, Integer>();
+		Vector<Resource> outputs = new Vector<Resource>();
 		for (ProcessingAction action : actions) {
 			for (Schematics sche : action.getInputs()) {
-				consumed.add(sche.getTypeId());
+				consumed.put(sche.getTypeId(), sche.getTypeId());
 			}
 			outputs.addAll(action.getActionResults());
 		}
-
-		return null;
+		// Calculate the value removing from the loop the resources used and adding to it the new outputs.
+		double value = 0.0;
+		for (Resource r : scenery.getResources()) {
+			if (null == consumed.get(r.getTypeID())) {
+				value += r.getItem().getHighestBuyerPrice().getPrice();
+			}
+		}
+		// Add outputs resources value.
+		for (Resource r : outputs) {
+			if (null == consumed.get(r.getTypeID())) {
+				value += r.getItem().getHighestBuyerPrice().getPrice();
+			}
+		}
+		return value;
 	}
 
 }
