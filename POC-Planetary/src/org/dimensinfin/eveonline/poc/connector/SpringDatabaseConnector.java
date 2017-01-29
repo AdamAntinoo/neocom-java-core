@@ -298,29 +298,29 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 				//				if (cursor.moveToFirst()) {
 				detected = true;
 				// Check returned values when doing the assignments.
-				long fragmentID = cursor.getLong(5);
+				long fragmentID = cursor.getInt(1);
 				if (fragmentID > 0) {
 					hit.setSystemID(fragmentID);
-					hit.setSystem(cursor.getString(6));
-				} else {
-					hit.setSystem(cursor.getString(3));
+					//					hit.setSystem(cursor.getString(6));
+					//				} else {
+					//					hit.setSystem(cursor.getString(3));
 				}
-				fragmentID = cursor.getLong(7);
-				if (fragmentID > 0) {
-					hit.setConstellationID(fragmentID);
-					hit.setConstellation(cursor.getString(8));
-				}
-				fragmentID = cursor.getLong(9);
-				if (fragmentID > 0) {
-					hit.setRegionID(fragmentID);
-					hit.setRegion(cursor.getString(10));
-				}
-				hit.setTypeID(cursor.getInt(2));
-				hit.setStation(cursor.getString(3));
-				hit.setLocationID(cursor.getLong(1));
-				hit.setSecurity(cursor.getString(4));
-				// Update the final ID
-				hit.getID();
+				//				fragmentID = cursor.getLong(7);
+				//				if (fragmentID > 0) {
+				//					hit.setConstellationID(fragmentID);
+				//					hit.setConstellation(cursor.getString(8));
+				//				}
+				//				fragmentID = cursor.getLong(9);
+				//				if (fragmentID > 0) {
+				//					hit.setRegionID(fragmentID);
+				//					hit.setRegion(cursor.getString(10));
+				//				}
+				//				hit.setTypeID(cursor.getInt(2));
+				//				hit.setStation(cursor.getString(3));
+				//				hit.setLocationID(cursor.getLong(1));
+				//				hit.setSecurity(cursor.getString(4));
+				//				// Update the final ID
+				//				hit.getID();
 				detected = true;
 			}
 			//			if (!detected) // Search the location on the list of outposts.
@@ -329,7 +329,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 		} catch (final Exception ex) {
 			logger.warning("Location <" + name + "> not found.");
 		}
-		return hit;
+		return searchLocationbyID(hit.getSystemID());
 	}
 
 	/**

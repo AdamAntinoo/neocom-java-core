@@ -57,7 +57,7 @@ public class MarketDataService {
 		//		}
 		Vector<MarketDataEntry> hubData = extractMarketData(marketEntries);
 		// Update the structures related to the newly downloaded data.
-		MarketDataSet reference = AppConnector.getDBConnector().searchMarketData(localizer, EMarketSide.SELLER);
+		MarketDataSet reference = new MarketDataSet(localizer, EMarketSide.SELLER);
 		reference.setData(hubData);
 		if (marketEntries.size() > 1) {
 			results.add(reference);
@@ -69,7 +69,7 @@ public class MarketDataService {
 		//			marketEntries = AppConnector.getStorageConnector().parseMarketDataEC(item.getTypeID(), EMarketSide.BUYER);
 		//		}
 		hubData = extractMarketData(marketEntries);
-		reference = AppConnector.getDBConnector().searchMarketData(localizer, EMarketSide.BUYER);
+		reference = new MarketDataSet(localizer, EMarketSide.BUYER);
 		reference.setData(hubData);
 		if (marketEntries.size() > 1) {
 			results.add(reference);
