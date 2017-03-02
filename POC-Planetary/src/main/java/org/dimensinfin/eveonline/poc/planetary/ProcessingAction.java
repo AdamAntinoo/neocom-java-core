@@ -7,8 +7,6 @@ package org.dimensinfin.eveonline.poc.planetary;
 
 import java.util.HashMap;
 import java.util.Vector;
-// - IMPORT SECTION .........................................................................................
-import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -28,22 +26,16 @@ import org.dimensinfin.eveonline.neocom.model.Schematics.ESchematicDirection;
 public class ProcessingAction {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger								logger									= Logger.getLogger("ProcessingResult");
-	private static int									RAW2TIER1_TRANSFORMQTY	= 3000;
-	private static final int						MINUTES_RAWCYCLE				= 30;
-	private static final int						RAWOUTPUT_MULTIPLIER		= 20;
+	//	private static Logger								logger									= Logger.getLogger("ProcessingAction");
+	//	private static int									RAW2TIER1_TRANSFORMQTY	= 3000;
+	//	private static final int						MINUTES_RAWCYCLE				= 30;
+	//	private static final int						RAWOUTPUT_MULTIPLIER		= 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Vector<Schematics>					schematics							= new Vector();
-	private Vector<Schematics>					inputList								= new Vector<Schematics>();
-	private Schematics									output									= null;
-	private HashMap<Integer, Resource>	actionResources					= new HashMap<Integer, Resource>();
-
-	//	private Vector<PlanetaryResource>						rawResources						= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t1Resources							= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t2Resources							= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t3Resources							= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t4Resources							= new Vector<PlanetaryResource>();
+	private Vector<Schematics>					schematics			= new Vector<Schematics>();
+	private Vector<Schematics>					inputList				= new Vector<Schematics>();
+	private Schematics									output					= null;
+	private HashMap<Integer, Resource>	actionResources	= new HashMap<Integer, Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**

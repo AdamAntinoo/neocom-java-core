@@ -27,16 +27,16 @@ import org.dimensinfin.eveonline.neocom.model.Schematics;
  */
 public class BitSequencer /* extends BitSet */ {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger										logger							= Logger.getLogger("BitProcessor");
+	private static Logger										logger							= Logger.getLogger("BitSequencer");
 	private static final long								serialVersionUID		= -2437083317973194379L;
 	private static HashMap<Integer, String>	sequencer						= null;
-	private static Vector<ProcessingAction>	optimizedSequencer	= new Vector<ProcessingAction>();
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private Vector<ProcessingAction>				optimizedSequencer	= new Vector<ProcessingAction>();
 	private Vector<Resource>								sourceResources			= null;
 	private int															bitsNumber					= 0;
 	private long														position						= 0;
-	private int															maxCounter;
+	private double													maxCounter					= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -57,10 +57,10 @@ public class BitSequencer /* extends BitSet */ {
 	 */
 	public boolean hasSequence() {
 		// Check if we have arrived to the max value possible with the number of bits setup for this sequencer.
-		if (maxReached())
-			return false;
-		else
+		if (position <= maxCounter)
 			return true;
+		else
+			return false;
 	}
 
 	public Vector<ProcessingAction> nextSequence() {
@@ -120,17 +120,13 @@ public class BitSequencer /* extends BitSet */ {
 		return new Resource(inputResourceId);
 	}
 
-	private boolean maxReached() {
-		return false;
-	}
-
 	/**
 	 * Reinitializes the sequence pointer and counter that generates the list of processing packs.
 	 */
 	private void reset() {
 		//		clear();
 		position = 0;
-		maxCounter = 2 ^ bitsNumber;
+		maxCounter = Math.pow(2, bitsNumber);
 	}
 }
 

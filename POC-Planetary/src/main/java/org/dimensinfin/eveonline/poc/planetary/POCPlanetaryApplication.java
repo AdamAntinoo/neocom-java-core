@@ -78,37 +78,6 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 		planetaryAssets.add(new Resource(3691, 4278)); // Synthetic Oil
 		planetaryAssets.add(new Resource(9838, 2814)); // Superconductors
 
-		//		pa = new Resource(2393, 8640);
-		//		planetaryAssets.add(pa);
-		//		pa = ;
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2329, 6520);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2869, 19);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(17136, 253);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(9838, 7484);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(3891, 4890);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(3693, 1445);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(3695, 7573);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2287, 2000000);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2288, 2000000);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2308, 2000000);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(3645, 69886);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2390, 13320);
-		//		planetaryAssets.add(pa);
-		//		pa = new Resource(2310, 2245474);
-		//		planetaryAssets.add(pa);
-
 		// The Planetary Advisor requires a list of Planetary Resources to be stocked to start the profit calculations.
 		PlanetaryScenery scenery = new PlanetaryScenery();
 		scenery.stock(planetaryAssets);

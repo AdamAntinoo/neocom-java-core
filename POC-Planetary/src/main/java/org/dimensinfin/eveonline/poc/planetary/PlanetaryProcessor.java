@@ -15,7 +15,7 @@ import org.dimensinfin.eveonline.neocom.model.Schematics;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryProcessor {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger										logger				= Logger.getLogger("org.dimensinfin.eveonline.poc.planetary");
+	private static Logger										logger				= Logger.getLogger("PlanetaryProcessor");
 	private static HashMap<Integer, String>	t2ProductList	= new HashMap<Integer, String>();
 	// Refined Commodities
 	static {
