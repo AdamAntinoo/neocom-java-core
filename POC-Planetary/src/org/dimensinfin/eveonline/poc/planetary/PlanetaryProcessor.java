@@ -110,26 +110,60 @@ public class PlanetaryProcessor {
 		// If current target is null this is then the first iteration on the search.
 		if (null == currentTarget) {
 			// Search for Tier2 optimizations
-			for (int target : t2ProductList.keySet()) {
-				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Searching " + target);
-				ProcessingAction action = new ProcessingAction(target);
-				// Get the input resources from the Scenery if available.
-				for (Schematics input : action.getInputs()) {
-					action.addResource(scenery.getResource(input.getTypeId()));
-				}
-				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Action: " + action);
-				// Validate if the action is successful, if it can deliver output resources.
-				int cycles = action.getPossibleCycles();
-				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Cycles: " + cycles);
-				if (action.getPossibleCycles() > 0) {
-					// Record this action and evaluate the market value of the new scenery.
-					actions.add(action);
-					double marketValue = evaluateValue();
+			// Create the sequencer and start to iterate over it.
+			BitSequencer t2sequence = new BitSequencer(t2ProductList);
+			t2sequence.setResources(scenery.getResources());
+			while (t2sequence.hasSequence()) {
+				Vector<ProcessingAction> next2Sequence = t2sequence.nextSequence();
+				// Update resource list by processing the list of current actions.
+				Vector<Resource> new2Resources = processActions(next2Sequence, scenery.getResources());
+				//Search for Tier3 optimizations
+				BitSequencer t3sequence = new BitSequencer(t3ProductList);
+				t3sequence.setResources(new2Resources);
+				while (t3sequence.hasSequence()) {
+					Vector<ProcessingAction> next3Sequence = t3sequence.nextSequence();
+					// Update resource list by processing the list of current actions.
+					Vector<Resource> new3Resources = processActions(next3Sequence, new2Resources);
+					//Search for Tier3 optimizations
+					BitSequencer t4sequence = new BitSequencer(t4ProductList);
+					t4sequence.setResources(new3Resources);
+					while (t4sequence.hasSequence()) {
+						Vector<ProcessingAction> next4Sequence = t3sequence.nextSequence();
+						// Update resource list by processing the list of current actions.
+						Vector<Resource> new4Resources = processActions(next4Sequence, new3Resources);
+						// Evaluate the market value of the resulting resources.
+						double marketValue = evaluateValue();
+					}
 				}
 			}
+
+			//			for (int target : t2ProductList.keySet()) {
+			//				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Searching " + target);
+			//				ProcessingAction action = new ProcessingAction(target);
+			//				// Get the input resources from the Scenery if available.
+			//				for (Schematics input : action.getInputs()) {
+			//					action.addResource(scenery.getResource(input.getTypeId()));
+			//				}
+			//				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Action: " + action);
+			//				// Validate if the action is successful, if it can deliver output resources.
+			//				int cycles = action.getPossibleCycles();
+			//				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Cycles: " + cycles);
+			//				if (action.getPossibleCycles() > 0) {
+			//					// Record this action and evaluate the market value of the new scenery.
+			//					actions.add(action);
+			//					double marketValue = evaluateValue();
+			//				}
+			//			}
 		}
 		logger.info("<< [PlanetaryProcessor.startProfitSearch]");
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("PlanetaryProcessor [");
+		buffer.append("actions:").append(actions);
+		return buffer.toString();
 	}
 
 	/**
@@ -167,6 +201,25 @@ public class PlanetaryProcessor {
 		return value;
 	}
 
+	private Vector<Resource> processActions(Vector<ProcessingAction> actions, Vector<Resource> inputResources) {
+		// Get the list of resources consumed by the actions. Those are each action input schematics.
+		HashMap<Integer, Integer> consumed = new HashMap<Integer, Integer>();
+		Vector<Resource> outputs = new Vector<Resource>();
+		for (ProcessingAction action : actions) {
+			for (Schematics sche : action.getInputs()) {
+				consumed.put(sche.getTypeId(), sche.getTypeId());
+			}
+			outputs.addAll(action.getActionResults());
+		}
+		// Generate the new list of resources.
+		Vector<Resource> resources = new Vector<Resource>();
+		for (Resource r : inputResources) {
+			// Do not add consumed and include outputs.
+			if (null == consumed.get(r.getTypeID())) resources.add(r);
+		}
+		resources.addAll(outputs);
+		return resources;
+	}
 }
 
 // - UNUSED CODE ............................................................................................

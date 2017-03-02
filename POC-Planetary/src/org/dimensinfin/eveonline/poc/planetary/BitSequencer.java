@@ -5,10 +5,10 @@
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
 package org.dimensinfin.eveonline.poc.planetary;
 
+//- IMPORT SECTION .........................................................................................
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Vector;
-// - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -25,39 +25,26 @@ import org.dimensinfin.eveonline.neocom.model.Schematics;
  * 
  * @author Adam Antinoo
  */
-public class BitSequencer extends BitSet {
+public class BitSequencer /* extends BitSet */ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger										logger							= Logger.getLogger("BitProcessor");
 	private static final long								serialVersionUID		= -2437083317973194379L;
 	private static HashMap<Integer, String>	sequencer						= null;
-	private static Vector										optimizedSequencer	= new Vector();
-	//	static {
-	//		t2ProductList.put(2268, "Aqueous Liquids");
-	//		t2ProductList.put(2305, "Autotrophs");
-	//		t2ProductList.put(2267, "Base Metals");
-	//		t2ProductList.put(2288, "Carbon Compounds");
-	//		t2ProductList.put(2287, "Complex Organisms");
-	//		t2ProductList.put(2307, "Felsic Magma");
-	//		t2ProductList.put(2272, "Heavy Metals");
-	//		t2ProductList.put(2309, "Ionic Solutions");
-	//		t2ProductList.put(2073, "Microorganisms");
-	//		t2ProductList.put(2310, "Noble Gas");
-	//		t2ProductList.put(2270, "Noble Metals");
-	//		t2ProductList.put(2306, "Non-CS Crystals");
-	//		t2ProductList.put(2286, "Planktic Colonies");
-	//		t2ProductList.put(2311, "Reactive Gas");
-	//		t2ProductList.put(2308, "Suspended Plasma");
-	//	}
+	private static Vector<ProcessingAction>	optimizedSequencer	= new Vector<ProcessingAction>();
+
 	// - F I E L D - S E C T I O N ............................................................................
 	private Vector<Resource>								sourceResources			= null;
 	private int															bitsNumber					= 0;
+	private long														position						= 0;
+	private int															maxCounter;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
-	 * Create a bit set with the list of planetary resources to be used for the sequence calculation.
+	 * Create a bit set with the list of planetary resources to be used for the sequence calculation. The sets
+	 * received are the full list for Tier 2 or Tier 3 and so on.
 	 */
 	public BitSequencer(HashMap<Integer, String> productList) {
-		super(productList.size());
+		//		super(productList.size());
 		sequencer = productList;
 	}
 
@@ -76,9 +63,20 @@ public class BitSequencer extends BitSet {
 			return true;
 	}
 
-	public Object nextSequence() {
-		// TODO Auto-generated method stub
-		return null;
+	public Vector<ProcessingAction> nextSequence() {
+		// Check if last sequence reached.
+		if (hasSequence()) {
+			position++;
+			// Get the bits conversion of the position number;
+			BitSet bits = Bits.convert(position);
+			// Compose the sequence from the active bits.
+			Vector<ProcessingAction> sequence = new Vector<ProcessingAction>();
+			for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
+				sequence.add(optimizedSequencer.get(i));
+			}
+			return sequence;
+		} else
+			return new Vector<ProcessingAction>();
 	}
 
 	/**
@@ -89,7 +87,7 @@ public class BitSequencer extends BitSet {
 	public void setResources(Vector<Resource> resources) {
 		sourceResources = resources;
 		// Validate witch combinations can be generated.
-		// Search for Tier2 optimizations
+		// Search for TierN optimizations
 		for (int target : sequencer.keySet()) {
 			logger.info("-- [BitSequencer.setResources]> Searching " + target);
 			ProcessingAction action = new ProcessingAction(target);
@@ -101,18 +99,11 @@ public class BitSequencer extends BitSet {
 			// Validate if the action is successful, if it can deliver output resources.
 			int cycles = action.getPossibleCycles();
 			// If this is > 0 then we have to set this planetary resource as a possible combination.
-			if (cycles > 0) optimizedSequencer.add(target);
-
-			//			logger.info("-- [BitSequencer.setResources]> Cycles: " + cycles);
-			//			if (action.getPossibleCycles() > 0) {
-			//				// Record this action and evaluate the market value of the new scenery.
-			//				actions.add(action);
-			//				double marketValue = evaluateValue();
-			//			}
+			if (cycles > 0) optimizedSequencer.add(action);
 		}
 		// After filtering out the invalid target resources reset the counter to the new size
 		this.bitsNumber = optimizedSequencer.size();
-		this.clear();
+		this.reset();
 	}
 
 	/**
@@ -123,7 +114,7 @@ public class BitSequencer extends BitSet {
 	 * @return
 	 */
 	private Resource getResource(int inputResourceId) {
-		for (Resource res : sceneryResources) {
+		for (Resource res : sourceResources) {
 			if (res.getTypeID() == inputResourceId) return res;
 		}
 		return new Resource(inputResourceId);
@@ -131,6 +122,39 @@ public class BitSequencer extends BitSet {
 
 	private boolean maxReached() {
 		return false;
+	}
+
+	/**
+	 * Reinitializes the sequence pointer and counter that generates the list of processing packs.
+	 */
+	private void reset() {
+		//		clear();
+		position = 0;
+		maxCounter = 2 ^ bitsNumber;
+	}
+}
+
+final class Bits {
+
+	public static long convert(BitSet bits) {
+		long value = 0L;
+		for (int i = 0; i < bits.length(); ++i) {
+			value += bits.get(i) ? (1L << i) : 0L;
+		}
+		return value;
+	}
+
+	public static BitSet convert(long value) {
+		BitSet bits = new BitSet();
+		int index = 0;
+		while (value != 0L) {
+			if ((value % 2L) != 0) {
+				bits.set(index);
+			}
+			++index;
+			value = value >>> 1;
+		}
+		return bits;
 	}
 }
 // - UNUSED CODE ............................................................................................
