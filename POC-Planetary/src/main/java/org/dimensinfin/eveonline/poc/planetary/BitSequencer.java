@@ -25,7 +25,7 @@ import org.dimensinfin.eveonline.neocom.model.Schematics;
  * 
  * @author Adam Antinoo
  */
-public class BitSequencer /* extends BitSet */ {
+public class BitSequencer {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger										logger							= Logger.getLogger("BitSequencer");
 	private static final long								serialVersionUID		= -2437083317973194379L;
@@ -44,7 +44,6 @@ public class BitSequencer /* extends BitSet */ {
 	 * received are the full list for Tier 2 or Tier 3 and so on.
 	 */
 	public BitSequencer(HashMap<Integer, String> productList) {
-		//		super(productList.size());
 		sequencer = productList;
 	}
 
@@ -57,7 +56,7 @@ public class BitSequencer /* extends BitSet */ {
 	 */
 	public boolean hasSequence() {
 		// Check if we have arrived to the max value possible with the number of bits setup for this sequencer.
-		if (position <= maxCounter)
+		if (position < maxCounter)
 			return true;
 		else
 			return false;
@@ -89,7 +88,7 @@ public class BitSequencer /* extends BitSet */ {
 		// Validate witch combinations can be generated.
 		// Search for TierN optimizations
 		for (int target : sequencer.keySet()) {
-			logger.info("-- [BitSequencer.setResources]> Searching " + target);
+			logger.info("-- [BitSequencer.setResources]> Searching: " + sequencer.get(target));
 			ProcessingAction action = new ProcessingAction(target);
 			// Get the input resources from the Scenery if available.
 			for (Schematics input : action.getInputs()) {
@@ -104,6 +103,20 @@ public class BitSequencer /* extends BitSet */ {
 		// After filtering out the invalid target resources reset the counter to the new size
 		this.bitsNumber = optimizedSequencer.size();
 		this.reset();
+		logger.info("-- [BitSequencer.setResources]> optimizedSequencer: " + optimizedSequencer);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer("BitSequencer [");
+		buffer.append("resources: ").append(sourceResources);
+		buffer.append("sequence").append(optimizedSequencer);
+		//		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
+		//		buffer.append("stack: ").append(stackSize).append(" ");
+		//		buffer.append("total: ").append(this.getQuantity()).append(" ");
+		//buffer.append("#").append(this.getTypeID()).append(" ");
+		buffer.append("]");
+		return buffer.toString();
 	}
 
 	/**
@@ -126,7 +139,7 @@ public class BitSequencer /* extends BitSet */ {
 	private void reset() {
 		//		clear();
 		position = 0;
-		maxCounter = Math.pow(2, bitsNumber);
+		maxCounter = Math.pow(2, bitsNumber) - 1;
 	}
 }
 

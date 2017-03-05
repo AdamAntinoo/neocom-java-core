@@ -83,8 +83,10 @@ public class PlanetaryProcessor {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private PlanetaryScenery					scenery	= null;
-	private Vector<ProcessingAction>	actions	= new Vector<ProcessingAction>();
+	private PlanetaryScenery					scenery				= null;
+	private Vector<ProcessingAction>	actions				= new Vector<ProcessingAction>();
+	private double										betterProfit	= 0.0;
+	private Vector<ProcessingAction>	savedScenery	= new Vector<ProcessingAction>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -105,58 +107,57 @@ public class PlanetaryProcessor {
 	 * @param currentTarget
 	 * @return
 	 */
-	public PlanetaryProcessor startProfitSearch(PlanetaryProcessor currentTarget) {
+	public Vector<ProcessingAction> startProfitSearch(PlanetaryProcessor currentTarget) {
 		logger.info(">> [PlanetaryProcessor.startProfitSearch]");
 		// If current target is null this is then the first iteration on the search.
-		if (null == currentTarget) {
-			// Search for Tier2 optimizations
-			// Create the sequencer and start to iterate over it.
-			BitSequencer t2sequence = new BitSequencer(t2ProductList);
-			t2sequence.setResources(scenery.getResources());
-			while (t2sequence.hasSequence()) {
-				Vector<ProcessingAction> next2Sequence = t2sequence.nextSequence();
+		betterProfit = 0.0;
+		logger.info("-- [PlanetaryProcessor.startProfitSearch]> Initial resources: " + scenery.getResources());
+		// Search for Tier2 optimizations
+		// Create the sequencer and start to iterate over it.
+		BitSequencer t2sequence = new BitSequencer(t2ProductList);
+		t2sequence.setResources(scenery.getResources());
+		while (t2sequence.hasSequence()) {
+			Vector<ProcessingAction> next2Sequence = t2sequence.nextSequence();
+			// Update resource list by processing the list of current actions.
+			Vector<Resource> new2Resources = processActions(next2Sequence, scenery.getResources());
+			//Search for Tier3 optimizations
+			BitSequencer t3sequence = new BitSequencer(t3ProductList);
+			t3sequence.setResources(new2Resources);
+			while (t3sequence.hasSequence()) {
+				Vector<ProcessingAction> next3Sequence = t3sequence.nextSequence();
 				// Update resource list by processing the list of current actions.
-				Vector<Resource> new2Resources = processActions(next2Sequence, scenery.getResources());
+				Vector<Resource> new3Resources = processActions(next3Sequence, new2Resources);
 				//Search for Tier3 optimizations
-				BitSequencer t3sequence = new BitSequencer(t3ProductList);
-				t3sequence.setResources(new2Resources);
-				while (t3sequence.hasSequence()) {
-					Vector<ProcessingAction> next3Sequence = t3sequence.nextSequence();
-					// Update resource list by processing the list of current actions.
-					Vector<Resource> new3Resources = processActions(next3Sequence, new2Resources);
-					//Search for Tier3 optimizations
-					BitSequencer t4sequence = new BitSequencer(t4ProductList);
-					t4sequence.setResources(new3Resources);
+				BitSequencer t4sequence = new BitSequencer(t4ProductList);
+				t4sequence.setResources(new3Resources);
+				double marketValue = 0.0;
+				// Before processing the sequences I have to know the number for ZERO there is special code to run.
+				if (t4sequence.hasSequence()) {
 					while (t4sequence.hasSequence()) {
 						Vector<ProcessingAction> next4Sequence = t3sequence.nextSequence();
 						// Update resource list by processing the list of current actions.
 						Vector<Resource> new4Resources = processActions(next4Sequence, new3Resources);
 						// Evaluate the market value of the resulting resources.
-						double marketValue = evaluateValue();
+						marketValue = evaluateValue(new4Resources);
+						// Check if this is the best configuration and if so save it.
+						Vector<ProcessingAction> sceneryActions = new Vector<ProcessingAction>();
+						sceneryActions.addAll(next2Sequence);
+						sceneryActions.addAll(next3Sequence);
+						sceneryActions.addAll(next4Sequence);
+						saveBetterConfiguration(marketValue, sceneryActions);
 					}
+				} else {
+					marketValue = evaluateValue(new3Resources);
+					// Check if this is the best configuration and if so save it.
+					Vector<ProcessingAction> sceneryActions = new Vector<ProcessingAction>();
+					sceneryActions.addAll(next2Sequence);
+					sceneryActions.addAll(next3Sequence);
+					saveBetterConfiguration(marketValue, sceneryActions);
 				}
 			}
-
-			//			for (int target : t2ProductList.keySet()) {
-			//				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Searching " + target);
-			//				ProcessingAction action = new ProcessingAction(target);
-			//				// Get the input resources from the Scenery if available.
-			//				for (Schematics input : action.getInputs()) {
-			//					action.addResource(scenery.getResource(input.getTypeId()));
-			//				}
-			//				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Action: " + action);
-			//				// Validate if the action is successful, if it can deliver output resources.
-			//				int cycles = action.getPossibleCycles();
-			//				logger.info("-- [PlanetaryProcessor.startProfitSearch]> Cycles: " + cycles);
-			//				if (action.getPossibleCycles() > 0) {
-			//					// Record this action and evaluate the market value of the new scenery.
-			//					actions.add(action);
-			//					double marketValue = evaluateValue();
-			//				}
-			//			}
 		}
 		logger.info("<< [PlanetaryProcessor.startProfitSearch]");
-		return this;
+		return savedScenery;
 	}
 
 	@Override
@@ -173,31 +174,33 @@ public class PlanetaryProcessor {
 	 * by an action and add to the list the result of that same action. This is done on the fly without changin
 	 * the original list of resources of the scenery.
 	 * 
+	 * @param resourceList2Evaluate
+	 * 
 	 * @return
 	 */
-	private double evaluateValue() {
-		// Get the list of resources consumed by the actions. Those are each action input schematics.
-		HashMap<Integer, Integer> consumed = new HashMap<Integer, Integer>();
-		Vector<Resource> outputs = new Vector<Resource>();
-		for (ProcessingAction action : actions) {
-			for (Schematics sche : action.getInputs()) {
-				consumed.put(sche.getTypeId(), sche.getTypeId());
-			}
-			outputs.addAll(action.getActionResults());
-		}
+	private double evaluateValue(Vector<Resource> resourceList2Evaluate) {
+		//		// Get the list of resources consumed by the actions. Those are each action input schematics.
+		//		HashMap<Integer, Integer> consumed = new HashMap<Integer, Integer>();
+		//		Vector<Resource> outputs = new Vector<Resource>();
+		//		for (ProcessingAction action : actions) {
+		//			for (Schematics sche : action.getInputs()) {
+		//				consumed.put(sche.getTypeId(), sche.getTypeId());
+		//			}
+		//			outputs.addAll(action.getActionResults());
+		//		}
 		// Calculate the value removing from the loop the resources used and adding to it the new outputs.
 		double value = 0.0;
-		for (Resource r : scenery.getResources()) {
-			if (null == consumed.get(r.getTypeID())) {
-				value += r.getItem().getHighestBuyerPrice().getPrice();
-			}
+		for (Resource r : resourceList2Evaluate) {
+			//			if (null == consumed.get(r.getTypeID())) {
+			value += r.getItem().getHighestBuyerPrice().getPrice() * r.getQuantity();
+			//			}
 		}
-		// Add outputs resources value.
-		for (Resource r : outputs) {
-			if (null == consumed.get(r.getTypeID())) {
-				value += r.getItem().getHighestBuyerPrice().getPrice();
-			}
-		}
+		//		// Add outputs resources value.
+		//		for (Resource r : outputs) {
+		//			if (null == consumed.get(r.getTypeID())) {
+		//				value += r.getItem().getHighestBuyerPrice().getPrice();
+		//			}
+		//		}
 		return value;
 	}
 
@@ -219,6 +222,21 @@ public class PlanetaryProcessor {
 		}
 		resources.addAll(outputs);
 		return resources;
+	}
+
+	private void saveBetterConfiguration(double marketValue, Vector<ProcessingAction> sceneryActions) {
+		if (marketValue > betterProfit) {
+			betterProfit = marketValue;
+			savedScenery.clear();
+			for (ProcessingAction action : sceneryActions) {
+				try {
+					savedScenery.add(action.clone());
+				} catch (CloneNotSupportedException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+			}
+		}
 	}
 }
 

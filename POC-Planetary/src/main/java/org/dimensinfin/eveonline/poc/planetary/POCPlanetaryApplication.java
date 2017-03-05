@@ -35,9 +35,9 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private SpringDatabaseConnector	dbConnector			= null;
-	private long										itemIdSequence	= 1000000000000L;
-	private long										locationID			= 20000547L;
+	private SpringDatabaseConnector dbConnector = null;
+	//	private long										itemIdSequence	= 1000000000000L;
+	//	private long										locationID			= 20000547L;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public POCPlanetaryApplication(String[] args) {
@@ -66,14 +66,13 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 	public void run() {
 		// Get some list of planetary resources of all kinds for testing.
 		Vector<Resource> planetaryAssets = new Vector<Resource>();
-		//		Resource pa = ;
 		planetaryAssets.add(new Resource(2268, 1000000)); // Aqueous Liquids
 		planetaryAssets.add(new Resource(2309, 800000)); // Ionic Solutions
 		planetaryAssets.add(new Resource(2288, 600000)); // Carbon Compounds
 		planetaryAssets.add(new Resource(2073, 800000)); // Micro Organisms
 
 		planetaryAssets.add(new Resource(2397, 14600)); // Industrial Fibers
-		planetaryAssets.add(new Resource(2495, 11800)); // Proteins
+		planetaryAssets.add(new Resource(2395, 11800)); // Proteins
 
 		planetaryAssets.add(new Resource(3691, 4278)); // Synthetic Oil
 		planetaryAssets.add(new Resource(9838, 2814)); // Superconductors
@@ -85,8 +84,11 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 		// Create the initial processing point and start the optimization recursively.
 		PlanetaryProcessor proc = new PlanetaryProcessor(scenery);
 		// Start running the best profit search.
-		PlanetaryProcessor bestScenario = proc.startProfitSearch(null);
+		Vector<ProcessingAction> bestScenario = proc.startProfitSearch(null);
 		// Print the output
+		for (ProcessingAction action : bestScenario) {
+			System.out.println(action.toString());
+		}
 	}
 }
 

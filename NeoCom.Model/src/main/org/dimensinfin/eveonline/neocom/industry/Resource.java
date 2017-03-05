@@ -186,11 +186,12 @@ public class Resource extends AbstractComplexNode {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("Resource [");
+		buffer.append("#").append(this.getTypeID());
 		buffer.append("[").append(this.getCategory()).append("] ");
 		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
 		buffer.append("stack: ").append(stackSize).append(" ");
 		buffer.append("total: ").append(this.getQuantity()).append(" ");
-		buffer.append("#").append(this.getTypeID()).append(" ");
+		//buffer.append("#").append(this.getTypeID()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
