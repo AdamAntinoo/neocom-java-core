@@ -6,6 +6,7 @@
 //					to display and process the Planetary Data of a sample Eve account.
 package org.dimensinfin.poc.asb.planetaryoptimizer.main;
 
+import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -17,10 +18,13 @@ import org.joda.time.DateTime;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -35,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @SpringBootApplication
+@RestController
 @ComponentScan(basePackages = { "com.dimensinfin.poc.asb.planetaryoptimizer.config" })
 public class NeoComApplication extends AppAbstractConnector {
 	private static Logger							logger						= Logger.getLogger("NeoComApplication");
@@ -87,7 +92,7 @@ public class NeoComApplication extends AppAbstractConnector {
 	public EveItem eveItem(@PathVariable final String typeID, @PathVariable final String debug) {
 		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
 		EveItem item = AppConnector.getCCPDBConnector().searchItembyID(Integer.parseInt(typeID));
-		// Add a time of 1 second to the response time if the debug flag is defined
+		// Add a time of 3 seconds to the response time if the debug flag is defined
 		if (null != debug) {
 			try {
 				Thread.sleep(3000); //1000 milliseconds is one second.
@@ -212,12 +217,12 @@ public class NeoComApplication extends AppAbstractConnector {
 	//		return dbConnector;
 	//	}
 	//
-	//	@Bean
-	//	public Jackson2ObjectMapperBuilder jacksonBuilder() {
-	//		Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
-	//		b.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
-	//		return b;
-	//	}
+	@Bean
+	public Jackson2ObjectMapperBuilder jacksonBuilder() {
+		Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
+		b.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+		return b;
+	}
 
 	//	@RequestMapping(value = "/rest/v1/locationitem/{locationID}", method = RequestMethod.GET, produces = "application/json")
 	//	public EveLocation locationItem(@PathVariable final String locationID) {

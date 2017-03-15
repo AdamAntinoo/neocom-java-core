@@ -104,7 +104,7 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
 	}
 
-	public static IDatabaseConnector getCCPDBConnector() {
+	public static ICCPDatabaseConnector getCCPDBConnector() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getCCPDBConnector();
 		else

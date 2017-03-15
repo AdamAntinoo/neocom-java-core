@@ -99,7 +99,7 @@ public class SpringDatabaseConnector implements ICCPDatabaseConnector {
 			} catch (Exception sqle) {
 				logger.warning(sqle.getClass().getName() + ": " + sqle.getMessage());
 			}
-			logger.info("Opened database successfully");
+			logger.info(" --[-openCCPDataBase]> Opened CCP database successfully");
 		}
 		return true;
 	}
