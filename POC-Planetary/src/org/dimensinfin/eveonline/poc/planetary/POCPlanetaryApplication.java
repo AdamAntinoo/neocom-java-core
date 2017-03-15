@@ -50,7 +50,6 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 		return dbConnector;
 	}
 
-	@Override
 	public IConnector getSingleton() {
 		return singleton;
 	}

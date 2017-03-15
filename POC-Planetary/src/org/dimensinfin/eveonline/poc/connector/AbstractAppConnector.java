@@ -9,6 +9,7 @@ package org.dimensinfin.eveonline.poc.connector;
 
 import java.util.logging.Logger;
 
+import org.dimensinfin.eveonline.neocom.connector.ICCPDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IStorageConnector;
@@ -46,6 +47,10 @@ public abstract class AbstractAppConnector implements IConnector {
 
 	public String getAppFilePath(final String fileresourcename) {
 		throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
+	}
+
+	public ICCPDatabaseConnector getCCPDBConnector() {
+		throw new RuntimeException("Application connector not defined. Functionality 'getCCPDBConnector' disabled.");
 	}
 
 	public IDatabaseConnector getDBConnector() {

@@ -10,10 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.connector.ICCPDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
+import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.neocom.connector.SpringDatabaseConnector;
+import org.dimensinfin.eveonline.poc.connector.SpringDatabaseConnector;
 import org.joda.time.DateTime;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -91,7 +91,7 @@ public class NeoComApplication extends AppAbstractConnector {
 	@RequestMapping(value = "/api/v1/eveitem/{typeID}/{debug}", method = RequestMethod.GET, produces = "application/json")
 	public EveItem eveItem(@PathVariable final String typeID, @PathVariable final String debug) {
 		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
-		EveItem item = AppConnector.getCCPDBConnector().searchItembyID(Integer.parseInt(typeID));
+		EveItem item = AppConnector.getDBConnector().searchItembyID(Integer.parseInt(typeID));
 		// Add a time of 3 seconds to the response time if the debug flag is defined
 		if (null != debug) {
 			try {
@@ -190,7 +190,7 @@ public class NeoComApplication extends AppAbstractConnector {
 	//	}
 
 	@Override
-	public ICCPDatabaseConnector getCCPDBConnector() {
+	public IDatabaseConnector getDBConnector() {
 		if (null == dbCCPConnector) dbCCPConnector = new SpringDatabaseConnector();
 		return dbCCPConnector;
 	}

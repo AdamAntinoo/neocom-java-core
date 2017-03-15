@@ -411,7 +411,6 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 		// }
 	}
 
-	@Override
 	public int searchRawPlanetaryOutput(int typeID) {
 		int outputResourceId = typeID;
 		PreparedStatement prepStmt = null;
