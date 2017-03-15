@@ -53,25 +53,27 @@ public class Resource extends AbstractComplexNode {
 	private double						damage										= 1.0;
 	private DateTime					registrationDate					= new DateTime(DateTimeZone.UTC);
 
+	/**
+	 * Builds a new resource of quantity 1.
+	 * 
+	 * @param hullTypeId
+	 */
+	public Resource(final int typeID) {
+		resourceID = typeID;
+		item = AppConnector.getDBConnector().searchItembyID(typeID);
+		baseQty = 0;
+	}
+
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Resource(final int typeID, final int newQty) {
-		this.resourceID = typeID;
-		this.item = AppConnector.getDBConnector().searchItembyID(typeID);
-		this.baseQty = newQty;
-	}
-/**
- * Builds a new resource of quantity 1.
- * @param hullTypeId
- */
-	public Resource(int typeID) {
-		this.resourceID = typeID;
-		this.item = AppConnector.getDBConnector().searchItembyID(typeID);
-		this.baseQty = 1;
+		resourceID = typeID;
+		item = AppConnector.getDBConnector().searchItembyID(typeID);
+		baseQty = newQty;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void add(final int count) {
-		this.baseQty += count;
+		baseQty += count;
 	}
 
 	/**
@@ -82,10 +84,10 @@ public class Resource extends AbstractComplexNode {
 	 * @param newResource
 	 */
 	public void addition(final Resource newResource) {
-		int newqty = getBaseQuantity() * getStackSize();
+		int newqty = this.getBaseQuantity() * this.getStackSize();
 		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
-		this.baseQty = newqty;
-		this.stackSize = 1;
+		baseQty = newqty;
+		stackSize = 1;
 		//	wasteQty = 0;
 	}
 
@@ -101,27 +103,27 @@ public class Resource extends AbstractComplexNode {
 	}
 
 	public int getBaseQuantity() {
-		return this.baseQty;
+		return baseQty;
 	}
 
 	public String getCategory() {
-		return this.item.getCategory();
+		return item.getCategory();
 	}
 
 	public double getDamage() {
-		return this.damage;
+		return damage;
 	}
 
 	public String getGroupName() {
-		return this.item.getGroupName();
+		return item.getGroupName();
 	}
 
 	public EveItem getItem() {
-		return this.item;
+		return item;
 	}
 
 	public String getName() {
-		return this.item.getName();
+		return item.getName();
 	}
 
 	/**
@@ -130,35 +132,39 @@ public class Resource extends AbstractComplexNode {
 	 * @return my manufacture quantity
 	 */
 	public int getQuantity() {
-		return getBaseQuantity() * this.stackSize;
+		return this.getBaseQuantity() * stackSize;
 	}
 
 	public DateTime getRegistrationDate() {
-		if (null == this.registrationDate) this.registrationDate = new DateTime(DateTimeZone.UTC);
-		return this.registrationDate;
+		if (null == registrationDate) {
+			registrationDate = new DateTime(DateTimeZone.UTC);
+		}
+		return registrationDate;
 	}
 
 	public int getStackSize() {
-		return this.stackSize;
+		return stackSize;
 	}
 
 	public int getTypeID() {
-		return this.item.getItemID();
+		return item.getItemID();
 	}
 
 	public void setAdaptiveStackSize(final int size) {
-		setStackSize(size);
-		if (this.item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-			if (this.item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+		this.setStackSize(size);
+		if (item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 				final double stack = Math.ceil(size / 10d);
-				setStackSize(Math.max(new Double(stack).intValue(), 1));
+				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
-			if (this.item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
 				final double stack = Math.ceil(size / 300d);
-				setStackSize(Math.max(new Double(stack).intValue(), 1));
+				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
 		}
-		if (this.item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) setStackSize(1);
+		if (item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+			this.setStackSize(1);
+		}
 	}
 
 	public void setDamage(final double damage) {
@@ -166,7 +172,7 @@ public class Resource extends AbstractComplexNode {
 	}
 
 	public void setQuantity(final int newQuantity) {
-		this.baseQty = newQuantity;
+		baseQty = newQuantity;
 	}
 
 	public void setRegistrationDate(final DateTime registrationDate) {
@@ -180,11 +186,11 @@ public class Resource extends AbstractComplexNode {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("Resource [");
-		buffer.append("[").append(getCategory()).append("] ");
-		buffer.append(this.item.getName()).append(" x").append(this.baseQty).append(" ");
-		buffer.append("stack: ").append(this.stackSize).append(" ");
-		buffer.append("total: ").append(getQuantity()).append(" ");
-		buffer.append("#").append(getTypeID()).append(" ");
+		buffer.append("[").append(this.getCategory()).append("] ");
+		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
+		buffer.append("stack: ").append(stackSize).append(" ");
+		buffer.append("total: ").append(this.getQuantity()).append(" ");
+		buffer.append("#").append(this.getTypeID()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}

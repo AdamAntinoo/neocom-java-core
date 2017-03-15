@@ -70,6 +70,10 @@ public class MarketDataSet implements Serializable {
 		return bestmarkethigh;
 	}
 
+	public EMarketSide getSide() {
+		return side;
+	}
+
 	public Instant getTS() {
 		return timestamp;
 	}
@@ -80,7 +84,7 @@ public class MarketDataSet implements Serializable {
 
 	public void setData(final Vector<MarketDataEntry> hubData) {
 		dataOnMarketHub = hubData;
-		updateBestMarket();
+		this.updateBestMarket();
 	}
 
 	@Override
@@ -94,12 +98,12 @@ public class MarketDataSet implements Serializable {
 	private int getSecurityCategory(final String security) {
 		try {
 			double sec = Double.parseDouble(security);
-			if (sec >= 0.5) return HIGH_SECURITY;
-			if (sec >= 0.0) return LOW_SECURITY;
+			if (sec >= 0.5) return MarketDataSet.HIGH_SECURITY;
+			if (sec >= 0.0) return MarketDataSet.LOW_SECURITY;
 		} catch (RuntimeException rtex) {
-			return NULL_SECURITY;
+			return MarketDataSet.NULL_SECURITY;
 		}
-		return NULL_SECURITY;
+		return MarketDataSet.NULL_SECURITY;
 	}
 
 	/**
@@ -114,24 +118,26 @@ public class MarketDataSet implements Serializable {
 				double baseprice = AppConnector.getDBConnector().searchItembyID(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
-				logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
+				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
 			} else {
 				// Scan the list of entries to store the best one for each of the categories.
 				bestmarkethigh = null;
 				for (MarketDataEntry mde : dataOnMarketHub) {
-					logger.info("-- MarketDataSet.updateBestMarket - processing MDE: " + mde); //$NON-NLS-1$
-					int sec = getSecurityCategory(mde.getSecurity());
-					if (sec == HIGH_SECURITY) {
-						if (null == bestmarkethigh)
+					MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - processing MDE: " + mde); //$NON-NLS-1$
+					int sec = this.getSecurityCategory(mde.getSecurity());
+					if (sec == MarketDataSet.HIGH_SECURITY) {
+						if (null == bestmarkethigh) {
 							bestmarkethigh = mde;
-						else if (bestmarkethigh.getPrice() > mde.getPrice()) {
+						} else if (bestmarkethigh.getPrice() > mde.getPrice()) {
 							bestmarkethigh = mde;
-							logger.info("-- MarketDataSet.updateBestMarket - setting a better SELLER: " + mde); //$NON-NLS-1$
+							MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - setting a better SELLER: " + mde); //$NON-NLS-1$
 						}
 					}
 				}
 				// Check for empty process. For example on blueprints.
-				if (null == bestmarkethigh) bestmarkethigh = new MarketDataEntry(new EveLocation());
+				if (null == bestmarkethigh) {
+					bestmarkethigh = new MarketDataEntry(new EveLocation());
+				}
 			}
 		}
 		if (side == EMarketSide.BUYER) {
@@ -139,23 +145,25 @@ public class MarketDataSet implements Serializable {
 				double baseprice = AppConnector.getDBConnector().searchItembyID(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
-				logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
+				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
 			} else {
 				// Scan the list of entries to store the best one for each of the categories.
 				bestmarkethigh = null;
 				for (MarketDataEntry mde : dataOnMarketHub) {
-					int sec = getSecurityCategory(mde.getSecurity());
-					if (sec == HIGH_SECURITY) {
-						if (null == bestmarkethigh)
+					int sec = this.getSecurityCategory(mde.getSecurity());
+					if (sec == MarketDataSet.HIGH_SECURITY) {
+						if (null == bestmarkethigh) {
 							bestmarkethigh = mde;
-						else if (bestmarkethigh.getPrice() < mde.getPrice()) {
+						} else if (bestmarkethigh.getPrice() < mde.getPrice()) {
 							bestmarkethigh = mde;
-							logger.info("-- MarketDataSet.updateBestMarket - setting a better BUYER: " + mde); //$NON-NLS-1$
+							MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - setting a better BUYER: " + mde); //$NON-NLS-1$
 						}
 					}
 				}
 				// Check for empty process. For example on blueprints.
-				if (null == bestmarkethigh) bestmarkethigh = new MarketDataEntry(new EveLocation());
+				if (null == bestmarkethigh) {
+					bestmarkethigh = new MarketDataEntry(new EveLocation());
+				}
 			}
 		}
 	}
