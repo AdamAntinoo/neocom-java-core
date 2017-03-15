@@ -11,17 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.dimensinfin.evedroid.connector.IDatabaseConnector;
-import org.dimensinfin.evedroid.enums.EMarketSide;
-import org.dimensinfin.evedroid.industry.Resource;
-import org.dimensinfin.evedroid.market.MarketDataSet;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.model.MarketOrder;
-import org.dimensinfin.evedroid.model.Property;
-import org.dimensinfin.neocom.model.Asset;
-import org.dimensinfin.neocom.model.EveItem;
-import org.dimensinfin.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 
 import com.j256.ormlite.dao.Dao;
 

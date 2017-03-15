@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.main;
+package org.dimensinfin.poc.asb.planetaryoptimizer.main;
 
 import java.io.Serializable;
 
