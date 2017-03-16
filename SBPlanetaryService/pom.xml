@@ -132,11 +132,11 @@
 			</plugin>
 		</plugins>
 	</build>
-	<resources>
-		<resource>
-			<directory>target/aui</directory>
-			<targetPath>static</targetPath>
-		</resource>
-	</resources>
+<!-- 	<resources> -->
+<!-- 		<resource> -->
+<!-- 			<directory>target/aui</directory> -->
+<!-- 			<targetPath>static</targetPath> -->
+<!-- 		</resource> -->
+<!-- 	</resources> -->
 
 </project>

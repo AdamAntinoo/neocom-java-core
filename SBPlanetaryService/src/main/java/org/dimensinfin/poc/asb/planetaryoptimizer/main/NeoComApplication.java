@@ -92,6 +92,9 @@ public class NeoComApplication extends AppAbstractConnector {
 	public EveItem eveItem(@PathVariable final String typeID, @PathVariable final String debug) {
 		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
 		EveItem item = AppConnector.getDBConnector().searchItembyID(Integer.parseInt(typeID));
+		// Initialize the market data from start because this is a requirements on serialization.
+		item.getHighestBuyerPrice();
+		item.getLowestSellerPrice();
 		// Add a time of 3 seconds to the response time if the debug flag is defined
 		if (null != debug) {
 			try {

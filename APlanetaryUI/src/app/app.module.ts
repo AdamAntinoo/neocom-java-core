@@ -6,6 +6,8 @@ import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { EveItemComponent } from './eve-item/eve-item.component';
 
+import { EveItemService } from './services/eve-item.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,7 +18,7 @@ import { EveItemComponent } from './eve-item/eve-item.component';
     FormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [EveItemService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -63,11 +63,13 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public MarketDataEntry getHighestBuyerPrice() {
-		return getBuyerMarketData().getBestMarket();
+		return this.getBuyerMarketData().getBestMarket();
 	}
 
 	public EIndustryGroup getIndustryGroup() {
-		if (industryGroup == EIndustryGroup.UNDEFINED) classifyIndustryGroup();
+		if (industryGroup == EIndustryGroup.UNDEFINED) {
+			this.classifyIndustryGroup();
+		}
 		return industryGroup;
 	}
 
@@ -76,7 +78,7 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public MarketDataEntry getLowestSellerPrice() {
-		return getSellerMarketData().getBestMarket();
+		return this.getSellerMarketData().getBestMarket();
 	}
 
 	public String getName() {
@@ -96,7 +98,9 @@ public class EveItem extends AbstractComplexNode {
 	 * @param price
 	 */
 	public double getPrice() {
-		if (defaultprice < 0.0) defaultprice = getBuyerMarketData().getBestMarket().getPrice();
+		if (defaultprice < 0.0) {
+			defaultprice = this.getBuyerMarketData().getBestMarket().getPrice();
+		}
 		return defaultprice;
 	}
 
@@ -119,7 +123,7 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public boolean hasInvention() {
-		return AppConnector.getDBConnector().checkInvention(getTypeID());
+		return AppConnector.getDBConnector().checkInvention(this.getTypeID());
 	}
 
 	public boolean isBlueprint() {
@@ -164,9 +168,10 @@ public class EveItem extends AbstractComplexNode {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("EveItem [");
-		buffer.append("#").append(getItemID()).append(" - ").append(getName()).append(" ");
-		buffer.append(getGroupName()).append("/").append(getCategory()).append(" [").append(getPrice()).append(" ISK]")
-				.append(" ");
+		buffer.append("#").append(this.getItemID()).append(" - ").append(this.getName()).append(" ");
+		//		buffer.append(getGroupName()).append("/").append(getCategory()).append(" [").append(getPrice()).append(" ISK]")
+		//		.append(" ");
+		buffer.append(this.getGroupName()).append("/").append(this.getCategory()).append(" [").append(" ");
 		buffer.append("IC:").append(industryGroup).append(" ");
 		buffer.append("]");
 		return buffer.toString();
@@ -212,20 +217,25 @@ public class EveItem extends AbstractComplexNode {
 		if (groupname.equalsIgnoreCase("Datacores")) {
 			industryGroup = EIndustryGroup.DATACORES;
 		}
-		if (groupname.equalsIgnoreCase("Salvaged Materials")) industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
+		if (groupname.equalsIgnoreCase("Salvaged Materials")) {
+			industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
+		}
 		if (category.equalsIgnoreCase("Ship")) {
 			industryGroup = EIndustryGroup.HULL;
 		}
 	}
 
 	private MarketDataSet getBuyerMarketData() {
-		if (null == buyerData) buyerData = AppConnector.getDBConnector().searchMarketData(getTypeID(), EMarketSide.BUYER);
+		if (null == buyerData) {
+			buyerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+		}
 		return buyerData;
 	}
 
 	private MarketDataSet getSellerMarketData() {
-		if (null == sellerData)
-			sellerData = AppConnector.getDBConnector().searchMarketData(getTypeID(), EMarketSide.SELLER);
+		if (null == sellerData) {
+			sellerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+		}
 		return sellerData;
 	}
 }

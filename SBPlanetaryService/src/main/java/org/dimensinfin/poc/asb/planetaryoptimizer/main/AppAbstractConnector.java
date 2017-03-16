@@ -12,9 +12,10 @@ import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IStorageConnector;
 import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AppAbstractConnector implements IConnector {
+public abstract class AppAbstractConnector extends SpringBootServletInitializer implements IConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	//	private static Logger logger = Logger.getLogger("org.dimensinfin.evedroid.connector");
 	// - F I E L D - S E C T I O N ............................................................................
