@@ -299,3 +299,58 @@ marketValue	9.2056824E7
  Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
  Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
 marketValue	8.9318354E7	
+
+--THIRD ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ],
+ Resource [#2393[Planetary Commodities] Bacteria x0 stack: 1 total: 0 ],
+ Resource [#2395[Planetary Commodities] Proteins x6480 stack: 1 total: 6480 ],
+ Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	9.2487744E7	
+
+--FOURTH ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ], Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ], Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ], Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ], Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ], Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ], Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ], Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ], Resource [#2395[Planetary Commodities] Proteins x7800 stack: 1 total: 7800 ], Resource [#2396[Planetary Commodities] Biofuels x0 stack: 1 total: 0 ], Resource [#3725[Planetary Commodities] Livestock x500 stack: 1 total: 500 ], Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ], Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ], Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	8.9124434E7	
+
+-FIFTH ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ], Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ], Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ], Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ], Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ], Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ], Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ], Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ], Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ], Resource [#2395[Planetary Commodities] Proteins x7800 stack: 1 total: 7800 ], Resource [#2396[Planetary Commodities] Biofuels x0 stack: 1 total: 0 ], Resource [#3725[Planetary Commodities] Livestock x500 stack: 1 total: 500 ], Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ], Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ], Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	9.2293824E7	
+
+--FINAL BEST CONFIGURATION
+ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+ProcessingAction [[Schematics [INPUT #2393x40],
+ Schematics [INPUT #2395x40]] Schematics [OUTPUT #3693x5] resources: {2393=Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ 2395=Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ]} ]
+ProcessingAction [[Schematics [INPUT #2395x40],
+ Schematics [INPUT #2396x40]] Schematics [OUTPUT #3725x5] resources: {2395=Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ 2396=Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ]} ]
+ProcessingAction [[Schematics [INPUT #2396x40],
+ Schematics [INPUT #2397x40]] Schematics [OUTPUT #3695x5] resources: {2396=Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ 2397=Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ]} ]
+ProcessingAction [[Schematics [INPUT #2393x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #2319x5] resources: {2393=Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+ProcessingAction [[Schematics [INPUT #3691x10],
+ Schematics [INPUT #9838x10]] Schematics [OUTPUT #17136x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 9838=Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]} ]
+ProcessingAction [[Schematics [INPUT #3693x10],
+ Schematics [INPUT #3695x10]] Schematics [OUTPUT #2360x3] resources: {3693=Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ 3695=Resource [#3695[Planetary Commodities] Polytextiles x500 stack: 1 total: 500 ]} ]
+ProcessingAction [[Schematics [INPUT #2319x10],
+ Schematics [INPUT #3691x10],
+ Schematics [INPUT #3693x10]] Schematics [OUTPUT #2367x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 3693=Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ 2319=Resource [#2319[Planetary Commodities] Test Cultures x665 stack: 1 total: 665 ]} ]
+
