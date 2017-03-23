@@ -2,7 +2,9 @@
   EveItem Component works !
 </h1>
 <div>
-  <span>{{name}}</span>
+  <span *ngIf="downloaded">{{item.name}}</span>
+
+  <!-- <span>{{item.name}}</span> -->
   <!-- public expanded: boolean,
   public downloaded: boolean,
   public renderWhenEmpty: boolean,

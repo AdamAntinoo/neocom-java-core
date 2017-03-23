@@ -79,8 +79,8 @@ public class NeoComApplication extends AppAbstractConnector {
 		booststrapInitialization();
 		logger.info("<< [NeoComApplication.<constructor>]");
 	}
-	// - M E T H O D - S E C T I O N ..........................................................................
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Gets the Eve Database information for an eve item identified by it's identifier.
 	 * 
@@ -248,6 +248,7 @@ public class NeoComApplication extends AppAbstractConnector {
 	//		return new ServletRegistrationBean(new HystrixMetricsStreamServlet(), "/hystrix.stream");
 	//	}
 
+	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(NeoComApplication.class);
 	}
