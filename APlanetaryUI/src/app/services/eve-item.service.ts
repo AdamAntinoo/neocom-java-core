@@ -14,7 +14,7 @@ export class EveItemService {
   Returns the instance of an EveItem from the CCP database for the required item identifier.
   */
   getEveItem(identifier: number): Observable<Response> {
-    return this.http.get("http://localhost:8080/api/v1/eveitem/8105/debug")
+    return this.http.get("http://localhost:8080/api/v1/eveitem/" + identifier)
       .map((res: Response) => res.json())
       .catch((error: any) => Observable.throw(error.json().error || 'Server error'))
   }

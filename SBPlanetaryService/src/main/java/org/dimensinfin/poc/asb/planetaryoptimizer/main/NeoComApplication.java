@@ -88,21 +88,24 @@ public class NeoComApplication extends AppAbstractConnector {
 	 *          identifier of the type to search.
 	 * @return json information of the type from the CCP item database.
 	 */
-	@RequestMapping(value = "/api/v1/eveitem/{typeID}/{debug}", method = RequestMethod.GET, produces = "application/json")
-	public EveItem eveItem(@PathVariable final String typeID, @PathVariable final String debug) {
+	@RequestMapping(value = "/api/v1/eveitem/{typeID}", method = RequestMethod.GET, produces = "application/json")
+	public EveItem eveItem(@PathVariable final String typeID/* , @PathVariable final String debug */) {
+		logger.info(">> [NeoComApplication.eveItem]");
 		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
 		EveItem item = AppConnector.getDBConnector().searchItembyID(Integer.parseInt(typeID));
 		// Initialize the market data from start because this is a requirements on serialization.
 		item.getHighestBuyerPrice();
 		item.getLowestSellerPrice();
+		logger.info("-- [NeoComApplication.eveItem]> [#" + item.getItemID() + "]" + item.getName());
 		// Add a time of 3 seconds to the response time if the debug flag is defined
-		if (null != debug) {
-			try {
-				Thread.sleep(3000); //1000 milliseconds is one second.
-			} catch (InterruptedException ex) {
-				Thread.currentThread().interrupt();
-			}
-		}
+		//		if (null != debug) {
+		//			try {
+		//				Thread.sleep(3000); //1000 milliseconds is one second.
+		//			} catch (InterruptedException ex) {
+		//				Thread.currentThread().interrupt();
+		//			}
+		//		}
+		logger.info("<< [NeoComApplication.eveItem]");
 		return item;
 	}
 
