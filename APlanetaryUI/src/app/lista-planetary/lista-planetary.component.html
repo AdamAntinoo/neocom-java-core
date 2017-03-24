@@ -1,0 +1,19 @@
+<div>
+  <div class="list-group-item active">
+    <table>
+      <tr>
+        <td class="list-title">Planetary Resources List</td>
+        <td><button type="button" class="btn btn-default">New Resource</button></td>
+        <td><button type="button" class="btn btn-danger">Clean List</button></td>
+      </tr>
+    </table>
+  </div>
+  <div class="list-group-item">
+    <table>
+      <tr *ngFor="let resource of planetaryResources">
+        <td>{{item.name}}</td>
+        <td>{{item.quantity}}</td>
+      </tr>
+    </table>
+  </div>
+</div>

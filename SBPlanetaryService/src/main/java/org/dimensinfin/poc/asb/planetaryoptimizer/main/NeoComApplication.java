@@ -21,6 +21,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,9 +89,11 @@ public class NeoComApplication extends AppAbstractConnector {
 	 *          identifier of the type to search.
 	 * @return json information of the type from the CCP item database.
 	 */
+	@CrossOrigin()
 	@RequestMapping(value = "/api/v1/eveitem/{typeID}", method = RequestMethod.GET, produces = "application/json")
 	public EveItem eveItem(@PathVariable final String typeID/* , @PathVariable final String debug */) {
 		logger.info(">> [NeoComApplication.eveItem]");
+		logger.info("-- [NeoComApplication.eveItem]> typeID: " + typeID);
 		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
 		EveItem item = AppConnector.getDBConnector().searchItembyID(Integer.parseInt(typeID));
 		// Initialize the market data from start because this is a requirements on serialization.

@@ -7,11 +7,13 @@ import { AppComponent } from './app.component';
 import { EveItemComponent } from './eve-item/eve-item.component';
 
 import { EveItemService } from './services/eve-item.service';
+import { ListaPlanetaryComponent } from './lista-planetary/lista-planetary.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    EveItemComponent
+    EveItemComponent,
+    ListaPlanetaryComponent
   ],
   imports: [
     BrowserModule,

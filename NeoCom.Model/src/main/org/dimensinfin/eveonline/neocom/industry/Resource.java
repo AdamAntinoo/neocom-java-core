@@ -46,7 +46,7 @@ public class Resource extends AbstractComplexNode {
 	private static final int	DEFAULT_T2TE							= 14;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public EveItem						item											= new EveItem();
+	public EveItem						item											= EveItem.getDefaultItem();
 	private int								resourceID								= -1;
 	public int								baseQty										= 0;
 	public int								stackSize									= 1;

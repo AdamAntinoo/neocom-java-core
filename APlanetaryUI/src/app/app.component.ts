@@ -10,7 +10,7 @@ import { Http } from '@angular/http';
 export class AppComponent {
   private appVersion: String;
   private appName: String;
-  private title: String = 'app works!';
+  private title: String = 'POC-WEB-Planetary Optimizer';
 
   constructor(private http: Http) { }
 

@@ -7,6 +7,8 @@
 
 package org.dimensinfin.poc.asb.planetaryoptimizer.main;
 
+import java.util.GregorianCalendar;
+
 import org.dimensinfin.eveonline.neocom.connector.ICCPDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
@@ -31,8 +33,23 @@ public abstract class AppAbstractConnector extends SpringBootServletInitializer 
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * Checks that the current parameter timestamp is still on the frame of the window.
+	 * 
+	 * @param timestamp
+	 *          the current and last timestamp of the object.
+	 * @param window
+	 *          time span window in milliseconds.
+	 */
 	public boolean checkExpiration(final long timestamp, final long window) {
-		throw new RuntimeException("Application connector not defined. Functionality 'checkExpiration' disabled.");
+		// logger.info("-- Checking expiration for " + timestamp + ". Window " + window);
+		if (0 == timestamp) return true;
+		final long now = GregorianCalendar.getInstance().getTimeInMillis();
+		final long endWindow = timestamp + window;
+		if (now < endWindow)
+			return false;
+		else
+			return true;
 	}
 
 	public String getAppFilePath(final int fileresourceid) {

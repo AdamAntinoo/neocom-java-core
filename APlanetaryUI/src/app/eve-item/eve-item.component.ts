@@ -16,7 +16,7 @@ export class EveItemComponent implements OnInit {
   constructor(private eveItemService: EveItemService) { }
 
   ngOnInit() {
-    this.eveItemService.getEveItem(8502)
+    this.eveItemService.getEveItem(16311)
       .subscribe(
       itemResponse => {
         // Do the actions of the completion of the subscription.
