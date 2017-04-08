@@ -16,7 +16,7 @@ export class ListaPlanetaryComponent implements OnInit {
       .subscribe(
       itemResponse => {
         // Do the actions of the completion of the subscription.
-        let resource = new PlanetaryResource(2393, 199.0);
+        let resource = new PlanetaryResource(/*2393.0, 199.0*/);
         if (null != itemResponse) {
           resource.setName(itemResponse["name"]);
         }
@@ -29,7 +29,7 @@ export class ListaPlanetaryComponent implements OnInit {
       .subscribe(
       itemResponse => {
         // Do the actions of the completion of the subscription.
-        let resource = new PlanetaryResource(2398, 299.0);
+        let resource = new PlanetaryResource(/*2398, 299.0*/);
         if (null != itemResponse) {
           resource.setName(itemResponse["name"]);
         }
@@ -42,7 +42,7 @@ export class ListaPlanetaryComponent implements OnInit {
       .subscribe(
       itemResponse => {
         // Do the actions of the completion of the subscription.
-        let resource = new PlanetaryResource(2400, 399.0);
+        let resource = new PlanetaryResource(/*2400, 399.0*/);
         if (null != itemResponse) {
           resource.setName(itemResponse["name"]);
         }
@@ -57,11 +57,11 @@ export class ListaPlanetaryComponent implements OnInit {
     // this.item.setName("<PRUEBA>");
     // this.item.setQuantity(123);
   }
-  addResource(resource: PlanetaryResource): ListaPlanetaryComponent {
-    if (!todo.id) {
-      todo.id = ++this.lastId;
-    }
-    this.todos.push(todo);
-    return this;
-  }
+  // addResource(resource: PlanetaryResource): ListaPlanetaryComponent {
+  //   if (!todo.id) {
+  //     todo.id = ++this.lastId;
+  //   }
+  //   this.todos.push(todo);
+  //   return this;
+  // }
 }

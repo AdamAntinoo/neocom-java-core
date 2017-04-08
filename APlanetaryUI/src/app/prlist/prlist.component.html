@@ -1,0 +1,31 @@
+<div>
+  <table>
+    <tr>
+      <td width="70%" class="list-title">Planetary Resources List</td>
+      <td><button type="button" class="btn btn-default" (click)="addResource()">New Resource</button></td>
+      <td><button type="button" class="btn btn-danger">Clean List</button></td>
+    </tr>
+  </table>
+  <ul *ngFor="let resource of contents">
+    <li class="list">{{resource.name}}<span class="badge">{{resource.quantity}}</span><span class="glyphicon glyphicon-remove" (click)="removeResource(resource)"></span></li>
+  </ul>
+</div>
+<div *ngIf="showNewresourceForm">
+  <hr>
+  <h1>Addind a new Resource to the list...</h1>
+  <form (ngSubmit)="onSubmit()" #newResourceForm="ngForm">
+    <div class="form-group">
+      <label for="username">Resource Identifier</label>
+      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid" #spy #typeid="ngModel">
+      <div [hidden]="typeid.valid || typeid.pristine" class="alert alert-danger">
+        Resource type identifier should be valid.
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="quantity">Quantity</label>
+      <input type="text" class="form-control" id="quantity" required [(ngModel)]="newResource.quantity" name="quantity">
+    </div>
+    <button type="submit" class="btn" [disabled]="!newResourceForm.form.valid" [ngClass]="{'btn-success':newResourceForm.form.valid}">Add Resource</button>
+  </form>
+  <hr>
+</div>

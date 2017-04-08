@@ -1,31 +1,28 @@
-import { OnInit } from '@angular/core';
+// PROJECT:     POC-ASB-Planetary (POC.ASBP)
+// AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+// COPYRIGHT:   (c) 2017 by Dimensinfin Industries, all rights reserved.
+// ENVIRONMENT: Angular - CLASS
+// DESCRIPTION: Defines the PlanetaryResource equivalent to store the data forr a sresource.
 import { ReflectiveInjector } from '@angular/core';
 import { EveItemService } from '../services/eve-item.service';
 
 export class PlanetaryResource {
+  private typeid: number;
+  private quantity: number;
+  private name: string = "<NAME>";
   static eveItemService: EveItemService = null; // ReflectiveInjector.resolveAndCreate([EveItemService]).get(EveItemService);
 
-  private typeid: number = 34;
-  private name: string = "<NO NAME>";
-  private quantity: number = 0;
-
-  constructor(resourceid: number, quantity: number) {
-    // Check global existence of the Service. If not instantiated then create it.
-    // if (null == PlanetaryResource.eveItemService) {
-    //   let injector = ReflectiveInjector.resolveAndCreate([EveItemService]);
-    //   PlanetaryResource.eveItemService = injector.get(EveItemService);
-    // }
-    this.name = "UNDEFINED";
-    this.typeid = resourceid;
-    this.quantity = quantity;
-    // Get the item information from the backend.
-    // var item = PlanetaryResource.eveItemService.getEveItem(resourceid);
-    // this.name = item["name"];
+  // constructor(private newresourceid: number, private newquantity: number) {
+  //   this.typeid = newresourceid;
+  //   this.quantity = newquantity;
+  // }
+  public getId(): number {
+    return this.typeid;
   }
-  public getName() {
+  public getName(): string {
     return this.name;
   }
-  public getQuantity() {
+  public getQuantity(): number {
     return this.quantity;
   }
   public setName(newname: string) {
@@ -34,8 +31,4 @@ export class PlanetaryResource {
   public setQuantity(newq: number) {
     this.quantity = newq;
   }
-  // ngOnInit() {
-  //   let injector = ReflectiveInjector.resolveAndCreate([EveItemService]);
-  //   this.eveItemService = injector.get(EveItemService);
-  // }
 }
