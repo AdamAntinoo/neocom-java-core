@@ -13,7 +13,7 @@ import { PRListComponent } from './prlist/prlist.component';
 import { HeaderComponent } from './header/header.component';
 
 import { EveItemComponent }         from './eve-item/eve-item.component';
-import { ListaPlanetaryComponent }  from './lista-planetary/lista-planetary.component';
+//import { ListaPlanetaryComponent }  from './lista-planetary/lista-planetary.component';
 
 //--- ROUTES
 const appRoutes: Routes = [
@@ -29,7 +29,7 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     EveItemComponent,
-    ListaPlanetaryComponent,
+    //  ListaPlanetaryComponent,
     PRListComponent,
     HeaderComponent
   ],

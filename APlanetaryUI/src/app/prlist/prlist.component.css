@@ -11,3 +11,30 @@ input {
   border-left: 5px solid #a94442;
   /* red */
 }
+
+.pr-list-title {
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.pr-list {
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.pr-button {
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.badge {
+  background-color: #0174DF;
+  border-radius: 4px;
+  font-family: Roboto;
+  font-size: 14px;
+  margin-right: 5px;
+  padding-top: 4px;
+}

@@ -53,6 +53,7 @@ export class ListaPlanetaryComponent implements OnInit {
   }
 
   ngOnInit() {
+
     // this.item = new PlanetaryResource();
     // this.item.setName("<PRUEBA>");
     // this.item.setQuantity(123);

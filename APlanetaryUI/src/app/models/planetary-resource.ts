@@ -16,6 +16,8 @@ export class PlanetaryResource {
   //   this.typeid = newresourceid;
   //   this.quantity = newquantity;
   // }
+  constructor() { }
+
   public getId(): number {
     return this.typeid;
   }

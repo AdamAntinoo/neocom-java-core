@@ -31,6 +31,9 @@ export class PlanetaryResourceListService {
       }
     }
   }
+  public savePRList(newList: PlanetaryResource[]) {
+
+  }
   private search4id(targetid: number) {
     for (let res of this.prList) {
       if (res.getId() == targetid) return res;

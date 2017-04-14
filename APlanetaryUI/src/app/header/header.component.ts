@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AppCoreDataService } from '../services/app-core-data.service';
 
 @Component({
   selector: 'app-header',
@@ -6,10 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
-  constructor() { }
+  public version: string = "<VERSION>";
+  constructor(private appCoreData: AppCoreDataService) { }
 
   ngOnInit() {
+    this.version = this.appCoreData.getVersion();
   }
 
 }

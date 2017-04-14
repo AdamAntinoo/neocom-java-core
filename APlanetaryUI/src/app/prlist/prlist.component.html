@@ -1,13 +1,17 @@
 <div>
   <table>
     <tr>
-      <td width="70%" class="list-title">Planetary Resources List</td>
-      <td><button type="button" class="btn btn-default" (click)="addResource()">New Resource</button></td>
-      <td><button type="button" class="btn btn-danger">Clean List</button></td>
+      <td width="70%" class="list list-title pr-list-title">Planetary Resources List</td>
+      <td width="20%" class="list list-title pr-list-title">
+        <input type="text" class="form-control" [(ngModel)]="listTitle" name="typeid" #spy>
+      </td>
+      <td><button type="button" class="btn btn-default pr-button" (click)="addNewResource()">New Resource</button></td>
+      <td><button type="button" class="btn btn-danger pr-button">Clean List</button></td>
     </tr>
   </table>
-  <ul *ngFor="let resource of contents">
-    <li class="list">{{resource.name}}<span class="badge">{{resource.quantity}}</span><span class="glyphicon glyphicon-remove" (click)="removeResource(resource)"></span></li>
+  <ul class="nav nav-pills" *ngFor="let resource of prList">
+    <li class="list pr-list" role="presentation">{{resource.name}}<span class="badge">{{resource.quantity}}</span><span class="glyphicon glyphicon-remove"
+          (click)="removeOldResource(resource)"></span></li>
   </ul>
 </div>
 <div *ngIf="showNewresourceForm">
@@ -16,7 +20,8 @@
   <form (ngSubmit)="onSubmit()" #newResourceForm="ngForm">
     <div class="form-group">
       <label for="username">Resource Identifier</label>
-      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid" #spy #typeid="ngModel">
+      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid"
+          #spy #typeid="ngModel">
       <div [hidden]="typeid.valid || typeid.pristine" class="alert alert-danger">
         Resource type identifier should be valid.
       </div>

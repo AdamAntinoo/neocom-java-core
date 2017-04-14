@@ -14,16 +14,16 @@ export class AppCoreDataService {
   //--- Application Globals
   private title: string = "<TITLE>";
 //  private prList: PlanetaryResource[] = [];
-  private version: String;
+  private version: string="<VERSION>";
 
   constructor(private resourceListService:PlanetaryResourceListService) { }
   public setTitle(newtitle: string) {
     this.title = newtitle;
   }
-  public getTitle() {
+  public getTitle() :string{
     return this.title;
   }
-  public getVersion() {
+  public getVersion() :string{
     return this.version;
   }
   public setVersion(newversion:string){
