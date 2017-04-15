@@ -7,7 +7,7 @@ import { ReflectiveInjector } from '@angular/core';
 import { EveItemService } from '../services/eve-item.service';
 
 export class PlanetaryResource {
-  private typeid: number;
+  public typeid: number;
   private quantity: number;
   private name: string = "<NAME>";
   static eveItemService: EveItemService = null; // ReflectiveInjector.resolveAndCreate([EveItemService]).get(EveItemService);
@@ -34,3 +34,28 @@ export class PlanetaryResource {
     this.quantity = newq;
   }
 }
+// class FileUploadResult {
+//     status: string;
+//     timestamp: string;
+//     message: string;
+//     parameters: Map<string, string>;
+//
+//     constructor(json: JsonResponse) {
+//         this.status = json.status;
+//         this.timestamp = json.timestamp;
+//         this.message = json.message;
+//
+//         this.parameters = new Map<string, string>();
+//         Object.keys(json.parameters).forEach(key => {
+//             this.addParameter(key, json.parameters[key]);
+//         });
+//     }
+//
+//     addParameter(key: string, value: string) {
+//         this.parameters.set(key, value);
+//     }
+//
+//     getParameters() {
+//         return this.parameters;
+//     }
+// }

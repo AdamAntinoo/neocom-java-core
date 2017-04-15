@@ -18,6 +18,13 @@ input {
   font-weight: 600;
 }
 
+.pr-list-name {
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 600;
+  width: 100%;
+}
+
 .pr-list {
   font-family: Roboto;
   font-size: 14px;

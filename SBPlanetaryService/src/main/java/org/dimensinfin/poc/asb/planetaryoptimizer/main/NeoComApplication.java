@@ -6,7 +6,12 @@
 //					to display and process the Planetary Data of a sample Eve account.
 package org.dimensinfin.poc.asb.planetaryoptimizer.main;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -14,6 +19,7 @@ import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.poc.connector.SpringDatabaseConnector;
+import org.dimensinfin.neocom.models.PlanetaryResource;
 import org.joda.time.DateTime;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,6 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -82,6 +89,30 @@ public class NeoComApplication extends AppAbstractConnector {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@CrossOrigin()
+	@RequestMapping(value = "/api/v1/addresourcelist", method = RequestMethod.POST, produces = "application/json")
+	public String addresourcelist(@RequestBody final ResourceList newlist) {
+		// Map<String, List<DefaultConfigDto>>
+		logger.info(">> [NeoComApplication.addresourcelist]");
+		logger.info("-- [NeoComApplication.addresourcelist]> newlist: " + newlist);
+		//		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
+		//		EveItem item = AppConnector.getDBConnector().searchItembyID(Integer.parseInt(typeID));
+		//		// Initialize the market data from start because this is a requirements on serialization.
+		//		item.getHighestBuyerPrice();
+		//		item.getLowestSellerPrice();
+		//		logger.info("-- [NeoComApplication.eveItem]> [#" + item.getItemID() + "]" + item.getName());
+		//		// Add a time of 3 seconds to the response time if the debug flag is defined
+		//		//		if (null != debug) {
+		//		//			try {
+		//		//				Thread.sleep(3000); //1000 milliseconds is one second.
+		//		//			} catch (InterruptedException ex) {
+		//		//				Thread.currentThread().interrupt();
+		//		//			}
+		//		//		}
+		logger.info("<< [NeoComApplication.addresourcelist]");
+		return "OK";
+	}
+
 	/**
 	 * Gets the Eve Database information for an eve item identified by it's identifier.
 	 * 
@@ -112,107 +143,23 @@ public class NeoComApplication extends AppAbstractConnector {
 		return item;
 	}
 
-	//   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-	//       final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-	//       final ObjectMapper objectMapper = new ObjectMapper();
-	//       objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-	//       converter.setObjectMapper(objectMapper);
-	//       converters.add(converter);
-	//       super.configureMessageConverters(converters);
-	//   }
-	//	@RequestMapping(value = "/api/v1/apikey/{apikey}:{validationcode}", method = RequestMethod.GET, produces = "application/json")
-	//	public ArrayList<APIKey> apikey(@PathVariable final String apikey, @PathVariable final String validationcode) {
-	//		//		public ArrayList<EveCharCore> keycharacters(@RequestBody String data, HttpServletResponse response,
-	//		//				@PathVariable final String apikey, @PathVariable final String validationcode) {
-	//		try {
-	//			// Validate the received parameters
-	//			if (null == apikey) throw new HTTPException(500, "Required parameter 'apikey' not found.");
-	//			if (null == validationcode) throw new HTTPException(500, "Required parameter 'validationcode' not found.");
-	//
-	//			// Register the key in the global apikey list
-	//			APIKey newkey = new APIKey(Integer.valueOf(apikey), validationcode);
-	//			getApiKeys().put(new Long(newkey.getKeyID()), newkey);
-	//
-	//			// Create the datasource of ApiKeys and included are the pilots
-	//			ApiKeyDatasource apikeyds = (ApiKeyDatasource) getDataSourceConector()
-	//					.registerDataSource(new ApiKeyDatasource("NEOCOM", AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO));
-	//			ArrayList<APIKey> keys = apikeyds.getModel();
-	//			return keys;
-	//			// Convert the list of ApiKeys to a json stream.
-	//			//			Gson gson = new Gson();
-	//			//			String json = gson.toJson(keys);
-	//
-	//			//			ArrayList<String> result = new ArrayList<String>();
-	//			//			for (APIKey key : keys) {
-	//			//				result.add(key.json());
-	//			//			}
-	//			//			return json;
-	//		} catch (HTTPException httpe) {
-	//			//			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-	//			return null;
-	//		}
-	//	}
-
-	//	@RequestMapping(value = "/data", method = RequestMethod.GET, produces = "application/json")
-	//	@ResponseBody
-	//	public AppInfo applicationInfo() {
-	//		try {
-	//			Thread.sleep(3000); //1000 milliseconds is one second.
-	//		} catch (InterruptedException ex) {
-	//			Thread.currentThread().interrupt();
-	//		}
-	//		NeoComApplication.requests++;
-	//		NeoComApplication.requestsTime += new Long(new Double(Math.random() * 1000).intValue());
-	//		return new AppInfo();
-	//	}
-
-	//	/**
-	//	 * Entry point for the Assets Model. The model returned will be the Asset By Location data but instead using
-	//	 * the lazy evaluation this will return the full model to be managed by the Angular Controller.
-	//	 * 
-	//	 * The DataSource returns a list of Regions. Regions contents will be Locations that then will have Assets.
-	//	 * There can be composed assets that are Containers or Ships.
-	//	 * 
-	//	 * The value to be used on the demo is: 92223647
-	//	 * 
-	//	 * @param characterID
-	//	 *          - The identifier of the character to get the assets from on the CCP call.
-	//	 * @return A list of Regions.
-	//	 */
-	//	@RequestMapping(value = "/rest/v1/assets/{characterID}", method = RequestMethod.GET, produces = "application/json")
-	//	//	@RequestMapping(value = "/rest/v1/assets/{characterID}", method = RequestMethod.GET, produces = "text/html")
-	//	public List<Region> characterAssets(@PathVariable final String characterID) {
-	//		// Search for a new DataSource.
-	//		IDataSource<Region> ds = dsManager.registerDataSource(new AssetsByLocationDataSource(Long.parseLong(characterID),
-	//				AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION));
-	//		ArrayList<Region> model = ds.getModel();
-	//		return model;
-	//	}
-	//
-	//	@RequestMapping(value = "/api/v1/characters", method = RequestMethod.GET, produces = "application/json")
-	//	public ArrayList<EveCharCore> characters() {
-	//		// Create the datasource of Pilots and get the pilot list
-	//		PilotDataSource pilotds = (PilotDataSource) getDataSourceConector()
-	//				.registerDataSource(new PilotDataSource("NEOCOM", AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO));
-	//		ArrayList<EveCharCore> pilots = pilotds.getModel();
-	//		return pilots;
-	//	}
-
 	@Override
 	public IDatabaseConnector getDBConnector() {
 		if (null == dbCCPConnector) dbCCPConnector = new SpringDatabaseConnector();
 		return dbCCPConnector;
 	}
 
-	//	public HashMap<Long, APIKey> getApiKeys() {
-	//		return apiKeys;
-	//	}
+	// [03]
 
 	@Override
 	public IConnector getSingleton() {
 		if (null == singleton) new NeoComApplication();
 		return singleton;
 	}
+
+	//	public HashMap<Long, APIKey> getApiKeys() {
+	//		return apiKeys;
+	//	}
 
 	//	@Override
 	//	public IDataSourceConnector getDataSourceConector() {
@@ -231,6 +178,23 @@ public class NeoComApplication extends AppAbstractConnector {
 		Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
 		b.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 		return b;
+	}
+
+	@CrossOrigin()
+	@RequestMapping(value = "/api/v1/resourcelist/{name}", method = RequestMethod.GET, produces = "application/json")
+	public ResourceList resourcelist(@PathVariable final String name) {
+		logger.info(">> [NeoComApplication.resourcelist]");
+		logger.info("-- [NeoComApplication.resourcelist]> name: " + name);
+		// Get the demo list of the resource list and return it to the caller
+		ResourceList newrl = new ResourceList();
+		newrl.mockup();
+		Map<String, List<PlanetaryResource>> rl = new HashMap<String, List<PlanetaryResource>>();
+		List<PlanetaryResource> rllist = new ArrayList<PlanetaryResource>();
+		rllist.add(new PlanetaryResource(123, 234.0));
+		rllist.add(new PlanetaryResource(234, 345.0));
+		rl.put("PruebaInicial", rllist);
+		logger.info("<< [NeoComApplication.addresourcelist]");
+		return newrl;
 	}
 
 	//	@RequestMapping(value = "/rest/v1/locationitem/{locationID}", method = RequestMethod.GET, produces = "application/json")
@@ -294,3 +258,111 @@ public class NeoComApplication extends AppAbstractConnector {
 		logger.info("<< [NeoComApplication.booststrapInitialization]");
 	}
 }
+
+final class ResourceList implements Serializable {
+	private static final long				serialVersionUID	= -2122653250395649670L;
+	public String										name;
+	public List<PlanetaryResource>	data							= new ArrayList<PlanetaryResource>();
+
+	public String getName() {
+		return name;
+	}
+
+	public void mockup() {
+		name = "PruebaInicial";
+		//	data = new PlanetaryResource[2];
+		data.add(new PlanetaryResource(123, 234.0));
+		data.add(new PlanetaryResource(234, 345.0));
+	}
+
+	public void setName(String newname) {
+		this.name = newname;
+	}
+}
+
+//[03]
+//   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//       final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+//       final ObjectMapper objectMapper = new ObjectMapper();
+//       objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+//       converter.setObjectMapper(objectMapper);
+//       converters.add(converter);
+//       super.configureMessageConverters(converters);
+//   }
+//	@RequestMapping(value = "/api/v1/apikey/{apikey}:{validationcode}", method = RequestMethod.GET, produces = "application/json")
+//	public ArrayList<APIKey> apikey(@PathVariable final String apikey, @PathVariable final String validationcode) {
+//		//		public ArrayList<EveCharCore> keycharacters(@RequestBody String data, HttpServletResponse response,
+//		//				@PathVariable final String apikey, @PathVariable final String validationcode) {
+//		try {
+//			// Validate the received parameters
+//			if (null == apikey) throw new HTTPException(500, "Required parameter 'apikey' not found.");
+//			if (null == validationcode) throw new HTTPException(500, "Required parameter 'validationcode' not found.");
+//
+//			// Register the key in the global apikey list
+//			APIKey newkey = new APIKey(Integer.valueOf(apikey), validationcode);
+//			getApiKeys().put(new Long(newkey.getKeyID()), newkey);
+//
+//			// Create the datasource of ApiKeys and included are the pilots
+//			ApiKeyDatasource apikeyds = (ApiKeyDatasource) getDataSourceConector()
+//					.registerDataSource(new ApiKeyDatasource("NEOCOM", AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO));
+//			ArrayList<APIKey> keys = apikeyds.getModel();
+//			return keys;
+//			// Convert the list of ApiKeys to a json stream.
+//			//			Gson gson = new Gson();
+//			//			String json = gson.toJson(keys);
+//
+//			//			ArrayList<String> result = new ArrayList<String>();
+//			//			for (APIKey key : keys) {
+//			//				result.add(key.json());
+//			//			}
+//			//			return json;
+//		} catch (HTTPException httpe) {
+//			//			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+//			return null;
+//		}
+//	}
+
+//	@RequestMapping(value = "/data", method = RequestMethod.GET, produces = "application/json")
+//	@ResponseBody
+//	public AppInfo applicationInfo() {
+//		try {
+//			Thread.sleep(3000); //1000 milliseconds is one second.
+//		} catch (InterruptedException ex) {
+//			Thread.currentThread().interrupt();
+//		}
+//		NeoComApplication.requests++;
+//		NeoComApplication.requestsTime += new Long(new Double(Math.random() * 1000).intValue());
+//		return new AppInfo();
+//	}
+
+//	/**
+//	 * Entry point for the Assets Model. The model returned will be the Asset By Location data but instead using
+//	 * the lazy evaluation this will return the full model to be managed by the Angular Controller.
+//	 * 
+//	 * The DataSource returns a list of Regions. Regions contents will be Locations that then will have Assets.
+//	 * There can be composed assets that are Containers or Ships.
+//	 * 
+//	 * The value to be used on the demo is: 92223647
+//	 * 
+//	 * @param characterID
+//	 *          - The identifier of the character to get the assets from on the CCP call.
+//	 * @return A list of Regions.
+//	 */
+//	@RequestMapping(value = "/rest/v1/assets/{characterID}", method = RequestMethod.GET, produces = "application/json")
+//	//	@RequestMapping(value = "/rest/v1/assets/{characterID}", method = RequestMethod.GET, produces = "text/html")
+//	public List<Region> characterAssets(@PathVariable final String characterID) {
+//		// Search for a new DataSource.
+//		IDataSource<Region> ds = dsManager.registerDataSource(new AssetsByLocationDataSource(Long.parseLong(characterID),
+//				AppWideConstants.fragment.FRAGMENT_ASSETSBYLOCATION));
+//		ArrayList<Region> model = ds.getModel();
+//		return model;
+//	}
+//
+//	@RequestMapping(value = "/api/v1/characters", method = RequestMethod.GET, produces = "application/json")
+//	public ArrayList<EveCharCore> characters() {
+//		// Create the datasource of Pilots and get the pilot list
+//		PilotDataSource pilotds = (PilotDataSource) getDataSourceConector()
+//				.registerDataSource(new PilotDataSource("NEOCOM", AppWideConstants.fragment.FRAGMENT_PILOTINFO_INFO));
+//		ArrayList<EveCharCore> pilots = pilotds.getModel();
+//		return pilots;
+//	}

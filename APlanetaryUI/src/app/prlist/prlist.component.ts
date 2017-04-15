@@ -11,17 +11,44 @@ import { PlanetaryResource }            from '../models/planetary-resource';
 })
 export class PRListComponent implements OnInit {
   public listTitle: string = "<TITLE>";
+  public prList: PlanetaryResource[] = [];
+  public doingDownload: boolean = true;
 
-  private prList: PlanetaryResource[] = [];
   private showNewresourceForm: boolean = false;
   private newResource: PlanetaryResource = new PlanetaryResource();
   public typeid: number;
 
   constructor(private resourceListService: PlanetaryResourceListService) { }
-
+  /**
+  // This method is called during initialization of the component a single time. So the code should load the last list that was being used. We are going to use a backend service so this service that has persistence will be able to identify that last list and the return it as the initial list for the POC.
+  */
   ngOnInit() {
-    // Read the list of Planetry Resources fromt the backend service.
-    this.prList = this.resourceListService.getPRList();
+    console.log(">>[PRListComponent.ngOnInit]");
+    // Read the list of Planetry Resources from the backend service.
+    this.resourceListService.getPRList(this.listTitle)
+      .subscribe(result => {
+        //    this.listTitle = result.name;
+        console.log("--[PRListComponent.ngOnInit.subscribe]> setting name: " + JSON.stringify(result));
+        let first = result["name"];
+        let second = result["data"];
+        console.log("--[PRListComponent.ngOnInit.subscribe]> first: " + JSON.stringify(first));
+        console.log("--[PRListComponent.ngOnInit.subscribe]> second: " + JSON.stringify(second));
+        // Convert the list of resource to the new list of resources.
+        let list = [];
+        for (let key of second) {
+          let resource = new PlanetaryResource();
+          resource.typeid = key.id;
+          resource.setName(key.name);
+          resource.setQuantity(key.quantity);
+          list.push(resource);
+        }
+        // Set the conponent exported fields to the new data to update the ui.
+        this.listTitle = first;
+        this.prList = list;
+      }
+      );
+
+    console.log("<<[PRListComponent.ngOnInit]");
   }
   public addNewResource() {
     // Open the new resource component to enter the forms data
@@ -40,7 +67,7 @@ export class PRListComponent implements OnInit {
     this.showNewresourceForm = false;
 
     // Save the new list of resources on the backend list.
-    this.resourceListService.savePRList(this.prList);
+    this.resourceListService.savePRList(this.listTitle, this.prList);
   }
   private addResource(newres: PlanetaryResource) {
     // Check if this resource already exists. If so add them. Otherwise add the resource.

@@ -8,6 +8,7 @@ import { AppComponent }         from './app.component';
 import { AppCoreDataService }           from './services/app-core-data.service';
 import { EveItemService }               from './services/eve-item.service';
 import { PlanetaryResourceListService } from './services/planetary-resource-list.service';
+//import { URLSearchParams, Jsonp }       from '@angular/http';
 //--- COMPONENTS
 import { PRListComponent } from './prlist/prlist.component';
 import { HeaderComponent } from './header/header.component';
@@ -40,6 +41,7 @@ const appRoutes: Routes = [
     RouterModule.forRoot(appRoutes)
   ],
   providers: [
+    //    Jsonp,
     AppCoreDataService,
     EveItemService,
     PlanetaryResourceListService
