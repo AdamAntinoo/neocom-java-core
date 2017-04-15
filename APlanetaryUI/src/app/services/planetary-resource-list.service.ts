@@ -58,10 +58,13 @@ export class PlanetaryResourceListService {
     return this.http.post(PlanetaryResourceListService.RESOURCE_SERVICE_URL + "/newresource/", prListData)
       .map(res => res.json())
       .map(result => {
-        console.log("--[PlanetaryResourceListService.searchTypeName.map]> result: " + JSON.stringify(result));
+        console.log("--[PlanetaryResourceListService.addResource2List.map]> result: " + JSON.stringify(result));
         return result;
       })
-      .subscribe(result => console.log("createProject called successfully"));
+      .subscribe(result => {
+        console.log("--[PlanetaryResourceListService.addResource2List.subscribe]> result: " + JSON.stringify(result));
+        let data = result[0];
+      });
     //    .catch(res => Observable.throw(res.json()));
   }
 }

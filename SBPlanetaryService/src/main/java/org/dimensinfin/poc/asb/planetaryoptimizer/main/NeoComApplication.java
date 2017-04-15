@@ -11,13 +11,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.IConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.poc.connector.SpringDatabaseConnector;
+import org.dimensinfin.eveonline.poc.planetary.PlanetaryProcessor;
+import org.dimensinfin.eveonline.poc.planetary.PlanetaryScenery;
 import org.dimensinfin.neocom.models.PlanetaryResource;
 import org.joda.time.DateTime;
 import org.springframework.boot.SpringApplication;
@@ -88,26 +92,6 @@ public class NeoComApplication extends AppAbstractConnector {
 		logger.info("<< [NeoComApplication.<constructor>]");
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	@CrossOrigin()
-	@RequestMapping(value = "/api/v1/newresource", method = RequestMethod.POST, produces = "application/json")
-	public String newresource(@RequestBody final ResourcePack newlist) {
-		logger.info(">> [NeoComApplication.addresourcelist]");
-		//		logger.info("-- [NeoComApplication.addresourcelist]> newlist: " + newlist);
-		// Search for the list and then add the resource to it.
-		ArrayList<PlanetaryResource> hitlist = listRepository.get(newlist.getName());
-		if (null != hitlist) {
-			hitlist.add(newlist.getData());
-			return "OK";
-		} else {
-			hitlist = new ArrayList<PlanetaryResource>();
-			hitlist.add(newlist.getData());
-			listRepository.put(newlist.getName(), hitlist);
-		}
-		logger.info("<< [NeoComApplication.addresourcelist]");
-		return "OK";
-	}
-
 	@CrossOrigin()
 	@RequestMapping(value = "/api/v1/deleteResource/{listname}/{resourceid}", method = RequestMethod.GET, produces = "application/json")
 	public String deleteResource(@PathVariable final String listname, @PathVariable final String resourceid) {
@@ -129,16 +113,6 @@ public class NeoComApplication extends AppAbstractConnector {
 		}
 		logger.info("<< [NeoComApplication.deleteResource]");
 		return "OK";
-	}
-
-	private ArrayList<PlanetaryResource> deleteListResource(ArrayList<PlanetaryResource> list, int type) {
-		// Create the new list copy.
-		ArrayList<PlanetaryResource> newList = new ArrayList<PlanetaryResource>();
-		for (PlanetaryResource planetaryResource : newList) {
-			if (planetaryResource.getId() != type) newList.add(planetaryResource);
-		}
-		// Replace the list with the new list with the resource removed.
-		return newList;
 	}
 
 	/**
@@ -177,8 +151,6 @@ public class NeoComApplication extends AppAbstractConnector {
 		return dbCCPConnector;
 	}
 
-	// [03]
-
 	@Override
 	public IConnector getSingleton() {
 		if (null == singleton) new NeoComApplication();
@@ -192,6 +164,29 @@ public class NeoComApplication extends AppAbstractConnector {
 		b.indentOutput(true).dateFormat(new SimpleDateFormat("yyyy-MM-dd"));
 		return b;
 	}
+
+	// - M E T H O D - S E C T I O N ..........................................................................
+	@CrossOrigin()
+	@RequestMapping(value = "/api/v1/newresource", method = RequestMethod.POST, produces = "application/json")
+	public Vector<Resource> newresource(@RequestBody final ResourcePack newlist) {
+		logger.info(">> [NeoComApplication.addresourcelist]");
+		// Search for the list and then add the resource to it.
+		ArrayList<PlanetaryResource> hitlist = listRepository.get(newlist.getName());
+		if (null != hitlist) {
+			hitlist.add(newlist.getData());
+			//			return "OK";
+		} else {
+			hitlist = new ArrayList<PlanetaryResource>();
+			hitlist.add(newlist.getData());
+			listRepository.put(newlist.getName(), hitlist);
+		}
+
+		// Generate the list of transformed resources and return it to the UI.
+		logger.info("<< [NeoComApplication.addresourcelist]");
+		return transformList(hitlist);
+	}
+
+	// [03]
 
 	@CrossOrigin()
 	@RequestMapping(value = "/api/v1/resourcelist/{name}", method = RequestMethod.GET, produces = "application/json")
@@ -282,6 +277,36 @@ public class NeoComApplication extends AppAbstractConnector {
 	//	public ServletRegistrationBean servletRegistrationBean() {
 	//		return new ServletRegistrationBean(new HystrixMetricsStreamServlet(), "/hystrix.stream");
 	//	}
+
+	private ArrayList<PlanetaryResource> deleteListResource(ArrayList<PlanetaryResource> list, int type) {
+		// Create the new list copy.
+		ArrayList<PlanetaryResource> newList = new ArrayList<PlanetaryResource>();
+		for (PlanetaryResource planetaryResource : newList) {
+			if (planetaryResource.getId() != type) newList.add(planetaryResource);
+		}
+		// Replace the list with the new list with the resource removed.
+		return newList;
+	}
+
+	private Vector<Resource> transformList(ArrayList<PlanetaryResource> hitlist) {
+		// Get some list of planetary resources of all kinds for testing.
+		Vector<Resource> planetaryAssets = new Vector<Resource>();
+		for (PlanetaryResource pr : hitlist) {
+			Resource pa = new Resource(pr.getId(), Double.valueOf(pr.getQuantity()).intValue());
+			planetaryAssets.add(pa);
+		}
+
+		// The Planetary Advisor requires a list of Planetary Resources to be stocked to start the profit calculations.
+		PlanetaryScenery scenery = new PlanetaryScenery();
+		scenery.stock(planetaryAssets);
+
+		// Create the initial processing point and start the optimization recursively.
+		PlanetaryProcessor proc = new PlanetaryProcessor(scenery);
+		// Start running the best profit search.
+		PlanetaryProcessor bestScenario = proc.startProfitSearch(null);
+		// Print the output
+		return bestScenario.getResources();
+	}
 }
 
 final class ResourceList implements Serializable {
@@ -293,15 +318,15 @@ final class ResourceList implements Serializable {
 		return name;
 	}
 
-	public void setList(ArrayList<PlanetaryResource> hitlist) {
-		if (null != data) data = hitlist;
-	}
-
 	public void mockup() {
 		name = "PruebaInicial";
 		//	data = new PlanetaryResource[2];
 		data.add(new PlanetaryResource(123, 234.0));
 		data.add(new PlanetaryResource(234, 345.0));
+	}
+
+	public void setList(ArrayList<PlanetaryResource> hitlist) {
+		if (null != data) data = hitlist;
 	}
 
 	public void setName(String newname) {
@@ -314,12 +339,12 @@ final class ResourcePack implements Serializable {
 	public String							name;
 	public PlanetaryResource	data;
 
-	public String getName() {
-		return name;
-	}
-
 	public PlanetaryResource getData() {
 		return data;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public void setData(PlanetaryResource data) {

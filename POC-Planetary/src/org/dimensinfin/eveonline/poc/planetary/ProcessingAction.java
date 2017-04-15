@@ -5,6 +5,7 @@
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
 package org.dimensinfin.eveonline.poc.planetary;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Vector;
 // - IMPORT SECTION .........................................................................................
@@ -25,9 +26,9 @@ import org.dimensinfin.eveonline.neocom.model.Schematics.ESchematicDirection;
  * 
  * @author Adam Antinoo
  */
-public class ProcessingAction {
-
+public class ProcessingAction implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static final long						serialVersionUID				= 7628407640423052121L;
 	private static Logger								logger									= Logger.getLogger("ProcessingResult");
 	private static int									RAW2TIER1_TRANSFORMQTY	= 3000;
 	private static final int						MINUTES_RAWCYCLE				= 30;

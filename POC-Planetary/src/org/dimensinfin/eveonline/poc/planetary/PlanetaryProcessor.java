@@ -96,6 +96,34 @@ public class PlanetaryProcessor {
 		this.scenery = scenery;
 	}
 
+	public Vector<Resource> getResources() {
+		Vector<Resource> finalResources = new Vector<Resource>();
+		//		for (ProcessingAction processingAction : actions) {
+		// Get the list of resources consumed by the actions. Those are each action input schematics.
+		HashMap<Integer, Integer> consumed = new HashMap<Integer, Integer>();
+		Vector<Resource> outputs = new Vector<Resource>();
+		for (ProcessingAction action : actions) {
+			for (Schematics sche : action.getInputs()) {
+				consumed.put(sche.getTypeId(), sche.getTypeId());
+			}
+			outputs.addAll(action.getActionResults());
+		}
+		// Calculate the value removing from the loop the resources used and adding to it the new outputs.
+		//			double value = 0.0;
+		for (Resource r : scenery.getResources()) {
+			if (null == consumed.get(r.getTypeID())) {
+				finalResources.add(r);
+			}
+		}
+		// Add outputs resources value.
+		for (Resource r : outputs) {
+			if (null == consumed.get(r.getTypeID())) {
+				finalResources.add(r);
+			}
+		}
+		return finalResources;
+	}
+
 	/**
 	 * Start the recursive process of analyzing the different processing combinations to search for the most
 	 * profitable. The process gets the list of all possible Tier2 products and searched for their inputs. If

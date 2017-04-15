@@ -50,12 +50,6 @@ export class PRListComponent implements OnInit {
       });
     console.log("<<[PRListComponent.ngOnInit]");
   }
-  // ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-  //   console.log(">>[PRListComponent.ngOnChange]> changes: " + JSON.stringify(changes));
-  // }
-  // public nameChange(event) {
-  //   console.log(">>[PRListComponent.nameChange]> event: " + JSON.stringify(event));
-  // }
   public newIdChange(event) {
     console.log(">>[PRListComponent.newIdChange]> event: " + JSON.stringify(event));
     // Search for the resource name that matches the new id.
@@ -108,13 +102,14 @@ export class PRListComponent implements OnInit {
   public onSubmit() {
     console.log(">>[PRListComponent.onSubmit]");
     // Check if this resource already exists. If so add them. Otherwise add the resource.
-    // console.log("--[PlanetaryResourceListService.addResource]> newres: " + JSON.stringify(newres));
     let hit = this.search4id(this.newResource.getId());
     console.log("--[PlanetaryResourceListService.addResource]> hit: " + JSON.stringify(hit));
     if (undefined == hit) {
       this.prList.push(this.newResource);
     } else {
-      hit.setQuantity(hit.getQuantity() + this.newResource.getQuantity());
+      let newQty = hit.getQuantity() * 1.0;
+      newQty = newQty + this.newResource.getQuantity() * 1.0;
+      hit.setQuantity(newQty);
     }
     let counter = this.prList.length;
     // Hide again the new resource form.
