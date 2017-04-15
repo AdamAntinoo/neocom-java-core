@@ -1,5 +1,6 @@
 import { Component }                    from '@angular/core';
 import { OnInit }                       from '@angular/core';
+import { OnChanges, SimpleChange }      from '@angular/core';
 import { AppCoreDataService }           from '../services/app-core-data.service';
 import { PlanetaryResourceListService } from '../services/planetary-resource-list.service';
 import { PlanetaryResource }            from '../models/planetary-resource';
@@ -9,10 +10,11 @@ import { PlanetaryResource }            from '../models/planetary-resource';
   templateUrl: './prlist.component.html',
   styleUrls: ['./prlist.component.css']
 })
-export class PRListComponent implements OnInit {
+export class PRListComponent implements OnInit, OnChanges {
   public listTitle: string = "<TITLE>";
   public prList: PlanetaryResource[] = [];
   public doingDownload: boolean = true;
+  public idIsValid: boolean = false;
 
   private showNewresourceForm: boolean = false;
   private newResource: PlanetaryResource = new PlanetaryResource();
@@ -47,17 +49,31 @@ export class PRListComponent implements OnInit {
         this.prList = list;
       }
       );
-
     console.log("<<[PRListComponent.ngOnInit]");
   }
-  public addNewResource() {
+  ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+    console.log(">>[PRListComponent.ngOnChange]> changes: " + JSON.stringify(changes));
+  }
+  public openNewResource() {
     // Open the new resource component to enter the forms data
     this.newResource = new PlanetaryResource();
+    this.idIsValid = false;
     this.showNewresourceForm = true;
   }
-  public removeOldResource(target: PlanetaryResource) {
-    console.log("--[PRListComponent.removeResource]> newres: " + JSON.stringify(target));
-    this.removeResource(target);
+
+  public deleteResource(target: PlanetaryResource) {
+    console.log("--[PRListComponent.deleteResource]> target: " + JSON.stringify(target));
+    // Clear the resoource from the resurce list.
+    let hit = this.search4id(target.getId());
+    if (undefined != hit) {
+      this.showNewresourceForm = false;
+      var index = this.prList.indexOf(target, 0);
+      if (index > -1) {
+        this.prList.splice(index, 1);
+      }
+      // Send the deletion message to the backend.
+      this.resourceListService.deleteResource(this.listTitle, hit.getId());
+    }
   }
   public onSubmit() {
     console.log(">>[PRListComponent.onSubmit]");

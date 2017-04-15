@@ -7,10 +7,13 @@ import { ReflectiveInjector } from '@angular/core';
 import { EveItemService } from '../services/eve-item.service';
 
 export class PlanetaryResource {
+  static eveItemService: EveItemService = null;
+
   public typeid: number;
-  private quantity: number;
-  private name: string = "<NAME>";
-  static eveItemService: EveItemService = null; // ReflectiveInjector.resolveAndCreate([EveItemService]).get(EveItemService);
+  public quantity: number;
+  public name: string = "<NAME>";
+
+  // ReflectiveInjector.resolveAndCreate([EveItemService]).get(EveItemService);
 
   // constructor(private newresourceid: number, private newquantity: number) {
   //   this.typeid = newresourceid;
@@ -21,6 +24,9 @@ export class PlanetaryResource {
   public getId(): number {
     return this.typeid;
   }
+  // get name() {
+  //   return this.name;
+  // }
   public getName(): string {
     return this.name;
   }
@@ -34,28 +40,3 @@ export class PlanetaryResource {
     this.quantity = newq;
   }
 }
-// class FileUploadResult {
-//     status: string;
-//     timestamp: string;
-//     message: string;
-//     parameters: Map<string, string>;
-//
-//     constructor(json: JsonResponse) {
-//         this.status = json.status;
-//         this.timestamp = json.timestamp;
-//         this.message = json.message;
-//
-//         this.parameters = new Map<string, string>();
-//         Object.keys(json.parameters).forEach(key => {
-//             this.addParameter(key, json.parameters[key]);
-//         });
-//     }
-//
-//     addParameter(key: string, value: string) {
-//         this.parameters.set(key, value);
-//     }
-//
-//     getParameters() {
-//         return this.parameters;
-//     }
-// }

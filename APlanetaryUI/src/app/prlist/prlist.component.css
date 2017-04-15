@@ -16,13 +16,26 @@ input {
   font-family: Roboto;
   font-size: 16px;
   font-weight: 600;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: black;
 }
 
 .pr-list-name {
+  border: 1px solid #CCC;
+  border-radius: 4px;
   font-family: Roboto;
   font-size: 16px;
   font-weight: 600;
+  margin-left: 5px;
+  padding: 8px 12px;
+  vertical-align: middle;
   width: 100%;
+  background-color: aliceblue;
+}
+
+.pr-list-name:hover {
+  background-color: palegreen;
 }
 
 .pr-list {
@@ -35,13 +48,18 @@ input {
   font-family: Roboto;
   font-size: 16px;
   font-weight: 600;
+  margin-left: 5px;
+  vertical-align: middle;
 }
 
 .badge {
-  background-color: #0174DF;
+  background-color: #BCE954;
   border-radius: 4px;
   font-family: Roboto;
   font-size: 14px;
   margin-right: 5px;
+  margin-left: 5px;
   padding-top: 4px;
+  padding-left: 15px;
+  padding-right: 15px;
 }

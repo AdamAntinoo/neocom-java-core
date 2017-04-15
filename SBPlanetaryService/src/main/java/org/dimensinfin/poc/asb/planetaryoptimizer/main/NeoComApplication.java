@@ -73,7 +73,8 @@ public class NeoComApplication extends AppAbstractConnector {
 	// - F I E L D - S E C T I O N ............................................................................
 	//	private final SpringDatabaseConnector	dbconnector	= null;
 	//	private DataSourceManager							dsManager		= new DataSourceManager();
-	private SpringDatabaseConnector dbCCPConnector = null;
+	private SpringDatabaseConnector												dbCCPConnector	= null;
+	private HashMap<String, ArrayList<PlanetaryResource>>	listRepository	= new HashMap<String, ArrayList<PlanetaryResource>>();
 	//	private ApplicationListenerMethodAdapter					apiKeys			= new HashMap<Long, APIKey>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -111,6 +112,39 @@ public class NeoComApplication extends AppAbstractConnector {
 		//		//		}
 		logger.info("<< [NeoComApplication.addresourcelist]");
 		return "OK";
+	}
+
+	@CrossOrigin()
+	@RequestMapping(value = "/api/v1/deleteResource/{listname}/{resourceid}", method = RequestMethod.GET, produces = "application/json")
+	public String deleteResource(@PathVariable final String listname, @PathVariable final String resourceid) {
+		logger.info(">> [NeoComApplication.deleteResource]");
+		logger.info("-- [NeoComApplication.deleteResource]> listname: " + listname);
+		logger.info("-- [NeoComApplication.deleteResource]> resourceid: " + resourceid);
+		// Transform the resource identifier to an eve type.
+		int typeid = Integer.parseInt(resourceid);
+		if (typeid > 0) {
+			// Locate the list and the delete the resource from that list.
+			ArrayList<PlanetaryResource> list = listRepository.get(listname);
+			if (null != list) {
+				logger.info("-- [NeoComApplication.deleteResource]> list(" + listname + ") located.");
+				logger.info("-- [NeoComApplication.deleteResource]>PRE " + listname + " items: " + list.size());
+				list = deleteListResource(list, typeid);
+				logger.info("-- [NeoComApplication.deleteResource]>POS " + listname + " items: " + list.size());
+				listRepository.put(listname, list);
+			}
+		}
+		logger.info("<< [NeoComApplication.deleteResource]");
+		return "OK";
+	}
+
+	private ArrayList<PlanetaryResource> deleteListResource(ArrayList<PlanetaryResource> list, int type) {
+		// Create the new list copy.
+		ArrayList<PlanetaryResource> newList = new ArrayList<PlanetaryResource>();
+		for (PlanetaryResource planetaryResource : newList) {
+			if (planetaryResource.getId() != type) newList.add(planetaryResource);
+		}
+		// Replace the list with the new list with the resource removed.
+		return newList;
 	}
 
 	/**
@@ -157,22 +191,7 @@ public class NeoComApplication extends AppAbstractConnector {
 		return singleton;
 	}
 
-	//	public HashMap<Long, APIKey> getApiKeys() {
-	//		return apiKeys;
-	//	}
-
-	//	@Override
-	//	public IDataSourceConnector getDataSourceConector() {
-	//		if (null == dsManager) dsManager = new DataSourceManager();
-	//		return dsManager;
-	//	}
-	//
-	//	@Override
-	//	public IDatabaseConnector getDBConnector() {
-	//		if (null == dbConnector) dbConnector = new SpringDatabaseConnector();
-	//		return dbConnector;
-	//	}
-	//
+	//[04]
 	@Bean
 	public Jackson2ObjectMapperBuilder jacksonBuilder() {
 		Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
@@ -185,42 +204,43 @@ public class NeoComApplication extends AppAbstractConnector {
 	public ResourceList resourcelist(@PathVariable final String name) {
 		logger.info(">> [NeoComApplication.resourcelist]");
 		logger.info("-- [NeoComApplication.resourcelist]> name: " + name);
-		// Get the demo list of the resource list and return it to the caller
-		ResourceList newrl = new ResourceList();
-		newrl.mockup();
-		Map<String, List<PlanetaryResource>> rl = new HashMap<String, List<PlanetaryResource>>();
-		List<PlanetaryResource> rllist = new ArrayList<PlanetaryResource>();
-		rllist.add(new PlanetaryResource(123, 234.0));
-		rllist.add(new PlanetaryResource(234, 345.0));
-		rl.put("PruebaInicial", rllist);
-		logger.info("<< [NeoComApplication.addresourcelist]");
-		return newrl;
+		// Search the list name in the repository.
+		ArrayList<PlanetaryResource> hitlist = listRepository.get(name);
+		if (null == hitlist) {
+			// Get the demo list of the resource list and return it to the caller
+			ResourceList newrl = new ResourceList();
+			newrl.mockup();
+			Map<String, List<PlanetaryResource>> rl = new HashMap<String, List<PlanetaryResource>>();
+			List<PlanetaryResource> rllist = new ArrayList<PlanetaryResource>();
+			rllist.add(new PlanetaryResource(123, 234.0));
+			rllist.add(new PlanetaryResource(234, 345.0));
+			rl.put("PruebaInicial", rllist);
+			logger.info("<< [NeoComApplication.addresourcelist]");
+			return newrl;
+		} else {
+			logger.info("<< [NeoComApplication.addresourcelist]");
+			ResourceList newrl = new ResourceList();
+			newrl.setName(name);
+			newrl.setList(hitlist);
+			return newrl;
+		}
 	}
-
-	//	@RequestMapping(value = "/rest/v1/locationitem/{locationID}", method = RequestMethod.GET, produces = "application/json")
-	//	public EveLocation locationItem(@PathVariable final String locationID) {
-	//		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
-	//		EveLocation location = new EveLocation();
-	//		try {
-	//			location = AppConnector.getDBConnector().searchLocationbyID(Long.parseLong(locationID));
-	//			Thread.sleep(3000); //1000 milliseconds is one second.
-	//		} catch (InterruptedException ex) {
-	//			Thread.currentThread().interrupt();
-	//		} catch (NumberFormatException nfexc) {
-	//			return new EveLocation();
-	//		}
-	//		return location;
-	//	}
-	//
-	//	// Register the hystrix.stream to publish hystrix data to the dashboard
-	//	@Bean
-	//	public ServletRegistrationBean servletRegistrationBean() {
-	//		return new ServletRegistrationBean(new HystrixMetricsStreamServlet(), "/hystrix.stream");
-	//	}
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(NeoComApplication.class);
+	}
+
+	private void booststrapInitialization() {
+		logger.info(">> [NeoComApplication.booststrapInitialization]");
+		// Initialize demo list of api keys
+		//		apiKeys.put(
+		//				new Long(2855881),
+		//				new APIKey(2855881, "jcmdsBL4RiyzFO7mVWRz5kks1ih2fTyyFhvawr0nrRMq2Gn97AOSO3FfW6lLWgGG"));
+		//		apiKeys.add(new APIKey(2956305, "u2Idzk1ymAufjgwwrQoHl0uTRa7fKwWNxotzZiEoLm0NgEHCdqpBr1C8pjmWdbiy"));
+		//		apiKeys.add(new APIKey(3106761, "gltCmvVoZl5akrM8d6DbNKZn7Jm2SaukrmqjnSOyqKbvzz5CtNfknTEwdBe6IIFf"));
+		//		apiKeys.add(new APIKey(924767, "2qBKUY6I9ozYhKxYUBPnSIix0fHFCqveD1UEAv0GbYqLenLLTIfkkIWeOBejKX5P"));
+		logger.info("<< [NeoComApplication.booststrapInitialization]");
 	}
 	//	@RequestMapping(value = "/api/v1/apicharacters/{apikey}:{validationcode}", method = RequestMethod.GET, produces = "application/json")
 	//	public ArrayList<EveCharCore> apiCharacters(@PathVariable final String apikey,
@@ -245,18 +265,26 @@ public class NeoComApplication extends AppAbstractConnector {
 	//			return null;
 	//		}
 	//	}
-
-	private void booststrapInitialization() {
-		logger.info(">> [NeoComApplication.booststrapInitialization]");
-		// Initialize demo list of api keys
-		//		apiKeys.put(
-		//				new Long(2855881),
-		//				new APIKey(2855881, "jcmdsBL4RiyzFO7mVWRz5kks1ih2fTyyFhvawr0nrRMq2Gn97AOSO3FfW6lLWgGG"));
-		//		apiKeys.add(new APIKey(2956305, "u2Idzk1ymAufjgwwrQoHl0uTRa7fKwWNxotzZiEoLm0NgEHCdqpBr1C8pjmWdbiy"));
-		//		apiKeys.add(new APIKey(3106761, "gltCmvVoZl5akrM8d6DbNKZn7Jm2SaukrmqjnSOyqKbvzz5CtNfknTEwdBe6IIFf"));
-		//		apiKeys.add(new APIKey(924767, "2qBKUY6I9ozYhKxYUBPnSIix0fHFCqveD1UEAv0GbYqLenLLTIfkkIWeOBejKX5P"));
-		logger.info("<< [NeoComApplication.booststrapInitialization]");
-	}
+	//	@RequestMapping(value = "/rest/v1/locationitem/{locationID}", method = RequestMethod.GET, produces = "application/json")
+	//	public EveLocation locationItem(@PathVariable final String locationID) {
+	//		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
+	//		EveLocation location = new EveLocation();
+	//		try {
+	//			location = AppConnector.getDBConnector().searchLocationbyID(Long.parseLong(locationID));
+	//			Thread.sleep(3000); //1000 milliseconds is one second.
+	//		} catch (InterruptedException ex) {
+	//			Thread.currentThread().interrupt();
+	//		} catch (NumberFormatException nfexc) {
+	//			return new EveLocation();
+	//		}
+	//		return location;
+	//	}
+	//
+	//	// Register the hystrix.stream to publish hystrix data to the dashboard
+	//	@Bean
+	//	public ServletRegistrationBean servletRegistrationBean() {
+	//		return new ServletRegistrationBean(new HystrixMetricsStreamServlet(), "/hystrix.stream");
+	//	}
 }
 
 final class ResourceList implements Serializable {
@@ -266,6 +294,10 @@ final class ResourceList implements Serializable {
 
 	public String getName() {
 		return name;
+	}
+
+	public void setList(ArrayList<PlanetaryResource> hitlist) {
+		if (null != data) data = hitlist;
 	}
 
 	public void mockup() {
@@ -366,3 +398,20 @@ final class ResourceList implements Serializable {
 //		ArrayList<EveCharCore> pilots = pilotds.getModel();
 //		return pilots;
 //	}
+//[04]
+//	public HashMap<Long, APIKey> getApiKeys() {
+//		return apiKeys;
+//	}
+
+//	@Override
+//	public IDataSourceConnector getDataSourceConector() {
+//		if (null == dsManager) dsManager = new DataSourceManager();
+//		return dsManager;
+//	}
+//
+//	@Override
+//	public IDatabaseConnector getDBConnector() {
+//		if (null == dbConnector) dbConnector = new SpringDatabaseConnector();
+//		return dbConnector;
+//	}
+//
