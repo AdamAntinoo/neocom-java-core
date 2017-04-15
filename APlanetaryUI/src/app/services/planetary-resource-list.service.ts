@@ -46,4 +46,13 @@ export class PlanetaryResourceListService {
       }
       );
   }
+  public searchTypeName(id: number) {
+    return this.http.get(PlanetaryResourceListService.RESOURCE_SERVICE_URL + "/eveitem/" + id)
+      .map(res => res.json())
+      .map(result => {
+        console.log("--[PlanetaryResourceListService.searchTypeName.map]> result: " + JSON.stringify(result));
+        return result;
+      })
+      .catch(res => Observable.throw(res.json()));
+  }
 }

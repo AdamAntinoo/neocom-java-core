@@ -15,6 +15,7 @@ export class PRListComponent implements OnInit, OnChanges {
   public prList: PlanetaryResource[] = [];
   public doingDownload: boolean = true;
   public idIsValid: boolean = false;
+  public newResorceName: string;
 
   private showNewresourceForm: boolean = false;
   private newResource: PlanetaryResource = new PlanetaryResource();
@@ -47,12 +48,27 @@ export class PRListComponent implements OnInit, OnChanges {
         // Set the conponent exported fields to the new data to update the ui.
         this.listTitle = first;
         this.prList = list;
-      }
-      );
+      });
     console.log("<<[PRListComponent.ngOnInit]");
   }
   ngOnChanges(changes: { [propName: string]: SimpleChange }) {
     console.log(">>[PRListComponent.ngOnChange]> changes: " + JSON.stringify(changes));
+  }
+  public nameChange(event) {
+    console.log(">>[PRListComponent.nameChange]> event: " + JSON.stringify(event));
+  }
+  public newIdChange(event) {
+    console.log(">>[PRListComponent.newIdChange]> event: " + JSON.stringify(event));
+    // Search for the resource name that matches the new id.
+    this.idIsValid = false;
+    this.resourceListService.searchTypeName(event)
+      .subscribe(result => {
+        console.log("--[PRListComponent.newIdChange]> result: " + JSON.stringify(result));
+        let category = result.category;
+        if (category == "Planetary Resources") this.idIsValid = true;
+        if (category == "Planetary Commodities") this.idIsValid = true;
+        if (this.idIsValid) this.newResorceName = result.name;
+      });
   }
   public openNewResource() {
     // Open the new resource component to enter the forms data

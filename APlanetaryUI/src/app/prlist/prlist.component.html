@@ -6,7 +6,7 @@
           <tr>
             <td class="list list-title pr-list-title">Planetary Resources List</td>
             <td>
-              <span class="pr-list-name" #name>{{listTitle}}</span>
+              <input class="pr-list-name" [ngModel]="listTitle" (ngModelChange)="nameChange($event)" />
               <button type="button" class="btn btn-default pr-button" (click)="openNewResource()">New</button>
               <button type="button" class="btn btn-danger pr-button">Clean List</button>
             </td>
@@ -39,11 +39,12 @@
   <form (ngSubmit)="onSubmit()" #newResourceForm="ngForm">
     <div class="form-group">
       <label for="typeid">Resource Identifier</label>
-      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid"
-          #spy #typeid="ngModel">
-      <div [hidden]="typeid.valid || typeid.pristine" class="alert alert-danger">
-        Resource type identifier should be valid.
+      <input type="text" class="form-control" id="typeid" required [ngModel]="newResource.typeid" name="typeid"
+          (ngModelChange)="newIdChange($event)" #spy #typeid="ngModel" />
+      <div [hidden]="idIsValid" class="alert alert-danger">
+        Resource type identifier should point to Planetary Resources.
       </div>
+      <label class="resourceName">{{newResorceName}}</label>
     </div>
     <label *ngIf="idIsValid" for="name">{{newResource.name}}</label>
     <div class="form-group">

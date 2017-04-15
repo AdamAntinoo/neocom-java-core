@@ -49,7 +49,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\WorkStage\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
 	//private static final String							DATABASE_URL							= "jdbc:sqlite:D:\\Development\\ProjectsAngular\\NeoCom\\src\\main\\resources\\eve.db";
-	private static final String										DATABASE_URL							= "jdbc:sqlite:./src/main/resources/eve.db";
+	private static final String										DATABASE_URL							= "jdbc:sqlite:src/main/resources/eve.db";
 	private static final String										SELECT_ITEM_BYID					= "SELECT it.typeID AS typeID, it.typeName AS typeName"
 			+ " , ig.groupName AS groupName" + " , ic.categoryName AS categoryName" + " , it.basePrice AS basePrice"
 			+ " , it.volume AS volume" + " , IFNULL(img.metaGroupName, " + '"' + "NOTECH" + '"' + ") AS Tech"
@@ -191,7 +191,10 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 				prepStmt = getCCPDatabase().prepareStatement(SELECT_ITEM_BYID);
 				prepStmt.setString(1, Integer.valueOf(typeID).toString());
 				cursor = prepStmt.executeQuery();
+				// The query can be run but now there are ids that do not return data.
+				boolean found = false;
 				while (cursor.next()) {
+					found = true;
 					hit.setTypeID(cursor.getInt(1));
 					hit.setName(cursor.getString(2));
 					hit.setGroupname(cursor.getString(3));
@@ -215,6 +218,9 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 					} else {
 						hit.setTech(tech);
 					}
+				}
+				if (!found) {
+					logger.warning("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID + "> not found.");
 				}
 			} catch (Exception e) {
 				logger.warning("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID + "> not found.");
