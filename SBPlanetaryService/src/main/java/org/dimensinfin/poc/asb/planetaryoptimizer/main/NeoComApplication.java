@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -91,25 +90,20 @@ public class NeoComApplication extends AppAbstractConnector {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@CrossOrigin()
-	@RequestMapping(value = "/api/v1/addresourcelist", method = RequestMethod.POST, produces = "application/json")
-	public String addresourcelist(@RequestBody final ResourceList newlist) {
-		// Map<String, List<DefaultConfigDto>>
+	@RequestMapping(value = "/api/v1/newresource", method = RequestMethod.POST, produces = "application/json")
+	public String newresource(@RequestBody final ResourcePack newlist) {
 		logger.info(">> [NeoComApplication.addresourcelist]");
-		logger.info("-- [NeoComApplication.addresourcelist]> newlist: " + newlist);
-		//		// Connect to the eve database and generate an output for the query related to the eve item received as parameter.
-		//		EveItem item = AppConnector.getDBConnector().searchItembyID(Integer.parseInt(typeID));
-		//		// Initialize the market data from start because this is a requirements on serialization.
-		//		item.getHighestBuyerPrice();
-		//		item.getLowestSellerPrice();
-		//		logger.info("-- [NeoComApplication.eveItem]> [#" + item.getItemID() + "]" + item.getName());
-		//		// Add a time of 3 seconds to the response time if the debug flag is defined
-		//		//		if (null != debug) {
-		//		//			try {
-		//		//				Thread.sleep(3000); //1000 milliseconds is one second.
-		//		//			} catch (InterruptedException ex) {
-		//		//				Thread.currentThread().interrupt();
-		//		//			}
-		//		//		}
+		//		logger.info("-- [NeoComApplication.addresourcelist]> newlist: " + newlist);
+		// Search for the list and then add the resource to it.
+		ArrayList<PlanetaryResource> hitlist = listRepository.get(newlist.getName());
+		if (null != hitlist) {
+			hitlist.add(newlist.getData());
+			return "OK";
+		} else {
+			hitlist = new ArrayList<PlanetaryResource>();
+			hitlist.add(newlist.getData());
+			listRepository.put(newlist.getName(), hitlist);
+		}
 		logger.info("<< [NeoComApplication.addresourcelist]");
 		return "OK";
 	}
@@ -207,23 +201,26 @@ public class NeoComApplication extends AppAbstractConnector {
 		// Search the list name in the repository.
 		ArrayList<PlanetaryResource> hitlist = listRepository.get(name);
 		if (null == hitlist) {
-			// Get the demo list of the resource list and return it to the caller
-			ResourceList newrl = new ResourceList();
-			newrl.mockup();
-			Map<String, List<PlanetaryResource>> rl = new HashMap<String, List<PlanetaryResource>>();
-			List<PlanetaryResource> rllist = new ArrayList<PlanetaryResource>();
-			rllist.add(new PlanetaryResource(123, 234.0));
-			rllist.add(new PlanetaryResource(234, 345.0));
-			rl.put("PruebaInicial", rllist);
-			logger.info("<< [NeoComApplication.addresourcelist]");
-			return newrl;
-		} else {
-			logger.info("<< [NeoComApplication.addresourcelist]");
-			ResourceList newrl = new ResourceList();
-			newrl.setName(name);
-			newrl.setList(hitlist);
-			return newrl;
+			//			// Get the demo list of the resource list and return it to the caller
+			//			ResourceList newrl = new ResourceList();
+			//			newrl.mockup();
+			//			Map<String, List<PlanetaryResource>> rl = new HashMap<String, List<PlanetaryResource>>();
+			//			List<PlanetaryResource> rllist = new ArrayList<PlanetaryResource>();
+			//			rllist.add(new PlanetaryResource(123, 234.0));
+			//			rllist.add(new PlanetaryResource(234, 345.0));
+			//			rl.put("PruebaInicial", rllist);
+			//			logger.info("<< [NeoComApplication.addresourcelist]");
+			//			return newrl;
+			//		} else {
+			hitlist = new ArrayList<PlanetaryResource>();
+			//			hitlist.add(newlist.getData());
+			listRepository.put(name, hitlist);
 		}
+		logger.info("<< [NeoComApplication.addresourcelist]");
+		ResourceList newrl = new ResourceList();
+		newrl.setName(name);
+		newrl.setList(hitlist);
+		return newrl;
 	}
 
 	@Override
@@ -305,6 +302,28 @@ final class ResourceList implements Serializable {
 		//	data = new PlanetaryResource[2];
 		data.add(new PlanetaryResource(123, 234.0));
 		data.add(new PlanetaryResource(234, 345.0));
+	}
+
+	public void setName(String newname) {
+		this.name = newname;
+	}
+}
+
+final class ResourcePack implements Serializable {
+	private static final long	serialVersionUID	= 9043918926214241311L;
+	public String							name;
+	public PlanetaryResource	data;
+
+	public String getName() {
+		return name;
+	}
+
+	public PlanetaryResource getData() {
+		return data;
+	}
+
+	public void setData(PlanetaryResource data) {
+		this.data = data;
 	}
 
 	public void setName(String newname) {

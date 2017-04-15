@@ -11,10 +11,16 @@
               <button type="button" class="btn btn-danger pr-button">Clean List</button>
             </td>
           </tr>
+        </table>
+        <table width="100%">
           <tr *ngFor="let resource of prList">
-            <td>
+            <td width="90%">
               <span class="pr-list">{{resource.name}}</span>
+            </td>
+            <td>
               <span class="badge">{{resource.quantity}} units</span>
+            </td>
+            <td>
               <span class="glyphicon glyphicon-remove" (click)="deleteResource(resource)"></span>
             </td>
           </tr>
@@ -33,7 +39,7 @@
     </tr>
   </table>
 </div>
-<div *ngIf="showNewresourceForm">
+<div *ngIf="showNewResourceForm">
   <hr>
   <h1>Adding a new Resource to the list...</h1>
   <form (ngSubmit)="onSubmit()" #newResourceForm="ngForm">
@@ -44,9 +50,8 @@
       <div [hidden]="idIsValid" class="alert alert-danger">
         Resource type identifier should point to Planetary Resources.
       </div>
-      <label class="resourceName">{{newResorceName}}</label>
+      <label *ngIf="idIsValid" for="name">{{newResource.name}}</label>
     </div>
-    <label *ngIf="idIsValid" for="name">{{newResource.name}}</label>
     <div class="form-group">
       <label for="quantity">Quantity</label>
       <input type="text" class="form-control" id="quantity" required [(ngModel)]="newResource.quantity" name="quantity">

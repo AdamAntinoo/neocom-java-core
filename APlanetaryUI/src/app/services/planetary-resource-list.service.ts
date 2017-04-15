@@ -23,17 +23,16 @@ export class PlanetaryResourceListService {
       .map(result => {
         console.log("--[PlanetaryResourceListService.getPRList.map]> result: " + JSON.stringify(result));
         return result;
-      }
-      );
-  }
-  public savePRList(name: string, newList: PlanetaryResource[]) {
-    let prListData = { name: name, data: newList };
-    this.http.post("http://localhost:8090/api/v1/addresourcelist", prListData)
-      .subscribe(function() {
-        console.log("createProject called successfully")
       });
-    //  .catch((error: any) => Observable.throw(error.json().error || 'Server error'))
   }
+  // public savePRList(name: string, newList: PlanetaryResource[]) {
+  //   let prListData = { name: name, data: newList };
+  //   this.http.post("http://localhost:8090/api/v1/addresourcelist", prListData)
+  //     .subscribe(function() {
+  //       console.log("createProject called successfully")
+  //     });
+  //   //  .catch((error: any) => Observable.throw(error.json().error || 'Server error'))
+  // }
   public deleteResource(listName: string, resourceId: number) {
     console.log(">>[PlanetaryResourceListService.deleteResource]")
     console.log("--[PlanetaryResourceListService.deleteResource]> listName: " + listName)
@@ -43,8 +42,7 @@ export class PlanetaryResourceListService {
       .map(result => {
         console.log("--[PlanetaryResourceListService.getPRList.map]> result: " + JSON.stringify(result));
         return result;
-      }
-      );
+      });
   }
   public searchTypeName(id: number) {
     return this.http.get(PlanetaryResourceListService.RESOURCE_SERVICE_URL + "/eveitem/" + id)
@@ -52,7 +50,18 @@ export class PlanetaryResourceListService {
       .map(result => {
         console.log("--[PlanetaryResourceListService.searchTypeName.map]> result: " + JSON.stringify(result));
         return result;
+      });
+    //    .catch(res => Observable.throw(res.json()));
+  }
+  public addResource2List(name: string, newResource: PlanetaryResource) {
+    let prListData = { name: name, data: newResource };
+    return this.http.post(PlanetaryResourceListService.RESOURCE_SERVICE_URL + "/newresource/", prListData)
+      .map(res => res.json())
+      .map(result => {
+        console.log("--[PlanetaryResourceListService.searchTypeName.map]> result: " + JSON.stringify(result));
+        return result;
       })
-      .catch(res => Observable.throw(res.json()));
+      .subscribe(result => console.log("createProject called successfully"));
+    //    .catch(res => Observable.throw(res.json()));
   }
 }

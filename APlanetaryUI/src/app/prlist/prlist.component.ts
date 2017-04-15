@@ -1,6 +1,6 @@
 import { Component }                    from '@angular/core';
 import { OnInit }                       from '@angular/core';
-import { OnChanges, SimpleChange }      from '@angular/core';
+// import { OnChanges, SimpleChange }      from '@angular/core';
 import { AppCoreDataService }           from '../services/app-core-data.service';
 import { PlanetaryResourceListService } from '../services/planetary-resource-list.service';
 import { PlanetaryResource }            from '../models/planetary-resource';
@@ -10,14 +10,13 @@ import { PlanetaryResource }            from '../models/planetary-resource';
   templateUrl: './prlist.component.html',
   styleUrls: ['./prlist.component.css']
 })
-export class PRListComponent implements OnInit, OnChanges {
-  public listTitle: string = "<TITLE>";
+export class PRListComponent implements OnInit {
+  public listTitle: string = "ResourceList";
   public prList: PlanetaryResource[] = [];
   public doingDownload: boolean = true;
   public idIsValid: boolean = false;
-  public newResorceName: string;
 
-  private showNewresourceForm: boolean = false;
+  private showNewResourceForm: boolean = false;
   private newResource: PlanetaryResource = new PlanetaryResource();
   public typeid: number;
 
@@ -51,30 +50,45 @@ export class PRListComponent implements OnInit, OnChanges {
       });
     console.log("<<[PRListComponent.ngOnInit]");
   }
-  ngOnChanges(changes: { [propName: string]: SimpleChange }) {
-    console.log(">>[PRListComponent.ngOnChange]> changes: " + JSON.stringify(changes));
-  }
-  public nameChange(event) {
-    console.log(">>[PRListComponent.nameChange]> event: " + JSON.stringify(event));
-  }
+  // ngOnChanges(changes: { [propName: string]: SimpleChange }) {
+  //   console.log(">>[PRListComponent.ngOnChange]> changes: " + JSON.stringify(changes));
+  // }
+  // public nameChange(event) {
+  //   console.log(">>[PRListComponent.nameChange]> event: " + JSON.stringify(event));
+  // }
   public newIdChange(event) {
     console.log(">>[PRListComponent.newIdChange]> event: " + JSON.stringify(event));
     // Search for the resource name that matches the new id.
     this.idIsValid = false;
-    this.resourceListService.searchTypeName(event)
-      .subscribe(result => {
-        console.log("--[PRListComponent.newIdChange]> result: " + JSON.stringify(result));
-        let category = result.category;
-        if (category == "Planetary Resources") this.idIsValid = true;
-        if (category == "Planetary Commodities") this.idIsValid = true;
-        if (this.idIsValid) this.newResorceName = result.name;
-      });
+    // Check the range for valid resource values
+    if (event == 44) {
+      this.resourceListService.searchTypeName(event)
+        .subscribe(result => {
+          console.log("--[PRListComponent.newIdChange]> result: " + JSON.stringify(result));
+          let category = result.category;
+          if (category == "Planetary Resources") this.idIsValid = true;
+          if (category == "Planetary Commodities") this.idIsValid = true;
+          if (this.idIsValid) this.newResource.name = result.name;
+        });
+    }
+    if (event > 2072) {
+      if (event < 28975) {
+        this.resourceListService.searchTypeName(event)
+          .subscribe(result => {
+            console.log("--[PRListComponent.newIdChange]> result: " + JSON.stringify(result));
+            let category = result.category;
+            if (category == "Planetary Resources") this.idIsValid = true;
+            if (category == "Planetary Commodities") this.idIsValid = true;
+            if (this.idIsValid) this.newResource.name = result.name;
+          });
+      }
+    }
   }
   public openNewResource() {
     // Open the new resource component to enter the forms data
     this.newResource = new PlanetaryResource();
     this.idIsValid = false;
-    this.showNewresourceForm = true;
+    this.showNewResourceForm = true;
   }
 
   public deleteResource(target: PlanetaryResource) {
@@ -82,7 +96,7 @@ export class PRListComponent implements OnInit, OnChanges {
     // Clear the resoource from the resurce list.
     let hit = this.search4id(target.getId());
     if (undefined != hit) {
-      this.showNewresourceForm = false;
+      this.showNewResourceForm = false;
       var index = this.prList.indexOf(target, 0);
       if (index > -1) {
         this.prList.splice(index, 1);
@@ -93,26 +107,34 @@ export class PRListComponent implements OnInit, OnChanges {
   }
   public onSubmit() {
     console.log(">>[PRListComponent.onSubmit]");
-    // Add the new resource to the list of resources.
-    this.addResource(this.newResource);
-    // Hide again the new resource form.
-    this.showNewresourceForm = false;
-
-    // Save the new list of resources on the backend list.
-    this.resourceListService.savePRList(this.listTitle, this.prList);
-  }
-  private addResource(newres: PlanetaryResource) {
     // Check if this resource already exists. If so add them. Otherwise add the resource.
-    console.log("--[PlanetaryResourceListService.addResource]> newres: " + JSON.stringify(newres));
-    let hit = this.search4id(newres.getId());
+    // console.log("--[PlanetaryResourceListService.addResource]> newres: " + JSON.stringify(newres));
+    let hit = this.search4id(this.newResource.getId());
     console.log("--[PlanetaryResourceListService.addResource]> hit: " + JSON.stringify(hit));
     if (undefined == hit) {
-      this.prList.push(newres);
+      this.prList.push(this.newResource);
     } else {
-      hit.setQuantity(hit.getQuantity() + newres.getQuantity());
+      hit.setQuantity(hit.getQuantity() + this.newResource.getQuantity());
     }
     let counter = this.prList.length;
+    // Hide again the new resource form.
+    this.showNewResourceForm = false;
+
+    // Save the new list of resources on the backend list.
+    this.resourceListService.addResource2List(this.listTitle, this.newResource);
   }
+  // private addResource(newres: PlanetaryResource) {
+  //   // Check if this resource already exists. If so add them. Otherwise add the resource.
+  //   console.log("--[PlanetaryResourceListService.addResource]> newres: " + JSON.stringify(newres));
+  //   let hit = this.search4id(newres.getId());
+  //   console.log("--[PlanetaryResourceListService.addResource]> hit: " + JSON.stringify(hit));
+  //   if (undefined == hit) {
+  //     this.prList.push(newres);
+  //   } else {
+  //     hit.setQuantity(hit.getQuantity() + newres.getQuantity());
+  //   }
+  //   let counter = this.prList.length;
+  // }
   private removeResource(target: PlanetaryResource) {
     console.log("--[PlanetaryResourceListService.removeResource]> newres: " + JSON.stringify(target));
     let hit = this.search4id(target.getId());
