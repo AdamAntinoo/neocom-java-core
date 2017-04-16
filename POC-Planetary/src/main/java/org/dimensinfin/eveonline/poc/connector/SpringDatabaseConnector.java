@@ -357,7 +357,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 	 */
 	@Override
 	public MarketDataSet searchMarketData(final int itemID, final EMarketSide side) {
-		// Log.i("EVEI","-- MarketUpdaterService.searchMarketDataByID. Searching
+		logger.info(">>[SpringDatabaseConnector.searchMarketData]> itemid: " + itemID + " side: " + side.toString());
 		// for Market Data: " + itemID + " - " + side);
 		// Search on the cache. By default load the SELLER as If I am buying the
 		// item.

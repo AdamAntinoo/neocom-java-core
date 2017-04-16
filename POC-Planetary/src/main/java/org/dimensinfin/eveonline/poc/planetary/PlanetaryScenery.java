@@ -58,19 +58,6 @@ public class PlanetaryScenery {
 		return sceneryResources;
 	}
 
-	public void stock(Resource resource) {
-		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
-		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
-			int outputType = AppConnector.getDBConnector().searchRawPlanetaryOutput(resource.getTypeID());
-			ProcessingAction action = new ProcessingAction(outputType);
-			action.addResource(resource);
-			Vector<Resource> results = action.getActionResults();
-			for (Resource planetaryResource : results) {
-				sceneryResources.add(planetaryResource);
-			}
-		}
-	}
-
 	/**
 	 * Stocks for processing and selling evaluation the list of Planetary Resources received on the parameter.
 	 * While processing the resources it will convert them to our special variation of
@@ -88,6 +75,27 @@ public class PlanetaryScenery {
 		}
 	}
 	//[01]
+
+	/**
+	 * Convert RAW Planetary Resources to Tier 1 and store the results into the list of resources for this
+	 * scenery. Other resources are stored with no processing.
+	 * 
+	 * @param resource
+	 *          resource to check and store.
+	 */
+	private void stock(Resource resource) {
+		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
+		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
+			int outputType = AppConnector.getDBConnector().searchRawPlanetaryOutput(resource.getTypeID());
+			ProcessingAction action = new ProcessingAction(outputType);
+			action.addResource(resource);
+			Vector<Resource> results = action.getActionResults();
+			for (Resource planetaryResource : results) {
+				sceneryResources.add(planetaryResource);
+			}
+		} else
+			sceneryResources.add(resource);
+	}
 }
 
 // - UNUSED CODE ............................................................................................

@@ -3,12 +3,11 @@
 //	COPYRIGHT:      (c) 2017 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Java 1.7.
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
-package org.dimensinfin.eveonline.poc.planetary;
+package main.java.org.dimensinfin.eveonline.poc.planetary;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Vector;
-// - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -35,16 +34,11 @@ public class ProcessingAction implements Serializable {
 	private static final int						RAWOUTPUT_MULTIPLIER		= 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Vector<Schematics>					schematics							= new Vector();
+	private int													targetId								= 0;
+	private Vector<Schematics>					schematics							= new Vector<Schematics>();
 	private Vector<Schematics>					inputList								= new Vector<Schematics>();
 	private Schematics									output									= null;
 	private HashMap<Integer, Resource>	actionResources					= new HashMap<Integer, Resource>();
-
-	//	private Vector<PlanetaryResource>						rawResources						= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t1Resources							= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t2Resources							= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t3Resources							= new Vector<PlanetaryResource>();
-	//	private Vector<PlanetaryResource>						t4Resources							= new Vector<PlanetaryResource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -55,6 +49,7 @@ public class ProcessingAction implements Serializable {
 	 * @param targetId
 	 */
 	public ProcessingAction(int targetId) {
+		this.targetId = targetId;
 		// Get the schematics information.
 		schematics = AppConnector.getDBConnector().searchSchematics4Output(targetId);
 		// Store the inputs into another list.
@@ -123,13 +118,20 @@ public class ProcessingAction implements Serializable {
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("Schematics [");
-		buffer.append("inputs: ").append(inputList).append(" ");
-		buffer.append("output: ").append(output).append(" \n");
+		final StringBuffer buffer = new StringBuffer("ProcessingAction [");
+		buffer.append(inputList).append(" ").append(output).append(" ");
 		buffer.append("resources: ").append(actionResources).append(" ");
 		buffer.append("]");
-		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
+	}
+
+	@Override
+	protected ProcessingAction clone() throws CloneNotSupportedException {
+		ProcessingAction clone = new ProcessingAction(this.targetId);
+		for (Integer resource : actionResources.keySet()) {
+			clone.addResource(new Resource(resource, actionResources.get(resource).getQuantity()));
+		}
+		return clone;
 	}
 
 	/**

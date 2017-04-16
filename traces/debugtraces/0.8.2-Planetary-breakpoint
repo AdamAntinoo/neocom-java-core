@@ -1,174 +1,356 @@
-[stationName=0.0 Vale of the Silent - Y-ZXIO qty=184374 price=120.0,
- stationName=0.0 Vale of the Silent - TVN-FM qty=31000 price=120.0,
- stationName=0.0 Vale of the Silent - TVN-FM qty=659 price=145.0,
- stationName=0.0 Feythabolis - R4K-8L qty=680 price=150.0,
- stationName=0.0 Vale of the Silent - LZ-6SU qty=9560 price=190.0,
- stationName=0.0 Catch - B-XJX4 qty=46751 price=200.0,
- stationName=0.0 Feythabolis - RIT-A7 qty=77441 price=200.0,
- stationName=0.0 Fountain - NY6-FH qty=3800 price=200.0,
- stationName=0.0 Esoteria - YAP-TN qty=15485 price=200.0,
- stationName=0.0 Esoteria - PE-H02 qty=3740 price=200.0,
- stationName=0.0 Wicked Creek - 5NQI-E qty=11680 price=250.0,
- stationName=0.0 Tenal - ZJ-QOO qty=100 price=260.0,
- stationName=0.0 Tenal - V7-MID qty=7760 price=260.0,
- stationName=0.0 Catch - GMLH-K qty=40032 price=270.0,
- stationName=0.0 Catch - BUZ-DB qty=133622 price=280.0,
- stationName=0.0 Catch - N-8BZ6 qty=3417 price=280.0,
- stationName=0.0 Catch - CBL-XP qty=24483 price=290.0,
- stationName=0.0 Tenal - 30-D5G qty=56060 price=300.0,
- stationName=0.0 Tenal - 30-D5G qty=159737 price=300.0,
- stationName=0.0 Tenal - HB-FSO qty=19500 price=300.0,
- stationName=0.0 Catch - N-8BZ6 qty=137600 price=300.0,
- stationName=0.0 Catch - N-8BZ6 qty=74517 price=300.0,
- stationName=0.0 Catch - V2-VC2 qty=57809 price=300.0,
- stationName=0.0 Feythabolis - TSG-NO qty=65673 price=300.0,
- stationName=0.0 Esoteria - DL-CDY qty=23322 price=300.0,
- stationName=0.0 Tenal - IG-ZAM qty=107885 price=300.0,
- stationName=0.0 Tenal - A1RR-M qty=45135 price=300.0,
- stationName=0.0 Fade - L-SCBU qty=28950 price=327.0,
- stationName=0.0 Tribute - MJI3-8 qty=51935 price=349.0,
- stationName=0.0 Catch - V2-VC2 qty=240 price=350.0,
- stationName=0.0 Tribute - O-0ERG qty=265802 price=350.0,
- stationName=0.0 Tenal - 6OYQ-Z qty=155298 price=350.0,
- stationName=0.0 Catch - V2-VC2 qty=9820 price=350.0,
- stationName=0.0 Tribute - SH1-6P qty=4040 price=350.0,
- stationName=0.8 Verge Vendor - Clellinon qty=10 price=350.0,
- stationName=0.0 Tribute - MJI3-8 qty=3160 price=350.0,
- stationName=0.0 Tribute - O-0ERG qty=10000 price=375.0,
- stationName=0.9 Verge Vendor - Alenia qty=10 price=390.0,
- stationName=0.9 Verge Vendor - Alenia qty=20 price=390.0,
- stationName=0.9 Verge Vendor - Alenia qty=20 price=390.0,
- stationName=0.0 Catch - 7LHB-Z qty=228811 price=395.0,
- stationName=0.8 Verge Vendor - Clellinon qty=10 price=397.0,
- stationName=0.8 Verge Vendor - Clellinon qty=20 price=398.0,
- stationName=0.0 The Kalevala Expanse - BVRQ-O qty=2764 price=399.0,
- stationName=0.0 Fountain - 9DQW-W qty=124140 price=399.0,
- stationName=0.0 Fountain - F-88PJ qty=460 price=400.0,
- stationName=0.0 Immensea - OP9L-F qty=615 price=400.0,
- stationName=0.0 Tenal - R-YWID qty=20690 price=400.0,
- stationName=0.0 Querious - A2-V27 qty=655930 price=400.0,
- stationName=0.0 The Kalevala Expanse - BVRQ-O qty=10080 price=400.0,
- stationName=0.7 Derelik - Gelhan qty=2900 price=400.0,
- stationName=0.8 Verge Vendor - Clellinon qty=10 price=400.0,
- stationName=0.8 Verge Vendor - Clellinon qty=10 price=400.0,
- stationName=0.0 Vale of the Silent - K8X-6B qty=2400 price=400.0,
- stationName=0.0 Catch - E-YJ8G qty=591325 price=400.0,
- stationName=0.0 Tribute - H-W9TY qty=92835 price=400.0,
- stationName=0.0 Catch - V2-VC2 qty=29860 price=400.0,
- stationName=0.0 Fountain - 6VDT-H qty=1970 price=400.0,
- stationName=0.8 Verge Vendor - Clellinon qty=20 price=407.0,
- stationName=0.8 Verge Vendor - Clellinon qty=10 price=430.0,
- stationName=0.0 Querious - 3BK-O7 qty=660 price=440.0,
- stationName=0.0 Stain - O5Y3-W qty=209 price=440.0,
- stationName=0.0 Feythabolis - KJ-V0P qty=884025 price=440.0,
- stationName=0.0 Querious - UVHO-F qty=7560 price=450.0,
- stationName=0.0 Esoteria - IPX-H5 qty=19400 price=450.0,
- stationName=0.0 Immensea - D-BAMJ qty=1704 price=450.0,
- stationName=0.9 Tash-Murkon - Pasha qty=10 price=450.0,
- stationName=0.9 Tash-Murkon - Pasha qty=10 price=450.0,
- stationName=0.8 Tash-Murkon - Tash-Murkon Prime qty=10 price=450.0,
- stationName=0.9 Sinq Laison - Trossere qty=10 price=450.0,
- stationName=0.4 Verge Vendor - Hevrice qty=20 price=450.0,
- stationName=0.9 Sinq Laison - Aymaerne qty=10 price=467.0,
- stationName=0.0 Esoteria - J-RVGD qty=3920 price=470.0,
- stationName=0.0 Molden Heath - Skarkon qty=3120 price=470.0,
- stationName=0.0 Omist - G-B3PR qty=362703 price=480.0,
- stationName=0.0 Branch - HB7R-F qty=15360 price=480.0,
- stationName=1.0 Metropolis - Arlulf qty=10 price=497.0,
- stationName=0.6 Verge Vendor - Amygnon qty=2603 price=497.0,
- stationName=0.0 Providence - H6-CX8 qty=260 price=498.0,
- stationName=0.8 Derelik - Tidacha qty=5719 price=499.0,
- stationName=0.3 Khanid - Vezila qty=12495 price=499.0,
- stationName=0.0 Tenal - WV-0R2 qty=80962 price=499.0,
- stationName=0.0 Esoteria - C-VZAK qty=356374 price=500.0,
- stationName=1.0 Metropolis - Arlulf qty=10 price=500.0,
- stationName=0.6 Derelik - Khankenirdia qty=1290 price=500.0,
- stationName=0.0 Tenal - J1-KJP qty=118814 price=500.0,
- stationName=0.9 Sinq Laison - Trossere qty=20 price=500.0,
- stationName=0.0 Tribute - M-OEE8 qty=8320 price=500.0,
- stationName=0.8 Sinq Laison - Aunia qty=10 price=500.0,
- stationName=0.0 Vale of the Silent - TVN-FM qty=18051 price=500.0,
- stationName=0.5 Genesis - Tarta qty=600 price=500.0,
- stationName=0.5 Genesis - Tarta qty=160 price=500.0,
- stationName=0.5 Genesis - Tarta qty=320 price=500.0,
- stationName=0.8 Tash-Murkon - Baviasi qty=130 price=500.0,
- stationName=0.0 Pure Blind - 2D-0SO qty=44450 price=512.0,
- stationName=0.0 Scalding Pass - RYC-19 qty=80 price=520.0,
- stationName=0.0 Vale of the Silent - AZBR-2 qty=141409 price=520.0,
- stationName=0.9 The Citadel - Hatakani qty=10 price=523.0,
- stationName=0.9 Sinq Laison - Dodixie qty=5857 price=525.0,
- stationName=0.7 Metropolis - Hakeri qty=41700 price=530.0,
- stationName=0.0 Period Basis - TPAR-G qty=34 price=530.0,
- stationName=0.6 Domain - Bahromab qty=10 price=535.0,
- stationName=0.0 Vale of the Silent - TVN-FM qty=26315 price=538.0,
- stationName=0.6 Tash-Murkon - Seil qty=13700 price=540.0,
- stationName=0.0 The Kalevala Expanse - BVRQ-O qty=210691 price=543.0,
- stationName=0.7 Tash-Murkon - Pimsu qty=8800 price=545.0,
- stationName=0.4 Tash-Murkon - Teshkat qty=2104 price=546.0,
- stationName=0.8 Lonetrek - Veisto qty=1315 price=550.0,
- stationName=0.6 Tash-Murkon - Azerakish qty=17131 price=550.0,
- stationName=0.4 Lonetrek - Aurohunen qty=139135 price=550.0,
- stationName=0.0 Providence - I7S-1S qty=18760 price=550.0,
- stationName=0.9 Lonetrek - Jouvulen qty=30 price=550.0,
- stationName=1.0 Domain - Chaven qty=20 price=552.0,
- stationName=0.8 Sinq Laison - Fricoure qty=55978 price=556.0,
- stationName=0.5 Metropolis - Lanngisi qty=1960 price=570.0,
- stationName=0.0 Syndicate - X-M2LR qty=86100 price=570.0,
- stationName=0.0 Syndicate - X-M2LR qty=42685 price=570.0,
- stationName=0.0 Syndicate - 0T-AMZ qty=90975 price=570.0,
- stationName=0.8 Sinq Laison - Grinacanne qty=3310 price=583.0,
- stationName=0.9 Sinq Laison - Dodixie qty=10890 price=586.0,
- stationName=0.9 Sinq Laison - Dodixie qty=138 price=588.0,
- stationName=0.9 Sinq Laison - Dodixie qty=6668 price=589.0,
- stationName=0.9 Sinq Laison - Dodixie qty=6300 price=589.0,
- stationName=0.9 Sinq Laison - Dodixie qty=12180 price=590.0,
- stationName=0.9 Sinq Laison - Dodixie qty=1360 price=590.0,
- stationName=0.9 Sinq Laison - Dodixie qty=16420 price=590.0,
- stationName=0.9 Sinq Laison - Dodixie qty=65 price=590.0,
- stationName=0.8 Everyshore - Harerget qty=89976 price=595.0,
- stationName=0.8 Everyshore - Harerget qty=41775 price=598.0,
- stationName=0.5 Genesis - Sigga qty=20 price=599.0,
- stationName=0.5 Genesis - Sigga qty=70 price=599.0,
- stationName=0.0 Branch - 9F-7PZ qty=250000 price=600.0,
- stationName=0.5 Metropolis - Hek qty=52 price=600.0,
- stationName=0.0 Outer Ring - 4C-B7X qty=149159 price=600.0,
- stationName=0.7 Placid - Osmeden qty=1120 price=600.0,
- stationName=0.0 Stain - 6Y-0TW qty=40106 price=600.0,
- stationName=0.0 Venal - H-PA29 qty=572758 price=600.0,
- stationName=0.9 Metropolis - Elgoi qty=30980 price=600.0,
- stationName=0.6 Genesis - Madomi qty=120 price=600.0,
- stationName=0.9 Tash-Murkon - Pasha qty=10 price=600.0,
- stationName=0.0 Malpais - UYG-YX qty=680 price=600.0,
- stationName=0.8 Lonetrek - Korama qty=3020 price=600.0,
- stationName=0.9 Everyshore - Ethernity qty=5760 price=600.0,
- stationName=0.8 Domain - Safizon qty=10 price=600.0,
- stationName=0.9 Everyshore - Ethernity qty=21580 price=600.0,
- stationName=0.5 Domain - Shuria qty=40340 price=600.0,
- stationName=0.1 Metropolis - Arifsdald qty=267475 price=600.0,
- stationName=0.4 Metropolis - Hagilur qty=12260 price=604.0,
- stationName=0.7 Everyshore - Olide qty=94858 price=616.0,
- stationName=0.9 Sinq Laison - Dodixie qty=110000 price=618.0,
- stationName=0.0 The Kalevala Expanse - WNM-V0 qty=700 price=637.0,
- stationName=0.0 Tenal - V-LDEJ qty=61216 price=640.0,
- stationName=0.9 Sinq Laison - Dodixie qty=18480 price=649.0,
- stationName=0.9 Sinq Laison - Dodixie qty=69149 price=649.0,
- stationName=0.7 Placid - Orvolle qty=2520 price=650.0,
- stationName=0.4 Metropolis - Floseswin qty=256200 price=650.0,
- stationName=0.5 Placid - Slays qty=31 price=650.0,
- stationName=0.5 Placid - Adacyne qty=100000 price=650.0,
- stationName=0.9 Sinq Laison - Dodixie qty=144240 price=650.0,
- stationName=0.0 Venal - 6NJ8-V qty=10760 price=670.0,
- stationName=1.0 Domain - Amarr qty=49880 price=674.0,
- stationName=1.0 Domain - Amarr qty=3000 price=695.0,
- stationName=0.9 The Forge - Jita qty=310080 price=698.0,
- stationName=0.9 The Forge - Jita qty=3780 price=699.0,
- stationName=0.2 Black Rise - Rakapas qty=73360 price=700.0,
- stationName=0.8 Essence - Aporulie qty=36804 price=700.0,
- stationName=0.5 Genesis - Tarta qty=30000 price=700.0,
- stationName=0.7 The Forge - Vattuolen qty=15899 price=700.0,
- stationName=0.9 Sinq Laison - Dodixie qty=921 price=700.0,
- stationName=0.0 The Kalevala Expanse - WNM-V0 qty=655 price=709.0,
- stationName=0.9 The Forge - Jita qty=20 price=730.0,
- stationName=0.9 The Forge - Jita qty=23395 price=738.0,
- stationName=0.9 The Forge - Jita qty=20 price=7...
+--PROCESS ACTIONS
+-- RESOURCES
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2495[Skill] Interplanetary Consolidation x11800 stack: 1 total: 11800 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]]
+
+
+-ACTION
+ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+
+-CONSUMED
+{2390=2390,
+ 3645=3645}
+
+-OUTPUTS
+[Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ]]
+
+--END RESOURCES
+*[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+* Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+* Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+* Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+* Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+* Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+* Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+* Resource [#2495[Skill] Interplanetary Consolidation x11800 stack: 1 total: 11800 ],
+* Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+* Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ],
+* Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+* Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+* Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ]]
+
+
+--T3 OPTIMIZER
+[ProcessingAction [[Schematics [INPUT #3691x10],
+ Schematics [INPUT #9838x10]] Schematics [OUTPUT #17136x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 9838=Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]} ]]
+
+-CONSUMED
+{3691=3691, 9838=9838}
+
+-OUTPUTS
+[Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+
+--T3 RESOURCES
+*[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ *Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+* Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+* Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+* Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+* Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+* Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+* Resource [#2495[Skill] Interplanetary Consolidation x11800 stack: 1 total: 11800 ],
+* Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+* Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+* Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ],
+* Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+* Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+* Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+
+-- RESOURCE LIST TO EVALUATE
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+
+--MARKET INFORMATION
+[stationName=0.0 Stain - J-AYLV qty=3736727 price=0.98,
+ stationName=0.0 Tenal - 33CE-7 qty=2875271 price=1.0,
+ stationName=0.0 Tenal - WV-0R2 qty=226525 price=1.0,
+ stationName=0.0 Vale of the Silent - TVN-FM qty=14542 price=1.0,
+ stationName=0.0 Tribute - GIH-ZG qty=243283 price=1.0,
+ stationName=0.0 Vale of the Silent - 3HX-DL qty=43742 price=1.75,
+ stationName=0.0 Fade - FIO1-8 qty=316444 price=1.8,
+ stationName=0.0 Deklein - YA0-XJ qty=20600 price=1.9,
+ stationName=0.0 Tenal - W0X-MG qty=88000 price=2.0,
+ stationName=0.0 Tenerifis - C3-0YD qty=2328920 price=2.0,
+ stationName=0.0 Aridia - Balas qty=2387004 price=2.23,
+ stationName=0.0 Cobalt Edge - P-H5IY qty=747194 price=2.3,
+ stationName=0.0 Pure Blind - 5ZXX-K qty=2093051 price=2.45,
+ stationName=0.0 Wicked Creek - M-MBRT qty=6317 price=2.5,
+ stationName=0.0 Detorid - 0-G8NO qty=742792 price=2.64,
+ stationName=0.0 Esoteria - J-RVGD qty=203595 price=2.8,
+ stationName=0.5 Khanid - Parses qty=927830 price=2.84,
+ stationName=0.2 Devoid - Ussad qty=765361 price=2.9,
+ stationName=0.0 Providence - Shintaht qty=59294 price=3.0,
+ stationName=0.6 Lonetrek - Antiainen qty=8075 price=3.0,
+ stationName=0.8 Kor-Azor - Nahyeen qty=1 price=3.0,
+ stationName=0.6 Devoid - Esescama qty=600000 price=3.13,
+ stationName=0.9 Heimatar - Rens qty=14288023 price=3.61,
+ stationName=1.0 Lonetrek - Kakakela qty=11009508 price=3.99,
+ stationName=0.8 Heimatar - Sist qty=136240 price=4.0,
+ stationName=0.7 The Citadel - Suroken qty=5000000 price=4.18,
+ stationName=0.5 Tash-Murkon - Lari qty=1525810 price=5.0,
+ stationName=0.5 Domain - Zaimeth qty=2402087 price=5.0,
+ stationName=0.6 Everyshore - Leremblompes qty=2702182 price=5.75,
+ stationName=0.2 Black Rise - Kehjari qty=3411778 price=7.5]
+
+
+
+Location	Remaining	Price	Range	Updated	Distance from
+
+0.9 The Forge - Jita	29,467,573	2.89ISK	Station	< 10 minutes ago	 
+0.9 Sinq Laison - Dodixie	2,058,603	2.27ISK	Station	< 5 minutes ago	 
+0.6 Metropolis - Earwik	6,760,730	2.00ISK	Solarsystem	< 10 minutes ago	 
+0.0 Deklein - WUZ-WM	607,571	2.00ISK	Station	< 30 minutes ago	 
+1.0 Domain - Amarr	14,180,068	1.78ISK	3 Jumps	< 10 minutes ago	 
+1.0 Lonetrek - Kakakela	7,726,065	1.70ISK	3 Jumps	< 10 minutes ago	 
+1.0 Lonetrek - Amsen	6,441,638	1.68ISK	3 Jumps	< 10 minutes ago	 
+0.5 Lonetrek - Saatuban	9,161,853	1.60ISK	Station	< 10 minutes ago	 
+1.0 Tash-Murkon - Emrayur	18,345,799	1.53ISK	3 Jumps	< 5 minutes ago	 
+0.6 Everyshore - Jaschercis	5,190,118	1.50ISK	Solarsystem	< 10 minutes ago	 
+0.5 The Bleak Lands - Sasiekko	9,399,961	1.50ISK	1 Jump	< 5 minutes ago	 
+0.9 The Forge - Jita	23,137,608	1.11ISK	Region	< 10 minutes ago	 
+0.6 Devoid - Esescama	9,361,453	1.01ISK	Station	< 5 minutes ago	 
+0.7 The Citadel - Kamio	8,031,952	1.00ISK	3 Jumps	< 5 minutes ago	 
+0.0 Oasa - MZLW-9	9,000,000	1.00ISK	Station	< 10 minutes ago	 
+0.7 Essence - Noghere	3,626,387	0.96ISK	40 Jumps	< 5 minutes ago	 
+0.9 Sinq Laison - Dodixie	1,848,326	0.91ISK	Station	< 5 minutes ago	 
+0.5 Verge Vendor - Arraron	1,000,000	0.82ISK	1 Jump	< 5 minutes ago	 
+1.0 Domain - Amarr	43,145,952	0.80ISK	Solarsystem	< 10 minutes ago	 
+0.7 The Citadel - Konola	10,000,000	0.75ISK	10 Jumps	< 5 minutes ago	 
+0.7 The Citadel - Isaziwa	335,778,385	0.73ISK	Region	< 5 minutes ago	 
+0.6 The Citadel - Ikao	10,000,000	0.73ISK	Region	< 5 minutes ago	 
+0.9 Essence - Synchelle	2,121,418,083	0.42ISK	Region	< 5 minutes ago	 
+0.6 Metropolis - Aldrat	42,216,867	0.24ISK	Region	< 10 minutes ago	
+
+
+[MarketDataEntry [qty: 14288023 3.61 ISK location: NeoComLocation [#30002510 (0) [Heimatar] system: Rens station: Rens ] ]]
+
+
+MarketDataSet [SELLER MarketDataEntry [qty: 0 0.0 ISK location: NeoComLocation [#-1 (0) [<REGION>] system: <SYSTEM> station: <STATION> ] ]]
+
+
+[MarketDataEntry [qty: 11541287 2.1 ISK location: NeoComLocation [#30002053 (0) [Metropolis] system: Hek station: Hek ] ],
+ MarketDataEntry [qty: 14180068 1.78 ISK location: NeoComLocation [#30002187 (0) [Domain] system: Amarr station: Amarr ] ],
+ MarketDataEntry [qty: 29467573 2.89 ISK location: NeoComLocation [#30000142 (0) [The Forge] system: Jita station: Jita ] ],
+ MarketDataEntry [qty: 666096 2.3 ISK location: NeoComLocation [#30002510 (0) [Heimatar] system: Rens station: Rens ] ]]
+
+[MarketDataEntry [qty: 11541287 2.1 ISK location: NeoComLocation [#30002053 (0) [Metropolis] system: Hek station: Hek ] ],
+ MarketDataEntry [qty: 14180068 1.78 ISK location: NeoComLocation [#30002187 (0) [Domain] system: Amarr station: Amarr ] ],
+ MarketDataEntry [qty: 29467573 2.89 ISK location: NeoComLocation [#30000142 (0) [The Forge] system: Jita station: Jita ] ],
+ MarketDataEntry [qty: 666096 2.3 ISK location: NeoComLocation [#30002510 (0) [Heimatar] system: Rens station: Rens ] ]]
+
+[MarketDataSet [SELLER MarketDataEntry [qty: 14288023 3.61 ISK location: NeoComLocation [#30002510 (0) [Heimatar] system: Rens station: Rens ] ]],
+ MarketDataSet [BUYER MarketDataEntry [qty: 29467573 2.89 ISK location: NeoComLocation [#30000142 (0) [The Forge] system: Jita station: Jita ] ]]]
+
+MarketDataSet [BUYER MarketDataEntry [qty: 29467573 2.89 ISK location: NeoComLocation [#30000142 (0) [The Forge] system: Jita station: Jita ] ]]
+
+-- VALUE
+value	1.06291215E8	
+
+29,467,573	2.89
+
+
+--DATA AT THE EVALUATION POINT
+-T4
+BitSequencer [resources: [Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]sequence[]]
+-T3
+BitSequencer [resources: [Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ]]sequence[ProcessingAction [[Schematics [INPUT #3691x10],
+ Schematics [INPUT #9838x10]] Schematics [OUTPUT #17136x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 9838=Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]} ]]]
+-T2
+BitSequencer [resources: [Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]]sequence[ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ],
+ ProcessingAction [[Schematics [INPUT #2393x40],
+ Schematics [INPUT #2395x40]] Schematics [OUTPUT #3693x5] resources: {2393=Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ 2395=Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ]} ],
+ ProcessingAction [[Schematics [INPUT #2395x40],
+ Schematics [INPUT #2396x40]] Schematics [OUTPUT #3725x5] resources: {2395=Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ 2396=Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ]} ],
+ ProcessingAction [[Schematics [INPUT #2396x40],
+ Schematics [INPUT #2397x40]] Schematics [OUTPUT #3695x5] resources: {2396=Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ 2397=Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ]} ],
+ ProcessingAction [[Schematics [INPUT #2393x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #2319x5] resources: {2393=Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]]]
+
+
+--NEXT T2 SEQUENCE ACTIONS
+[ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]]
+
+--NEXT T3 SEQUENCE ACTIONS
+[ProcessingAction [[Schematics [INPUT #3691x10],
+ Schematics [INPUT #9838x10]] Schematics [OUTPUT #17136x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 9838=Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]} ]]
+
+
+-SCENERY TO SAVE ACTIONS
+[ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ],
+ ProcessingAction [[Schematics [INPUT #3691x10],
+ Schematics [INPUT #9838x10]] Schematics [OUTPUT #17136x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 9838=Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]} ]]
+
+--CLONE VERIFICATION
+ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+
+-- FIRST ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	9.2056824E7	
+
+-- SECOND ITERATION RESOURCES
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2393[Planetary Commodities] Bacteria x0 stack: 1 total: 0 ],
+ Resource [#2395[Planetary Commodities] Proteins x6480 stack: 1 total: 6480 ],
+ Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	8.9318354E7	
+
+--THIRD ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ],
+ Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ],
+ Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ],
+ Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ],
+ Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ],
+ Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ],
+ Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ],
+ Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ],
+ Resource [#2393[Planetary Commodities] Bacteria x0 stack: 1 total: 0 ],
+ Resource [#2395[Planetary Commodities] Proteins x6480 stack: 1 total: 6480 ],
+ Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ],
+ Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ],
+ Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	9.2487744E7	
+
+--FOURTH ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ], Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ], Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ], Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ], Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ], Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ], Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ], Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ], Resource [#2395[Planetary Commodities] Proteins x7800 stack: 1 total: 7800 ], Resource [#2396[Planetary Commodities] Biofuels x0 stack: 1 total: 0 ], Resource [#3725[Planetary Commodities] Livestock x500 stack: 1 total: 500 ], Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ], Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ], Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	8.9124434E7	
+
+-FIFTH ITERATION
+[Resource [#2268[Planetary Resources] Aqueous Liquids x1000 stack: 1 total: 1000 ], Resource [#2309[Planetary Resources] Ionic Solutions x2000 stack: 1 total: 2000 ], Resource [#2288[Planetary Resources] Carbon Compounds x0 stack: 1 total: 0 ], Resource [#2073[Planetary Resources] Microorganisms x2000 stack: 1 total: 2000 ], Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ], Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ], Resource [#2390[Planetary Commodities] Electrolytes x0 stack: 1 total: 0 ], Resource [#3645[Planetary Commodities] Water x1340 stack: 1 total: 1340 ], Resource [#9832[Planetary Commodities] Coolant x665 stack: 1 total: 665 ], Resource [#2395[Planetary Commodities] Proteins x7800 stack: 1 total: 7800 ], Resource [#2396[Planetary Commodities] Biofuels x0 stack: 1 total: 0 ], Resource [#3725[Planetary Commodities] Livestock x500 stack: 1 total: 500 ], Resource [#3691[Planetary Commodities] Synthetic Oil x1468 stack: 1 total: 1468 ], Resource [#9838[Planetary Commodities] Superconductors x4 stack: 1 total: 4 ], Resource [#17136[Planetary Commodities] Ukomi Superconductors x843 stack: 1 total: 843 ]]
+marketValue	9.2293824E7	
+
+--FINAL BEST CONFIGURATION
+ProcessingAction [[Schematics [INPUT #2390x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #9832x5] resources: {2390=Resource [#2390[Planetary Commodities] Electrolytes x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+ProcessingAction [[Schematics [INPUT #2393x40],
+ Schematics [INPUT #2395x40]] Schematics [OUTPUT #3693x5] resources: {2393=Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ 2395=Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ]} ]
+ProcessingAction [[Schematics [INPUT #2395x40],
+ Schematics [INPUT #2396x40]] Schematics [OUTPUT #3725x5] resources: {2395=Resource [#2395[Planetary Commodities] Proteins x11800 stack: 1 total: 11800 ],
+ 2396=Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ]} ]
+ProcessingAction [[Schematics [INPUT #2396x40],
+ Schematics [INPUT #2397x40]] Schematics [OUTPUT #3695x5] resources: {2396=Resource [#2396[Planetary Commodities] Biofuels x4000 stack: 1 total: 4000 ],
+ 2397=Resource [#2397[Planetary Commodities] Industrial Fibers x14600 stack: 1 total: 14600 ]} ]
+ProcessingAction [[Schematics [INPUT #2393x40],
+ Schematics [INPUT #3645x40]] Schematics [OUTPUT #2319x5] resources: {2393=Resource [#2393[Planetary Commodities] Bacteria x5320 stack: 1 total: 5320 ],
+ 3645=Resource [#3645[Planetary Commodities] Water x6660 stack: 1 total: 6660 ]} ]
+ProcessingAction [[Schematics [INPUT #3691x10],
+ Schematics [INPUT #9838x10]] Schematics [OUTPUT #17136x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 9838=Resource [#9838[Planetary Commodities] Superconductors x2814 stack: 1 total: 2814 ]} ]
+ProcessingAction [[Schematics [INPUT #3693x10],
+ Schematics [INPUT #3695x10]] Schematics [OUTPUT #2360x3] resources: {3693=Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ 3695=Resource [#3695[Planetary Commodities] Polytextiles x500 stack: 1 total: 500 ]} ]
+ProcessingAction [[Schematics [INPUT #2319x10],
+ Schematics [INPUT #3691x10],
+ Schematics [INPUT #3693x10]] Schematics [OUTPUT #2367x3] resources: {3691=Resource [#3691[Planetary Commodities] Synthetic Oil x4278 stack: 1 total: 4278 ],
+ 3693=Resource [#3693[Planetary Commodities] Fertilizer x665 stack: 1 total: 665 ],
+ 2319=Resource [#2319[Planetary Commodities] Test Cultures x665 stack: 1 total: 665 ]} ]
 

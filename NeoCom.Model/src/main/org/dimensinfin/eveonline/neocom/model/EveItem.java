@@ -236,16 +236,42 @@ public class EveItem extends AbstractComplexNode {
 		}
 	}
 
+	/**
+	 * Search on the market data provider for the market registers for this particular item. This will search on
+	 * the market data cache and then if not found on the market data service that will call the corresponding
+	 * parsers to extract the information.<br>
+	 * This method can fail by some causes. First of them because there are no connection to the sources of by
+	 * errors during the parsing of the information. In such cases I should be ready to get the price
+	 * information from other sources like the default price information.
+	 * 
+	 * @return
+	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
 			buyerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			if (null == buyerData) {
+				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
+			}
 		}
 		return buyerData;
 	}
 
+	/**
+	 * Search on the market data provider for the market registers for this particular item. This will search on
+	 * the market data cache and then if not found on the market data service that will call the corresponding
+	 * parsers to extract the information.<br>
+	 * This method can fail by some causes. First of them because there are no connection to the sources of by
+	 * errors during the parsing of the information. In such cases I should be ready to get the price
+	 * information from other sources like the default price information.
+	 * 
+	 * @return
+	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
 			sellerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			if (null == sellerData) {
+				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
+			}
 		}
 		return sellerData;
 	}
