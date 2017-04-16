@@ -60,11 +60,7 @@ export class PlanetaryResourceListService {
       .map(result => {
         console.log("--[PlanetaryResourceListService.addResource2List.map]> result: " + JSON.stringify(result));
         return result;
-      })
-      .subscribe(result => {
-        console.log("--[PlanetaryResourceListService.addResource2List.subscribe]> result: " + JSON.stringify(result));
-        let data = result[0];
-      });
+      });      
     //    .catch(res => Observable.throw(res.json()));
   }
 }

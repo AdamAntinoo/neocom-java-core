@@ -14,6 +14,7 @@
         </table>
         <table width="100%">
           <tr *ngFor="let resource of prList">
+            <td class="badge badge-blue">{{resource.typeid}}</td>
             <td width="90%">
               <span class="pr-list">{{resource.name}}</span>
             </td>
@@ -28,8 +29,15 @@
         <table width="100%">
           <tr>
             <td class="list list-title pr-list-title">Transformed Resource List</td>
+          </tr>
+          <tr *ngFor="let resource of transformList">
+            <td class="badge badge-blue">{{resource.typeid}}</td>
+            <td width="90%">
+              <span class="pr-list">{{resource.name}}</span>
+            </td>
+            <td class="badge">{{resource.quantity}} units</td>
             <td>
-              <button type="button" class="btn btn-primary pr-button">Update</button>
+              <span class="glyphicon glyphicon-remove" (click)="deleteResource(resource)"></span>
             </td>
           </tr>
         </table>
@@ -43,7 +51,7 @@
   <form (ngSubmit)="onSubmit()" #newResourceForm="ngForm">
     <div class="form-group">
       <label for="typeid">Resource Identifier</label>
-      <input type="text" class="form-control" id="typeid" required [ngModel]="newResource.typeid" name="typeid"
+      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid"
           (ngModelChange)="newIdChange($event)" #spy #typeid="ngModel" />
       <div [hidden]="idIsValid" class="alert alert-danger">
         Resource type identifier should point to Planetary Resources.

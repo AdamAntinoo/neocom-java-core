@@ -22,6 +22,7 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.poc.connector.SpringDatabaseConnector;
 import org.dimensinfin.eveonline.poc.planetary.PlanetaryProcessor;
 import org.dimensinfin.eveonline.poc.planetary.PlanetaryScenery;
+import org.dimensinfin.eveonline.poc.planetary.ProcessingAction;
 import org.dimensinfin.neocom.models.PlanetaryResource;
 import org.joda.time.DateTime;
 import org.springframework.boot.SpringApplication;
@@ -282,7 +283,7 @@ public class NeoComApplication extends AppAbstractConnector {
 		// Create the new list copy.
 		ArrayList<PlanetaryResource> newList = new ArrayList<PlanetaryResource>();
 		for (PlanetaryResource planetaryResource : newList) {
-			if (planetaryResource.getId() != type) newList.add(planetaryResource);
+			if (planetaryResource.getTypeid() != type) newList.add(planetaryResource);
 		}
 		// Replace the list with the new list with the resource removed.
 		return newList;
@@ -292,7 +293,7 @@ public class NeoComApplication extends AppAbstractConnector {
 		// Get some list of planetary resources of all kinds for testing.
 		Vector<Resource> planetaryAssets = new Vector<Resource>();
 		for (PlanetaryResource pr : hitlist) {
-			Resource pa = new Resource(pr.getId(), Double.valueOf(pr.getQuantity()).intValue());
+			Resource pa = new Resource(pr.getTypeid(), Double.valueOf(pr.getQuantity()).intValue());
 			planetaryAssets.add(pa);
 		}
 
@@ -303,9 +304,9 @@ public class NeoComApplication extends AppAbstractConnector {
 		// Create the initial processing point and start the optimization recursively.
 		PlanetaryProcessor proc = new PlanetaryProcessor(scenery);
 		// Start running the best profit search.
-		PlanetaryProcessor bestScenario = proc.startProfitSearch(null);
+		Vector<ProcessingAction> bestScenario = proc.startProfitSearch(null);
 		// Print the output
-		return bestScenario.getResources();
+		return proc.getResources();
 	}
 }
 

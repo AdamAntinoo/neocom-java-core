@@ -27,11 +27,6 @@ public class PlanetaryResource {
 		this.quantity = newquantity;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public int getId() {
-		return this.typeid;
-	}
-
 	public String getName() {
 		return this.name;
 	}
@@ -40,12 +35,21 @@ public class PlanetaryResource {
 		return this.quantity;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public int getTypeid() {
+		return this.typeid;
+	}
+
 	public void setName(String newname) {
 		this.name = newname;
 	}
 
 	public void setQuantity(double newq) {
 		this.quantity = newq;
+	}
+
+	public void setTypeid(int typeid) {
+		this.typeid = typeid;
 	}
 }
 // - UNUSED CODE ............................................................................................

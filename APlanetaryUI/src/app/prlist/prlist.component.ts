@@ -13,12 +13,13 @@ import { PlanetaryResource }            from '../models/planetary-resource';
 export class PRListComponent implements OnInit {
   public listTitle: string = "ResourceList";
   public prList: PlanetaryResource[] = [];
+  public transformList: PlanetaryResource[] = [];
   public doingDownload: boolean = true;
   public idIsValid: boolean = false;
 
   private showNewResourceForm: boolean = false;
   private newResource: PlanetaryResource = new PlanetaryResource();
-  public typeid: number;
+//  public typeid: number;
 
   constructor(private resourceListService: PlanetaryResourceListService) { }
   /**
@@ -88,7 +89,7 @@ export class PRListComponent implements OnInit {
   public deleteResource(target: PlanetaryResource) {
     console.log("--[PRListComponent.deleteResource]> target: " + JSON.stringify(target));
     // Clear the resoource from the resurce list.
-    let hit = this.search4id(target.getId());
+    let hit = this.search4id(target.getTypeid());
     if (undefined != hit) {
       this.showNewResourceForm = false;
       var index = this.prList.indexOf(target, 0);
@@ -96,13 +97,14 @@ export class PRListComponent implements OnInit {
         this.prList.splice(index, 1);
       }
       // Send the deletion message to the backend.
-      this.resourceListService.deleteResource(this.listTitle, hit.getId());
+      this.resourceListService.deleteResource(this.listTitle, hit.getTypeid());
     }
   }
   public onSubmit() {
     console.log(">>[PRListComponent.onSubmit]");
     // Check if this resource already exists. If so add them. Otherwise add the resource.
-    let hit = this.search4id(this.newResource.getId());
+  //  this.newResource.typeid = this.typeid;
+    let hit = this.search4id(this.newResource.getTypeid());
     console.log("--[PlanetaryResourceListService.addResource]> hit: " + JSON.stringify(hit));
     if (undefined == hit) {
       this.prList.push(this.newResource);
@@ -116,7 +118,18 @@ export class PRListComponent implements OnInit {
     this.showNewResourceForm = false;
 
     // Save the new list of resources on the backend list.
-    this.resourceListService.addResource2List(this.listTitle, this.newResource);
+    this.resourceListService.addResource2List(this.listTitle, this.newResource)
+    .subscribe(result => {
+      console.log("--[PRListComponent.onSubmit.subscribe]> result: " + JSON.stringify(result));
+      this.transformList=[];
+      for (let resource of result){
+        let trresource = new PlanetaryResource();
+        trresource.typeid=resource.typeID;
+        trresource.quantity=resource.quantity;
+        trresource.name=resource.name;
+        this.transformList.push(trresource);
+      }
+    });
   }
   // private addResource(newres: PlanetaryResource) {
   //   // Check if this resource already exists. If so add them. Otherwise add the resource.
@@ -132,7 +145,7 @@ export class PRListComponent implements OnInit {
   // }
   private removeResource(target: PlanetaryResource) {
     console.log("--[PlanetaryResourceListService.removeResource]> newres: " + JSON.stringify(target));
-    let hit = this.search4id(target.getId());
+    let hit = this.search4id(target.getTypeid());
     if (undefined != hit) {
       var index = this.prList.indexOf(target, 0);
       if (index > -1) {
@@ -142,7 +155,7 @@ export class PRListComponent implements OnInit {
   }
   private search4id(targetid: number) {
     for (let res of this.prList) {
-      if (res.getId() == targetid) return res;
+      if (res.getTypeid() == targetid) return res;
     }
     return undefined;
   }

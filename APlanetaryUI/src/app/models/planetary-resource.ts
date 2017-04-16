@@ -21,12 +21,12 @@ export class PlanetaryResource {
   // }
   constructor() { }
 
-  public getId(): number {
+  public getTypeid(): number {
     return this.typeid;
   }
-  // get name() {
-  //   return this.name;
-  // }
+  public setTypeid(newid: number) {
+    this.typeid = newid;
+  }
   public getName(): string {
     return this.name;
   }

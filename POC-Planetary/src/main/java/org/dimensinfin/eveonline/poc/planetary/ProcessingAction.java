@@ -3,7 +3,7 @@
 //	COPYRIGHT:      (c) 2017 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Java 1.7.
 //	DESCRIPTION:		Projects for Proof Of Concept desings.
-package main.java.org.dimensinfin.eveonline.poc.planetary;
+package org.dimensinfin.eveonline.poc.planetary;
 
 import java.io.Serializable;
 import java.util.HashMap;
