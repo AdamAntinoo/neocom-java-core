@@ -89,6 +89,8 @@ public class POCPlanetaryApplication extends AbstractAppConnector {
 		for (ProcessingAction action : bestScenario) {
 			System.out.println(action.toString());
 		}
+		// Get the list of outputs.
+		System.out.println(proc.getResources());
 	}
 }
 
