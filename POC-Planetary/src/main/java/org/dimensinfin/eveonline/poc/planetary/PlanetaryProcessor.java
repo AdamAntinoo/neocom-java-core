@@ -162,7 +162,7 @@ public class PlanetaryProcessor {
 				// Before processing the sequences I have to know the number for ZERO there is special code to run.
 				if (t4sequence.hasSequence()) {
 					while (t4sequence.hasSequence()) {
-						Vector<ProcessingAction> next4Sequence = t3sequence.nextSequence();
+						Vector<ProcessingAction> next4Sequence = t4sequence.nextSequence();
 						// Update resource list by processing the list of current actions.
 						Vector<Resource> new4Resources = processActions(next4Sequence, new3Resources);
 						// Evaluate the market value of the resulting resources.

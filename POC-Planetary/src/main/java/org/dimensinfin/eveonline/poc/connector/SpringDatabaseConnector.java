@@ -413,6 +413,7 @@ public class SpringDatabaseConnector extends AbstractDatabaseConnector {
 				return searchMarketData(itemID, side);
 			}
 		}
+		logger.info("<<[SpringDatabaseConnector.searchMarketData]");
 		return entry;
 		// }
 	}

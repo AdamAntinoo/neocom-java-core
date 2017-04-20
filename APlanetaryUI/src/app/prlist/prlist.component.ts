@@ -19,7 +19,7 @@ export class PRListComponent implements OnInit {
 
   private showNewResourceForm: boolean = false;
   private newResource: PlanetaryResource = new PlanetaryResource();
-//  public typeid: number;
+  //  public typeid: number;
 
   constructor(private resourceListService: PlanetaryResourceListService) { }
   /**
@@ -40,7 +40,7 @@ export class PRListComponent implements OnInit {
         let list = [];
         for (let key of second) {
           let resource = new PlanetaryResource();
-          resource.typeid = key.id;
+          resource.typeid = key.typeid;
           resource.setName(key.name);
           resource.setQuantity(key.quantity);
           list.push(resource);
@@ -103,7 +103,7 @@ export class PRListComponent implements OnInit {
   public onSubmit() {
     console.log(">>[PRListComponent.onSubmit]");
     // Check if this resource already exists. If so add them. Otherwise add the resource.
-  //  this.newResource.typeid = this.typeid;
+    //  this.newResource.typeid = this.typeid;
     let hit = this.search4id(this.newResource.getTypeid());
     console.log("--[PlanetaryResourceListService.addResource]> hit: " + JSON.stringify(hit));
     if (undefined == hit) {
@@ -119,17 +119,17 @@ export class PRListComponent implements OnInit {
 
     // Save the new list of resources on the backend list.
     this.resourceListService.addResource2List(this.listTitle, this.newResource)
-    .subscribe(result => {
-      console.log("--[PRListComponent.onSubmit.subscribe]> result: " + JSON.stringify(result));
-      this.transformList=[];
-      for (let resource of result){
-        let trresource = new PlanetaryResource();
-        trresource.typeid=resource.typeID;
-        trresource.quantity=resource.quantity;
-        trresource.name=resource.name;
-        this.transformList.push(trresource);
-      }
-    });
+      .subscribe(result => {
+        console.log("--[PRListComponent.onSubmit.subscribe]> result: " + JSON.stringify(result));
+        this.transformList = [];
+        for (let resource of result) {
+          let trresource = new PlanetaryResource();
+          trresource.typeid = resource.typeID;
+          trresource.quantity = resource.quantity;
+          trresource.name = resource.name;
+          this.transformList.push(trresource);
+        }
+      });
   }
   // private addResource(newres: PlanetaryResource) {
   //   // Check if this resource already exists. If so add them. Otherwise add the resource.

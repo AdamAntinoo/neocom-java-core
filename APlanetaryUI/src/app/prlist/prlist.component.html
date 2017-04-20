@@ -30,6 +30,8 @@
           <tr>
             <td class="list list-title pr-list-title">Transformed Resource List</td>
           </tr>
+        </table>
+        <table>
           <tr *ngFor="let resource of transformList">
             <td class="badge badge-blue">{{resource.typeid}}</td>
             <td width="90%">
@@ -51,8 +53,8 @@
   <form (ngSubmit)="onSubmit()" #newResourceForm="ngForm">
     <div class="form-group">
       <label for="typeid">Resource Identifier</label>
-      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid"
-          (ngModelChange)="newIdChange($event)" #spy #typeid="ngModel" />
+      <input type="text" class="form-control" id="typeid" required [(ngModel)]="newResource.typeid" name="typeid" (ngModelChange)="newIdChange($event)"
+        #spy #typeid="ngModel" />
       <div [hidden]="idIsValid" class="alert alert-danger">
         Resource type identifier should point to Planetary Resources.
       </div>
