@@ -21,8 +21,8 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.model.Container;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -529,7 +529,7 @@ public class AssetsManager implements Serializable {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetsManager [");
-		buffer.append("owner:").append(this.getPilot().getName());
+		buffer.append("owner:").append(this.getPilot().getName()).append(" ");
 		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
 		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
 		if (assetsAtCategoryCache.size() > 0) {
@@ -663,71 +663,80 @@ public class AssetsManager implements Serializable {
 	 * @param asset
 	 */
 	private void processElement(final NeoComAsset asset) {
-		// Remove the element from the map.
-		assetMap.remove(asset.getAssetID());
-		// Add the asset to the verification count.
-		verificationAssetCount++;
-		// Add the asset value to the owner balance.
-		totalAssetsValue += asset.getIskvalue();
-		// Transform the asset if on specific categories like Ship or Container
-		if (asset.isShip()) {
-			// Check if the ship is packaged. If packaged leave it as a simple asset.
-			if (!asset.isPackaged()) {
-				// Transform the asset to a ship.
-				Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
-				ships.put(ship.getAssetID(), ship);
-				// The ship is a container so add it and forget about this asset.
-				if (ship.hasParent()) {
-					this.processElement(ship.getParentContainer());
-				} //else {
-				this.add2Location(ship);
-				// Remove all the assets contained because they will be added in the call to collaborate2Model
-				// REFACTOR set the default variant as a constant even that information if defined at other project
-				ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
-				// The list returned is not the real list of assets contained but the list of Separators
-				for (AbstractComplexNode node : removableList) {
-					this.removeNode(node);
+		try {
+			// Remove the element from the map.
+			assetMap.remove(asset.getAssetID());
+			// Add the asset to the verification count.
+			verificationAssetCount++;
+			// Add the asset value to the owner balance.
+			totalAssetsValue += asset.getIskValue();
+			// Transform the asset if on specific categories like Ship or Container
+			if (asset.isShip()) {
+				// Check if the ship is packaged. If packaged leave it as a simple asset.
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
+					ships.put(ship.getAssetID(), ship);
+					// The ship is a container so add it and forget about this asset.
+					if (ship.hasParent()) {
+						this.processElement(ship.getParentContainer());
+					} //else {
+					this.add2Location(ship);
+					// Remove all the assets contained because they will be added in the call to collaborate2Model
+					// REFACTOR set the default variant as a constant even that information if defined at other project
+					ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					// The list returned is not the real list of assets contained but the list of Separators
+					for (AbstractComplexNode node : removableList) {
+						this.removeNode(node);
+					}
+				} else {
+					this.add2Location(asset);
+				}
+				return;
+			}
+			if (asset.isContainer()) {
+				// Check if the asset is packaged. If so leave as asset
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					Container container = new Container().copyFrom(asset);
+					containers.put(container.getAssetID(), container);
+					// The container is a container so add it and forget about this asset.
+					if (container.hasParent()) {
+						this.processElement(container.getParentContainer());
+					} // else {
+					this.add2Location(container);
+					// Remove all the assets contained because they will be added in the call to collaborate2Model
+					// REFACTOR set the default variant as a constant even that information if defined at other project
+					ArrayList<AbstractComplexNode> removableList = container
+							.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					// The list returned is not the real list of assets contained but the list of Separators
+					for (AbstractComplexNode node : removableList) {
+						this.removeNode(node);
+					}
+				} else {
+					this.add2Location(asset);
+				}
+				//				// Remove all the assets contained because they will be added in the call to collaborate2Model
+				//				ArrayList<AbstractComplexNode> removable = asset.collaborate2Model("REPLACE");
+				//				for (AbstractComplexNode node : removable) {
+				//					assetMap.remove(((Container) node).getAssetID());
+				//				}
+				//	}
+				return;
+			}
+			// Process the asset parent if this is the case because we should add first parent to the hierarchy
+			if (asset.hasParent()) {
+				NeoComAsset parent = asset.getParentContainer();
+				if (null == parent) {
+					this.add2Location(asset);
+				} else {
+					this.processElement(parent);
 				}
 			} else {
 				this.add2Location(asset);
 			}
-			return;
-		}
-		if (asset.isContainer()) {
-			// Check if the asset is packaged. If so leave as asset
-			if (!asset.isPackaged()) {
-				// Transform the asset to a ship.
-				Container container = new Container(this.getPilot().getCharacterID()).copyFrom(asset);
-				containers.put(container.getAssetID(), container);
-				// The container is a container so add it and forget about this asset.
-				if (container.hasParent()) {
-					this.processElement(container.getParentContainer());
-				} // else {
-				this.add2Location(container);
-				// Remove all the assets contained because they will be added in the call to collaborate2Model
-				// REFACTOR set the default variant as a constant even that information if defined at other project
-				ArrayList<AbstractComplexNode> removableList = container
-						.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
-				// The list returned is not the real list of assets contained but the list of Separators
-				for (AbstractComplexNode node : removableList) {
-					this.removeNode(node);
-				}
-			} else {
-				this.add2Location(asset);
-			}
-			//				// Remove all the assets contained because they will be added in the call to collaborate2Model
-			//				ArrayList<AbstractComplexNode> removable = asset.collaborate2Model("REPLACE");
-			//				for (AbstractComplexNode node : removable) {
-			//					assetMap.remove(((Container) node).getAssetID());
-			//				}
-			//	}
-			return;
-		}
-		// Process the asset parent if this is the case because we should add first parent to the hierarchy
-		if (asset.hasParent()) {
-			this.processElement(asset.getParentContainer());
-		} else {
-			this.add2Location(asset);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 

@@ -19,10 +19,6 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
-import org.joda.time.DateTime;
-import org.joda.time.Instant;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
@@ -79,9 +75,9 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
 		AccountStatusParser statusparser = new AccountStatusParser();
 		AccountStatusResponse statusresponse = statusparser.getResponse(authorization);
-		if (null != statusresponse)
+		if (null != statusresponse) {
 			apiKey.setDelegateStatus(statusresponse);
-		else
+		} else
 			throw new ApiException("No response from CCP for key (" + keynumber + "/" + validationcode + ")");
 		return apiKey;
 	}
@@ -94,7 +90,7 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	private int													key										= -1;
 	private String											validationCode				= "<INVALID>";
 	private Date												cachedUntil						= GregorianCalendar.getInstance().getTime();
-	private Instant											paidUntil							= new Instant(0);
+	//	private Instant											paidUntil							= new Instant(0);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private NeoComApiKey() {
@@ -108,8 +104,9 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		try {
-			for (NeoComCharacter node : this.getApiCharacters())
+			for (NeoComCharacter node : this.getApiCharacters()) {
 				result.add(node);
+			}
 		} catch (ApiException apiex) {
 			apiex.printStackTrace();
 		}
@@ -117,7 +114,7 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	}
 
 	public long getAccessMask() {
-		return delegatedApiKey.getAccessMask();
+		return this.getDelegatedApiKey().getAccessMask();
 	}
 
 	/**
@@ -130,7 +127,7 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	public ArrayList<NeoComCharacter> getApiCharacters() throws ApiException {
 		if (null == neocomCharactersCache) {
 			neocomCharactersCache = new ArrayList<NeoComCharacter>();
-			Collection<Character> coreList = delegatedApiKey.getEveCharacters();
+			Collection<Character> coreList = this.getDelegatedApiKey().getEveCharacters();
 			for (Character character : coreList) {
 				NeoComCharacter neochar = NeoComCharacter.build(character, this);
 				neocomCharactersCache.add(neochar);
@@ -147,16 +144,52 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		return cachedUntil;
 	}
 
-	public Date getExpires() {
-		return delegatedApiKey.getExpires();
+	/**
+	 * Accessor to the delegated information. If the field is null we have to recover it from CCP because we
+	 * have been read from storage and some fields are transient.
+	 * 
+	 * @return
+	 */
+	public ApiKeyInfo getDelegatedApiKey() {
+		if (null == delegatedApiKey) {
+			try {
+				NeoComApiKey alterkey = NeoComApiKey.build(key, validationCode);
+				// Copy downloaded data.
+				delegatedApiKey = alterkey.delegatedApiKey;
+				delegateStatus = alterkey.delegateStatus;
+				this.getApiCharacters();
+			} catch (ApiException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return delegatedApiKey;
+	}
+
+	public AccountStatus getDelegateStatus() {
+		if (null == delegateStatus) {
+			try {
+				NeoComApiKey alterkey = NeoComApiKey.build(key, validationCode);
+				// Copy downloaded data.
+				delegatedApiKey = alterkey.delegatedApiKey;
+				delegateStatus = alterkey.delegateStatus;
+				this.getApiCharacters();
+			} catch (ApiException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return delegateStatus;
 	}
 
 	public int getKey() {
 		return key;
 	}
 
+	public Date getPaidUntil() {
+		return this.getDelegateStatus().getPaidUntil();
+	}
+
 	public KeyType getType() {
-		return delegatedApiKey.getType();
+		return this.getDelegatedApiKey().getType();
 	}
 
 	public String getValidationCode() {
@@ -164,15 +197,15 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	}
 
 	public boolean isAccountKey() {
-		return delegatedApiKey.isAccountKey();
+		return this.getDelegatedApiKey().isAccountKey();
 	}
 
 	public boolean isCharacterKey() {
-		return delegatedApiKey.isCharacterKey();
+		return this.getDelegatedApiKey().isCharacterKey();
 	}
 
 	public boolean isCorporationKey() {
-		return delegatedApiKey.isCorporationKey();
+		return this.getDelegatedApiKey().isCorporationKey();
 	}
 
 	public void setCachedUntil(final Date cachedUntil) {
@@ -202,16 +235,16 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 		return buffer.toString();
 	}
 
-	protected void setPaidUntil(final String text) {
-		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss");
-		try {
-			String source = text.replace(" ", "'T'") + ".00000";
-			DateTime dt = fmt.parseDateTime(text);
-			paidUntil = new Instant(dt);
-		} catch (Exception ex) {
-			paidUntil = new Instant();
-		}
-	}
+	//	protected void setPaidUntil(final String text) {
+	//		DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd' 'HH:mm:ss");
+	//		try {
+	//			String source = text.replace(" ", "'T'") + ".00000";
+	//			DateTime dt = fmt.parseDateTime(text);
+	//			paidUntil = new Instant(dt);
+	//		} catch (Exception ex) {
+	//			paidUntil = new Instant();
+	//		}
+	//	}
 
 	private void setAuthorization(final ApiAuthorization auth) {
 		authorization = auth;

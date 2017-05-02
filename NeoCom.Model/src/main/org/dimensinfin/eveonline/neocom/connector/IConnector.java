@@ -20,11 +20,15 @@ public interface IConnector {
 
 	public String getAppFilePath(String fileresourceid);
 
+	public ICCPDatabaseConnector getCCPDBConnector();
+
 	public IDatabaseConnector getDBConnector();
 
 	public INeoComModelStore getModelStore();
 
 	public String getResourceString(int reference);
+
+	//	public String getResourceString(String reference);
 
 	public IConnector getSingleton();
 

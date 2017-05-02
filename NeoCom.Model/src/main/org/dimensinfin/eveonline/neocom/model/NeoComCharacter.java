@@ -105,6 +105,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		ApiAuthorization authcopy = new ApiAuthorization(apikey.getKey(), coreChar.getCharacterID(),
 				apikey.getValidationCode());
 		newchar.setAuthorization(authcopy);
+		// Copy the id to a non volatile field.
+		newchar.setID(coreChar.getCharacterID());
 		newchar.setDelegatedCharacter(coreChar);
 		// Go to the API and get more information for this character.
 		// Balance information
@@ -141,7 +143,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			newchar.setSkillInTraining(trainingresponse);
 		}
 		// Full list of assets from database.
-		//		newchar.accessAllAssets();
+		newchar.accessAllAssets();
 		return newchar;
 	}
 
@@ -149,6 +151,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	/** Reference to the delegated core eveapi Character */
 	protected NeoComApiKey										apikey							= null;
 	private ApiAuthorization									authorization				= null;
+	private long															characterID					= -1;
 	protected transient Character							delegatedCharacter	= null;
 	protected transient CharacterInfoResponse	characterInfo				= null;
 	private final boolean											active							= true;
@@ -346,7 +349,11 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public long getCharacterID() {
-		return delegatedCharacter.getCharacterID();
+		// Delegated maybe null when read from storage. Return the copy
+		if (null == delegatedCharacter)
+			return characterID;
+		else
+			return delegatedCharacter.getCharacterID();
 	}
 
 	/**
@@ -474,7 +481,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		if (AppConnector.checkExpiration(assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
-		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
+		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
 	}
 
@@ -536,10 +543,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		this.authorization = authorization;
 	}
 
+	public void setID(final long newid) {
+		characterID = newid;
+	}
+
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComCharacter [");
-		buffer.append("assets:").append(this.getAssetCount()).append(" ");
+		buffer.append("name:").append(this.getName()).append(" ");
+		buffer.append("assets#:").append(this.getAssetCount()).append(" ");
 		buffer.append("]");
 		buffer.append("->").append(super.toString());
 		return buffer.toString();
@@ -629,7 +641,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			}
 		}
 		// Add the asset value to the database.
-		newAsset.setIskvalue(this.calculateAssetValue(newAsset));
+		newAsset.setIskValue(this.calculateAssetValue(newAsset));
 		return newAsset;
 	}
 
@@ -768,7 +780,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 					this.processAsset(childAsset, myasset);
 				}
 			}
-			NeoComCharacter.logger.finest("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+			NeoComCharacter.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+			//			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
 		} catch (final SQLException sqle) {
 			NeoComCharacter.logger
 					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());

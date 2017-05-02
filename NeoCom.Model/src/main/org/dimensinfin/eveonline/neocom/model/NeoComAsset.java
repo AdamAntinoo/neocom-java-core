@@ -9,6 +9,7 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.sql.SQLException;
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -88,7 +90,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	@DatabaseField
 	private boolean								containerFlag			= false;
 	@DatabaseField
-	private double								iskvalue					= 0.0;
+	private double								iskValue					= 0.0;
 
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset	parentAssetCache	= null;
@@ -135,8 +137,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return groupName;
 	}
 
-	public double getIskvalue() {
-		return iskvalue;
+	public double getIskValue() {
+		return iskValue;
 	}
 
 	/**
@@ -163,8 +165,26 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return locationCache;
 	}
 
+	/**
+	 * Return the location id of the asset. If the asset is in a container then the location is lost and the
+	 * value is -1. In that cases we should search for the location on the parent asset if that exists.
+	 * 
+	 * @return
+	 */
 	public long getLocationID() {
-		return locationID;
+		if (locationID == -1) {
+			if (this.getParentContainerId() == -1)
+				return -1L;
+			else {
+				// Get the location from the parent.
+				NeoComAsset par = this.getParentContainer();
+				if (null == par)
+					return -1L;
+				else
+					return par.getLocationID();
+			}
+		} else
+			return locationID;
 	}
 
 	public String getName() {
@@ -179,9 +199,51 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return ownerID;
 	}
 
+	/**
+	 * This method usually return the parent container of an asset. This is valid when the asset is inside a
+	 * container or a ship or any other asset, but when the asset is located on other corporation POCO or other
+	 * unknown or unaccessible asset then this method fails to get the parent asset. <br>
+	 * In that case we should replace the parent pointer to a new location pointer that gets stored into our new
+	 * Locations table. With that change assets will be reallocated to a valid place and all code will
+	 * understand the changes and behave correctly.
+	 * 
+	 * @return
+	 */
 	public NeoComAsset getParentContainer() {
 		if (parentAssetID > 0) if (null == parentAssetCache) {
+			// Search for the parent asset. If not found then go to the transformation method.
 			parentAssetCache = AppConnector.getDBConnector().searchAssetByID(parentAssetID);
+			if (null == parentAssetCache) {
+				long newlocationId = parentAssetID;
+				EveLocation loc = this.moveAssetToUnknown(newlocationId);
+				this.setLocationID(newlocationId);
+				parentAssetID = -1;
+				locationCache = loc;
+				// Save the asset to disk.
+				try {
+					Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+					// Try to create the pair. It fails then  it was already created.
+					assetDao.createOrUpdate(this);
+				} catch (final SQLException sqle) {
+					sqle.printStackTrace();
+					this.setDirty(true);
+				}
+				//				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
+				//				Container container = new Container();
+				//				container.setAssetID(newlocationId);
+				//				container.setLocationID(newlocationId);
+				//				container.setTypeID(17366);
+				//				container.setQuantity(1);
+				//				container.setSingleton(false);
+				//
+				//				//- D E R I V E D   F I E L D S
+				//				container.setOwnerID(this.getOwnerID());
+				//				container.setName("Undefined #" + newlocationId);
+				//				container.setCategory("Celestial");
+				//				container.setGroupName("Undefined Location");
+				//				container.setContainer(true);
+				return null;
+			}
 		}
 		return parentAssetCache;
 	}
@@ -307,8 +369,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		this.id = id;
 	}
 
-	public void setIskvalue(final double iskvalue) {
-		this.iskvalue = iskvalue;
+	public void setIskValue(final double iskvalue) {
+		iskValue = iskvalue;
 	}
 
 	public void setLocationID(final long location) {
@@ -364,6 +426,9 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		}
 	}
 
+	/**
+	 * Try to reduce the calls to methods to compose this information since that affects the code to be run.
+	 */
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComAsset [");
@@ -371,13 +436,37 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		if (null != this.getUserLabel()) {
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
-		buffer.append("itemID:").append(this.getAssetID()).append(" ");
-		buffer.append("locationID:").append(this.getLocationID()).append(" ");
-		buffer.append("containerID:").append(this.getParentContainerId()).append(" ");
-		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
-		buffer.append("quantity:").append(this.getQuantity()).append(" ");
+		buffer.append("itemID:").append(assetID).append(" ");
+		buffer.append("locationID:").append(locationID).append(" ");
+		buffer.append("containerID:").append(parentAssetID).append(" ");
+		buffer.append("ownerID:").append(ownerID).append(" ");
+		buffer.append("quantity:").append(quantity).append(" ");
 		buffer.append("]\n");
 		return buffer.toString();
+	}
+
+	/**
+	 * Replaces a non reachable parent asset into an Unknown Location.
+	 * 
+	 * @param newlocationid
+	 * @return
+	 */
+	private EveLocation moveAssetToUnknown(final long newlocationid) {
+		EveLocation newundefloc = new EveLocation();
+		newundefloc.setId(newlocationid);
+		newundefloc.setRegion("SPACE");
+		newundefloc.setSystem("Undefined");
+		newundefloc.setStation("Station#" + newlocationid);
+		// Save this new location ot the database.
+		try {
+			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+			// Try to create the pair. It fails then  it was already created.
+			locationDao.createOrUpdate(newundefloc);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+			this.setDirty(true);
+		}
+		return newundefloc;
 	}
 }
 //- UNUSED CODE ............................................................................................

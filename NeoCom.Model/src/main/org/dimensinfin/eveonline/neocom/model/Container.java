@@ -20,12 +20,14 @@ public class Container extends NeoComAsset {
 	private static Logger	logger	= Logger.getLogger("org.dimensinfin.evedroid.model");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private long					pilotID	= 0;
+	private final long		pilotID	= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Container(final long pilot) {
-		pilotID = pilot;
+	public Container() {
 	}
+	//	public Container(final long pilot) {
+	//		pilotID = pilot;
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**

@@ -30,6 +30,8 @@ import javax.net.ssl.X509TrustManager;
 
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.parser.ApiPage;
+import com.beimin.eveapi.parser.ApiRequest;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComConnector extends ApiConnector {
@@ -62,7 +64,9 @@ public class NeoComConnector extends ApiConnector {
 			wr = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
 			StringBuilder data = new StringBuilder();
 			for (Entry<String, String> entry : params.entrySet()) {
-				if (data.length() > 0) data.append("&"); // to ensure that we don't append an '&' to the end.
+				if (data.length() > 0) {
+					data.append("&"); // to ensure that we don't append an '&' to the end.
+				}
 				String key = entry.getKey();
 				String value = entry.getValue();
 				data.append(URLEncoder.encode(key, "UTF8"));
@@ -80,8 +84,9 @@ public class NeoComConnector extends ApiConnector {
 
 					BufferedReader buffer = new BufferedReader(new InputStreamReader(stream));
 					String s = "";
-					while ((s = buffer.readLine()) != null)
+					while ((s = buffer.readLine()) != null) {
 						output.append(s);
+					}
 				}
 				return conn.getInputStream();
 			} else
@@ -89,12 +94,27 @@ public class NeoComConnector extends ApiConnector {
 		} catch (Exception e) {
 			throw new ApiException(e);
 		} finally {
-			if (wr != null) try {
-				wr.close();
-			} catch (IOException e) {
-				NeoComConnector.logger.warning("Error closing the stream");
+			if (wr != null) {
+				try {
+					wr.close();
+				} catch (IOException e) {
+					NeoComConnector.logger.warning("Error closing the stream");
+				}
 			}
 		}
+	}
+
+	/**
+	 * Add the flat flag when the page requested is related to the assets. This will generate a new format for
+	 * the list of assets.
+	 */
+	@Override
+	protected Map<String, String> getParams(final ApiRequest request) {
+		Map<String, String> par = super.getParams(request);
+		if (request.getPage() == ApiPage.ASSET_LIST) {
+			par.put("flat", "1");
+		}
+		return par;
 	}
 
 	private ApiConnector getConnector() {
@@ -134,11 +154,13 @@ public class NeoComConnector extends ApiConnector {
 			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		} finally {
-			if (in != null) try {
-				in.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-				//No problem...
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+					//No problem...
+				}
 			}
 		}
 		return con;

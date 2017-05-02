@@ -20,8 +20,8 @@ import org.joda.time.Instant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
- * This class role is to allow the Model to use external environment funtions that can change depeding on the
- * final imeplementing platforma like Android or Sprint Boot. Allows the coding of the model outside from
+ * This class role is to allow the Model to use external environment functions that can change depending on
+ * the final implementing platform like Android or Sprint Boot. Allows the coding of the model outside from
  * application of other external dependencies such as file systems or file locations. This is a proxy that
  * will send the messages to the real connector supplied by the application at runtime.
  * 
@@ -32,22 +32,22 @@ public class AppConnector {
 	private static IConnector	connection	= null;
 	private static Instant		chrono			= null;
 
-	public static void addCharacterUpdateRequest(long characterID) {
-		if (null != connection)
-			connection.addCharacterUpdateRequest(characterID);
-		else
+	public static void addCharacterUpdateRequest(final long characterID) {
+		if (null != AppConnector.connection) {
+			AppConnector.connection.addCharacterUpdateRequest(characterID);
+		} else
 			throw new RuntimeException(
 					"Application connector not defined. Functionality 'addCharacterUpdateRequest' disabled.");
 	}
 
 	public static boolean checkExpiration(final Instant timestamp, final long window) {
 		if (null == timestamp) return true;
-		return checkExpiration(timestamp.getMillis(), window);
+		return AppConnector.checkExpiration(timestamp.getMillis(), window);
 	}
 
 	public static boolean checkExpiration(final long timestamp, final long window) {
-		if (null != connection)
-			return connection.checkExpiration(timestamp, window);
+		if (null != AppConnector.connection)
+			return AppConnector.connection.checkExpiration(timestamp, window);
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'checkExpiration' disabled.");
 	}
@@ -84,8 +84,8 @@ public class AppConnector {
 	}
 
 	public static String getAppFilePath(final int fileresourceid) {
-		if (null != connection)
-			return connection.getAppFilePath(fileresourceid);
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getAppFilePath(fileresourceid);
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
 	}
@@ -98,65 +98,79 @@ public class AppConnector {
 	//	}
 
 	public static String getAppFilePath(final String fileresourcename) {
-		if (null != connection)
-			return connection.getAppFilePath(fileresourcename);
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getAppFilePath(fileresourcename);
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
 	}
 
+	public static ICCPDatabaseConnector getCCPDBConnector() {
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getCCPDBConnector();
+		else
+			throw new RuntimeException("Application connector not defined. Functionality 'getCCPDBConnector' disabled.");
+	}
+
 	public static IDatabaseConnector getDBConnector() {
-		if (null != connection)
-			return connection.getDBConnector();
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getDBConnector();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getDBConnector' disabled.");
 	}
 
 	public static INeoComModelStore getModelStore() {
-		if (null != connection)
-			return connection.getModelStore();
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getModelStore();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
 	}
 
 	public static String getResourceString(final int reference) {
-		if (null != connection)
-			return connection.getResourceString(reference);
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getResourceString(reference);
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
 	}
 
+	//	public static String getResourceString(final String reference) {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.getResourceString(reference);
+	//		else
+	//			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
+	//	}
+
 	public static IConnector getSingleton() {
-		if (null != connection)
-			return connection.getSingleton();
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getSingleton();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getSingleton' disabled.");
 	}
 
 	public static IStorageConnector getStorageConnector() {
-		if (null != connection)
-			return connection.getStorageConnector();
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getStorageConnector();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getStorageConnector' disabled.");
 	}
 
 	public static boolean sdcardAvailable() {
-		if (null != connection)
-			return connection.sdcardAvailable();
+		if (null != AppConnector.connection)
+			return AppConnector.connection.sdcardAvailable();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'sdcardAvailable' disabled.");
 	}
 
 	public static void setConnector(final IConnector androidApp) {
 		if (null == androidApp) throw new RuntimeException("Required connector is not properly defined.");
-		connection = androidApp;
+		AppConnector.connection = androidApp;
 	}
 
 	public static void startChrono() {
-		chrono = new Instant();
+		AppConnector.chrono = new Instant();
 	}
 
 	public static Duration timeLapse() {
-		return new Duration(chrono, new Instant());
+		return new Duration(AppConnector.chrono, new Instant());
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................

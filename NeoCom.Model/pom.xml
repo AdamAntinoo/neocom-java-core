@@ -20,23 +20,23 @@
 		<dependency>
 			<groupId>DimensinfinIndustries</groupId>
 			<artifactId>CoreBase.core</artifactId>
-			<version>1.1.1</version>
+			<version>1.1.2</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/CoreBase.core-1.1.1.jar</systemPath>
+			<systemPath>${project.basedir}/privatelibraries/CoreBase.core-1.1.2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>DimensinfinIndustries</groupId>
 			<artifactId>EveDevelopments.evemarket</artifactId>
 			<version>1.0.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/EveDevelopments.evemarket-1.0.0.jar</systemPath>
+			<systemPath>${project.basedir}/privatelibraries/EveDevelopments.evemarket-1.0.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>GoldeGnu</groupId>
 			<artifactId>jeveassets</artifactId>
 			<version>3.1.2</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/jeveassets.3.1.2.jar</systemPath>
+			<systemPath>${project.basedir}/privatelibraries/jeveassets.3.1.2.jar</systemPath>
 		</dependency>
 
 		<dependency>

@@ -69,7 +69,6 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 	@DatabaseField
 	protected int							typeID						= -1;
 	protected boolean					citadel						= false;
-	//	private final boolean empty=true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
@@ -79,7 +78,6 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 		stationID = locationID;
 	}
 
-	//		public EveLocation(Citadel citadel) {
 	public EveLocation(final long citadelid, final Citadel cit) {
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
@@ -94,6 +92,11 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 		}
 	}
 
+	/**
+	 * Create a location from an Outpost read on the current list of player outposts.
+	 * 
+	 * @param out
+	 */
 	public EveLocation(final Outpost out) {
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
@@ -124,6 +127,7 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 		}
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Ship locations collaborate to the model by adding all their children because we store there the items
 	 * located at the selected real location.
@@ -134,7 +138,6 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 		return results;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean equals(final EveLocation obj) {
 		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
 		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
@@ -154,9 +157,15 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
 	}
 
-	public long getId() {
-		return id;
-	}
+	//	/**
+	//	 * Only use for location replication.
+	//	 * 
+	//	 * @return
+	//	 */
+	//@Deprecated
+	//	public long getId() {
+	//		return id;
+	//	}
 
 	public long getID() {
 		return Math.max(Math.max(Math.max(stationID, systemID), constellationID), regionID);

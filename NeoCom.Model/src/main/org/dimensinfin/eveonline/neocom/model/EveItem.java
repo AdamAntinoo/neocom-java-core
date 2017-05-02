@@ -17,37 +17,48 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveItem extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long					serialVersionUID	= -2548296399305221197L;
+	private static final long	serialVersionUID	= -2548296399305221197L;
+	private static EveItem		defaultItem				= new EveItem();
+	private static final int	DEFAULT_TYPE_ID		= 34;
+
+	public static EveItem getDefaultItem() {
+		if (null == EveItem.defaultItem) {
+			EveItem.defaultItem = AppConnector.getDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
+			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
+			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
+		}
+		return EveItem.defaultItem;
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int												id								= -1;
-	private String										name							= "<NAME>";
-	private String										groupname					= "<GROUPNAME>";
-	private String										category					= "<CATEGORY>";
+	private int												id						= 34;
+	private String										name					= "<NAME>";
+	private String										groupname			= "<GROUPNAME>";
+	private String										category			= "<CATEGORY>";
 	/**
 	 * This is the default price set for an item at the SDE database. I should get other prices from market
 	 * information blocks. This price will be updated from market data with the Jita lowest seller price when
 	 * the market data gets updated.
 	 */
-	private double										baseprice					= -1.0;
+	private double										baseprice			= -1.0;
 	/**
 	 * This is the highest buyers price when the market data is available or the <code>baseprice</code> is still
 	 * not available. It is only used when the caller does not specify the particular market side for the
 	 * requested price or any other search parameter.
 	 */
-	private double										defaultprice			= -1.0;
-	private double										volume						= 0.0;
-	private String										tech							= ModelWideConstants.eveglobal.TechI;
-	private boolean										isBlueprint				= false;
+	private double										defaultprice	= -1.0;
+	private double										volume				= 0.0;
+	private String										tech					= ModelWideConstants.eveglobal.TechI;
 
+	private boolean										isBlueprint		= false;
 	// - A D D I T I O N A L   F I E L D S
-	private transient EIndustryGroup	industryGroup			= EIndustryGroup.UNDEFINED;
-	private transient MarketDataSet		buyerData					= null;
-	private transient MarketDataSet		sellerData				= null;
+	private transient EIndustryGroup	industryGroup	= EIndustryGroup.UNDEFINED;
+	private transient MarketDataSet		buyerData			= null;
+	private transient MarketDataSet		sellerData		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public EveItem() {
-	}
+	//	public EveItem() {
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public double getBaseprice() {
@@ -63,11 +74,13 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public MarketDataEntry getHighestBuyerPrice() {
-		return getBuyerMarketData().getBestMarket();
+		return this.getBuyerMarketData().getBestMarket();
 	}
 
 	public EIndustryGroup getIndustryGroup() {
-		if (industryGroup == EIndustryGroup.UNDEFINED) classifyIndustryGroup();
+		if (industryGroup == EIndustryGroup.UNDEFINED) {
+			this.classifyIndustryGroup();
+		}
 		return industryGroup;
 	}
 
@@ -76,7 +89,7 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public MarketDataEntry getLowestSellerPrice() {
-		return getSellerMarketData().getBestMarket();
+		return this.getSellerMarketData().getBestMarket();
 	}
 
 	public String getName() {
@@ -96,7 +109,9 @@ public class EveItem extends AbstractComplexNode {
 	 * @param price
 	 */
 	public double getPrice() {
-		if (defaultprice < 0.0) defaultprice = getBuyerMarketData().getBestMarket().getPrice();
+		if (defaultprice < 0.0) {
+			defaultprice = this.getBuyerMarketData().getBestMarket().getPrice();
+		}
 		return defaultprice;
 	}
 
@@ -119,7 +134,7 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public boolean hasInvention() {
-		return AppConnector.getDBConnector().checkInvention(getTypeID());
+		return AppConnector.getDBConnector().checkInvention(this.getTypeID());
 	}
 
 	public boolean isBlueprint() {
@@ -164,9 +179,10 @@ public class EveItem extends AbstractComplexNode {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("EveItem [");
-		buffer.append("#").append(getItemID()).append(" - ").append(getName()).append(" ");
-		buffer.append(getGroupName()).append("/").append(getCategory()).append(" [").append(getPrice()).append(" ISK]")
-				.append(" ");
+		buffer.append("#").append(this.getItemID()).append(" - ").append(this.getName()).append(" ");
+		//		buffer.append(getGroupName()).append("/").append(getCategory()).append(" [").append(getPrice()).append(" ISK]")
+		//		.append(" ");
+		buffer.append(this.getGroupName()).append("/").append(this.getCategory()).append(" [").append(" ");
 		buffer.append("IC:").append(industryGroup).append(" ");
 		buffer.append("]");
 		return buffer.toString();
@@ -212,20 +228,51 @@ public class EveItem extends AbstractComplexNode {
 		if (groupname.equalsIgnoreCase("Datacores")) {
 			industryGroup = EIndustryGroup.DATACORES;
 		}
-		if (groupname.equalsIgnoreCase("Salvaged Materials")) industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
+		if (groupname.equalsIgnoreCase("Salvaged Materials")) {
+			industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
+		}
 		if (category.equalsIgnoreCase("Ship")) {
 			industryGroup = EIndustryGroup.HULL;
 		}
 	}
 
+	/**
+	 * Search on the market data provider for the market registers for this particular item. This will search on
+	 * the market data cache and then if not found on the market data service that will call the corresponding
+	 * parsers to extract the information.<br>
+	 * This method can fail by some causes. First of them because there are no connection to the sources of by
+	 * errors during the parsing of the information. In such cases I should be ready to get the price
+	 * information from other sources like the default price information.
+	 * 
+	 * @return
+	 */
 	private MarketDataSet getBuyerMarketData() {
-		if (null == buyerData) buyerData = AppConnector.getDBConnector().searchMarketData(getTypeID(), EMarketSide.BUYER);
+		if (null == buyerData) {
+			buyerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			if (null == buyerData) {
+				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
+			}
+		}
 		return buyerData;
 	}
 
+	/**
+	 * Search on the market data provider for the market registers for this particular item. This will search on
+	 * the market data cache and then if not found on the market data service that will call the corresponding
+	 * parsers to extract the information.<br>
+	 * This method can fail by some causes. First of them because there are no connection to the sources of by
+	 * errors during the parsing of the information. In such cases I should be ready to get the price
+	 * information from other sources like the default price information.
+	 * 
+	 * @return
+	 */
 	private MarketDataSet getSellerMarketData() {
-		if (null == sellerData)
-			sellerData = AppConnector.getDBConnector().searchMarketData(getTypeID(), EMarketSide.SELLER);
+		if (null == sellerData) {
+			sellerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			if (null == sellerData) {
+				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
+			}
+		}
 		return sellerData;
 	}
 }

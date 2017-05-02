@@ -8,6 +8,7 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -19,6 +20,9 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.Property;
+import org.dimensinfin.eveonline.neocom.model.Schematics;
+import org.dimensinfin.eveonline.neocom.planetary.PlanetaryResource;
+import org.dimensinfin.eveonline.neocom.planetary.ResourceList;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -46,7 +50,15 @@ public interface IDatabaseConnector {
 
 	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException;
 
+	//	public NeocomDBHelper getNeocomDBHelper();
+
+	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
+
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
+
+	public Dao<ResourceList, String> getResourceListDao() throws SQLException;
+
+	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 
 	public boolean openAppDataBase();
 
@@ -72,6 +84,8 @@ public interface IDatabaseConnector {
 
 	public int searchBlueprint4Module(final int moduleID);
 
+	public Vector<Integer> searchInputResources(int target);
+
 	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
 
 	public int searchInventionProduct(int typeID);
@@ -96,7 +110,11 @@ public interface IDatabaseConnector {
 
 	public int searchModule4Blueprint(int bpitemID);
 
+	public int searchRawPlanetaryOutput(int itemID);
+
 	public int searchReactionOutputMultiplier(int itemID);
+
+	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public int searchStationType(long systemID);
 
