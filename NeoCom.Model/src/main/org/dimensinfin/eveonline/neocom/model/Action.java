@@ -35,8 +35,9 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
  */
 public class Action extends AbstractComplexNode implements INeoComNode {
 	private class TaskBundle implements Serializable {
-		protected int			priority	= 999;
-		protected EveTask	task			= null;
+		private static final long	serialVersionUID	= -5450309773660347151L;
+		protected int							priority					= 999;
+		protected EveTask					task							= null;
 
 		public TaskBundle(final int pri, final EveTask task) {
 			priority = pri;
@@ -54,6 +55,7 @@ public class Action extends AbstractComplexNode implements INeoComNode {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger								logger							= Logger.getLogger("EVEI-M");
+	private static final long						serialVersionUID		= 1733515746949020056L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Resource										resource						= null;

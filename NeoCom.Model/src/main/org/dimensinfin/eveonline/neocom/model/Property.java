@@ -19,36 +19,37 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "Properties")
 public class Property implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	public static final int	LOCATION_ROLE_PROPERTY	= 10;
-	public static final int	TASK_ACTION_PROPERTY		= 20;
+	private static final long	serialVersionUID				= 1209487969346789159L;
+	public static final int		LOCATION_ROLE_PROPERTY	= 10;
+	public static final int		TASK_ACTION_PROPERTY		= 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(generatedId = true, index = true)
-	private long						id											= -2;
+	private final long				id											= -2;
 	@DatabaseField
-	private String					propertyType						= EPropertyTypes.UNDEFINED.name();
+	private String						propertyType						= EPropertyTypes.UNDEFINED.name();
 	@DatabaseField
-	private String					stringValue							= "";
+	private String						stringValue							= "";
 	@DatabaseField
-	private double					numericValue						= 0.0;
+	private double						numericValue						= 0.0;
 	@DatabaseField
-	private long						ownerID									= -1;
+	private long							ownerID									= -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Property() {
 	}
 
-	public Property(EPropertyTypes propertyType) {
+	public Property(final EPropertyTypes propertyType) {
 		try {
 			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
 			// Try to create the pair. It fails then  it was already created.
 			propertyDao.create(this);
 			// Be sure the owner is reset to undefined when stored at the database.
-			resetOwner();
-			setPropertyType(propertyType);
+			this.resetOwner();
+			this.setPropertyType(propertyType);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-			setDirty(true);
+			this.setDirty(true);
 		}
 	}
 
@@ -99,6 +100,10 @@ public class Property implements Serializable {
 		return EPropertyTypes.decode(propertyType);
 	}
 
+	public String getPropertyValue() {
+		return stringValue;
+	}
+
 	public String getStringValue() {
 		return stringValue;
 	}
@@ -122,22 +127,22 @@ public class Property implements Serializable {
 
 	public void setNumericValue(final double numericValue) {
 		this.numericValue = numericValue;
-		setDirty(true);
+		this.setDirty(true);
 	}
 
 	public void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
-		setDirty(true);
+		this.setDirty(true);
 	}
 
 	public void setPropertyType(final EPropertyTypes propertyType) {
 		this.propertyType = propertyType.toString();
-		setDirty(true);
+		this.setDirty(true);
 	}
 
 	public void setStringValue(final String stringValue) {
 		this.stringValue = stringValue;
-		setDirty(true);
+		this.setDirty(true);
 	}
 
 	@Override
@@ -147,10 +152,6 @@ public class Property implements Serializable {
 		buffer.append("Type:").append(propertyType).append(" ");
 		buffer.append("]");
 		return buffer.toString();
-	}
-
-	public String getPropertyValue() {
-		return this.stringValue;
 	}
 
 }

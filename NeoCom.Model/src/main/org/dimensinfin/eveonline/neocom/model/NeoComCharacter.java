@@ -61,7 +61,8 @@ import com.j256.ormlite.stmt.Where;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("NeoComCharacter");
+	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
+	private static final long	serialVersionUID	= 3456210619258009170L;
 
 	public static NeoComCharacter build(final Character coreChar, final NeoComApiKey apikey) throws ApiException {
 		// The api to use depends on the type of character.

@@ -42,7 +42,8 @@ import com.j256.ormlite.dao.Dao;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Corporation extends NeoComCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("NeoComCorporation");
+	private static Logger			logger						= Logger.getLogger("NeoComCorporation");
+	private static final long	serialVersionUID	= -2990989673090493394L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -107,8 +108,9 @@ public class Corporation extends NeoComCharacter {
 				List<Asset> assets = response.getAll();
 				assetsCacheTime = new Instant(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets)
+				for (final Asset eveAsset : assets) {
 					this.processAsset(eveAsset, null);
+				}
 			}
 			//			}
 			AppConnector.getDBConnector().replaceAssets(this.getCharacterID());
@@ -155,7 +157,7 @@ public class Corporation extends NeoComCharacter {
 			if (null != response) {
 				//					final ArrayList<Blueprint> bplist = new ArrayList<Blueprint>();
 				Set<Blueprint> blueprints = response.getAll();
-				for (Blueprint bp : blueprints)
+				for (Blueprint bp : blueprints) {
 					try {
 						bplist.add(this.convert2Blueprint(bp));
 					} catch (final RuntimeException rtex) {
@@ -163,6 +165,7 @@ public class Corporation extends NeoComCharacter {
 						Corporation.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
 						Corporation.logger.info("W> " + bp.toString());
 					}
+				}
 			}
 			//			}
 			// Pack the blueprints and store them on the database.
@@ -288,7 +291,9 @@ public class Corporation extends NeoComCharacter {
 			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
 			if (null != balanceresponse) {
 				Set<EveAccountBalance> balance = balanceresponse.getAll();
-				if (balance.size() > 0) this.setAccountBalance(balance.iterator().next().getBalance());
+				if (balance.size() > 0) {
+					this.setAccountBalance(balance.iterator().next().getBalance());
+				}
 			}
 		} catch (ApiException ex) {
 			// TODO Auto-generated catch block

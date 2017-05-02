@@ -25,7 +25,8 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipLocation extends EveLocation implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("ShipLocation");
+	private static Logger			logger						= Logger.getLogger("ShipLocation");
+	private static final long	serialVersionUID	= 28570905307514340L;
 
 	public static ShipLocation createFromLocation(final EveLocation original) {
 		ShipLocation shiploc = new ShipLocation();
@@ -50,6 +51,7 @@ public class ShipLocation extends EveLocation implements INeoComNode {
 	 * Ship locations collaborate to the model by adding all their children because we store there the items
 	 * located at the selected real location.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());

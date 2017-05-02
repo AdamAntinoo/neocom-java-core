@@ -17,10 +17,11 @@ import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Container extends NeoComAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger	= Logger.getLogger("org.dimensinfin.evedroid.model");
+	private static Logger			logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
+	private static final long	serialVersionUID	= 2813029093080549286L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final long		pilotID	= 0;
+	private final long				pilotID						= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Container() {

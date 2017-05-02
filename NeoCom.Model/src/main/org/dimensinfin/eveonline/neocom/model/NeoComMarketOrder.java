@@ -21,6 +21,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "MarketOrders")
 public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static final long			serialVersionUID	= -167389011690399402L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/**
@@ -30,9 +31,9 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	@DatabaseField(id = true)
 	private long									orderID;
 	@DatabaseField
-	private long									ownerID				= -1;
+	private long									ownerID						= -1;
 	@DatabaseField
-	private long									stationID			= -1;
+	private long									stationID					= -1;
 	@DatabaseField
 	private int										volEntered;
 	@DatabaseField
@@ -42,7 +43,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	@DatabaseField
 	private int										orderState;
 	@DatabaseField
-	private int										typeID				= -1;
+	private int										typeID						= -1;
 	@DatabaseField
 	private int										range;
 	@DatabaseField
@@ -59,15 +60,15 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	private Date									issuedDate;
 
 	/** Derived fields that store cached data. */
-	private transient EveItem			orderItem			= null;
-	private transient EveLocation	orderLocation	= null;
+	private transient EveItem			orderItem					= null;
+	private transient EveLocation	orderLocation			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComMarketOrder() {
 	}
 
 	public NeoComMarketOrder(final long newOrderID) {
-		this.orderID = newOrderID;
+		orderID = newOrderID;
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	 * 
 	 * @return
 	 */
-	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		result.add(this);
 		return result;
@@ -83,86 +84,89 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public int getAccountKey() {
-		return this.accountKey;
+		return accountKey;
 	}
 
 	public boolean getBid() {
-		return this.bid;
+		return bid;
 	}
 
 	public int getDuration() {
-		return this.duration;
+		return duration;
 	}
 
 	public double getEscrow() {
-		return this.escrow;
+		return escrow;
 	}
 
 	public Date getIssuedDate() {
-		return this.issuedDate;
+		return issuedDate;
 	}
 
 	public EveItem getItem() {
-		if (null == this.orderItem) this.orderItem = AppConnector.getDBConnector().searchItembyID(this.typeID);
-		return this.orderItem;
+		if (null == orderItem) {
+			orderItem = AppConnector.getDBConnector().searchItembyID(typeID);
+		}
+		return orderItem;
 	}
 
 	public int getItemTypeID() {
-		return this.typeID;
+		return typeID;
 	}
 
 	public int getMinVolume() {
-		return this.minVolume;
+		return minVolume;
 	}
 
 	public long getOrderID() {
-		return this.orderID;
+		return orderID;
 	}
 
 	public String getOrderingName() {
-		return getItem().getName();
+		return this.getItem().getName();
 	}
 
 	public EveItem getOrderItem() {
-		return this.orderItem;
+		return orderItem;
 	}
 
 	public EveLocation getOrderLocation() {
-		if (null == this.orderLocation)
-			this.orderLocation = AppConnector.getDBConnector().searchLocationbyID(this.stationID);
-		return this.orderLocation;
+		if (null == orderLocation) {
+			orderLocation = AppConnector.getDBConnector().searchLocationbyID(stationID);
+		}
+		return orderLocation;
 	}
 
 	public long getOrderLocationID() {
-		return this.stationID;
+		return stationID;
 	}
 
 	public int getOrderState() {
-		return this.orderState;
+		return orderState;
 	}
 
 	public double getPrice() {
-		return this.price;
+		return price;
 	}
 
 	public int getQuantity() {
-		return this.volEntered;
+		return volEntered;
 	}
 
 	public int getRange() {
-		return this.range;
+		return range;
 	}
 
 	public long getStationID() {
-		return this.stationID;
+		return stationID;
 	}
 
 	public int getVolEntered() {
-		return this.volEntered;
+		return volEntered;
 	}
 
 	public int getVolRemaining() {
-		return this.volRemaining;
+		return volRemaining;
 	}
 
 	public void setAccountKey(final int accountKey) {
@@ -170,10 +174,11 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	}
 
 	public void setBid(final int newbid) {
-		if (newbid == 1)
-			this.bid = true;
-		else
-			this.bid = false;
+		if (newbid == 1) {
+			bid = true;
+		} else {
+			bid = false;
+		}
 	}
 
 	public void setDuration(final int duration) {
@@ -193,7 +198,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	}
 
 	public void setOrderLocationID(final long locationID) {
-		this.stationID = locationID;
+		stationID = locationID;
 	}
 
 	public void setOrderState(final int orderState) {
@@ -231,16 +236,16 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("MarketOrder [");
-		buffer.append(this.orderID).append(" ");
+		buffer.append(orderID).append(" ");
 		//		buffer.append("[").append(blueprintID).append("]");
-		buffer.append("#").append(this.typeID).append(" ");
+		buffer.append("#").append(typeID).append(" ");
 		buffer.append(this.getOrderingName()).append(" - ");
 		//		if (activityID == 1) buffer.append("MANUFACTURE").append(" ");
 		//		if (activityID == 8) buffer.append("INVENTION").append(" ");
-		buffer.append("Volumes:").append(this.volEntered).append("/").append(this.volRemaining).append(" ");
+		buffer.append("Volumes:").append(volEntered).append("/").append(volRemaining).append(" ");
 		//		buffer.append("Module [").append(moduleName).append("] ");
-		buffer.append("Escrow:").append(this.escrow).append(" ");
-		buffer.append("Price:").append(this.price).append(" ");
+		buffer.append("Escrow:").append(escrow).append(" ");
+		buffer.append("Price:").append(price).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
