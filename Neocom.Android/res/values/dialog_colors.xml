@@ -1,9 +1,0 @@
-<resources>
-    <color name="dialogBackground">#AA000000</color>
-    <color name="dialogLabelTextColor" alias="orangeText">#FFFBB917</color>
-    <color name="dialogEntryTextColor">#FFFFFFFF</color>
-    <color name="dialogDefaultTextColor">#FFAAAAAA</color>
-    <color name="dialogNonEditableTextColor">#FF555555</color>
-    <color name="dialogSpinnerTextColor">#FFFBB917</color>
-    <color name="dialogSpinnerBackgroundColor">#FFFFFFFF</color>
-</resources>
