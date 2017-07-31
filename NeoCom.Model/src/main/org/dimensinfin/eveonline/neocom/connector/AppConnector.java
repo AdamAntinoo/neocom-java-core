@@ -29,7 +29,18 @@ import org.joda.time.Instant;
  */
 public class AppConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
+	// - P R E F E R E N C E S
+	public static final class preference {
+		public static final String	PREF_APPTHEMES						= "prefkey_appthemes";
+		public static final String	PREF_LOCATIONSLIMIT				= "prefkey_locationsLimit";
+		public static final String	PREF_ALLOWMOVEREQUESTS		= "prefkey_AllowMoveRequests";
+		public static final String	PREF_CALCULATEASSETVALUE	= "prefkey_AssetValueCalculation";
+		public static final String	PREF_BLOCKDOWNLOAD				= "prefkey_BlockDownloads";
+		public static final String	PREF_BLOCKMARKET					= "prefkey_BlockMarket";
+	}
+
 	private static IConnector	connection	= null;
+
 	private static Instant		chrono			= null;
 
 	public static void addCharacterUpdateRequest(final long characterID) {
@@ -118,18 +129,19 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getDBConnector' disabled.");
 	}
 
+	public static NeocomPreferences getDefaultSharedPreferences() {
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getDefaultSharedPreferences();
+		else
+			throw new RuntimeException(
+					"Application connector not defined. Functionality 'getDefaultSharedPreferences' disabled.");
+	}
+
 	public static INeoComModelStore getModelStore() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getModelStore();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
-	}
-
-	public static String getResourceString(final int reference) {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getResourceString(reference);
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
 	}
 
 	//	public static String getResourceString(final String reference) {
@@ -138,6 +150,13 @@ public class AppConnector {
 	//		else
 	//			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
 	//	}
+
+	public static String getResourceString(final int reference) {
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getResourceString(reference);
+		else
+			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
+	}
 
 	public static IConnector getSingleton() {
 		if (null != AppConnector.connection)

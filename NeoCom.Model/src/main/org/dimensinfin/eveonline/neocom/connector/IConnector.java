@@ -24,11 +24,13 @@ public interface IConnector {
 
 	public IDatabaseConnector getDBConnector();
 
+	public NeocomPreferences getDefaultSharedPreferences();
+
 	public INeoComModelStore getModelStore();
 
-	public String getResourceString(int reference);
-
 	//	public String getResourceString(String reference);
+
+	public String getResourceString(int reference);
 
 	public IConnector getSingleton();
 
