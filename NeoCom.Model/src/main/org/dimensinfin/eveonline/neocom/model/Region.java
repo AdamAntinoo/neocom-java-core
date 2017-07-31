@@ -19,6 +19,7 @@ public class Region extends Separator {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Region(final String title) {
 		super(title);
+		jsonClassname = "Region";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

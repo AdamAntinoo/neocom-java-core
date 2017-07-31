@@ -32,6 +32,10 @@ public class Ship extends NeoComAsset {
 	private final Separator		cargo							= new Separator("CARGO HOLD").setType(ESeparatorType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public Ship() {
+		jsonClassname = "ShipLocation";
+	}
+
 	/**
 	 * Get the Pilot when the ship is created to be able to search for its contents. Check if this value matches
 	 * the owner ID.
@@ -39,6 +43,7 @@ public class Ship extends NeoComAsset {
 	 * @param pilot
 	 */
 	public Ship(final long pilot) {
+		jsonClassname = "ShipLocation";
 		pilotID = pilot;
 		this.setDownloaded(false);
 	}

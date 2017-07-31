@@ -100,6 +100,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComAsset() {
 		super();
+		jsonClassname = "NeoComAsset";
 		id = -2;
 		locationID = -1;
 	}

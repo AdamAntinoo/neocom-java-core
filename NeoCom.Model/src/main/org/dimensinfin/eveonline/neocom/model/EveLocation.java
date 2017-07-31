@@ -72,13 +72,16 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
+		jsonClassname = "EveLocation";
 	}
 
 	public EveLocation(final long locationID) {
+		jsonClassname = "EveLocation";
 		stationID = locationID;
 	}
 
 	public EveLocation(final long citadelid, final Citadel cit) {
+		jsonClassname = "EveLocation";
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
@@ -98,6 +101,7 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 	 * @param out
 	 */
 	public EveLocation(final Outpost out) {
+		jsonClassname = "EveLocation";
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -113,6 +117,7 @@ public class EveLocation extends AbstractComplexNode implements INeoComNode {
 	}
 
 	public EveLocation(final Station station) {
+		jsonClassname = "EveLocation";
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.

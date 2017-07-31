@@ -46,6 +46,11 @@ public class ShipLocation extends EveLocation implements INeoComNode {
 		return shiploc;
 	}
 
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public ShipLocation() {
+		jsonClassname = "ShipLocation";
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Ship locations collaborate to the model by adding all their children because we store there the items
