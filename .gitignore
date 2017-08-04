@@ -3,3 +3,5 @@
 *.log
 .recommenders/
 .metadata/
+SBPlanetaryService/src/main/resources/static/
+POC-IntegratorServer/
