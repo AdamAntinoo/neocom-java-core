@@ -53,6 +53,7 @@ import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -144,13 +145,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			newchar.setSkillInTraining(trainingresponse);
 		}
 		// Full list of assets from database.
-		newchar.accessAllAssets();
+		//	newchar.accessAllAssets();
 		return newchar;
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the delegated core eveapi Character */
+	@JsonIgnore
 	protected NeoComApiKey										apikey							= null;
+	@JsonIgnore
 	private ApiAuthorization									authorization				= null;
 	private long															characterID					= -1;
 	protected transient Character							delegatedCharacter	= null;
@@ -161,12 +164,16 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - T R A N S I E N T   D A T A
 	protected transient Instant								lastCCPAccessTime		= null;
 	protected transient Instant								assetsCacheTime			= null;
+	@JsonIgnore
 	protected transient AssetsManager					assetsManager				= null;
 	protected transient Instant								blueprintsCacheTime	= null;
 	protected transient Instant								jobsCacheTime				= null;
+	@JsonIgnore
 	protected transient ArrayList<Job>				jobList							= null;
 	protected transient Instant								marketCacheTime			= null;
+	@JsonIgnore
 	private transient ArrayList<Property>			locationRoles				= null;
+	@JsonIgnore
 	private transient HashMap<Long, Property>	actions4Character		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -332,10 +339,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * 
 	 * @return
 	 */
+	@JsonIgnore
 	public long getAssetCount() {
 		return this.getAssetsManager().getAssetTotalCount();
 	}
 
+	@JsonIgnore
 	public AssetsManager getAssetsManager() {
 		if (null == assetsManager) {
 			assetsManager = new AssetsManager(this);
@@ -363,10 +372,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * 
 	 * @return
 	 */
+	@JsonIgnore
 	public EveLocation getDefaultLocation() {
 		return this.getAssetsManager().getLocations().values().iterator().next();
 	}
 
+	@JsonIgnore
 	public ArrayList<Job> getIndustryJobs() {
 		if (null == jobList) {
 			jobList = this.searchIndustryJobs();
@@ -381,6 +392,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @param matchingRole
 	 * @return
 	 */
+	@JsonIgnore
 	public EveLocation getLocation4Role(final String matchingRole) {
 		if (null == locationRoles) {
 			this.accessLocationRoles();
@@ -403,6 +415,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @param Region
 	 * @return
 	 */
+	@JsonIgnore
 	public EveLocation getLocation4Role(final String matchingRole, final String region) {
 		//		EveLocation preferredLocation = null;
 		for (Property role : locationRoles)
@@ -425,6 +438,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @return
 	 * @return
 	 */
+	@JsonIgnore
 	public ArrayList<Property> getLocationRoles(final long targetLocationID, final String defaultValue) {
 		ArrayList<Property> roles = new ArrayList<Property>();
 		if (null == locationRoles) {
@@ -442,6 +456,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return roles;
 	}
 
+	@JsonIgnore
 	public ArrayList<NeoComMarketOrder> getMarketOrders() {
 		return this.searchMarketOrders();
 	}
@@ -450,6 +465,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return delegatedCharacter.getName();
 	}
 
+	@JsonIgnore
 	public ArrayList<NeoComAsset> getShips() {
 		return this.searchAsset4Category(this.getCharacterID(), "Ship");
 	}
@@ -552,7 +568,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComCharacter [");
 		buffer.append("name:").append(this.getName()).append(" ");
-		buffer.append("assets#:").append(this.getAssetCount()).append(" ");
+		//	buffer.append("assets#:").append(this.getAssetCount()).append(" ");
 		buffer.append("]");
 		buffer.append("->").append(super.toString());
 		return buffer.toString();
