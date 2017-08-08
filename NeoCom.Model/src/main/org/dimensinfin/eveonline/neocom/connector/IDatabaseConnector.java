@@ -66,7 +66,7 @@ public interface IDatabaseConnector {
 
 	public boolean openCCPDataBase();
 
-	public boolean openDAO();
+	//public boolean openDAO();
 
 	public int queryBlueprintDependencies(int bpitemID);
 

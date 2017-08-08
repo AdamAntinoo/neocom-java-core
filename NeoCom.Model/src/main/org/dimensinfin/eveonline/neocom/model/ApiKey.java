@@ -55,6 +55,14 @@ public class ApiKey {
 		this.validationcode = validationcode;
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("ApiKey [");
+		buffer.append(login).append("/");
+		buffer.append(keynumber).append("-").append(validationcode);
+		buffer.append("]");
+		return buffer.toString();
+	}
 }
 
 // - UNUSED CODE ............................................................................................
