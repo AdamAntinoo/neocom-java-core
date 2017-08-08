@@ -11,7 +11,6 @@ import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IConnector {
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addCharacterUpdateRequest(long characterID);
 
 	public boolean checkExpiration(final long timestamp, final long window);
@@ -20,6 +19,7 @@ public interface IConnector {
 
 	public String getAppFilePath(String fileresourceid);
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public ICCPDatabaseConnector getCCPDBConnector();
 
 	public IDatabaseConnector getDBConnector();

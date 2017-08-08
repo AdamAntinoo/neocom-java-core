@@ -13,6 +13,7 @@ import java.util.Vector;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Job;
@@ -40,6 +41,8 @@ public interface IDatabaseConnector {
 
 	public void closeDatabases();
 
+	public Dao<ApiKey, String> getApiKeysDao() throws java.sql.SQLException;
+
 	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
 
 	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException;
@@ -50,21 +53,20 @@ public interface IDatabaseConnector {
 
 	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException;
 
-	//	public NeocomDBHelper getNeocomDBHelper();
-
 	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
 
 	public Dao<ResourceList, String> getResourceListDao() throws SQLException;
 
-	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
+	public Dao<DatabaseVersion, String> getVersionDao() throws java.sql.SQLException;
 
+	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
 
 	public boolean openCCPDataBase();
 
-	public boolean openDAO();
+	//public boolean openDAO();
 
 	public int queryBlueprintDependencies(int bpitemID);
 
