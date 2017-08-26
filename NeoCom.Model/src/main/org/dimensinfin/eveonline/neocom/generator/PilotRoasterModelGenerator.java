@@ -7,9 +7,7 @@
 //								Database and model adaptations for storage model independency.
 package org.dimensinfin.eveonline.neocom.generator;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -26,38 +24,16 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PilotRoasterModelGenerator implements IModelGenerator {
+public class PilotRoasterModelGenerator extends AbstractGenerator implements IModelGenerator {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger									logger					= Logger.getLogger("PilotRoasterModelGenerator");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private DataSourceLocator							_locator				= null;
-	private boolean												_cacheable			= true;
-	private final HashMap<String, Object>	_parameters			= new HashMap<String, Object>();
-	/** The initial node where to store the model. Model elements are children of this root. */
-	protected RootNode										_dataModelRoot	= null;
-
-	private String												login						= null;
+	private String login = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotRoasterModelGenerator(final DataSourceLocator locator, final String login) {
-		_locator = locator;
+		super(locator);
 		this.login = login;
-	}
-
-	public PilotRoasterModelGenerator addParameter(final String name, final int value) {
-		_parameters.put(name, Integer.valueOf(value));
-		return this;
-	}
-
-	public PilotRoasterModelGenerator addParameter(final String name, final long value) {
-		_parameters.put(name, Long.valueOf(value));
-		return this;
-	}
-
-	public PilotRoasterModelGenerator addParameter(final String name, final String value) {
-		_parameters.put(name, value);
-		return this;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -68,7 +44,7 @@ public class PilotRoasterModelGenerator implements IModelGenerator {
 	 * of keys and from there to the set of characters.
 	 */
 	public RootNode collaborate2Model() {
-		PilotRoasterModelGenerator.logger.info(">> [PilotRoasterModelAdapter.collaborate2Model]");
+		AbstractGenerator.logger.info(">> [PilotRoasterModelAdapter.collaborate2Model]");
 		// Access the database to get the list of keys. From that point on we can retrieve the characters easily.
 		List<ApiKey> apilist = null;
 		try {
@@ -90,7 +66,7 @@ public class PilotRoasterModelGenerator implements IModelGenerator {
 				// Scan for the characters declared into this key.
 				for (NeoComCharacter pilot : key.getApiCharacters()) {
 					_dataModelRoot.addChild(pilot);
-					PilotRoasterModelGenerator.logger.info(
+					AbstractGenerator.logger.info(
 							"-- [PilotRoasterModelAdapter.collaborate2Model]> Adding " + pilot.getName() + " to the _dataModelRoot");
 				}
 			} catch (ApiException apiex) {
@@ -98,39 +74,8 @@ public class PilotRoasterModelGenerator implements IModelGenerator {
 			}
 		}
 
-		PilotRoasterModelGenerator.logger.info("<< [PilotListDataSource.collaborate2Model]");
+		AbstractGenerator.logger.info("<< [PilotListDataSource.collaborate2Model]");
 		return _dataModelRoot;
-	}
-
-	public DataSourceLocator getDataSourceLocator() {
-		return _locator;
-	}
-
-	public void setCacheable(final boolean cacheState) {
-		_cacheable = cacheState;
-	}
-
-	//[01]
-	public void setDataModel(final RootNode root) {
-		_dataModelRoot = root;
-	}
-
-	protected int getParameterInteger(final String name) {
-		Object param = _parameters.get(name);
-		if (null != param) if (param instanceof Integer) return ((Integer) param).intValue();
-		return 0;
-	}
-
-	protected long getParameterLong(final String name) {
-		Object param = _parameters.get(name);
-		if (null != param) if (param instanceof Long) return ((Long) param).longValue();
-		return 0;
-	}
-
-	protected String getParameterString(final String name) {
-		Object param = _parameters.get(name);
-		if (null != param) if (param instanceof String) return (String) param;
-		return "";
 	}
 }
 

@@ -1,6 +1,6 @@
 //	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:      (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API16.
 //	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
 //									available databases.
@@ -9,11 +9,6 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.core;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
@@ -21,7 +16,11 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 public interface INeoComModelStore extends IModelStore {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public NeoComCharacter getPilot();
+	public void activatePilot(long characterID);
+
+	public NeoComCharacter getCurrentPilot();
+
+	public String getLoginIdentifier();
 }
 
 // - UNUSED CODE ............................................................................................

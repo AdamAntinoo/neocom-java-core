@@ -51,18 +51,18 @@ import com.j256.ormlite.dao.Dao;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger						logger						= Logger.getLogger("Pilot");
-	private static final long				serialVersionUID	= 7093412975290500541L;
+	private static Logger									logger						= Logger.getLogger("Pilot");
+	private static final long							serialVersionUID	= 7093412975290500541L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - T R A N S I E N T   D A T A
 	@JsonView(PilotView.DetailedView.class)
-	private CharacterSheetResponse	characterSheet		= null;
+	private CharacterSheetResponse				characterSheet		= null;
 	@JsonView(PilotView.DetailedView.class)
-	private Set<SkillQueueItem>			skills						= null;
+	private transient Set<SkillQueueItem>	skills						= null;
 	@JsonView(PilotView.DetailedView.class)
-	private SkillInTrainingResponse	skillInTraining		= null;
+	private SkillInTrainingResponse				skillInTraining		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Pilot() {

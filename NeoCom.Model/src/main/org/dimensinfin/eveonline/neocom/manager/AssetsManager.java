@@ -9,8 +9,6 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-// - IMPORT SECTION .........................................................................................
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +18,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -57,7 +56,7 @@ import com.j256.ormlite.stmt.Where;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetsManager implements Serializable {
+public class AssetsManager extends AbstractGEFNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long																serialVersionUID				= -8502099148768297876L;
 	private static Logger																		logger									= Logger.getLogger("AssetsManager");
@@ -758,11 +757,12 @@ public class AssetsManager implements Serializable {
 			}
 		}
 	}
-
-	// TODO The dirty flag for the assets is not used because assets are not persisted.
-	private void setDirty(final boolean value) {
-		//		getPilot().setDirty(value);
-	}
+	//
+	//	// TODO The dirty flag for the assets is not used because assets are not persisted.
+	//	@Override
+	//	private void setDirty(final boolean value) {
+	//		//		getPilot().setDirty(value);
+	//	}
 
 	private void updateBlueprints() {
 		AssetsManager.logger.info(">> AssetsManager.updateBlueprints");
