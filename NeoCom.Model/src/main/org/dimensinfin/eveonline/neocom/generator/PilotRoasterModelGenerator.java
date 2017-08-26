@@ -13,15 +13,7 @@ import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.DataSourceLocator;
 import org.dimensinfin.eveonline.neocom.connector.IModelGenerator;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-
-import com.beimin.eveapi.exception.ApiException;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotRoasterModelGenerator extends AbstractGenerator implements IModelGenerator {
@@ -45,35 +37,16 @@ public class PilotRoasterModelGenerator extends AbstractGenerator implements IMo
 	 */
 	public RootNode collaborate2Model() {
 		AbstractGenerator.logger.info(">> [PilotRoasterModelAdapter.collaborate2Model]");
-		// Access the database to get the list of keys. From that point on we can retrieve the characters easily.
-		List<ApiKey> apilist = null;
-		try {
-			Dao<ApiKey, String> keyDao = AppConnector.getDBConnector().getApiKeysDao();
-			QueryBuilder<ApiKey, String> queryBuilder = keyDao.queryBuilder();
-			Where<ApiKey, String> where = queryBuilder.where();
-			where.eq("login", login);
-			PreparedQuery<ApiKey> preparedQuery = queryBuilder.prepare();
-			apilist = keyDao.query(preparedQuery);
-		} catch (java.sql.SQLException sqle) {
-			sqle.printStackTrace();
-		}
+		// Get the list for characters associates to the current login. This should be already accessible at the AppModelStore.
+		List<NeoComCharacter> characters = AppConnector.getModelStore().getActiveCharacters();
 		// Initialize the Adapter data structures.
 		this.setDataModel(new RootNode());
 		// For each key get the list of characters and instantiate them to the resulting list.
-		for (ApiKey apiKey : apilist) {
-			try {
-				NeoComApiKey key = NeoComApiKey.build(apiKey.getKeynumber(), apiKey.getValidationcode());
-				// Scan for the characters declared into this key.
-				for (NeoComCharacter pilot : key.getApiCharacters()) {
-					_dataModelRoot.addChild(pilot);
-					AbstractGenerator.logger.info(
-							"-- [PilotRoasterModelAdapter.collaborate2Model]> Adding " + pilot.getName() + " to the _dataModelRoot");
-				}
-			} catch (ApiException apiex) {
-				apiex.printStackTrace();
-			}
+		for (NeoComCharacter character : characters) {
+			_dataModelRoot.addChild(character);
+			AbstractGenerator.logger.info(
+					"-- [PilotRoasterModelAdapter.collaborate2Model]> Adding " + character.getName() + " to the _dataModelRoot");
 		}
-
 		AbstractGenerator.logger.info("<< [PilotListDataSource.collaborate2Model]");
 		return _dataModelRoot;
 	}
