@@ -34,8 +34,7 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<AbstractComplexNode>();
 	}
 
 	public NeoComCharacter getPilot() {

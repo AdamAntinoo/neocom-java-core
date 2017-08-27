@@ -164,10 +164,10 @@ public class AssetsManager extends AbstractManager {
 			return ships.values();
 	}
 
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		return new ArrayList<AbstractComplexNode>();
-	}
+	//	@Override
+	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+	//		return new ArrayList<AbstractComplexNode>();
+	//	}
 
 	/**
 	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM

@@ -40,7 +40,7 @@ public class PilotDirectorsGenerator extends AbstractGenerator implements IModel
 		this.setDataModel(new RootNode());
 
 		// Add to the data model list the Directors that can be used on this character.
-		_dataModelRoot.addChild(AppConnector.getModelStore().getCurrentPilot());
+		_dataModelRoot.addChildren(AppConnector.getModelStore().getCurrentPilot().collaborate2Model(this.getVariant()));
 		AbstractGenerator.logger.info("<< [PilotDirectorsGenerator.collaborate2Model]");
 		return _dataModelRoot;
 	}
