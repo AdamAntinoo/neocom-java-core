@@ -20,12 +20,12 @@ public class PilotRoasterModelGenerator extends AbstractGenerator implements IMo
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String login = null;
+	private String _login = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotRoasterModelGenerator(final DataSourceLocator locator, final String login) {
-		super(locator);
-		this.login = login;
+	public PilotRoasterModelGenerator(final DataSourceLocator locator, final String variant, final String login) {
+		super(locator, variant);
+		_login = login;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -42,10 +42,11 @@ public class PilotRoasterModelGenerator extends AbstractGenerator implements IMo
 		// Initialize the Adapter data structures.
 		this.setDataModel(new RootNode());
 		// For each key get the list of characters and instantiate them to the resulting list.
+		// For first level items do not use the collaborate2Model function. This is to get the rest of the hierarchy
 		for (NeoComCharacter character : characters) {
 			_dataModelRoot.addChild(character);
-			AbstractGenerator.logger.info(
-					"-- [PilotRoasterModelAdapter.collaborate2Model]> Adding " + character.getName() + " to the _dataModelRoot");
+			AbstractGenerator.logger.info("-- [PilotRoasterModelAdapter.collaborate2Model]> Adding '" + character.getName()
+					+ "' to the _dataModelRoot");
 		}
 		AbstractGenerator.logger.info("<< [PilotListDataSource.collaborate2Model]");
 		return _dataModelRoot;

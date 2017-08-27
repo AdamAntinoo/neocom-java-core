@@ -23,14 +23,16 @@ public abstract class AbstractGenerator implements IModelGenerator {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	protected DataSourceLocator						_locator				= null;
+	protected String											_variant				= null;
 	private boolean												_cacheable			= true;
 	private final HashMap<String, Object>	_parameters			= new HashMap<String, Object>();
 	/** The initial node where to store the model. Model elements are children of this root. */
 	protected RootNode										_dataModelRoot	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractGenerator(final DataSourceLocator locator) {
+	public AbstractGenerator(final DataSourceLocator locator, final String variant) {
 		_locator = locator;
+		_variant = variant;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -53,12 +55,20 @@ public abstract class AbstractGenerator implements IModelGenerator {
 		return _locator;
 	}
 
+	public String getVariant() {
+		return _variant;
+	}
+
 	public void setCacheable(final boolean cacheState) {
 		_cacheable = cacheState;
 	}
 
 	public void setDataModel(final RootNode root) {
 		_dataModelRoot = root;
+	}
+
+	public void setVariant(final String variant) {
+		_variant = variant;
 	}
 
 	protected int getParameterInteger(final String name) {

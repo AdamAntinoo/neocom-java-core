@@ -23,8 +23,8 @@ public class PilotDirectorsGenerator extends AbstractGenerator implements IModel
 	private String login = "Default";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotDirectorsGenerator(final DataSourceLocator locator, final String login) {
-		super(locator);
+	public PilotDirectorsGenerator(final DataSourceLocator locator, final String variant, final String login) {
+		super(locator, variant);
 		this.login = login;
 	}
 

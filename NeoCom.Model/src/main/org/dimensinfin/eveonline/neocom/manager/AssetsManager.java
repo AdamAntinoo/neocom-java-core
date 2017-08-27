@@ -18,7 +18,6 @@ import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -56,7 +55,7 @@ import com.j256.ormlite.stmt.Where;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetsManager extends AbstractGEFNode {
+public class AssetsManager extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long																serialVersionUID				= -8502099148768297876L;
 	private static Logger																		logger									= Logger.getLogger("AssetsManager");
@@ -99,6 +98,7 @@ public class AssetsManager extends AbstractGEFNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
+		super();
 		this.setPilot(pilot);
 		// Reinitialize the list of assets for this pilot.
 		this.accessAllAssets();
@@ -156,6 +156,11 @@ public class AssetsManager extends AbstractGEFNode {
 			return ships.values();
 	}
 
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		return new ArrayList<AbstractComplexNode>();
+	}
+
 	/**
 	 * Get the complete list of the assets that belong to this owner.
 	 * 
@@ -201,6 +206,13 @@ public class AssetsManager extends AbstractGEFNode {
 		return totalAssets;
 	}
 
+	//	public int getLocationCount() {
+	//		if (locationCount < 0) {
+	//			this.updateLocations();
+	//		}
+	//		return locationCount;
+	//	}
+
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
 			this.updateBlueprints();
@@ -210,13 +222,6 @@ public class AssetsManager extends AbstractGEFNode {
 		}
 		return blueprintCache;
 	}
-
-	//	public int getLocationCount() {
-	//		if (locationCount < 0) {
-	//			this.updateLocations();
-	//		}
-	//		return locationCount;
-	//	}
 
 	/**
 	 * Returns the list of different locations where this character has assets. The locations are the unique
@@ -294,6 +299,15 @@ public class AssetsManager extends AbstractGEFNode {
 		return (ArrayList<NeoComAsset>) assetsCategoryList;
 	}
 
+	//	public HashSet<String> queryT2ModuleNames() {
+	//		HashSet<String> names = new HashSet<String>();
+	//		ArrayList<Asset> modules = searchT2Modules();
+	//		for (Asset mod : modules) {
+	//			names.add(mod.getName());
+	//		}
+	//		return names;
+	//	}
+
 	public ArrayList<NeoComAsset> searchAsset4Group(final String group) {
 		//	Select assets for the owner and with an specific category.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
@@ -311,15 +325,6 @@ public class AssetsManager extends AbstractGEFNode {
 		}
 		return (ArrayList<NeoComAsset>) assetList;
 	}
-
-	//	public HashSet<String> queryT2ModuleNames() {
-	//		HashSet<String> names = new HashSet<String>();
-	//		ArrayList<Asset> modules = searchT2Modules();
-	//		for (Asset mod : modules) {
-	//			names.add(mod.getName());
-	//		}
-	//		return names;
-	//	}
 
 	public ArrayList<NeoComAsset> searchAsset4Location(final EveLocation location) {
 		AssetsManager.logger.info(">> AssetsManager.searchAsset4Location");
@@ -359,21 +364,6 @@ public class AssetsManager extends AbstractGEFNode {
 		return null;
 	}
 
-	/**
-	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
-	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	 * 
-	 * @return list of T1 blueprints.
-	 */
-	public ArrayList<NeoComBlueprint> searchT1Blueprints() {
-		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
-		for (NeoComBlueprint bp : this.getBlueprints())
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				blueprintList.add(bp);
-			}
-		return blueprintList;
-	}
-
 	//	/**
 	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
 	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
@@ -399,6 +389,21 @@ public class AssetsManager extends AbstractGEFNode {
 	//	}
 
 	/**
+	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
+	 * blueprints. We expect this is not cost intensive because this function is called few times.
+	 * 
+	 * @return list of T1 blueprints.
+	 */
+	public ArrayList<NeoComBlueprint> searchT1Blueprints() {
+		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
+		for (NeoComBlueprint bp : this.getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+				blueprintList.add(bp);
+			}
+		return blueprintList;
+	}
+
+	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
 	 * blueprints. We expect this is not cost intensive because this function is called few times.
 	 * 
@@ -412,6 +417,13 @@ public class AssetsManager extends AbstractGEFNode {
 			}
 		return blueprintList;
 	}
+
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
 
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
@@ -442,13 +454,6 @@ public class AssetsManager extends AbstractGEFNode {
 		AssetsManager.logger.info("<< EveChar.queryT2Modules");
 		return (ArrayList<NeoComAsset>) assetList;
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
 
 	public void setPilot(final NeoComCharacter newPilot) {
 		pilot = newPilot;

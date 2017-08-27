@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.jsonviews.PilotView;
 import org.joda.time.Duration;
@@ -116,6 +117,10 @@ public class Pilot extends NeoComCharacter {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		//TODO Variant insertion still not defined at Generators.
+		if (variant == ENeoComVariants.CAPSULEER_LIST.name()) {
+			//			results.add(this);
+		}
 		return results;
 	}
 
