@@ -9,7 +9,7 @@ package org.dimensinfin.eveonline.neocom.industry;
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
 
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.model.Action;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
@@ -34,7 +34,7 @@ public interface IJobProcess {
 
 	public String getSubtitle();
 
-	public void setAssetsManager(AssetsManager industryAssetsManager);
+	public void setAssetsManager(AbstractManager industryAssetsManager);
 
 	void setBlueprint(NeoComBlueprint target);
 

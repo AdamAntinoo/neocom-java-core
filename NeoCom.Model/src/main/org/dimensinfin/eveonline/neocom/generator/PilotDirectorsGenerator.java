@@ -13,7 +13,6 @@ import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.DataSourceLocator;
 import org.dimensinfin.eveonline.neocom.connector.IModelGenerator;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotDirectorsGenerator extends AbstractGenerator implements IModelGenerator {
@@ -29,13 +28,19 @@ public class PilotDirectorsGenerator extends AbstractGenerator implements IModel
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * The collaboration for a Pilot or Corporation on this Activity is the list of Managers that can be applied
+	 * to the Character. So we can move the decission to the place where it better suits that is the Character
+	 * that is already selected. This is performed internally in a recursive way by calling the model
+	 * collaboration depending on the variant.
+	 */
 	public RootNode collaborate2Model() {
 		AbstractGenerator.logger.info(">> [PilotDirectorsGenerator.collaborate2Model]");
 		// Initialize the Adapter data structures.
 		this.setDataModel(new RootNode());
 
 		// Add to the data model list the Directors that can be used on this character.
-		_dataModelRoot.addChild(new AssetsManager(AppConnector.getModelStore().getCurrentPilot()));
+		_dataModelRoot.addChild(AppConnector.getModelStore().getCurrentPilot());
 		AbstractGenerator.logger.info("<< [PilotDirectorsGenerator.collaborate2Model]");
 		return _dataModelRoot;
 	}

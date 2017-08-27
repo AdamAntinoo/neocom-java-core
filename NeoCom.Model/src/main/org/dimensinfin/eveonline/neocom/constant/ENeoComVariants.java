@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.constant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum ENeoComVariants {
-	CAPSULEER_LIST, PILOT_ROASTER, PILOT_DETAILS
+	CAPSULEER_LIST, PILOT_DETAILS
 }
 
 // - UNUSED CODE ............................................................................................
