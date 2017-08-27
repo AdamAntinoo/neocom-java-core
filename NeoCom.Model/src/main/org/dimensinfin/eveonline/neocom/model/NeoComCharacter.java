@@ -12,8 +12,8 @@ package org.dimensinfin.eveonline.neocom.model;
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -62,13 +62,14 @@ import com.j256.ormlite.stmt.Where;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
 	private static final long	serialVersionUID	= 3456210619258009170L;
+	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
 
 	public static NeoComCharacter build(final Character coreChar, final NeoComApiKey apikey) throws ApiException {
 		// The api to use depends on the type of character.
 		if (apikey.getType() == KeyType.Character) return NeoComCharacter.createPilot(coreChar, apikey);
 		if (apikey.getType() == KeyType.Corporation) return NeoComCharacter.createCorporation(coreChar, apikey);
+		// By default create a Pilot.
 		return NeoComCharacter.createPilot(coreChar, apikey);
 	}
 
@@ -95,8 +96,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		CharacterInfoParser infoparser = new CharacterInfoParser();
 		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
 		if (null != inforesponse) {
-			newcorp.characterInfo = inforesponse;
+			newcorp.setInfo(inforesponse);
 		}
+		// Update the last updated timestamp from the CharacterInfoResponse.
+		newcorp.updateLastAccess(inforesponse.getCachedUntil());
 		return newcorp;
 	}
 
@@ -124,7 +127,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		CharacterInfoParser infoparser = new CharacterInfoParser();
 		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
 		if (null != inforesponse) {
-			newchar.characterInfo = inforesponse;
+			newchar.setInfo(inforesponse);
 		}
 		// Character sheet information
 		CharacterSheetParser sheetparser = new CharacterSheetParser();
@@ -146,24 +149,45 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		}
 		// Full list of assets from database.
 		//	newchar.accessAllAssets();
+
+		// Update the last updated timestamp from the CharacterInfoResponse.
+		newchar.updateLastAccess(inforesponse.getCachedUntil());
 		return newchar;
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the delegated core eveapi Character */
-	@JsonIgnore
-	private NeoComApiKey											apikey							= null;
+
+	//	@JsonIgnore
+	/** Reference to the key that generated this character on the first place. */
+	private transient NeoComApiKey						apikey							= null;
 	//	@JsonIgnore
 	private ApiAuthorization									authorization				= null;
 	private long															characterID					= -1;
-	private transient Character								delegatedCharacter	= null;
-	protected CharacterInfoResponse						characterInfo				= null;
-	private final boolean											active							= true;
+	/** Reference to the original eveapi Character data. */
+	private Character													delegatedCharacter	= null;
+	/**
+	 * Character detailed information from the CharacterInfoResponse CCP api call. This can apply to Pilots and
+	 * Corportations.
+	 */
+	private CharacterInfoResponse							characterInfo				= null;
+	/**
+	 * Character account balance from the AccountBalanceResponse CCP api call. This can apply to Pilots and
+	 * Corportations.
+	 */
 	private double														accountBalance			= 0.0;
+	/**
+	 * State of this character. The use can deactivate the character so it is removed from the update lists even
+	 * the current data is still visible.
+	 */
+	private final boolean											active							= true;
 
 	// - T R A N S I E N T   D A T A
-	protected transient Instant								lastCCPAccessTime		= null;
-	protected transient Instant								assetsCacheTime			= null;
+	private transient Instant									lastCCPAccessTime		= null;
+	private transient ArrayList<Property>			locationRoles				= null;
+	private transient HashMap<Long, Property>	actions4Character		= null;
+	private transient Instant									assetsCacheTime			= null;
+
 	@JsonIgnore
 	protected transient AssetsManager					assetsManager				= null;
 	protected transient Instant								blueprintsCacheTime	= null;
@@ -171,14 +195,11 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	@JsonIgnore
 	protected transient ArrayList<Job>				jobList							= null;
 	protected transient Instant								marketCacheTime			= null;
-	@JsonIgnore
-	private transient ArrayList<Property>			locationRoles				= null;
-	@JsonIgnore
-	private transient HashMap<Long, Property>	actions4Character		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
 		lastCCPAccessTime = Instant.now();
+		assetsCacheTime = Instant.now();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -309,7 +330,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
 
-	public abstract void downloadAssets();
+	//	public abstract void downloadAssets();
 
 	public abstract void downloadBlueprints();
 
@@ -494,9 +515,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * @return
 	 */
 	public EDataBlock needsUpdate() {
-		if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.HOURS1)) return EDataBlock.CHARACTERDATA;
-		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
-		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
+		if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.NOW)) return EDataBlock.CHARACTERDATA;
+		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
+		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		if (AppConnector.checkExpiration(assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
 		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
@@ -564,6 +585,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		characterID = newid;
 	}
 
+	public void setInfo(final CharacterInfoResponse inforesponse) {
+		characterInfo = inforesponse;
+	}
+
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComCharacter [");
@@ -574,7 +599,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return buffer.toString();
 	}
 
+	public void updateAssetsAccesscacheTime(final Date newCacheTime) {
+		assetsCacheTime = new Instant(newCacheTime);
+	}
+
 	public abstract void updateCharacterInfo();
+
+	public void updateLastAccess(final Date cachedUntil) {
+		lastCCPAccessTime = new Instant(cachedUntil);
+	}
 
 	/**
 	 * Updates the list of assets, regions and locations from the database. This code will initialize the
@@ -734,6 +767,55 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return newMarketOrder;
 	}
 
+	//	/**
+	//	 * Processes an asset and all their children. This method converts from a API record to a database asset
+	//	 * record.
+	//	 * 
+	//	 * @param eveAsset
+	//	 */
+	//	protected void processAsset(final Asset eveAsset, final NeoComAsset parent) {
+	//		final NeoComAsset myasset = this.convert2Asset(eveAsset);
+	//		if (null != parent) {
+	//			myasset.setParent(parent);
+	//			myasset.setParentContainer(parent);
+	//			// Set the location to the parent's location is not set.
+	//			if (myasset.getLocationID() == -1) {
+	//				myasset.setLocationID(parent.getLocationID());
+	//			}
+	//		}
+	//		// Only search names for containers and ships.
+	//		if (myasset.isShip()) {
+	//			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+	//		}
+	//		if (myasset.isContainer()) {
+	//			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+	//		}
+	//		try {
+	//			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+	//			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
+	//			if (children.size() > 0) {
+	//				myasset.setContainer(true);
+	//			}
+	//			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
+	//				myasset.setShip(true);
+	//			}
+	//			assetDao.create(myasset);
+	//
+	//			// Process all the children and convert them to assets.
+	//			if (children.size() > 0) {
+	//				for (final Asset childAsset : children) {
+	//					this.processAsset(childAsset, myasset);
+	//				}
+	//			}
+	//			NeoComCharacter.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+	//			//			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
+	//		} catch (final SQLException sqle) {
+	//			NeoComCharacter.logger
+	//					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
+	//			sqle.printStackTrace();
+	//		}
+	//	}
+
 	protected String downloadAssetEveName(final long assetID) {
 		// Wait up to one second to avoid request rejections from CCP.
 		try {
@@ -757,53 +839,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return null;
 	}
 
-	/**
-	 * Processes an asset and all their children. This method converts from a API record to a database asset
-	 * record.
-	 * 
-	 * @param eveAsset
-	 */
-	protected void processAsset(final Asset eveAsset, final NeoComAsset parent) {
-		final NeoComAsset myasset = this.convert2Asset(eveAsset);
-		if (null != parent) {
-			myasset.setParent(parent);
-			myasset.setParentContainer(parent);
-			// Set the location to the parent's location is not set.
-			if (myasset.getLocationID() == -1) {
-				myasset.setLocationID(parent.getLocationID());
-			}
-		}
-		// Only search names for containers and ships.
-		if (myasset.isShip()) {
-			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
-		}
-		if (myasset.isContainer()) {
-			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
-		}
-		try {
-			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
-			if (children.size() > 0) {
-				myasset.setContainer(true);
-			}
-			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
-				myasset.setShip(true);
-			}
-			assetDao.create(myasset);
-
-			// Process all the children and convert them to assets.
-			if (children.size() > 0) {
-				for (final Asset childAsset : children) {
-					this.processAsset(childAsset, myasset);
-				}
-			}
-			NeoComCharacter.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
-			//			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
-		} catch (final SQLException sqle) {
-			NeoComCharacter.logger
-					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
-			sqle.printStackTrace();
-		}
+	protected CharacterInfoResponse getCharacterInfo() {
+		return characterInfo;
 	}
 
 	protected ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {
@@ -938,12 +975,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return (ArrayList<NeoComAsset>) accountList;
 	}
 
-	private Instant getAssetsCacheTime() {
-		if (null == assetsCacheTime) {
-			assetsCacheTime = new Instant(0);
-		}
-		return assetsCacheTime;
-	}
+	//	private Instant getAssetsCacheTime() {
+	//		if (null == assetsCacheTime) {
+	//			assetsCacheTime = new Instant().now();
+	//		}
+	//		return assetsCacheTime;
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................

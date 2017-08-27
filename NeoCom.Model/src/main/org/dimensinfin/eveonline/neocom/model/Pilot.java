@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -19,13 +18,13 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.jsonviews.PilotView;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
-import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
@@ -35,18 +34,15 @@ import com.beimin.eveapi.parser.pilot.BlueprintsParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.IndustryJobsParser;
 import com.beimin.eveapi.parser.pilot.MarketOrdersParser;
-import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
-import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
-import com.fasterxml.jackson.annotation.JsonView;
 import com.j256.ormlite.dao.Dao;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -58,11 +54,13 @@ public class Pilot extends NeoComCharacter {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - T R A N S I E N T   D A T A
-	@JsonView(PilotView.DetailedView.class)
+	//	@JsonView(PilotView.DetailedView.class)
+	/** Pilot data information complementary from the CharacterSheetResponse CCP api call. */
 	private CharacterSheetResponse				characterSheet		= null;
-	@JsonView(PilotView.DetailedView.class)
+	//	@JsonView(PilotView.DetailedView.class)
+	/** Pilot skill queue from the SkillQueueResponse CCP api call. */
 	private transient Set<SkillQueueItem>	skills						= null;
-	@JsonView(PilotView.DetailedView.class)
+	//	@JsonView(PilotView.DetailedView.class)
 	private SkillInTrainingResponse				skillInTraining		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -117,73 +115,74 @@ public class Pilot extends NeoComCharacter {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		//TODO Variant insertion still not defined at Generators.
-		if (variant == ENeoComVariants.CAPSULEER_LIST.name()) {
-			//			results.add(this);
+		if (variant == ENeoComVariants.PILOT_DETAILS.name()) {
+			// Add the Managers that apply to this Pilot
+			results.add(new AssetsManager(this));
+			results.add(new PlanetaryManager(this));
 		}
 		return results;
 	}
 
-	/**
-	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
-	 * parser. This requires then that the cache verification and other cache tasks be performed locally to
-	 * avoid downloading the same information multiple times.<br>
-	 * Cache expiration is of 6 hours but we will set it up to 3.<br>
-	 * After verification we have to update the list, we then fire the events to signal asset list modification
-	 * to any dependent data structures or UI objects that may be showing this information.<br>
-	 * This update mechanism may require reading the last known state of the assets list from the sdcard file
-	 * storage. This information is not stored automatically with the character information to speed up the
-	 * initialization process and is loading only when needed and this data should be accessed. This is an
-	 * special case because the assets downloaded are being written to a special set of records in the User
-	 * database. Then, after the download terminates the database is updated to move those assets to the right
-	 * character. It is supposed that this is performed in the background and that while we are doing this the
-	 * uses has access to an older set of assets. New implementation. With the use of the eveapi library there
-	 * is no need to use the URL to locate and download the assets. We use the eveapi locator and parser to get
-	 * the data structures used to generate and store the assets into the local database. We first clear any
-	 * database records not associated to any owner, the add records for a generic owner and finally change the
-	 * owner to this character.
-	 */
-	@Override
-	@SuppressWarnings("rawtypes")
-	public synchronized void downloadAssets() {
-		Pilot.logger.info(">> EveChar.updateAssets");
-		try {
-			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
-			PilotAssetListParser parser = new PilotAssetListParser();
-			AssetListResponse response = parser.getResponse(this.getAuthorization());
-			if (null != response) {
-				List<Asset> assets = response.getAll();
-				assetsCacheTime = new Instant(response.getCachedUntil());
-				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets) {
-					try {
-						this.processAsset(eveAsset, null);
-					} catch (final Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-			}
-			//			}
-			AppConnector.getDBConnector().replaceAssets(this.getCharacterID());
-
-			// Update the caching time to the time set by the eveapi.
-			assetsCacheTime = new Instant(response.getCachedUntil());
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		} catch (final Exception ex) {
-			ex.printStackTrace();
-		}
-		// Clean all user structures invalid after the reload of the assets.
-		assetsManager = null;
-		//		totalAssets = -1;
-		//		clearTimers();
-		//		JobManager.clearCache();
-
-		this.setDirty(true);
-		this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
-		Pilot.logger.info("<< EveChar.updateAssets");
-	}
+	//	/**
+	//	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
+	//	 * parser. This requires then that the cache verification and other cache tasks be performed locally to
+	//	 * avoid downloading the same information multiple times.<br>
+	//	 * Cache expiration is of 6 hours but we will set it up to 3.<br>
+	//	 * After verification we have to update the list, we then fire the events to signal asset list modification
+	//	 * to any dependent data structures or UI objects that may be showing this information.<br>
+	//	 * This update mechanism may require reading the last known state of the assets list from the sdcard file
+	//	 * storage. This information is not stored automatically with the character information to speed up the
+	//	 * initialization process and is loading only when needed and this data should be accessed. This is an
+	//	 * special case because the assets downloaded are being written to a special set of records in the User
+	//	 * database. Then, after the download terminates the database is updated to move those assets to the right
+	//	 * character. It is supposed that this is performed in the background and that while we are doing this the
+	//	 * uses has access to an older set of assets. New implementation. With the use of the eveapi library there
+	//	 * is no need to use the URL to locate and download the assets. We use the eveapi locator and parser to get
+	//	 * the data structures used to generate and store the assets into the local database. We first clear any
+	//	 * database records not associated to any owner, the add records for a generic owner and finally change the
+	//	 * owner to this character.
+	//	 */
+	//	@Override
+	//	@SuppressWarnings("rawtypes")
+	//	public synchronized void downloadAssets() {
+	//		Pilot.logger.info(">> [Pilot.downloadAssets]");
+	//		try {
+	//			// Clear any previous record with owner -1 from database.
+	//			AppConnector.getDBConnector().clearInvalidRecords();
+	//			PilotAssetListParser parser = new PilotAssetListParser();
+	//			AssetListResponse response = parser.getResponse(this.getAuthorization());
+	//			if (null != response) {
+	//				List<Asset> assets = response.getAll();
+	//				assetsCacheTime = new Instant(response.getCachedUntil());
+	//				// Assets may be parent of other assets so process them recursively.
+	//				for (final Asset eveAsset : assets) {
+	//					try {
+	//						this.processAsset(eveAsset, null);
+	//					} catch (final Exception ex) {
+	//						ex.printStackTrace();
+	//					}
+	//				}
+	//			}
+	//			//			}
+	//			AppConnector.getDBConnector().replaceAssets(this.getCharacterID());
+	//
+	//			// Update the caching time to the time set by the eveapi.
+	//			assetsCacheTime = new Instant(response.getCachedUntil());
+	//		} catch (final ApiException apie) {
+	//			apie.printStackTrace();
+	//		} catch (final Exception ex) {
+	//			ex.printStackTrace();
+	//		}
+	//		// Clean all user structures invalid after the reload of the assets.
+	//		assetsManager = null;
+	//		//		totalAssets = -1;
+	//		//		clearTimers();
+	//		//		JobManager.clearCache();
+	//
+	//		this.setDirty(true);
+	//		this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
+	//		Pilot.logger.info("<< EveChar.updateAssets");
+	//	}
 
 	/**
 	 * Download the blueprint list for this character from CCP using the new API over the eveapi library and
@@ -321,7 +320,7 @@ public class Pilot extends NeoComCharacter {
 	}
 
 	public String getLastKnownLocation() {
-		return characterInfo.getLastKnownLocation();
+		return this.getCharacterInfo().getLastKnownLocation();
 	}
 
 	public int getSkillLevel(final int skillID) {
@@ -386,10 +385,9 @@ public class Pilot extends NeoComCharacter {
 			if (null != skillresponse) {
 				this.setSkillInTraining(trainingresponse);
 			}
-			// Full list of assets from database.
-			this.accessAllAssets();
+			// Update the last updated timestamp from the CharacterInfoResponse.
+			this.updateLastAccess(sheetresponse.getCachedUntil());
 		} catch (ApiException ex) {
-			// TODO Auto-generated catch block
 			ex.printStackTrace();
 		}
 	}
