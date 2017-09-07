@@ -94,12 +94,12 @@ public class AppConnector {
 		return comparator;
 	}
 
-	public static String getAppFilePath(final int fileresourceid) {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getAppFilePath(fileresourceid);
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-	}
+	//	public static String getAppFilePath(final int fileresourceid) {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.getAppFilePath(fileresourceid);
+	//		else
+	//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
+	//	}
 
 	//	public static ICache getCacheConnector() {
 	//		if (null != connection)
@@ -108,12 +108,12 @@ public class AppConnector {
 	//			throw new RuntimeException("Application connector not defined. Functionality 'getCacheConnector' disabled.");
 	//	}
 
-	public static String getAppFilePath(final String fileresourcename) {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getAppFilePath(fileresourcename);
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-	}
+	//	public static String getAppFilePath(final String fileresourcename) {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.getAppFilePath(fileresourcename);
+	//		else
+	//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
+	//	}
 
 	public static ICCPDatabaseConnector getCCPDBConnector() {
 		if (null != AppConnector.connection)
@@ -129,13 +129,13 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getDBConnector' disabled.");
 	}
 
-	public static NeocomPreferences getDefaultSharedPreferences() {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getDefaultSharedPreferences();
-		else
-			throw new RuntimeException(
-					"Application connector not defined. Functionality 'getDefaultSharedPreferences' disabled.");
-	}
+	//	public static NeocomPreferences getDefaultSharedPreferences() {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.getDefaultSharedPreferences();
+	//		else
+	//			throw new RuntimeException(
+	//					"Application connector not defined. Functionality 'getDefaultSharedPreferences' disabled.");
+	//	}
 
 	public static INeoComModelStore getModelStore() {
 		if (null != AppConnector.connection)
@@ -172,12 +172,12 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getStorageConnector' disabled.");
 	}
 
-	public static boolean sdcardAvailable() {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.sdcardAvailable();
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'sdcardAvailable' disabled.");
-	}
+	//	public static boolean sdcardAvailable() {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.sdcardAvailable();
+	//		else
+	//			throw new RuntimeException("Application connector not defined. Functionality 'sdcardAvailable' disabled.");
+	//	}
 
 	public static void setConnector(final IConnector androidApp) {
 		if (null == androidApp) throw new RuntimeException("Required connector is not properly defined.");

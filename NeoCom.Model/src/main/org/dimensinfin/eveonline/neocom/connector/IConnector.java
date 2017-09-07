@@ -15,20 +15,17 @@ public interface IConnector {
 
 	public boolean checkExpiration(final long timestamp, final long window);
 
-	public String getAppFilePath(int fileresourceid);
+	//	public String getAppFilePath(int fileresourceid);
 
-	public String getAppFilePath(String fileresourceid);
+	//	public String getAppFilePath(String fileresourceid);
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public ICCPDatabaseConnector getCCPDBConnector();
 
 	public IDatabaseConnector getDBConnector();
 
-	public NeocomPreferences getDefaultSharedPreferences();
+	//	public NeocomPreferences getDefaultSharedPreferences();
 
 	public INeoComModelStore getModelStore();
-
-	//	public String getResourceString(String reference);
 
 	public String getResourceString(int reference);
 
@@ -36,7 +33,7 @@ public interface IConnector {
 
 	public IStorageConnector getStorageConnector();
 
-	public boolean sdcardAvailable();
+	//	public boolean sdcardAvailable();
 }
 
 // - UNUSED CODE ............................................................................................

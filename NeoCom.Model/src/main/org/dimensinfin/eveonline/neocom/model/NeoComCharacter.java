@@ -158,43 +158,42 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the delegated core eveapi Character */
 
-	//	@JsonIgnore
 	/** Reference to the key that generated this character on the first place. */
-	private transient NeoComApiKey						apikey							= null;
-	//	@JsonIgnore
-	private ApiAuthorization									authorization				= null;
-	private long															characterID					= -1;
+	private transient NeoComApiKey			apikey							= null;
+	@JsonIgnore
+	private ApiAuthorization						authorization				= null;
+	private long												characterID					= -1;
 	/** Reference to the original eveapi Character data. */
-	private Character													delegatedCharacter	= null;
+	public Character										delegatedCharacter	= null;
 	/**
 	 * Character detailed information from the CharacterInfoResponse CCP api call. This can apply to Pilots and
 	 * Corportations.
 	 */
-	private CharacterInfoResponse							characterInfo				= null;
+	public CharacterInfoResponse				characterInfo				= null;
 	/**
 	 * Character account balance from the AccountBalanceResponse CCP api call. This can apply to Pilots and
 	 * Corportations.
 	 */
-	private double														accountBalance			= 0.0;
+	public double												accountBalance			= 0.0;
 	/**
 	 * State of this character. The use can deactivate the character so it is removed from the update lists even
 	 * the current data is still visible.
 	 */
-	private final boolean											active							= true;
+	private final boolean								active							= true;
 
 	// - T R A N S I E N T   D A T A
-	private transient Instant									lastCCPAccessTime		= null;
-	private transient ArrayList<Property>			locationRoles				= null;
-	private transient HashMap<Long, Property>	actions4Character		= null;
-	private transient Instant									assetsCacheTime			= null;
+	private transient Instant						lastCCPAccessTime		= null;
+	public ArrayList<Property>					locationRoles				= null;
+	public HashMap<Long, Property>			actions4Character		= null;
+	private transient Instant						assetsCacheTime			= null;
 
 	@JsonIgnore
-	protected transient AssetsManager					assetsManager				= null;
-	protected transient Instant								blueprintsCacheTime	= null;
-	protected transient Instant								jobsCacheTime				= null;
+	protected transient AssetsManager		assetsManager				= null;
+	protected transient Instant					blueprintsCacheTime	= null;
+	protected transient Instant					jobsCacheTime				= null;
 	@JsonIgnore
-	protected transient ArrayList<Job>				jobList							= null;
-	protected transient Instant								marketCacheTime			= null;
+	protected transient ArrayList<Job>	jobList							= null;
+	protected transient Instant					marketCacheTime			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
