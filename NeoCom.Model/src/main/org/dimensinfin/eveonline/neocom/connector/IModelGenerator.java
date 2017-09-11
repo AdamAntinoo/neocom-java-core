@@ -10,6 +10,7 @@
 package org.dimensinfin.eveonline.neocom.connector;
 
 import org.dimensinfin.core.model.RootNode;
+import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IModelGenerator {

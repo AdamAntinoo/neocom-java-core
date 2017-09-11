@@ -17,6 +17,8 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.industry.Job;
+import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 

@@ -1,16 +1,18 @@
 //	PROJECT:      NeoCom.model (NEOC.M)
 //	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
+//	COPYRIGHT:    (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:	Java 1.8 Library.
 //	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
 //								available databases.
 //								This version includes the access to the latest 6.x version of eveapi libraries to
 //								download ad parse the CCP XML API data.
 //								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.generator;
+package org.dimensinfin.eveonline.neocom.core;
 
+//- IMPORT SECTION .........................................................................................
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -24,7 +26,8 @@ import java.util.ArrayList;
 public class DataSourceLocator implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long				serialVersionUID	= -9208786809602219002L;
-	private static final Object			SEPARATOR					= '/';
+	private static Logger						logger						= Logger.getLogger("DataSourceLocator");
+	private static final char				SEPARATOR					= '/';
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private final ArrayList<String>	identifiers				= new ArrayList<String>();

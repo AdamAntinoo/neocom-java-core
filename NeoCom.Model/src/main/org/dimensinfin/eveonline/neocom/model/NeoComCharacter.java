@@ -25,8 +25,12 @@ import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
+import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.market.MarketOrderAnalyticalGroup;
+import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
+import org.dimensinfin.eveonline.neocom.market.ScheduledSellsAnalyticalGroup;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 

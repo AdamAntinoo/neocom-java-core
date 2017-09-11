@@ -3,7 +3,7 @@
 //	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.market;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
@@ -16,8 +16,9 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
+import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
+import org.dimensinfin.eveonline.neocom.model.AnalyticalGroup;
 
 import com.beimin.eveapi.model.shared.MarketOrder;
 
@@ -73,8 +74,9 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
 			locations.put(newOrder.getOrderLocationID(), hit);
-		} else
+		} else {
 			hit.add(newOrder);
+		}
 	}
 
 	/**
@@ -89,13 +91,17 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		// If the groups has no elements then check the flag to determinate if it is shown or not.
-		if (this.isRenderWhenEmpty()) results.add(this);
+		if (this.isRenderWhenEmpty()) {
+			results.add(this);
+		}
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
 		Vector<AbstractPropertyChanger> orders = this.aggregate(this.getChildren());
-		Collections.sort(orders, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
+		Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractPropertyChanger node : orders)
-			if (node instanceof NeoComMarketOrder) results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
+			if (node instanceof NeoComMarketOrder) {
+				results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
+			}
 		return results;
 	}
 
@@ -151,10 +157,11 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements INeoC
 			if (node instanceof MarketOrder) {
 				final NeoComMarketOrder order = (NeoComMarketOrder) node;
 				final NeoComMarketOrder hit = datamap.get(new Integer(order.getItemTypeID()));
-				if (null == hit)
+				if (null == hit) {
 					datamap.put(new Integer(order.getItemTypeID()), order);
-				else
+				} else {
 					hit.setVolEntered(hit.getVolEntered() + order.getVolEntered());
+				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
 		return new Vector<AbstractPropertyChanger>(datamap.values());

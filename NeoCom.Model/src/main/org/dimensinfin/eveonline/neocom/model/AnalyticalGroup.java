@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.IWeigthedNode;
+import org.dimensinfin.eveonline.neocom.interfaces.IWeigthedNode;
 
 /**
  * The requirements of model objects to be nodes has to review the implementation of simple nodes that only

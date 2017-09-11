@@ -7,7 +7,7 @@
 //									This version includes the access to the latest 6.x version of eveapi libraries to
 //									download ad parse the CCP XML API data.
 //									Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.factory;
+package org.dimensinfin.eveonline.neocom.core;
 
 import java.util.Comparator;
 // - IMPORT SECTION .........................................................................................
@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractPropertyChanger;
-import org.dimensinfin.eveonline.neocom.core.IWeigthedNode;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
+import org.dimensinfin.eveonline.neocom.industry.JobQueue;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.JobQueue;
+import org.dimensinfin.eveonline.neocom.interfaces.IWeigthedNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

@@ -3,7 +3,7 @@
 //	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.market;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
@@ -14,9 +14,11 @@ import java.util.Vector;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
+import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.Separator;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -48,14 +50,14 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 		super.addChild(newOrder);
 
 		// Recalculate analytical data from the order api methods.
-		this.budget += newOrder.getItem().getHighestBuyerPrice().getPrice() * newOrder.getQuantity();
-		this.volume += newOrder.getItem().getVolume() * newOrder.getQuantity();
-		this.quantity += newOrder.getQuantity();
-		Vector<AbstractGEFNode> hit = this.locations.get(newOrder.getItem().getHighestBuyerPrice().getLocation().getID());
+		budget += newOrder.getItem().getHighestBuyerPrice().getPrice() * newOrder.getQuantity();
+		volume += newOrder.getItem().getVolume() * newOrder.getQuantity();
+		quantity += newOrder.getQuantity();
+		Vector<AbstractGEFNode> hit = locations.get(newOrder.getItem().getHighestBuyerPrice().getLocation().getID());
 		if (null == hit) {
 			hit = new Vector<AbstractGEFNode>();
 			hit.add(newOrder);
-			this.locations.put(newOrder.getItem().getHighestBuyerPrice().getLocation().getID(), hit);
+			locations.put(newOrder.getItem().getHighestBuyerPrice().getLocation().getID(), hit);
 		} else {
 			hit.add(newOrder);
 		}
@@ -65,17 +67,17 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 	public ArrayList<AbstractGEFNode> collaborate2Model() {
 		final ArrayList<AbstractGEFNode> results = new ArrayList<AbstractGEFNode>();
 		results.add(this);
-		for (final IGEFNode node : getChildren())
+		for (final IGEFNode node : this.getChildren())
 			if (node instanceof Resource) {
 				final Resource order = (Resource) node;
 				// Get the type and the location to classify.
 				final EveLocation location = order.getItem().getHighestBuyerPrice().getLocation();
 				final int type = order.getTypeID();
-				classifyOrder(order, type, location);
+				this.classifyOrder(order, type, location);
 			}
 		// Now get the regions and move the parts to the result in the right order.
-		final ArrayList<AbstractGEFNode> regionNames = new ArrayList<AbstractGEFNode>(this.regions.values());
-		Collections.sort(regionNames, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
+		final ArrayList<AbstractGEFNode> regionNames = new ArrayList<AbstractGEFNode>(regions.values());
+		Collections.sort(regionNames, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractGEFNode region : regionNames) {
 			results.add(region);
 			// Now add the depending item in the order but with their own rules.
@@ -84,7 +86,7 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 			for (IGEFNode node : v) {
 				orders.add((AbstractPropertyChanger) node);
 			}
-			Collections.sort(orders, AppConnector.createComparator(ModelWideConstants.comparators.COMPARATOR_NAME));
+			Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 			for (final AbstractPropertyChanger node : orders)
 				if (node instanceof Resource) {
 					results.addAll(((Resource) node).collaborate2Model());
@@ -102,10 +104,10 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 	 */
 	private void classifyOrder(final Resource order, final int type, final EveLocation location) {
 		final String locRegion = location.getRegion();
-		Separator hitRegion = this.regions.get(locRegion);
+		Separator hitRegion = regions.get(locRegion);
 		if (null == hitRegion) {
 			hitRegion = new Separator(locRegion);
-			this.regions.put(locRegion, hitRegion);
+			regions.put(locRegion, hitRegion);
 		}
 		hitRegion.addChild(order);
 	}

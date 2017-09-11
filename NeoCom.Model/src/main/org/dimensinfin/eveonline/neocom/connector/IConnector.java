@@ -6,14 +6,14 @@
 
 package org.dimensinfin.eveonline.neocom.connector;
 
-import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
+import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IConnector {
 
 	public void addCharacterUpdateRequest(long characterID);
 
-	public boolean checkExpiration(final long timestamp, final long window);
+	//	public boolean checkExpiration(final long timestamp, final long window);
 
 	//	public String getAppFilePath(int fileresourceid);
 
@@ -27,7 +27,7 @@ public interface IConnector {
 
 	public INeoComModelStore getModelStore();
 
-	public String getResourceString(int reference);
+	//	public String getResourceString(int reference);
 
 	public IConnector getSingleton();
 

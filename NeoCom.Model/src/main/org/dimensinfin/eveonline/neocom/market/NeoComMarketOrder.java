@@ -4,7 +4,7 @@
 //	ENVIRONMENT:		JRE 1.7.
 //	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
 
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.market;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +13,8 @@ import java.util.Date;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.INamed;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

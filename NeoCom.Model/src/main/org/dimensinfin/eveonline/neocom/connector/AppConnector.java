@@ -9,12 +9,9 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.util.Comparator;
+import java.util.GregorianCalendar;
 
-import org.dimensinfin.core.model.AbstractPropertyChanger;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.INeoComModelStore;
-import org.dimensinfin.eveonline.neocom.interfaces.INamed;
+import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 
@@ -56,64 +53,25 @@ public class AppConnector {
 		return AppConnector.checkExpiration(timestamp.getMillis(), window);
 	}
 
+	/**
+	 * Checks that the current parameter timestamp is still on the frame of the window.
+	 * 
+	 * @param timestamp
+	 *          the current and last timestamp of the object.
+	 * @param window
+	 *          time span window in milliseconds.
+	 */
 	public static boolean checkExpiration(final long timestamp, final long window) {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.checkExpiration(timestamp, window);
+		if (0 == timestamp) return true;
+		final long now = GregorianCalendar.getInstance().getTimeInMillis();
+		final long endWindow = timestamp + window;
+		if (now < endWindow)
+			return false;
 		else
-			throw new RuntimeException("Application connector not defined. Functionality 'checkExpiration' disabled.");
+			return true;
 	}
-
-	public static Comparator<AbstractPropertyChanger> createComparator(final int code) {
-		Comparator<AbstractPropertyChanger> comparator = new Comparator<AbstractPropertyChanger>() {
-			public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
-				return 0;
-			}
-		};
-		switch (code) {
-			case ModelWideConstants.comparators.COMPARATOR_NAME:
-				comparator = new Comparator<AbstractPropertyChanger>() {
-					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
-						String leftField = null;
-						String rightField = null;
-						if (left instanceof INamed) {
-							leftField = ((INamed) left).getOrderingName();
-						}
-						if (right instanceof INamed) {
-							rightField = ((INamed) right).getOrderingName();
-						}
-
-						if (null == leftField) return 1;
-						if (null == rightField) return -1;
-						if ("" == leftField) return 1;
-						if ("" == rightField) return -1;
-						return leftField.compareTo(rightField);
-					}
-				};
-				break;
-		}
-		return comparator;
-	}
-
-	//	public static String getAppFilePath(final int fileresourceid) {
-	//		if (null != AppConnector.connection)
-	//			return AppConnector.connection.getAppFilePath(fileresourceid);
-	//		else
-	//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-	//	}
-
-	//	public static ICache getCacheConnector() {
-	//		if (null != connection)
-	//			return connection.getCacheConnector();
-	//		else
-	//			throw new RuntimeException("Application connector not defined. Functionality 'getCacheConnector' disabled.");
-	//	}
-
-	//	public static String getAppFilePath(final String fileresourcename) {
-	//		if (null != AppConnector.connection)
-	//			return AppConnector.connection.getAppFilePath(fileresourcename);
-	//		else
-	//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-	//	}
+	//[03]
+	//[01]
 
 	public static ICCPDatabaseConnector getCCPDBConnector() {
 		if (null != AppConnector.connection)
@@ -129,33 +87,11 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getDBConnector' disabled.");
 	}
 
-	//	public static NeocomPreferences getDefaultSharedPreferences() {
-	//		if (null != AppConnector.connection)
-	//			return AppConnector.connection.getDefaultSharedPreferences();
-	//		else
-	//			throw new RuntimeException(
-	//					"Application connector not defined. Functionality 'getDefaultSharedPreferences' disabled.");
-	//	}
-
 	public static INeoComModelStore getModelStore() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getModelStore();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
-	}
-
-	//	public static String getResourceString(final String reference) {
-	//		if (null != AppConnector.connection)
-	//			return AppConnector.connection.getResourceString(reference);
-	//		else
-	//			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
-	//	}
-
-	public static String getResourceString(final int reference) {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getResourceString(reference);
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
 	}
 
 	public static IConnector getSingleton() {
@@ -171,13 +107,6 @@ public class AppConnector {
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getStorageConnector' disabled.");
 	}
-
-	//	public static boolean sdcardAvailable() {
-	//		if (null != AppConnector.connection)
-	//			return AppConnector.connection.sdcardAvailable();
-	//		else
-	//			throw new RuntimeException("Application connector not defined. Functionality 'sdcardAvailable' disabled.");
-	//	}
 
 	public static void setConnector(final IConnector androidApp) {
 		if (null == androidApp) throw new RuntimeException("Required connector is not properly defined.");
@@ -201,3 +130,82 @@ public class AppConnector {
 }
 
 // - UNUSED CODE ............................................................................................
+//[01]
+//	public static String getAppFilePath(final int fileresourceid) {
+//		if (null != AppConnector.connection)
+//			return AppConnector.connection.getAppFilePath(fileresourceid);
+//		else
+//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
+//	}
+
+//	public static ICache getCacheConnector() {
+//		if (null != connection)
+//			return connection.getCacheConnector();
+//		else
+//			throw new RuntimeException("Application connector not defined. Functionality 'getCacheConnector' disabled.");
+//	}
+
+//	public static String getAppFilePath(final String fileresourcename) {
+//		if (null != AppConnector.connection)
+//			return AppConnector.connection.getAppFilePath(fileresourcename);
+//		else
+//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
+//	}
+//[02]
+//	public static String getResourceString(final String reference) {
+//		if (null != AppConnector.connection)
+//			return AppConnector.connection.getResourceString(reference);
+//		else
+//			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
+//	}
+
+//public static String getResourceString(final int reference) {
+//	if (null != AppConnector.connection)
+//		return AppConnector.connection.getResourceString(reference);
+//	else
+//		throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
+//}
+//	public static NeocomPreferences getDefaultSharedPreferences() {
+//		if (null != AppConnector.connection)
+//			return AppConnector.connection.getDefaultSharedPreferences();
+//		else
+//			throw new RuntimeException(
+//					"Application connector not defined. Functionality 'getDefaultSharedPreferences' disabled.");
+//	}
+//	public static boolean sdcardAvailable() {
+//		if (null != AppConnector.connection)
+//			return AppConnector.connection.sdcardAvailable();
+//		else
+//			throw new RuntimeException("Application connector not defined. Functionality 'sdcardAvailable' disabled.");
+//	}
+//[03]
+//	public static Comparator<AbstractPropertyChanger> createComparator(final int code) {
+//		Comparator<AbstractPropertyChanger> comparator = new Comparator<AbstractPropertyChanger>() {
+//			public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+//				return 0;
+//			}
+//		};
+//		switch (code) {
+//			case ModelWideConstants.comparators.COMPARATOR_NAME:
+//				comparator = new Comparator<AbstractPropertyChanger>() {
+//					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+//						String leftField = null;
+//						String rightField = null;
+//						if (left instanceof INamed) {
+//							leftField = ((INamed) left).getOrderingName();
+//						}
+//						if (right instanceof INamed) {
+//							rightField = ((INamed) right).getOrderingName();
+//						}
+//
+//						if (null == leftField) return 1;
+//						if (null == rightField) return -1;
+//						if ("" == leftField) return 1;
+//						if ("" == rightField) return -1;
+//						return leftField.compareTo(rightField);
+//					}
+//				};
+//				break;
+//		}
+//		return comparator;
+//	}

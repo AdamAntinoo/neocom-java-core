@@ -7,16 +7,16 @@
 //								This version includes the access to the latest 6.x version of eveapi libraries to
 //								download ad parse the CCP XML API data.
 //								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.manager;
+package org.dimensinfin.eveonline.neocom.generator;
 
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.DataSourceLocator;
 import org.dimensinfin.eveonline.neocom.connector.IModelGenerator;
+import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ModelGeneratorManager {
+public class ModelGeneratorStore {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger																	logger		= Logger.getLogger("ModelGeneratorManager");
 	private static final HashMap<String, IModelGenerator>	adapters	= new HashMap<String, IModelGenerator>();
@@ -24,12 +24,12 @@ public class ModelGeneratorManager {
 	public static IModelGenerator registerGenerator(final IModelGenerator newGenerator) {
 		DataSourceLocator locator = newGenerator.getDataSourceLocator();
 		// Search for locator on cache.
-		IModelGenerator found = ModelGeneratorManager.adapters.get(locator.getIdentity());
+		IModelGenerator found = ModelGeneratorStore.adapters.get(locator.getIdentity());
 		// REFACTOR Code to remove caching from the Model generator
 		found = null;
 		if (null == found) {
-			ModelGeneratorManager.adapters.put(locator.getIdentity(), newGenerator);
-			ModelGeneratorManager.logger
+			ModelGeneratorStore.adapters.put(locator.getIdentity(), newGenerator);
+			ModelGeneratorStore.logger
 					.info("-- [ModelGeneratorManager.registerGenerator]> Registering new Generator: " + locator.getIdentity());
 			//			// Connect the Generator to the Manager.
 			//			newGenerator.connect(this);

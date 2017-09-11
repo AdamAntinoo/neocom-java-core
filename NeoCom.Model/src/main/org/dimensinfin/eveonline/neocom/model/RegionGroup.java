@@ -21,8 +21,9 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
-import org.dimensinfin.eveonline.neocom.factory.ComparatorFactory;
+import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

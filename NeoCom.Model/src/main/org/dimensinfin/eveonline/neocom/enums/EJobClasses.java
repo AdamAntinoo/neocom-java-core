@@ -3,15 +3,20 @@
 //	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		Android API11.
 //	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
-package org.dimensinfin.eveonline.neocom.core;
+
+package org.dimensinfin.eveonline.neocom.enums;
 
 // - IMPORT SECTION .........................................................................................
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface IWeigthedNode {
-	public int getWeight();
+public enum EJobClasses {
+	MANUFACTURE, INVENTION, TIMERESEARCH, MATERIALRESEARCH, COPYING;
 
-	public void setWeight(final int weight);
+	public static EJobClasses decodeActivity(final int activityID) {
+		if (activityID == 1) return MANUFACTURE;
+		if (activityID == 8) return INVENTION;
+		return MANUFACTURE;
+	}
 }
 
 // - UNUSED CODE ............................................................................................
