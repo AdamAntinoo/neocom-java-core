@@ -16,14 +16,14 @@ import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PilotRoasterModelGenerator extends AbstractGenerator implements IModelGenerator {
+public class PilotRoasterGenerator extends AbstractGenerator implements IModelGenerator {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private String _login = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotRoasterModelGenerator(final DataSourceLocator locator, final String variant, final String login) {
+	public PilotRoasterGenerator(final DataSourceLocator locator, final String variant, final String login) {
 		super(locator, variant);
 		_login = login;
 	}
