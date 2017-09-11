@@ -7,29 +7,11 @@
 //									This version includes the access to the latest 6.x version of eveapi libraries to
 //									download ad parse the CCP XML API data.
 //									Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.core;
-
-import java.util.List;
-
-import org.dimensinfin.core.model.IModelStore;
-import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+package org.dimensinfin.eveonline.neocom.constant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface INeoComModelStore extends IModelStore {
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public void activatePilot(long characterID);
-
-	public List<NeoComCharacter> getActiveCharacters();
-
-	public List<NeoComApiKey> getApiKeys();
-
-	public NeoComCharacter getCurrentPilot();
-
-	public String getLoginIdentifier();
-
-	//	public void setCurrentPilot(NeoComCharacter pilot);
+public enum ENeoComVariants {
+	CAPSULEER_LIST, PILOT_DETAILS
 }
 
 // - UNUSED CODE ............................................................................................

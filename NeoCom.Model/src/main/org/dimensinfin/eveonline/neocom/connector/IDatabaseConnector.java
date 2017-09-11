@@ -8,6 +8,7 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
@@ -43,6 +44,8 @@ public interface IDatabaseConnector {
 
 	public Dao<ApiKey, String> getApiKeysDao() throws java.sql.SQLException;
 
+	public List<ApiKey> getApiList4Login(String login);
+
 	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
 
 	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException;
@@ -64,9 +67,9 @@ public interface IDatabaseConnector {
 	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
 
-	public boolean openCCPDataBase();
-
 	//public boolean openDAO();
+
+	public boolean openCCPDataBase();
 
 	public int queryBlueprintDependencies(int bpitemID);
 
@@ -77,6 +80,8 @@ public interface IDatabaseConnector {
 	public void replaceBlueprints(long characterID);
 
 	public void replaceJobs(long characterID);
+
+	public ArrayList<NeoComAsset> searchAllPlanetaryAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 

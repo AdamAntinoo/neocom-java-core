@@ -83,13 +83,13 @@ public class NeoComApiKey extends AbstractComplexNode implements INeoComNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private ApiAuthorization						authorization					= null;
-	private transient ApiKeyInfo				delegatedApiKey				= null;
-	private transient AccountStatus			delegateStatus				= null;
-	private ArrayList<NeoComCharacter>	neocomCharactersCache	= null;
-	private int													key										= -1;
-	private String											validationCode				= "<INVALID>";
-	private Date												cachedUntil						= GregorianCalendar.getInstance().getTime();
+	private ApiAuthorization											authorization					= null;
+	private transient ApiKeyInfo									delegatedApiKey				= null;
+	private transient AccountStatus								delegateStatus				= null;
+	private transient ArrayList<NeoComCharacter>	neocomCharactersCache	= null;
+	private int																		key										= -1;
+	private String																validationCode				= "<INVALID>";
+	private Date																	cachedUntil						= GregorianCalendar.getInstance().getTime();
 	//	private Instant											paidUntil							= new Instant(0);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
