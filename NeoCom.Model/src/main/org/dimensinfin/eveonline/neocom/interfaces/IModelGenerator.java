@@ -7,7 +7,7 @@
 //								This version includes the access to the latest 6.x version of eveapi libraries to
 //								download ad parse the CCP XML API data.
 //								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.connector;
+package org.dimensinfin.eveonline.neocom.interfaces;
 
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;

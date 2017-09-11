@@ -19,15 +19,17 @@ public interface IConnector {
 
 	//	public String getAppFilePath(String fileresourceid);
 
-	public ICCPDatabaseConnector getCCPDBConnector();
+	public ICacheConnector getCacheConnector();
 
-	public IDatabaseConnector getDBConnector();
+	public ICCPDatabaseConnector getCCPDBConnector();
 
 	//	public NeocomPreferences getDefaultSharedPreferences();
 
-	public INeoComModelStore getModelStore();
+	public IDatabaseConnector getDBConnector();
 
 	//	public String getResourceString(int reference);
+
+	public INeoComModelStore getModelStore();
 
 	public IConnector getSingleton();
 

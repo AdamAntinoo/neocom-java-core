@@ -12,8 +12,8 @@ package org.dimensinfin.eveonline.neocom.generator;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.IModelGenerator;
 import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
+import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelGeneratorStore {

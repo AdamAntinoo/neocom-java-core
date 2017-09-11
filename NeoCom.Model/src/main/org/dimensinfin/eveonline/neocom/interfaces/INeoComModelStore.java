@@ -29,6 +29,8 @@ public interface INeoComModelStore extends IModelStore {
 
 	public String getLoginIdentifier();
 
+	public NeoComCharacter searchCharacter(long _locator);
+
 	//	public void setCurrentPilot(NeoComCharacter pilot);
 }
 
