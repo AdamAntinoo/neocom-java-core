@@ -16,6 +16,8 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractManager extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -23,6 +25,8 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 	private static Logger							logger						= Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	public String											jsonClassname			= "AbstractManager";
+	@JsonIgnore
 	private transient NeoComCharacter	pilot							= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................

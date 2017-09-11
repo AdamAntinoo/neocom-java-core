@@ -14,13 +14,14 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PlanetaryManager extends AbstractManager {
+public class PlanetaryManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID				= 3794750126425122302L;
 	private static Logger											logger									= Logger.getLogger("PlanetaryManager");
@@ -33,12 +34,15 @@ public class PlanetaryManager extends AbstractManager {
 	private final HashMap<Long, EveLocation>	locations								= new HashMap<Long, EveLocation>();
 	private final HashMap<Long, NeoComAsset>	containers							= new HashMap<Long, NeoComAsset>();
 	private ArrayList<NeoComAsset>						planetaryAssetList			= new ArrayList<NeoComAsset>();
+	public String															iconName;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryManager(final NeoComCharacter pilot) {
 		super(pilot);
 		// Get all the Planetary assets and classify them into lists.
 		this.accessAllAssets();
+		jsonClassname = "PlanetaryManager";
+		iconName = "planets.png";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -57,6 +61,10 @@ public class PlanetaryManager extends AbstractManager {
 
 	public long getAssetTotalCount() {
 		return planetaryAssetList.size();
+	}
+
+	public String getOrderingName() {
+		return "Planetary Manager";
 	}
 }
 

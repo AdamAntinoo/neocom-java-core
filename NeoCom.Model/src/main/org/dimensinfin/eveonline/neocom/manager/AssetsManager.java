@@ -25,6 +25,7 @@ import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 import org.dimensinfin.eveonline.neocom.model.Container;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -66,7 +67,7 @@ import com.j256.ormlite.stmt.Where;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetsManager extends AbstractManager {
+public class AssetsManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long																serialVersionUID				= -8502099148768297876L;
 	private static Logger																		logger									= Logger.getLogger("AssetsManager");
@@ -105,11 +106,15 @@ public class AssetsManager extends AbstractManager {
 	/** Used during the processing of the assets into the different structures. */
 	private transient HashMap<Long, NeoComAsset>						assetMap								= new HashMap<Long, NeoComAsset>();
 
+	public String																						iconName;
+
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
 		super(pilot);
 		// Reinitialize the list of assets for this pilot.
 		this.accessAllAssets();
+		jsonClassname = "AssetsManager";
+		iconName = "assets.png";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -348,6 +353,10 @@ public class AssetsManager extends AbstractManager {
 		return locations;
 	}
 
+	public String getOrderingName() {
+		return "Assets Manager";
+	}
+
 	/**
 	 * Returns the list of different Regions found on the list of locations.
 	 * 
@@ -363,6 +372,15 @@ public class AssetsManager extends AbstractManager {
 	public ArrayList<NeoComAsset> getShips() {
 		return this.searchAsset4Category("Ship");
 	}
+
+	//	public HashSet<String> queryT2ModuleNames() {
+	//		HashSet<String> names = new HashSet<String>();
+	//		ArrayList<Asset> modules = searchT2Modules();
+	//		for (Asset mod : modules) {
+	//			names.add(mod.getName());
+	//		}
+	//		return names;
+	//	}
 
 	/**
 	 * Checks if that category was requested before and it is on the cache. If found returns that list.
@@ -402,15 +420,6 @@ public class AssetsManager extends AbstractManager {
 
 		return (ArrayList<NeoComAsset>) assetsCategoryList;
 	}
-
-	//	public HashSet<String> queryT2ModuleNames() {
-	//		HashSet<String> names = new HashSet<String>();
-	//		ArrayList<Asset> modules = searchT2Modules();
-	//		for (Asset mod : modules) {
-	//			names.add(mod.getName());
-	//		}
-	//		return names;
-	//	}
 
 	public ArrayList<NeoComAsset> searchAsset4Group(final String group) {
 		//	Select assets for the owner and with an specific category.
@@ -460,14 +469,6 @@ public class AssetsManager extends AbstractManager {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	public NeoComBlueprint searchBlueprintByID(final long assetid) {
-		for (NeoComBlueprint bp : this.getBlueprints()) {
-			String refs = bp.getStackIDRefences();
-			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
-		}
-		return null;
-	}
-
 	//	/**
 	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
 	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
@@ -491,6 +492,14 @@ public class AssetsManager extends AbstractManager {
 	//		if (null == t2blueprints) getPilot().updateBlueprints();
 	//		return t2blueprints;
 	//	}
+
+	public NeoComBlueprint searchBlueprintByID(final long assetid) {
+		for (NeoComBlueprint bp : this.getBlueprints()) {
+			String refs = bp.getStackIDRefences();
+			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
+		}
+		return null;
+	}
 
 	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
@@ -552,6 +561,13 @@ public class AssetsManager extends AbstractManager {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
+
 	/**
 	 * Retrieves from the database all the stacks for an specific item type id. The method stores the results
 	 * into the cache so next accesses will not trigger database access.
@@ -580,13 +596,6 @@ public class AssetsManager extends AbstractManager {
 		stacksByItemCache.put(item.getItemID(), (ArrayList<NeoComAsset>) assetList);
 		return (ArrayList<NeoComAsset>) assetList;
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
 
 	/**
 	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.

@@ -28,6 +28,8 @@ public interface INeoComModelStore extends IModelStore {
 	public NeoComCharacter getCurrentPilot();
 
 	public String getLoginIdentifier();
+
+	//	public void setCurrentPilot(NeoComCharacter pilot);
 }
 
 // - UNUSED CODE ............................................................................................
