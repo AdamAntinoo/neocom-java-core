@@ -4,13 +4,13 @@
 //	ENVIRONMENT:	Java 1.8 Library.
 //	DESCRIPTION:	SQLite database access library. Isolates Neocom database access from any
 //					environment limits.
-package org.dimensinfin.eveonline.neocom.connector;
+package org.dimensinfin.eveonline.neocom.model;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "version")
+@DatabaseTable(tableName = "Version")
 public class DatabaseVersion {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
@@ -22,7 +22,7 @@ public class DatabaseVersion {
 	public DatabaseVersion() {
 	}
 
-	public DatabaseVersion(int newVersion) {
+	public DatabaseVersion(final int newVersion) {
 		versionNumber = newVersion;
 	}
 
@@ -31,7 +31,7 @@ public class DatabaseVersion {
 		return versionNumber;
 	}
 
-	public void setVersionNumber(int versionNumber) {
+	public void setVersionNumber(final int versionNumber) {
 		this.versionNumber = versionNumber;
 	}
 }

@@ -17,11 +17,13 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
+import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
+import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 import org.dimensinfin.eveonline.neocom.planetary.PlanetaryResource;
 import org.dimensinfin.eveonline.neocom.planetary.ResourceList;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
@@ -42,19 +44,19 @@ public interface IDatabaseConnector {
 
 	public void closeDatabases();
 
-	public Dao<ApiKey, String> getApiKeysDao() throws java.sql.SQLException;
+	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
 
 	public List<ApiKey> getApiList4Login(String login);
 
-	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
+	public Dao<NeoComAsset, String> getAssetDAO() throws SQLException;
 
-	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException;
+	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws SQLException;
 
 	public Dao<Job, String> getJobDAO() throws SQLException;
 
-	public Dao<EveLocation, String> getLocationDAO() throws java.sql.SQLException;
+	public Dao<EveLocation, String> getLocationDAO() throws SQLException;
 
-	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException;
+	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 
 	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
@@ -62,12 +64,14 @@ public interface IDatabaseConnector {
 
 	public Dao<ResourceList, String> getResourceListDao() throws SQLException;
 
-	public Dao<DatabaseVersion, String> getVersionDao() throws java.sql.SQLException;
+	public Dao<TimeStamp, String> getTimeStampDAO() throws SQLException;
+
+	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
+
+	//public boolean openDAO();
 
 	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
-
-	//public boolean openDAO();
 
 	public boolean openCCPDataBase();
 

@@ -202,7 +202,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
 		lastCCPAccessTime = Instant.now();
-		assetsCacheTime = Instant.now();
+		//		assetsCacheTime = Instant.now();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -288,7 +288,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public void clean() {
 		assetsManager = null;
 		//		lastCCPAccessTime = null;
-		assetsCacheTime = null;
+		//		assetsCacheTime = null;
 		blueprintsCacheTime = null;
 		jobsCacheTime = null;
 		super.clean();
@@ -602,9 +602,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return buffer.toString();
 	}
 
-	public void updateAssetsAccesscacheTime(final Date newCacheTime) {
-		assetsCacheTime = new Instant(newCacheTime);
-	}
+	//	public void updateAssetsAccesscacheTime(final Date newCacheTime) {
+	//		assetsCacheTime = new Instant(newCacheTime);
+	//	}
 
 	public abstract void updateCharacterInfo();
 

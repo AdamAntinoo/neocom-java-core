@@ -34,7 +34,9 @@ import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
+import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 import org.joda.time.Duration;
+import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
@@ -112,7 +114,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	public AssetsManager(final NeoComCharacter pilot) {
 		super(pilot);
 		// Reinitialize the list of assets for this pilot.
-		this.accessAllAssets();
+		//		this.accessAllAssets();
 		jsonClassname = "AssetsManager";
 		iconName = "assets.png";
 	}
@@ -216,7 +218,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
-				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
+				//				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
 				for (final Asset eveAsset : assets) {
 					this.processAsset(eveAsset, null);
@@ -226,7 +228,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 			AppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
 
 			//				// Update the caching time to the time set by the eveapi.
-			//				assetsCacheTime = new Instant(response.getCachedUntil());
+			String reference = this.getPilot().getCharacterID() + ".ASSETS";
+			new TimeStamp(reference, new Instant(response.getCachedUntil()));
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
@@ -269,7 +272,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
-				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
+				//				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
 				for (final Asset eveAsset : assets) {
 					try {
@@ -279,24 +282,16 @@ public class AssetsManager extends AbstractManager implements INamed {
 					}
 				}
 			}
-			//			}
+			// Assign the assets to the pilot.
 			AppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
-
-			//			// Update the caching time to the time set by the eveapi.
-			//			assetsCacheTime = new Instant(response.getCachedUntil());
+			// Update the caching time to the time set by the eveapi.
+			String reference = this.getPilot().getCharacterID() + ".ASSETS";
+			new TimeStamp(reference, new Instant(response.getCachedUntil()));
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
-		// Clean all user structures invalid after the reload of the assets.
-		//		assetsManager = null;
-		//		totalAssets = -1;
-		//		clearTimers();
-		//		JobManager.clearCache();
-
-		//		this.setDirty(true);
-		//		this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
 		AssetsManager.logger.info("<< [AssetsManager.downloadPilotAssets]");
 	}
 
@@ -930,7 +925,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 			AssetsManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
-			//			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
+			//			logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
 		} catch (final SQLException sqle) {
 			AssetsManager.logger
 					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());

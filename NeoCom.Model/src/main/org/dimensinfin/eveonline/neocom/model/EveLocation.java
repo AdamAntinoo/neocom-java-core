@@ -47,7 +47,6 @@ public class EveLocation extends AbstractNeoComNode {
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true, index = true)
 	private long							id								= -2;
-	//	private transient String	location					= "<LOCATION-UNDEFINED>";
 	@DatabaseField
 	private long							stationID					= -1;
 	@DatabaseField
@@ -137,6 +136,7 @@ public class EveLocation extends AbstractNeoComNode {
 	 * Ship locations collaborate to the model by adding all their children because we store there the items
 	 * located at the selected real location.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());

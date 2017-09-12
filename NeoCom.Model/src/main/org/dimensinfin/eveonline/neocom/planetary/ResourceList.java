@@ -15,7 +15,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "resourcelist")
+@DatabaseTable(tableName = "ResourceList")
 public class ResourceList {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger	logger	= Logger.getLogger("ResourceList");

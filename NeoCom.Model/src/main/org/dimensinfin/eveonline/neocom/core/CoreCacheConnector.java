@@ -37,14 +37,14 @@ public abstract class CoreCacheConnector {
 	 * to be updated.
 	 */
 	public void addCharacterUpdateRequest(final long localizer) {
-		CoreCacheConnector.logger.info(">> [MicroServicesCacheConnector.addCharacterUpdateRequest]");
+		CoreCacheConnector.logger.info(">> [CoreCacheConnector.addCharacterUpdateRequest]");
 		final PendingRequestEntry request = new PendingRequestEntry(localizer);
 		request.setClass(ERequestClass.CHARACTERUPDATE);
 		request.setPriority(20);
 		if (this.addNoDuplicate(request)) {
 			this.incrementTopCounter();
 		}
-		CoreCacheConnector.logger.info("<< [MicroServicesCacheConnector.addCharacterUpdateRequest]");
+		CoreCacheConnector.logger.info("<< [CoreCacheConnector.addCharacterUpdateRequest]");
 	}
 
 	/**
