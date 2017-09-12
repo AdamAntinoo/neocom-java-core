@@ -21,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -95,6 +96,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset	parentAssetCache	= null;
 	private transient EveLocation	locationCache			= null;
+	@JsonIgnore
 	private transient EveItem			itemCache					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -253,6 +255,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return parentAssetID;
 	}
 
+	@JsonIgnore
 	public double getPrice() {
 		return this.getItem().getPrice();
 	}
