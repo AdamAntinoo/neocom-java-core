@@ -46,6 +46,7 @@ import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -84,6 +85,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	// - A S S E T   M A N A G E M E N T
 	private long																						totalAssets							= -1;
 	private long																						verificationAssetCount	= 0;
+	@JsonInclude
 	private double																					totalAssetsValue				= 0.0;
 	private final HashMap<Long, Region>											regions									= new HashMap<Long, Region>();
 	private final HashMap<Long, EveLocation>								locations								= new HashMap<Long, EveLocation>();
@@ -103,20 +105,16 @@ public class AssetsManager extends AbstractManager implements INamed {
 
 	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache							= new HashMap<Long, ArrayList<NeoComAsset>>();
 	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
+	public String																						iconName								= "assets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
 	private transient HashMap<Long, NeoComAsset>						assetMap								= new HashMap<Long, NeoComAsset>();
 
-	public String																						iconName;
-
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
 		super(pilot);
-		// Reinitialize the list of assets for this pilot.
-		//		this.accessAllAssets();
 		jsonClassname = "AssetsManager";
-		iconName = "assets.png";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -170,11 +168,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		else
 			return ships.values();
 	}
-
-	//	@Override
-	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-	//		return new ArrayList<AbstractComplexNode>();
-	//	}
 
 	/**
 	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
@@ -243,6 +236,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 		//			this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
 		AssetsManager.logger.info("<< [AssetsManager.downloadCorporationAssets");
 	}
+
+	//	@Override
+	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+	//		return new ArrayList<AbstractComplexNode>();
+	//	}
 
 	/**
 	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
@@ -314,13 +312,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return totalAssets;
 	}
 
-	//	public int getLocationCount() {
-	//		if (locationCount < 0) {
-	//			this.updateLocations();
-	//		}
-	//		return locationCount;
-	//	}
-
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
 			this.updateBlueprints();
@@ -330,6 +321,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 		return blueprintCache;
 	}
+
+	//	public int getLocationCount() {
+	//		if (locationCount < 0) {
+	//			this.updateLocations();
+	//		}
+	//		return locationCount;
+	//	}
 
 	/**
 	 * Returns the list of different locations where this character has assets. The locations are the unique
@@ -366,6 +364,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 
 	public ArrayList<NeoComAsset> getShips() {
 		return this.searchAsset4Category("Ship");
+	}
+
+	public AssetsManager initialize() {
+		this.accessAllAssets();
+		return this;
 	}
 
 	//	public HashSet<String> queryT2ModuleNames() {

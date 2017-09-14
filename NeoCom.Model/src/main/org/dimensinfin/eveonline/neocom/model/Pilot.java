@@ -117,7 +117,7 @@ public class Pilot extends NeoComCharacter {
 		if (variant == ENeoComVariants.PILOT_DETAILS.name()) {
 			// Add the Managers that apply to this Pilot
 			results.add(new AssetsManager(this));
-			results.add(new PlanetaryManager(this));
+			results.add(new PlanetaryManager(this).initialize());
 		}
 		return results;
 	}

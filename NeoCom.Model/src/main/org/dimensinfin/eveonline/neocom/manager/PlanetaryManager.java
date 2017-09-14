@@ -36,12 +36,12 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	// - F I E L D - S E C T I O N ............................................................................
 	//	private final long												totalAssets							= -1;
 	private long																	verificationAssetCount	= 0;
-	private double																totalAssetsValue				= 0.0;
+	public double																	totalAssetsValue				= 0.0;
 	public final HashMap<Long, Region>						regions									= new HashMap<Long, Region>();
 	private final HashMap<Long, EveLocation>			locations								= new HashMap<Long, EveLocation>();
 	private final HashMap<Long, NeoComAsset>			containers							= new HashMap<Long, NeoComAsset>();
 	public ArrayList<NeoComAsset>									planetaryAssetList			= new ArrayList<NeoComAsset>();
-	public String																	iconName;
+	public String																	iconName								= "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
@@ -52,9 +52,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	public PlanetaryManager(final NeoComCharacter pilot) {
 		super(pilot);
 		// Get all the Planetary assets and classify them into lists.
-		this.accessAllAssets();
 		jsonClassname = "PlanetaryManager";
-		iconName = "planets.png";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -104,6 +102,11 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 
 	public String getOrderingName() {
 		return "Planetary Manager";
+	}
+
+	public PlanetaryManager initialize() {
+		this.accessAllAssets();
+		return this;
 	}
 
 	/**
