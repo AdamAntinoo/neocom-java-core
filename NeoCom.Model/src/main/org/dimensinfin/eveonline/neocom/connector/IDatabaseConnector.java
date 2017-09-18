@@ -85,6 +85,8 @@ public interface IDatabaseConnector {
 
 	public void replaceJobs(long characterID);
 
+	public ArrayList<NeoComAsset> searchAllBlueprintAssets(long characterID);
+
 	public ArrayList<NeoComAsset> searchAllPlanetaryAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);

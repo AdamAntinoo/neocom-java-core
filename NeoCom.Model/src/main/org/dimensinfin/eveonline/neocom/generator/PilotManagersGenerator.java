@@ -10,21 +10,23 @@
 package org.dimensinfin.eveonline.neocom.generator;
 
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
 import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PilotDirectorsGenerator extends AbstractGenerator implements IModelGenerator {
+public class PilotManagersGenerator extends AbstractGenerator implements IModelGenerator {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String login = "Default";
+	private final String		login			= "Default";
+	private NeoComCharacter	character	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotDirectorsGenerator(final DataSourceLocator locator, final String variant, final String login) {
+	public PilotManagersGenerator(final DataSourceLocator locator, final String variant,
+			final NeoComCharacter pilotCorp) {
 		super(locator, variant);
-		this.login = login;
+		character = pilotCorp;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -40,7 +42,7 @@ public class PilotDirectorsGenerator extends AbstractGenerator implements IModel
 		this.setDataModel(new RootNode());
 
 		// Add to the data model list the Directors that can be used on this character.
-		_dataModelRoot.addChildren(AppConnector.getModelStore().getCurrentPilot().collaborate2Model(this.getVariant()));
+		_dataModelRoot.addChildren(character.collaborate2Model(this.getVariant()));
 		AbstractGenerator.logger.info("<< [PilotDirectorsGenerator.collaborate2Model]");
 		return _dataModelRoot;
 	}

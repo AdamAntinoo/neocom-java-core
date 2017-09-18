@@ -20,7 +20,9 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.BlueprintManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.dimensinfin.eveonline.neocom.manager.SkillsManager;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -59,7 +61,7 @@ public class Pilot extends NeoComCharacter {
 	/** Pilot data information complementary from the CharacterSheetResponse CCP api call. */
 	public CharacterSheetResponse		characterSheet		= null;
 	/** Pilot skill queue from the SkillQueueResponse CCP api call. */
-	public Set<SkillQueueItem>			skills						= null;
+	public Set<SkillQueueItem>			skillQueue				= null;
 	public SkillInTrainingResponse	skillInTraining		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -114,9 +116,11 @@ public class Pilot extends NeoComCharacter {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (variant == ENeoComVariants.PILOT_DETAILS.name()) {
+		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
 			// Add the Managers that apply to this Pilot
 			results.add(new AssetsManager(this));
+			results.add(new SkillsManager(this).initialize());
+			results.add(new BlueprintManager(this).initialize());
 			results.add(new PlanetaryManager(this).initialize());
 		}
 		return results;
@@ -344,7 +348,7 @@ public class Pilot extends NeoComCharacter {
 	}
 
 	public void setSkillQueue(final Set<SkillQueueItem> skilllist) {
-		skills = skilllist;
+		skillQueue = skilllist;
 	}
 
 	/**

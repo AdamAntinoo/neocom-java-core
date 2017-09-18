@@ -114,7 +114,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
 		super(pilot);
-		jsonClassname = "AssetsManager";
+		jsonClass = "AssetsManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -708,7 +708,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		Long locid = eveAsset.getLocationID();
 		if (locid > 1000000000000L) {
 			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
-			newAsset.setLocationID(-1);
+			newAsset.setLocationID(-2);
 			newAsset.setParentId(locid);
 		} else {
 			// The location is a real location.

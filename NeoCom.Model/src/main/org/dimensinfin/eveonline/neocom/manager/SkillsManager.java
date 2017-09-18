@@ -9,46 +9,48 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.util.ArrayList;
-import java.util.logging.Logger;
+import java.util.Set;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.interfaces.INamed;
+import org.dimensinfin.eveonline.neocom.model.Pilot;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.beimin.eveapi.model.pilot.Skill;
+import com.beimin.eveapi.model.pilot.SkillQueueItem;
+import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AbstractManager extends AbstractNeoComNode {
+public class SkillsManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long					serialVersionUID	= -3012043551959443176L;
-	protected static Logger						logger						= Logger.getLogger("AbstractManager");
+	private static final long				serialVersionUID	= -5398590391396592182L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public String											jsonClass					= "AbstractManager";
-	@JsonIgnore
-	private transient NeoComCharacter	pilot							= null;
+	private Set<Skill>							skills						= null;
+	public Set<SkillQueueItem>			skillQueue				= null;
+	public SkillInTrainingResponse	skillInTraining		= null;
+	public String										iconName					= "skills.png";
+
+	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractManager(final NeoComCharacter pilot) {
-		super();
-		this.setPilot(pilot);
+	public SkillsManager(final Pilot pilot) {
+		super(pilot);
+		// Get the skills references from the Pilot.
+		skills = pilot.characterSheet.getSkills();
+		skillQueue = pilot.skillQueue;
+		skillInTraining = pilot.skillInTraining;
+		jsonClass = "SkillsManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		return new ArrayList<AbstractComplexNode>();
+
+	public String getOrderingName() {
+		return "Skills Manager";
 	}
 
-	public NeoComCharacter getPilot() {
-		return pilot;
+	public SkillsManager initialize() {
+		//		this.accessAllBlueprints();
+		return this;
 	}
-
-	public void setPilot(final NeoComCharacter newPilot) {
-		pilot = newPilot;
-	}
-
 }
 
 // - UNUSED CODE ............................................................................................

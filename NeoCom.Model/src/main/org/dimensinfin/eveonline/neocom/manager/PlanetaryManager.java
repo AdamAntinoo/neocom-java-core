@@ -26,6 +26,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryManager extends AbstractManager implements INamed {
@@ -37,9 +38,11 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	//	private final long												totalAssets							= -1;
 	private long																	verificationAssetCount	= 0;
 	public double																	totalAssetsValue				= 0.0;
-	public final HashMap<Long, Region>						regions									= new HashMap<Long, Region>();
+	@JsonInclude
+	private final HashMap<Long, Region>						regions									= new HashMap<Long, Region>();
 	private final HashMap<Long, EveLocation>			locations								= new HashMap<Long, EveLocation>();
 	private final HashMap<Long, NeoComAsset>			containers							= new HashMap<Long, NeoComAsset>();
+	@JsonIgnore
 	public ArrayList<NeoComAsset>									planetaryAssetList			= new ArrayList<NeoComAsset>();
 	public String																	iconName								= "planets.png";
 
@@ -52,7 +55,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	public PlanetaryManager(final NeoComCharacter pilot) {
 		super(pilot);
 		// Get all the Planetary assets and classify them into lists.
-		jsonClassname = "PlanetaryManager";
+		jsonClass = "PlanetaryManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

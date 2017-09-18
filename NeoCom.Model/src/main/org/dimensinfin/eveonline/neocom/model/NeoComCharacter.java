@@ -28,6 +28,7 @@ import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.market.MarketOrderAnalyticalGroup;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.market.ScheduledSellsAnalyticalGroup;
@@ -58,6 +59,7 @@ import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -163,41 +165,44 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	/** Reference to the delegated core eveapi Character */
 
 	/** Reference to the key that generated this character on the first place. */
-	private transient NeoComApiKey			apikey							= null;
-	@JsonIgnore
-	private ApiAuthorization						authorization				= null;
-	private long												characterID					= -1;
+	@JsonInclude
+	private transient NeoComApiKey				apikey							= null;
+	@JsonInclude
+	private ApiAuthorization							authorization				= null;
+	private long													characterID					= -1;
 	/** Reference to the original eveapi Character data. */
-	public Character										delegatedCharacter	= null;
+	public Character											delegatedCharacter	= null;
 	/**
 	 * Character detailed information from the CharacterInfoResponse CCP api call. This can apply to Pilots and
 	 * Corportations.
 	 */
-	public CharacterInfoResponse				characterInfo				= null;
+	public CharacterInfoResponse					characterInfo				= null;
 	/**
 	 * Character account balance from the AccountBalanceResponse CCP api call. This can apply to Pilots and
 	 * Corportations.
 	 */
-	public double												accountBalance			= 0.0;
+	public double													accountBalance			= 0.0;
 	/**
 	 * State of this character. The use can deactivate the character so it is removed from the update lists even
 	 * the current data is still visible.
 	 */
-	private final boolean								active							= true;
+	private final boolean									active							= true;
 
 	// - T R A N S I E N T   D A T A
-	private transient Instant						lastCCPAccessTime		= null;
-	public ArrayList<Property>					locationRoles				= null;
-	public HashMap<Long, Property>			actions4Character		= null;
-	private transient Instant						assetsCacheTime			= null;
+	private transient Instant							lastCCPAccessTime		= null;
+	public ArrayList<Property>						locationRoles				= null;
+	public HashMap<Long, Property>				actions4Character		= null;
+	private transient Instant							assetsCacheTime			= null;
 
 	@JsonIgnore
-	protected transient AssetsManager		assetsManager				= null;
-	protected transient Instant					blueprintsCacheTime	= null;
-	protected transient Instant					jobsCacheTime				= null;
+	protected transient AssetsManager			assetsManager				= null;
 	@JsonIgnore
-	protected transient ArrayList<Job>	jobList							= null;
-	protected transient Instant					marketCacheTime			= null;
+	protected transient PlanetaryManager	_planetaryManager		= null;
+	protected transient Instant						blueprintsCacheTime	= null;
+	protected transient Instant						jobsCacheTime				= null;
+	@JsonIgnore
+	protected transient ArrayList<Job>		jobList							= null;
+	protected transient Instant						marketCacheTime			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
@@ -489,6 +494,13 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return delegatedCharacter.getName();
 	}
 
+	public PlanetaryManager getPlanetaryManager() {
+		if (null == _planetaryManager) {
+			_planetaryManager = new PlanetaryManager(this);
+		}
+		return _planetaryManager;
+	}
+
 	@JsonIgnore
 	public ArrayList<NeoComAsset> getShips() {
 		return this.searchAsset4Category(this.getCharacterID(), "Ship");
@@ -592,6 +604,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		characterInfo = inforesponse;
 	}
 
+	//	public void updateAssetsAccesscacheTime(final Date newCacheTime) {
+	//		assetsCacheTime = new Instant(newCacheTime);
+	//	}
+
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComCharacter [");
@@ -601,10 +617,6 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
-
-	//	public void updateAssetsAccesscacheTime(final Date newCacheTime) {
-	//		assetsCacheTime = new Instant(newCacheTime);
-	//	}
 
 	public abstract void updateCharacterInfo();
 
@@ -746,30 +758,6 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return newJob;
 	}
 
-	protected NeoComMarketOrder convert2Order(final MarketOrder eveorder) {
-		// Create the asset from the API asset.
-		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
-		try {
-			newMarketOrder.setOwnerID(eveorder.getCharID());
-			newMarketOrder.setStationID(eveorder.getStationID());
-			newMarketOrder.setVolEntered(eveorder.getVolEntered());
-			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
-			newMarketOrder.setMinVolume(eveorder.getMinVolume());
-			newMarketOrder.setOrderState(eveorder.getOrderState());
-			newMarketOrder.setTypeID(eveorder.getTypeID());
-			newMarketOrder.setRange(eveorder.getRange());
-			newMarketOrder.setAccountKey(eveorder.getAccountKey());
-			newMarketOrder.setDuration(eveorder.getDuration());
-			newMarketOrder.setEscrow(eveorder.getEscrow());
-			newMarketOrder.setPrice(eveorder.getPrice());
-			newMarketOrder.setBid(eveorder.getBid());
-			newMarketOrder.setIssuedDate(eveorder.getIssued());
-		} catch (final RuntimeException rtex) {
-			rtex.printStackTrace();
-		}
-		return newMarketOrder;
-	}
-
 	//	/**
 	//	 * Processes an asset and all their children. This method converts from a API record to a database asset
 	//	 * record.
@@ -818,6 +806,30 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	//			sqle.printStackTrace();
 	//		}
 	//	}
+
+	protected NeoComMarketOrder convert2Order(final MarketOrder eveorder) {
+		// Create the asset from the API asset.
+		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
+		try {
+			newMarketOrder.setOwnerID(eveorder.getCharID());
+			newMarketOrder.setStationID(eveorder.getStationID());
+			newMarketOrder.setVolEntered(eveorder.getVolEntered());
+			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
+			newMarketOrder.setMinVolume(eveorder.getMinVolume());
+			newMarketOrder.setOrderState(eveorder.getOrderState());
+			newMarketOrder.setTypeID(eveorder.getTypeID());
+			newMarketOrder.setRange(eveorder.getRange());
+			newMarketOrder.setAccountKey(eveorder.getAccountKey());
+			newMarketOrder.setDuration(eveorder.getDuration());
+			newMarketOrder.setEscrow(eveorder.getEscrow());
+			newMarketOrder.setPrice(eveorder.getPrice());
+			newMarketOrder.setBid(eveorder.getBid());
+			newMarketOrder.setIssuedDate(eveorder.getIssued());
+		} catch (final RuntimeException rtex) {
+			rtex.printStackTrace();
+		}
+		return newMarketOrder;
+	}
 
 	protected String downloadAssetEveName(final long assetID) {
 		// Wait up to one second to avoid request rejections from CCP.
