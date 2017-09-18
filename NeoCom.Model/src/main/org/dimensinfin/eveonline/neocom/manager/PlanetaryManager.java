@@ -39,7 +39,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	private long																	verificationAssetCount	= 0;
 	public double																	totalAssetsValue				= 0.0;
 	@JsonInclude
-	private final HashMap<Long, Region>						regions									= new HashMap<Long, Region>();
+	public final HashMap<Long, Region>						regions									= new HashMap<Long, Region>();
 	private final HashMap<Long, EveLocation>			locations								= new HashMap<Long, EveLocation>();
 	private final HashMap<Long, NeoComAsset>			containers							= new HashMap<Long, NeoComAsset>();
 	@JsonIgnore
@@ -80,9 +80,9 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			}
 			// Process the map until all elements are removed.
 			Long key = assetMap.keySet().iterator().next();
-			assetCounter++;
 			NeoComAsset point = assetMap.get(key);
 			while (null != point) {
+				assetCounter++;
 				this.processElement(point);
 				key = assetMap.keySet().iterator().next();
 				point = assetMap.get(key);
