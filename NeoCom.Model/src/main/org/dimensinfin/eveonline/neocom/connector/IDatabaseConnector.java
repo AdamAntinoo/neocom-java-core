@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
@@ -119,7 +117,7 @@ public interface IDatabaseConnector {
 
 	public EveLocation searchLocationBySystem(String system);
 
-	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
+	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
 
 	public int searchModule4Blueprint(int bpitemID);
 

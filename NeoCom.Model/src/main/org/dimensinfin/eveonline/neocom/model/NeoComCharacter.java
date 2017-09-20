@@ -525,7 +525,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 	/**
 	 * Check each of the request cache time until founds one that has expired. If no one found then the
-	 * character does not need any update
+	 * character does not need any update.
+	 * 
+	 * For Managers data we should check the Manager before launching the update operation.
 	 * 
 	 * @return
 	 */
@@ -533,7 +535,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.NOW)) return EDataBlock.CHARACTERDATA;
 		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
-		if (AppConnector.checkExpiration(assetsCacheTime, ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+		// Block to check the needs for update of the Character Assets.
+		if (null != assetsManager) {
+			TimeStamp time = assetsManager.getAssetsCacheTime();
+			if (null == time) return EDataBlock.ASSETDATA;
+			if (AppConnector.checkExpiration(time.getTimeStamp(), ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+		}
 		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
 	}

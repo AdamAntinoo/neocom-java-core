@@ -11,6 +11,8 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.util.Vector;
 
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -33,6 +35,8 @@ public interface ICacheConnector {
 	public int incrementMarketCounter();
 
 	public int incrementTopCounter();
+
+	public MarketDataSet searchMarketData(int typeID, EMarketSide buyer);
 
 }
 

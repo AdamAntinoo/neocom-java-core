@@ -9,22 +9,28 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.core;
 
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.services.MarketDataService;
 import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class CoreCacheConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger									logger						= Logger.getLogger("CoreCacheConnector");
+	private static Logger													logger							= Logger.getLogger("CoreCacheConnector");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected Vector<PendingRequestEntry>	_pendingRequests	= new Vector<PendingRequestEntry>();
+	protected Vector<PendingRequestEntry>					_pendingRequests		= new Vector<PendingRequestEntry>();
+	private final HashMap<Integer, MarketDataSet>	buyMarketDataCache	= new HashMap<Integer, MarketDataSet>();
+	private final HashMap<Integer, MarketDataSet>	sellMarketDataCache	= new HashMap<Integer, MarketDataSet>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CoreCacheConnector() {
@@ -125,6 +131,66 @@ public abstract class CoreCacheConnector {
 	public abstract int incrementMarketCounter();
 
 	public abstract int incrementTopCounter();
+
+	/**
+	 * Search for this market data on the cache. <br>
+	 * The cache used for the search depends on the side parameter received on the call. All default prices are
+	 * references to the cost of the price to be spent to buy the item.<br>
+	 * If not found on the memory cache then try to load from the serialized version stored on disk. This is an
+	 * special implementation for SpringBoot applications that may run on a server so the cache disk location is
+	 * implemented in a different way that on Android, indeed, because we can access the market data online we
+	 * are not going to cache the data but get a fresh copy if not found on the cache.<br>
+	 * If the data is not located on the case call the market data downloader and processor to get a new copy
+	 * and store it on the cache.
+	 * 
+	 * @param itemID
+	 *          item id code of the item assigned to this market request.
+	 * @param side
+	 *          differentiates if we like to BUY or SELL the item.
+	 * @return the cached data or an empty locator ready to receive downloaded data.
+	 */
+	//	@Cacheable("MarketData")
+	public MarketDataSet searchMarketData(final int itemID, final EMarketSide side) {
+		CoreCacheConnector.logger
+				.info(">> [SpringDatabaseConnector.searchMarketData]> itemid: " + itemID + " side: " + side.toString());
+		// for Market Data: " + itemID + " - " + side);
+		// Search on the cache. By default load the SELLER as If I am buying the item.
+
+		// Cache interception performed by EHCache. If we reach this point that means we have not cached the data.
+		HashMap<Integer, MarketDataSet> cache = sellMarketDataCache;
+		if (side == EMarketSide.BUYER) {
+			cache = buyMarketDataCache;
+		}
+		//		MarketDataSet entry = null;
+		MarketDataSet entry = cache.get(itemID);
+		if (null == entry) {
+			// Download and process the market data by posting a Market Update Request.
+			boolean doInmediately = false;
+			if (doInmediately) {
+				// Download and process the market data right now.
+				Vector<MarketDataSet> entries = MarketDataService.marketDataServiceEntryPoint(itemID);
+				for (MarketDataSet data : entries) {
+					if (data.getSide() == EMarketSide.BUYER) {
+						buyMarketDataCache.put(itemID, entry);
+						if (side == data.getSide()) {
+							entry = data;
+						}
+					}
+					if (data.getSide() == EMarketSide.SELLER) {
+						sellMarketDataCache.put(itemID, entry);
+						if (side == data.getSide()) {
+							entry = data;
+						}
+					}
+				}
+			} else {
+				// Post the download of the market data to the background service.
+				this.addMarketDataRequest(itemID);
+			}
+		}
+		CoreCacheConnector.logger.info("<< [SpringDatabaseConnector.searchMarketData]");
+		return entry;
+	}
 
 	/**
 	 * Adds a new entry if not already found on the pending list.

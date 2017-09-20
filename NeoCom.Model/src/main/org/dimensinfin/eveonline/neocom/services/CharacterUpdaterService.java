@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -48,9 +47,9 @@ public class CharacterUpdaterService implements Runnable {
 					case ASSETDATA:
 						// New data model decouples the character from the data managers. But requires to know if Pilot or Corporation.
 						if (pilot.isCorporation()) {
-							new AssetsManager(pilot).downloadCorporationAssets();
+							pilot.getAssetsManager().downloadCorporationAssets();
 						} else {
-							new AssetsManager(pilot).downloadPilotAssets();
+							pilot.getAssetsManager().downloadPilotAssets();
 						}
 						//							pilot.downloadAssets();
 						//							pilot.downloadBlueprints();

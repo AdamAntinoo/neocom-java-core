@@ -52,8 +52,8 @@ import com.j256.ormlite.dao.Dao;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger						logger						= Logger.getLogger("Pilot");
 	private static final long				serialVersionUID	= 7093412975290500541L;
+	private static Logger						logger						= Logger.getLogger("Pilot");
 
 	// - F I E L D - S E C T I O N ............................................................................
 

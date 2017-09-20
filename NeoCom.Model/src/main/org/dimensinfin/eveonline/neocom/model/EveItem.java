@@ -253,7 +253,7 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			buyerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			buyerData = AppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
 			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
 			}
@@ -273,7 +273,7 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			sellerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			sellerData = AppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
 			}
