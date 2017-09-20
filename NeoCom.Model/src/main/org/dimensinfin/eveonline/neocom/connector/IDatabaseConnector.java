@@ -73,6 +73,8 @@ public interface IDatabaseConnector {
 
 	public boolean openCCPDataBase();
 
+	public Vector<String> queryAllLogins();
+
 	public int queryBlueprintDependencies(int bpitemID);
 
 	public ArrayList<Resource> refineOre(int itemID);
@@ -115,9 +117,9 @@ public interface IDatabaseConnector {
 
 	public EveLocation searchLocationbyID(long locationID);
 
-	public EveLocation searchLocationBySystem(String system);
-
 	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
+
+	public EveLocation searchLocationBySystem(String system);
 
 	public int searchModule4Blueprint(int bpitemID);
 

@@ -31,7 +31,7 @@ public class CharacterUpdaterService implements Runnable {
 		//		Long localizer = (Long) intent.getSerializableExtra(AppWideConstants.EExtras.EXTRA_CHARACTER_LOCALIZER.name());
 		//		// Be sure we have access to the network. Otherwise intercept the exceptions.
 		//		if (NeoComApp.checkNetworkAccess()) {
-		NeoComCharacter pilot = AppConnector.getModelStore().searchCharacter(_locator);
+		NeoComCharacter pilot = AppConnector.getModelStore().activatePilot(_locator);
 		if (null != pilot) {
 			// Pilot signaled for update. Locate the next data set to update because its cache has expired.
 			EDataBlock datacode = pilot.needsUpdate();

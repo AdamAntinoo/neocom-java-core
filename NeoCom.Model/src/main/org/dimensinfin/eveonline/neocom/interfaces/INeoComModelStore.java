@@ -19,7 +19,9 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 public interface INeoComModelStore extends IModelStore {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void activatePilot(long characterID);
+	public String activateLoginIdentifier(final String loginTarget);
+
+	public NeoComCharacter activatePilot(long characterID);
 
 	public List<NeoComCharacter> getActiveCharacters();
 
@@ -29,7 +31,7 @@ public interface INeoComModelStore extends IModelStore {
 
 	public String getLoginIdentifier();
 
-	public NeoComCharacter searchCharacter(long _locator);
+	//	public NeoComCharacter searchCharacter(long _locator);
 
 	//	public void setCurrentPilot(NeoComCharacter pilot);
 }

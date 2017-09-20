@@ -12,12 +12,15 @@ package org.dimensinfin.eveonline.neocom.manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 import org.dimensinfin.eveonline.neocom.model.Container;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -35,6 +38,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	private static Logger													logger									= Logger.getLogger("PlanetaryManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private boolean																initialized							= false;
 	//	private final long												totalAssets							= -1;
 	private long																	verificationAssetCount	= 0;
 	public double																	totalAssetsValue				= 0.0;
@@ -43,7 +47,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	private final HashMap<Long, EveLocation>			locations								= new HashMap<Long, EveLocation>();
 	private final HashMap<Long, NeoComAsset>			containers							= new HashMap<Long, NeoComAsset>();
 	@JsonIgnore
-	public ArrayList<NeoComAsset>									planetaryAssetList			= new ArrayList<NeoComAsset>();
+	public ArrayList<NeoComAsset>									planetaryAssetList			= null;
 	public String																	iconName								= "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
@@ -100,7 +104,36 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	}
 
 	public long getAssetTotalCount() {
-		return planetaryAssetList.size();
+		if (null == planetaryAssetList)
+			return 0;
+		else
+			return planetaryAssetList.size();
+	}
+
+	/**
+	 * Get the list of Planetary Resources that are at the indicated location. If the location is not found or
+	 * the contents are not initializes then return an empty list.
+	 * 
+	 * @param locationid
+	 * @return
+	 */
+	public Vector<Resource> getLocationContents(final String locationid) {
+		long locidnumber = Long.valueOf(locationid);
+		for (Long key : locations.keySet()) {
+			if (key == locidnumber) {
+				Vector<IGEFNode> contents = locations.get(key).getChildren();
+				// Transform the contents to a list of Resources
+				Vector<Resource> results = new Vector<Resource>(contents.size());
+				for (IGEFNode node : contents) {
+					if (node instanceof NeoComAsset) {
+						NeoComAsset transformedNode = (NeoComAsset) node;
+						results.add(new Resource(transformedNode.getTypeID(), transformedNode.getQuantity()));
+					}
+				}
+				return results;
+			}
+		}
+		return new Vector<Resource>();
 	}
 
 	public String getOrderingName() {
@@ -109,7 +142,18 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 
 	public PlanetaryManager initialize() {
 		this.accessAllAssets();
+		initialized = true;
 		return this;
+	}
+
+	/**
+	 * Checks if the initialization method and the load of the resources has been already executed.
+	 * 
+	 * @return
+	 */
+	public boolean isInitialized() {
+		if (initialized) if (null != planetaryAssetList) return true;
+		return false;
 	}
 
 	/**

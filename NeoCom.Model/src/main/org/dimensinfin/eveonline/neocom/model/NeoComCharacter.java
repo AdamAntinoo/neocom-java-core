@@ -174,7 +174,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public Character											delegatedCharacter	= null;
 	/**
 	 * Character detailed information from the CharacterInfoResponse CCP api call. This can apply to Pilots and
-	 * Corportations.
+	 * Corporations.
 	 */
 	public CharacterInfoResponse					characterInfo				= null;
 	/**
