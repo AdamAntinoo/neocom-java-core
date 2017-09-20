@@ -48,7 +48,7 @@ public class ShipLocation extends EveLocation implements INeoComNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ShipLocation() {
-		jsonClassname = "ShipLocation";
+		jsonClass = "ShipLocation";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

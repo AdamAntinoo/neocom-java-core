@@ -31,7 +31,7 @@ public interface IConnector {
 
 	public INeoComModelStore getModelStore();
 
-	public IConnector getSingleton();
+	//	public IConnector getSingleton();
 
 	public IStorageConnector getStorageConnector();
 

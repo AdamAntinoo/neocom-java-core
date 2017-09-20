@@ -68,19 +68,20 @@ public class EveLocation extends AbstractNeoComNode {
 	@DatabaseField
 	protected int							typeID						= -1;
 	protected boolean					citadel						= false;
+	public String							urlLocationIcon		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
-		jsonClassname = "EveLocation";
+		jsonClass = "EveLocation";
 	}
 
 	public EveLocation(final long locationID) {
-		jsonClassname = "EveLocation";
+		jsonClass = "EveLocation";
 		stationID = locationID;
 	}
 
 	public EveLocation(final long citadelid, final Citadel cit) {
-		jsonClassname = "EveLocation";
+		jsonClass = "EveLocation";
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
@@ -100,7 +101,7 @@ public class EveLocation extends AbstractNeoComNode {
 	 * @param out
 	 */
 	public EveLocation(final Outpost out) {
-		jsonClassname = "EveLocation";
+		jsonClass = "EveLocation";
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -116,7 +117,7 @@ public class EveLocation extends AbstractNeoComNode {
 	}
 
 	public EveLocation(final Station station) {
-		jsonClassname = "EveLocation";
+		jsonClass = "EveLocation";
 		try {
 			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -220,6 +221,21 @@ public class EveLocation extends AbstractNeoComNode {
 
 	public long getSystemID() {
 		return systemID;
+	}
+
+	/**
+	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
+	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
+	 * 
+	 * @param targetIcon
+	 * @param typeID
+	 */
+	public String getUrlLocationIcon() {
+		if (null == urlLocationIcon) {
+			urlLocationIcon = "http://image.eveonline.com/Render/" + AppConnector.getDBConnector().searchStationType(id)
+					+ "_64.png";
+		}
+		return urlLocationIcon;
 	}
 
 	public final boolean isCitadel() {

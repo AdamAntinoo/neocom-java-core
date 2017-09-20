@@ -21,7 +21,7 @@ public abstract class AbstractNeoComNode extends AbstractComplexNode implements 
 	private static final long	serialVersionUID	= -1735276692612402194L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public String							jsonClassname			= "AbstractNeoComNode";
+	public String							jsonClass			= "AbstractNeoComNode";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractNeoComNode() {

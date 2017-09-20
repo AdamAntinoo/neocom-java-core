@@ -101,12 +101,12 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
 	}
 
-	public static IConnector getSingleton() {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getSingleton();
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'getSingleton' disabled.");
-	}
+	//	public static IConnector getSingleton() {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.getSingleton();
+	//		else
+	//			throw new RuntimeException("Application connector not defined. Functionality 'getSingleton' disabled.");
+	//	}
 
 	public static IStorageConnector getStorageConnector() {
 		if (null != AppConnector.connection)
