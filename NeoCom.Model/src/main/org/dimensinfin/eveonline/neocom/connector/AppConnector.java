@@ -25,7 +25,6 @@ import org.joda.time.Instant;
  * @author Adam Antinoo
  */
 public class AppConnector {
-	// - S T A T I C - S E C T I O N ..........................................................................
 	// - P R E F E R E N C E S
 	public static final class preference {
 		public static final String	PREF_APPTHEMES						= "prefkey_appthemes";
@@ -36,8 +35,8 @@ public class AppConnector {
 		public static final String	PREF_BLOCKMARKET					= "prefkey_BlockMarket";
 	}
 
+	// - S T A T I C - S E C T I O N ..........................................................................
 	private static IConnector	connection	= null;
-
 	private static Instant		chrono			= null;
 
 	public static void addCharacterUpdateRequest(final long characterID) {
@@ -70,21 +69,12 @@ public class AppConnector {
 		else
 			return true;
 	}
-	//[03]
-	//[01]
 
 	public static ICacheConnector getCacheConnector() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getCacheConnector();
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getCacheConnector' disabled.");
-	}
-
-	public static ICCPDatabaseConnector getCCPDBConnector() {
-		if (null != AppConnector.connection)
-			return AppConnector.connection.getCCPDBConnector();
-		else
-			throw new RuntimeException("Application connector not defined. Functionality 'getCCPDBConnector' disabled.");
 	}
 
 	public static IDatabaseConnector getDBConnector() {
@@ -100,13 +90,6 @@ public class AppConnector {
 		else
 			throw new RuntimeException("Application connector not defined. Functionality 'getModelStore' disabled.");
 	}
-
-	//	public static IConnector getSingleton() {
-	//		if (null != AppConnector.connection)
-	//			return AppConnector.connection.getSingleton();
-	//		else
-	//			throw new RuntimeException("Application connector not defined. Functionality 'getSingleton' disabled.");
-	//	}
 
 	public static IStorageConnector getStorageConnector() {
 		if (null != AppConnector.connection)
@@ -137,82 +120,3 @@ public class AppConnector {
 }
 
 // - UNUSED CODE ............................................................................................
-//[01]
-//	public static String getAppFilePath(final int fileresourceid) {
-//		if (null != AppConnector.connection)
-//			return AppConnector.connection.getAppFilePath(fileresourceid);
-//		else
-//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-//	}
-
-//	public static ICache getCacheConnector() {
-//		if (null != connection)
-//			return connection.getCacheConnector();
-//		else
-//			throw new RuntimeException("Application connector not defined. Functionality 'getCacheConnector' disabled.");
-//	}
-
-//	public static String getAppFilePath(final String fileresourcename) {
-//		if (null != AppConnector.connection)
-//			return AppConnector.connection.getAppFilePath(fileresourcename);
-//		else
-//			throw new RuntimeException("Application connector not defined. Functionality 'getAppFilePath' disabled.");
-//	}
-//[02]
-//	public static String getResourceString(final String reference) {
-//		if (null != AppConnector.connection)
-//			return AppConnector.connection.getResourceString(reference);
-//		else
-//			throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
-//	}
-
-//public static String getResourceString(final int reference) {
-//	if (null != AppConnector.connection)
-//		return AppConnector.connection.getResourceString(reference);
-//	else
-//		throw new RuntimeException("Application connector not defined. Functionality 'getResourceString' disabled.");
-//}
-//	public static NeocomPreferences getDefaultSharedPreferences() {
-//		if (null != AppConnector.connection)
-//			return AppConnector.connection.getDefaultSharedPreferences();
-//		else
-//			throw new RuntimeException(
-//					"Application connector not defined. Functionality 'getDefaultSharedPreferences' disabled.");
-//	}
-//	public static boolean sdcardAvailable() {
-//		if (null != AppConnector.connection)
-//			return AppConnector.connection.sdcardAvailable();
-//		else
-//			throw new RuntimeException("Application connector not defined. Functionality 'sdcardAvailable' disabled.");
-//	}
-//[03]
-//	public static Comparator<AbstractPropertyChanger> createComparator(final int code) {
-//		Comparator<AbstractPropertyChanger> comparator = new Comparator<AbstractPropertyChanger>() {
-//			public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
-//				return 0;
-//			}
-//		};
-//		switch (code) {
-//			case ModelWideConstants.comparators.COMPARATOR_NAME:
-//				comparator = new Comparator<AbstractPropertyChanger>() {
-//					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
-//						String leftField = null;
-//						String rightField = null;
-//						if (left instanceof INamed) {
-//							leftField = ((INamed) left).getOrderingName();
-//						}
-//						if (right instanceof INamed) {
-//							rightField = ((INamed) right).getOrderingName();
-//						}
-//
-//						if (null == leftField) return 1;
-//						if (null == rightField) return -1;
-//						if ("" == leftField) return 1;
-//						if ("" == rightField) return -1;
-//						return leftField.compareTo(rightField);
-//					}
-//				};
-//				break;
-//		}
-//		return comparator;
-//	}

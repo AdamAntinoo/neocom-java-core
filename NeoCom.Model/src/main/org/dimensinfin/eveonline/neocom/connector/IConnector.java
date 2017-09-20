@@ -10,8 +10,15 @@ import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IConnector {
-
 	public void addCharacterUpdateRequest(long characterID);
+
+	public ICacheConnector getCacheConnector();
+
+	public IDatabaseConnector getDBConnector();
+
+	public INeoComModelStore getModelStore();
+
+	public IStorageConnector getStorageConnector();
 
 	//	public boolean checkExpiration(final long timestamp, final long window);
 
@@ -19,21 +26,13 @@ public interface IConnector {
 
 	//	public String getAppFilePath(String fileresourceid);
 
-	public ICacheConnector getCacheConnector();
-
-	public ICCPDatabaseConnector getCCPDBConnector();
+	//public ICCPDatabaseConnector getCCPDBConnector();
 
 	//	public NeocomPreferences getDefaultSharedPreferences();
 
-	public IDatabaseConnector getDBConnector();
-
 	//	public String getResourceString(int reference);
 
-	public INeoComModelStore getModelStore();
-
 	//	public IConnector getSingleton();
-
-	public IStorageConnector getStorageConnector();
 
 	//	public boolean sdcardAvailable();
 }

@@ -14,6 +14,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ICacheConnector;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
@@ -23,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.services.MarketDataService;
 import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class CoreCacheConnector {
+public abstract class CoreCacheConnector implements ICacheConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger													logger							= Logger.getLogger("CoreCacheConnector");
 
