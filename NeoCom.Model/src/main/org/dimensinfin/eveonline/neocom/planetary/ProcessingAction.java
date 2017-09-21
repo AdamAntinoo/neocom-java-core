@@ -94,6 +94,10 @@ public class ProcessingAction {
 		return inputList;
 	}
 
+	public Schematics getOutput() {
+		return output;
+	}
+
 	/**
 	 * Return the number of cycles that can be run with the current quantities of input resources.
 	 * 
@@ -120,6 +124,10 @@ public class ProcessingAction {
 	 */
 	public HashMap<Integer, Resource> getResources() {
 		return actionResources;
+	}
+
+	public int getTargetId() {
+		return targetId;
 	}
 
 	@Override

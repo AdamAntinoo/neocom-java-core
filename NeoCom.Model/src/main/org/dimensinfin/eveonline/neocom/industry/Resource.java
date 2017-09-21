@@ -20,6 +20,8 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
@@ -51,6 +53,7 @@ public class Resource extends AbstractComplexNode {
 	public int								baseQty										= 0;
 	public int								stackSize									= 1;
 	private double						damage										= 1.0;
+	@JsonIgnore
 	private DateTime					registrationDate					= new DateTime(DateTimeZone.UTC);
 
 	/**
