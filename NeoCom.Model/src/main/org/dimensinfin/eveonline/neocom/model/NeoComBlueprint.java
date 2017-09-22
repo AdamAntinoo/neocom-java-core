@@ -81,7 +81,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	@DatabaseField
 	private int								manufactureIndex		= -1;
 	@DatabaseField
-	private int								inventionIndex			= -1;
+	private final int					inventionIndex			= -1;
 	@DatabaseField
 	private double						jobProductionCost		= -1.0;
 	@DatabaseField
@@ -108,11 +108,11 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	public NeoComBlueprint(final int blueprintID) {
 		super();
 		typeID = blueprintID;
-		blueprintItem = AppConnector.getDBConnector().searchItembyID(blueprintID);
+		blueprintItem = AppConnector.getCCPDBConnector().searchItembyID(blueprintID);
 		typeName = blueprintItem.getName();
 		moduleTypeID = AppConnector.getDBConnector().searchModule4Blueprint(typeID);
-		moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
-		tech = obtainTech();
+		moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+		tech = this.obtainTech();
 		associatedAsset = null;
 	}
 
@@ -127,14 +127,14 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		assetID = newAsseID;
 		// Load the asset and set the reference.
 		try {
-			accessAssociatedAsset();
+			this.accessAssociatedAsset();
 			// Create the processor depending on the blueprint technology
 			blueprintItem = associatedAsset.getItem();
 			typeID = blueprintItem.getItemID();
 			typeName = blueprintItem.getName();
 			moduleTypeID = AppConnector.getDBConnector().searchModule4Blueprint(typeID);
-			moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
-			tech = obtainTech();
+			moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+			tech = this.obtainTech();
 		} catch (final Exception ex) {
 			//			Log.w("W> Blueprint.<init>. Asset <" + newAsseID + "> not found.");
 			throw new RuntimeException("W> Blueprint.<init> - Asset <" + newAsseID + "> not found.");
@@ -146,7 +146,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	}
 
 	public String getCategory() {
-		return getAssociatedAsset().getCategory();
+		return this.getAssociatedAsset().getCategory();
 	}
 
 	public int getFlag() {
@@ -154,11 +154,11 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	}
 
 	public String getGroupName() {
-		return getAssociatedAsset().getGroupName();
+		return this.getAssociatedAsset().getGroupName();
 	}
 
 	public EveItem getItem() {
-		return getAssociatedAsset().getItem();
+		return this.getAssociatedAsset().getItem();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -173,10 +173,11 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	 */
 	public EveLocation getLocation() {
 		if (null == locationCache) {
-			if (null == getAssociatedAsset())
+			if (null == this.getAssociatedAsset())
 				return new EveLocation();
-			else
-				locationCache = getAssociatedAsset().getLocation();
+			else {
+				locationCache = this.getAssociatedAsset().getLocation();
+			}
 		}
 		return locationCache;
 	}
@@ -198,27 +199,35 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	}
 
 	public String getModuleCategory() {
-		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
+		if (null == moduleItem) {
+			moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+		}
 		return moduleItem.getCategory();
 	}
 
 	public String getModuleGroup() {
-		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
+		if (null == moduleItem) {
+			moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+		}
 		return moduleItem.getGroupName();
 	}
 
 	public String getModuleGroupCategory() {
-		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
+		if (null == moduleItem) {
+			moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+		}
 		return moduleItem.getGroupName() + "/" + moduleItem.getCategory();
 	}
 
 	public EveItem getModuleItem() {
-		if (null == moduleItem) moduleItem = AppConnector.getDBConnector().searchItembyID(moduleTypeID);
+		if (null == moduleItem) {
+			moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+		}
 		return moduleItem;
 	}
 
 	public String getModuleName() {
-		return getAssociatedAsset().getItemName();
+		return this.getAssociatedAsset().getItemName();
 	}
 
 	public int getModuleTypeID() {
@@ -226,11 +235,11 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	}
 
 	public String getName() {
-		return getTypeName();
+		return this.getTypeName();
 	}
 
 	public NeoComAsset getParentContainer() {
-		return getAssociatedAsset().getParentContainer();
+		return this.getAssociatedAsset().getParentContainer();
 	}
 
 	public int getQuantity() {
@@ -243,7 +252,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 
 	public String getStackID() {
 		StringBuffer stackid = new StringBuffer();
-		stackid.append(typeID).append(".").append(getLocationID()).append(getRuns());
+		stackid.append(typeID).append(".").append(this.getLocationID()).append(this.getRuns());
 		return stackid.toString();
 	}
 
@@ -290,10 +299,11 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	 *          the asset reference to store.
 	 */
 	public void registerReference(final long refid) {
-		if (stackIDRefences == "")
+		if (stackIDRefences == "") {
 			stackIDRefences = Long.valueOf(refid).toString();
-		else
+		} else {
 			stackIDRefences = stackIDRefences + ModelWideConstants.STACKID_SEPARATOR + Long.valueOf(refid).toString();
+		}
 	}
 
 	public void resetOwner() {
@@ -308,7 +318,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		this.flag = flag;
 	}
 
-	public void setJobProductionCost(double jobProductionCost) {
+	public void setJobProductionCost(final double jobProductionCost) {
 		this.jobProductionCost = jobProductionCost;
 	}
 
@@ -316,11 +326,11 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		containerID = locationID;
 	}
 
-	public void setManufacturableCount(int manufacturableCount) {
+	public void setManufacturableCount(final int manufacturableCount) {
 		this.manufacturableCount = manufacturableCount;
 	}
 
-	public void setManufactureIndex(int manufactureIndex) {
+	public void setManufactureIndex(final int manufactureIndex) {
 		this.manufactureIndex = manufactureIndex;
 	}
 
@@ -367,18 +377,21 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Blueprint [");
-		if (associatedAsset == null)
+		if (associatedAsset == null) {
 			buffer.append("[PROTO]").append(" ");
-		else
-			buffer.append("[").append(getAssociatedAsset().getAssetID()).append("]").append(" ").append(getStackIDRefences())
-					.append(" ");
+		} else {
+			buffer.append("[").append(this.getAssociatedAsset().getAssetID()).append("]").append(" ")
+					.append(this.getStackIDRefences()).append(" ");
+		}
 		buffer.append(typeName).append(" ");
 		buffer.append("[").append(typeID).append("/").append(moduleTypeID).append("] ");
 		buffer.append(tech).append(" ");
-		buffer.append("Runs:").append(getRuns()).append(" ");
-		buffer.append("MT:").append(getMaterialEfficiency()).append("/").append(getTimeEfficiency()).append(" ");
+		buffer.append("Runs:").append(this.getRuns()).append(" ");
+		buffer.append("MT:").append(this.getMaterialEfficiency()).append("/").append(this.getTimeEfficiency()).append(" ");
 		buffer.append("Qty:").append(quantity).append(" ");
-		if (null != locationCache) buffer.append(locationCache.toString()).append(" ");
+		if (null != locationCache) {
+			buffer.append(locationCache.toString()).append(" ");
+		}
 		buffer.append("]");
 		return buffer.toString();
 	}
@@ -394,7 +407,9 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	}
 
 	private NeoComAsset getAssociatedAsset() {
-		if (null == associatedAsset) accessAssociatedAsset();
+		if (null == associatedAsset) {
+			this.accessAssociatedAsset();
+		}
 		return associatedAsset;
 	}
 

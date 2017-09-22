@@ -19,13 +19,13 @@
 	</properties>
 
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 			<groupId>DimensinfinIndustries</groupId> -->
-<!-- 			<artifactId>CoreBase.core</artifactId> -->
-<!-- 			<version>1.1.2</version> -->
-<!-- 			<scope>system</scope> -->
-<!-- 			<systemPath>${project.basedir}/privatelibs/CoreBase.core-1.1.2.jar</systemPath> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>DimensinfinIndustries</groupId>
+			<artifactId>CoreBase.core</artifactId>
+			<version>1.4.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/privatelibs/CoreBase.core-1.4.1.jar</systemPath>
+		</dependency>
 		<dependency>
 			<groupId>DimensinfinIndustries</groupId>
 			<artifactId>EveDevelopments.evemarket</artifactId>
@@ -62,11 +62,11 @@
 			<artifactId>ormlite-core</artifactId>
 			<version>${ormlite.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.google.code.gson</groupId> -->
-<!-- 			<artifactId>gson</artifactId> -->
-<!-- 			<version>2.3.1</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.google.code.gson</groupId> -->
+		<!-- <artifactId>gson</artifactId> -->
+		<!-- <version>2.3.1</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.beimin</groupId>
 			<artifactId>eveapi</artifactId>

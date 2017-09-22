@@ -232,7 +232,7 @@ public class EveLocation extends AbstractNeoComNode {
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
-			urlLocationIcon = "http://image.eveonline.com/Render/" + AppConnector.getDBConnector().searchStationType(id)
+			urlLocationIcon = "http://image.eveonline.com/Render/" + AppConnector.getCCPDBConnector().searchStationType(id)
 					+ "_64.png";
 		}
 		return urlLocationIcon;
@@ -352,7 +352,7 @@ public class EveLocation extends AbstractNeoComNode {
 
 	private void updateFromSystem(final long id) {
 		// Get the system information from the CCP location tables.
-		EveLocation systemLocation = AppConnector.getDBConnector().searchLocationbyID(id);
+		EveLocation systemLocation = AppConnector.getCCPDBConnector().searchLocationbyID(id);
 		systemID = systemLocation.getSystemID();
 		system = systemLocation.getSystem();
 		constellationID = systemLocation.getConstellationID();

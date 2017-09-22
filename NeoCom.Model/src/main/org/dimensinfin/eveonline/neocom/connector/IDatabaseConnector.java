@@ -1,9 +1,12 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
@@ -16,7 +19,6 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
@@ -71,7 +73,7 @@ public interface IDatabaseConnector {
 	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
 
-	public boolean openCCPDataBase();
+	//	public boolean openCCPDataBase();
 
 	public Vector<String> queryAllLogins();
 
@@ -103,7 +105,7 @@ public interface IDatabaseConnector {
 
 	public int searchInventionProduct(int typeID);
 
-	public EveItem searchItembyID(int typeID);
+	//	public EveItem searchItembyID(int typeID);
 
 	public ArrayList<Job> searchJob4Class(long characterID, String string);
 
@@ -115,11 +117,11 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Resource> searchListOfReaction(int itemID);
 
-	public EveLocation searchLocationbyID(long locationID);
+	//	public EveLocation searchLocationbyID(long locationID);
 
 	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
 
-	public EveLocation searchLocationBySystem(String system);
+	//	public EveLocation searchLocationBySystem(String system);
 
 	public int searchModule4Blueprint(int bpitemID);
 
@@ -129,7 +131,7 @@ public interface IDatabaseConnector {
 
 	public Vector<Schematics> searchSchematics4Output(int targetId);
 
-	public int searchStationType(long systemID);
+	//	public int searchStationType(long systemID);
 
 	public String searchTech4Blueprint(int blueprintID);
 }

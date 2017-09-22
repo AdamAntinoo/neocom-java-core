@@ -48,7 +48,7 @@ public class MarketDataService implements Runnable {
 		//		final Integer localizer = (Integer) intent.getSerializableExtra(AppWideConstants.extras.EXTRA_MARKETDATA_LOCALIZER);
 		// Be sure we have access to the network. Otherwise intercept the exceptions.
 		//		if (NeoComApp.checkNetworkAccess()) {
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(localizer);
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(localizer);
 		//			if(market==EVEMARKETDATA)
 		Vector<TrackEntry> marketEntries = MarketDataService.parseMarketDataEMD(item.getName(), EMarketSide.SELLER);
 		//		if (marketEntries.size() < 1) {
@@ -220,7 +220,7 @@ public class MarketDataService implements Runnable {
 		final String hubRegion = parts[0].trim();
 
 		// Search for the system on the list of locations.
-		return AppConnector.getDBConnector().searchLocationBySystem(hubSystem);
+		return AppConnector.getCCPDBConnector().searchLocationBySystem(hubSystem);
 	}
 
 	private static Vector<String> getMarketHubs() {

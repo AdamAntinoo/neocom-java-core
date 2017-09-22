@@ -152,7 +152,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	 */
 	public EveItem getItem() {
 		if (null == itemCache) {
-			itemCache = AppConnector.getDBConnector().searchItembyID(typeID);
+			itemCache = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		}
 		return itemCache;
 	}
@@ -163,7 +163,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 
 	public EveLocation getLocation() {
 		if (null == locationCache) {
-			locationCache = AppConnector.getDBConnector().searchLocationbyID(locationID);
+			locationCache = AppConnector.getCCPDBConnector().searchLocationbyID(locationID);
 		}
 		return locationCache;
 	}

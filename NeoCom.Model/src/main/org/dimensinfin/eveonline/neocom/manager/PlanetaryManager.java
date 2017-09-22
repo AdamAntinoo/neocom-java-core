@@ -200,7 +200,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
 		if (null == target) {
-			target = AppConnector.getDBConnector().searchLocationbyID(locid);
+			target = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
 		}

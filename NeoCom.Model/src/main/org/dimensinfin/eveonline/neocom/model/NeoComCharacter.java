@@ -429,7 +429,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		for (Property role : locationRoles) {
 			String value = role.getPropertyType().toString();
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole))
-				return AppConnector.getDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
+				return AppConnector.getCCPDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 			//		Property currentRole = locationRoles.get(locID);
 			//			if (matchingRole.equalsIgnoreCase(currentRole.getStringValue()))
 			//				return AppConnector.getDBConnector().searchLocationbyID(locID);
@@ -449,7 +449,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		//		EveLocation preferredLocation = null;
 		for (Property role : locationRoles)
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole)) {
-				EveLocation target = AppConnector.getDBConnector()
+				EveLocation target = AppConnector.getCCPDBConnector()
 						.searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 				if (target.getRegion().equalsIgnoreCase(region)) return target;
 				//		Property currentRole = locationRoles.get(locID);
@@ -699,7 +699,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());

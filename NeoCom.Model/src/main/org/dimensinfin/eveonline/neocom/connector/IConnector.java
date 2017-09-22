@@ -14,11 +14,11 @@ public interface IConnector {
 
 	public ICacheConnector getCacheConnector();
 
+	public ICCPDatabaseConnector getCCPDBConnector();
+
 	public IDatabaseConnector getDBConnector();
 
 	public INeoComModelStore getModelStore();
-
-	public IStorageConnector getStorageConnector();
 
 	//	public boolean checkExpiration(final long timestamp, final long window);
 
@@ -26,7 +26,7 @@ public interface IConnector {
 
 	//	public String getAppFilePath(String fileresourceid);
 
-	//public ICCPDatabaseConnector getCCPDBConnector();
+	public IStorageConnector getStorageConnector();
 
 	//	public NeocomPreferences getDefaultSharedPreferences();
 

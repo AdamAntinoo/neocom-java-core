@@ -47,6 +47,11 @@ public class MarketDataSet implements Serializable {
 	private Instant														timestamp					= new Instant(0);
 	private int																id								= -2;
 	private EMarketSide												side							= EMarketSide.SELLER;
+	/**
+	 * Special indicator to report invalid entries that should not be cached. Only true when filled from market
+	 * real data.
+	 */
+	public boolean														valid							= false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -60,7 +65,7 @@ public class MarketDataSet implements Serializable {
 	public MarketDataSet(final int id, final EMarketSide side) {
 		this.id = id;
 		this.side = side;
-		double baseprice = AppConnector.getDBConnector().searchItembyID(id).getBaseprice();
+		double baseprice = AppConnector.getCCPDBConnector().searchItembyID(id).getBaseprice();
 		bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 		bestmarkethigh.setPrice(baseprice);
 	}
@@ -78,6 +83,10 @@ public class MarketDataSet implements Serializable {
 		return timestamp;
 	}
 
+	public boolean isValid() {
+		return valid;
+	}
+
 	public void markUpdate() {
 		timestamp = new Instant();
 	}
@@ -85,6 +94,10 @@ public class MarketDataSet implements Serializable {
 	public void setData(final Vector<MarketDataEntry> hubData) {
 		dataOnMarketHub = hubData;
 		this.updateBestMarket();
+	}
+
+	public void setValid(final boolean valid) {
+		this.valid = valid;
 	}
 
 	@Override
@@ -115,7 +128,7 @@ public class MarketDataSet implements Serializable {
 	private synchronized void updateBestMarket() {
 		if (side == EMarketSide.SELLER) {
 			if ((null == dataOnMarketHub) || (dataOnMarketHub.size() < 1)) {
-				double baseprice = AppConnector.getDBConnector().searchItembyID(id).getBaseprice();
+				double baseprice = AppConnector.getCCPDBConnector().searchItembyID(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
 				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
@@ -142,7 +155,7 @@ public class MarketDataSet implements Serializable {
 		}
 		if (side == EMarketSide.BUYER) {
 			if ((null == dataOnMarketHub) || (dataOnMarketHub.size() < 1)) {
-				double baseprice = AppConnector.getDBConnector().searchItembyID(id).getBaseprice();
+				double baseprice = AppConnector.getCCPDBConnector().searchItembyID(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
 				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$

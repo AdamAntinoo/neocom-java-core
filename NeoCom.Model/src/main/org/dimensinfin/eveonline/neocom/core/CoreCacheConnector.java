@@ -26,12 +26,12 @@ import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class CoreCacheConnector implements ICacheConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger													logger							= Logger.getLogger("CoreCacheConnector");
+	private static Logger														logger							= Logger.getLogger("CoreCacheConnector");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected Vector<PendingRequestEntry>					_pendingRequests		= new Vector<PendingRequestEntry>();
-	private final HashMap<Integer, MarketDataSet>	buyMarketDataCache	= new HashMap<Integer, MarketDataSet>();
-	private final HashMap<Integer, MarketDataSet>	sellMarketDataCache	= new HashMap<Integer, MarketDataSet>();
+	protected Vector<PendingRequestEntry>						_pendingRequests		= new Vector<PendingRequestEntry>();
+	protected final HashMap<Integer, MarketDataSet>	buyMarketDataCache	= new HashMap<Integer, MarketDataSet>();
+	protected final HashMap<Integer, MarketDataSet>	sellMarketDataCache	= new HashMap<Integer, MarketDataSet>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CoreCacheConnector() {
@@ -65,7 +65,7 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	public synchronized void addMarketDataRequest(final long localizer) {
 		// Log.i("AndroidCacheConnector", ">>
 		// AndroidCacheConnector.addMarketDataRequest");
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
 		CoreCacheConnector.logger
 				.info("-- [AndroidCacheConnector.addMarketDataRequest] Posting market update for: " + item.getName());
 		// Detect priority from the Category of the item. Download data from
