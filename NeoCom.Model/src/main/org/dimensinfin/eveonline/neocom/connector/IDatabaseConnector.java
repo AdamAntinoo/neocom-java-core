@@ -70,10 +70,12 @@ public interface IDatabaseConnector {
 
 	//public boolean openDAO();
 
-	//	public NeocomDBHelper getNeocomDBHelper();
-	public boolean openAppDataBase();
+	public void loadSeedData();
 
 	//	public boolean openCCPDataBase();
+
+	//	public NeocomDBHelper getNeocomDBHelper();
+	public boolean openAppDataBase();
 
 	public Vector<String> queryAllLogins();
 
@@ -103,9 +105,9 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
 
-	public int searchInventionProduct(int typeID);
-
 	//	public EveItem searchItembyID(int typeID);
+
+	public int searchInventionProduct(int typeID);
 
 	public ArrayList<Job> searchJob4Class(long characterID, String string);
 
@@ -115,13 +117,13 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Resource> searchListOfMaterials(int itemID);
 
-	public ArrayList<Resource> searchListOfReaction(int itemID);
-
 	//	public EveLocation searchLocationbyID(long locationID);
 
 	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
 
 	//	public EveLocation searchLocationBySystem(String system);
+
+	public ArrayList<Resource> searchListOfReaction(int itemID);
 
 	public int searchModule4Blueprint(int bpitemID);
 
@@ -129,9 +131,9 @@ public interface IDatabaseConnector {
 
 	public int searchReactionOutputMultiplier(int itemID);
 
-	public Vector<Schematics> searchSchematics4Output(int targetId);
-
 	//	public int searchStationType(long systemID);
+
+	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public String searchTech4Blueprint(int blueprintID);
 }
