@@ -12,6 +12,7 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 import java.util.List;
 
 import org.dimensinfin.core.model.IModelStore;
+import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
@@ -19,7 +20,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 public interface INeoComModelStore extends IModelStore {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public String activateLoginIdentifier(final String loginTarget);
+	public Login activateLoginIdentifier(final String loginTarget);
 
 	public NeoComCharacter activatePilot(long characterID);
 

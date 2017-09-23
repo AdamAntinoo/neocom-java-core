@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -20,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
@@ -77,7 +79,7 @@ public interface IDatabaseConnector {
 	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
 
-	public Vector<String> queryAllLogins();
+	public Hashtable<String, Login> queryAllLogins();
 
 	public int queryBlueprintDependencies(int bpitemID);
 
