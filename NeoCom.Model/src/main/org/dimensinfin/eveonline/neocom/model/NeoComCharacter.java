@@ -544,10 +544,14 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		// Block to check the needs for update of the Character Assets.
+		// OPTIMIZATION: Remove this optimization until I found a way to get the assets downloaded for new Characters
 		if (null != assetsManager) {
 			TimeStamp time = assetsManager.getAssetsCacheTime();
 			if (null == time) return EDataBlock.ASSETDATA;
 			if (AppConnector.checkExpiration(time.getTimeStamp(), ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+		} else {
+			assetsManager = new AssetsManager(this);
+			return this.needsUpdate();
 		}
 		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;

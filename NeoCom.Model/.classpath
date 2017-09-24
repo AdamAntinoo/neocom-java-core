@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="org/dimensinfin/eveonline/neocom/connector/R.java|org/dimensinfin/eveonline/neocom/connector/NeocomPreferences.java|org/dimensinfin/eveonline/neocom/json/MarketDataSetDeserializer.java" kind="src" path="src/main"/>
+	<classpathentry kind="src" path="src/main"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
