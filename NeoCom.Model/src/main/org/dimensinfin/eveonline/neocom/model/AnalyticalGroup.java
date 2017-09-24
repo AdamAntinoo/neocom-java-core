@@ -9,9 +9,8 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-//- IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.IWeigthedNode;
+import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.interfaces.IWeigthedNode;
 
 /**
  * The requirements of model objects to be nodes has to review the implementation of simple nodes that only
@@ -24,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.core.IWeigthedNode;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AnalyticalGroup extends AbstractComplexNode implements IWeigthedNode {
+public abstract class AnalyticalGroup extends AbstractNeoComNode implements IWeigthedNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long		serialVersionUID					= 8917539237775595255L;
 	public static final String	EVENT_EXPANDCOLLAPSENODE	= "AnalyticalGroup.EVENT_EXPANDCOLLAPSENODE";
@@ -80,6 +79,7 @@ public abstract class AnalyticalGroup extends AbstractComplexNode implements IWe
 		return title;
 	}
 
+	@Override
 	public int getWeight() {
 		return weight;
 	}
@@ -93,6 +93,7 @@ public abstract class AnalyticalGroup extends AbstractComplexNode implements IWe
 		this.title = title;
 	}
 
+	@Override
 	public void setWeight(final int weight) {
 		this.weight = weight;
 	}

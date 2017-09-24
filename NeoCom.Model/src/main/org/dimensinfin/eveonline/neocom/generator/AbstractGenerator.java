@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.RootNode;
-import org.dimensinfin.eveonline.neocom.connector.DataSourceLocator;
-import org.dimensinfin.eveonline.neocom.connector.IModelGenerator;
+import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
+import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractGenerator implements IModelGenerator {

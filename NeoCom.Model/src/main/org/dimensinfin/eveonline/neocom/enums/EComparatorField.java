@@ -9,20 +9,16 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.enums;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
- * This enumerated defines the possible values for the comparator fields. Depending on this value the comparator will
- * check if the instance received fits the api required and then will get the right field for comparison.
+ * This enumerated defines the possible values for the comparator fields. Depending on this value the
+ * comparator will check if the instance received fits the api required and then will get the right field for
+ * comparison.
  * 
  * @author Adam Antinoo
  */
 public enum EComparatorField {
-NAME, ASSET_COUNT, RESOURCE_TYPE, WEIGHT, TIMEPENDING
+	NAME, ASSET_COUNT, RESOURCE_TYPE, WEIGHT, TIMEPENDING, REQUEST_PRIORITY
 }
 
 // - UNUSED CODE ............................................................................................

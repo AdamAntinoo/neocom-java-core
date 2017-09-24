@@ -12,7 +12,6 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.sql.SQLException;
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
@@ -21,6 +20,7 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -95,12 +95,13 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset	parentAssetCache	= null;
 	private transient EveLocation	locationCache			= null;
+	@JsonIgnore
 	private transient EveItem			itemCache					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComAsset() {
 		super();
-		jsonClassname = "NeoComAsset";
+		jsonClass = "NeoComAsset";
 		id = -2;
 		locationID = -1;
 	}
@@ -112,8 +113,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
 
@@ -150,7 +151,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	 */
 	public EveItem getItem() {
 		if (null == itemCache) {
-			itemCache = AppConnector.getDBConnector().searchItembyID(typeID);
+			itemCache = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		}
 		return itemCache;
 	}
@@ -161,7 +162,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 
 	public EveLocation getLocation() {
 		if (null == locationCache) {
-			locationCache = AppConnector.getDBConnector().searchLocationbyID(locationID);
+			locationCache = AppConnector.getCCPDBConnector().searchLocationbyID(locationID);
 		}
 		return locationCache;
 	}
@@ -192,6 +193,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return name;
 	}
 
+	@Override
 	public String getOrderingName() {
 		return name;
 	}
@@ -253,6 +255,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return parentAssetID;
 	}
 
+	@JsonIgnore
 	public double getPrice() {
 		return this.getItem().getPrice();
 	}

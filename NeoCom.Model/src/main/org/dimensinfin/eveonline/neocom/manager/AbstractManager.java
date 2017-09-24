@@ -22,10 +22,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class AbstractManager extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long					serialVersionUID	= -3012043551959443176L;
-	private static Logger							logger						= Logger.getLogger("AbstractManager");
+	protected static Logger						logger						= Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public String											jsonClassname			= "AbstractManager";
 	@JsonIgnore
 	private transient NeoComCharacter	pilot							= null;
 
@@ -33,6 +32,7 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 	public AbstractManager(final NeoComCharacter pilot) {
 		super();
 		this.setPilot(pilot);
+		jsonClass = "AbstractManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

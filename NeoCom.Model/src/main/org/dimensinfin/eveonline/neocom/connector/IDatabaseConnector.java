@@ -1,30 +1,34 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
+//	PROJECT:        NeoCom.model (NEOC.M)
 //	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API16.
+//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
+//									available databases.
+//									This version includes the access to the latest 6.x version of eveapi libraries to
+//									download ad parse the CCP XML API data.
+//									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.Job;
+import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.Property;
-import org.dimensinfin.eveonline.neocom.model.Schematics;
+import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 import org.dimensinfin.eveonline.neocom.planetary.PlanetaryResource;
 import org.dimensinfin.eveonline.neocom.planetary.ResourceList;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -42,19 +46,19 @@ public interface IDatabaseConnector {
 
 	public void closeDatabases();
 
-	public Dao<ApiKey, String> getApiKeysDao() throws java.sql.SQLException;
+	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
 
 	public List<ApiKey> getApiList4Login(String login);
 
-	public Dao<NeoComAsset, String> getAssetDAO() throws java.sql.SQLException;
+	public Dao<NeoComAsset, String> getAssetDAO() throws SQLException;
 
-	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws java.sql.SQLException;
+	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws SQLException;
 
 	public Dao<Job, String> getJobDAO() throws SQLException;
 
-	public Dao<EveLocation, String> getLocationDAO() throws java.sql.SQLException;
+	public Dao<EveLocation, String> getLocationDAO() throws SQLException;
 
-	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws java.sql.SQLException;
+	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 
 	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
@@ -62,14 +66,20 @@ public interface IDatabaseConnector {
 
 	public Dao<ResourceList, String> getResourceListDao() throws SQLException;
 
-	public Dao<DatabaseVersion, String> getVersionDao() throws java.sql.SQLException;
+	public Dao<TimeStamp, String> getTimeStampDAO() throws SQLException;
+
+	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
+
+	//public boolean openDAO();
+
+	public void loadSeedData();
+
+	//	public boolean openCCPDataBase();
 
 	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
 
-	//public boolean openDAO();
-
-	public boolean openCCPDataBase();
+	public Hashtable<String, Login> queryAllLogins();
 
 	public int queryBlueprintDependencies(int bpitemID);
 
@@ -80,6 +90,8 @@ public interface IDatabaseConnector {
 	public void replaceBlueprints(long characterID);
 
 	public void replaceJobs(long characterID);
+
+	public ArrayList<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAllPlanetaryAssets(long characterID);
 
@@ -95,9 +107,9 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
 
-	public int searchInventionProduct(int typeID);
+	//	public EveItem searchItembyID(int typeID);
 
-	public EveItem searchItembyID(int typeID);
+	public int searchInventionProduct(int typeID);
 
 	public ArrayList<Job> searchJob4Class(long characterID, String string);
 
@@ -107,13 +119,13 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Resource> searchListOfMaterials(int itemID);
 
+	//	public EveLocation searchLocationbyID(long locationID);
+
+	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
+
+	//	public EveLocation searchLocationBySystem(String system);
+
 	public ArrayList<Resource> searchListOfReaction(int itemID);
-
-	public EveLocation searchLocationbyID(long locationID);
-
-	public EveLocation searchLocationBySystem(String system);
-
-	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
 
 	public int searchModule4Blueprint(int bpitemID);
 
@@ -121,9 +133,9 @@ public interface IDatabaseConnector {
 
 	public int searchReactionOutputMultiplier(int itemID);
 
-	public Vector<Schematics> searchSchematics4Output(int targetId);
+	//	public int searchStationType(long systemID);
 
-	public int searchStationType(long systemID);
+	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public String searchTech4Blueprint(int blueprintID);
 }

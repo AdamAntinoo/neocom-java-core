@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
@@ -21,8 +20,9 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
-import org.dimensinfin.eveonline.neocom.factory.ComparatorFactory;
+import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -110,13 +110,14 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	/**
 	 * Check if the Region is empty and if not then add all the children to the model.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (this.isRenderWhenEmpty()) {
 			results.add(this);
 		}
 		if (this.isExpanded()) {
-			results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+			results = this.concatenateChildren(results, this.getChildren());
 		}
 		return results;
 	}

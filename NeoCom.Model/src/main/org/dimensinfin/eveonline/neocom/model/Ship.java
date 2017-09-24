@@ -33,7 +33,7 @@ public class Ship extends NeoComAsset {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Ship() {
-		jsonClassname = "ShipLocation";
+		jsonClass = "ShipLocation";
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class Ship extends NeoComAsset {
 	 * @param pilot
 	 */
 	public Ship(final long pilot) {
-		jsonClassname = "ShipLocation";
+		jsonClass = "ShipLocation";
 		pilotID = pilot;
 		this.setDownloaded(false);
 	}

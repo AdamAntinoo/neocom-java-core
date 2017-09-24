@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
@@ -34,7 +35,9 @@ import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
+import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 import org.joda.time.Duration;
+import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
@@ -44,6 +47,7 @@ import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -82,10 +86,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 	// - A S S E T   M A N A G E M E N T
 	private long																						totalAssets							= -1;
 	private long																						verificationAssetCount	= 0;
-	private double																					totalAssetsValue				= 0.0;
-	private final HashMap<Long, Region>											regions									= new HashMap<Long, Region>();
+	@JsonInclude
+	public double																						totalAssetsValue				= 0.0;
+	public final HashMap<Long, Region>											regions									= new HashMap<Long, Region>();
 	private final HashMap<Long, EveLocation>								locations								= new HashMap<Long, EveLocation>();
 	private final HashMap<Long, NeoComAsset>								containers							= new HashMap<Long, NeoComAsset>();
+	private TimeStamp																				assetsCacheTime					= null;;
+
 	/** Probably redundant with containers. */
 	private final HashMap<Long, NeoComAsset>								assetsAtContainer				= new HashMap<Long, NeoComAsset>();
 	/** The new list of ships with their state and their contents. An extension of containers. */
@@ -101,20 +108,16 @@ public class AssetsManager extends AbstractManager implements INamed {
 
 	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache							= new HashMap<Long, ArrayList<NeoComAsset>>();
 	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
+	public String																						iconName								= "assets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
 	private transient HashMap<Long, NeoComAsset>						assetMap								= new HashMap<Long, NeoComAsset>();
 
-	public String																						iconName;
-
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
 		super(pilot);
-		// Reinitialize the list of assets for this pilot.
-		this.accessAllAssets();
-		jsonClassname = "AssetsManager";
-		iconName = "assets.png";
+		jsonClass = "AssetsManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -169,11 +172,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 			return ships.values();
 	}
 
-	//	@Override
-	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-	//		return new ArrayList<AbstractComplexNode>();
-	//	}
-
 	/**
 	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
 	 * parser. This requires then that the cache verification and other cache tasks be performed locally to
@@ -193,7 +191,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * database records not associated to any owner, the add records for a generic owner and finally change the
 	 * owner to this character.
 	 */
-	public synchronized void downloadCorporationAssets() {
+	public void downloadCorporationAssets() {
 		AssetsManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
@@ -216,7 +214,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
-				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
+				//				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
 				for (final Asset eveAsset : assets) {
 					this.processAsset(eveAsset, null);
@@ -226,7 +224,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 			AppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
 
 			//				// Update the caching time to the time set by the eveapi.
-			//				assetsCacheTime = new Instant(response.getCachedUntil());
+			String reference = this.getPilot().getCharacterID() + ".ASSETS";
+			new TimeStamp(reference, new Instant(response.getCachedUntil()));
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
@@ -260,16 +259,18 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * database records not associated to any owner, the add records for a generic owner and finally change the
 	 * owner to this character.
 	 */
-	public synchronized void downloadPilotAssets() {
+	public void downloadPilotAssets() {
 		AssetsManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
+			IDatabaseConnector dbConn = AppConnector.getDBConnector();
+			synchronized (dbConn) {
+				dbConn.clearInvalidRecords();
+			}
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
-				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
 				for (final Asset eveAsset : assets) {
 					try {
@@ -279,25 +280,32 @@ public class AssetsManager extends AbstractManager implements INamed {
 					}
 				}
 			}
-			//			}
-			AppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
-
-			//			// Update the caching time to the time set by the eveapi.
-			//			assetsCacheTime = new Instant(response.getCachedUntil());
+			// Assign the assets to the pilot.
+			synchronized (dbConn) {
+				dbConn.replaceAssets(this.getPilot().getCharacterID());
+			}
+			// Update the caching time to the time set by the eveapi.
+			String reference = this.getPilot().getCharacterID() + ".ASSETS";
+			if (null == assetsCacheTime) {
+				assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+			} else {
+				assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+			}
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
-		// Clean all user structures invalid after the reload of the assets.
-		//		assetsManager = null;
-		//		totalAssets = -1;
-		//		clearTimers();
-		//		JobManager.clearCache();
-
-		//		this.setDirty(true);
-		//		this.fireStructureChange("EVENTSTRUCTURE_EVECHARACTER_ASSETS", null, null);
 		AssetsManager.logger.info("<< [AssetsManager.downloadPilotAssets]");
+	}
+
+	//	@Override
+	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+	//		return new ArrayList<AbstractComplexNode>();
+	//	}
+
+	public TimeStamp getAssetsCacheTime() {
+		return assetsCacheTime;
 	}
 
 	/**
@@ -319,13 +327,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return totalAssets;
 	}
 
-	//	public int getLocationCount() {
-	//		if (locationCount < 0) {
-	//			this.updateLocations();
-	//		}
-	//		return locationCount;
-	//	}
-
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
 			this.updateBlueprints();
@@ -335,6 +336,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 		return blueprintCache;
 	}
+
+	//	public int getLocationCount() {
+	//		if (locationCount < 0) {
+	//			this.updateLocations();
+	//		}
+	//		return locationCount;
+	//	}
 
 	/**
 	 * Returns the list of different locations where this character has assets. The locations are the unique
@@ -371,6 +379,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 
 	public ArrayList<NeoComAsset> getShips() {
 		return this.searchAsset4Category("Ship");
+	}
+
+	public AssetsManager initialize() {
+		this.accessAllAssets();
+		return this;
 	}
 
 	//	public HashSet<String> queryT2ModuleNames() {
@@ -664,7 +677,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return buffer.toString();
 	}
 
-	protected double calculateAssetValue(final NeoComAsset asset) {
+	protected synchronized double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
 		double assetValueISK = 0.0;
 		if (null != asset) {
@@ -699,18 +712,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 		final NeoComAsset newAsset = new NeoComAsset();
 		newAsset.setAssetID(eveAsset.getItemID());
 		newAsset.setTypeID(eveAsset.getTypeID());
-		//		// Children locations have a null on this field. Set it to their parents
-		//		final Long assetloc = eveAsset.getLocationID();
-		//		if (null != assetloc) {
-		//			newAsset.setLocationID(assetloc.longValue());
-		//			//	}else {
-		//			//		newAsset.setLocationID(
-		//		}
 		// Under the flat api check if the location is a real location or an asset.
 		Long locid = eveAsset.getLocationID();
 		if (locid > 1000000000000L) {
 			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
-			newAsset.setLocationID(-1);
+			newAsset.setLocationID(-2);
 			newAsset.setParentId(locid);
 		} else {
 			// The location is a real location.
@@ -722,7 +728,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());
@@ -819,7 +825,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
 		if (null == target) {
-			target = AppConnector.getDBConnector().searchLocationbyID(locid);
+			target = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
 		}
@@ -930,7 +936,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 			AssetsManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
-			//			NeoComCharacter.logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
+			//			logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
 		} catch (final SQLException sqle) {
 			AssetsManager.logger
 					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());

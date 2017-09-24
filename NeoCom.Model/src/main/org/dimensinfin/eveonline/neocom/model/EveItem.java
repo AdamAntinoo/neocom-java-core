@@ -14,6 +14,8 @@ import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveItem extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -23,7 +25,7 @@ public class EveItem extends AbstractComplexNode {
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
-			EveItem.defaultItem = AppConnector.getDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
+			EveItem.defaultItem = AppConnector.getCCPDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
 			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
 			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
 		}
@@ -46,7 +48,7 @@ public class EveItem extends AbstractComplexNode {
 	 * not available. It is only used when the caller does not specify the particular market side for the
 	 * requested price or any other search parameter.
 	 */
-	private double										defaultprice	= -1.0;
+	public double											defaultprice	= -1.0;
 	private double										volume				= 0.0;
 	private String										tech					= ModelWideConstants.eveglobal.TechI;
 
@@ -73,6 +75,7 @@ public class EveItem extends AbstractComplexNode {
 		return groupname;
 	}
 
+	@JsonIgnore
 	public MarketDataEntry getHighestBuyerPrice() {
 		return this.getBuyerMarketData().getBestMarket();
 	}
@@ -88,6 +91,7 @@ public class EveItem extends AbstractComplexNode {
 		return id;
 	}
 
+	@JsonIgnore
 	public MarketDataEntry getLowestSellerPrice() {
 		return this.getSellerMarketData().getBestMarket();
 	}
@@ -108,6 +112,7 @@ public class EveItem extends AbstractComplexNode {
 	 * 
 	 * @param price
 	 */
+	@JsonIgnore
 	public double getPrice() {
 		if (defaultprice < 0.0) {
 			defaultprice = this.getBuyerMarketData().getBestMarket().getPrice();
@@ -248,7 +253,7 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			buyerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			buyerData = AppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
 			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
 			}
@@ -268,7 +273,7 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			sellerData = AppConnector.getDBConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			sellerData = AppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
 			}

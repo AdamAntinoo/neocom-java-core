@@ -20,6 +20,8 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
@@ -51,6 +53,7 @@ public class Resource extends AbstractComplexNode {
 	public int								baseQty										= 0;
 	public int								stackSize									= 1;
 	private double						damage										= 1.0;
+	@JsonIgnore
 	private DateTime					registrationDate					= new DateTime(DateTimeZone.UTC);
 
 	/**
@@ -60,14 +63,14 @@ public class Resource extends AbstractComplexNode {
 	 */
 	public Resource(final int typeID) {
 		resourceID = typeID;
-		item = AppConnector.getDBConnector().searchItembyID(typeID);
+		item = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		baseQty = 0;
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Resource(final int typeID, final int newQty) {
 		resourceID = typeID;
-		item = AppConnector.getDBConnector().searchItembyID(typeID);
+		item = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		baseQty = newQty;
 	}
 

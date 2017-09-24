@@ -10,8 +10,17 @@
 package org.dimensinfin.eveonline.neocom.connector;
 
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 //- INTERFACE IMPLEMENTATION ...............................................................................
 public interface ICCPDatabaseConnector {
+	public boolean openCCPDataBase();
+
 	public EveItem searchItembyID(int typeID);
+
+	public EveLocation searchLocationbyID(long locationID);
+
+	public EveLocation searchLocationBySystem(String system);
+
+	public int searchStationType(long systemID);
 }
