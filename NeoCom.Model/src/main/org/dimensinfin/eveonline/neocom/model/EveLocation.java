@@ -18,6 +18,7 @@ import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 
 import com.beimin.eveapi.model.eve.Station;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -45,6 +46,7 @@ public class EveLocation extends AbstractNeoComNode {
 	private static final long	serialVersionUID	= 1522765618286937377L;
 
 	// - F I E L D - S E C T I O N ............................................................................
+	@JsonIgnore
 	@DatabaseField(id = true, index = true)
 	private long							id								= -2;
 	@DatabaseField
@@ -163,16 +165,6 @@ public class EveLocation extends AbstractNeoComNode {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
 	}
 
-	//	/**
-	//	 * Only use for location replication.
-	//	 * 
-	//	 * @return
-	//	 */
-	//@Deprecated
-	//	public long getId() {
-	//		return id;
-	//	}
-
 	public long getID() {
 		return Math.max(Math.max(Math.max(stationID, systemID), constellationID), regionID);
 	}
@@ -190,6 +182,16 @@ public class EveLocation extends AbstractNeoComNode {
 	public String getRegion() {
 		return region;
 	}
+
+	//	/**
+	//	 * Only use for location replication.
+	//	 * 
+	//	 * @return
+	//	 */
+	//@Deprecated
+	//	public long getId() {
+	//		return id;
+	//	}
 
 	public long getRegionID() {
 		return regionID;
@@ -223,6 +225,10 @@ public class EveLocation extends AbstractNeoComNode {
 		return systemID;
 	}
 
+	public int getTypeID() {
+		return typeID;
+	}
+
 	/**
 	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
 	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
@@ -252,6 +258,10 @@ public class EveLocation extends AbstractNeoComNode {
 
 	public final boolean isSystem() {
 		return ((this.getStationID() == 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
+	}
+
+	public void setCitadel(final boolean citadel) {
+		this.citadel = citadel;
 	}
 
 	public void setConstellation(final String constellation) {
@@ -322,6 +332,10 @@ public class EveLocation extends AbstractNeoComNode {
 	public void setTypeID(final int typeID) {
 		this.typeID = typeID;
 		//		setDirty(true);
+	}
+
+	public void setUrlLocationIcon(final String urlLocationIcon) {
+		this.urlLocationIcon = urlLocationIcon;
 	}
 
 	@Override

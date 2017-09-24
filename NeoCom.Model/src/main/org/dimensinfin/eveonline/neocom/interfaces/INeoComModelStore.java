@@ -9,6 +9,7 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
+import java.util.Hashtable;
 import java.util.List;
 
 import org.dimensinfin.core.model.IModelStore;
@@ -19,7 +20,8 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelStore extends IModelStore {
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	public Hashtable<String, Login> accessLoginList();
+
 	public Login activateLoginIdentifier(final String loginTarget);
 
 	public NeoComCharacter activatePilot(long characterID);
@@ -31,10 +33,6 @@ public interface INeoComModelStore extends IModelStore {
 	public NeoComCharacter getCurrentPilot();
 
 	public String getLoginIdentifier();
-
-	//	public NeoComCharacter searchCharacter(long _locator);
-
-	//	public void setCurrentPilot(NeoComCharacter pilot);
 }
 
 // - UNUSED CODE ............................................................................................

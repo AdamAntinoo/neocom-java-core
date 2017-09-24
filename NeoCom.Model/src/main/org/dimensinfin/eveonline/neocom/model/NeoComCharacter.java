@@ -66,7 +66,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode {
+public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode, Comparable<NeoComCharacter> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3456210619258009170L;
 	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
@@ -337,6 +337,12 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
+
+	public int compareTo(final NeoComCharacter target) {
+		if (this.getCharacterID() > target.getCharacterID()) return -1;
+		if (this.getCharacterID() == target.getCharacterID()) return 0;
+		return 1;
+	}
 
 	//	public abstract void downloadAssets();
 

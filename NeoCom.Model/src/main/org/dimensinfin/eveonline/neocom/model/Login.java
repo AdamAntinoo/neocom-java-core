@@ -30,8 +30,8 @@ public class Login {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private String													_name				= "-Default-";
-	private final Vector										_keys				= new Vector();
-	private final TreeSet<NeoComCharacter>	_characters	= new TreeSet();
+	private final Vector<ApiKey>						_keys				= new Vector<ApiKey>();
+	private final TreeSet<NeoComCharacter>	_characters	= new TreeSet<NeoComCharacter>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Login(final String name) {
@@ -61,6 +61,12 @@ public class Login {
 		}
 
 		return this;
+	}
+
+	public Vector<NeoComCharacter> getCharacters() {
+		Vector<NeoComCharacter> result = new Vector<NeoComCharacter>();
+		result.addAll(_characters);
+		return result;
 	}
 
 	public String getName() {
