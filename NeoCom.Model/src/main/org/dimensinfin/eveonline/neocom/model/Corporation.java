@@ -141,7 +141,7 @@ public class Corporation extends NeoComCharacter {
 		try {
 			AppConnector.startChrono();
 			// Clear any previous records with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
+			AppConnector.getDBConnector().clearInvalidRecords(this.getCharacterID() * -1);
 			// Download and parse the blueprints using the eveapi.
 			// Set the default connector for blueprints to a cache connector.
 			//			if (null == apiCacheConnector) {

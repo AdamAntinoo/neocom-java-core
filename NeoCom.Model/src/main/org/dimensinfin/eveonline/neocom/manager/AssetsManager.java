@@ -195,7 +195,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
+			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID() * -1);
 			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
 			//			AssetListResponse response = null;
 			//			if (getName().equalsIgnoreCase("Corporation")) {
@@ -265,7 +265,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			// Clear any previous record with owner -1 from database.
 			IDatabaseConnector dbConn = AppConnector.getDBConnector();
 			synchronized (dbConn) {
-				dbConn.clearInvalidRecords();
+				dbConn.clearInvalidRecords(this.getPilot().getCharacterID() * -1);
 			}
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
@@ -361,6 +361,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return locations;
 	}
 
+	@Override
 	public String getOrderingName() {
 		return "Assets Manager";
 	}
@@ -927,6 +928,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
 				myasset.setShip(true);
 			}
+			myasset.setOwnerID(this.getPilot().getCharacterID() * -1);
 			assetDao.create(myasset);
 
 			// Process all the children and convert them to assets.

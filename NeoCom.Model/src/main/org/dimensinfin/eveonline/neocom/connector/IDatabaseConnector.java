@@ -42,7 +42,7 @@ public interface IDatabaseConnector {
 
 	public boolean checkManufacturable(int typeid);
 
-	public void clearInvalidRecords();
+	public void clearInvalidRecords(long pilotid);
 
 	public void closeDatabases();
 
