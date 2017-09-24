@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="Neocom.Models/production/Neocom.Models-1.0.0.jar"/>
+    <jar path="Neocom.Models/production/Neocom.Models-1.1.0.jar"/>
     <options buildIfNeeded="true" compress="false" descriptionLocation="/Neocom.Models/production/export-jar.Neocom.Models.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
@@ -11,7 +11,7 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <folder path="/Neocom.Models/target"/>
         <javaElement handleIdentifier="=Neocom.Models/src\/main"/>
+        <folder path="/Neocom.Models/target"/>
     </selectedElements>
 </jardesc>
