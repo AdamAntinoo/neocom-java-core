@@ -9,12 +9,14 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.core;
 
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.ICacheConnector;
+import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
@@ -132,6 +134,7 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 			if (entry.state != ERequestState.COMPLETED) {
 				openRequests.add(entry);
 			}
+		Collections.sort(openRequests, ComparatorFactory.createComparator(EComparatorField.REQUEST_PRIORITY));
 		_pendingRequests = openRequests;
 		return _pendingRequests;
 	}

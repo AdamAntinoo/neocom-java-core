@@ -147,7 +147,7 @@ public class MarketDataSet implements Serializable {
 				double baseprice = AppConnector.getCCPDBConnector().searchItembyID(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
-				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
+				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
 			} else {
 				// Scan the list of entries to store the best one for each of the categories.
 				bestmarkethigh = null;
@@ -159,7 +159,7 @@ public class MarketDataSet implements Serializable {
 							bestmarkethigh = mde;
 						} else if (bestmarkethigh.getPrice() > mde.getPrice()) {
 							bestmarkethigh = mde;
-							MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - setting a better SELLER: " + mde); //$NON-NLS-1$
+							//							MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - setting a better SELLER: " + mde); //$NON-NLS-1$
 						}
 					}
 				}
@@ -174,7 +174,7 @@ public class MarketDataSet implements Serializable {
 				double baseprice = AppConnector.getCCPDBConnector().searchItembyID(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
-				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
+				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
 			} else {
 				// Scan the list of entries to store the best one for each of the categories.
 				bestmarkethigh = null;
@@ -185,7 +185,7 @@ public class MarketDataSet implements Serializable {
 							bestmarkethigh = mde;
 						} else if (bestmarkethigh.getPrice() < mde.getPrice()) {
 							bestmarkethigh = mde;
-							MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - setting a better BUYER: " + mde); //$NON-NLS-1$
+							//							MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - setting a better BUYER: " + mde); //$NON-NLS-1$
 						}
 					}
 				}
