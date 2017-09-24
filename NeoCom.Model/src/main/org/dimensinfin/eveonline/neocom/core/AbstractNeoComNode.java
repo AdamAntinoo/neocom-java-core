@@ -11,9 +11,11 @@ package org.dimensinfin.eveonline.neocom.core;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.List;
 
 import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractNeoComNode extends AbstractComplexNode implements INeoComNode {
@@ -28,7 +30,18 @@ public abstract class AbstractNeoComNode extends AbstractComplexNode implements 
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(final String variant);
+
+	protected ArrayList<AbstractComplexNode> concatenateChildren(final ArrayList<AbstractComplexNode> target,
+			final List<IGEFNode> children) {
+		for (IGEFNode node : children) {
+			if (node instanceof AbstractComplexNode) {
+				target.add((AbstractComplexNode) node);
+			}
+		}
+		return target;
+	}
 }
 
 // - UNUSED CODE ............................................................................................

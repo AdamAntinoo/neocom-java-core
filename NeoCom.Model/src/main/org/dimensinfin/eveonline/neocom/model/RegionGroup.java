@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
@@ -111,13 +110,14 @@ public class RegionGroup extends AnalyticalGroup implements INeoComNode {
 	/**
 	 * Check if the Region is empty and if not then add all the children to the model.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (this.isRenderWhenEmpty()) {
 			results.add(this);
 		}
 		if (this.isExpanded()) {
-			results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+			results = this.concatenateChildren(results, this.getChildren());
 		}
 		return results;
 	}

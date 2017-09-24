@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -141,8 +140,8 @@ public class EveLocation extends AbstractNeoComNode {
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
 

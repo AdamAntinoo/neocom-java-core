@@ -31,7 +31,7 @@ public class PlanetaryScenery {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private final Vector<Resource>					sceneryResources				= new Vector<Resource>();
-	private final Vector<ProcessingAction>	actions									= new Vector();
+	private final Vector<ProcessingAction>	actions									= new Vector<ProcessingAction>();
 	private final double										inTax										= 5.0;
 	private final double										outTax									= 5.0;
 

@@ -336,8 +336,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			}
 	}
 
+	@Override
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
 
+	@Override
 	public int compareTo(final NeoComCharacter target) {
 		if (this.getCharacterID() > target.getCharacterID()) return -1;
 		if (this.getCharacterID() == target.getCharacterID()) return 0;
@@ -950,7 +952,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			where.and();
 			where.eq("propertyType", EPropertyTypes.LOCATIONROLE.toString());
 			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
-			locationRoles = new ArrayList(propertyDao.query(preparedQuery));
+			locationRoles = new ArrayList<>(propertyDao.query(preparedQuery));
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
