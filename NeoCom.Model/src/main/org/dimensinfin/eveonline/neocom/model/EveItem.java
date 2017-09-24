@@ -25,7 +25,7 @@ public class EveItem extends AbstractComplexNode {
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
-			EveItem.defaultItem = AppConnector.getDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
+			EveItem.defaultItem = AppConnector.getCCPDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
 			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
 			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
 		}

@@ -77,6 +77,13 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getCacheConnector' disabled.");
 	}
 
+	public static ICCPDatabaseConnector getCCPDBConnector() {
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getCCPDBConnector();
+		else
+			throw new RuntimeException("Application connector not defined. Functionality 'getCCPDBConnector' disabled.");
+	}
+
 	public static IDatabaseConnector getDBConnector() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getDBConnector();

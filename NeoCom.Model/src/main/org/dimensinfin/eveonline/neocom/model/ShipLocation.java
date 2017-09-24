@@ -9,7 +9,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.interfaces.INeoComNode;
@@ -58,8 +57,8 @@ public class ShipLocation extends EveLocation implements INeoComNode {
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
 

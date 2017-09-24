@@ -107,7 +107,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 
 	public EveItem getItem() {
 		if (null == orderItem) {
-			orderItem = AppConnector.getDBConnector().searchItembyID(typeID);
+			orderItem = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		}
 		return orderItem;
 	}
@@ -134,7 +134,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 
 	public EveLocation getOrderLocation() {
 		if (null == orderLocation) {
-			orderLocation = AppConnector.getDBConnector().searchLocationbyID(stationID);
+			orderLocation = AppConnector.getCCPDBConnector().searchLocationbyID(stationID);
 		}
 		return orderLocation;
 	}

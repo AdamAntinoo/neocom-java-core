@@ -66,7 +66,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode {
+public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode, Comparable<NeoComCharacter> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3456210619258009170L;
 	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
@@ -336,7 +336,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			}
 	}
 
+	@Override
 	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
+
+	@Override
+	public int compareTo(final NeoComCharacter target) {
+		if (this.getCharacterID() > target.getCharacterID()) return -1;
+		if (this.getCharacterID() == target.getCharacterID()) return 0;
+		return 1;
+	}
 
 	//	public abstract void downloadAssets();
 
@@ -429,7 +437,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		for (Property role : locationRoles) {
 			String value = role.getPropertyType().toString();
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole))
-				return AppConnector.getDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
+				return AppConnector.getCCPDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 			//		Property currentRole = locationRoles.get(locID);
 			//			if (matchingRole.equalsIgnoreCase(currentRole.getStringValue()))
 			//				return AppConnector.getDBConnector().searchLocationbyID(locID);
@@ -449,7 +457,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		//		EveLocation preferredLocation = null;
 		for (Property role : locationRoles)
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole)) {
-				EveLocation target = AppConnector.getDBConnector()
+				EveLocation target = AppConnector.getCCPDBConnector()
 						.searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 				if (target.getRegion().equalsIgnoreCase(region)) return target;
 				//		Property currentRole = locationRoles.get(locID);
@@ -536,10 +544,14 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		// Block to check the needs for update of the Character Assets.
+		// OPTIMIZATION: Remove this optimization until I found a way to get the assets downloaded for new Characters
 		if (null != assetsManager) {
 			TimeStamp time = assetsManager.getAssetsCacheTime();
 			if (null == time) return EDataBlock.ASSETDATA;
 			if (AppConnector.checkExpiration(time.getTimeStamp(), ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+		} else {
+			assetsManager = new AssetsManager(this);
+			return this.needsUpdate();
 		}
 		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
@@ -699,7 +711,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());
@@ -944,7 +956,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			where.and();
 			where.eq("propertyType", EPropertyTypes.LOCATIONROLE.toString());
 			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
-			locationRoles = new ArrayList(propertyDao.query(preparedQuery));
+			locationRoles = new ArrayList<>(propertyDao.query(preparedQuery));
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}

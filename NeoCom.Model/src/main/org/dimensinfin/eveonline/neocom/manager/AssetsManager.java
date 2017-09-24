@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
@@ -262,12 +263,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
+			IDatabaseConnector dbConn = AppConnector.getDBConnector();
+			synchronized (dbConn) {
+				dbConn.clearInvalidRecords();
+			}
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
 			if (null != response) {
 				List<Asset> assets = response.getAll();
-				//				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
 				// Assets may be parent of other assets so process them recursively.
 				for (final Asset eveAsset : assets) {
 					try {
@@ -278,10 +281,16 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 			// Assign the assets to the pilot.
-			AppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
+			synchronized (dbConn) {
+				dbConn.replaceAssets(this.getPilot().getCharacterID());
+			}
 			// Update the caching time to the time set by the eveapi.
 			String reference = this.getPilot().getCharacterID() + ".ASSETS";
-			assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+			if (null == assetsCacheTime) {
+				assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+			} else {
+				assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+			}
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		} catch (final Exception ex) {
@@ -703,13 +712,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		final NeoComAsset newAsset = new NeoComAsset();
 		newAsset.setAssetID(eveAsset.getItemID());
 		newAsset.setTypeID(eveAsset.getTypeID());
-		//		// Children locations have a null on this field. Set it to their parents
-		//		final Long assetloc = eveAsset.getLocationID();
-		//		if (null != assetloc) {
-		//			newAsset.setLocationID(assetloc.longValue());
-		//			//	}else {
-		//			//		newAsset.setLocationID(
-		//		}
 		// Under the flat api check if the location is a real location or an asset.
 		Long locid = eveAsset.getLocationID();
 		if (locid > 1000000000000L) {
@@ -726,7 +728,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());
@@ -823,7 +825,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
 		if (null == target) {
-			target = AppConnector.getDBConnector().searchLocationbyID(locid);
+			target = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
 		}

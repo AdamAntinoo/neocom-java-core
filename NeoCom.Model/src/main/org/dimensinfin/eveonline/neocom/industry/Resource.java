@@ -63,14 +63,14 @@ public class Resource extends AbstractComplexNode {
 	 */
 	public Resource(final int typeID) {
 		resourceID = typeID;
-		item = AppConnector.getDBConnector().searchItembyID(typeID);
+		item = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		baseQty = 0;
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Resource(final int typeID, final int newQty) {
 		resourceID = typeID;
-		item = AppConnector.getDBConnector().searchItembyID(typeID);
+		item = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		baseQty = newQty;
 	}
 

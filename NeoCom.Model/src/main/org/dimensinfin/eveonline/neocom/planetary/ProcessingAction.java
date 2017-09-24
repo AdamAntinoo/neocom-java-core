@@ -14,6 +14,7 @@ import java.util.Vector;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -29,17 +30,15 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
 public class ProcessingAction {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	//	private static Logger								logger									= Logger.getLogger("ProcessingAction");
-	//	private static int									RAW2TIER1_TRANSFORMQTY	= 3000;
-	//	private static final int						MINUTES_RAWCYCLE				= 30;
-	//	private static final int						RAWOUTPUT_MULTIPLIER		= 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int																targetId				= 0;
+	public EveItem														targetItem			= null;
 	private Vector<Schematics>								schematics			= new Vector<Schematics>();
 	private final Vector<Schematics>					inputList				= new Vector<Schematics>();
 	private Schematics												output					= null;
 	private final HashMap<Integer, Resource>	actionResources	= new HashMap<Integer, Resource>();
+	public String															jsonClass				= "ProcessingAction";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -51,6 +50,8 @@ public class ProcessingAction {
 	 */
 	public ProcessingAction(final int targetId) {
 		this.targetId = targetId;
+		// Get the item for the target id to be identified on the Json serialization.
+		targetItem = AppConnector.getCCPDBConnector().searchItembyID(targetId);
 		// Get the schematics information.
 		schematics = AppConnector.getDBConnector().searchSchematics4Output(targetId);
 		// Store the inputs into another list.

@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
 public class ModelGeneratorStore {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger																	logger		= Logger.getLogger("ModelGeneratorManager");
-	private static final HashMap<String, IModelGenerator>	adapters	= new HashMap<String, IModelGenerator>();
+	private static final HashMap<String, IModelGenerator>	adapters	= new HashMap<>();
 
 	public static IModelGenerator registerGenerator(final IModelGenerator newGenerator) {
 		DataSourceLocator locator = newGenerator.getDataSourceLocator();

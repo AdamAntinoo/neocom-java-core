@@ -32,6 +32,9 @@ public class MarketDataEntry implements Serializable {
 	private double						price							= 999999999999.99;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public MarketDataEntry() {
+	}
+
 	public MarketDataEntry(final EveLocation entryLocation) {
 		location = entryLocation;
 	}
@@ -69,6 +72,10 @@ public class MarketDataEntry implements Serializable {
 		return location.getSystem();
 	}
 
+	public void setLocation(final EveLocation location) {
+		this.location = location;
+	}
+
 	public void setPrice(final double price) {
 		this.price = price;
 	}
@@ -77,6 +84,7 @@ public class MarketDataEntry implements Serializable {
 		this.qty = qty;
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("MarketDataEntry [");
 		buffer.append("qty: ").append(qty).append(" ");

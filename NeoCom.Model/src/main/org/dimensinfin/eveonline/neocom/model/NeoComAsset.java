@@ -12,7 +12,6 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.sql.SQLException;
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
@@ -114,8 +113,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
 
@@ -152,7 +151,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	 */
 	public EveItem getItem() {
 		if (null == itemCache) {
-			itemCache = AppConnector.getDBConnector().searchItembyID(typeID);
+			itemCache = AppConnector.getCCPDBConnector().searchItembyID(typeID);
 		}
 		return itemCache;
 	}
@@ -163,7 +162,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 
 	public EveLocation getLocation() {
 		if (null == locationCache) {
-			locationCache = AppConnector.getDBConnector().searchLocationbyID(locationID);
+			locationCache = AppConnector.getCCPDBConnector().searchLocationbyID(locationID);
 		}
 		return locationCache;
 	}
@@ -194,6 +193,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return name;
 	}
 
+	@Override
 	public String getOrderingName() {
 		return name;
 	}

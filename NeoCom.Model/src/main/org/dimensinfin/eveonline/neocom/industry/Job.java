@@ -10,7 +10,6 @@ package org.dimensinfin.eveonline.neocom.industry;
 import java.util.Date;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -102,7 +101,9 @@ public class Job extends AbstractComplexNode {
 	}
 
 	public String getBlueprintName() {
-		if (null == blueprintItem) blueprintItem = AppConnector.getDBConnector().searchItembyID(blueprintTypeID);
+		if (null == blueprintItem) {
+			blueprintItem = AppConnector.getCCPDBConnector().searchItembyID(blueprintTypeID);
+		}
 		return blueprintItem.getName();
 	}
 
@@ -129,12 +130,15 @@ public class Job extends AbstractComplexNode {
 	public long getFacilityID() {
 		return facilityID;
 	}
+
 	public long getJobID() {
 		return jobID;
 	}
 
 	public EveLocation getJobLocation() {
-		if (null == jobLocation) jobLocation = AppConnector.getDBConnector().searchLocationbyID(facilityID);
+		if (null == jobLocation) {
+			jobLocation = AppConnector.getCCPDBConnector().searchLocationbyID(facilityID);
+		}
 		return jobLocation;
 	}
 
@@ -147,7 +151,7 @@ public class Job extends AbstractComplexNode {
 	}
 
 	public int getMaxRuns() {
-		return maxRuns;
+		return Job.maxRuns;
 	}
 
 	public String getModuleName() {
@@ -206,7 +210,7 @@ public class Job extends AbstractComplexNode {
 	public void setBlueprintTypeID(final int blueprintTypeID) {
 		this.blueprintTypeID = blueprintTypeID;
 		// Load the blueprint item reference.
-		blueprintItem = AppConnector.getDBConnector().searchItembyID(blueprintTypeID);
+		blueprintItem = AppConnector.getCCPDBConnector().searchItembyID(blueprintTypeID);
 	}
 
 	public void setCompletedCharacterID(final long completedCharacterID) {
@@ -283,9 +287,13 @@ public class Job extends AbstractComplexNode {
 		buffer.append(jobID).append(" ");
 		buffer.append("[").append(blueprintID).append("] ");
 		buffer.append("#").append(blueprintTypeID).append(" ");
-		buffer.append(getBlueprintName()).append(" ");
-		if (activityID == ModelWideConstants.activities.MANUFACTURING) buffer.append("MANUFACTURE").append(" ");
-		if (activityID == ModelWideConstants.activities.INVENTION) buffer.append("INVENTION").append(" ");
+		buffer.append(this.getBlueprintName()).append(" ");
+		if (activityID == ModelWideConstants.activities.MANUFACTURING) {
+			buffer.append("MANUFACTURE").append(" ");
+		}
+		if (activityID == ModelWideConstants.activities.INVENTION) {
+			buffer.append("INVENTION").append(" ");
+		}
 		buffer.append("Output:#").append(productTypeID).append(" ");
 		//		buffer.append("Module [").append(moduleName).append("] ");
 		buffer.append("Start:").append(startDate).append(" - End:").append(endDate);

@@ -25,7 +25,6 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 	protected static Logger						logger						= Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public String											jsonClass					= "AbstractManager";
 	@JsonIgnore
 	private transient NeoComCharacter	pilot							= null;
 
@@ -33,6 +32,7 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 	public AbstractManager(final NeoComCharacter pilot) {
 		super();
 		this.setPilot(pilot);
+		jsonClass = "AbstractManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

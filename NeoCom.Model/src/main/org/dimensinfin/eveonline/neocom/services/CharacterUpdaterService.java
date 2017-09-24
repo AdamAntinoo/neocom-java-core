@@ -15,10 +15,42 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class CharacterUpdaterService implements Runnable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger		= Logger.getLogger("CharacterUpdaterService");
+	private static Logger logger = Logger.getLogger("CharacterUpdaterService");
+
+	/**
+	 * Entry point fot the background timed service. Once a Character is detected that need update it will fire
+	 * this call with no need for the AppModelStore.
+	 */
+	public static void processCharacter(final NeoComCharacter pilot) {
+		EDataBlock datacode = pilot.needsUpdate();
+		try {
+			CharacterUpdaterService.logger.info(
+					"-- [CharacterUpdaterService.onHandleIntent] EDataBlock to process: " + pilot.getName() + " - " + datacode);
+			switch (datacode) {
+				case CHARACTERDATA:
+					pilot.updateCharacterInfo();
+					//					AppConnector.getCacheConnector().clearPendingRequest(_locator);
+					//					AppConnector.getCacheConnector().decrementTopCounter();
+					break;
+				case ASSETDATA:
+					// New data model decouples the character from the data managers. But requires to know if Pilot or Corporation.
+					if (pilot.isCorporation()) {
+						pilot.getAssetsManager().downloadCorporationAssets();
+					} else {
+						pilot.getAssetsManager().downloadPilotAssets();
+					}
+					//					AppConnector.getCacheConnector().clearPendingRequest(_locator);
+					//					AppConnector.getCacheConnector().decrementTopCounter();
+					break;
+				default:
+					break;
+			}
+		} catch (RuntimeException rtex) {
+		}
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private long					_locator	= -1;
+	private long _locator = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CharacterUpdaterService(final long locator) {

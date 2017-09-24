@@ -9,7 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.core;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -26,12 +26,12 @@ import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class CoreCacheConnector implements ICacheConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger													logger							= Logger.getLogger("CoreCacheConnector");
+	private static Logger															logger							= Logger.getLogger("CoreCacheConnector");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected Vector<PendingRequestEntry>					_pendingRequests		= new Vector<PendingRequestEntry>();
-	private final HashMap<Integer, MarketDataSet>	buyMarketDataCache	= new HashMap<Integer, MarketDataSet>();
-	private final HashMap<Integer, MarketDataSet>	sellMarketDataCache	= new HashMap<Integer, MarketDataSet>();
+	protected Vector<PendingRequestEntry>							_pendingRequests		= new Vector<PendingRequestEntry>();
+	protected final Hashtable<Integer, MarketDataSet>	buyMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
+	protected final Hashtable<Integer, MarketDataSet>	sellMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CoreCacheConnector() {
@@ -43,6 +43,7 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	 * initialized at startup and probably in some other conditions like when the information is stale and needs
 	 * to be updated.
 	 */
+	@Override
 	public void addCharacterUpdateRequest(final long localizer) {
 		CoreCacheConnector.logger.info(">> [CoreCacheConnector.addCharacterUpdateRequest]");
 		final PendingRequestEntry request = new PendingRequestEntry(localizer);
@@ -62,10 +63,11 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	 * @param localizer
 	 *          identifier of the item related to the data to download.
 	 */
-	public synchronized void addMarketDataRequest(final long localizer) {
+	@Override
+	public void addMarketDataRequest(final long localizer) {
 		// Log.i("AndroidCacheConnector", ">>
 		// AndroidCacheConnector.addMarketDataRequest");
-		final EveItem item = AppConnector.getDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
+		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
 		CoreCacheConnector.logger
 				.info("-- [AndroidCacheConnector.addMarketDataRequest] Posting market update for: " + item.getName());
 		// Detect priority from the Category of the item. Download data from
@@ -92,10 +94,12 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 		}
 	}
 
+	@Override
 	public synchronized void clearPendingRequest(final long localizer) {
 		this.clearPendingRequest(Long.valueOf(localizer).toString());
 	}
 
+	@Override
 	public synchronized void clearPendingRequest(final String localizer) {
 		for (final PendingRequestEntry entry : _pendingRequests) {
 			final String entryid = entry.getIdentifier();
@@ -111,10 +115,13 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 		}
 	}
 
+	@Override
 	public abstract int decrementMarketCounter();
 
+	@Override
 	public abstract int decrementTopCounter();
 
+	@Override
 	public synchronized Vector<PendingRequestEntry> getPendingRequests() {
 		if (null == _pendingRequests) {
 			_pendingRequests = new Vector<PendingRequestEntry>();
@@ -129,8 +136,10 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 		return _pendingRequests;
 	}
 
+	@Override
 	public abstract int incrementMarketCounter();
 
+	@Override
 	public abstract int incrementTopCounter();
 
 	/**
@@ -151,6 +160,7 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	 * @return the cached data or an empty locator ready to receive downloaded data.
 	 */
 	//	@Cacheable("MarketData")
+	@Override
 	public MarketDataSet searchMarketData(final int itemID, final EMarketSide side) {
 		CoreCacheConnector.logger
 				.info(">> [SpringDatabaseConnector.searchMarketData]> itemid: " + itemID + " side: " + side.toString());
@@ -158,7 +168,7 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 		// Search on the cache. By default load the SELLER as If I am buying the item.
 
 		// Cache interception performed by EHCache. If we reach this point that means we have not cached the data.
-		HashMap<Integer, MarketDataSet> cache = sellMarketDataCache;
+		Hashtable<Integer, MarketDataSet> cache = sellMarketDataCache;
 		if (side == EMarketSide.BUYER) {
 			cache = buyMarketDataCache;
 		}

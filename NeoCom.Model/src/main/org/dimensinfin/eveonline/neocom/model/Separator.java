@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
-import java.util.Collection;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
@@ -42,8 +41,8 @@ public class Separator extends AbstractNeoComNode {
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll((Collection<? extends AbstractComplexNode>) this.getChildren());
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
 
