@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>DimensinfinIndustries</groupId>
 	<artifactId>NeoCom.model</artifactId>
-	<version>0.7.0-SNAPSHOT</version>
+	<version>0.2.0-SNAPSHOT</version>
 	<name>NeoCom Eve Model</name>
 	<description>Isolated model structures to access and manage Eve Online character data and their available databases.
 	This version includes the access to the latest 6.x version of eveapi libraries to download ad parse the CCP XML API data.
@@ -75,19 +75,10 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-					<delimiters>
-						<delimiter>@</delimiter>
-					</delimiters>
-					<useDefaultDelimiters>false</useDefaultDelimiters>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
