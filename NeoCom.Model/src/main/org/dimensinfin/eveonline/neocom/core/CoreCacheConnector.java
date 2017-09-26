@@ -9,14 +9,13 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.core;
 
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.ICacheConnector;
-import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
@@ -26,14 +25,20 @@ import org.dimensinfin.eveonline.neocom.services.MarketDataService;
 import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 
 // - CLASS IMPLEMENTATION ...................................................................................
+/**
+ * Common platform implementation of the Cache Connector service. This code can be used on all platforms and
+ * covers almost all the required model data cache functionality.
+ * 
+ * @author Adam Antinoo
+ */
 public abstract class CoreCacheConnector implements ICacheConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger															logger							= Logger.getLogger("CoreCacheConnector");
+	private static Logger																	logger							= Logger.getLogger("CoreCacheConnector");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected Vector<PendingRequestEntry>							_pendingRequests		= new Vector<PendingRequestEntry>();
-	protected final Hashtable<Integer, MarketDataSet>	buyMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
-	protected final Hashtable<Integer, MarketDataSet>	sellMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
+	protected PriorityBlockingQueue<PendingRequestEntry>	_pendingRequests		= new PriorityBlockingQueue<PendingRequestEntry>();
+	protected final Hashtable<Integer, MarketDataSet>			buyMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
+	protected final Hashtable<Integer, MarketDataSet>			sellMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CoreCacheConnector() {
@@ -67,27 +72,31 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	 */
 	@Override
 	public void addMarketDataRequest(final long localizer) {
-		// Log.i("AndroidCacheConnector", ">>
-		// AndroidCacheConnector.addMarketDataRequest");
+		CoreCacheConnector.logger.info(">> [CoreCacheConnector.addMarketDataRequest]>Localizer: " + localizer);
 		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
 		CoreCacheConnector.logger
 				.info("-- [AndroidCacheConnector.addMarketDataRequest] Posting market update for: " + item.getName());
-		// Detect priority from the Category of the item. Download data from
-		// Asteroids and Minerals first.
+		// Detect priority from the Category of the item. Download data from Asteroids and Minerals first.
 		final String category = item.getCategory();
 		final String group = item.getGroupName();
-		int priority = 1;
-		if (category.equalsIgnoreCase("Asteroid")) {
-			priority = 6;
-		}
+		int priority = 30;
 		if (category.equalsIgnoreCase("Material")) {
 			priority = 5;
 		}
-		if (category.equalsIgnoreCase("Module")) {
-			priority = 8;
+		if (category.equalsIgnoreCase("Asteroid")) {
+			priority = 6;
+		}
+		if (category.equalsIgnoreCase("Planetary Commodities")) {
+			priority = 7;
+		}
+		if (category.equalsIgnoreCase("Planetary Resources")) {
+			priority = 7;
 		}
 		if (group.equalsIgnoreCase("Datacores")) {
-			priority = 3;
+			priority = 8;
+		}
+		if (category.equalsIgnoreCase("Module")) {
+			priority = 10;
 		}
 		final PendingRequestEntry request = new PendingRequestEntry(localizer);
 		request.setPriority(priority);
@@ -124,18 +133,18 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	public abstract int decrementTopCounter();
 
 	@Override
-	public synchronized Vector<PendingRequestEntry> getPendingRequests() {
-		if (null == _pendingRequests) {
-			_pendingRequests = new Vector<PendingRequestEntry>();
-		}
-		// Clean up all completed requests.
-		final Vector<PendingRequestEntry> openRequests = new Vector<PendingRequestEntry>(_pendingRequests.size());
-		for (final PendingRequestEntry entry : _pendingRequests)
-			if (entry.state != ERequestState.COMPLETED) {
-				openRequests.add(entry);
-			}
-		Collections.sort(openRequests, ComparatorFactory.createComparator(EComparatorField.REQUEST_PRIORITY));
-		_pendingRequests = openRequests;
+	public PriorityBlockingQueue<PendingRequestEntry> getPendingRequests() {
+		//		if (null == _pendingRequests) {
+		//			_pendingRequests = new Vector<PendingRequestEntry>();
+		//		}
+		//		// Clean up all completed requests.
+		//		final Vector<PendingRequestEntry> openRequests = new Vector<PendingRequestEntry>(_pendingRequests.size());
+		//		for (final PendingRequestEntry entry : _pendingRequests)
+		//			if (entry.state != ERequestState.COMPLETED) {
+		//				openRequests.add(entry);
+		//			}
+		//		Collections.sort(openRequests, ComparatorFactory.createComparator(EComparatorField.REQUEST_PRIORITY));
+		//	_pendingRequests = openRequests;
 		return _pendingRequests;
 	}
 
@@ -207,18 +216,22 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	}
 
 	/**
-	 * Adds a new entry if not already found on the pending list.
+	 * Adds a new entry if not already found on the pending list. This feature is now a little more tricky
+	 * because the queue implementation hides the contens and there is no way to check this without reading the
+	 * list completely.
 	 * 
 	 * @param request
 	 */
 	private synchronized boolean addNoDuplicate(final PendingRequestEntry request) {
 		// Check for duplicates before adding the new element.
 		final String requestid = request.getIdentifier();
-		for (final PendingRequestEntry entry : _pendingRequests) {
-			final String entryid = entry.getIdentifier();
-			if (entryid.equalsIgnoreCase(requestid)) return false;
+		synchronized (_pendingRequests) {
+			for (PendingRequestEntry pendingRequestEntry : _pendingRequests) {
+				PendingRequestEntry entry = pendingRequestEntry;
+				if (entry.getIdentifier().equalsIgnoreCase(requestid)) return false;
+			}
+			_pendingRequests.add(request);
 		}
-		_pendingRequests.add(request);
 		return true;
 	}
 }

@@ -9,7 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.util.Vector;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
@@ -30,7 +30,7 @@ public interface ICacheConnector {
 
 	public int decrementTopCounter();
 
-	public Vector<PendingRequestEntry> getPendingRequests();
+	public PriorityBlockingQueue<PendingRequestEntry> getPendingRequests();
 
 	public int incrementMarketCounter();
 
