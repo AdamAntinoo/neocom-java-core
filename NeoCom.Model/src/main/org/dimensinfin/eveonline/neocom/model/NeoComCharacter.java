@@ -194,9 +194,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	public HashMap<Long, Property>				actions4Character		= null;
 	private transient Instant							assetsCacheTime			= null;
 
-	@JsonIgnore
+	//	@JsonIgnore
+	@JsonInclude
 	protected transient AssetsManager			assetsManager				= null;
-	@JsonIgnore
+	//	@JsonIgnore
 	protected transient PlanetaryManager	_planetaryManager		= null;
 	protected transient Instant						blueprintsCacheTime	= null;
 	protected transient Instant						jobsCacheTime				= null;
@@ -385,7 +386,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return this.getAssetsManager().getAssetTotalCount();
 	}
 
-	@JsonIgnore
+	//	@JsonIgnore
 	public AssetsManager getAssetsManager() {
 		if (null == assetsManager) {
 			assetsManager = new AssetsManager(this);
