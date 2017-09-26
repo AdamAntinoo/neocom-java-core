@@ -9,9 +9,14 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
+
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 
 import com.beimin.eveapi.exception.ApiException;
 
@@ -24,18 +29,20 @@ import com.beimin.eveapi.exception.ApiException;
  * 
  * @author Adam Antinoo
  */
-public class Login {
+public class Login extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger										logger			= Logger.getLogger("Login");
+	private static final long								serialVersionUID	= -1654191267396975701L;
+	private static Logger										logger						= Logger.getLogger("Login");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String													_name				= "-Default-";
-	private final Vector<ApiKey>						_keys				= new Vector<ApiKey>();
-	private final TreeSet<NeoComCharacter>	_characters	= new TreeSet<NeoComCharacter>();
+	private String													_name							= "-Default-";
+	private final Vector<ApiKey>						_keys							= new Vector<ApiKey>();
+	private final TreeSet<NeoComCharacter>	_characters				= new TreeSet<NeoComCharacter>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Login(final String name) {
 		_name = name;
+		jsonClass = "Login";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -63,6 +70,18 @@ public class Login {
 		return this;
 	}
 
+	/**
+	 * Assets should collaborate to the model by adding the Characters if they are expanded.
+	 */
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		if (this.isExpanded()) {
+			results = this.concatenateNeoComCharacter(results, this.getCharacters());
+		}
+		return results;
+	}
+
 	public Vector<NeoComCharacter> getCharacters() {
 		Vector<NeoComCharacter> result = new Vector<NeoComCharacter>();
 		result.addAll(_characters);
@@ -84,6 +103,16 @@ public class Login {
 			if (neoch.getCharacterID() == id) return neoch;
 		}
 		return null;
+	}
+
+	protected ArrayList<AbstractComplexNode> concatenateNeoComCharacter(final ArrayList<AbstractComplexNode> target,
+			final List<NeoComCharacter> children) {
+		for (NeoComCharacter node : children) {
+			if (node instanceof AbstractComplexNode) {
+				target.add(node);
+			}
+		}
+		return target;
 	}
 }
 

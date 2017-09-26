@@ -207,7 +207,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
 		lastCCPAccessTime = Instant.now();
-		//		assetsCacheTime = Instant.now();
+		jsonClass = "NeoComCharacter";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -346,9 +346,9 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return 1;
 	}
 
-	//	public abstract void downloadAssets();
-
 	public abstract void downloadBlueprints();
+
+	//	public abstract void downloadAssets();
 
 	public abstract void downloadIndustryJobs();
 
@@ -369,6 +369,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			this.accessActionList();
 		}
 		return actions4Character;
+	}
+
+	public Date getApiKeyExpiration() {
+		return apikey.getDelegatedApiKey().getExpires();
 	}
 
 	/**

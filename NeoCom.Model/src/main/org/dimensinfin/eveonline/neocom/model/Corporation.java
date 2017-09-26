@@ -47,6 +47,7 @@ public class Corporation extends NeoComCharacter {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Corporation() {
+		jsonClass = "Corporation";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
