@@ -152,7 +152,7 @@ public class MarketDataSet implements Serializable {
 				// Scan the list of entries to store the best one for each of the categories.
 				bestmarkethigh = null;
 				for (MarketDataEntry mde : dataOnMarketHub) {
-					MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - processing MDE: " + mde); //$NON-NLS-1$
+					//	MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - processing MDE: " + mde); //$NON-NLS-1$
 					int sec = this.getSecurityCategory(mde.getSecurity());
 					if (sec == MarketDataSet.HIGH_SECURITY) {
 						if (null == bestmarkethigh) {

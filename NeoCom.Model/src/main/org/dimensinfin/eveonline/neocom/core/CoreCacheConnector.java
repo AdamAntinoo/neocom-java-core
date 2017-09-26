@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.connector.ICacheConnector;
+import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
@@ -36,7 +37,8 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	private static Logger																	logger							= Logger.getLogger("CoreCacheConnector");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected PriorityBlockingQueue<PendingRequestEntry>	_pendingRequests		= new PriorityBlockingQueue<PendingRequestEntry>();
+	protected PriorityBlockingQueue<PendingRequestEntry>	_pendingRequests		= new PriorityBlockingQueue<PendingRequestEntry>(
+			100, ComparatorFactory.createComparator(EComparatorField.REQUEST_PRIORITY));
 	protected final Hashtable<Integer, MarketDataSet>			buyMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
 	protected final Hashtable<Integer, MarketDataSet>			sellMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
 
