@@ -7,15 +7,14 @@
 //								This version includes the access to the latest 6.x version of eveapi libraries to
 //								download ad parse the CCP XML API data.
 //								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.core;
+package org.dimensinfin.eveonline.neocom.connector;
 
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.connector.ICacheConnector;
+import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
@@ -108,11 +107,13 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	}
 
 	@Override
+	@Deprecated
 	public synchronized void clearPendingRequest(final long localizer) {
 		this.clearPendingRequest(Long.valueOf(localizer).toString());
 	}
 
 	@Override
+	@Deprecated
 	public synchronized void clearPendingRequest(final String localizer) {
 		for (final PendingRequestEntry entry : _pendingRequests) {
 			final String entryid = entry.getIdentifier();
