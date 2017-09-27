@@ -387,12 +387,38 @@ public class AssetsManager extends AbstractManager implements INamed {
 	/**
 	 * This is the initialization code that we should always use when we need to operate with a loaded
 	 * AssetsManager.<br>
-	 * The initialization will load all the Locations and some of the counters.
+	 * The initialization will load all the Locations and some of the counters. The method processed the result
+	 * to generate the root list of Regions, then the space Locations and then their contents in the case the
+	 * Location has been downloaded.
 	 * 
 	 * @return
 	 */
 	public AssetsManager initialize() {
-		//	this.accessAllAssets();
+		List<NeoComAsset> locs = AppConnector.getDBConnector().queryAllAssetLocations(this.getPilot().getCharacterID());
+		regions.clear();
+		locations.clear();
+		// Process the locations to a new list of Regions.
+		for (NeoComAsset asset : locs) {
+			long locid = asset.getLocationID();
+			if (locid < 0) {
+				continue;
+			}
+			if (locations.containsKey(locid)) {
+				continue;
+			} else {
+				EveLocation location = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
+				locations.put(locid, location);
+				long regid = location.getRegionID();
+				Region reg = regions.get(regid);
+				if (null == reg) {
+					reg = new Region(location.getRegion());
+					reg.addChild(location);
+					regions.put(regid, reg);
+				} else {
+					reg.addChild(location);
+				}
+			}
+		}
 		return this;
 	}
 

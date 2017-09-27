@@ -555,8 +555,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			if (null == time) return EDataBlock.ASSETDATA;
 			if (AppConnector.checkExpiration(time.getTimeStamp(), ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
 		} else {
-			assetsManager = new AssetsManager(this);
-			return this.needsUpdate();
+			//			assetsManager = new AssetsManager(this);
+			//			return this.needsUpdate();
 		}
 		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
 		return EDataBlock.READY;
