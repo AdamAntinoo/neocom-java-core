@@ -17,10 +17,10 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "apikey")
+@DatabaseTable(tableName = "ApiKey")
 public class ApiKey {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger	logger					= Logger.getLogger("ApiKey.java");
+	private static Logger	logger					= Logger.getLogger("ApiKey");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(generatedId = true)

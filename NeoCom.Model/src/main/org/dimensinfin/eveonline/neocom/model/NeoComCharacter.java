@@ -23,6 +23,7 @@ import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.industry.Job;
@@ -66,7 +67,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode, Comparable<NeoComCharacter> {
+public abstract class NeoComCharacter extends AbstractNeoComNode implements INeoComNode, Comparable<NeoComCharacter> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3456210619258009170L;
 	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
@@ -961,7 +962,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			where.and();
 			where.eq("propertyType", EPropertyTypes.LOCATIONROLE.toString());
 			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
-			locationRoles = new ArrayList<>(propertyDao.query(preparedQuery));
+			locationRoles = new ArrayList<Property>(propertyDao.query(preparedQuery));
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}

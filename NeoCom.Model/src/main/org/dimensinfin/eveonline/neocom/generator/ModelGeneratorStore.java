@@ -9,7 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.generator;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
@@ -18,8 +18,8 @@ import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelGeneratorStore {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger																	logger		= Logger.getLogger("ModelGeneratorManager");
-	private static final HashMap<String, IModelGenerator>	adapters	= new HashMap<>();
+	private static Logger																		logger		= Logger.getLogger("ModelGeneratorManager");
+	private static final Hashtable<String, IModelGenerator>	adapters	= new Hashtable<String, IModelGenerator>();
 
 	public static IModelGenerator registerGenerator(final IModelGenerator newGenerator) {
 		DataSourceLocator locator = newGenerator.getDataSourceLocator();
