@@ -24,6 +24,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.industry.Job;
@@ -163,13 +164,15 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	/** Reference to the delegated core eveapi Character */
-
 	/** Reference to the key that generated this character on the first place. */
 	@JsonInclude
 	private transient NeoComApiKey				apikey							= null;
 	@JsonInclude
 	private ApiAuthorization							authorization				= null;
+	/** Parent reference to the container Login. This is used when reconstructing the data chain. */
+	@JsonIgnore
+	private Login													parentLoginRef			= null;
+	/** Should contain a copy of this data value can can also be found at the delegatedCharacter. */
 	private long													characterID					= -1;
 	/** Reference to the original eveapi Character data. */
 	public Character											delegatedCharacter	= null;
@@ -348,11 +351,15 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		return 1;
 	}
 
+	public void connectLogin(final Login newref) {
+		parentLoginRef = newref;
+	}
+
 	public abstract void downloadBlueprints();
 
-	//	public abstract void downloadAssets();
-
 	public abstract void downloadIndustryJobs();
+
+	//	public abstract void downloadAssets();
 
 	public abstract void downloadMarketOrders();
 
@@ -452,7 +459,7 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 	}
 
 	/**
-	 * Return the firat location that matches that role at the specified Region.
+	 * Return the first location that matches that role at the specified Region.
 	 * 
 	 * @param matchingRole
 	 * @param Region
@@ -497,6 +504,12 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		//		else
 		//			return hit.getStringValue();
 		return roles;
+	}
+
+	public Login getLoginRef() {
+		if (null == parentLoginRef)
+			throw new NeocomRuntimeException("Null pointer trying to access a Pilot's Login that is orphan.");
+		return parentLoginRef;
 	}
 
 	@JsonIgnore

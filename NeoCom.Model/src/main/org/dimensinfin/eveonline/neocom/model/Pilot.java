@@ -66,6 +66,7 @@ public class Pilot extends NeoComCharacter {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Pilot() {
+		super();
 		jsonClass = "Pilot";
 	}
 

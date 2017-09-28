@@ -26,6 +26,8 @@ public interface INeoComModelStore extends IModelStore {
 
 	public NeoComCharacter activatePilot(long characterID);
 
+	public NeoComCharacter getActiveCharacter();
+
 	public List<NeoComCharacter> getActiveCharacters();
 
 	public List<NeoComApiKey> getApiKeys();

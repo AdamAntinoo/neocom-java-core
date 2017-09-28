@@ -27,6 +27,7 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 	// - F I E L D - S E C T I O N ............................................................................
 	@JsonIgnore
 	private transient NeoComCharacter	pilot							= null;
+	protected boolean									initialized				= false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractManager(final NeoComCharacter pilot) {
@@ -43,6 +44,17 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 
 	public NeoComCharacter getPilot() {
 		return pilot;
+	}
+
+	public abstract AbstractManager initialize();
+
+	/**
+	 * Checks if the initialization method and the load of the resources has been already executed.
+	 * 
+	 * @return
+	 */
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 	public void setPilot(final NeoComCharacter newPilot) {

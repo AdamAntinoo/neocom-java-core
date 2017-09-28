@@ -40,6 +40,11 @@ public class Login extends AbstractNeoComNode {
 	private final TreeSet<NeoComCharacter>	_characters				= new TreeSet<NeoComCharacter>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public Login() {
+		super();
+		jsonClass = "Login";
+	}
+
 	public Login(final String name) {
 		_name = name;
 		jsonClass = "Login";
@@ -61,6 +66,8 @@ public class Login extends AbstractNeoComNode {
 				//					// Post the request to update the Character.
 				//					AppConnector.getCacheConnector().addCharacterUpdateRequest(pilot.getCharacterID());
 				_characters.add(pilot);
+				// Update the pilot parentship.
+				pilot.connectLogin(this);
 				Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " to the _characters");
 			}
 		} catch (ApiException apiex) {

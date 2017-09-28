@@ -37,8 +37,6 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	private static final long											serialVersionUID				= 3794750126425122302L;
 	private static Logger													logger									= Logger.getLogger("PlanetaryManager");
 
-	// - F I E L D - S E C T I O N ............................................................................
-	private boolean																initialized							= false;
 	//	private final long												totalAssets							= -1;
 	private long																	verificationAssetCount	= 0;
 	public double																	totalAssetsValue				= 0.0;
@@ -136,24 +134,27 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		return new Vector<Resource>();
 	}
 
+	@Override
 	public String getOrderingName() {
 		return "Planetary Manager";
 	}
 
-	public PlanetaryManager initialize() {
+	public AbstractManager initialize() {
 		this.accessAllAssets();
 		initialized = true;
 		return this;
 	}
 
 	/**
-	 * Checks if the initialization method and the load of the resources has been already executed.
-	 * 
-	 * @return
+	 * Does additional checks besides the initialization flag status. For planetary we have to get sure we have
+	 * already downloaded and processed the Resources.
 	 */
+	@Override
 	public boolean isInitialized() {
-		if (initialized) if (null != planetaryAssetList) return true;
-		return false;
+		if (null == planetaryAssetList)
+			return false;
+		else
+			return super.isInitialized();
 	}
 
 	/**
