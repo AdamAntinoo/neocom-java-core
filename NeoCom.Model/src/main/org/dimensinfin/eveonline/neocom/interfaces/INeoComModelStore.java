@@ -11,14 +11,16 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.eveonline.neocom.model.Login;
-import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelStore extends IModelStore {
+
+	public Set<NeoComCharacter> accessCharacterList();
 
 	public Hashtable<String, Login> accessLoginList();
 
@@ -26,11 +28,11 @@ public interface INeoComModelStore extends IModelStore {
 
 	public NeoComCharacter activatePilot(long characterID);
 
+	public NeoComCharacter activatePilot(final String characterstring);
+
 	public NeoComCharacter getActiveCharacter();
 
 	public List<NeoComCharacter> getActiveCharacters();
-
-	public List<NeoComApiKey> getApiKeys();
 
 	public NeoComCharacter getCurrentPilot();
 
