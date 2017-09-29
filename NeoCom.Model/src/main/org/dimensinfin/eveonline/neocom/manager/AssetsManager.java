@@ -315,8 +315,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 		if (totalAssets == -1) {
 			try {
 				this.accessDao();
-				totalAssets = assetDao.countOf(
-						assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID()).prepare());
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				queryBuilder.setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID());
+				totalAssets = assetDao.countOf(queryBuilder.prepare());
 			} catch (SQLException sqle) {
 				AssetsManager.logger.info("W> Proglem calculating the number of assets for " + this.getPilot().getName());
 			}
@@ -374,8 +375,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * @return
 	 */
 	public HashMap<Long, Region> getRegions() {
-		if (null == regions) {
-			this.accessAllAssets();
+		if (!this.isInitialized()) {
+			this.initialize();
 		}
 		return regions;
 	}
@@ -393,7 +394,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * 
 	 * @return
 	 */
+	@Override
 	public AssetsManager initialize() {
+		// INITIALIZE - Initialize the number os assets.
+		this.getAssetTotalCount();
+		// INITIALIZE - Initialize the Locations and the Regions
 		List<NeoComAsset> locs = AppConnector.getDBConnector().queryAllAssetLocations(this.getPilot().getCharacterID());
 		regions.clear();
 		locations.clear();

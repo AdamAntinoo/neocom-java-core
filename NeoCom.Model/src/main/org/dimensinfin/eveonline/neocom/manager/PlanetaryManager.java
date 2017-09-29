@@ -102,6 +102,9 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	}
 
 	public long getAssetTotalCount() {
+		if (!this.isInitialized()) {
+			this.initialize();
+		}
 		if (null == planetaryAssetList)
 			return 0;
 		else
@@ -139,6 +142,19 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		return "Planetary Manager";
 	}
 
+	/**
+	 * Returns the list of different Regions found on the list of locations.
+	 * 
+	 * @return
+	 */
+	public HashMap<Long, Region> getRegions() {
+		if (!this.isInitialized()) {
+			this.initialize();
+		}
+		return regions;
+	}
+
+	@Override
 	public AbstractManager initialize() {
 		this.accessAllAssets();
 		initialized = true;
