@@ -83,7 +83,8 @@ public interface IDatabaseConnector {
 
 	public Hashtable<String, Login> queryAllLogins();
 
-	public int queryBlueprintDependencies(int bpitemID);
+	//	public int queryBlueprintDependencies(int bpitemID);
+	//	public int searchModule4Blueprint(int bpitemID);
 
 	public ArrayList<Resource> refineOre(int itemID);
 
@@ -129,7 +130,7 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Resource> searchListOfReaction(int itemID);
 
-	public int searchModule4Blueprint(int bpitemID);
+	//	public int searchModule4Blueprint(int bpitemID);
 
 	public int searchRawPlanetaryOutput(int itemID);
 

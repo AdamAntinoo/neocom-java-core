@@ -55,18 +55,26 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public boolean openCCPDataBase() {
 		if (null == ccpDatabase) {
 			try {
 				Class.forName("org.sqlite.JDBC");
-				ccpDatabase = DriverManager.getConnection(CCPDATABASE_URL);
+				ccpDatabase = DriverManager.getConnection(CCPDatabaseConnector.CCPDATABASE_URL);
 				ccpDatabase.setAutoCommit(false);
 			} catch (Exception sqle) {
-				logger.warning(sqle.getClass().getName() + ": " + sqle.getMessage());
+				CCPDatabaseConnector.logger.warning(sqle.getClass().getName() + ": " + sqle.getMessage());
 			}
-			logger.info("-- [StringDatabaseConnector.openCCPDataBase]> Opened CCP database successfully.");
+			CCPDatabaseConnector.logger
+					.info("-- [StringDatabaseConnector.openCCPDataBase]> Opened CCP database successfully.");
 		}
 		return true;
+	}
+
+	@Override
+	public int queryBlueprintDependencies(final int bpitemID) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	/**
@@ -75,6 +83,7 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	 * different treatment and also we check for the availability of the item at the current cache if
 	 * implemented.
 	 */
+	@Override
 	public synchronized EveItem searchItembyID(final int typeID) {
 		// Search the item on the cache.
 		EveItem hit = itemCache.get(typeID);
@@ -86,7 +95,7 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 				//			final Cursor cursor = getCCPDatabase().rawQuery(SELECT_ITEM_BYID,
 				//					new String[] { Integer.valueOf(typeID).toString() });
 				//	      Statement stmt = getCCPDatabase().createStatement();
-				prepStmt = getCCPDatabase().prepareStatement(SELECT_ITEM_BYID);
+				prepStmt = this.getCCPDatabase().prepareStatement(CCPDatabaseConnector.SELECT_ITEM_BYID);
 				prepStmt.setString(1, Integer.valueOf(typeID).toString());
 				cursor = prepStmt.executeQuery();
 				// The query can be run but now there are ids that do not return data.
@@ -118,19 +127,25 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 					}
 				}
 				if (!found) {
-					logger.warning("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID + "> not found.");
+					CCPDatabaseConnector.logger
+							.warning("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID + "> not found.");
 				}
 			} catch (Exception e) {
-				logger.warning("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID + "> not found.");
+				CCPDatabaseConnector.logger
+						.warning("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID + "> not found.");
 				return new EveItem();
 			} finally {
 				try {
-					if (cursor != null) cursor.close();
+					if (cursor != null) {
+						cursor.close();
+					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 				try {
-					if (prepStmt != null) prepStmt.close();
+					if (prepStmt != null) {
+						prepStmt.close();
+					}
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -140,12 +155,13 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 		return hit;
 	}
 
+	@Override
 	public EveLocation searchLocationbyID(final long locationID) {
 		EveLocation hit = new EveLocation(locationID);
 		PreparedStatement prepStmt = null;
 		ResultSet cursor = null;
 		try {
-			prepStmt = getCCPDatabase().prepareStatement(SELECT_LOCATIONBYID);
+			prepStmt = this.getCCPDatabase().prepareStatement(CCPDatabaseConnector.SELECT_LOCATIONBYID);
 			prepStmt.setString(1, Long.valueOf(locationID).toString());
 			cursor = prepStmt.executeQuery();
 			boolean detected = false;
@@ -182,17 +198,18 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 			//				hit = searchOutpostbyID(locationID);
 			//	}
 		} catch (final Exception ex) {
-			logger.warning("Location <" + locationID + "> not found.");
+			CCPDatabaseConnector.logger.warning("Location <" + locationID + "> not found.");
 		}
 		return hit;
 	}
 
+	@Override
 	public EveLocation searchLocationBySystem(final String name) {
 		EveLocation hit = new EveLocation();
 		PreparedStatement prepStmt = null;
 		ResultSet cursor = null;
 		try {
-			prepStmt = getCCPDatabase().prepareStatement(SELECT_LOCATIONBYSYSTEM);
+			prepStmt = this.getCCPDatabase().prepareStatement(CCPDatabaseConnector.SELECT_LOCATIONBYSYSTEM);
 			prepStmt.setString(1, name);
 			cursor = prepStmt.executeQuery();
 			boolean detected = false;
@@ -229,9 +246,15 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 			//				hit = searchOutpostbyID(locationID);
 			//	}
 		} catch (final Exception ex) {
-			logger.warning("Location <" + name + "> not found.");
+			CCPDatabaseConnector.logger.warning("Location <" + name + "> not found.");
 		}
-		return searchLocationbyID(hit.getSystemID());
+		return this.searchLocationbyID(hit.getSystemID());
+	}
+
+	@Override
+	public int searchModule4Blueprint(final int bpitemID) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	/**
@@ -240,28 +263,34 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	 * @param stationID
 	 * @return
 	 */
+	@Override
 	public int searchStationType(final long stationID) {
 		int stationTypeID = 1529;
 		AppConnector.startChrono();
 		PreparedStatement prepStmt = null;
 		ResultSet cursor = null;
 		try {
-			prepStmt = getCCPDatabase().prepareStatement(STATIONTYPE);
+			prepStmt = this.getCCPDatabase().prepareStatement(CCPDatabaseConnector.STATIONTYPE);
 			prepStmt.setString(1, Long.valueOf(stationID).toString());
 			cursor = prepStmt.executeQuery();
 			while (cursor.next()) {
-				stationTypeID = cursor.getInt(STATIONTYPEID_COLINDEX);
+				stationTypeID = cursor.getInt(CCPDatabaseConnector.STATIONTYPEID_COLINDEX);
 			}
 		} catch (Exception ex) {
-			logger.warning("W- [SpingDatabaseConnector.searchStationType]> Database exception: " + ex.getMessage());
+			CCPDatabaseConnector.logger
+					.warning("W- [SpingDatabaseConnector.searchStationType]> Database exception: " + ex.getMessage());
 		} finally {
 			try {
-				if (cursor != null) cursor.close();
+				if (cursor != null) {
+					cursor.close();
+				}
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
 			try {
-				if (prepStmt != null) prepStmt.close();
+				if (prepStmt != null) {
+					prepStmt.close();
+				}
 			} catch (SQLException ex) {
 				ex.printStackTrace();
 			}
@@ -271,7 +300,9 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	}
 
 	private Connection getCCPDatabase() {
-		if (null == ccpDatabase) openCCPDataBase();
+		if (null == ccpDatabase) {
+			this.openCCPDataBase();
+		}
 		return ccpDatabase;
 	}
 
