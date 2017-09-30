@@ -42,6 +42,7 @@ public abstract class AbstractManager extends AbstractNeoComNode {
 		return new ArrayList<AbstractComplexNode>();
 	}
 
+	@JsonIgnore
 	public NeoComCharacter getPilot() {
 		return pilot;
 	}

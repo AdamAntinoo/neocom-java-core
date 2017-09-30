@@ -47,6 +47,7 @@ import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -197,7 +198,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID() * -1);
+			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
 			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
 			//			AssetListResponse response = null;
 			//			if (getName().equalsIgnoreCase("Corporation")) {
@@ -267,7 +268,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			// Clear any previous record with owner -1 from database.
 			IDatabaseConnector dbConn = AppConnector.getDBConnector();
 			synchronized (dbConn) {
-				dbConn.clearInvalidRecords(this.getPilot().getCharacterID() * -1);
+				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
 			}
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
@@ -329,7 +330,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 	//		return new ArrayList<AbstractComplexNode>();
 	//	}
-
+	@JsonIgnore
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
 			this.updateBlueprints();
@@ -424,6 +425,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 		}
+		initialized = true;
 		return this;
 	}
 

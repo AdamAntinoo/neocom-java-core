@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.enums;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum EManagerType {
-	ASSETS_MANEGER, PLANETARY_MANAGER, SKILLS_MANAGER, INDUSTRY_MANAGER;
+	ASSETS_MANAGER, PLANETARY_MANAGER, SKILLS_MANAGER, INDUSTRY_MANAGER;
 }
 
 // - UNUSED CODE ............................................................................................

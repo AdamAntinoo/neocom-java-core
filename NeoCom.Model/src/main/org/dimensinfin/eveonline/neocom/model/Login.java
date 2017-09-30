@@ -84,7 +84,9 @@ public class Login extends AbstractNeoComNode {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (this.isExpanded()) {
+			results.add(new Separator());
 			results = this.concatenateNeoComCharacter(results, this.getCharacters());
+			results.add(new Separator());
 		}
 		return results;
 	}

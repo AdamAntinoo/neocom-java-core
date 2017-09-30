@@ -506,6 +506,7 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		return roles;
 	}
 
+	@JsonIgnore
 	public Login getLoginRef() {
 		if (null == parentLoginRef)
 			throw new NeocomRuntimeException("Null pointer trying to access a Pilot's Login that is orphan.");

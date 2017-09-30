@@ -18,7 +18,7 @@ import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Separator extends AbstractNeoComNode {
 	public enum ESeparatorType {
-		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
+		DEFAULT, LINE_ORANGE, LINE_GREEN, LINE_RED, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -26,11 +26,16 @@ public class Separator extends AbstractNeoComNode {
 	//	private static Logger			logger						= Logger.getLogger("Separator");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String						title							= "TITLE";
+	private String						title							= "-TITLE-";
 	private String						content						= "";
 	private ESeparatorType		type							= ESeparatorType.DEFAULT;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public Separator() {
+		// This is an special case because the rendering shoud be a line.
+		type = ESeparatorType.LINE_ORANGE;
+	}
+
 	public Separator(final String title) {
 		this.title = title;
 	}
