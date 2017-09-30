@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -28,30 +29,29 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long											serialVersionUID				= 3794750126425122302L;
-	private static Logger													logger									= Logger.getLogger("PlanetaryManager");
+	private static final long									serialVersionUID				= 3794750126425122302L;
+	private static Logger											logger									= Logger.getLogger("PlanetaryManager");
 
 	//	private final long												totalAssets							= -1;
-	private long																	verificationAssetCount	= 0;
-	public double																	totalAssetsValue				= 0.0;
+	private long															verificationAssetCount	= 0;
+	public double															totalAssetsValue				= 0.0;
 	@JsonInclude
-	public final HashMap<Long, Region>						regions									= new HashMap<Long, Region>();
-	private final HashMap<Long, EveLocation>			locations								= new HashMap<Long, EveLocation>();
-	private final HashMap<Long, NeoComAsset>			containers							= new HashMap<Long, NeoComAsset>();
-	@JsonIgnore
-	public ArrayList<NeoComAsset>									planetaryAssetList			= null;
-	public String																	iconName								= "planets.png";
+	public final HashMap<Long, Region>				regions									= new HashMap<Long, Region>();
+	private final HashMap<Long, EveLocation>	locations								= new HashMap<Long, EveLocation>();
+	private final HashMap<Long, NeoComAsset>	containers							= new HashMap<Long, NeoComAsset>();
+	//	@JsonIgnore
+	//	public ArrayList<NeoComAsset>									planetaryAssetList			= null;
+	public String															iconName								= "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
-	@JsonIgnore
-	private transient HashMap<Long, NeoComAsset>	assetMap								= new HashMap<Long, NeoComAsset>();
+	//	@JsonIgnore
+	//	private transient HashMap<Long, NeoComAsset>	assetMap								= new HashMap<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryManager(final NeoComCharacter pilot) {
@@ -74,9 +74,10 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		int assetCounter = 0;
 		try {
 			// Read all the assets for this character if not done already.
-			planetaryAssetList = AppConnector.getDBConnector().searchAllPlanetaryAssets(this.getPilot().getCharacterID());
+			ArrayList<NeoComAsset> planetaryAssetList = AppConnector.getDBConnector()
+					.accessAllPlanetaryAssets(this.getPilot().getCharacterID());
 			// Move the list to a processing map.
-			assetMap = new HashMap<Long, NeoComAsset>(planetaryAssetList.size());
+			Hashtable<Long, NeoComAsset> assetMap = new Hashtable<Long, NeoComAsset>(planetaryAssetList.size());
 			for (NeoComAsset asset : planetaryAssetList) {
 				assetMap.put(asset.getAssetID(), asset);
 			}

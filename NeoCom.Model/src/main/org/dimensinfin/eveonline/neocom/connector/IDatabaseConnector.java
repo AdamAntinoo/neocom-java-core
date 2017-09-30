@@ -96,7 +96,7 @@ public interface IDatabaseConnector {
 
 	public ArrayList<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
-	public ArrayList<NeoComAsset> searchAllPlanetaryAssets(long characterID);
+	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 

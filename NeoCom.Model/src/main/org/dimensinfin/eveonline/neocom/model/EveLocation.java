@@ -18,6 +18,7 @@ import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -68,6 +69,8 @@ public class EveLocation extends AbstractNeoComNode {
 	private String						security					= "0.0";
 	@DatabaseField
 	protected int							typeID						= -1;
+	//	@DatabaseField
+	//	protected String structureName="-NOT-STRUCTURE-";
 	protected boolean					citadel						= false;
 	public String							urlLocationIcon		= null;
 
@@ -164,6 +167,7 @@ public class EveLocation extends AbstractNeoComNode {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
 	}
 
+	@JsonInclude
 	public long getID() {
 		return Math.max(Math.max(Math.max(stationID, systemID), constellationID), regionID);
 	}

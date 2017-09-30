@@ -17,6 +17,22 @@ public class Region extends Separator {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	/**
+	 * If the region id is -1 this means that this is probable coming from an space structure not registered on
+	 * CCP data. So we can assume that this is a User Structure in an unknown place of space.
+	 * 
+	 * @param regionid
+	 * @param regionName
+	 */
+	public Region(final long regionid, final String regionName) {
+		super(regionName);
+		jsonClass = "Region";
+		// If undefined update the name.
+		if (-1 == regionid) {
+			this.setTitle("-DEEP SPACE-");
+		}
+	}
+
 	public Region(final String title) {
 		super(title);
 		jsonClass = "Region";
