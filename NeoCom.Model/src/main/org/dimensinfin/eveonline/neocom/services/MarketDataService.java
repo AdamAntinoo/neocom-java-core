@@ -11,12 +11,12 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.evemarket.model.TrackEntry;
-import org.dimensinfin.evemarket.parser.EVEMarketDataParser;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.market.TrackEntry;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.xml.sax.SAXException;
@@ -308,6 +308,7 @@ public class MarketDataService implements Runnable {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@Override
 	public void run() {
 		MarketDataService.marketDataServiceEntryPoint(_locator);
 	}

@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
 
-import org.dimensinfin.evemarket.model.TrackEntry;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.market.TrackEntry;
 import org.w3c.dom.Element;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -33,8 +33,9 @@ public interface IStorageConnector {
 
 	public File getCacheStorage();
 
-	public Vector<TrackEntry> parseMarketDataEMD(String itemName, EMarketSide opType);
 	public Vector<TrackEntry> parseMarketDataEC(int itemid, EMarketSide opType);
+
+	public Vector<TrackEntry> parseMarketDataEMD(String itemName, EMarketSide opType);
 
 	public MarketDataSet readDiskMarketData(int itemID, EMarketSide side);
 

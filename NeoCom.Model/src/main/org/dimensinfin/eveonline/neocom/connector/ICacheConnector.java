@@ -10,6 +10,7 @@
 package org.dimensinfin.eveonline.neocom.connector;
 
 import java.util.Vector;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
@@ -30,7 +31,9 @@ public interface ICacheConnector {
 
 	public int decrementTopCounter();
 
-	public Vector<PendingRequestEntry> getPendingRequests();
+	public Vector<PendingRequestEntry> getAndroidPendingRequests();
+
+	public PriorityBlockingQueue<PendingRequestEntry> getPendingRequests();
 
 	public int incrementMarketCounter();
 

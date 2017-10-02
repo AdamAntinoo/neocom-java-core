@@ -23,6 +23,8 @@ import org.dimensinfin.core.interfaces.INeoComNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.industry.Job;
@@ -66,7 +68,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class NeoComCharacter extends AbstractComplexNode implements INeoComNode, Comparable<NeoComCharacter> {
+public abstract class NeoComCharacter extends AbstractNeoComNode implements INeoComNode, Comparable<NeoComCharacter> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3456210619258009170L;
 	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
@@ -79,6 +81,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return NeoComCharacter.createPilot(coreChar, apikey);
 	}
 
+	/**
+	 * Creates a new Corporation Character from some calls to CCP sources. I use the eveapi to process that
+	 * information.
+	 * 
+	 * @param coreChar
+	 * @param apikey
+	 * @return
+	 * @throws ApiException
+	 */
 	private static Corporation createCorporation(final Character coreChar, final NeoComApiKey apikey)
 			throws ApiException {
 		Corporation newcorp = new Corporation();
@@ -106,6 +117,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		}
 		// Update the last updated timestamp from the CharacterInfoResponse.
 		newcorp.updateLastAccess(inforesponse.getCachedUntil());
+
+		// Because renderization needs some detailed information only found on Managers we get that copied
+		// into fields before terminating the construction of the instance.
+		newcorp.assetTotalCount = new AssetsManager(newcorp).getAssetTotalCount();
 		return newcorp;
 	}
 
@@ -158,17 +173,23 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 
 		// Update the last updated timestamp from the CharacterInfoResponse.
 		newchar.updateLastAccess(inforesponse.getCachedUntil());
+
+		// Because renderization needs some detailed information only found on Managers we get that copied
+		// into fields before terminating the construction of the instance.
+		newchar.assetTotalCount = new AssetsManager(newchar).getAssetTotalCount();
 		return newchar;
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	/** Reference to the delegated core eveapi Character */
-
 	/** Reference to the key that generated this character on the first place. */
 	@JsonInclude
 	private transient NeoComApiKey				apikey							= null;
 	@JsonInclude
 	private ApiAuthorization							authorization				= null;
+	/** Parent reference to the container Login. This is used when reconstructing the data chain. */
+	@JsonIgnore
+	private Login													parentLoginRef			= null;
+	/** Should contain a copy of this data value can can also be found at the delegatedCharacter. */
 	private long													characterID					= -1;
 	/** Reference to the original eveapi Character data. */
 	public Character											delegatedCharacter	= null;
@@ -182,6 +203,8 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	 * Corportations.
 	 */
 	public double													accountBalance			= 0.0;
+	/** Copy of the total number of assets got from one AssetsManager. */
+	public long														assetTotalCount			= 0;
 	/**
 	 * State of this character. The use can deactivate the character so it is removed from the update lists even
 	 * the current data is still visible.
@@ -195,6 +218,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	private transient Instant							assetsCacheTime			= null;
 
 	@JsonIgnore
+	@JsonInclude
 	protected transient AssetsManager			assetsManager				= null;
 	@JsonIgnore
 	protected transient PlanetaryManager	_planetaryManager		= null;
@@ -207,7 +231,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
 		lastCCPAccessTime = Instant.now();
-		//		assetsCacheTime = Instant.now();
+		jsonClass = "NeoComCharacter";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -346,11 +370,15 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return 1;
 	}
 
-	//	public abstract void downloadAssets();
+	public void connectLogin(final Login newref) {
+		parentLoginRef = newref;
+	}
 
 	public abstract void downloadBlueprints();
 
 	public abstract void downloadIndustryJobs();
+
+	//	public abstract void downloadAssets();
 
 	public abstract void downloadMarketOrders();
 
@@ -369,6 +397,10 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			this.accessActionList();
 		}
 		return actions4Character;
+	}
+
+	public Date getApiKeyExpiration() {
+		return apikey.getDelegatedApiKey().getExpires();
 	}
 
 	/**
@@ -446,7 +478,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	/**
-	 * Return the firat location that matches that role at the specified Region.
+	 * Return the first location that matches that role at the specified Region.
 	 * 
 	 * @param matchingRole
 	 * @param Region
@@ -494,6 +526,13 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 	}
 
 	@JsonIgnore
+	public Login getLoginRef() {
+		if (null == parentLoginRef)
+			throw new NeocomRuntimeException("Null pointer trying to access a Pilot's Login that is orphan.");
+		return parentLoginRef;
+	}
+
+	@JsonIgnore
 	public ArrayList<NeoComMarketOrder> getMarketOrders() {
 		return this.searchMarketOrders();
 	}
@@ -502,6 +541,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 		return delegatedCharacter.getName();
 	}
 
+	@JsonIgnore
 	public PlanetaryManager getPlanetaryManager() {
 		if (null == _planetaryManager) {
 			_planetaryManager = new PlanetaryManager(this);
@@ -956,7 +996,7 @@ public abstract class NeoComCharacter extends AbstractComplexNode implements INe
 			where.and();
 			where.eq("propertyType", EPropertyTypes.LOCATIONROLE.toString());
 			PreparedQuery<Property> preparedQuery = queryBuilder.prepare();
-			locationRoles = new ArrayList<>(propertyDao.query(preparedQuery));
+			locationRoles = new ArrayList<Property>(propertyDao.query(preparedQuery));
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}

@@ -42,7 +42,7 @@ public interface IDatabaseConnector {
 
 	public boolean checkManufacturable(int typeid);
 
-	public void clearInvalidRecords();
+	public void clearInvalidRecords(long pilotid);
 
 	public void closeDatabases();
 
@@ -79,9 +79,12 @@ public interface IDatabaseConnector {
 	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
 
+	public List<NeoComAsset> queryAllAssetLocations(long identifier);
+
 	public Hashtable<String, Login> queryAllLogins();
 
-	public int queryBlueprintDependencies(int bpitemID);
+	//	public int queryBlueprintDependencies(int bpitemID);
+	//	public int searchModule4Blueprint(int bpitemID);
 
 	public ArrayList<Resource> refineOre(int itemID);
 
@@ -93,7 +96,7 @@ public interface IDatabaseConnector {
 
 	public ArrayList<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
-	public ArrayList<NeoComAsset> searchAllPlanetaryAssets(long characterID);
+	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 
@@ -105,9 +108,9 @@ public interface IDatabaseConnector {
 
 	public Vector<Integer> searchInputResources(int target);
 
-	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
-
 	//	public EveItem searchItembyID(int typeID);
+
+	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
 
 	public int searchInventionProduct(int typeID);
 
@@ -117,23 +120,23 @@ public interface IDatabaseConnector {
 
 	public ArrayList<Resource> searchListOfDatacores(final int itemID);
 
-	public ArrayList<Resource> searchListOfMaterials(int itemID);
-
 	//	public EveLocation searchLocationbyID(long locationID);
 
 	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
 
 	//	public EveLocation searchLocationBySystem(String system);
 
+	public ArrayList<Resource> searchListOfMaterials(int itemID);
+
 	public ArrayList<Resource> searchListOfReaction(int itemID);
 
-	public int searchModule4Blueprint(int bpitemID);
+	//	public int searchModule4Blueprint(int bpitemID);
 
 	public int searchRawPlanetaryOutput(int itemID);
 
-	public int searchReactionOutputMultiplier(int itemID);
-
 	//	public int searchStationType(long systemID);
+
+	public int searchReactionOutputMultiplier(int itemID);
 
 	public Vector<Schematics> searchSchematics4Output(int targetId);
 

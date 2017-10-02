@@ -8,24 +8,21 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.services;
 
-// - IMPORT SECTION .........................................................................................
-import java.util.logging.Logger;
-
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PendingRequestEntry extends AbstractGEFNode {
+public class PendingRequestEntry extends AbstractGEFNode implements Comparable<PendingRequestEntry> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -7936869026974954271L;
-	private static Logger			logger						= Logger.getLogger("PendingRequestEntry");
+	//	private static Logger			logger						= Logger.getLogger("PendingRequestEntry");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	public ERequestClass			reqClass					= ERequestClass.UNDEFINED;
 	public ERequestState			state							= ERequestState.EMPTY;
 	private Number						content						= null;
-	private int								priority					= 1;
+	private int								priority					= 30;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -42,7 +39,14 @@ public class PendingRequestEntry extends AbstractGEFNode {
 		state = ERequestState.PENDING;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	//- M E T H O D - S E C T I O N ..........................................................................
+	@Override
+	public int compareTo(final PendingRequestEntry o) {
+		if (null == o) return 1;
+		if ((reqClass == o.reqClass) && (state == o.state) && (content == o.content)) return 0;
+		return ((priority < o.priority) ? -1 : 1);
+	}
+
 	public Number getContent() {
 		return content;
 	}

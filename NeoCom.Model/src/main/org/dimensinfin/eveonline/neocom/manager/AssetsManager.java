@@ -47,6 +47,7 @@ import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -117,6 +118,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
 		super(pilot);
+		// Load the timestamp from the database to control the refresh status of all the assets.
+		this.readTimeStamps();
 		jsonClass = "AssetsManager";
 	}
 
@@ -195,7 +198,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords();
+			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
 			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
 			//			AssetListResponse response = null;
 			//			if (getName().equalsIgnoreCase("Corporation")) {
@@ -265,7 +268,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			// Clear any previous record with owner -1 from database.
 			IDatabaseConnector dbConn = AppConnector.getDBConnector();
 			synchronized (dbConn) {
-				dbConn.clearInvalidRecords();
+				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
 			}
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
@@ -299,11 +302,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info("<< [AssetsManager.downloadPilotAssets]");
 	}
 
-	//	@Override
-	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-	//		return new ArrayList<AbstractComplexNode>();
-	//	}
-
 	public TimeStamp getAssetsCacheTime() {
 		return assetsCacheTime;
 	}
@@ -318,8 +316,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 		if (totalAssets == -1) {
 			try {
 				this.accessDao();
-				totalAssets = assetDao.countOf(
-						assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID()).prepare());
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				queryBuilder.setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID());
+				totalAssets = assetDao.countOf(queryBuilder.prepare());
 			} catch (SQLException sqle) {
 				AssetsManager.logger.info("W> Proglem calculating the number of assets for " + this.getPilot().getName());
 			}
@@ -327,6 +326,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return totalAssets;
 	}
 
+	//	@Override
+	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+	//		return new ArrayList<AbstractComplexNode>();
+	//	}
+	@JsonIgnore
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
 			this.updateBlueprints();
@@ -336,13 +340,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 		return blueprintCache;
 	}
-
-	//	public int getLocationCount() {
-	//		if (locationCount < 0) {
-	//			this.updateLocations();
-	//		}
-	//		return locationCount;
-	//	}
 
 	/**
 	 * Returns the list of different locations where this character has assets. The locations are the unique
@@ -361,9 +358,17 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return locations;
 	}
 
+	@Override
 	public String getOrderingName() {
 		return "Assets Manager";
 	}
+
+	//	public int getLocationCount() {
+	//		if (locationCount < 0) {
+	//			this.updateLocations();
+	//		}
+	//		return locationCount;
+	//	}
 
 	/**
 	 * Returns the list of different Regions found on the list of locations.
@@ -371,8 +376,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * @return
 	 */
 	public HashMap<Long, Region> getRegions() {
-		if (null == regions) {
-			this.accessAllAssets();
+		if (!this.isInitialized()) {
+			this.initialize();
 		}
 		return regions;
 	}
@@ -381,19 +386,48 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return this.searchAsset4Category("Ship");
 	}
 
+	/**
+	 * This is the initialization code that we should always use when we need to operate with a loaded
+	 * AssetsManager.<br>
+	 * The initialization will load all the Locations and some of the counters. The method processed the result
+	 * to generate the root list of Regions, then the space Locations and then their contents in the case the
+	 * Location has been downloaded.
+	 * 
+	 * @return
+	 */
+	@Override
 	public AssetsManager initialize() {
-		this.accessAllAssets();
+		// INITIALIZE - Initialize the number os assets.
+		this.getAssetTotalCount();
+		// INITIALIZE - Initialize the Locations and the Regions
+		List<NeoComAsset> locs = AppConnector.getDBConnector().queryAllAssetLocations(this.getPilot().getCharacterID());
+		regions.clear();
+		locations.clear();
+		// Process the locations to a new list of Regions.
+		for (NeoComAsset asset : locs) {
+			long locid = asset.getLocationID();
+			if (locid < 0) {
+				continue;
+			}
+			if (locations.containsKey(locid)) {
+				continue;
+			} else {
+				EveLocation location = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
+				locations.put(locid, location);
+				long regid = location.getRegionID();
+				Region reg = regions.get(regid);
+				if (null == reg) {
+					reg = new Region(location.getRegion());
+					reg.addChild(location);
+					regions.put(regid, reg);
+				} else {
+					reg.addChild(location);
+				}
+			}
+		}
+		initialized = true;
 		return this;
 	}
-
-	//	public HashSet<String> queryT2ModuleNames() {
-	//		HashSet<String> names = new HashSet<String>();
-	//		ArrayList<Asset> modules = searchT2Modules();
-	//		for (Asset mod : modules) {
-	//			names.add(mod.getName());
-	//		}
-	//		return names;
-	//	}
 
 	/**
 	 * Checks if that category was requested before and it is on the cache. If found returns that list.
@@ -452,6 +486,15 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
+	//	public HashSet<String> queryT2ModuleNames() {
+	//		HashSet<String> names = new HashSet<String>();
+	//		ArrayList<Asset> modules = searchT2Modules();
+	//		for (Asset mod : modules) {
+	//			names.add(mod.getName());
+	//		}
+	//		return names;
+	//	}
+
 	public ArrayList<NeoComAsset> searchAsset4Location(final EveLocation location) {
 		AssetsManager.logger.info(">> AssetsManager.searchAsset4Location");
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
@@ -482,6 +525,29 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
+	public NeoComBlueprint searchBlueprintByID(final long assetid) {
+		for (NeoComBlueprint bp : this.getBlueprints()) {
+			String refs = bp.getStackIDRefences();
+			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
+		}
+		return null;
+	}
+
+	/**
+	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
+	 * blueprints. We expect this is not cost intensive because this function is called few times.
+	 * 
+	 * @return list of T1 blueprints.
+	 */
+	public ArrayList<NeoComBlueprint> searchT1Blueprints() {
+		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
+		for (NeoComBlueprint bp : this.getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+				blueprintList.add(bp);
+			}
+		return blueprintList;
+	}
+
 	//	/**
 	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
 	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
@@ -505,29 +571,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		if (null == t2blueprints) getPilot().updateBlueprints();
 	//		return t2blueprints;
 	//	}
-
-	public NeoComBlueprint searchBlueprintByID(final long assetid) {
-		for (NeoComBlueprint bp : this.getBlueprints()) {
-			String refs = bp.getStackIDRefences();
-			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
-		}
-		return null;
-	}
-
-	/**
-	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
-	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	 * 
-	 * @return list of T1 blueprints.
-	 */
-	public ArrayList<NeoComBlueprint> searchT1Blueprints() {
-		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
-		for (NeoComBlueprint bp : this.getBlueprints())
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				blueprintList.add(bp);
-			}
-		return blueprintList;
-	}
 
 	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
@@ -573,13 +616,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info("<< EveChar.queryT2Modules");
 		return (ArrayList<NeoComAsset>) assetList;
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
 
 	/**
 	 * Retrieves from the database all the stacks for an specific item type id. The method stores the results
@@ -652,6 +688,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 	}
 
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
+
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetsManager [");
@@ -714,6 +757,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 		newAsset.setTypeID(eveAsset.getTypeID());
 		// Under the flat api check if the location is a real location or an asset.
 		Long locid = eveAsset.getLocationID();
+		if (null == locid) {
+			locid = (long) -2;
+		}
 		if (locid > 1000000000000L) {
 			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
 			newAsset.setLocationID(-2);
@@ -839,7 +885,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			region = new Region(target.getRegion());
 			regions.put(new Long(regionid), region);
 		}
-		region.addChild(target);
+		region.addLocation(target);
 	}
 
 	/**
@@ -895,6 +941,10 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return assetList;
 	}
 
+	private String getTSAssetsReference() {
+		return this.getPilot().getCharacterID() + ".ASSETS";
+	}
+
 	/**
 	 * Processes an asset and all their children. This method converts from a API record to a database asset
 	 * record.
@@ -927,6 +977,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
 				myasset.setShip(true);
 			}
+			myasset.setOwnerID(this.getPilot().getCharacterID() * -1);
 			assetDao.create(myasset);
 
 			// Process all the children and convert them to assets.
@@ -1030,6 +1081,22 @@ public class AssetsManager extends AbstractManager implements INamed {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	private void readTimeStamps() {
+		try {
+			Dao<TimeStamp, String> tsDao = AppConnector.getDBConnector().getTimeStampDAO();
+			QueryBuilder<TimeStamp, String> queryBuilder = tsDao.queryBuilder();
+			Where<TimeStamp, String> where = queryBuilder.where();
+			where.eq("reference", this.getTSAssetsReference());
+			PreparedQuery<TimeStamp> preparedQuery = queryBuilder.prepare();
+			List<TimeStamp> ts = tsDao.query(preparedQuery);
+			if (ts.size() > 0) {
+				assetsCacheTime = ts.get(0);
+			}
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
 		}
 	}
 

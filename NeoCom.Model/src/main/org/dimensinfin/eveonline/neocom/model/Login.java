@@ -9,9 +9,15 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
+
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 
 import com.beimin.eveapi.exception.ApiException;
 
@@ -24,18 +30,25 @@ import com.beimin.eveapi.exception.ApiException;
  * 
  * @author Adam Antinoo
  */
-public class Login {
+public class Login extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger										logger			= Logger.getLogger("Login");
+	private static final long								serialVersionUID	= -1654191267396975701L;
+	private static Logger										logger						= Logger.getLogger("Login");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String													_name				= "-Default-";
-	private final Vector<ApiKey>						_keys				= new Vector<ApiKey>();
-	private final TreeSet<NeoComCharacter>	_characters	= new TreeSet<NeoComCharacter>();
+	private String													_name							= "-Default-";
+	private final Vector<ApiKey>						_keys							= new Vector<ApiKey>();
+	private final TreeSet<NeoComCharacter>	_characters				= new TreeSet<NeoComCharacter>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public Login() {
+		super();
+		jsonClass = "Login";
+	}
+
 	public Login(final String name) {
 		_name = name;
+		jsonClass = "Login";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -47,20 +60,45 @@ public class Login {
 		_keys.add(newkey);
 		// Process the key to get the next level of data.
 		try {
-			NeoComApiKey key = NeoComApiKey.build(newkey.getKeynumber(), newkey.getValidationcode());
-			// Scan for the characters declared into this key.
-			for (NeoComCharacter pilot : key.getApiCharacters()) {
-				// REFACTOR There is no need to update the Character information since it is already present and Assets and other data will be collected autoamtically.
-				//					// Post the request to update the Character.
-				//					AppConnector.getCacheConnector().addCharacterUpdateRequest(pilot.getCharacterID());
-				_characters.add(pilot);
-				Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " to the _characters");
+			if (newkey.isActive()) {
+				NeoComApiKey key = NeoComApiKey.build(newkey.getKeynumber(), newkey.getValidationcode());
+				// Add the Characters only if the Key is active.
+				// Scan for the characters declared into this key.
+				for (NeoComCharacter pilot : key.getApiCharacters()) {
+					// REFACTOR There is no need to update the Character information since it is already present and Assets and other data will be collected autoamtically.
+					//					// Post the request to update the Character.
+					//					AppConnector.getCacheConnector().addCharacterUpdateRequest(pilot.getCharacterID());
+					_characters.add(pilot);
+					// Update the pilot parentship.
+					pilot.connectLogin(this);
+					Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " to the _characters");
+				}
 			}
 		} catch (ApiException apiex) {
 			apiex.printStackTrace();
 		}
 
 		return this;
+	}
+
+	/**
+	 * Assets should collaborate to the model by adding the Characters if they are expanded. In the case the
+	 * Login has no associated chaactrs because their keys are not active, set an special Separator that says
+	 * the item is expanded but empty.
+	 */
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		if (this.isExpanded()) {
+			results.add(new Separator());
+			if (_characters.size() < 1) {
+				results.add(new Separator().setType(ESeparatorType.EMPTY_SIGNAL));
+			} else {
+				results = this.concatenateNeoComCharacter(results, this.getCharacters());
+			}
+			results.add(new Separator());
+		}
+		return results;
 	}
 
 	public Vector<NeoComCharacter> getCharacters() {
@@ -84,6 +122,16 @@ public class Login {
 			if (neoch.getCharacterID() == id) return neoch;
 		}
 		return null;
+	}
+
+	protected ArrayList<AbstractComplexNode> concatenateNeoComCharacter(final ArrayList<AbstractComplexNode> target,
+			final List<NeoComCharacter> children) {
+		for (NeoComCharacter node : children) {
+			if (node instanceof AbstractComplexNode) {
+				target.add(node);
+			}
+		}
+		return target;
 	}
 }
 

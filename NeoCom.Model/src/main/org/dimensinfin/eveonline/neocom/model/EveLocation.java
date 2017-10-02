@@ -11,13 +11,16 @@ package org.dimensinfin.eveonline.neocom.model;
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -42,34 +45,37 @@ import net.nikr.eve.jeveasset.data.Citadel;
 @DatabaseTable(tableName = "Locations")
 public class EveLocation extends AbstractNeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 1522765618286937377L;
+	private static final long		serialVersionUID	= 1522765618286937377L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@JsonIgnore
 	@DatabaseField(id = true, index = true)
-	private long							id								= -2;
+	private long								id								= -2;
 	@DatabaseField
-	private long							stationID					= -1;
+	private long								stationID					= -1;
 	@DatabaseField
-	private String						station						= "<STATION>";
+	private String							station						= "<STATION>";
 	@DatabaseField
-	private long							systemID					= -1;
+	private long								systemID					= -1;
 	@DatabaseField
-	private String						system						= "<SYSTEM>";
+	private String							system						= "<SYSTEM>";
 	@DatabaseField
-	private long							constellationID		= -1;
+	private long								constellationID		= -1;
 	@DatabaseField
-	private String						constellation			= "<CONSTELLATION>";
+	private String							constellation			= "<CONSTELLATION>";
 	@DatabaseField
-	private long							regionID					= -1;
+	private long								regionID					= -1;
 	@DatabaseField
-	private String						region						= "<REGION>";
+	private String							region						= "<REGION>";
 	@DatabaseField
-	private String						security					= "0.0";
+	private String							security					= "0.0";
 	@DatabaseField
-	protected int							typeID						= -1;
-	protected boolean					citadel						= false;
-	public String							urlLocationIcon		= null;
+	protected int								typeID						= -1;
+	//	@DatabaseField
+	//	protected String structureName="-NOT-STRUCTURE-";
+	protected boolean						citadel						= false;
+	public String								urlLocationIcon		= null;
+	public Vector<NeoComAsset>	contents					= new Vector<NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
@@ -88,6 +94,7 @@ public class EveLocation extends AbstractNeoComNode {
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
+			typeID = 1;
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
@@ -108,6 +115,7 @@ public class EveLocation extends AbstractNeoComNode {
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(out.getSolarSystem());
 			id = out.getFacilityID();
+			typeID = 2;
 			this.setStation(out.getName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
@@ -124,12 +132,24 @@ public class EveLocation extends AbstractNeoComNode {
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
+			typeID = 3;
 			this.setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			this.setDirty(true);
+		}
+	}
+
+	/**
+	 * Intercept the use of the children and store the data on the location contents.
+	 */
+	@Override
+	public void addChild(final IGEFNode child) {
+		this.clean();
+		if (child instanceof NeoComAsset) {
+			contents.add((NeoComAsset) child);
 		}
 	}
 
@@ -152,6 +172,20 @@ public class EveLocation extends AbstractNeoComNode {
 		return true;
 	}
 
+	/**
+	 * Intercept this call and return the contents.
+	 * 
+	 */
+	@Deprecated
+	@Override
+	public Vector<IGEFNode> getChildren() {
+		Vector<IGEFNode> result = new Vector<IGEFNode>();
+		for (NeoComAsset neoComAsset : contents) {
+			result.add(neoComAsset);
+		}
+		return result;
+	}
+
 	public String getConstellation() {
 		return constellation;
 	}
@@ -160,10 +194,15 @@ public class EveLocation extends AbstractNeoComNode {
 		return constellationID;
 	}
 
+	public Vector<NeoComAsset> getContents() {
+		return contents;
+	}
+
 	public String getFullLocation() {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
 	}
 
+	@JsonInclude
 	public long getID() {
 		return Math.max(Math.max(Math.max(stationID, systemID), constellationID), regionID);
 	}
