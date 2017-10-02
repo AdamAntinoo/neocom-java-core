@@ -10,7 +10,6 @@
 package org.dimensinfin.eveonline.neocom.manager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -28,30 +27,34 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
+import org.dimensinfin.eveonline.neocom.model.Ship;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID				= 3794750126425122302L;
-	private static Logger											logger									= Logger.getLogger("PlanetaryManager");
+	private static final long												serialVersionUID				= 3794750126425122302L;
+	private static Logger														logger									= Logger.getLogger("PlanetaryManager");
 
 	//	private final long												totalAssets							= -1;
-	private long															verificationAssetCount	= 0;
-	public double															totalAssetsValue				= 0.0;
+	private long																		verificationAssetCount	= 0;
+	public double																		totalAssetsValue				= 0.0;
 	@JsonInclude
-	public final HashMap<Long, Region>				regions									= new HashMap<Long, Region>();
-	private final HashMap<Long, EveLocation>	locations								= new HashMap<Long, EveLocation>();
-	private final HashMap<Long, NeoComAsset>	containers							= new HashMap<Long, NeoComAsset>();
+	public final Hashtable<Long, Region>						regions									= new Hashtable<Long, Region>();
+	private final Hashtable<Long, EveLocation>			locations								= new Hashtable<Long, EveLocation>();
+	private final Hashtable<Long, NeoComAsset>			containers							= new Hashtable<Long, NeoComAsset>();
+	private final Hashtable<Long, Ship>							ships										= new Hashtable<Long, Ship>();
 	//	@JsonIgnore
 	//	public ArrayList<NeoComAsset>									planetaryAssetList			= null;
-	public String															iconName								= "planets.png";
+	public String																		iconName								= "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
-	//	@JsonIgnore
-	//	private transient HashMap<Long, NeoComAsset>	assetMap								= new HashMap<Long, NeoComAsset>();
+	/** Shared field to allow to share the list of assets to process between methods during the processing. */
+	@JsonIgnore
+	private transient Hashtable<Long, NeoComAsset>	assetMap								= new Hashtable<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryManager(final NeoComCharacter pilot) {
@@ -77,7 +80,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			ArrayList<NeoComAsset> planetaryAssetList = AppConnector.getDBConnector()
 					.accessAllPlanetaryAssets(this.getPilot().getCharacterID());
 			// Move the list to a processing map.
-			Hashtable<Long, NeoComAsset> assetMap = new Hashtable<Long, NeoComAsset>(planetaryAssetList.size());
+			assetMap = new Hashtable<Long, NeoComAsset>(planetaryAssetList.size());
 			for (NeoComAsset asset : planetaryAssetList) {
 				assetMap.put(asset.getAssetID(), asset);
 			}
@@ -106,10 +109,11 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		if (!this.isInitialized()) {
 			this.initialize();
 		}
-		if (null == planetaryAssetList)
-			return 0;
-		else
-			return planetaryAssetList.size();
+		return verificationAssetCount;
+		//		if (null == planetaryAssetList)
+		//			return 0;
+		//		else
+		//			return planetaryAssetList.size();
 	}
 
 	/**
@@ -148,7 +152,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 * 
 	 * @return
 	 */
-	public HashMap<Long, Region> getRegions() {
+	public Hashtable<Long, Region> getRegions() {
 		if (!this.isInitialized()) {
 			this.initialize();
 		}
@@ -168,7 +172,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 */
 	@Override
 	public boolean isInitialized() {
-		if (null == planetaryAssetList)
+		if ((regions.size() < 1) && (locations.size() < 1))
 			return false;
 		else
 			return super.isInitialized();
@@ -214,6 +218,17 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		// This is an Unknown location that should be a Custom Office
 	}
 
+	private void add2Container(final NeoComAsset asset, final NeoComAsset target) {
+		long id = asset.getLocationID();
+		NeoComAsset subtarget = containers.get(id);
+		if (null == subtarget) {
+			target.addChild(asset);
+			containers.put(target.getAssetID(), target);
+			this.add2Location(target);
+		}
+		subtarget.addChild(asset);
+	}
+
 	private void add2Location(final NeoComAsset asset) {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
@@ -232,7 +247,20 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			region = new Region(target.getRegion());
 			regions.put(new Long(regionid), region);
 		}
-		region.addChild(target);
+		region.addLocation(target);
+	}
+
+	private boolean isContainer(final long identifier) {
+		// Search for this asset on the database. If it is a ship or a container, add it to the list of assets.
+		NeoComAsset target = AppConnector.getDBConnector().searchAssetByID(identifier);
+		if (null == target)
+			return false;
+		else {
+			// It it is a ship then add the bay as a container. Otherwise add the container and process it as a new asset.
+			if (target.isContainer()) return true;
+			if (target.isShip()) return true;
+		}
+		return false;
 	}
 
 	/**
@@ -255,29 +283,29 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			// Add the asset value to the owner balance.
 			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container
-			//			if (asset.isShip()) {
-			//				// Check if the ship is packaged. If packaged leave it as a simple asset.
-			//				if (!asset.isPackaged()) {
-			//					// Transform the asset to a ship.
-			//					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
-			//					ships.put(ship.getAssetID(), ship);
-			//					// The ship is a container so add it and forget about this asset.
-			//					if (ship.hasParent()) {
-			//						this.processElement(ship.getParentContainer());
-			//					} //else {
-			//					this.add2Location(ship);
-			//					// Remove all the assets contained because they will be added in the call to collaborate2Model
-			//					// REFACTOR set the default variant as a constant even that information if defined at other project
-			//					ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
-			//					// The list returned is not the real list of assets contained but the list of Separators
-			//					for (AbstractComplexNode node : removableList) {
-			//						this.removeNode(node);
-			//					}
-			//				} else {
-			//					this.add2Location(asset);
-			//				}
-			//				return;
-			//			}
+			if (asset.isShip()) {
+				// Check if the ship is packaged. If packaged leave it as a simple asset.
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
+					ships.put(ship.getAssetID(), ship);
+					// The ship is a container so add it and forget about this asset.
+					if (ship.hasParent()) {
+						this.processElement(ship.getParentContainer());
+					} //else {
+					this.add2Location(ship);
+					// Remove all the assets contained because they will be added in the call to collaborate2Model
+					// REFACTOR set the default variant as a constant even that information if defined at other project
+					ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					// The list returned is not the real list of assets contained but the list of Separators
+					for (AbstractComplexNode node : removableList) {
+						this.removeNode(node);
+					}
+				} else {
+					this.add2Location(asset);
+				}
+				return;
+			}
 			if (asset.isContainer()) {
 				// Check if the asset is packaged. If so leave as asset
 				if (!asset.isPackaged()) {
@@ -316,8 +344,16 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 				} else {
 					this.processElement(parent);
 				}
+				return;
+			}
+			// Check if the location identifier matches an asset. This item can be contained inside some other.
+			if (this.isContainer(asset.getLocationID())) {
+				NeoComAsset target = AppConnector.getDBConnector().searchAssetByID(asset.getLocationID());
+				asset.setParentContainer(target);
+				this.processElement(asset);
 			} else {
 				this.add2Location(asset);
+				//	}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
