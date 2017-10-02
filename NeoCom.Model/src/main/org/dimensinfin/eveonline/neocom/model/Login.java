@@ -92,7 +92,7 @@ public class Login extends AbstractNeoComNode {
 		if (this.isExpanded()) {
 			results.add(new Separator());
 			if (_characters.size() < 1) {
-				results.add(new Separator().setType(ESeparatorType.EMPTY_SYGNAL));
+				results.add(new Separator().setType(ESeparatorType.EMPTY_SIGNAL));
 			} else {
 				results = this.concatenateNeoComCharacter(results, this.getCharacters());
 			}
