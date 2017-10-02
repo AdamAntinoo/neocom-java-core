@@ -70,6 +70,13 @@ public class AppConnector {
 			return true;
 	}
 
+	public static IConnector getAppSingleton() {
+		if (null != AppConnector.connection)
+			return AppConnector.connection.getAppSingleton();
+		else
+			throw new RuntimeException("Application connector not defined. Functionality 'getAppSingleton' disabled.");
+	}
+
 	public static ICacheConnector getCacheConnector() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getCacheConnector();

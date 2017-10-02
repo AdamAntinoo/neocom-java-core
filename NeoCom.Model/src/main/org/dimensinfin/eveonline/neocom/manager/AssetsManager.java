@@ -757,6 +757,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 		newAsset.setTypeID(eveAsset.getTypeID());
 		// Under the flat api check if the location is a real location or an asset.
 		Long locid = eveAsset.getLocationID();
+		if (null == locid) {
+			locid = (long) -2;
+		}
 		if (locid > 1000000000000L) {
 			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
 			newAsset.setLocationID(-2);
@@ -882,7 +885,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			region = new Region(target.getRegion());
 			regions.put(new Long(regionid), region);
 		}
-		region.addChild(target);
+		region.addLocation(target);
 	}
 
 	/**

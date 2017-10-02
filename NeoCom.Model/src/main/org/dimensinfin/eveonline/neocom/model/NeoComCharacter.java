@@ -81,6 +81,15 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		return NeoComCharacter.createPilot(coreChar, apikey);
 	}
 
+	/**
+	 * Creates a new Corporation Character from some calls to CCP sources. I use the eveapi to process that
+	 * information.
+	 * 
+	 * @param coreChar
+	 * @param apikey
+	 * @return
+	 * @throws ApiException
+	 */
 	private static Corporation createCorporation(final Character coreChar, final NeoComApiKey apikey)
 			throws ApiException {
 		Corporation newcorp = new Corporation();
@@ -108,6 +117,10 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		}
 		// Update the last updated timestamp from the CharacterInfoResponse.
 		newcorp.updateLastAccess(inforesponse.getCachedUntil());
+
+		// Because renderization needs some detailed information only found on Managers we get that copied
+		// into fields before terminating the construction of the instance.
+		newcorp.assetTotalCount = new AssetsManager(newcorp).getAssetTotalCount();
 		return newcorp;
 	}
 
@@ -160,6 +173,10 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 
 		// Update the last updated timestamp from the CharacterInfoResponse.
 		newchar.updateLastAccess(inforesponse.getCachedUntil());
+
+		// Because renderization needs some detailed information only found on Managers we get that copied
+		// into fields before terminating the construction of the instance.
+		newchar.assetTotalCount = new AssetsManager(newchar).getAssetTotalCount();
 		return newchar;
 	}
 
@@ -186,6 +203,8 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 	 * Corportations.
 	 */
 	public double													accountBalance			= 0.0;
+	/** Copy of the total number of assets got from one AssetsManager. */
+	public long														assetTotalCount			= 0;
 	/**
 	 * State of this character. The use can deactivate the character so it is removed from the update lists even
 	 * the current data is still visible.
@@ -198,10 +217,10 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 	public HashMap<Long, Property>				actions4Character		= null;
 	private transient Instant							assetsCacheTime			= null;
 
-	//	@JsonIgnore
+	@JsonIgnore
 	@JsonInclude
 	protected transient AssetsManager			assetsManager				= null;
-	//	@JsonIgnore
+	@JsonIgnore
 	protected transient PlanetaryManager	_planetaryManager		= null;
 	protected transient Instant						blueprintsCacheTime	= null;
 	protected transient Instant						jobsCacheTime				= null;
@@ -394,7 +413,7 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		return this.getAssetsManager().getAssetTotalCount();
 	}
 
-	//	@JsonIgnore
+	@JsonIgnore
 	public AssetsManager getAssetsManager() {
 		if (null == assetsManager) {
 			assetsManager = new AssetsManager(this);
@@ -522,6 +541,7 @@ public abstract class NeoComCharacter extends AbstractNeoComNode implements INeo
 		return delegatedCharacter.getName();
 	}
 
+	@JsonIgnore
 	public PlanetaryManager getPlanetaryManager() {
 		if (null == _planetaryManager) {
 			_planetaryManager = new PlanetaryManager(this);

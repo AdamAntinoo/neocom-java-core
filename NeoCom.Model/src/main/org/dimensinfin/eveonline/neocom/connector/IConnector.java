@@ -12,19 +12,23 @@ import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
 public interface IConnector {
 	public void addCharacterUpdateRequest(long characterID);
 
+	public IConnector getAppSingleton();
+
+	public boolean getAssetsFormat();
+
 	public ICacheConnector getCacheConnector();
 
 	public ICCPDatabaseConnector getCCPDBConnector();
-
-	public IDatabaseConnector getDBConnector();
-
-	public INeoComModelStore getModelStore();
 
 	//	public boolean checkExpiration(final long timestamp, final long window);
 
 	//	public String getAppFilePath(int fileresourceid);
 
 	//	public String getAppFilePath(String fileresourceid);
+
+	public IDatabaseConnector getDBConnector();
+
+	public INeoComModelStore getModelStore();
 
 	public IStorageConnector getStorageConnector();
 

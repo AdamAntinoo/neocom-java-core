@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 
 import com.beimin.eveapi.exception.ApiException;
 
@@ -59,16 +60,19 @@ public class Login extends AbstractNeoComNode {
 		_keys.add(newkey);
 		// Process the key to get the next level of data.
 		try {
-			NeoComApiKey key = NeoComApiKey.build(newkey.getKeynumber(), newkey.getValidationcode());
-			// Scan for the characters declared into this key.
-			for (NeoComCharacter pilot : key.getApiCharacters()) {
-				// REFACTOR There is no need to update the Character information since it is already present and Assets and other data will be collected autoamtically.
-				//					// Post the request to update the Character.
-				//					AppConnector.getCacheConnector().addCharacterUpdateRequest(pilot.getCharacterID());
-				_characters.add(pilot);
-				// Update the pilot parentship.
-				pilot.connectLogin(this);
-				Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " to the _characters");
+			if (newkey.isActive()) {
+				NeoComApiKey key = NeoComApiKey.build(newkey.getKeynumber(), newkey.getValidationcode());
+				// Add the Characters only if the Key is active.
+				// Scan for the characters declared into this key.
+				for (NeoComCharacter pilot : key.getApiCharacters()) {
+					// REFACTOR There is no need to update the Character information since it is already present and Assets and other data will be collected autoamtically.
+					//					// Post the request to update the Character.
+					//					AppConnector.getCacheConnector().addCharacterUpdateRequest(pilot.getCharacterID());
+					_characters.add(pilot);
+					// Update the pilot parentship.
+					pilot.connectLogin(this);
+					Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " to the _characters");
+				}
 			}
 		} catch (ApiException apiex) {
 			apiex.printStackTrace();
@@ -78,14 +82,20 @@ public class Login extends AbstractNeoComNode {
 	}
 
 	/**
-	 * Assets should collaborate to the model by adding the Characters if they are expanded.
+	 * Assets should collaborate to the model by adding the Characters if they are expanded. In the case the
+	 * Login has no associated chaactrs because their keys are not active, set an special Separator that says
+	 * the item is expanded but empty.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (this.isExpanded()) {
 			results.add(new Separator());
-			results = this.concatenateNeoComCharacter(results, this.getCharacters());
+			if (_characters.size() < 1) {
+				results.add(new Separator().setType(ESeparatorType.EMPTY_SYGNAL));
+			} else {
+				results = this.concatenateNeoComCharacter(results, this.getCharacters());
+			}
 			results.add(new Separator());
 		}
 		return results;
