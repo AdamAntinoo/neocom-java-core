@@ -28,6 +28,8 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.parser.ApiPage;
@@ -106,12 +108,13 @@ public class NeoComConnector extends ApiConnector {
 
 	/**
 	 * Add the flat flag when the page requested is related to the assets. This will generate a new format for
-	 * the list of assets.
+	 * the list of assets. New variation. The format of the assets, hierarchy or flat can be decided at the
+	 * Application core so this should be implemented by the AppConnector.
 	 */
 	@Override
 	protected Map<String, String> getParams(final ApiRequest request) {
 		Map<String, String> par = super.getParams(request);
-		if (request.getPage() == ApiPage.ASSET_LIST) {
+		if (AppConnector.getAppSingleton().getAssetsFormat()) if (request.getPage() == ApiPage.ASSET_LIST) {
 			par.put("flat", "1");
 		}
 		return par;
@@ -125,12 +128,15 @@ public class NeoComConnector extends ApiConnector {
 	private HttpsURLConnection getSecureURLConnection(final URL requestUrl, final Map<String, String> params) {
 		// Create a trust manager that does not validate certificate chains
 		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+			@Override
 			public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
 			}
 
+			@Override
 			public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
 			}
 
+			@Override
 			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
 				return null;
 			}
@@ -168,6 +174,7 @@ public class NeoComConnector extends ApiConnector {
 }
 
 final class Verifier implements HostnameVerifier {
+	@Override
 	public boolean verify(final String hostname, final SSLSession session) {
 		return true;
 	}

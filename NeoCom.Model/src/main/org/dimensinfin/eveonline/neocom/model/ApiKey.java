@@ -31,6 +31,8 @@ public class ApiKey {
 	private int						keynumber				= -1;
 	@DatabaseField
 	private String				validationcode	= "";
+	@DatabaseField
+	private boolean				active					= true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ApiKey() {
@@ -59,6 +61,16 @@ public class ApiKey {
 
 	public String getValidationcode() {
 		return validationcode;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public ApiKey setActive(final boolean activeState) {
+		active = activeState;
+		this.setDirty(true);
+		return this;
 	}
 
 	public void setDirty(final boolean state) {

@@ -16,11 +16,15 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 public interface ICCPDatabaseConnector {
 	public boolean openCCPDataBase();
 
+	public int queryBlueprintDependencies(int bpitemID);
+
 	public EveItem searchItembyID(int typeID);
 
 	public EveLocation searchLocationbyID(long locationID);
 
 	public EveLocation searchLocationBySystem(String system);
+
+	public int searchModule4Blueprint(int bpitemID);
 
 	public int searchStationType(long systemID);
 }

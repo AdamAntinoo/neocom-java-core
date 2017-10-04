@@ -94,6 +94,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset	parentAssetCache	= null;
+	@JsonIgnore
 	private transient EveLocation	locationCache			= null;
 	@JsonIgnore
 	private transient EveItem			itemCache					= null;
@@ -160,6 +161,7 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		return this.getItem().getName();
 	}
 
+	@JsonIgnore
 	public EveLocation getLocation() {
 		if (null == locationCache) {
 			locationCache = AppConnector.getCCPDBConnector().searchLocationbyID(locationID);
@@ -294,31 +296,32 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 	public boolean isContainer() {
 		if (this.isBlueprint()) return false;
 		// Use a list of types to set what is a container
-		if (this.getTypeID() == 23) return true;
-		if (this.getTypeID() == 11490) return true;
-		if (this.getTypeID() == 33003) return true;
-		if (this.getTypeID() == 24445) return true;
-		if (this.getTypeID() == 11489) return true;
-		if (this.getTypeID() == 41567) return true;
-		if (this.getTypeID() == 33005) return true;
 		if (this.getTypeID() == 11488) return true;
-		if (this.getTypeID() == 17365) return true;
-		if (this.getTypeID() == 33007) return true;
-		if (this.getTypeID() == 3465) return true;
-		if (this.getTypeID() == 3296) return true;
-		if (this.getTypeID() == 17364) return true;
-		if (this.getTypeID() == 33009) return true;
-		if (this.getTypeID() == 3466) return true;
-		if (this.getTypeID() == 3293) return true;
-		if (this.getTypeID() == 2263) return true;
-		if (this.getTypeID() == 3468) return true;
+		if (this.getTypeID() == 11489) return true;
+		if (this.getTypeID() == 11490) return true;
 		if (this.getTypeID() == 17363) return true;
-		if (this.getTypeID() == 33011) return true;
-		if (this.getTypeID() == 3467) return true;
-		if (this.getTypeID() == 3297) return true;
+		if (this.getTypeID() == 17364) return true;
+		if (this.getTypeID() == 17365) return true;
 		if (this.getTypeID() == 17366) return true;
 		if (this.getTypeID() == 17367) return true;
 		if (this.getTypeID() == 17368) return true;
+		if (this.getTypeID() == 2263) return true;
+		if (this.getTypeID() == 23) return true;
+		if (this.getTypeID() == 24445) return true;
+		if (this.getTypeID() == 28570) return true;
+		if (this.getTypeID() == 3293) return true;
+		if (this.getTypeID() == 3296) return true;
+		if (this.getTypeID() == 3297) return true;
+		if (this.getTypeID() == 33003) return true;
+		if (this.getTypeID() == 33005) return true;
+		if (this.getTypeID() == 33007) return true;
+		if (this.getTypeID() == 33009) return true;
+		if (this.getTypeID() == 33011) return true;
+		if (this.getTypeID() == 3465) return true;
+		if (this.getTypeID() == 3466) return true;
+		if (this.getTypeID() == 3467) return true;
+		if (this.getTypeID() == 3468) return true;
+		if (this.getTypeID() == 41567) return true;
 		if (this.getName().contains("Container"))
 			return true;
 		else
@@ -361,6 +364,20 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		containerFlag = value;
 	}
 
+	@Override
+	public void setDirty(final boolean flag) {
+		if (flag) {
+			try {
+				Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+				// Try to create the pair. It fails then  it was already created.
+				assetDao.createOrUpdate(this);
+			} catch (final SQLException sqle) {
+				sqle.printStackTrace();
+				//	this.setDirty(true);
+			}
+		}
+	}
+
 	public void setFlag(final int newFlag) {
 		flag = newFlag;
 	}
@@ -393,6 +410,8 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		if (null != newParent) {
 			parentAssetCache = newParent;
 			parentAssetID = newParent.getAssetID();
+			// Trigger an update of the record at the database.
+			this.setDirty(true);
 		}
 	}
 
@@ -462,14 +481,14 @@ public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INa
 		newundefloc.setSystem("Undefined");
 		newundefloc.setStation("Station#" + newlocationid);
 		// Save this new location ot the database.
-		try {
-			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
-			// Try to create the pair. It fails then  it was already created.
-			locationDao.createOrUpdate(newundefloc);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			this.setDirty(true);
-		}
+		//		try {
+		//			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+		//			// Try to create the pair. It fails then  it was already created.
+		//			locationDao.createOrUpdate(newundefloc);
+		//		} catch (final SQLException sqle) {
+		//			sqle.printStackTrace();
+		//			this.setDirty(true);
+		//		}
 		return newundefloc;
 	}
 }

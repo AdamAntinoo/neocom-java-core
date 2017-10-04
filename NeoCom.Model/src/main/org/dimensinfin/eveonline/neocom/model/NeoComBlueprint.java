@@ -110,7 +110,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		typeID = blueprintID;
 		blueprintItem = AppConnector.getCCPDBConnector().searchItembyID(blueprintID);
 		typeName = blueprintItem.getName();
-		moduleTypeID = AppConnector.getDBConnector().searchModule4Blueprint(typeID);
+		moduleTypeID = AppConnector.getCCPDBConnector().searchModule4Blueprint(typeID);
 		moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
 		tech = this.obtainTech();
 		associatedAsset = null;
@@ -132,7 +132,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 			blueprintItem = associatedAsset.getItem();
 			typeID = blueprintItem.getItemID();
 			typeName = blueprintItem.getName();
-			moduleTypeID = AppConnector.getDBConnector().searchModule4Blueprint(typeID);
+			moduleTypeID = AppConnector.getCCPDBConnector().searchModule4Blueprint(typeID);
 			moduleItem = AppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
 			tech = this.obtainTech();
 		} catch (final Exception ex) {

@@ -47,6 +47,7 @@ import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -197,7 +198,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID() * -1);
+			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
 			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
 			//			AssetListResponse response = null;
 			//			if (getName().equalsIgnoreCase("Corporation")) {
@@ -267,7 +268,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			// Clear any previous record with owner -1 from database.
 			IDatabaseConnector dbConn = AppConnector.getDBConnector();
 			synchronized (dbConn) {
-				dbConn.clearInvalidRecords(this.getPilot().getCharacterID() * -1);
+				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
 			}
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
@@ -315,8 +316,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 		if (totalAssets == -1) {
 			try {
 				this.accessDao();
-				totalAssets = assetDao.countOf(
-						assetDao.queryBuilder().setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID()).prepare());
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				queryBuilder.setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID());
+				totalAssets = assetDao.countOf(queryBuilder.prepare());
 			} catch (SQLException sqle) {
 				AssetsManager.logger.info("W> Proglem calculating the number of assets for " + this.getPilot().getName());
 			}
@@ -328,7 +330,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 	//		return new ArrayList<AbstractComplexNode>();
 	//	}
-
+	@JsonIgnore
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
 			this.updateBlueprints();
@@ -374,8 +376,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * @return
 	 */
 	public HashMap<Long, Region> getRegions() {
-		if (null == regions) {
-			this.accessAllAssets();
+		if (!this.isInitialized()) {
+			this.initialize();
 		}
 		return regions;
 	}
@@ -393,7 +395,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * 
 	 * @return
 	 */
+	@Override
 	public AssetsManager initialize() {
+		// INITIALIZE - Initialize the number os assets.
+		this.getAssetTotalCount();
+		// INITIALIZE - Initialize the Locations and the Regions
 		List<NeoComAsset> locs = AppConnector.getDBConnector().queryAllAssetLocations(this.getPilot().getCharacterID());
 		regions.clear();
 		locations.clear();
@@ -419,6 +425,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 		}
+		initialized = true;
 		return this;
 	}
 
@@ -750,6 +757,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 		newAsset.setTypeID(eveAsset.getTypeID());
 		// Under the flat api check if the location is a real location or an asset.
 		Long locid = eveAsset.getLocationID();
+		if (null == locid) {
+			locid = (long) -2;
+		}
 		if (locid > 1000000000000L) {
 			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
 			newAsset.setLocationID(-2);
@@ -875,7 +885,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			region = new Region(target.getRegion());
 			regions.put(new Long(regionid), region);
 		}
-		region.addChild(target);
+		region.addLocation(target);
 	}
 
 	/**
