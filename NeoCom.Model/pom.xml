@@ -19,13 +19,13 @@
 	</properties>
 
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 			<groupId>DimensinfinIndustries</groupId> -->
-<!-- 			<artifactId>CoreBase.core</artifactId> -->
-<!-- 			<version>1.4.1</version> -->
-<!-- 			<scope>system</scope> -->
-<!-- 			<systemPath>${project.basedir}/privatelibs/CoreBase.core-1.4.1.jar</systemPath> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>DimensinfinIndustries</groupId>
+			<artifactId>CoreBase.core</artifactId>
+			<version>1.4.2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/privatelibs/CoreBase.core-1.4.2.jar</systemPath>
+		</dependency>
 		<dependency>
 			<groupId>GoldeGnu</groupId>
 			<artifactId>jeveassets</artifactId>
