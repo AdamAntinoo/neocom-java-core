@@ -56,6 +56,8 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	@JsonIgnore
 	private transient Hashtable<Long, NeoComAsset>	assetMap								= new Hashtable<Long, NeoComAsset>();
 
+	private Container																container								= null;
+
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryManager(final NeoComCharacter pilot) {
 		super(pilot);
@@ -275,6 +277,8 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 * @param asset
 	 */
 	private void processElement(final NeoComAsset asset) {
+		PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]>>>>> Asset: " + asset);
+		PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]>>>>> Pending assrts count: " + assetMap.size());
 		try {
 			// Remove the element from the map.
 			assetMap.remove(asset.getAssetID());
@@ -284,6 +288,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container
 			if (asset.isShip()) {
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Detected ship");
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
@@ -304,28 +309,34 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 				} else {
 					this.add2Location(asset);
 				}
+				PlanetaryManager.logger
+						.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: " + asset.getAssetID());
 				return;
 			}
 			if (asset.isContainer()) {
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Detected container");
 				// Check if the asset is packaged. If so leave as asset
 				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
-					Container container = new Container().copyFrom(asset);
+					container = new Container().copyFrom(asset);
 					containers.put(container.getAssetID(), container);
 					// The container is a container so add it and forget about this asset.
 					if (container.hasParent()) {
 						this.processElement(container.getParentContainer());
 					} // else {
+					PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Container added to Location");
 					this.add2Location(container);
-					// Remove all the assets contained because they will be added in the call to collaborate2Model
-					// REFACTOR set the default variant as a constant even that information if defined at other project
-					ArrayList<AbstractComplexNode> removableList = container
-							.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
-					// The list returned is not the real list of assets contained but the list of Separators
-					for (AbstractComplexNode node : removableList) {
-						this.removeNode(node);
-					}
+					//					// Remove all the assets contained because they will be added in the call to collaborate2Model
+					//					// REFACTOR set the default variant as a constant even that information if defined at other project
+					//					ArrayList<AbstractComplexNode> removableList = container
+					//							.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					//					// The list returned is not the real list of assets contained but the list of Separators
+					//					for (AbstractComplexNode node : removableList) {
+					//						this.removeNode(node);
+					//					}
 				} else {
+					PlanetaryManager.logger
+							.info("DD [PlanetaryManager.processElement]> Container is packaged. Add it as an Asset.");
 					this.add2Location(asset);
 				}
 				//				// Remove all the assets contained because they will be added in the call to collaborate2Model
@@ -334,24 +345,40 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 				//					assetMap.remove(((Container) node).getAssetID());
 				//				}
 				//	}
+				PlanetaryManager.logger
+						.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: " + asset.getAssetID());
 				return;
 			}
 			// Process the asset parent if this is the case because we should add first parent to the hierarchy
 			if (asset.hasParent()) {
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Detected parent");
 				NeoComAsset parent = asset.getParentContainer();
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Parent: " + parent);
 				if (null == parent) {
 					this.add2Location(asset);
 				} else {
 					this.processElement(parent);
+					// Add the current element to the parent already processed.
+					// REFACTOR The container for the recursion is stored on a field. This is not a good practice.
+					if (null != container) {
+						PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Added asset: " + asset.getAssetID()
+								+ " to Container: " + container.getAssetID());
+						container.addContent(asset);
+					}
 				}
+				PlanetaryManager.logger
+						.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: " + asset.getAssetID());
 				return;
 			}
 			// Check if the location identifier matches an asset. This item can be contained inside some other.
+			PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Checking Location: " + asset.getLocationID());
 			if (this.isContainer(asset.getLocationID())) {
 				NeoComAsset target = AppConnector.getDBConnector().searchAssetByID(asset.getLocationID());
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Asset connection found: " + target);
 				asset.setParentContainer(target);
 				this.processElement(asset);
 			} else {
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Adding asset to Location");
 				this.add2Location(asset);
 				//	}
 			}

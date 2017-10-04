@@ -59,8 +59,9 @@ public class EveItem extends AbstractComplexNode {
 	private transient MarketDataSet		sellerData		= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	//	public EveItem() {
-	//	}
+	public EveItem() {
+		jsonClass = "EveItem";
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public double getBaseprice() {

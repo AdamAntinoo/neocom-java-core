@@ -9,7 +9,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
@@ -17,7 +16,7 @@ import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Container extends NeoComAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger					logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
+	//	private static Logger					logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
 	private static final long			serialVersionUID	= 2813029093080549286L;
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -25,12 +24,14 @@ public class Container extends NeoComAsset {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Container() {
+		jsonClass = "Container";
 	}
-	//	public Container(final long pilot) {
-	//		pilotID = pilot;
-	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public void addContent(final NeoComAsset asset) {
+		contents.add(asset);
+	}
+
 	/**
 	 * The collaboration of the container is different form the one of an asset. It will aggregate to the output
 	 * the list of the contents. <br>
