@@ -14,11 +14,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
-import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
@@ -41,7 +41,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends AbstractNeoComNode implements /* IAsset, */ INamed {
+public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");

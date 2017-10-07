@@ -9,10 +9,11 @@ package org.dimensinfin.eveonline.neocom.generator;
 
 import java.util.List;
 
+import org.dimensinfin.android.datasource.DataSourceLocator;
+import org.dimensinfin.android.interfaces.IModelGenerator;
+import org.dimensinfin.android.mvc.core.AbstractGenerator;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.core.DataSourceLocator;
-import org.dimensinfin.eveonline.neocom.interfaces.IModelGenerator;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 // - CLASS IMPLEMENTATION ...................................................................................

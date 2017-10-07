@@ -28,8 +28,6 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.parser.ApiPage;
@@ -49,6 +47,10 @@ public class NeoComConnector extends ApiConnector {
 
 	public NeoComConnector(final ApiConnector baseConnector) {
 		this.baseConnector = baseConnector;
+	}
+
+	public boolean getAssetsFormat() {
+		return true;
 	}
 
 	@Override
@@ -114,7 +116,7 @@ public class NeoComConnector extends ApiConnector {
 	@Override
 	protected Map<String, String> getParams(final ApiRequest request) {
 		Map<String, String> par = super.getParams(request);
-		if (AppConnector.getAppSingleton().getAssetsFormat()) if (request.getPage() == ApiPage.ASSET_LIST) {
+		if (this.getAssetsFormat()) if (request.getPage() == ApiPage.ASSET_LIST) {
 			par.put("flat", "1");
 		}
 		return par;

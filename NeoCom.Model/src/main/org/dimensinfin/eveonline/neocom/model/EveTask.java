@@ -10,14 +10,14 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import org.dimensinfin.core.interfaces.INeoComNode;
+import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.eveonline.neocom.enums.ETaskType;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveTask extends AbstractComplexNode implements INeoComNode{
+public class EveTask extends AbstractComplexNode implements IViewableNode{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7187291497544861372L;
 

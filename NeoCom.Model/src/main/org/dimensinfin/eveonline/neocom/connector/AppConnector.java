@@ -98,6 +98,13 @@ public class AppConnector {
 			throw new RuntimeException("Application connector not defined. Functionality 'getDBConnector' disabled.");
 	}
 
+	//	public static Class<?> getFirstActivity() {
+	//		if (null != AppConnector.connection)
+	//			return AppConnector.connection.getFirstActivity();
+	//		else
+	//			throw new RuntimeException("Application connector not defined. Functionality 'getFirstActivity' disabled.");
+	//	}
+
 	public static INeoComModelStore getModelStore() {
 		if (null != AppConnector.connection)
 			return AppConnector.connection.getModelStore();

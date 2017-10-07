@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.dimensinfin.android.model.Separator;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
@@ -18,7 +19,6 @@ import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.Separator;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**

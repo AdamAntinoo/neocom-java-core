@@ -15,13 +15,13 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 import org.dimensinfin.eveonline.neocom.model.Container;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -393,13 +393,13 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 */
 	private void removeNode(final AbstractComplexNode node) {
 		// Check that the class of the item is an Asset. Anyway check for its collaboration.
-		if (node instanceof AbstractNeoComNode) {
+		if (node instanceof AbstractViewableNode) {
 			// Try to remove the asset if found
 			if (node instanceof NeoComAsset) {
 				assetMap.remove(((NeoComAsset) node).getAssetID());
 			}
 			// Remove also the nodes collaborated by it.
-			for (AbstractComplexNode child : ((AbstractNeoComNode) node)
+			for (AbstractComplexNode child : ((AbstractViewableNode) node)
 					.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name())) {
 				this.removeNode(child);
 			}

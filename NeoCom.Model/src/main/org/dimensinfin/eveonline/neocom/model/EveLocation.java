@@ -13,10 +13,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.data.Citadel;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
-public class EveLocation extends AbstractNeoComNode {
+public class EveLocation extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long		serialVersionUID	= 1522765618286937377L;
 

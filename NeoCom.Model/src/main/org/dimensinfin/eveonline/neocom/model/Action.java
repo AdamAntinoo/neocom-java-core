@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.interfaces.INeoComNode;
+import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.ETaskCompletion;
@@ -33,7 +33,7 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractComplexNode implements INeoComNode {
+public class Action extends AbstractComplexNode implements IViewableNode {
 	private class TaskBundle implements Serializable {
 		private static final long	serialVersionUID	= -5450309773660347151L;
 		protected int							priority					= 999;

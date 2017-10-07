@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.dimensinfin.core.interfaces.INeoComNode;
+import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
@@ -36,7 +36,7 @@ import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
  * 
  * @author Adam Antinoo
  */
-public class RegionGroup extends AnalyticalGroup implements INeoComNode {
+public class RegionGroup extends AnalyticalGroup implements IViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long																serialVersionUID	= 8380020771073012459L;
 

@@ -12,8 +12,8 @@ package org.dimensinfin.eveonline.neocom.manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.interfaces.INamed;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;

@@ -9,7 +9,7 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.eveonline.neocom.interfaces.IWeigthedNode;
 
 /**
@@ -23,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IWeigthedNode;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AnalyticalGroup extends AbstractNeoComNode implements IWeigthedNode {
+public abstract class AnalyticalGroup extends AbstractViewableNode implements IWeigthedNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long		serialVersionUID					= 8917539237775595255L;
 	public static final String	EVENT_EXPANDCOLLAPSENODE	= "AnalyticalGroup.EVENT_EXPANDCOLLAPSENODE";

@@ -11,10 +11,11 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.Separator;
+import org.dimensinfin.android.model.Separator.ESeparatorType;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.AppConnector;
-import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Ship extends NeoComAsset {

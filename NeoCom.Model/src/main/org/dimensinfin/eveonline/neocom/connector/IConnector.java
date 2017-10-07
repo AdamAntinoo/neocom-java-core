@@ -14,11 +14,11 @@ public interface IConnector {
 
 	public IConnector getAppSingleton();
 
-	public boolean getAssetsFormat();
-
 	public ICacheConnector getCacheConnector();
 
 	public ICCPDatabaseConnector getCCPDBConnector();
+
+	public IDatabaseConnector getDBConnector();
 
 	//	public boolean checkExpiration(final long timestamp, final long window);
 
@@ -26,7 +26,8 @@ public interface IConnector {
 
 	//	public String getAppFilePath(String fileresourceid);
 
-	public IDatabaseConnector getDBConnector();
+	//	public boolean getAssetsFormat();
+	//	public Class<?> getFirstActivity();
 
 	public INeoComModelStore getModelStore();
 

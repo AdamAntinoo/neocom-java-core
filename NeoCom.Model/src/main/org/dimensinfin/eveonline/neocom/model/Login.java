@@ -15,9 +15,10 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.android.model.Separator;
+import org.dimensinfin.android.model.Separator.ESeparatorType;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
-import org.dimensinfin.eveonline.neocom.model.Separator.ESeparatorType;
 
 import com.beimin.eveapi.exception.ApiException;
 
@@ -30,7 +31,7 @@ import com.beimin.eveapi.exception.ApiException;
  * 
  * @author Adam Antinoo
  */
-public class Login extends AbstractNeoComNode {
+public class Login extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long								serialVersionUID	= -1654191267396975701L;
 	private static Logger										logger						= Logger.getLogger("Login");

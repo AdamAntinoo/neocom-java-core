@@ -12,6 +12,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import org.dimensinfin.android.model.Separator;
 import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................

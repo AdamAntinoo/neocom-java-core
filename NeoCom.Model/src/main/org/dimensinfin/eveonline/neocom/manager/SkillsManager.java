@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import java.util.Set;
 
-import org.dimensinfin.eveonline.neocom.interfaces.INamed;
+import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.eveonline.neocom.model.Pilot;
 
 import com.beimin.eveapi.model.pilot.Skill;

@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.interfaces.INeoComNode;
+import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 
 /**
@@ -22,7 +22,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ShipLocation extends EveLocation implements INeoComNode {
+public class ShipLocation extends EveLocation implements IViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger			logger						= Logger.getLogger("ShipLocation");
 	private static final long	serialVersionUID	= 28570905307514340L;

@@ -12,14 +12,14 @@ package org.dimensinfin.eveonline.neocom.manager;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.AbstractNeoComNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AbstractManager extends AbstractNeoComNode {
+public abstract class AbstractManager extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long					serialVersionUID	= -3012043551959443176L;
 	protected static Logger						logger						= Logger.getLogger("AbstractManager");
