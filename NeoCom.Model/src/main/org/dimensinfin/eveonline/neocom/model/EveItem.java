@@ -25,7 +25,8 @@ public class EveItem extends AbstractComplexNode {
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
-			EveItem.defaultItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
+			EveItem.defaultItem = NeoComAppConnector.getSingleton().getCCPDBConnector()
+					.searchItembyID(EveItem.DEFAULT_TYPE_ID);
 			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
 			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
 		}
@@ -140,7 +141,7 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public boolean hasInvention() {
-		return NeoComAppConnector.getDBConnector().checkInvention(this.getTypeID());
+		return NeoComAppConnector.getSingleton().getDBConnector().checkInvention(this.getTypeID());
 	}
 
 	public boolean isBlueprint() {
@@ -254,7 +255,8 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			buyerData = NeoComAppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			buyerData = NeoComAppConnector.getSingleton().getCacheConnector().searchMarketData(this.getTypeID(),
+					EMarketSide.BUYER);
 			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
 			}
@@ -274,7 +276,8 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			sellerData = NeoComAppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			sellerData = NeoComAppConnector.getSingleton().getCacheConnector().searchMarketData(this.getTypeID(),
+					EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
 			}

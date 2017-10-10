@@ -90,7 +90,7 @@ public class EveLocation extends AbstractViewableNode {
 	public EveLocation(final long citadelid, final Citadel cit) {
 		jsonClass = "EveLocation";
 		try {
-			Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
+			Dao<EveLocation, String> locationDao = NeoComAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
@@ -111,7 +111,7 @@ public class EveLocation extends AbstractViewableNode {
 	public EveLocation(final Outpost out) {
 		jsonClass = "EveLocation";
 		try {
-			Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
+			Dao<EveLocation, String> locationDao = NeoComAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(out.getSolarSystem());
 			id = out.getFacilityID();
@@ -128,7 +128,7 @@ public class EveLocation extends AbstractViewableNode {
 	public EveLocation(final Station station) {
 		jsonClass = "EveLocation";
 		try {
-			Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
+			Dao<EveLocation, String> locationDao = NeoComAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
@@ -276,8 +276,8 @@ public class EveLocation extends AbstractViewableNode {
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
-			urlLocationIcon = "http://image.eveonline.com/Render/" + NeoComAppConnector.getCCPDBConnector().searchStationType(id)
-					+ "_64.png";
+			urlLocationIcon = "http://image.eveonline.com/Render/"
+					+ NeoComAppConnector.getSingleton().getCCPDBConnector().searchStationType(id) + "_64.png";
 		}
 		return urlLocationIcon;
 	}
@@ -314,7 +314,7 @@ public class EveLocation extends AbstractViewableNode {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
+				Dao<EveLocation, String> locationDao = NeoComAppConnector.getSingleton().getDBConnector().getLocationDAO();
 				locationDao.update(this);
 				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {

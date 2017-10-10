@@ -108,10 +108,10 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	public NeoComBlueprint(final int blueprintID) {
 		super();
 		typeID = blueprintID;
-		blueprintItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(blueprintID);
+		blueprintItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(blueprintID);
 		typeName = blueprintItem.getName();
-		moduleTypeID = NeoComAppConnector.getCCPDBConnector().searchModule4Blueprint(typeID);
-		moduleItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+		moduleTypeID = NeoComAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
+		moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		tech = this.obtainTech();
 		associatedAsset = null;
 	}
@@ -132,8 +132,8 @@ public class NeoComBlueprint extends AbstractComplexNode {
 			blueprintItem = associatedAsset.getItem();
 			typeID = blueprintItem.getItemID();
 			typeName = blueprintItem.getName();
-			moduleTypeID = NeoComAppConnector.getCCPDBConnector().searchModule4Blueprint(typeID);
-			moduleItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleTypeID = NeoComAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
+			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 			tech = this.obtainTech();
 		} catch (final Exception ex) {
 			//			Log.w("W> Blueprint.<init>. Asset <" + newAsseID + "> not found.");
@@ -200,28 +200,28 @@ public class NeoComBlueprint extends AbstractComplexNode {
 
 	public String getModuleCategory() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem.getCategory();
 	}
 
 	public String getModuleGroup() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem.getGroupName();
 	}
 
 	public String getModuleGroupCategory() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem.getGroupName() + "/" + moduleItem.getCategory();
 	}
 
 	public EveItem getModuleItem() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem;
 	}

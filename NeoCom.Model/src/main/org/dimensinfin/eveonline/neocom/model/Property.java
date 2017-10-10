@@ -41,7 +41,7 @@ public class Property implements Serializable {
 
 	public Property(final EPropertyTypes propertyType) {
 		try {
-			Dao<Property, String> propertyDao = NeoComAppConnector.getDBConnector().getPropertyDAO();
+			Dao<Property, String> propertyDao = NeoComAppConnector.getSingleton().getDBConnector().getPropertyDAO();
 			// Try to create the pair. It fails then  it was already created.
 			propertyDao.create(this);
 			// Be sure the owner is reset to undefined when stored at the database.
@@ -115,7 +115,7 @@ public class Property implements Serializable {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<Property, String> propertyDao = NeoComAppConnector.getDBConnector().getPropertyDAO();
+				Dao<Property, String> propertyDao = NeoComAppConnector.getSingleton().getDBConnector().getPropertyDAO();
 				propertyDao.update(this);
 				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {

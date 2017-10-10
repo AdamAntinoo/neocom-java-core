@@ -40,7 +40,8 @@ public class Container extends NeoComAsset {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		contents = NeoComAppConnector.getDBConnector().searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
+		contents = NeoComAppConnector.getSingleton().getDBConnector().searchAssetContainedAt(this.getOwnerID(),
+				this.getAssetID());
 		this.clean();
 		// Classify the contents
 		for (NeoComAsset node : contents) {

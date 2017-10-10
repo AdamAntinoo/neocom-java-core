@@ -62,8 +62,8 @@ public class Ship extends NeoComAsset {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		if (!this.isDownloaded()) {
-			ArrayList<NeoComAsset> contents = NeoComAppConnector.getDBConnector().searchAssetContainedAt(pilotID,
-					this.getAssetID());
+			ArrayList<NeoComAsset> contents = NeoComAppConnector.getSingleton().getDBConnector()
+					.searchAssetContainedAt(pilotID, this.getAssetID());
 			highModules.clean();
 			medModules.clean();
 			lowModules.clean();

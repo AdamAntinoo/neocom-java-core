@@ -199,9 +199,9 @@ public class Pilot extends NeoComCharacter {
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadBlueprints() {
 		try {
-			NeoComAppConnector.startChrono();
+			NeoComAppConnector.getSingleton().startChrono();
 			// Clear any previous records with owner -1 from database.
-			NeoComAppConnector.getDBConnector().clearInvalidRecords(this.getCharacterID());
+			NeoComAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getCharacterID());
 			// Download and parse the blueprints using the eveapi.
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
@@ -220,7 +220,7 @@ public class Pilot extends NeoComCharacter {
 			}
 			// Pack the blueprints and store them on the database.
 			this.getAssetsManager().storeBlueprints(bplist);
-			NeoComAppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
+			NeoComAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getCharacterID());
 			// Update the caching time to the time set by the eveapi.
 			blueprintsCacheTime = new Instant(response.getCachedUntil());
 			// Update the dirty state to signal modification of store structures.
@@ -228,7 +228,7 @@ public class Pilot extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		final Duration lapse = NeoComAppConnector.timeLapse();
+		final Duration lapse = NeoComAppConnector.getSingleton().timeLapse();
 		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	}
 
@@ -306,7 +306,8 @@ public class Pilot extends NeoComCharacter {
 				for (final MarketOrder eveorder : orders) {
 					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
 					try {
-						final Dao<NeoComMarketOrder, String> marketOrderDao = NeoComAppConnector.getDBConnector().getMarketOrderDAO();
+						final Dao<NeoComMarketOrder, String> marketOrderDao = NeoComAppConnector.getDBConnector()
+								.getMarketOrderDAO();
 						marketOrderDao.createOrUpdate(myorder);
 						Pilot.logger.finest(
 								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");

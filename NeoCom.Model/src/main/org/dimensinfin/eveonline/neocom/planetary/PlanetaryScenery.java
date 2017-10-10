@@ -90,7 +90,8 @@ public class PlanetaryScenery {
 	private void stock(final Resource resource) {
 		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
 		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
-			int outputType = NeoComAppConnector.getDBConnector().searchRawPlanetaryOutput(resource.getTypeID());
+			int outputType = NeoComAppConnector.getSingleton().getDBConnector()
+					.searchRawPlanetaryOutput(resource.getTypeID());
 			ProcessingAction action = new ProcessingAction(outputType);
 			action.addResource(resource);
 			Vector<Resource> results = action.getActionResults();

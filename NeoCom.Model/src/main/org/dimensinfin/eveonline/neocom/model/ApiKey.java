@@ -41,7 +41,7 @@ public class ApiKey {
 	public ApiKey(final String login) {
 		this.login = login;
 		try {
-			Dao<ApiKey, String> apikeyDao = NeoComAppConnector.getDBConnector().getApiKeysDao();
+			Dao<ApiKey, String> apikeyDao = NeoComAppConnector.getSingleton().getDBConnector().getApiKeysDao();
 			// Try to create the key. It fails then  it was already created.
 			apikeyDao.create(this);
 		} catch (final SQLException sqle) {

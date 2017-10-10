@@ -32,7 +32,7 @@ public class DatabaseVersion {
 	public DatabaseVersion(final int newVersion) {
 		versionNumber = newVersion;
 		try {
-			Dao<DatabaseVersion, String> versionDao = NeoComAppConnector.getDBConnector().getVersionDao();
+			Dao<DatabaseVersion, String> versionDao = NeoComAppConnector.getSingleton().getDBConnector().getVersionDao();
 			// Try to create the key. It fails then  it was already created.
 			versionDao.create(this);
 		} catch (final SQLException sqle) {
@@ -53,7 +53,7 @@ public class DatabaseVersion {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<DatabaseVersion, String> versionDao = NeoComAppConnector.getDBConnector().getVersionDao();
+				Dao<DatabaseVersion, String> versionDao = NeoComAppConnector.getSingleton().getDBConnector().getVersionDao();
 				versionDao.update(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();
