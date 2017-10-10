@@ -8,7 +8,7 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
 import com.j256.ormlite.dao.Dao;
@@ -108,10 +108,10 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	public NeoComBlueprint(final int blueprintID) {
 		super();
 		typeID = blueprintID;
-		blueprintItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(blueprintID);
+		blueprintItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(blueprintID);
 		typeName = blueprintItem.getName();
-		moduleTypeID = NeoComAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
-		moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+		moduleTypeID = ModelAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
+		moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		tech = this.obtainTech();
 		associatedAsset = null;
 	}
@@ -132,8 +132,8 @@ public class NeoComBlueprint extends AbstractComplexNode {
 			blueprintItem = associatedAsset.getItem();
 			typeID = blueprintItem.getItemID();
 			typeName = blueprintItem.getName();
-			moduleTypeID = NeoComAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
-			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleTypeID = ModelAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
+			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 			tech = this.obtainTech();
 		} catch (final Exception ex) {
 			//			Log.w("W> Blueprint.<init>. Asset <" + newAsseID + "> not found.");
@@ -200,28 +200,28 @@ public class NeoComBlueprint extends AbstractComplexNode {
 
 	public String getModuleCategory() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem.getCategory();
 	}
 
 	public String getModuleGroup() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem.getGroupName();
 	}
 
 	public String getModuleGroupCategory() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem.getGroupName() + "/" + moduleItem.getCategory();
 	}
 
 	public EveItem getModuleItem() {
 		if (null == moduleItem) {
-			moduleItem = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
 		}
 		return moduleItem;
 	}
@@ -398,7 +398,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 
 	private void accessAssociatedAsset() {
 		try {
-			Dao<NeoComAsset, String> dao = NeoComAppConnector.getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> dao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
 			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");
@@ -419,7 +419,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	 * @return
 	 */
 	private String obtainTech() {
-		return NeoComAppConnector.getDBConnector().searchTech4Blueprint(typeID);
+		return ModelAppConnector.getSingleton().getDBConnector().searchTech4Blueprint(typeID);
 	}
 }
 

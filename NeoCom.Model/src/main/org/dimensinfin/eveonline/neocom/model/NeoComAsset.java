@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -152,7 +152,7 @@ public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ I
 	 */
 	public EveItem getItem() {
 		if (null == itemCache) {
-			itemCache = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
+			itemCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
 		}
 		return itemCache;
 	}
@@ -164,7 +164,7 @@ public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ I
 	@JsonIgnore
 	public EveLocation getLocation() {
 		if (null == locationCache) {
-			locationCache = NeoComAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationID);
+			locationCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationID);
 		}
 		return locationCache;
 	}
@@ -217,7 +217,7 @@ public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ I
 	public NeoComAsset getParentContainer() {
 		if (parentAssetID > 0) if (null == parentAssetCache) {
 			// Search for the parent asset. If not found then go to the transformation method.
-			parentAssetCache = NeoComAppConnector.getSingleton().getDBConnector().searchAssetByID(parentAssetID);
+			parentAssetCache = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parentAssetID);
 			if (null == parentAssetCache) {
 				long newlocationId = parentAssetID;
 				EveLocation loc = this.moveAssetToUnknown(newlocationId);
@@ -226,7 +226,7 @@ public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ I
 				locationCache = loc;
 				// Save the asset to disk.
 				try {
-					Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getSingleton().getDBConnector().getAssetDAO();
+					Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 					// Try to create the pair. It fails then  it was already created.
 					assetDao.createOrUpdate(this);
 				} catch (final SQLException sqle) {
@@ -368,7 +368,7 @@ public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ I
 	public void setDirty(final boolean flag) {
 		if (flag) {
 			try {
-				Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 				// Try to create the pair. It fails then  it was already created.
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {

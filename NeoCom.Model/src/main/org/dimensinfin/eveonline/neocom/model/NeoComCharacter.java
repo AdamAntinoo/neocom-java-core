@@ -23,7 +23,6 @@ import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
@@ -353,7 +352,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getID())) {
 				//		if (null != hit) {
 				try {
-					Dao<Property, String> propertyDao = NeoComAppConnector.getSingleton().getDBConnector().getPropertyDAO();
+					Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDAO();
 					propertyDao.delete(role);
 					locationRoles = null;
 				} catch (final SQLException sqle) {
@@ -387,7 +386,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	public void forceRefresh() {
 		this.clean();
 		assetsManager = new AssetsManager(this);
-		ModelAppConnector.getSingleton().addCharacterUpdateRequest(this.getCharacterID());
+		ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
 	}
 
 	public double getAccountBalance() {
@@ -630,7 +629,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		List<NeoComMarketOrder> orderList = new ArrayList<NeoComMarketOrder>();
 		try {
 			ModelAppConnector.getSingleton().startChrono();
-			final Dao<NeoComMarketOrder, String> marketOrderDao = NeoComAppConnector.getSingleton().getDBConnector()
+			final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
 					.getMarketOrderDAO();
 			final QueryBuilder<NeoComMarketOrder, String> qb = marketOrderDao.queryBuilder();
 			qb.where().eq("ownerID", this.getCharacterID());
@@ -756,7 +755,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = NeoComAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());
@@ -926,7 +925,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		//	Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
@@ -946,14 +945,14 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		//	Select assets of type blueprint and that are of T2.
 		List<Job> jobList = new ArrayList<Job>();
 		try {
-			NeoComAppConnector.getSingleton().startChrono();
-			final Dao<Job, String> jobDao = NeoComAppConnector.getSingleton().getDBConnector().getJobDAO();
+			ModelAppConnector.getSingleton().startChrono();
+			final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
 			final QueryBuilder<Job, String> qb = jobDao.queryBuilder();
 			qb.where().eq("ownerID", this.getCharacterID());
 			qb.orderBy("endDate", false);
 			jobList = jobDao.query(qb.prepare());
 			this.checkRefresh(jobList.size(), "JOBS");
-			final Duration lapse = NeoComAppConnector.timeLapse();
+			final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 			NeoComCharacter.logger.info("-- Time lapse for [SELECT JOBS] " + lapse);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
@@ -972,7 +971,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	private void accessActionList() {
 		List<Property> actionList = new ArrayList<Property>();
 		try {
-			Dao<Property, String> propertyDao = NeoComAppConnector.getSingleton().getDBConnector().getPropertyDAO();
+			Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDAO();
 			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
 			Where<Property, String> where = queryBuilder.where();
 			where.eq("ownerID", delegatedCharacter.getCharacterID());
@@ -994,7 +993,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	private void accessLocationRoles() {
 		//		List<Property> roleList = new ArrayList<Property>();
 		try {
-			Dao<Property, String> propertyDao = NeoComAppConnector.getSingleton().getDBConnector().getPropertyDAO();
+			Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDAO();
 			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
 			Where<Property, String> where = queryBuilder.where();
 			where.eq("ownerID", delegatedCharacter.getCharacterID());
@@ -1018,10 +1017,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		if (size < 1) {
 			if (section.equalsIgnoreCase("JOBS")) {
 				this.cleanJobs();
-				NeoComAppConnector.getSingleton().addCharacterUpdateRequest(this.getCharacterID());
+				ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
 			}
 			if (section.equalsIgnoreCase("MARKETORDERS")) {
-				NeoComAppConnector.getSingleton().addCharacterUpdateRequest(this.getCharacterID());
+				ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
 			}
 		}
 	}
@@ -1039,7 +1038,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		///	Optimize the update of the assets to just process the ones with the -1 owner.
 		List<NeoComAsset> accountList = new ArrayList<NeoComAsset>();
 		try {
-			final Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			final Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("name", moduleName);

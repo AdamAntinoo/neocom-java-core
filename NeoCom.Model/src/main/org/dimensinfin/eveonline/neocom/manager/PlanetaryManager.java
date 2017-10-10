@@ -19,6 +19,7 @@ import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -215,7 +216,8 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		} else {
 			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
 			long id = asset.getParentContainerId();
-			NeoComAsset parentAssetCache = NeoComAppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
+			NeoComAsset parentAssetCache = ModelAppConnector.getSingleton().getDBConnector()
+					.searchAssetByID(asset.getParentContainerId());
 		}
 		// This is an Unknown location that should be a Custom Office
 	}
@@ -235,7 +237,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
 		if (null == target) {
-			target = NeoComAppConnector.getCCPDBConnector().searchLocationbyID(locid);
+			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
 		}
@@ -254,7 +256,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 
 	private boolean isContainer(final long identifier) {
 		// Search for this asset on the database. If it is a ship or a container, add it to the list of assets.
-		NeoComAsset target = NeoComAppConnector.getDBConnector().searchAssetByID(identifier);
+		NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(identifier);
 		if (null == target)
 			return false;
 		else {
@@ -373,7 +375,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			// Check if the location identifier matches an asset. This item can be contained inside some other.
 			PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Checking Location: " + asset.getLocationID());
 			if (this.isContainer(asset.getLocationID())) {
-				NeoComAsset target = NeoComAppConnector.getDBConnector().searchAssetByID(asset.getLocationID());
+				NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(asset.getLocationID());
 				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Asset connection found: " + target);
 				asset.setParentContainer(target);
 				this.processElement(asset);

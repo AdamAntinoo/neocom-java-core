@@ -10,7 +10,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
@@ -41,7 +41,7 @@ public class ApiKey {
 	public ApiKey(final String login) {
 		this.login = login;
 		try {
-			Dao<ApiKey, String> apikeyDao = NeoComAppConnector.getSingleton().getDBConnector().getApiKeysDao();
+			Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
 			// Try to create the key. It fails then  it was already created.
 			apikeyDao.create(this);
 		} catch (final SQLException sqle) {
@@ -76,7 +76,7 @@ public class ApiKey {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<ApiKey, String> apikeyDao = NeoComAppConnector.getDBConnector().getApiKeysDao();
+				Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
 				apikeyDao.update(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();

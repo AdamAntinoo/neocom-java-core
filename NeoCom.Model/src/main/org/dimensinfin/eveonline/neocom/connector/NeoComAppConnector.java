@@ -11,10 +11,6 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.io.File;
 
-import org.dimensinfin.android.mvc.connector.MVCAppConnector;
-import org.dimensinfin.eveonline.neocom.interfaces.INeoComAppConnector;
-import org.dimensinfin.eveonline.neocom.storage.NeoComModelStore;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
  * This class role is to allow the Model to use external environment functions that can change depending on
@@ -24,7 +20,7 @@ import org.dimensinfin.eveonline.neocom.storage.NeoComModelStore;
  * 
  * @author Adam Antinoo
  */
-public class NeoComAppConnector extends MVCAppConnector implements INeoComAppConnector {
+public class NeoComAppConnector /* extends GenericAppConnector */ implements INeoComAppConnector {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static NeoComAppConnector _singleton = null;
@@ -40,7 +36,7 @@ public class NeoComAppConnector extends MVCAppConnector implements INeoComAppCon
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComAppConnector(final INeoComAppConnector application) {
-		super(application);
+		//	super(application);
 		_connector = application;
 		NeoComAppConnector._singleton = this;
 	}
@@ -67,33 +63,33 @@ public class NeoComAppConnector extends MVCAppConnector implements INeoComAppCon
 		return _connector.getAppFilePath(fileresourceName);
 	}
 
-	@Override
-	public AndroidCacheConnector getCacheConnector() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getCacheConnector]> Application connection not defined. Functionality 'getCacheConnector' disabled.");
-		return _connector.getCacheConnector();
-	}
+	//	@Override
+	//	public ICacheConnector getCacheConnector() {
+	//		if (null == _connector) throw new RuntimeException(
+	//				"RTEX [GymAppConnector.getCacheConnector]> Application connection not defined. Functionality 'getCacheConnector' disabled.");
+	//		return _connector.getCacheConnector();
+	//	}
 
-	@Override
-	public ICCPDatabaseConnector getCCPDBConnector() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getCCPDBConnector]> Application connection not defined. Functionality 'getCCPDBConnector' disabled.");
-		return _connector.getCCPDBConnector();
-	}
+	//	@Override
+	//	public ICCPDatabaseConnector getCCPDBConnector() {
+	//		if (null == _connector) throw new RuntimeException(
+	//				"RTEX [GymAppConnector.getCCPDBConnector]> Application connection not defined. Functionality 'getCCPDBConnector' disabled.");
+	//		return _connector.getCCPDBConnector();
+	//	}
+	//
+	//	@Override
+	//	public IDatabaseConnector getDBConnector() {
+	//		if (null == _connector) throw new RuntimeException(
+	//				"RTEX [GymAppConnector.getDBConnector]> Application connection not defined. Functionality 'getDBConnector' disabled.");
+	//		return _connector.getDBConnector();
+	//	}
 
-	@Override
-	public AndroidDatabaseConnector getDBConnector() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getDBConnector]> Application connection not defined. Functionality 'getDBConnector' disabled.");
-		return _connector.getDBConnector();
-	}
-
-	@Override
-	public NeoComModelStore getModelStore() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getModelStore]> Application connection not defined. Functionality 'getModelStore' disabled.");
-		return _connector.getModelStore();
-	}
+	//	@Override
+	//	public INeoComModelStore getModelStore() {
+	//		if (null == _connector) throw new RuntimeException(
+	//				"RTEX [GymAppConnector.getModelStore]> Application connection not defined. Functionality 'getModelStore' disabled.");
+	//		return _connector.getModelStore();
+	//	}
 
 	@Override
 	public IStorageConnector getStorageConnector() {

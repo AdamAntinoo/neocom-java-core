@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.industry.Job;
@@ -199,9 +199,9 @@ public class Pilot extends NeoComCharacter {
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadBlueprints() {
 		try {
-			NeoComAppConnector.getSingleton().startChrono();
+			ModelAppConnector.getSingleton().startChrono();
 			// Clear any previous records with owner -1 from database.
-			NeoComAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getCharacterID());
+			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getCharacterID());
 			// Download and parse the blueprints using the eveapi.
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
@@ -220,7 +220,7 @@ public class Pilot extends NeoComCharacter {
 			}
 			// Pack the blueprints and store them on the database.
 			this.getAssetsManager().storeBlueprints(bplist);
-			NeoComAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getCharacterID());
+			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getCharacterID());
 			// Update the caching time to the time set by the eveapi.
 			blueprintsCacheTime = new Instant(response.getCachedUntil());
 			// Update the dirty state to signal modification of store structures.
@@ -228,7 +228,7 @@ public class Pilot extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		final Duration lapse = NeoComAppConnector.getSingleton().timeLapse();
+		final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	}
 
@@ -256,7 +256,7 @@ public class Pilot extends NeoComCharacter {
 					// Set the owner my there is not job cleanup.
 					//					myjob.setOwnerID(getCharacterID());
 					try {
-						final Dao<Job, String> jobDao = NeoComAppConnector.getDBConnector().getJobDAO();
+						final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
 						jobDao.createOrUpdate(myjob);
 						Pilot.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
 					} catch (final SQLException sqle) {
@@ -306,7 +306,7 @@ public class Pilot extends NeoComCharacter {
 				for (final MarketOrder eveorder : orders) {
 					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
 					try {
-						final Dao<NeoComMarketOrder, String> marketOrderDao = NeoComAppConnector.getDBConnector()
+						final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
 								.getMarketOrderDAO();
 						marketOrderDao.createOrUpdate(myorder);
 						Pilot.logger.finest(
