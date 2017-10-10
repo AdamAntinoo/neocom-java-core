@@ -74,7 +74,7 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 	@Override
 	public void addMarketDataRequest(final long localizer) {
 		CoreCacheConnector.logger.info(">> [CoreCacheConnector.addMarketDataRequest]>Localizer: " + localizer);
-		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
+		final EveItem item = NeoComAppConnector.getCCPDBConnector().searchItembyID(Long.valueOf(localizer).intValue());
 		CoreCacheConnector.logger
 				.info("-- [AndroidCacheConnector.addMarketDataRequest] Posting market update for: " + item.getName());
 		// Detect priority from the Category of the item. Download data from Asteroids and Minerals first.

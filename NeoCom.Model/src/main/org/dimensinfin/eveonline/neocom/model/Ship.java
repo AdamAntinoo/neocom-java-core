@@ -15,7 +15,7 @@ import org.dimensinfin.android.model.Separator;
 import org.dimensinfin.android.model.Separator.ESeparatorType;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Ship extends NeoComAsset {
@@ -62,7 +62,7 @@ public class Ship extends NeoComAsset {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		if (!this.isDownloaded()) {
-			ArrayList<NeoComAsset> contents = AppConnector.getDBConnector().searchAssetContainedAt(pilotID,
+			ArrayList<NeoComAsset> contents = NeoComAppConnector.getDBConnector().searchAssetContainedAt(pilotID,
 					this.getAssetID());
 			highModules.clean();
 			medModules.clean();

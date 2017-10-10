@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.util.ArrayList;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Container extends NeoComAsset {
@@ -40,7 +40,7 @@ public class Container extends NeoComAsset {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		contents = AppConnector.getDBConnector().searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
+		contents = NeoComAppConnector.getDBConnector().searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
 		this.clean();
 		// Classify the contents
 		for (NeoComAsset node : contents) {

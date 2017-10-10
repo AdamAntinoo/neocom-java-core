@@ -16,7 +16,7 @@ import java.util.Vector;
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -90,7 +90,7 @@ public class EveLocation extends AbstractViewableNode {
 	public EveLocation(final long citadelid, final Citadel cit) {
 		jsonClass = "EveLocation";
 		try {
-			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+			Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
@@ -111,7 +111,7 @@ public class EveLocation extends AbstractViewableNode {
 	public EveLocation(final Outpost out) {
 		jsonClass = "EveLocation";
 		try {
-			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+			Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(out.getSolarSystem());
 			id = out.getFacilityID();
@@ -128,7 +128,7 @@ public class EveLocation extends AbstractViewableNode {
 	public EveLocation(final Station station) {
 		jsonClass = "EveLocation";
 		try {
-			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+			Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
@@ -276,7 +276,7 @@ public class EveLocation extends AbstractViewableNode {
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
-			urlLocationIcon = "http://image.eveonline.com/Render/" + AppConnector.getCCPDBConnector().searchStationType(id)
+			urlLocationIcon = "http://image.eveonline.com/Render/" + NeoComAppConnector.getCCPDBConnector().searchStationType(id)
 					+ "_64.png";
 		}
 		return urlLocationIcon;
@@ -314,7 +314,7 @@ public class EveLocation extends AbstractViewableNode {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+				Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
 				locationDao.update(this);
 				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {
@@ -404,7 +404,7 @@ public class EveLocation extends AbstractViewableNode {
 
 	private void updateFromSystem(final long id) {
 		// Get the system information from the CCP location tables.
-		EveLocation systemLocation = AppConnector.getCCPDBConnector().searchLocationbyID(id);
+		EveLocation systemLocation = NeoComAppConnector.getCCPDBConnector().searchLocationbyID(id);
 		systemID = systemLocation.getSystemID();
 		system = systemLocation.getSystem();
 		constellationID = systemLocation.getConstellationID();

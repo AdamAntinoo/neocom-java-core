@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -198,7 +198,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
+			NeoComAppConnector.getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
 			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
 			//			AssetListResponse response = null;
 			//			if (getName().equalsIgnoreCase("Corporation")) {
@@ -224,7 +224,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 			//			}
-			AppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
+			NeoComAppConnector.getDBConnector().replaceAssets(this.getPilot().getCharacterID());
 
 			//				// Update the caching time to the time set by the eveapi.
 			String reference = this.getPilot().getCharacterID() + ".ASSETS";
@@ -266,7 +266,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			IDatabaseConnector dbConn = AppConnector.getDBConnector();
+			IDatabaseConnector dbConn = NeoComAppConnector.getDBConnector();
 			synchronized (dbConn) {
 				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
 			}
@@ -400,7 +400,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		// INITIALIZE - Initialize the number os assets.
 		this.getAssetTotalCount();
 		// INITIALIZE - Initialize the Locations and the Regions
-		List<NeoComAsset> locs = AppConnector.getDBConnector().queryAllAssetLocations(this.getPilot().getCharacterID());
+		List<NeoComAsset> locs = NeoComAppConnector.getDBConnector().queryAllAssetLocations(this.getPilot().getCharacterID());
 		regions.clear();
 		locations.clear();
 		// Process the locations to a new list of Regions.
@@ -412,7 +412,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			if (locations.containsKey(locid)) {
 				continue;
 			} else {
-				EveLocation location = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
+				EveLocation location = NeoComAppConnector.getCCPDBConnector().searchLocationbyID(locid);
 				locations.put(locid, location);
 				long regid = location.getRegionID();
 				Region reg = regions.get(regid);
@@ -443,7 +443,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		if (null == assetsCategoryList) {
 			try {
 				this.accessDao();
-				AppConnector.startChrono();
+				NeoComAppConnector.startChrono();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", this.getPilot().getCharacterID());
@@ -451,7 +451,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				where.eq("category", category);
 				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetsCategoryList = assetDao.query(preparedQuery);
-				Duration lapse = AppConnector.timeLapse();
+				Duration lapse = NeoComAppConnector.timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT CATEGORY=" + category + " OWNERID = "
 						+ this.getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
@@ -502,7 +502,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		assetList = assetsAtLocationCache.get(location.getID());
 		if (null == assetList) {
 			try {
-				AppConnector.startChrono();
+				NeoComAppConnector.startChrono();
 				this.accessDao();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
@@ -511,7 +511,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				where.eq("locationID", location.getID());
 				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
-				Duration lapse = AppConnector.timeLapse();
+				Duration lapse = NeoComAppConnector.timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT LOCATIONID=" + location.getID() + " OWNERID = "
 						+ this.getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtLocationCache.put(location.getID(), (ArrayList<NeoComAsset>) assetList);
@@ -594,8 +594,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 		assetList = assetsAtCategoryCache.get("T2Modules");
 		if (null == assetList) {
 			try {
-				AppConnector.startChrono();
-				Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+				NeoComAppConnector.startChrono();
+				Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getDBConnector().getAssetDAO();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", this.getPilot().getCharacterID());
@@ -605,7 +605,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				where.eq("tech", ModelWideConstants.eveglobal.TechII);
 				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
-				Duration lapse = AppConnector.timeLapse();
+				Duration lapse = NeoComAppConnector.timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT CATEGORY=MODULE TECH=TECH II OWNERID = "
 						+ this.getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtCategoryCache.put("T2Modules", (ArrayList<NeoComAsset>) assetList);
@@ -665,7 +665,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		// Update the database information.
 		for (NeoComBlueprint blueprint : blueprintCache) {
 			try {
-				Dao<NeoComBlueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
+				Dao<NeoComBlueprint, String> blueprintDao = NeoComAppConnector.getDBConnector().getBlueprintDAO();
 				// Be sure the owner is reset to undefined when stored at the database.
 				blueprint.resetOwner();
 				// Set new calculated values to reduce the time for blueprint part rendering.
@@ -774,7 +774,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = NeoComAppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());
@@ -818,7 +818,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	private void accessDao() {
 		if (null == assetDao) {
 			try {
-				assetDao = AppConnector.getDBConnector().getAssetDAO();
+				assetDao = NeoComAppConnector.getDBConnector().getAssetDAO();
 				if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
 			} catch (SQLException sqle) {
 				// Interrupt processing and signal a runtime exception.
@@ -862,7 +862,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		} else {
 			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
 			long id = asset.getParentContainerId();
-			NeoComAsset parentAssetCache = AppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
+			NeoComAsset parentAssetCache = NeoComAppConnector.getDBConnector().searchAssetByID(asset.getParentContainerId());
 		}
 		// This is an Unknown location that should be a Custom Office
 	}
@@ -871,7 +871,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		long locid = asset.getLocationID();
 		EveLocation target = locations.get(locid);
 		if (null == target) {
-			target = AppConnector.getCCPDBConnector().searchLocationbyID(locid);
+			target = NeoComAppConnector.getCCPDBConnector().searchLocationbyID(locid);
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
 		}
@@ -924,14 +924,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 		// Select assets for the owner.
 		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
-			AppConnector.startChrono();
+			Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getDBConnector().getAssetDAO();
+			NeoComAppConnector.startChrono();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", this.getPilot().getCharacterID());
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = (ArrayList<NeoComAsset>) assetDao.query(preparedQuery);
-			Duration lapse = AppConnector.timeLapse();
+			Duration lapse = NeoComAppConnector.timeLapse();
 			AssetsManager.logger
 					.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + this.getPilot().getCharacterID() + "] - " + lapse);
 			AssetsManager.logger.info("-- Assets processed: " + assetList.size());
@@ -969,7 +969,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
 		}
 		try {
-			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getDBConnector().getAssetDAO();
 			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
 			if (children.size() > 0) {
 				myasset.setContainer(true);
@@ -1086,7 +1086,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 
 	private void readTimeStamps() {
 		try {
-			Dao<TimeStamp, String> tsDao = AppConnector.getDBConnector().getTimeStampDAO();
+			Dao<TimeStamp, String> tsDao = NeoComAppConnector.getDBConnector().getTimeStampDAO();
 			QueryBuilder<TimeStamp, String> queryBuilder = tsDao.queryBuilder();
 			Where<TimeStamp, String> where = queryBuilder.where();
 			where.eq("reference", this.getTSAssetsReference());
@@ -1129,14 +1129,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> AssetsManager.updateBlueprints");
 		//		List<Blueprint> blueprintList = new ArrayList<Blueprint>();
 		try {
-			AppConnector.startChrono();
-			Dao<NeoComBlueprint, String> blueprintDao = AppConnector.getDBConnector().getBlueprintDAO();
+			NeoComAppConnector.startChrono();
+			Dao<NeoComBlueprint, String> blueprintDao = NeoComAppConnector.getDBConnector().getBlueprintDAO();
 			QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
 			Where<NeoComBlueprint, String> where = queryBuilder.where();
 			where.eq("ownerID", this.getPilot().getCharacterID());
 			PreparedQuery<NeoComBlueprint> preparedQuery = queryBuilder.prepare();
 			blueprintCache.addAll(blueprintDao.query(preparedQuery));
-			Duration lapse = AppConnector.timeLapse();
+			Duration lapse = NeoComAppConnector.timeLapse();
 			AssetsManager.logger
 					.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + this.getPilot().getCharacterID() + "] - " + lapse);
 			// Check if the list is empty. Then force a refresh download.

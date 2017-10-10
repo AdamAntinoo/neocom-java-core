@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -56,7 +56,7 @@ public class Refinery {
 		HashMap<Integer, Resource> result = new HashMap<Integer, Resource>();
 		for (Resource resource : entryResources.values()) {
 			// Get access to the refining parameters
-			ArrayList<Resource> refineParameters = AppConnector.getDBConnector().refineOre(resource.item.getItemID());
+			ArrayList<Resource> refineParameters = NeoComAppConnector.getDBConnector().refineOre(resource.item.getItemID());
 
 			// Calculate the quantity to refine.
 			double refineqty = 0.0;

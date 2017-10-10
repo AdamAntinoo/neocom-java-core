@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
@@ -48,7 +48,7 @@ public class MarketDataService implements Runnable {
 		//		final Integer localizer = (Integer) intent.getSerializableExtra(AppWideConstants.extras.EXTRA_MARKETDATA_LOCALIZER);
 		// Be sure we have access to the network. Otherwise intercept the exceptions.
 		//		if (NeoComApp.checkNetworkAccess()) {
-		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(localizer);
+		final EveItem item = NeoComAppConnector.getCCPDBConnector().searchItembyID(localizer);
 		//			if(market==EVEMARKETDATA)
 		Vector<TrackEntry> marketEntries = MarketDataService.parseMarketDataEMD(item.getName(), EMarketSide.SELLER);
 		//		if (marketEntries.size() < 1) {
@@ -220,7 +220,7 @@ public class MarketDataService implements Runnable {
 		final String hubRegion = parts[0].trim();
 
 		// Search for the system on the list of locations.
-		return AppConnector.getCCPDBConnector().searchLocationBySystem(hubSystem);
+		return NeoComAppConnector.getCCPDBConnector().searchLocationBySystem(hubSystem);
 	}
 
 	private static Vector<String> getMarketHubs() {

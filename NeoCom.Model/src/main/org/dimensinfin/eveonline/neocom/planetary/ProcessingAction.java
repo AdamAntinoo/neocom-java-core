@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
@@ -51,9 +51,9 @@ public class ProcessingAction {
 	public ProcessingAction(final int targetId) {
 		this.targetId = targetId;
 		// Get the item for the target id to be identified on the Json serialization.
-		targetItem = AppConnector.getCCPDBConnector().searchItembyID(targetId);
+		targetItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(targetId);
 		// Get the schematics information.
-		schematics = AppConnector.getDBConnector().searchSchematics4Output(targetId);
+		schematics = NeoComAppConnector.getDBConnector().searchSchematics4Output(targetId);
 		// Store the inputs into another list.
 		for (Schematics sche : schematics) {
 			if (sche.getDirection() == ESchematicDirection.INPUT) {

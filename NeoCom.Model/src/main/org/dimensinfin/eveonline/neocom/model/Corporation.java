@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.joda.time.Duration;
@@ -140,9 +140,9 @@ public class Corporation extends NeoComCharacter {
 	@SuppressWarnings("rawtypes")
 	public synchronized void downloadBlueprints() {
 		try {
-			AppConnector.startChrono();
+			NeoComAppConnector.startChrono();
 			// Clear any previous records with owner -1 from database.
-			AppConnector.getDBConnector().clearInvalidRecords(this.getCharacterID());
+			NeoComAppConnector.getDBConnector().clearInvalidRecords(this.getCharacterID());
 			// Download and parse the blueprints using the eveapi.
 			// Set the default connector for blueprints to a cache connector.
 			//			if (null == apiCacheConnector) {
@@ -169,7 +169,7 @@ public class Corporation extends NeoComCharacter {
 			//			}
 			// Pack the blueprints and store them on the database.
 			this.getAssetsManager().storeBlueprints(bplist);
-			AppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
+			NeoComAppConnector.getDBConnector().replaceBlueprints(this.getCharacterID());
 			// Update the caching time to the time set by the eveapi.
 			blueprintsCacheTime = new Instant(response.getCachedUntil());
 			// Update the dirty state to signal modification of store structures.
@@ -177,7 +177,7 @@ public class Corporation extends NeoComCharacter {
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
-		final Duration lapse = AppConnector.timeLapse();
+		final Duration lapse = NeoComAppConnector.timeLapse();
 		Corporation.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	}
 
@@ -205,7 +205,7 @@ public class Corporation extends NeoComCharacter {
 					// Set the owner my there is not job cleanup.
 					//					myjob.setOwnerID(getCharacterID());
 					try {
-						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
+						final Dao<Job, String> jobDao = NeoComAppConnector.getDBConnector().getJobDAO();
 						jobDao.createOrUpdate(myjob);
 						Corporation.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
 					} catch (final SQLException sqle) {
@@ -256,7 +256,7 @@ public class Corporation extends NeoComCharacter {
 				for (final MarketOrder eveorder : orders) {
 					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
 					try {
-						final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
+						final Dao<NeoComMarketOrder, String> marketOrderDao = NeoComAppConnector.getDBConnector().getMarketOrderDAO();
 						marketOrderDao.createOrUpdate(myorder);
 						Corporation.logger.finest(
 								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");

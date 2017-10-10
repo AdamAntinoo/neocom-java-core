@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.joda.time.DateTime;
@@ -63,14 +63,14 @@ public class Resource extends AbstractComplexNode {
 	 */
 	public Resource(final int typeID) {
 		resourceID = typeID;
-		item = AppConnector.getCCPDBConnector().searchItembyID(typeID);
+		item = NeoComAppConnector.getCCPDBConnector().searchItembyID(typeID);
 		baseQty = 0;
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Resource(final int typeID, final int newQty) {
 		resourceID = typeID;
-		item = AppConnector.getCCPDBConnector().searchItembyID(typeID);
+		item = NeoComAppConnector.getCCPDBConnector().searchItembyID(typeID);
 		baseQty = newQty;
 	}
 

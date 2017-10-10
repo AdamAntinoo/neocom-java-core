@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.dimensinfin.android.model.INamed;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
@@ -66,7 +66,7 @@ public class BlueprintManager extends AbstractManager implements INamed {
 		int assetCounter = 0;
 		try {
 			// Read all the assets for this character if not done already.
-			blueprintAssetList = AppConnector.getDBConnector().searchAllBlueprintAssets(this.getPilot().getCharacterID());
+			blueprintAssetList = NeoComAppConnector.getDBConnector().searchAllBlueprintAssets(this.getPilot().getCharacterID());
 			blueprintTotalCount = blueprintAssetList.size();
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();

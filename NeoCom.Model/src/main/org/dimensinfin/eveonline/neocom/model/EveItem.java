@@ -7,7 +7,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
@@ -25,7 +25,7 @@ public class EveItem extends AbstractComplexNode {
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
-			EveItem.defaultItem = AppConnector.getCCPDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
+			EveItem.defaultItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(EveItem.DEFAULT_TYPE_ID);
 			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
 			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
 		}
@@ -140,7 +140,7 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public boolean hasInvention() {
-		return AppConnector.getDBConnector().checkInvention(this.getTypeID());
+		return NeoComAppConnector.getDBConnector().checkInvention(this.getTypeID());
 	}
 
 	public boolean isBlueprint() {
@@ -254,7 +254,7 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			buyerData = AppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			buyerData = NeoComAppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
 			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
 			}
@@ -274,7 +274,7 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			sellerData = AppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			sellerData = NeoComAppConnector.getCacheConnector().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
 			}

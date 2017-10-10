@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.AppConnector;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
@@ -351,7 +351,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getID())) {
 				//		if (null != hit) {
 				try {
-					Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
+					Dao<Property, String> propertyDao = NeoComAppConnector.getDBConnector().getPropertyDAO();
 					propertyDao.delete(role);
 					locationRoles = null;
 				} catch (final SQLException sqle) {
@@ -385,7 +385,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 	public void forceRefresh() {
 		this.clean();
 		assetsManager = new AssetsManager(this);
-		AppConnector.addCharacterUpdateRequest(this.getCharacterID());
+		NeoComAppConnector.addCharacterUpdateRequest(this.getCharacterID());
 	}
 
 	public double getAccountBalance() {
@@ -469,7 +469,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		for (Property role : locationRoles) {
 			String value = role.getPropertyType().toString();
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole))
-				return AppConnector.getCCPDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
+				return NeoComAppConnector.getCCPDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 			//		Property currentRole = locationRoles.get(locID);
 			//			if (matchingRole.equalsIgnoreCase(currentRole.getStringValue()))
 			//				return AppConnector.getDBConnector().searchLocationbyID(locID);
@@ -489,7 +489,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		//		EveLocation preferredLocation = null;
 		for (Property role : locationRoles)
 			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole)) {
-				EveLocation target = AppConnector.getCCPDBConnector()
+				EveLocation target = NeoComAppConnector.getCCPDBConnector()
 						.searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 				if (target.getRegion().equalsIgnoreCase(region)) return target;
 				//		Property currentRole = locationRoles.get(locID);
@@ -580,7 +580,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 	 * @return
 	 */
 	public EDataBlock needsUpdate() {
-		if (AppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.NOW)) return EDataBlock.CHARACTERDATA;
+		if (NeoComAppConnector.checkExpiration(lastCCPAccessTime, ModelWideConstants.NOW)) return EDataBlock.CHARACTERDATA;
 		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
 		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
 		// Block to check the needs for update of the Character Assets.
@@ -588,7 +588,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		if (null != assetsManager) {
 			TimeStamp time = assetsManager.getAssetsCacheTime();
 			if (null == time) return EDataBlock.ASSETDATA;
-			if (AppConnector.checkExpiration(time.getTimeStamp(), ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
+			if (NeoComAppConnector.checkExpiration(time.getTimeStamp(), ModelWideConstants.NOW)) return EDataBlock.ASSETDATA;
 		} else {
 			assetsManager = new AssetsManager(this);
 			return this.needsUpdate();
@@ -625,12 +625,12 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		//	Select assets of type blueprint and that are of T2.
 		List<NeoComMarketOrder> orderList = new ArrayList<NeoComMarketOrder>();
 		try {
-			AppConnector.startChrono();
-			final Dao<NeoComMarketOrder, String> marketOrderDao = AppConnector.getDBConnector().getMarketOrderDAO();
+			NeoComAppConnector.startChrono();
+			final Dao<NeoComMarketOrder, String> marketOrderDao = NeoComAppConnector.getDBConnector().getMarketOrderDAO();
 			final QueryBuilder<NeoComMarketOrder, String> qb = marketOrderDao.queryBuilder();
 			qb.where().eq("ownerID", this.getCharacterID());
 			orderList = marketOrderDao.query(qb.prepare());
-			final Duration lapse = AppConnector.timeLapse();
+			final Duration lapse = NeoComAppConnector.timeLapse();
 			NeoComCharacter.logger.info("-- Time lapse for [SELECT MARKETORDERS] " + lapse);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
@@ -751,7 +751,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = AppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = NeoComAppConnector.getCCPDBConnector().searchItembyID(newAsset.getTypeID());
 		if (null != item) {
 			try {
 				newAsset.setName(item.getName());
@@ -921,7 +921,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		//	Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getDBConnector().getAssetDAO();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", characterID);
@@ -941,14 +941,14 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		//	Select assets of type blueprint and that are of T2.
 		List<Job> jobList = new ArrayList<Job>();
 		try {
-			AppConnector.startChrono();
-			final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
+			NeoComAppConnector.startChrono();
+			final Dao<Job, String> jobDao = NeoComAppConnector.getDBConnector().getJobDAO();
 			final QueryBuilder<Job, String> qb = jobDao.queryBuilder();
 			qb.where().eq("ownerID", this.getCharacterID());
 			qb.orderBy("endDate", false);
 			jobList = jobDao.query(qb.prepare());
 			this.checkRefresh(jobList.size(), "JOBS");
-			final Duration lapse = AppConnector.timeLapse();
+			final Duration lapse = NeoComAppConnector.timeLapse();
 			NeoComCharacter.logger.info("-- Time lapse for [SELECT JOBS] " + lapse);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
@@ -967,7 +967,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 	private void accessActionList() {
 		List<Property> actionList = new ArrayList<Property>();
 		try {
-			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
+			Dao<Property, String> propertyDao = NeoComAppConnector.getDBConnector().getPropertyDAO();
 			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
 			Where<Property, String> where = queryBuilder.where();
 			where.eq("ownerID", delegatedCharacter.getCharacterID());
@@ -989,7 +989,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 	private void accessLocationRoles() {
 		//		List<Property> roleList = new ArrayList<Property>();
 		try {
-			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
+			Dao<Property, String> propertyDao = NeoComAppConnector.getDBConnector().getPropertyDAO();
 			QueryBuilder<Property, String> queryBuilder = propertyDao.queryBuilder();
 			Where<Property, String> where = queryBuilder.where();
 			where.eq("ownerID", delegatedCharacter.getCharacterID());
@@ -1013,10 +1013,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		if (size < 1) {
 			if (section.equalsIgnoreCase("JOBS")) {
 				this.cleanJobs();
-				AppConnector.addCharacterUpdateRequest(this.getCharacterID());
+				NeoComAppConnector.addCharacterUpdateRequest(this.getCharacterID());
 			}
 			if (section.equalsIgnoreCase("MARKETORDERS")) {
-				AppConnector.addCharacterUpdateRequest(this.getCharacterID());
+				NeoComAppConnector.addCharacterUpdateRequest(this.getCharacterID());
 			}
 		}
 	}
@@ -1034,7 +1034,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode implements IV
 		///	Optimize the update of the assets to just process the ones with the -1 owner.
 		List<NeoComAsset> accountList = new ArrayList<NeoComAsset>();
 		try {
-			final Dao<NeoComAsset, String> assetDao = AppConnector.getDBConnector().getAssetDAO();
+			final Dao<NeoComAsset, String> assetDao = NeoComAppConnector.getDBConnector().getAssetDAO();
 			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			final Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("name", moduleName);
