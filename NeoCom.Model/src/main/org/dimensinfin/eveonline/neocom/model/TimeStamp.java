@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.joda.time.Instant;
 
 import com.j256.ormlite.dao.Dao;
@@ -42,7 +42,7 @@ public class TimeStamp {
 		timeStamp = instant.getMillis();
 		dateTimeUserReference = instant.toString();
 		try {
-			Dao<TimeStamp, String> timeStampDao = NeoComAppConnector.getDBConnector().getTimeStampDAO();
+			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO();
 			// Try to create the pair. It fails then  it was already created.
 			timeStampDao.create(this);
 		} catch (final SQLException sqle) {
@@ -67,7 +67,7 @@ public class TimeStamp {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<TimeStamp, String> timeStampDao = NeoComAppConnector.getDBConnector().getTimeStampDAO();
+				Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO();
 				timeStampDao.update(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();

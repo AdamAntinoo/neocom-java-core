@@ -8,7 +8,7 @@ package org.dimensinfin.eveonline.neocom.services;
 
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
@@ -64,7 +64,7 @@ public class CharacterUpdaterService implements Runnable {
 		//		Long localizer = (Long) intent.getSerializableExtra(AppWideConstants.EExtras.EXTRA_CHARACTER_LOCALIZER.name());
 		//		// Be sure we have access to the network. Otherwise intercept the exceptions.
 		//		if (NeoComApp.checkNetworkAccess()) {
-		NeoComCharacter pilot = NeoComAppConnector.getSingleton().getModelStore().activatePilot(_locator);
+		NeoComCharacter pilot = ModelAppConnector.getSingleton().getModelStore().activatePilot(_locator);
 		if (null != pilot) {
 			// Pilot signaled for update. Locate the next data set to update because its cache has expired.
 			EDataBlock datacode = pilot.needsUpdate();
@@ -74,8 +74,8 @@ public class CharacterUpdaterService implements Runnable {
 				switch (datacode) {
 					case CHARACTERDATA:
 						pilot.updateCharacterInfo();
-						NeoComAppConnector.getSingleton().getCacheConnector().clearPendingRequest(_locator);
-						NeoComAppConnector.getSingleton().getCacheConnector().decrementTopCounter();
+						ModelAppConnector.getSingleton().getCacheConnector().clearPendingRequest(_locator);
+						ModelAppConnector.getSingleton().getCacheConnector().decrementTopCounter();
 						break;
 					case ASSETDATA:
 						// New data model decouples the character from the data managers. But requires to know if Pilot or Corporation.
@@ -86,8 +86,8 @@ public class CharacterUpdaterService implements Runnable {
 						}
 						//							pilot.downloadAssets();
 						//							pilot.downloadBlueprints();
-						NeoComAppConnector.getSingleton().getCacheConnector().clearPendingRequest(_locator);
-						NeoComAppConnector.getSingleton().getCacheConnector().decrementTopCounter();
+						ModelAppConnector.getSingleton().getCacheConnector().clearPendingRequest(_locator);
+						ModelAppConnector.getSingleton().getCacheConnector().decrementTopCounter();
 						break;
 					//													case BLUEPRINTDATA:
 					////							pilot.downloadAssets();

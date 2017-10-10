@@ -10,7 +10,7 @@ package org.dimensinfin.eveonline.neocom.industry;
 import java.util.Date;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -102,7 +102,7 @@ public class Job extends AbstractComplexNode {
 
 	public String getBlueprintName() {
 		if (null == blueprintItem) {
-			blueprintItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(blueprintTypeID);
+			blueprintItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(blueprintTypeID);
 		}
 		return blueprintItem.getName();
 	}
@@ -137,7 +137,7 @@ public class Job extends AbstractComplexNode {
 
 	public EveLocation getJobLocation() {
 		if (null == jobLocation) {
-			jobLocation = NeoComAppConnector.getCCPDBConnector().searchLocationbyID(facilityID);
+			jobLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(facilityID);
 		}
 		return jobLocation;
 	}
@@ -210,7 +210,7 @@ public class Job extends AbstractComplexNode {
 	public void setBlueprintTypeID(final int blueprintTypeID) {
 		this.blueprintTypeID = blueprintTypeID;
 		// Load the blueprint item reference.
-		blueprintItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(blueprintTypeID);
+		blueprintItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(blueprintTypeID);
 	}
 
 	public void setCompletedCharacterID(final long completedCharacterID) {

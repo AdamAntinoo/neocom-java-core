@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -24,24 +24,26 @@ import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
  */
 public class Refinery {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger								logger													= Logger.getLogger("Refinery");
-	private static final int						RefiningSkillLevel							= 5;
-	private static final int						RefiningEfficiencySkillLevel		= 5;
-	private static final int						OreSpecificProcessingSkillLevel	= 4;
+	private static Logger											logger													= Logger.getLogger("Refinery");
+	private static final int									RefiningSkillLevel							= 5;
+	private static final int									RefiningEfficiencySkillLevel		= 5;
+	private static final int									OreSpecificProcessingSkillLevel	= 4;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private HashMap<Integer, Resource>	entryResources									= new HashMap<Integer, Resource>();
-	private HashMap<Integer, Resource>	exitResources										= new HashMap<Integer, Resource>();
+	private final HashMap<Integer, Resource>	entryResources									= new HashMap<Integer, Resource>();
+	private final HashMap<Integer, Resource>	exitResources										= new HashMap<Integer, Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Refinery() {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void addResource(Resource moreResource) {
+	public void addResource(final Resource moreResource) {
 		int newid = moreResource.getTypeID();
 		Resource stack = entryResources.get(newid);
-		if (null == stack) entryResources.put(newid, moreResource);
+		if (null == stack) {
+			entryResources.put(newid, moreResource);
+		}
 		stack.addition(moreResource);
 	}
 
@@ -56,7 +58,8 @@ public class Refinery {
 		HashMap<Integer, Resource> result = new HashMap<Integer, Resource>();
 		for (Resource resource : entryResources.values()) {
 			// Get access to the refining parameters
-			ArrayList<Resource> refineParameters = NeoComAppConnector.getDBConnector().refineOre(resource.item.getItemID());
+			ArrayList<Resource> refineParameters = ModelAppConnector.getSingleton().getDBConnector()
+					.refineOre(resource.item.getItemID());
 
 			// Calculate the quantity to refine.
 			double refineqty = 0.0;
@@ -66,9 +69,9 @@ public class Refinery {
 				long resultQuantity = refiner.getBaseQuantity();
 				long refineQty = resource.getQuantity();
 				double refinePercentage = .85;
-				int refinedResult = new Double(Math.floor(Math.floor(refineQty / portionsize) * resultQuantity
-						* getRefiningYield())).intValue();
-				addProduct(new Resource(refiner.item.getItemID(), refinedResult));
+				int refinedResult = new Double(
+						Math.floor(Math.floor(refineQty / portionsize) * resultQuantity * this.getRefiningYield())).intValue();
+				this.addProduct(new Resource(refiner.item.getItemID(), refinedResult));
 
 				//			double changeRefineQty = 0;
 				//				refineqty = ((mineralRequested * portionsize) / (refineQuantity * 0.8)) + portionsize;
@@ -87,16 +90,19 @@ public class Refinery {
 		return new ArrayList<Resource>(result.values());
 	}
 
-	private void addProduct(Resource newProduct) {
+	private void addProduct(final Resource newProduct) {
 		int newid = newProduct.getTypeID();
 		Resource stack = exitResources.get(newid);
-		if (null == stack) exitResources.put(newid, newProduct);
+		if (null == stack) {
+			exitResources.put(newid, newProduct);
+		}
 		stack.addition(newProduct);
 	}
 
 	private double getRefiningYield() {
-		double EffectiveRefiningYield = .5 + (0.375 * (1 + (RefiningSkillLevel * 0.02))
-				* (1 + (RefiningEfficiencySkillLevel * 0.04)) * (1 + (OreSpecificProcessingSkillLevel * 0.05)));
+		double EffectiveRefiningYield = .5
+				+ (0.375 * (1 + (Refinery.RefiningSkillLevel * 0.02)) * (1 + (Refinery.RefiningEfficiencySkillLevel * 0.04))
+						* (1 + (Refinery.OreSpecificProcessingSkillLevel * 0.05)));
 		return EffectiveRefiningYield;
 	}
 }

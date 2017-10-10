@@ -201,7 +201,7 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 			int access = CCPDatabaseConnector.locationsCacheStatistics.accountAccess(false);
 			List<EveLocation> locationList = null;
 			try {
-				Dao<EveLocation, String> locationDao = NeoComAppConnector.getDBConnector().getLocationDAO();
+				Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 				QueryBuilder<EveLocation, String> queryBuilder = locationDao.queryBuilder();
 				Where<EveLocation, String> where = queryBuilder.where();
 				where.eq("id", locationID);
@@ -357,7 +357,7 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	@Override
 	public int searchStationType(final long stationID) {
 		int stationTypeID = 1529;
-		NeoComAppConnector.startChrono();
+		ModelAppConnector.getSingleton().startChrono();
 		PreparedStatement prepStmt = null;
 		ResultSet cursor = null;
 		try {

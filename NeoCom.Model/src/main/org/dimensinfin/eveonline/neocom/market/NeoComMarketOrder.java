@@ -12,7 +12,7 @@ import java.util.Date;
 import org.dimensinfin.android.model.INamed;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
@@ -107,7 +107,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 
 	public EveItem getItem() {
 		if (null == orderItem) {
-			orderItem = NeoComAppConnector.getCCPDBConnector().searchItembyID(typeID);
+			orderItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
 		}
 		return orderItem;
 	}
@@ -124,6 +124,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 		return orderID;
 	}
 
+	@Override
 	public String getOrderingName() {
 		return this.getItem().getName();
 	}
@@ -134,7 +135,7 @@ public class NeoComMarketOrder extends AbstractComplexNode implements INamed {
 
 	public EveLocation getOrderLocation() {
 		if (null == orderLocation) {
-			orderLocation = NeoComAppConnector.getCCPDBConnector().searchLocationbyID(stationID);
+			orderLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(stationID);
 		}
 		return orderLocation;
 	}

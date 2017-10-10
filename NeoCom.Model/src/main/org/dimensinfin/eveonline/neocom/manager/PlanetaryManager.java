@@ -20,7 +20,6 @@ import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.Container;
@@ -80,7 +79,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		int assetCounter = 0;
 		try {
 			// Read all the assets for this character if not done already.
-			ArrayList<NeoComAsset> planetaryAssetList = NeoComAppConnector.getDBConnector()
+			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
 					.accessAllPlanetaryAssets(this.getPilot().getCharacterID());
 			// Move the list to a processing map.
 			assetMap = new Hashtable<Long, NeoComAsset>(planetaryAssetList.size());
