@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.model;
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.dimensinfin.android.model.AbstractViewableNode;
@@ -45,37 +46,37 @@ import net.nikr.eve.jeveasset.data.Citadel;
 @DatabaseTable(tableName = "Locations")
 public class EveLocation extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long		serialVersionUID	= 1522765618286937377L;
+	private static final long	serialVersionUID	= 1522765618286937377L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@JsonIgnore
 	@DatabaseField(id = true, index = true)
-	private long								id								= -2;
+	private long							id								= -2;
 	@DatabaseField
-	private long								stationID					= -1;
+	private long							stationID					= -1;
 	@DatabaseField
-	private String							station						= "<STATION>";
+	private String						station						= "<STATION>";
 	@DatabaseField
-	private long								systemID					= -1;
+	private long							systemID					= -1;
 	@DatabaseField
-	private String							system						= "<SYSTEM>";
+	private String						system						= "<SYSTEM>";
 	@DatabaseField
-	private long								constellationID		= -1;
+	private long							constellationID		= -1;
 	@DatabaseField
-	private String							constellation			= "<CONSTELLATION>";
+	private String						constellation			= "<CONSTELLATION>";
 	@DatabaseField
-	private long								regionID					= -1;
+	private long							regionID					= -1;
 	@DatabaseField
-	private String							region						= "<REGION>";
+	private String						region						= "<REGION>";
 	@DatabaseField
-	private String							security					= "0.0";
+	private String						security					= "0.0";
 	@DatabaseField
-	protected int								typeID						= -1;
+	protected int							typeID						= -1;
 	//	@DatabaseField
 	//	protected String structureName="-NOT-STRUCTURE-";
-	protected boolean						citadel						= false;
-	public String								urlLocationIcon		= null;
-	public Vector<NeoComAsset>	contents					= new Vector<NeoComAsset>();
+	protected boolean					citadel						= false;
+	public String							urlLocationIcon		= null;
+	public List<NeoComAsset>	contents					= new Vector<NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
@@ -142,18 +143,23 @@ public class EveLocation extends AbstractViewableNode {
 		}
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * Intercept the use of the children and store the data on the location contents.
 	 */
+	@Deprecated
 	@Override
 	public void addChild(final IGEFNode child) {
-		this.clean();
+		//	this.clean();
 		if (child instanceof NeoComAsset) {
 			contents.add((NeoComAsset) child);
 		}
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	public void addContent(final NeoComAsset asset) {
+		contents.add(asset);
+	}
+
 	/**
 	 * Ship locations collaborate to the model by adding all their children because we store there the items
 	 * located at the selected real location.
@@ -194,8 +200,33 @@ public class EveLocation extends AbstractViewableNode {
 		return constellationID;
 	}
 
-	public Vector<NeoComAsset> getContents() {
-		return contents;
+	@Override
+	public int getContentCount() {
+		return contents.size();
+	}
+
+	/**
+	 * This operation should control the download state for the contents of this location. If the Location is
+	 * not downloaded the result is an empty list but if the flag is set then it should fire the download code
+	 * to get the list of elements stored at this Location.
+	 * 
+	 * @return
+	 */
+	@JsonInclude
+	public List<NeoComAsset> getContents() {
+		return this.getContents(false);
+	}
+
+	public List<NeoComAsset> getContents(final boolean download) {
+		if (this.isDownloaded())
+			return contents;
+		else {
+			if (download) {
+				contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID());
+				this.setDownloaded(true);
+			}
+			return contents;
+		}
 	}
 
 	public String getFullLocation() {
@@ -220,16 +251,6 @@ public class EveLocation extends AbstractViewableNode {
 	public String getRegion() {
 		return region;
 	}
-
-	//	/**
-	//	 * Only use for location replication.
-	//	 * 
-	//	 * @return
-	//	 */
-	//@Deprecated
-	//	public long getId() {
-	//		return id;
-	//	}
 
 	public long getRegionID() {
 		return regionID;
@@ -296,6 +317,10 @@ public class EveLocation extends AbstractViewableNode {
 
 	public final boolean isSystem() {
 		return ((this.getStationID() == 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
+	}
+
+	public final boolean isUnknown() {
+		return (id == -2);
 	}
 
 	public void setCitadel(final boolean citadel) {
@@ -380,7 +405,7 @@ public class EveLocation extends AbstractViewableNode {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("NeoComLocation [");
 		buffer.append("#").append(this.getID()).append(" ");
-		buffer.append("(").append(this.getChildren().size()).append(") ");
+		buffer.append("(").append(this.getContents(false).size()).append(") ");
 		buffer.append("[").append(this.getRegion()).append("] ");
 		if (null != system) {
 			buffer.append("system: ").append(system).append(" ");
@@ -394,7 +419,6 @@ public class EveLocation extends AbstractViewableNode {
 
 	private void updateFromCitadel(final long id, final Citadel cit) {
 		this.updateFromSystem(cit.systemId);
-		//MyLocation myloc = citadel.getLocation(id);
 		// Copy the data from the citadel location.
 		stationID = id;
 		station = cit.name;
