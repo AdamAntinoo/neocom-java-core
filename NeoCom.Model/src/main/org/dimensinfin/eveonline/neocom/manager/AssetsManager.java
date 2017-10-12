@@ -341,6 +341,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return blueprintCache;
 	}
 
+	public EveLocation getLocationById(final long id) {
+		// Search for the location on the Location list.
+		for (Long key : locations.keySet()) {
+			if (key == id) return locations.get(key);
+		}
+		return null;
+	}
+
 	/**
 	 * Returns the list of different locations where this character has assets. The locations are the unique
 	 * location ids that can be on the same or different systems. If a system has assets in more that one
@@ -407,23 +415,33 @@ public class AssetsManager extends AbstractManager implements INamed {
 		// Process the locations to a new list of Regions.
 		for (NeoComAsset asset : locs) {
 			long locid = asset.getLocationID();
-			if (locid < 0) {
+			this.processLocation(locid);
+		}
+		containers.clear();
+		// Process the containers to locate new dependencies.
+		List<NeoComAsset> conts = ModelAppConnector.getSingleton().getDBConnector()
+				.queryAllAssetContainers(this.getPilot().getCharacterID());
+		for (NeoComAsset asset : conts) {
+			long id = asset.getParentContainerId();
+			if (id < 0) {
+				// This is an asset already located.
 				continue;
 			}
-			if (locations.containsKey(locid)) {
+			if (containers.containsKey(id)) {
 				continue;
 			} else {
-				EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
-				locations.put(locid, location);
-				long regid = location.getRegionID();
-				Region reg = regions.get(regid);
-				if (null == reg) {
-					reg = new Region(location.getRegion());
-					reg.addChild(location);
-					regions.put(regid, reg);
-				} else {
-					reg.addChild(location);
+				// Search this identifier as an extended location or as an asset.
+				EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(id);
+				if (location.isUnknown()) {
+					NeoComAsset container = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(id);
+					if (null == container) {
+						continue;
+					}
+					containers.put(id, container);
+					// Now Process the Location for this Container.
+					this.processLocation(container.getLocationID());
 				}
+				this.processLocation(id);
 			}
 		}
 		initialized = true;
@@ -487,15 +505,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	//	public HashSet<String> queryT2ModuleNames() {
-	//		HashSet<String> names = new HashSet<String>();
-	//		ArrayList<Asset> modules = searchT2Modules();
-	//		for (Asset mod : modules) {
-	//			names.add(mod.getName());
-	//		}
-	//		return names;
-	//	}
-
 	public ArrayList<NeoComAsset> searchAsset4Location(final EveLocation location) {
 		AssetsManager.logger.info(">> AssetsManager.searchAsset4Location");
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
@@ -526,6 +535,15 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
+	//	public HashSet<String> queryT2ModuleNames() {
+	//		HashSet<String> names = new HashSet<String>();
+	//		ArrayList<Asset> modules = searchT2Modules();
+	//		for (Asset mod : modules) {
+	//			names.add(mod.getName());
+	//		}
+	//		return names;
+	//	}
+
 	public NeoComBlueprint searchBlueprintByID(final long assetid) {
 		for (NeoComBlueprint bp : this.getBlueprints()) {
 			String refs = bp.getStackIDRefences();
@@ -544,6 +562,21 @@ public class AssetsManager extends AbstractManager implements INamed {
 		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
 		for (NeoComBlueprint bp : this.getBlueprints())
 			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+				blueprintList.add(bp);
+			}
+		return blueprintList;
+	}
+
+	/**
+	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
+	 * blueprints. We expect this is not cost intensive because this function is called few times.
+	 * 
+	 * @return list of T2 blueprints.
+	 */
+	public ArrayList<NeoComBlueprint> searchT2Blueprints() {
+		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
+		for (NeoComBlueprint bp : this.getBlueprints())
+			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 				blueprintList.add(bp);
 			}
 		return blueprintList;
@@ -572,21 +605,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		if (null == t2blueprints) getPilot().updateBlueprints();
 	//		return t2blueprints;
 	//	}
-
-	/**
-	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T2
-	 * blueprints. We expect this is not cost intensive because this function is called few times.
-	 * 
-	 * @return list of T2 blueprints.
-	 */
-	public ArrayList<NeoComBlueprint> searchT2Blueprints() {
-		ArrayList<NeoComBlueprint> blueprintList = new ArrayList<NeoComBlueprint>();
-		for (NeoComBlueprint bp : this.getBlueprints())
-			if (bp.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-				blueprintList.add(bp);
-			}
-		return blueprintList;
-	}
 
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
@@ -689,13 +707,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 	}
 
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
-
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetsManager [");
@@ -720,6 +731,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		buffer.append("]");
 		return buffer.toString();
 	}
+
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
 
 	protected synchronized double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
@@ -1083,6 +1101,25 @@ public class AssetsManager extends AbstractManager implements INamed {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	private void processLocation(final long identifier) {
+		if (identifier < 0) return;
+		if (locations.containsKey(identifier))
+			return;
+		else {
+			EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(identifier);
+			locations.put(identifier, location);
+			long regid = location.getRegionID();
+			Region reg = regions.get(regid);
+			if (null == reg) {
+				reg = new Region(location.getRegion()).setDownloaded(true);
+				reg.addLocation(location);
+				regions.put(regid, reg);
+			} else {
+				reg.addLocation(location);
+			}
 		}
 	}
 
