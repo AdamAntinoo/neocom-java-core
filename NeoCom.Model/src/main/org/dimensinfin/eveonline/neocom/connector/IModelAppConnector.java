@@ -10,14 +10,12 @@
 package org.dimensinfin.eveonline.neocom.connector;
 
 import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IModelAppConnector {
-	public boolean checkExpiration(final Instant timestamp, final long window);
-
-	public boolean checkExpiration(final long timestamp, final long window);
+	//	public boolean checkExpiration(final Instant timestamp, final long window);
+	//
+	//	public boolean checkExpiration(final long timestamp, final long window);
 
 	public ICacheConnector getCacheConnector();
 
@@ -27,9 +25,9 @@ public interface IModelAppConnector {
 
 	public INeoComModelStore getModelStore();
 
-	public void startChrono();
-
-	public Duration timeLapse();
+	//	public void startChrono();
+	//
+	//	public Duration timeLapse();
 }
 
 // - UNUSED CODE ............................................................................................

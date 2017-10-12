@@ -41,7 +41,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ INamed {
+public class NeoComAsset extends AbstractViewableNode implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -126,6 +126,11 @@ public class NeoComAsset extends AbstractViewableNode implements /* IAsset, */ I
 	public String getCategory() {
 		if (null == category) return "NOCAT";
 		return category;
+	}
+
+	@Override
+	public int getContentCount() {
+		return 0;
 	}
 
 	public long getDAOID() {

@@ -88,6 +88,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements IView
 	 * 
 	 * @return
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		// If the groups has no elements then check the flag to determinate if it is shown or not.
@@ -114,6 +115,11 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements IView
 
 	public double getBudget() {
 		return budget;
+	}
+
+	@Override
+	public int getContentCount() {
+		return this.getChildren().size();
 	}
 
 	public Vector<IGEFNode> getOrders() {

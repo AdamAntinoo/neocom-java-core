@@ -126,6 +126,11 @@ public class RegionGroup extends AnalyticalGroup implements IViewableNode {
 		return budget;
 	}
 
+	@Override
+	public int getContentCount() {
+		return this.getChildren().size();
+	}
+
 	public Vector<IGEFNode> getOrders() {
 		return this.getChildren();
 	}

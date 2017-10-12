@@ -66,7 +66,7 @@ public class BlueprintManager extends AbstractManager implements INamed {
 		int assetCounter = 0;
 		try {
 			// Read all the assets for this character if not done already.
-			blueprintAssetList = ModelAppConnector.getSingleton().getDBConnector()
+			blueprintAssetList = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
 					.searchAllBlueprintAssets(this.getPilot().getCharacterID());
 			blueprintTotalCount = blueprintAssetList.size();
 		} catch (final RuntimeException rex) {

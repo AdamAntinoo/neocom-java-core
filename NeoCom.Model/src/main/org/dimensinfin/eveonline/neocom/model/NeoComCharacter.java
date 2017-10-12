@@ -379,9 +379,9 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 
 	public abstract void downloadIndustryJobs();
 
-	//	public abstract void downloadAssets();
-
 	public abstract void downloadMarketOrders();
+
+	//	public abstract void downloadAssets();
 
 	public void forceRefresh() {
 		this.clean();
@@ -434,6 +434,11 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 			return characterID;
 		else
 			return delegatedCharacter.getCharacterID();
+	}
+
+	@Override
+	public int getContentCount() {
+		return 0;
 	}
 
 	/**

@@ -46,13 +46,11 @@ public class ModelAppConnector implements IModelAppConnector {
 	 * @param window
 	 *          time span window in milliseconds.
 	 */
-	@Override
 	public boolean checkExpiration(final Instant timestamp, final long window) {
 		if (null == timestamp) return true;
 		return this.checkExpiration(timestamp.getMillis(), window);
 	}
 
-	@Override
 	public boolean checkExpiration(final long timestamp, final long window) {
 		if (0 == timestamp) return true;
 		final long now = GregorianCalendar.getInstance().getTimeInMillis();
@@ -91,12 +89,10 @@ public class ModelAppConnector implements IModelAppConnector {
 		return _connector.getModelStore();
 	}
 
-	@Override
 	public void startChrono() {
 		chrono = new Instant();
 	}
 
-	@Override
 	public Duration timeLapse() {
 		return new Duration(chrono, new Instant());
 	}

@@ -37,6 +37,8 @@ import com.j256.ormlite.dao.Dao;
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IDatabaseConnector {
 
+	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean checkInvention(int typeID);
 
@@ -70,21 +72,17 @@ public interface IDatabaseConnector {
 
 	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 
-	//public boolean openDAO();
-
 	public void loadSeedData();
 
-	//	public boolean openCCPDataBase();
-
-	//	public NeocomDBHelper getNeocomDBHelper();
 	public boolean openAppDataBase();
+
+	public List<NeoComAsset> queryAllAssetContainers(long characterID);
 
 	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
 	public Hashtable<String, Login> queryAllLogins();
 
-	//	public int queryBlueprintDependencies(int bpitemID);
-	//	public int searchModule4Blueprint(int bpitemID);
+	public List<NeoComAsset> queryLocationContents(long id);
 
 	public ArrayList<Resource> refineOre(int itemID);
 
@@ -94,47 +92,33 @@ public interface IDatabaseConnector {
 
 	public void replaceJobs(long characterID);
 
-	public ArrayList<NeoComAsset> searchAllBlueprintAssets(long characterID);
+	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
-	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
-
-	public ArrayList<NeoComAsset> searchAsset4Type(long characterID, int typeID);
+	public List<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 
 	public NeoComAsset searchAssetByID(long parentAssetID);
 
-	public ArrayList<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
+	public List<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
 
 	public int searchBlueprint4Module(final int moduleID);
 
 	public Vector<Integer> searchInputResources(int target);
 
-	//	public EveItem searchItembyID(int typeID);
-
-	public ArrayList<Integer> searchInventionableBlueprints(String resourceIDs);
+	public List<Integer> searchInventionableBlueprints(String resourceIDs);
 
 	public int searchInventionProduct(int typeID);
 
-	public ArrayList<Job> searchJob4Class(long characterID, String string);
+	public List<Job> searchJob4Class(long characterID, String string);
 
 	public int searchJobExecutionTime(final int typeID, final int activityID);
 
 	public ArrayList<Resource> searchListOfDatacores(final int itemID);
 
-	//	public EveLocation searchLocationbyID(long locationID);
-
-	//	public MarketDataSet searchMarketData(int typeID, EMarketSide side);
-
-	//	public EveLocation searchLocationBySystem(String system);
-
 	public ArrayList<Resource> searchListOfMaterials(int itemID);
 
 	public ArrayList<Resource> searchListOfReaction(int itemID);
 
-	//	public int searchModule4Blueprint(int bpitemID);
-
 	public int searchRawPlanetaryOutput(int itemID);
-
-	//	public int searchStationType(long systemID);
 
 	public int searchReactionOutputMultiplier(int itemID);
 
