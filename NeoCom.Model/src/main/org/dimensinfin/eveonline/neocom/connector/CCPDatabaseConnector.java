@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
@@ -176,7 +177,7 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	}
 
 	/**
-	 * Searchs on the CCP Database or on the Application database for a new location ID that is not already on
+	 * Search on the CCP Database or on the Application database for a new location ID that is not already on
 	 * the cache. Locations are extended objects on the NeoCom model because to the standard and game defined
 	 * locations we should add an external resource with the compilation of user deployed structures (Citadels,
 	 * Refineries, etc) that can also store assets and that are becoming the real place where to have the items.
@@ -255,7 +256,7 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 								hit.setRegionID(fragmentID);
 								hit.setRegion(cursor.getString(CCPDatabaseConnector.LOCATIONBYID_REGION_CONINDEX));
 							}
-							hit.setTypeID(cursor.getInt(CCPDatabaseConnector.LOCATIONBYID_TYPEID_CONINDEX));
+							hit.setTypeID(ELocationType.CCPLOCATION);
 							hit.setStation(cursor.getString(CCPDatabaseConnector.LOCATIONBYID_LOCATIONNAME_CONINDEX));
 							hit.setLocationID(cursor.getLong(CCPDatabaseConnector.LOCATIONBYID_LOCATIONID_CONINDEX));
 							hit.setSecurity(cursor.getString(CCPDatabaseConnector.LOCATIONBYID_SECURITY_CONINDEX));

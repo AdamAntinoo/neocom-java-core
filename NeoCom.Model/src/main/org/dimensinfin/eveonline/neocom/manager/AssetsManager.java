@@ -27,6 +27,7 @@ import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.model.Container;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -114,6 +115,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
 	private transient HashMap<Long, NeoComAsset>						assetMap								= new HashMap<Long, NeoComAsset>();
+	private Vector<NeoComAsset>															unlocatedAssets					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
@@ -244,23 +246,20 @@ public class AssetsManager extends AbstractManager implements INamed {
 	}
 
 	/**
-	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
-	 * parser. This requires then that the cache verification and other cache tasks be performed locally to
-	 * avoid downloading the same information multiple times.<br>
-	 * Cache expiration is of 6 hours but we will set it up to 3.<br>
-	 * After verification we have to update the list, we then fire the events to signal asset list modification
-	 * to any dependent data structures or UI objects that may be showing this information.<br>
-	 * This update mechanism may require reading the last known state of the assets list from the sdcard file
-	 * storage. This information is not stored automatically with the character information to speed up the
-	 * initialization process and is loading only when needed and this data should be accessed. This is an
-	 * special case because the assets downloaded are being written to a special set of records in the User
-	 * database. Then, after the download terminates the database is updated to move those assets to the right
-	 * character. It is supposed that this is performed in the background and that while we are doing this the
-	 * uses has access to an older set of assets. New implementation. With the use of the eveapi library there
-	 * is no need to use the URL to locate and download the assets. We use the eveapi locator and parser to get
-	 * the data structures used to generate and store the assets into the local database. We first clear any
-	 * database records not associated to any owner, the add records for a generic owner and finally change the
-	 * owner to this character.
+	 * The new downloader uses the eveapi library to process the xml source code received. This simplifies the
+	 * code but adds the need to control the download format. There are two sets of records, one with the
+	 * hierarchical dependencies between the assets and the other a flat list of all the assets with no
+	 * dependencies but with a mix of Location and Asset codes on the locationId field.<br>
+	 * The new processing will filter the assets with Unknown locations for a second pass processing so the
+	 * final list on the database will have the correct parentship hierarchy set up.<br>
+	 * <br>
+	 * The assets downloaded are being written to a special set of records in the User database with an special
+	 * <code>ownerid</code> so we can work with a new set of records for an specific Character without
+	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
+	 * and stored in the database we remove the old list and replace the owner of the new list to the right
+	 * one.<br>
+	 * <br>
+	 * There are two flavour for the asset download process. One for Pilots and other for Corporation assets.
 	 */
 	public void downloadPilotAssets() {
 		AssetsManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
@@ -270,17 +269,23 @@ public class AssetsManager extends AbstractManager implements INamed {
 			synchronized (dbConn) {
 				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
 			}
+			// Parse the CCP data to a list of assets
 			PilotAssetListParser parser = new PilotAssetListParser();
 			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
 			if (null != response) {
+				unlocatedAssets = new Vector<NeoComAsset>();
 				List<Asset> assets = response.getAll();
-				// Assets may be parent of other assets so process them recursively.
+				// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
 				for (final Asset eveAsset : assets) {
 					try {
 						this.processAsset(eveAsset, null);
 					} catch (final Exception ex) {
 						ex.printStackTrace();
 					}
+				}
+				// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
+				for (NeoComAsset asset : unlocatedAssets) {
+					ELocationType validation = this.validateLocation(asset);
 				}
 			}
 			// Assign the assets to the pilot.
@@ -371,13 +376,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return "Assets Manager";
 	}
 
-	//	public int getLocationCount() {
-	//		if (locationCount < 0) {
-	//			this.updateLocations();
-	//		}
-	//		return locationCount;
-	//	}
-
 	/**
 	 * Returns the list of different Regions found on the list of locations.
 	 * 
@@ -389,6 +387,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 		return regions;
 	}
+
+	//	public int getLocationCount() {
+	//		if (locationCount < 0) {
+	//			this.updateLocations();
+	//		}
+	//		return locationCount;
+	//	}
 
 	public ArrayList<NeoComAsset> getShips() {
 		return this.searchAsset4Category("Ship");
@@ -535,6 +540,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
+	public NeoComBlueprint searchBlueprintByID(final long assetid) {
+		for (NeoComBlueprint bp : this.getBlueprints()) {
+			String refs = bp.getStackIDRefences();
+			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
+		}
+		return null;
+	}
+
 	//	public HashSet<String> queryT2ModuleNames() {
 	//		HashSet<String> names = new HashSet<String>();
 	//		ArrayList<Asset> modules = searchT2Modules();
@@ -543,14 +556,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		}
 	//		return names;
 	//	}
-
-	public NeoComBlueprint searchBlueprintByID(final long assetid) {
-		for (NeoComBlueprint bp : this.getBlueprints()) {
-			String refs = bp.getStackIDRefences();
-			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
-		}
-		return null;
-	}
 
 	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
@@ -582,30 +587,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return blueprintList;
 	}
 
-	//	/**
-	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
-	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
-	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
-	//	 * 
-	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
-	//	 */
-	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
-	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
-	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
-	//		EveFilter filter = new EveFilter(bps, techWhere);
-	//		return filter.getResults();
-	//	}
-
-	//	public ArrayList<Blueprint> queryT1Blueprints1() {
-	//		if (null == t1blueprints) getPilot().updateBlueprints();
-	//		return t1blueprints;
-	//	}
-	//
-	//	public ArrayList<Blueprint> queryT2Blueprints1() {
-	//		if (null == t2blueprints) getPilot().updateBlueprints();
-	//		return t2blueprints;
-	//	}
-
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
@@ -635,6 +616,30 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info("<< EveChar.queryT2Modules");
 		return (ArrayList<NeoComAsset>) assetList;
 	}
+
+	//	/**
+	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
+	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
+	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
+	//	 * 
+	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
+	//	 */
+	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
+	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
+	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
+	//		EveFilter filter = new EveFilter(bps, techWhere);
+	//		return filter.getResults();
+	//	}
+
+	//	public ArrayList<Blueprint> queryT1Blueprints1() {
+	//		if (null == t1blueprints) getPilot().updateBlueprints();
+	//		return t1blueprints;
+	//	}
+	//
+	//	public ArrayList<Blueprint> queryT2Blueprints1() {
+	//		if (null == t2blueprints) getPilot().updateBlueprints();
+	//		return t2blueprints;
+	//	}
 
 	/**
 	 * Retrieves from the database all the stacks for an specific item type id. The method stores the results
@@ -732,13 +737,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return buffer.toString();
 	}
 
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
-
 	protected synchronized double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
 		double assetValueISK = 0.0;
@@ -758,6 +756,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return assetValueISK;
 	}
 
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
+
 	/**
 	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
 	 * <br>
@@ -774,19 +779,23 @@ public class AssetsManager extends AbstractManager implements INamed {
 		final NeoComAsset newAsset = new NeoComAsset();
 		newAsset.setAssetID(eveAsset.getItemID());
 		newAsset.setTypeID(eveAsset.getTypeID());
-		// Under the flat api check if the location is a real location or an asset.
 		Long locid = eveAsset.getLocationID();
 		if (null == locid) {
 			locid = (long) -2;
 		}
-		if (locid > 1000000000000L) {
-			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
-			newAsset.setLocationID(-2);
-			newAsset.setParentId(locid);
-		} else {
-			// The location is a real location.
-			newAsset.setLocationID(locid);
-		}
+		newAsset.setLocationID(locid);
+		//		// Under the flat api check if the location is a real location or an asset.
+		//		if (null == locid) {
+		//			locid = (long) -2;
+		//		}
+		//		if (locid > 1000000000000L) {
+		//			// This is an asset so it represents the parent. We have not the location since the parent may not exist.
+		//			newAsset.setLocationID(-2);
+		//			newAsset.setParentId(locid);
+		//		} else {
+		//			// The location is a real location.
+		//			newAsset.setLocationID(locid);
+		//		}
 
 		newAsset.setQuantity(eveAsset.getQuantity());
 		newAsset.setFlag(eveAsset.getFlag());
@@ -967,7 +976,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 
 	/**
 	 * Processes an asset and all their children. This method converts from a API record to a database asset
-	 * record.
+	 * record.<br>
+	 * For flat assets it will detect the Location and if matched to an unknown location store the asset for
+	 * second pass processing.
 	 * 
 	 * @param eveAsset
 	 */
@@ -989,7 +1000,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
 		}
 		try {
-			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			this.accessDao();
 			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
 			if (children.size() > 0) {
 				myasset.setContainer(true);
@@ -1000,6 +1012,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 			myasset.setOwnerID(this.getPilot().getCharacterID() * -1);
 			assetDao.create(myasset);
 
+			// Check the asset location. The location can be a known game station, a known user structure, another asset
+			// or an unknown player structure. Check which one is this location.
+			EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector()
+					.searchLocationbyID(myasset.getLocationID());
+			if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
+				// Add this asset to the list of items to be reprocessed.
+				unlocatedAssets.add(myasset);
+			}
 			// Process all the children and convert them to assets.
 			if (children.size() > 0) {
 				for (final Asset childAsset : children) {
@@ -1007,10 +1027,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 			}
 			AssetsManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
-			//			logger.info("-- [NeoComCharacter.processAsset]> asset: " + myasset);
 		} catch (final SQLException sqle) {
-			AssetsManager.logger
-					.severe("E> Unable to create the new asset [" + myasset.getAssetID() + "]. " + sqle.getMessage());
+			AssetsManager.logger.severe("E> [AssetsManager.processAsset]Unable to create the new asset ["
+					+ myasset.getAssetID() + "]. " + sqle.getMessage());
 			sqle.printStackTrace();
 		}
 	}
@@ -1157,12 +1176,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 			}
 		}
 	}
-	//
-	//	// TODO The dirty flag for the assets is not used because assets are not persisted.
-	//	@Override
-	//	private void setDirty(final boolean value) {
-	//		//		getPilot().setDirty(value);
-	//	}
 
 	private void updateBlueprints() {
 		AssetsManager.logger.info(">> AssetsManager.updateBlueprints");
@@ -1187,6 +1200,36 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 		AssetsManager.logger.info("<< AssetsManager.updateBlueprints [" + blueprintCache.size() + "]");
 		//		return (ArrayList<Blueprint>) blueprintList;
+	}
+
+	/**
+	 * Checks if the Location can be found on the two lists of Locations, the CCP game list or the player
+	 * compiled list. If the Location can't be found on any of those lists then it can be another asset
+	 * (Container, Ship, etc) or another player/corporation structure resource that is not listed on the asset
+	 * list.
+	 * 
+	 * @param asset
+	 */
+	private ELocationType validateLocation(final NeoComAsset asset) {
+		long targetLocationid = asset.getLocationID();
+		EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(targetLocationid);
+		if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
+			// Need to check if asset or unreachable location.
+			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(targetLocationid);
+			if (null == target)
+				return ELocationType.UNKNOWN;
+			else {
+				// Change the asset parentship and update the asset location with the location of the parent.
+				asset.setParentId(targetLocationid);
+				//// search for the location of the parent.
+				//ELocationType parentLocationType = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(target.getLocationID()).getTypeID();
+				//if(parentLocationType!=ELocationType.UNKNOWN)
+				asset.setLocationID(target.getLocationID());
+				asset.setDirty(true);
+			}
+			return ELocationType.UNKNOWN;
+		} else
+			return targetLoc.getTypeID();
 	}
 
 	//	/**

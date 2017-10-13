@@ -21,6 +21,8 @@ public interface ICacheConnector {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addCharacterUpdateRequest(long characterID);
 
+	//	public void addLocationUpdateRequest(final ERequestClass locationClass);
+
 	public void addMarketDataRequest(long requestLocalizer);
 
 	public void clearPendingRequest(final long localizer);
@@ -34,6 +36,10 @@ public interface ICacheConnector {
 	public Vector<PendingRequestEntry> getAndroidPendingRequests();
 
 	public PriorityBlockingQueue<PendingRequestEntry> getPendingRequests();
+
+	//	public String getURLForItem(final int typeID);
+	//
+	//	public String getURLForStation(final int typeID);
 
 	public int incrementMarketCounter();
 

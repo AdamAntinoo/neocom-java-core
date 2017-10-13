@@ -18,6 +18,7 @@ import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,23 +56,23 @@ public class EveLocation extends AbstractViewableNode {
 	@DatabaseField
 	private long							stationID					= -1;
 	@DatabaseField
-	private String						station						= "<STATION>";
+	private String						station						= "SPACE";
 	@DatabaseField
 	private long							systemID					= -1;
 	@DatabaseField
-	private String						system						= "<SYSTEM>";
+	private String						system						= "UNKNOWN";
 	@DatabaseField
 	private long							constellationID		= -1;
 	@DatabaseField
-	private String						constellation			= "<CONSTELLATION>";
+	private String						constellation			= "Echo Cluster";
 	@DatabaseField
 	private long							regionID					= -1;
 	@DatabaseField
-	private String						region						= "<REGION>";
+	private String						region						= "-DEEP SPACE-";
 	@DatabaseField
 	private String						security					= "0.0";
 	@DatabaseField
-	protected int							typeID						= -1;
+	protected String					typeID						= ELocationType.UNKNOWN.name();
 	//	@DatabaseField
 	//	protected String structureName="-NOT-STRUCTURE-";
 	protected boolean					citadel						= false;
@@ -95,7 +96,7 @@ public class EveLocation extends AbstractViewableNode {
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
-			typeID = 1;
+			typeID = ELocationType.CITADEL.name();
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
@@ -116,7 +117,7 @@ public class EveLocation extends AbstractViewableNode {
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(out.getSolarSystem());
 			id = out.getFacilityID();
-			typeID = 2;
+			typeID = ELocationType.OUTPOST.name();
 			this.setStation(out.getName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
@@ -133,7 +134,7 @@ public class EveLocation extends AbstractViewableNode {
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
-			typeID = 3;
+			typeID = ELocationType.DEEP_SPACE.name();
 			this.setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
@@ -284,8 +285,8 @@ public class EveLocation extends AbstractViewableNode {
 		return systemID;
 	}
 
-	public int getTypeID() {
-		return typeID;
+	public ELocationType getTypeID() {
+		return ELocationType.valueOf(typeID);
 	}
 
 	/**
@@ -392,8 +393,8 @@ public class EveLocation extends AbstractViewableNode {
 		//		setDirty(true);
 	}
 
-	public void setTypeID(final int typeID) {
-		this.typeID = typeID;
+	public void setTypeID(final ELocationType typeID) {
+		this.typeID = typeID.name();
 		//		setDirty(true);
 	}
 
