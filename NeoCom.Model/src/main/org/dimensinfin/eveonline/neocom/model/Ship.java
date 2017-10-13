@@ -141,6 +141,12 @@ public class Ship extends NeoComAsset {
 		return result;
 	}
 
+	@Override
+	public int getContentCount() {
+		return highModules.getContentCount() + medModules.getContentCount() + lowModules.getContentCount()
+				+ rigs.getContentCount() + drones.getContentCount() + cargo.getContentCount();
+	}
+
 	public ArrayList<NeoComAsset> getDrones() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
 		for (IGEFNode node : drones.getChildren()) {
