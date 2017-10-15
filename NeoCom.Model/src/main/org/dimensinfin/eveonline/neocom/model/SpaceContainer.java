@@ -1,35 +1,41 @@
-//	PROJECT:        NeoCom.Android (NEOC.A)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
-//									for characters and corporations at Eve Online. The set is composed of some projects
-//									with implementation for Android and for an AngularJS web interface based on REST
-//									services on Sprint Boot Cloud.
+//	PROJECT:      NeoCom.model (NEOC.M)
+//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
+//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:	Java 1.8 Library.
+//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
+//								available databases.
+//								This version includes the access to the latest 6.x version of eveapi libraries to
+//								download ad parse the CCP XML API data.
+//								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Container extends NeoComAsset {
+public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	//	private static Logger					logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
-	private static final long			serialVersionUID	= 2813029093080549286L;
+	private static final long		serialVersionUID	= 2813029093080549286L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public ArrayList<NeoComAsset>	contents					= new ArrayList<NeoComAsset>();
+	public Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Container() {
+	public SpaceContainer() {
 		jsonClass = "Container";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void addContent(final NeoComAsset asset) {
-		contents.add(asset);
+	@Override
+	public int addContent(final NeoComAsset asset) {
+		_contents.add(asset);
+		return _contents.size();
 	}
 
 	/**
@@ -40,11 +46,11 @@ public class Container extends NeoComAsset {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		contents = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-				.searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
+		_contents = ModelAppConnector.getSingleton().getDBConnector().searchAssetContainedAt(this.getOwnerID(),
+				this.getAssetID());
 		this.clean();
 		// Classify the contents
-		for (NeoComAsset node : contents) {
+		for (NeoComAsset node : IAssetContainer._contents) {
 			result.add(node);
 		}
 		return result;
@@ -57,7 +63,7 @@ public class Container extends NeoComAsset {
 	 * 
 	 * @return this same instance updated with the reference data.
 	 */
-	public Container copyFrom(final NeoComAsset asset) {
+	public SpaceContainer copyFrom(final NeoComAsset asset) {
 		// REFACTOR Get access to the unique asset identifier.
 		this.setAssetID(asset.getAssetID());
 		this.setLocationID(asset.getLocationID());
@@ -81,8 +87,9 @@ public class Container extends NeoComAsset {
 		return this;
 	}
 
-	public ArrayList<NeoComAsset> getContents() {
-		return contents;
+	@Override
+	public List<NeoComAsset> getContents() {
+		return IAssetContainer._contents;
 	}
 }
 

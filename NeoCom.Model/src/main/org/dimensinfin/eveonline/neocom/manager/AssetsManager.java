@@ -28,7 +28,7 @@ import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.model.Container;
+import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -1081,7 +1081,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 				// Check if the asset is packaged. If so leave as asset
 				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
-					Container container = new Container().copyFrom(asset);
+					SpaceContainer container = new SpaceContainer().copyFrom(asset);
 					containers.put(container.getAssetID(), container);
 					// The container is a container so add it and forget about this asset.
 					if (container.hasParent()) {

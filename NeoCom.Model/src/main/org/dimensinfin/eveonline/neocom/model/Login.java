@@ -16,8 +16,6 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.android.model.Separator;
-import org.dimensinfin.android.model.Separator.ESeparatorType;
 import org.dimensinfin.core.model.AbstractComplexNode;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -90,14 +88,14 @@ public class Login extends AbstractViewableNode {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (this.isExpanded()) {
-			results.add(new Separator());
-			if (_characters.size() < 1) {
-				results.add(new Separator().setType(ESeparatorType.EMPTY_SIGNAL));
-			} else {
-				results = this.concatenateNeoComCharacter(results, this.getCharacters());
-			}
-			results.add(new Separator());
+		if (this.isVisible()) if (this.isExpanded()) {
+			//			results.add(new Separator());
+			//			if (_characters.size() < 1) {
+			//				results.add(new Separator().setType(ESeparatorType.EMPTY_SIGNAL));
+			//			} else {
+			results.addAll(this.getCharacters());
+			//			}
+			//			results.add(new Separator());
 		}
 		return results;
 	}

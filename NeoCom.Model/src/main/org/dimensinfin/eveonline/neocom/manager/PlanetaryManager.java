@@ -22,12 +22,13 @@ import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.Container;
+import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
+import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -56,21 +57,75 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	@JsonIgnore
 	private transient Hashtable<Long, NeoComAsset>	assetMap								= new Hashtable<Long, NeoComAsset>();
 
-	private Container																container								= null;
+	private SpaceContainer													container								= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryManager(final NeoComCharacter pilot) {
 		super(pilot);
-		// Get all the Planetary assets and classify them into lists.
 		jsonClass = "PlanetaryManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
-	 * Reads from the database all the Planetary assets and classifies them depending on Locations.
+	 * Reads from the database all the Planetary assets and classifies them into their contained Locations.
+	 * Planetary assets can be located at Locations or inside Containers or at Ships. Now that the parentship
+	 * hierarchies are back we should not process the old way but be able to access Ships or Containers on
+	 * demand to reconstruct the Resource hierarchy.
 	 */
 	public void accessAllAssets() {
-		//		try {
+		// Initialize the model
+		regions.clear();
+		locations.clear();
+		containers.clear();
+		// Get all the assets of the Planetary categories.
+		int assetCounter = 0;
+		try {
+			// Read all the assets for this character if not done already.
+			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
+					.accessAllPlanetaryAssets(this.getPilot().getCharacterID());
+			// Process the Resources and search for the parent assets to classify them into the Locations.
+			for (NeoComAsset resource : planetaryAssetList) {
+				// Check if the Resource has a parent.
+				if (resource.hasParent()) {
+					// Get access to the parent and its Location and add it to the Locations list it it is the top of the chain.
+					NeoComAsset parentRef = this.processParent(resource.getParentContainer());
+					if (null != parentRef) {
+						if (parentRef instanceof IAssetContainer) {
+							((IAssetContainer) parentRef).addContent(resource);
+						}
+					}
+				} else {
+					this.add2Location(resource);
+				}
+			}
+
+			//			// Move the list to a processing map.
+			//			assetMap = new Hashtable<Long, NeoComAsset>(planetaryAssetList.size());
+			//			for (NeoComAsset asset : planetaryAssetList) {
+			//				assetMap.put(asset.getAssetID(), asset);
+			//			}
+			//			// Process the map until all elements are removed.
+			//			Long key = assetMap.keySet().iterator().next();
+			//			NeoComAsset point = assetMap.get(key);
+			//			while (null != point) {
+			//			assetCounter++;
+			//			this.processElement(point);
+			//			key = assetMap.keySet().iterator().next();
+			//			point = assetMap.get(key);
+			//			}
+			//		} catch (NoSuchElementException nsee) {
+			//			// Reached the end of the list of assets to process.
+			//			PlanetaryManager.logger.info("-- [AssetsManager.accessAllAssets]> No more assets to process");
+		} catch (final RuntimeException rex) {
+			rex.printStackTrace();
+			PlanetaryManager.logger.severe(
+					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+		} finally {
+			PlanetaryManager.logger.info("-- [AssetsManager.accessAllAssets]> Assets processed: " + assetCounter);
+		}
+	}
+
+	public void accessAllAssetsOld() {
 		// Initialize the model
 		regions.clear();
 		locations.clear();
@@ -319,7 +374,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 				// Check if the asset is packaged. If so leave as asset
 				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
-					container = new Container().copyFrom(asset);
+					container = new SpaceContainer().copyFrom(asset);
 					containers.put(container.getAssetID(), container);
 					// The container is a container so add it and forget about this asset.
 					if (container.hasParent()) {
@@ -385,6 +440,32 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	/**
+	 * Get access to the parent and its Location and add it to the Locations list it it is the top of the chain.
+	 * THis can be performed recursively if the Parent has also another Parent.
+	 * 
+	 * @return
+	 */
+	private NeoComAsset processParent(final NeoComAsset parent) {
+		// This is the recursive part to get the complete chain.
+		if (parent.hasParent()) {
+			NeoComAsset target = this.processParent(parent.getParentContainer());
+			// Add asset to the chain.
+			if (target instanceof IAssetContainer) {
+				((IAssetContainer) target).addContent(parent);
+			}
+			return target;
+		} else {
+			// Get the asset (a Container or a Ship) and add it to the chain.
+			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
+			if (null != target) {
+				this.add2Location(target);
+				return target;
+			} else
+				return null;
 		}
 	}
 

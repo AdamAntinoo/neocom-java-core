@@ -9,6 +9,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.ArrayList;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.android.model.Separator;
@@ -16,21 +17,23 @@ import org.dimensinfin.android.model.Separator.ESeparatorType;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Ship extends NeoComAsset {
+public class Ship extends NeoComAsset implements IAssetContainer {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger			logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
-	private static final long	serialVersionUID	= 1782782104428714849L;
+	private static Logger				logger						= Logger.getLogger("Ship");
+	private static final long		serialVersionUID	= 1782782104428714849L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private long							pilotID						= 0;
-	private final Separator		highModules				= new Separator("HIGH").setType(ESeparatorType.SHIPSECTION_HIGH);
-	private final Separator		medModules				= new Separator("MED").setType(ESeparatorType.SHIPSECTION_MED);
-	private final Separator		lowModules				= new Separator("LOW").setType(ESeparatorType.SHIPSECTION_LOW);
-	private final Separator		rigs							= new Separator("RIGS").setType(ESeparatorType.SHIPSECTION_RIGS);
-	private final Separator		drones						= new Separator("DRONES").setType(ESeparatorType.SHIPSECTION_DRONES);
-	private final Separator		cargo							= new Separator("CARGO HOLD").setType(ESeparatorType.SHIPSECTION_CARGO);
+	public Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
+	private long								pilotID						= 0;
+	private final Separator			highModules				= new Separator("HIGH").setType(ESeparatorType.SHIPSECTION_HIGH);
+	private final Separator			medModules				= new Separator("MED").setType(ESeparatorType.SHIPSECTION_MED);
+	private final Separator			lowModules				= new Separator("LOW").setType(ESeparatorType.SHIPSECTION_LOW);
+	private final Separator			rigs							= new Separator("RIGS").setType(ESeparatorType.SHIPSECTION_RIGS);
+	private final Separator			drones						= new Separator("DRONES").setType(ESeparatorType.SHIPSECTION_DRONES);
+	private final Separator			cargo							= new Separator("CARGO HOLD").setType(ESeparatorType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Ship() {
