@@ -436,7 +436,6 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 			return delegatedCharacter.getCharacterID();
 	}
 
-	@Override
 	public int getContentCount() {
 		return 0;
 	}

@@ -106,7 +106,6 @@ public class Login extends AbstractViewableNode {
 		return result;
 	}
 
-	@Override
 	public int getContentCount() {
 		return _characters.size();
 	}

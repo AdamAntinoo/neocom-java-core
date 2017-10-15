@@ -117,7 +117,6 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements IView
 		return budget;
 	}
 
-	@Override
 	public int getContentCount() {
 		return this.getChildren().size();
 	}

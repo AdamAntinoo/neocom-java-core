@@ -201,7 +201,6 @@ public class EveLocation extends AbstractViewableNode {
 		return constellationID;
 	}
 
-	@Override
 	public int getContentCount() {
 		return contents.size();
 	}

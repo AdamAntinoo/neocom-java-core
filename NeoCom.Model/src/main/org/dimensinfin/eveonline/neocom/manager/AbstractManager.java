@@ -42,7 +42,6 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		return new ArrayList<AbstractComplexNode>();
 	}
 
-	@Override
 	public int getContentCount() {
 		return 0;
 	}

@@ -79,7 +79,6 @@ public class Region extends AbstractViewableNode {
 		return result;
 	}
 
-	@Override
 	public int getContentCount() {
 		return _locations.size();
 	}
