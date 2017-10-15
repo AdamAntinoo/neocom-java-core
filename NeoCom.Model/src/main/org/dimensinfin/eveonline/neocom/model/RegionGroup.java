@@ -18,7 +18,6 @@ import java.util.Vector;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
@@ -98,9 +97,9 @@ public class RegionGroup extends AnalyticalGroup implements IViewableNode {
 		}
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
-		Vector<AbstractPropertyChanger> orders = this.aggregate(this.getChildren());
+		Vector<AbstractComplexNode> orders = this.aggregate(this.getChildren());
 		Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
-		for (final AbstractPropertyChanger node : orders)
+		for (final AbstractComplexNode node : orders)
 			if (node instanceof NeoComMarketOrder) {
 				results.addAll(((NeoComMarketOrder) node).collaborate2Model("DEFAULT"));
 			}
@@ -173,7 +172,7 @@ public class RegionGroup extends AnalyticalGroup implements IViewableNode {
 		return buffer.toString();
 	}
 
-	private Vector<AbstractPropertyChanger> aggregate(final Vector<IGEFNode> children) {
+	private Vector<AbstractComplexNode> aggregate(final Vector<IGEFNode> children) {
 		final HashMap<Integer, NeoComMarketOrder> datamap = new HashMap<Integer, NeoComMarketOrder>();
 		for (final IGEFNode node : children)
 			if (node instanceof NeoComMarketOrder) {
@@ -186,7 +185,7 @@ public class RegionGroup extends AnalyticalGroup implements IViewableNode {
 				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
-		return new Vector<AbstractPropertyChanger>(datamap.values());
+		return new Vector<AbstractComplexNode>(datamap.values());
 	}
 
 	private int childrenCount() {

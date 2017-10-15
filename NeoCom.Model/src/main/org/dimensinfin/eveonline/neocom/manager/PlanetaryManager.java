@@ -15,8 +15,8 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.interfaces.INamed;
 import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;

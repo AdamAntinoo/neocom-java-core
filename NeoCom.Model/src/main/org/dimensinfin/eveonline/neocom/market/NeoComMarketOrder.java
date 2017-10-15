@@ -9,7 +9,7 @@ package org.dimensinfin.eveonline.neocom.market;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.dimensinfin.android.model.INamed;
+import org.dimensinfin.android.interfaces.INamed;
 //- IMPORT SECTION .........................................................................................
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;

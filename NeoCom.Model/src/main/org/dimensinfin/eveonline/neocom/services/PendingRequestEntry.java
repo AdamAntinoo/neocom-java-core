@@ -8,12 +8,12 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.services;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PendingRequestEntry extends AbstractGEFNode implements Comparable<PendingRequestEntry> {
+public class PendingRequestEntry extends AbstractComplexNode implements Comparable<PendingRequestEntry> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -7936869026974954271L;
 	//	private static Logger			logger						= Logger.getLogger("PendingRequestEntry");

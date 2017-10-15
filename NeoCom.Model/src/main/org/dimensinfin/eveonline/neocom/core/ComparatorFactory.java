@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.core;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.industry.JobQueue;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -25,9 +25,10 @@ public class ComparatorFactory {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("ComparatorFactory");
 
-	public static Comparator<AbstractPropertyChanger> createComparator(final EComparatorField code) {
-		Comparator<AbstractPropertyChanger> comparator = new Comparator<AbstractPropertyChanger>() {
-			public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+	public static Comparator<AbstractComplexNode> createComparator(final EComparatorField code) {
+		Comparator<AbstractComplexNode> comparator = new Comparator<AbstractComplexNode>() {
+			@Override
+			public int compare(final AbstractComplexNode left, final AbstractComplexNode right) {
 				return 0;
 			}
 		};
@@ -59,8 +60,9 @@ public class ComparatorFactory {
 			//				};
 			//				break;
 			case ASSET_COUNT:
-				comparator = new Comparator<AbstractPropertyChanger>() {
-					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+				comparator = new Comparator<AbstractComplexNode>() {
+					@Override
+					public int compare(final AbstractComplexNode left, final AbstractComplexNode right) {
 						long leftField = -1;
 						long rightField = -1;
 						if (left instanceof NeoComAsset) {
@@ -112,8 +114,9 @@ public class ComparatorFactory {
 			//				};
 			//				break;
 			case RESOURCE_TYPE:
-				comparator = new Comparator<AbstractPropertyChanger>() {
-					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+				comparator = new Comparator<AbstractComplexNode>() {
+					@Override
+					public int compare(final AbstractComplexNode left, final AbstractComplexNode right) {
 						int leftField = -1;
 						int rightField = -1;
 						if (left instanceof Resource) {
@@ -197,8 +200,9 @@ public class ComparatorFactory {
 			//				};
 			//				break;
 			case REQUEST_PRIORITY:
-				comparator = new Comparator<AbstractPropertyChanger>() {
-					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+				comparator = new Comparator<AbstractComplexNode>() {
+					@Override
+					public int compare(final AbstractComplexNode left, final AbstractComplexNode right) {
 						long leftField = -1;
 						long rightField = -1;
 						if (left instanceof PendingRequestEntry) {
@@ -237,8 +241,9 @@ public class ComparatorFactory {
 			//				};
 			//				break;
 			case WEIGHT:
-				comparator = new Comparator<AbstractPropertyChanger>() {
-					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+				comparator = new Comparator<AbstractComplexNode>() {
+					@Override
+					public int compare(final AbstractComplexNode left, final AbstractComplexNode right) {
 						int leftField = -1;
 						int rightField = -1;
 						if (left instanceof IWeigthedNode) {
@@ -254,8 +259,9 @@ public class ComparatorFactory {
 				};
 				break;
 			case TIMEPENDING:
-				comparator = new Comparator<AbstractPropertyChanger>() {
-					public int compare(final AbstractPropertyChanger left, final AbstractPropertyChanger right) {
+				comparator = new Comparator<AbstractComplexNode>() {
+					@Override
+					public int compare(final AbstractComplexNode left, final AbstractComplexNode right) {
 						int leftField = -1;
 						int rightField = -1;
 						if (left instanceof JobQueue) {

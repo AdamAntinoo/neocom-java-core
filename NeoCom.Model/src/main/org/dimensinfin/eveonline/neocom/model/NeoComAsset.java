@@ -14,8 +14,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.interfaces.INamed;
 import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.android.model.INamed;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;

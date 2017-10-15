@@ -97,7 +97,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements IView
 		}
 
 		// Add the children that are inside these group in the right date order. Aggregate items of the same type.
-		Vector<AbstractPropertyChanger> orders = this.aggregate(this.getChildren());
+		Vector<AbstractComplexNode> orders = this.aggregate(this.getChildren());
 		Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractPropertyChanger node : orders)
 			if (node instanceof NeoComMarketOrder) {
@@ -156,7 +156,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements IView
 		return buffer.toString();
 	}
 
-	private Vector<AbstractPropertyChanger> aggregate(final Vector<IGEFNode> children) {
+	private Vector<AbstractComplexNode> aggregate(final Vector<IGEFNode> children) {
 		final HashMap<Integer, NeoComMarketOrder> datamap = new HashMap<Integer, NeoComMarketOrder>();
 		for (final IGEFNode node : children)
 			if (node instanceof MarketOrder) {
@@ -169,7 +169,7 @@ public class MarketOrderAnalyticalGroup extends AnalyticalGroup implements IView
 				}
 			}
 		// Unpack the data map into a new list with the quantities aggregated
-		return new Vector<AbstractPropertyChanger>(datamap.values());
+		return new Vector<AbstractComplexNode>(datamap.values());
 	}
 
 }

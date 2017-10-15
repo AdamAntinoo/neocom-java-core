@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.dimensinfin.android.model.Separator;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.core.model.IGEFNode;
@@ -76,15 +77,15 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 				this.classifyOrder(order, type, location);
 			}
 		// Now get the regions and move the parts to the result in the right order.
-		final ArrayList<AbstractGEFNode> regionNames = new ArrayList<AbstractGEFNode>(regions.values());
+		final ArrayList<AbstractComplexNode> regionNames = new ArrayList<AbstractComplexNode>(regions.values());
 		Collections.sort(regionNames, ComparatorFactory.createComparator(EComparatorField.NAME));
 		for (final AbstractGEFNode region : regionNames) {
 			results.add(region);
 			// Now add the depending item in the order but with their own rules.
-			Vector<AbstractPropertyChanger> orders = new Vector<AbstractPropertyChanger>();
+			Vector<AbstractComplexNode> orders = new Vector<AbstractComplexNode>();
 			Vector<IGEFNode> v = region.getChildren();
 			for (IGEFNode node : v) {
-				orders.add((AbstractPropertyChanger) node);
+				orders.add((AbstractComplexNode) node);
 			}
 			Collections.sort(orders, ComparatorFactory.createComparator(EComparatorField.NAME));
 			for (final AbstractPropertyChanger node : orders)
