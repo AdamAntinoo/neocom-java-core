@@ -1,43 +1,45 @@
-//	PROJECT:        NeoCom.Android (NEOC.A)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
-//									for characters and corporations at Eve Online. The set is composed of some projects
-//									with implementation for Android and for an AngularJS web interface based on REST
-//									services on Sprint Boot Cloud.
+//	PROJECT:      NeoCom.model (NEOC.M)
+//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
+//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:	Java 1.8 Library.
+//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
+//								available databases.
+//								This version includes the access to the latest 6.x version of eveapi libraries to
+//								download ad parse the CCP XML API data.
+//								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.model.Separator;
-import org.dimensinfin.android.model.Separator.ESeparatorType;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+import org.dimensinfin.eveonline.neocom.model.AssetGroup.EGroupType;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Ship extends NeoComAsset implements IAssetContainer {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger				logger						= Logger.getLogger("Ship");
-	private static final long		serialVersionUID	= 1782782104428714849L;
+	private static Logger			logger						= Logger.getLogger("Ship");
+	private static final long	serialVersionUID	= 1782782104428714849L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
-	private long								pilotID						= 0;
-	private final Separator			highModules				= new Separator("HIGH").setType(ESeparatorType.SHIPSECTION_HIGH);
-	private final Separator			medModules				= new Separator("MED").setType(ESeparatorType.SHIPSECTION_MED);
-	private final Separator			lowModules				= new Separator("LOW").setType(ESeparatorType.SHIPSECTION_LOW);
-	private final Separator			rigs							= new Separator("RIGS").setType(ESeparatorType.SHIPSECTION_RIGS);
-	private final Separator			drones						= new Separator("DRONES").setType(ESeparatorType.SHIPSECTION_DRONES);
-	private final Separator			cargo							= new Separator("CARGO HOLD").setType(ESeparatorType.SHIPSECTION_CARGO);
+	private long							pilotID						= 0;
+	private final AssetGroup	highModules				= new AssetGroup("HIGH").setType(EGroupType.SHIPSECTION_HIGH);
+	private final AssetGroup	medModules				= new AssetGroup("MED").setType(EGroupType.SHIPSECTION_MED);
+	private final AssetGroup	lowModules				= new AssetGroup("LOW").setType(EGroupType.SHIPSECTION_LOW);
+	private final AssetGroup	rigs							= new AssetGroup("RIGS").setType(EGroupType.SHIPSECTION_RIGS);
+	private final AssetGroup	drones						= new AssetGroup("DRONES").setType(EGroupType.SHIPSECTION_DRONES);
+	private final AssetGroup	cargo							= new AssetGroup("CARGO HOLD").setType(EGroupType.SHIPSECTION_CARGO);
+	private final AssetGroup	orecargo					= new AssetGroup("ORE HOLD").setType(EGroupType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Ship() {
-		jsonClass = "ShipLocation";
+		// Ships have contents and are not available upon creation.
+		this.setDownloaded(false);
+		jsonClass = "Ship";
 	}
 
 	/**
@@ -47,9 +49,18 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	 * @param pilot
 	 */
 	public Ship(final long pilot) {
-		jsonClass = "ShipLocation";
+		jsonClass = "Ship";
 		pilotID = pilot;
 		this.setDownloaded(false);
+	}
+
+	/**
+	 * By default the contents are added to the Cargo Hold of the Ship.
+	 */
+	@Override
+	public int addContent(final NeoComAsset asset) {
+		cargo.addChild(asset);
+		return cargo.size();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -65,36 +76,7 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		if (!this.isDownloaded()) {
-			ArrayList<NeoComAsset> contents = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-					.searchAssetContainedAt(pilotID, this.getAssetID());
-			highModules.clean();
-			medModules.clean();
-			lowModules.clean();
-			rigs.clean();
-			drones.clean();
-			cargo.clean();
-			// Classify the contents
-			for (NeoComAsset node : contents) {
-				int flag = node.getFlag();
-				if ((flag > 10) && (flag < 19)) {
-					highModules.addChild(node);
-				} else if ((flag > 18) && (flag < 27)) {
-					medModules.addChild(node);
-				} else if ((flag > 26) && (flag < 35)) {
-					lowModules.addChild(node);
-				} else if ((flag > 91) && (flag < 100)) {
-					rigs.addChild(node);
-				} else {
-					// Check for drones
-					if (node.getCategory().equalsIgnoreCase("Drones")) {
-						drones.addChild(node);
-					} else {
-						// Contents on ships go to the cargohold.
-						cargo.addChild(node);
-					}
-				}
-			}
-			this.setDownloaded(true);
+			this.downloadShipData();
 		}
 		result.add(highModules);
 		result.add(medModules);
@@ -136,18 +118,23 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 		return this;
 	}
 
-	public ArrayList<NeoComAsset> getCargo() {
-		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (IGEFNode node : cargo.getChildren()) {
-			result.add((NeoComAsset) node);
-		}
-		return result;
+	public List<NeoComAsset> getCargo() {
+		//		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
+		//		for (IGEFNode node : cargo.getChildren()) {
+		//			result.add((NeoComAsset) node);
+		//		}
+		return cargo.getContents();
 	}
 
 	@Override
 	public int getContentCount() {
-		return highModules.getContentCount() + medModules.getContentCount() + lowModules.getContentCount()
-				+ rigs.getContentCount() + drones.getContentCount() + cargo.getContentCount();
+		return highModules.size() + medModules.size() + lowModules.size() + rigs.size() + drones.size() + cargo.size()
+				+ orecargo.size();
+	}
+
+	@Override
+	public List<NeoComAsset> getContents() {
+		return cargo.getContents();
 	}
 
 	public ArrayList<NeoComAsset> getDrones() {
@@ -200,6 +187,39 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 		buffer.append("]\n");
 		return buffer.toString();
 		//		return super.toString();
+	}
+
+	private void downloadShipData() {
+		ArrayList<NeoComAsset> contents = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
+				.searchAssetContainedAt(pilotID, this.getAssetID());
+		highModules.clean();
+		medModules.clean();
+		lowModules.clean();
+		rigs.clean();
+		drones.clean();
+		cargo.clean();
+		// Classify the contents
+		for (NeoComAsset node : contents) {
+			int flag = node.getFlag();
+			if ((flag > 10) && (flag < 19)) {
+				highModules.addChild(node);
+			} else if ((flag > 18) && (flag < 27)) {
+				medModules.addChild(node);
+			} else if ((flag > 26) && (flag < 35)) {
+				lowModules.addChild(node);
+			} else if ((flag > 91) && (flag < 100)) {
+				rigs.addChild(node);
+			} else {
+				// Check for drones
+				if (node.getCategory().equalsIgnoreCase("Drones")) {
+					drones.addChild(node);
+				} else {
+					// Contents on ships go to the cargohold.
+					cargo.addChild(node);
+				}
+			}
+		}
+		this.setDownloaded(true);
 	}
 }
 

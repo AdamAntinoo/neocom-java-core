@@ -28,7 +28,9 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public SpaceContainer() {
-		jsonClass = "Container";
+		super();
+		this.setDownloaded(false);
+		jsonClass = "SpaceContainer";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -46,11 +48,9 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		_contents = ModelAppConnector.getSingleton().getDBConnector().searchAssetContainedAt(this.getOwnerID(),
-				this.getAssetID());
 		this.clean();
 		// Classify the contents
-		for (NeoComAsset node : IAssetContainer._contents) {
+		for (NeoComAsset node : _contents) {
 			result.add(node);
 		}
 		return result;
@@ -89,7 +89,13 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 
 	@Override
 	public List<NeoComAsset> getContents() {
-		return IAssetContainer._contents;
+		return _contents;
+	}
+
+	private void downloadContainerData() {
+		_contents = (Vector<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
+				.searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
+		this.setDownloaded(true);
 	}
 }
 
