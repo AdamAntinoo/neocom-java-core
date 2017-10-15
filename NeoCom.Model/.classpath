@@ -12,5 +12,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.dimensinfin.android"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.dimensinfin.core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -33,7 +34,7 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractComplexNode implements IViewableNode {
+public class Action extends AbstractViewableNode implements IViewableNode {
 	private class TaskBundle implements Serializable {
 		private static final long	serialVersionUID	= -5450309773660347151L;
 		protected int							priority					= 999;
@@ -79,6 +80,7 @@ public class Action extends AbstractComplexNode implements IViewableNode {
 		resource.setStackSize(resource.getStackSize() + rs.getStackSize());
 	}
 
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		results.addAll(this.getTasks());
@@ -124,6 +126,7 @@ public class Action extends AbstractComplexNode implements IViewableNode {
 	public synchronized ArrayList<EveTask> getTasks() {
 		// Order the tasks and then extract them to a list.
 		Comparator<TaskBundle> orderbyPriority = new Comparator<TaskBundle>() {
+			@Override
 			public int compare(final TaskBundle left, final TaskBundle right) {
 				int leftField = left.priority;
 				int rightField = right.priority;

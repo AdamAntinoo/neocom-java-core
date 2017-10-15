@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Logger;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
@@ -36,7 +37,7 @@ import com.beimin.eveapi.response.account.AccountStatusResponse;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class NeoComApiKey extends AbstractComplexNode implements IViewableNode {
+public class NeoComApiKey extends AbstractViewableNode implements IViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 4162373120742984305L;
 	private static Logger			logger						= Logger.getLogger("NeoComApiKey");
@@ -101,6 +102,7 @@ public class NeoComApiKey extends AbstractComplexNode implements IViewableNode {
 	 * The model elements exported by this class are the characters or corporations defined for it. We should
 	 * check the different yypes but the elements exported will all share a common interface.
 	 */
+	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
 		try {

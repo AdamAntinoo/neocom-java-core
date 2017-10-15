@@ -6,18 +6,16 @@
 
 package org.dimensinfin.eveonline.neocom.model;
 
-// - IMPORT SECTION .........................................................................................
-import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
 import org.dimensinfin.eveonline.neocom.enums.ETaskType;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveTask extends AbstractComplexNode implements IViewableNode{
+public class EveTask extends AbstractViewableNode implements IViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 7187291497544861372L;
 
@@ -28,12 +26,12 @@ public class EveTask extends AbstractComplexNode implements IViewableNode{
 	private EveLocation				location					= null;
 	private EveLocation				destination				= null;
 	private String						action						= null;
-	private NeoComAsset							assetRef					= null;
+	private NeoComAsset				assetRef					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveTask(final ETaskType newType, final Resource newresource) {
-		this.type = newType;
-		setResource(newresource);
+		type = newType;
+		this.setResource(newresource);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -41,29 +39,36 @@ public class EveTask extends AbstractComplexNode implements IViewableNode{
 		this.action = action;
 	}
 
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		//		results.addAll(getTasks());
+		return results;
+	}
+
 	public EveLocation getDestination() {
-		return this.destination;
+		return destination;
 	}
 
 	public EveItem getItem() {
-		return this.resource.item;
+		return resource.item;
 	}
 
 	public String getItemName() {
-		return this.resource.item.getName();
+		return resource.item.getName();
 	}
 
 	public EveLocation getLocation() {
-		if (null == this.location) return new EveLocation();
-		return this.location;
+		if (null == location) return new EveLocation();
+		return location;
 	}
 
 	public double getPrice() {
-		return this.resource.item.getLowestSellerPrice().getPrice();
+		return resource.item.getLowestSellerPrice().getPrice();
 	}
 
 	public int getQty() {
-		return this.qty;
+		return qty;
 	}
 
 	/**
@@ -73,61 +78,58 @@ public class EveTask extends AbstractComplexNode implements IViewableNode{
 	 * @return
 	 */
 	public NeoComAsset getReferencedAsset() {
-		return this.assetRef;
+		return assetRef;
 	}
 
 	public Resource getResource() {
-		return this.resource;
+		return resource;
 	}
 
 	public ETaskType getTaskType() {
-		return this.type;
+		return type;
 	}
 
 	public int getTypeID() {
-		return this.resource.getTypeID();
+		return resource.getTypeID();
 	}
 
 	public void registerAsset(final NeoComAsset targetAsset) {
-		this.assetRef = targetAsset;
+		assetRef = targetAsset;
 	}
 
 	public void setDestination(final EveLocation newLocation) {
-		this.destination = newLocation;
+		destination = newLocation;
 	}
 
 	public void setLocation(final EveLocation newLocation) {
-		this.location = newLocation;
+		location = newLocation;
 	}
 
 	public void setQty(final int plusqty) {
-		this.qty = plusqty;
+		qty = plusqty;
 	}
 
 	public void setResource(final Resource newresource) {
-		this.resource = newresource;
+		resource = newresource;
 	}
 
 	public void setTaskType(final ETaskType newType) {
-		this.type = newType;
+		type = newType;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveTask [");
-		buffer.append(this.type).append(" [#").append(this.resource.getTypeID()).append(" ")
-				.append(this.resource.getName()).append("] ");
-		buffer.append("quantity: ").append(this.qty);
-		if (null != this.location) buffer.append(" location").append(this.location);
-		if (null != this.destination) buffer.append(" - ").append("destination").append(this.destination);
+		buffer.append(type).append(" [#").append(resource.getTypeID()).append(" ").append(resource.getName()).append("] ");
+		buffer.append("quantity: ").append(qty);
+		if (null != location) {
+			buffer.append(" location").append(location);
+		}
+		if (null != destination) {
+			buffer.append(" - ").append("destination").append(destination);
+		}
 		buffer.append(" ").append("]");
 		return buffer.toString();
-	}
-
-	public ArrayList<AbstractComplexNode> collaborate2Model(String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-//		results.addAll(getTasks());
-		return results;
 	}
 }
 
