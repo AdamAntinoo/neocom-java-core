@@ -262,7 +262,6 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 							hit.setSecurity(cursor.getString(CCPDatabaseConnector.LOCATIONBYID_SECURITY_CONINDEX));
 							// Update the final ID
 							hit.getID();
-							cursor.close();
 
 							// Location found on CCP database.
 							int hits = CCPDatabaseConnector.locationsCacheStatistics.getHits();
@@ -280,6 +279,12 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 					CCPDatabaseConnector.logger.warning(
 							"W- [AndroidDatabaseConnector.searchLocationbyID]> Location <" + fixedLocationID + "> not found.");
 				} finally {
+					try {
+						cursor.close();
+					} catch (SQLException ex) {
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+					}
 				}
 				// If the location is not cached nor in the CCP database. Return default location
 				return hit;

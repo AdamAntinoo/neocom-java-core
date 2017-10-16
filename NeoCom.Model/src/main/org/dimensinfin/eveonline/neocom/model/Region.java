@@ -92,6 +92,14 @@ public class Region extends AbstractViewableNode {
 	}
 
 	@Override
+	public boolean isEmpty() {
+		if (_locations.size() > 0)
+			return false;
+		else
+			return true;
+	}
+
+	@Override
 	public Region setDownloaded(final boolean downloadedstate) {
 		super.setDownloaded(downloadedstate);
 		return this;

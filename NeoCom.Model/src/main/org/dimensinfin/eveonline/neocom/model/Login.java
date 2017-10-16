@@ -114,6 +114,14 @@ public class Login extends AbstractViewableNode {
 		return _name;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		if (_characters.size() > 0)
+			return false;
+		else
+			return true;
+	}
+
 	/**
 	 * Search for a character with this ID on the list of characters linked to this Login.
 	 * 

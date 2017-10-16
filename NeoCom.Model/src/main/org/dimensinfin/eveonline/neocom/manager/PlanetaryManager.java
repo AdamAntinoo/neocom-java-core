@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import org.dimensinfin.android.interfaces.INamed;
 import org.dimensinfin.android.model.AbstractViewableNode;
@@ -23,41 +22,38 @@ import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long												serialVersionUID				= 3794750126425122302L;
-	private static Logger														logger									= Logger.getLogger("PlanetaryManager");
+	private static final long												serialVersionUID	= 3794750126425122302L;
+	//	private static Logger														logger						= Logger.getLogger("PlanetaryManager");
 
 	//	private final long												totalAssets							= -1;
-	private long																		verificationAssetCount	= 0;
-	public double																		totalAssetsValue				= 0.0;
-	@JsonInclude
-	public final Hashtable<Long, Region>						regions									= new Hashtable<Long, Region>();
-	private final Hashtable<Long, EveLocation>			locations								= new Hashtable<Long, EveLocation>();
-	private final Hashtable<Long, NeoComAsset>			containers							= new Hashtable<Long, NeoComAsset>();
-	private final Hashtable<Long, Ship>							ships										= new Hashtable<Long, Ship>();
+	private long																		assetCount				= 0;
+	public double																		totalAssetsValue	= 0.0;
+	//	@JsonInclude
+	//	public final Hashtable<Long, Region>						regions						= new Hashtable<Long, Region>();
+	//	private final Hashtable<Long, EveLocation>			locations					= new Hashtable<Long, EveLocation>();
+	//	private final Hashtable<Long, NeoComAsset>			containers				= new Hashtable<Long, NeoComAsset>();
+	//	private final Hashtable<Long, Ship>							ships							= new Hashtable<Long, Ship>();
 	//	@JsonIgnore
 	//	public ArrayList<NeoComAsset>									planetaryAssetList			= null;
-	public String																		iconName								= "planets.png";
+	public String																		iconName					= "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
 	/** Shared field to allow to share the list of assets to process between methods during the processing. */
 	@JsonIgnore
-	private transient Hashtable<Long, NeoComAsset>	assetMap								= new Hashtable<Long, NeoComAsset>();
+	private transient Hashtable<Long, NeoComAsset>	assetMap					= new Hashtable<Long, NeoComAsset>();
 
-	private SpaceContainer													container								= null;
+	private SpaceContainer													container					= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryManager(final NeoComCharacter pilot) {
@@ -77,12 +73,11 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		regions.clear();
 		locations.clear();
 		containers.clear();
-		// Get all the assets of the Planetary categories.
-		int assetCounter = 0;
 		try {
 			// Read all the assets for this character if not done already.
 			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
 					.accessAllPlanetaryAssets(this.getPilot().getCharacterID());
+			assetCount = planetaryAssetList.size();
 			// Process the Resources and search for the parent assets to classify them into the Locations.
 			for (NeoComAsset resource : planetaryAssetList) {
 				// Check if the Resource has a parent.
@@ -90,38 +85,27 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 					// Get access to the parent and its Location and add it to the Locations list it it is the top of the chain.
 					NeoComAsset parentRef = this.processParent(resource.getParentContainer());
 					if (null != parentRef) {
-						if (parentRef instanceof IAssetContainer) {
-							((IAssetContainer) parentRef).addContent(resource);
+						if (parentRef.isContainer()) {
+							SpaceContainer cont = new SpaceContainer().copyFrom(parentRef);
+							this.add2Container(resource, cont);
+							continue;
+						}
+						if (parentRef.isShip()) {
+							Ship cont = new Ship().copyFrom(parentRef);
+							this.add2Container(resource, cont);
+							continue;
 						}
 					}
 				} else {
 					this.add2Location(resource);
 				}
 			}
-
-			//			// Move the list to a processing map.
-			//			assetMap = new Hashtable<Long, NeoComAsset>(planetaryAssetList.size());
-			//			for (NeoComAsset asset : planetaryAssetList) {
-			//				assetMap.put(asset.getAssetID(), asset);
-			//			}
-			//			// Process the map until all elements are removed.
-			//			Long key = assetMap.keySet().iterator().next();
-			//			NeoComAsset point = assetMap.get(key);
-			//			while (null != point) {
-			//			assetCounter++;
-			//			this.processElement(point);
-			//			key = assetMap.keySet().iterator().next();
-			//			point = assetMap.get(key);
-			//			}
-			//		} catch (NoSuchElementException nsee) {
-			//			// Reached the end of the list of assets to process.
-			//			PlanetaryManager.logger.info("-- [AssetsManager.accessAllAssets]> No more assets to process");
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			PlanetaryManager.logger.severe(
-					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+			PlanetaryManager.logger
+					.severe("RTEX> [PlanetaryManager.accessAllAssets]> There is a problem processing the Planetary Resources.");
 		} finally {
-			PlanetaryManager.logger.info("-- [AssetsManager.accessAllAssets]> Assets processed: " + assetCounter);
+			PlanetaryManager.logger.info(">< [AssetsManager.accessAllAssets]> Assets processed: " + assetCount);
 		}
 	}
 
@@ -166,7 +150,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		if (!this.isInitialized()) {
 			this.initialize();
 		}
-		return verificationAssetCount;
+		return assetCount;
 		//		if (null == planetaryAssetList)
 		//			return 0;
 		//		else
@@ -204,17 +188,17 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		return "Planetary Manager";
 	}
 
-	/**
-	 * Returns the list of different Regions found on the list of locations.
-	 * 
-	 * @return
-	 */
-	public Hashtable<Long, Region> getRegions() {
-		if (!this.isInitialized()) {
-			this.initialize();
-		}
-		return regions;
-	}
+	//	/**
+	//	 * Returns the list of different Regions found on the list of locations.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public Hashtable<Long, Region> getRegions() {
+	//		if (!this.isInitialized()) {
+	//			this.initialize();
+	//		}
+	//		return regions;
+	//	}
 
 	@Override
 	public AbstractManager initialize() {
@@ -235,78 +219,85 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			return super.isInitialized();
 	}
 
-	/**
-	 * Search for this container reference on this Location's children until found. Then aggregates the asset to
-	 * that container calculating stacking if this is possible. There can be containers inside container like
-	 * the case where a container is on the hols of a ship. That special case will not be implemented on this
-	 * first approach and all the container will be located at the Location's hangar floor.<br>
-	 * Containers also do not have its market value added to the location's aggregation.
-	 * 
-	 * @param apart
-	 */
-	private void add2Container(final NeoComAsset asset) {
-		PlanetaryManager.logger.info(">> LocationAssetsPart.add2Container");
-		// Locate the container if already added to the location.
-		NeoComAsset cont = asset.getParentContainer();
-		// TODO Check what is the cause of a parent container null and solve it
-		if (null != cont) {
-			long pcid = cont.getDAOID();
-			NeoComAsset target = containers.get(pcid);
-			if (null == target) {
-				// Add the container to the list of containers.
-				PlanetaryManager.logger
-						.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
-				containers.put(new Long(pcid), cont);
-				// Add the container to the list of locations or to another container if not child
-				//			if (asset.hasParent()) {
-				//				add2Container(cont);
-				//			} else {
-				//				add2Location(cont);
-				//			}
-			} else {
-				// Add the asset to the children list of the target container
-				target.addChild(asset);
-			}
-		} else {
-			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
-			long id = asset.getParentContainerId();
-			NeoComAsset parentAssetCache = ModelAppConnector.getSingleton().getDBConnector()
-					.searchAssetByID(asset.getParentContainerId());
-		}
-		// This is an Unknown location that should be a Custom Office
-	}
-
-	private void add2Container(final NeoComAsset asset, final NeoComAsset target) {
-		long id = asset.getLocationID();
-		NeoComAsset subtarget = containers.get(id);
-		if (null == subtarget) {
-			target.addChild(asset);
-			containers.put(target.getAssetID(), target);
-			this.add2Location(target);
-		}
-		subtarget.addChild(asset);
-	}
-
-	private void add2Location(final NeoComAsset asset) {
-		long locid = asset.getLocationID();
-		EveLocation target = locations.get(locid);
-		if (null == target) {
-			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
-			locations.put(new Long(locid), target);
-			this.add2Region(target);
-		}
-		target.addChild(asset);
-	}
-
-	private void add2Region(final EveLocation target) {
-		long regionid = target.getRegionID();
-		Region region = regions.get(regionid);
-		if (null == region) {
-			region = new Region(target.getRegion());
-			regions.put(new Long(regionid), region);
-		}
-		region.addLocation(target);
-	}
+	//	/**
+	//	 * Search for this container reference on this Location's children until found. Then aggregates the asset to
+	//	 * that container calculating stacking if this is possible. There can be containers inside container like
+	//	 * the case where a container is on the hold of a ship. That special case will not be implemented on this
+	//	 * first approach and all the container will be located at the Location's hangar floor.<br>
+	//	 * Containers also do not have its market value added to the location's aggregation.
+	//	 * 
+	//	 * @param apart
+	//	 */
+	//	private void add2Container(final NeoComAsset asset) {
+	//		PlanetaryManager.logger.info(">> LocationAssetsPart.add2Container");
+	//		// Locate the container if already added to the location.
+	//		NeoComAsset cont = asset.getParentContainer();
+	//		// TODO Check what is the cause of a parent container null and solve it
+	//		if (null != cont) {
+	//			long pcid = cont.getDAOID();
+	//			NeoComAsset target = containers.get(pcid);
+	//			if (null == target) {
+	//				// Add the container to the list of containers.
+	//				PlanetaryManager.logger
+	//						.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
+	//				containers.put(new Long(pcid), cont);
+	//				// Add the container to the list of locations or to another container if not child
+	//				//			if (asset.hasParent()) {
+	//				//				add2Container(cont);
+	//				//			} else {
+	//				//				add2Location(cont);
+	//				//			}
+	//			} else {
+	//				// Add the asset to the children list of the target container
+	//				target.addChild(asset);
+	//			}
+	//		} else {
+	//			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
+	//			long id = asset.getParentContainerId();
+	//			NeoComAsset parentAssetCache = ModelAppConnector.getSingleton().getDBConnector()
+	//					.searchAssetByID(asset.getParentContainerId());
+	//		}
+	//		// This is an Unknown location that should be a Custom Office
+	//	}
+	//	/**
+	//	 * This adds the Asset to the target Container. If the Container is not already on the list of Containers
+	//	 * then it is addeed to that list no other assets get added to the same Container. The same with the
+	//	 * Location of the container. The Container is then added to its own Location.
+	//	 * 
+	//	 * @param asset
+	//	 * @param target
+	//	 */
+	//	private void add2Container(final NeoComAsset asset, final NeoComAsset target) {
+	//		long id = asset.getLocationID();
+	//		NeoComAsset subtarget = containers.get(id);
+	//		if (null == subtarget) {
+	//			target.addChild(asset);
+	//			containers.put(target.getAssetID(), target);
+	//			this.add2Location(target);
+	//		}
+	//		subtarget.addChild(asset);
+	//	}
+	//
+	//	private void add2Location(final NeoComAsset asset) {
+	//		long locid = asset.getLocationID();
+	//		EveLocation target = locations.get(locid);
+	//		if (null == target) {
+	//			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
+	//			locations.put(new Long(locid), target);
+	//			this.add2Region(target);
+	//		}
+	//		target.addChild(asset);
+	//	}
+	//
+	//	private void add2Region(final EveLocation target) {
+	//		long regionid = target.getRegionID();
+	//		Region region = regions.get(regionid);
+	//		if (null == region) {
+	//			region = new Region(target.getRegion());
+	//			regions.put(new Long(regionid), region);
+	//		}
+	//		region.addLocation(target);
+	//	}
 
 	private boolean isContainer(final long identifier) {
 		// Search for this asset on the database. If it is a ship or a container, add it to the list of assets.
@@ -339,7 +330,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			// Remove the element from the map.
 			assetMap.remove(asset.getAssetID());
 			// Add the asset to the verification count.
-			verificationAssetCount++;
+			assetCount++;
 			// Add the asset value to the owner balance.
 			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container
@@ -349,7 +340,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
 					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
-					ships.put(ship.getAssetID(), ship);
+					//					ships.put(ship.getAssetID(), ship);
 					// The ship is a container so add it and forget about this asset.
 					if (ship.hasParent()) {
 						this.processElement(ship.getParentContainer());
@@ -460,10 +451,10 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			return target;
 		} else {
 			// Get the asset (a Container or a Ship) and add it to the chain.
-			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
-			if (null != target) {
-				this.add2Location(target);
-				return target;
+			//			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
+			if (null != parent) {
+				this.add2Location(parent);
+				return parent;
 			} else
 				return null;
 		}

@@ -94,6 +94,8 @@ public interface IDatabaseConnector {
 
 	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
+	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName);
+
 	public List<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 
 	public NeoComAsset searchAssetByID(long parentAssetID);

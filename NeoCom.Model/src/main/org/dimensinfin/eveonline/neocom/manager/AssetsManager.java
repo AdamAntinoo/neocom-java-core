@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -28,7 +29,6 @@ import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -36,6 +36,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
+import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -75,10 +76,10 @@ import com.j256.ormlite.stmt.Where;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AssetsManager extends AbstractManager implements INamed {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long																serialVersionUID				= -8502099148768297876L;
-	private static Logger																		logger									= Logger.getLogger("AssetsManager");
+	private static final long																serialVersionUID			= -8502099148768297876L;
+	private static Logger																		logger								= Logger.getLogger("AssetsManager");
 
-	private transient Dao<NeoComAsset, String>							assetDao								= null;
+	private transient Dao<NeoComAsset, String>							assetDao							= null;
 
 	// - L O C A T I O N   M A N A G E M E N T
 	//	private int																							locationCount						= -1;
@@ -86,36 +87,36 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//	private ArrayList<EveLocation>													locationsList						= null;
 
 	// - A S S E T   M A N A G E M E N T
-	private long																						totalAssets							= -1;
-	private long																						verificationAssetCount	= 0;
+	private long																						totalAssets						= -1;
+	//	private long																						verificationAssetCount	= 0;
 	@JsonInclude
-	public double																						totalAssetsValue				= 0.0;
-	public final HashMap<Long, Region>											regions									= new HashMap<Long, Region>();
-	private final HashMap<Long, EveLocation>								locations								= new HashMap<Long, EveLocation>();
-	private final HashMap<Long, NeoComAsset>								containers							= new HashMap<Long, NeoComAsset>();
-	private TimeStamp																				assetsCacheTime					= null;;
+	public double																						totalAssetsValue			= 0.0;
+	//	public final HashMap<Long, Region>											regions								= new HashMap<Long, Region>();
+	//	private final HashMap<Long, EveLocation>								locations							= new HashMap<Long, EveLocation>();
+	//	private final HashMap<Long, NeoComAsset>								containers						= new HashMap<Long, NeoComAsset>();
+	private TimeStamp																				assetsCacheTime				= null;;
 
 	/** Probably redundant with containers. */
-	private final HashMap<Long, NeoComAsset>								assetsAtContainer				= new HashMap<Long, NeoComAsset>();
+	private final HashMap<Long, NeoComAsset>								assetsAtContainer			= new HashMap<Long, NeoComAsset>();
 	/** The new list of ships with their state and their contents. An extension of containers. */
-	private final HashMap<Long, NeoComAsset>								ships										= new HashMap<Long, NeoComAsset>();
-	private final HashMap<Long, ArrayList<NeoComAsset>>			assetsAtLocationCache		= new HashMap<Long, ArrayList<NeoComAsset>>();
-	private final HashMap<String, ArrayList<NeoComAsset>>		assetsAtCategoryCache		= new HashMap<String, ArrayList<NeoComAsset>>();
-	private final HashMap<Integer, ArrayList<NeoComAsset>>	stacksByItemCache				= new HashMap<Integer, ArrayList<NeoComAsset>>();
+	private final HashMap<Long, NeoComAsset>								ships									= new HashMap<Long, NeoComAsset>();
+	private final HashMap<Long, ArrayList<NeoComAsset>>			assetsAtLocationCache	= new HashMap<Long, ArrayList<NeoComAsset>>();
+	private final HashMap<String, ArrayList<NeoComAsset>>		assetsAtCategoryCache	= new HashMap<String, ArrayList<NeoComAsset>>();
+	private final HashMap<Integer, ArrayList<NeoComAsset>>	stacksByItemCache			= new HashMap<Integer, ArrayList<NeoComAsset>>();
 	/** The complete list of blueprints maybe is not used */
-	private final ArrayList<NeoComBlueprint>								blueprintCache					= new ArrayList<NeoComBlueprint>();
-	private final ArrayList<NeoComBlueprint>								t1BlueprintCache				= new ArrayList<NeoComBlueprint>();
-	private final ArrayList<NeoComBlueprint>								t2BlueprintCache				= new ArrayList<NeoComBlueprint>();
-	private final ArrayList<NeoComBlueprint>								bpoCache								= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								blueprintCache				= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								t1BlueprintCache			= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								t2BlueprintCache			= new ArrayList<NeoComBlueprint>();
+	private final ArrayList<NeoComBlueprint>								bpoCache							= new ArrayList<NeoComBlueprint>();
 
-	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache							= new HashMap<Long, ArrayList<NeoComAsset>>();
-	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
-	public String																						iconName								= "assets.png";
+	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
+	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache					= new HashMap<Long, ArrayList<NeoComAsset>>();
+	public String																						iconName							= "assets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
-	private transient HashMap<Long, NeoComAsset>						assetMap								= new HashMap<Long, NeoComAsset>();
-	private Vector<NeoComAsset>															unlocatedAssets					= null;
+	private transient HashMap<Long, NeoComAsset>						assetMap							= new HashMap<Long, NeoComAsset>();
+	private Vector<NeoComAsset>															unlocatedAssets				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetsManager(final NeoComCharacter pilot) {
@@ -363,10 +364,10 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * 
 	 * @return
 	 */
-	public HashMap<Long, EveLocation> getLocations() {
+	public Hashtable<Long, EveLocation> getLocations() {
 		// If the list is empty the go to the database and get the assets
 		if (null == locations) {
-			this.accessAllAssets();
+			this.initialize();
 		}
 		return locations;
 	}
@@ -381,11 +382,16 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * 
 	 * @return
 	 */
-	public HashMap<Long, Region> getRegions() {
+	@Override
+	public Hashtable<Long, Region> getRegions() {
 		if (!this.isInitialized()) {
 			this.initialize();
 		}
 		return regions;
+	}
+
+	public List<NeoComAsset> getShips() {
+		return this.searchAsset4Category("Ship");
 	}
 
 	//	public int getLocationCount() {
@@ -394,10 +400,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		}
 	//		return locationCount;
 	//	}
-
-	public ArrayList<NeoComAsset> getShips() {
-		return this.searchAsset4Category("Ship");
-	}
 
 	/**
 	 * This is the initialization code that we should always use when we need to operate with a loaded
@@ -410,7 +412,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 */
 	@Override
 	public AssetsManager initialize() {
-		// INITIALIZE - Initialize the number os assets.
+		// INITIALIZE - Initialize the number of assets.
 		this.getAssetTotalCount();
 		// INITIALIZE - Initialize the Locations and the Regions
 		List<NeoComAsset> locs = ModelAppConnector.getSingleton().getDBConnector()
@@ -422,33 +424,33 @@ public class AssetsManager extends AbstractManager implements INamed {
 			long locid = asset.getLocationID();
 			this.processLocation(locid);
 		}
-		containers.clear();
-		// Process the containers to locate new dependencies.
-		List<NeoComAsset> conts = ModelAppConnector.getSingleton().getDBConnector()
-				.queryAllAssetContainers(this.getPilot().getCharacterID());
-		for (NeoComAsset asset : conts) {
-			long id = asset.getParentContainerId();
-			if (id < 0) {
-				// This is an asset already located.
-				continue;
-			}
-			if (containers.containsKey(id)) {
-				continue;
-			} else {
-				// Search this identifier as an extended location or as an asset.
-				EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(id);
-				if (location.isUnknown()) {
-					NeoComAsset container = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(id);
-					if (null == container) {
-						continue;
-					}
-					containers.put(id, container);
-					// Now Process the Location for this Container.
-					this.processLocation(container.getLocationID());
-				}
-				this.processLocation(id);
-			}
-		}
+		//		containers.clear();
+		//		// Process the containers to locate new dependencies.
+		//		List<NeoComAsset> conts = ModelAppConnector.getSingleton().getDBConnector()
+		//				.queryAllAssetContainers(this.getPilot().getCharacterID());
+		//		for (NeoComAsset asset : conts) {
+		//			long id = asset.getParentContainerId();
+		//			if (id < 0) {
+		//				// This is an asset already located.
+		//				continue;
+		//			}
+		//			if (containers.containsKey(id)) {
+		//				continue;
+		//			} else {
+		//				// Search this identifier as an extended location or as an asset.
+		//				EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(id);
+		//				if (location.isUnknown()) {
+		//					NeoComAsset container = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(id);
+		//					if (null == container) {
+		//						continue;
+		//					}
+		//					containers.put(id, container);
+		//					// Now Process the Location for this Container.
+		//					this.processLocation(container.getLocationID());
+		//				}
+		//				this.processLocation(id);
+		//			}
+		//		}
 		initialized = true;
 		return this;
 	}
@@ -460,36 +462,19 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * @param category
 	 * @return
 	 */
-	public ArrayList<NeoComAsset> searchAsset4Category(final String category) {
+	public List<NeoComAsset> searchAsset4Category(final String category) {
 		//	Select assets for the owner and with an specific category.
 		List<NeoComAsset> assetsCategoryList = new ArrayList<NeoComAsset>();
 		assetsCategoryList = assetsAtCategoryCache.get(category);
 		if (null == assetsCategoryList) {
-			try {
-				this.accessDao();
-				ModelAppConnector.getSingleton().startChrono();
-				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
-				Where<NeoComAsset, String> where = queryBuilder.where();
-				where.eq("ownerID", this.getPilot().getCharacterID());
-				where.and();
-				where.eq("category", category);
-				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
-				assetsCategoryList = assetDao.query(preparedQuery);
-				Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-				AssetsManager.logger.info("~~ Time lapse for [SELECT CATEGORY=" + category + " OWNERID = "
-						+ this.getPilot().getCharacterID() + "] - " + lapse);
-				assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
-				// Update the dirty state to signal modification of store structures.
-				//				setDirty(true);
-			} catch (java.sql.SQLException sqle) {
-				sqle.printStackTrace();
-			}
+			assetsCategoryList = ModelAppConnector.getSingleton().getDBConnector()
+					.searchAsset4Category(this.getPilot().getCharacterID(), category);
+			assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
 		} else {
-			AssetsManager.logger
-					.info("~~ Cache hit [SELECT CATEGORY=" + category + " OWNERID = " + this.getPilot().getCharacterID() + "]");
+			AssetsManager.logger.info("~~ [AssetsManager.searchAsset4Category]> Cache hit [SELECT CATEGORY=" + category
+					+ " OWNERID = " + this.getPilot().getCharacterID() + "]");
 		}
-
-		return (ArrayList<NeoComAsset>) assetsCategoryList;
+		return assetsCategoryList;
 	}
 
 	public ArrayList<NeoComAsset> searchAsset4Group(final String group) {
@@ -855,67 +840,67 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 	}
 
-	/**
-	 * Search for this container reference on this Location's children until found. Then aggregates the asset to
-	 * that container calculating stacking if this is possible. There can be containers inside container like
-	 * the case where a container is on the hols of a ship. That special case will not be implemented on this
-	 * first approach and all the container will be located at the Location's hangar floor.<br>
-	 * Containers also do not have its market value added to the location's aggregation.
-	 * 
-	 * @param apart
-	 */
-	private void add2Container(final NeoComAsset asset) {
-		AssetsManager.logger.info(">> LocationAssetsPart.add2Container");
-		// Locate the container if already added to the location.
-		NeoComAsset cont = asset.getParentContainer();
-		// TODO Check what is the cause of a parent container null and solve it
-		if (null != cont) {
-			long pcid = cont.getDAOID();
-			NeoComAsset target = containers.get(pcid);
-			if (null == target) {
-				// Add the container to the list of containers.
-				AssetsManager.logger
-						.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
-				containers.put(new Long(pcid), cont);
-				// Add the container to the list of locations or to another container if not child
-				//			if (asset.hasParent()) {
-				//				add2Container(cont);
-				//			} else {
-				//				add2Location(cont);
-				//			}
-			} else {
-				// Add the asset to the children list of the target container
-				target.addChild(asset);
-			}
-		} else {
-			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
-			long id = asset.getParentContainerId();
-			NeoComAsset parentAssetCache = ModelAppConnector.getSingleton().getDBConnector()
-					.searchAssetByID(asset.getParentContainerId());
-		}
-		// This is an Unknown location that should be a Custom Office
-	}
-
-	private void add2Location(final NeoComAsset asset) {
-		long locid = asset.getLocationID();
-		EveLocation target = locations.get(locid);
-		if (null == target) {
-			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
-			locations.put(new Long(locid), target);
-			this.add2Region(target);
-		}
-		target.addChild(asset);
-	}
-
-	private void add2Region(final EveLocation target) {
-		long regionid = target.getRegionID();
-		Region region = regions.get(regionid);
-		if (null == region) {
-			region = new Region(target.getRegion());
-			regions.put(new Long(regionid), region);
-		}
-		region.addLocation(target);
-	}
+	//	/**
+	//	 * Search for this container reference on this Location's children until found. Then aggregates the asset to
+	//	 * that container calculating stacking if this is possible. There can be containers inside container like
+	//	 * the case where a container is on the hols of a ship. That special case will not be implemented on this
+	//	 * first approach and all the container will be located at the Location's hangar floor.<br>
+	//	 * Containers also do not have its market value added to the location's aggregation.
+	//	 * 
+	//	 * @param apart
+	//	 */
+	//	private void add2Container(final NeoComAsset asset) {
+	//		AssetsManager.logger.info(">> LocationAssetsPart.add2Container");
+	//		// Locate the container if already added to the location.
+	//		NeoComAsset cont = asset.getParentContainer();
+	//		// TODO Check what is the cause of a parent container null and solve it
+	//		if (null != cont) {
+	//			long pcid = cont.getDAOID();
+	//			NeoComAsset target = containers.get(pcid);
+	//			if (null == target) {
+	//				// Add the container to the list of containers.
+	//				AssetsManager.logger
+	//						.info("-- [AssetsByLocationDataSource.add2Container]> Created new container: " + cont.getDAOID());
+	//				containers.put(new Long(pcid), cont);
+	//				// Add the container to the list of locations or to another container if not child
+	//				//			if (asset.hasParent()) {
+	//				//				add2Container(cont);
+	//				//			} else {
+	//				//				add2Location(cont);
+	//				//			}
+	//			} else {
+	//				// Add the asset to the children list of the target container
+	//				target.addChild(asset);
+	//			}
+	//		} else {
+	//			// Investigate why the container is null. And maybe we should search for it because it is not our asset.
+	//			long id = asset.getParentContainerId();
+	//			NeoComAsset parentAssetCache = ModelAppConnector.getSingleton().getDBConnector()
+	//					.searchAssetByID(asset.getParentContainerId());
+	//		}
+	//		// This is an Unknown location that should be a Custom Office
+	//	}
+	//
+	//	private void add2Location(final NeoComAsset asset) {
+	//		long locid = asset.getLocationID();
+	//		EveLocation target = locations.get(locid);
+	//		if (null == target) {
+	//			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
+	//			locations.put(new Long(locid), target);
+	//			this.add2Region(target);
+	//		}
+	//		target.addChild(asset);
+	//	}
+	//
+	//	private void add2Region(final EveLocation target) {
+	//		long regionid = target.getRegionID();
+	//		Region region = regions.get(regionid);
+	//		if (null == region) {
+	//			region = new Region(target.getRegion());
+	//			regions.put(new Long(regionid), region);
+	//		}
+	//		region.addLocation(target);
+	//	}
 
 	/**
 	 * Stacks blueprints that are equal and that are located on the same location. The also should be inside the
@@ -1050,7 +1035,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			// Remove the element from the map.
 			assetMap.remove(asset.getAssetID());
 			// Add the asset to the verification count.
-			verificationAssetCount++;
+			//			verificationAssetCount++;
 			// Add the asset value to the owner balance.
 			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container

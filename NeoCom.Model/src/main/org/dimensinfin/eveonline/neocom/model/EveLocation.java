@@ -81,16 +81,17 @@ public class EveLocation extends AbstractViewableNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
+		this.setDownloaded(false);
+		this.setRenderWhenEmpty(false);
 		jsonClass = "EveLocation";
 	}
 
 	public EveLocation(final long locationID) {
-		jsonClass = "EveLocation";
 		stationID = locationID;
 	}
 
 	public EveLocation(final long citadelid, final Citadel cit) {
-		jsonClass = "EveLocation";
+		super();
 		try {
 			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
@@ -111,7 +112,7 @@ public class EveLocation extends AbstractViewableNode {
 	 * @param out
 	 */
 	public EveLocation(final Outpost out) {
-		jsonClass = "EveLocation";
+		super();
 		try {
 			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -128,7 +129,7 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	public EveLocation(final Station station) {
-		jsonClass = "EveLocation";
+		super();
 		try {
 			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -162,13 +163,18 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	/**
-	 * Ship locations collaborate to the model by adding all their children because we store there the items
-	 * located at the selected real location.
+	 * Locations collaborate to the model by adding all their contents if already downloaded. If not downloaded
+	 * but are being expanded then we should first download all their contents and process them into the model
+	 * before generating a new collaboration hierarchy.<br>
+	 * During the obtention of the contents we check the download state to download the items if not already
+	 * done.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results = this.concatenateChildren(results, this.getChildren());
+		if (this.isExpanded()) {
+			results.addAll(this.getContents(true));
+		}
 		return results;
 	}
 
@@ -201,9 +207,9 @@ public class EveLocation extends AbstractViewableNode {
 		return constellationID;
 	}
 
-	public int getContentCount() {
-		return contents.size();
-	}
+	//	public int getContentCount() {
+	//		return contents.size();
+	//	}
 
 	/**
 	 * This operation should control the download state for the contents of this location. If the Location is
@@ -305,6 +311,14 @@ public class EveLocation extends AbstractViewableNode {
 
 	public final boolean isCitadel() {
 		return citadel;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		if (this.isDownloaded())
+			return (contents.size() > 0) ? false : true;
+		else
+			return false;
 	}
 
 	public final boolean isRegion() {

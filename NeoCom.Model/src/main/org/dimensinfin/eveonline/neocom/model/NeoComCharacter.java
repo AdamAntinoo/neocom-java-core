@@ -448,7 +448,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	 */
 	@JsonIgnore
 	public EveLocation getDefaultLocation() {
-		return this.getAssetsManager().getLocations().values().iterator().next();
+		return this.getAssetsManager().initialize().getLocations().values().iterator().next();
 	}
 
 	@JsonIgnore
@@ -691,15 +691,15 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		lastCCPAccessTime = new Instant(cachedUntil);
 	}
 
-	/**
-	 * Updates the list of assets, regions and locations from the database. This code will initialize the
-	 * AssetsManager with that information on application load preferably and that lengthy operation will be
-	 * done on background. After this call the list of assets by location is accessible with just a call.
-	 */
-	protected void accessAllAssets() {
-		// Do this on the assets manager or create one is reuired.
-		this.getAssetsManager().accessAllAssets();
-	}
+	//	/**
+	//	 * Updates the list of assets, regions and locations from the database. This code will initialize the
+	//	 * AssetsManager with that information on application load preferably and that lengthy operation will be
+	//	 * done on background. After this call the list of assets by location is accessible with just a call.
+	//	 */
+	//	protected void accessAllAssets() {
+	//		// Do this on the assets manager or create one is reuired.
+	//		this.getAssetsManager().accessAllAssets();
+	//	}
 
 	protected double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
