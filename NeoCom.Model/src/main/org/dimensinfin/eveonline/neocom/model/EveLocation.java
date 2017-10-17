@@ -19,6 +19,7 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -77,7 +78,8 @@ public class EveLocation extends AbstractViewableNode {
 	//	protected String structureName="-NOT-STRUCTURE-";
 	protected boolean					citadel						= false;
 	public String							urlLocationIcon		= null;
-	public List<NeoComAsset>	contents					= new Vector<NeoComAsset>();
+	@JsonIgnore
+	private List<NeoComAsset>	contents					= new Vector<NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
@@ -87,11 +89,12 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	public EveLocation(final long locationID) {
+		this();
 		stationID = locationID;
 	}
 
 	public EveLocation(final long citadelid, final Citadel cit) {
-		super();
+		this();
 		try {
 			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
@@ -112,7 +115,7 @@ public class EveLocation extends AbstractViewableNode {
 	 * @param out
 	 */
 	public EveLocation(final Outpost out) {
-		super();
+		this();
 		try {
 			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -129,7 +132,7 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	public EveLocation(final Station station) {
-		super();
+		this();
 		try {
 			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
@@ -173,7 +176,19 @@ public class EveLocation extends AbstractViewableNode {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (this.isExpanded()) {
-			results.addAll(this.getContents(true));
+			if (this.isDownloaded()) {
+				results.addAll(contents);
+			} else {
+				//				if (download) {
+				if (variant == ENeoComVariants.ASSETS_BYLOCATION.name()) {
+					contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(id);
+				}
+				if (variant == ENeoComVariants.PLANETARY_BYLOCATION.name()) {
+					contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationPlanetaryContents(id);
+				}
+				this.setDownloaded(true);
+				results.addAll(contents);
+			}
 		}
 		return results;
 	}
@@ -207,9 +222,15 @@ public class EveLocation extends AbstractViewableNode {
 		return constellationID;
 	}
 
-	//	public int getContentCount() {
-	//		return contents.size();
-	//	}
+	public int getContentCount() {
+		if (this.isExpanded()) {
+			if (this.isDownloaded())
+				return contents.size();
+			else
+				return ModelAppConnector.getSingleton().getDBConnector().totalLocationContentCount(this.getID());
+		}
+		return contents.size();
+	}
 
 	/**
 	 * This operation should control the download state for the contents of this location. If the Location is
@@ -218,17 +239,25 @@ public class EveLocation extends AbstractViewableNode {
 	 * 
 	 * @return
 	 */
-	@JsonInclude
+	@JsonIgnore
 	public List<NeoComAsset> getContents() {
 		return this.getContents(false);
 	}
 
+	/**
+	 * The identifier to get the contents can change depending on the Locattion type. I have found that for
+	 * Citadels the resources are under the <code>parentAssetID</code> and not the <code>locationID</code>.
+	 * 
+	 * @param download
+	 * @return
+	 */
+	@JsonIgnore
 	public List<NeoComAsset> getContents(final boolean download) {
 		if (this.isDownloaded())
 			return contents;
 		else {
 			if (download) {
-				contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID());
+				contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(id);
 				this.setDownloaded(true);
 			}
 			return contents;
@@ -310,7 +339,8 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	public final boolean isCitadel() {
-		return citadel;
+		if (this.getTypeID() == ELocationType.CITADEL) return true;
+		return false;
 	}
 
 	@Override
@@ -333,6 +363,7 @@ public class EveLocation extends AbstractViewableNode {
 		return ((this.getStationID() == 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
 	}
 
+	@JsonIgnore
 	public final boolean isUnknown() {
 		return (id == -2);
 	}

@@ -25,7 +25,12 @@ public class Region extends AbstractViewableNode {
 	private String												_title						= "-DEEP SPACE-";
 	private final ArrayList<EveLocation>	_locations				= new ArrayList<EveLocation>();
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	//- C O N S T R U C T O R - S E C T I O N ................................................................
+	public Region() {
+		this.setDownloaded(true);
+		jsonClass = "Region";
+	}
+
 	/**
 	 * If the region id is -1 this means that this is probable coming from an space structure not registered on
 	 * CCP data. So we can assume that this is a User Structure in an unknown place of space.
@@ -34,8 +39,6 @@ public class Region extends AbstractViewableNode {
 	 * @param regionName
 	 */
 	public Region(final long regionid, final String regionName) {
-		//		super(regionName);
-		jsonClass = "Region";
 		// If undefined update the name.
 		if (-1 == regionid) {
 			this.setTitle("-DEEP SPACE-");
@@ -43,11 +46,11 @@ public class Region extends AbstractViewableNode {
 	}
 
 	public Region(final String title) {
-		//		super(title);
+		this();
 		_title = title;
-		jsonClass = "Region";
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	@Deprecated
 	@Override
 	public void addChild(final IGEFNode child) {
@@ -56,20 +59,25 @@ public class Region extends AbstractViewableNode {
 		}
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addLocation(final EveLocation target) {
 		if (null != target) {
 			_locations.add(target);
 		}
 	}
 
+	/**
+	 * Check visibility and extension before selecting what collaborates.
+	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll(_locations);
+		if (this.isVisible()) if (this.isExpanded()) {
+			results.addAll(this.getLocations());
+		}
 		return results;
 	}
 
+	@Deprecated
 	@Override
 	public Vector<IGEFNode> getChildren() {
 		Vector<IGEFNode> result = new Vector<IGEFNode>(_locations.size());
@@ -93,10 +101,7 @@ public class Region extends AbstractViewableNode {
 
 	@Override
 	public boolean isEmpty() {
-		if (_locations.size() > 0)
-			return false;
-		else
-			return true;
+		return (_locations.size() > 0) ? false : true;
 	}
 
 	@Override

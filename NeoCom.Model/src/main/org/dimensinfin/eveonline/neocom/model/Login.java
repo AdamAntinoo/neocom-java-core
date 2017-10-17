@@ -89,13 +89,7 @@ public class Login extends AbstractViewableNode {
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		if (this.isVisible()) if (this.isExpanded()) {
-			//			results.add(new Separator());
-			//			if (_characters.size() < 1) {
-			//				results.add(new Separator().setType(ESeparatorType.EMPTY_SIGNAL));
-			//			} else {
 			results.addAll(this.getCharacters());
-			//			}
-			//			results.add(new Separator());
 		}
 		return results;
 	}

@@ -286,19 +286,19 @@ public class AssetsManager extends AbstractManager implements INamed {
 				}
 				// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
 				for (NeoComAsset asset : unlocatedAssets) {
-					ELocationType validation = this.validateLocation(asset);
+					this.validateLocation(asset);
 				}
-			}
-			// Assign the assets to the pilot.
-			synchronized (dbConn) {
-				dbConn.replaceAssets(this.getPilot().getCharacterID());
-			}
-			// Update the caching time to the time set by the eveapi.
-			String reference = this.getPilot().getCharacterID() + ".ASSETS";
-			if (null == assetsCacheTime) {
-				assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
-			} else {
-				assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+				// Assign the assets to the pilot.
+				synchronized (dbConn) {
+					dbConn.replaceAssets(this.getPilot().getCharacterID());
+				}
+				// Update the caching time to the time set by the eveapi.
+				String reference = this.getPilot().getCharacterID() + ".ASSETS";
+				if (null == assetsCacheTime) {
+					assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+				} else {
+					assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+				}
 			}
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
@@ -377,18 +377,18 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return "Assets Manager";
 	}
 
-	/**
-	 * Returns the list of different Regions found on the list of locations.
-	 * 
-	 * @return
-	 */
-	@Override
-	public Hashtable<Long, Region> getRegions() {
-		if (!this.isInitialized()) {
-			this.initialize();
-		}
-		return regions;
-	}
+	//	/**
+	//	 * Returns the list of different Regions found on the list of locations.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	@Override
+	//	public Hashtable<Long, Region> getRegions() {
+	//		if (!this.isInitialized()) {
+	//			this.initialize();
+	//		}
+	//		return regions;
+	//	}
 
 	public List<NeoComAsset> getShips() {
 		return this.searchAsset4Category("Ship");

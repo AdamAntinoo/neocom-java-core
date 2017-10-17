@@ -82,7 +82,11 @@ public interface IDatabaseConnector {
 
 	public Hashtable<String, Login> queryAllLogins();
 
+	public List<NeoComAsset> queryContainerContents(long id);
+
 	public List<NeoComAsset> queryLocationContents(long id);
+
+	public List<NeoComAsset> queryLocationPlanetaryContents(long id);
 
 	public ArrayList<Resource> refineOre(int itemID);
 
@@ -127,6 +131,8 @@ public interface IDatabaseConnector {
 	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public String searchTech4Blueprint(int blueprintID);
+
+	public int totalLocationContentCount(long id);
 }
 
 // - UNUSED CODE ............................................................................................

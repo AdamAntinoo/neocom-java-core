@@ -11,6 +11,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/org.dimensinfin.android"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/org.dimensinfin.android"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

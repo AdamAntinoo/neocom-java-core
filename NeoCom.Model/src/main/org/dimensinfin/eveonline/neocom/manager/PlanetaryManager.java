@@ -441,6 +441,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 * @return
 	 */
 	private NeoComAsset processParent(final NeoComAsset parent) {
+		if (null == parent) return null;
 		// This is the recursive part to get the complete chain.
 		if (parent.hasParent()) {
 			NeoComAsset target = this.processParent(parent.getParentContainer());
@@ -452,11 +453,11 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		} else {
 			// Get the asset (a Container or a Ship) and add it to the chain.
 			//			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
-			if (null != parent) {
-				this.add2Location(parent);
-				return parent;
-			} else
-				return null;
+			//			if (null != parent) {
+			this.add2Location(parent);
+			return parent;
+			//			} else
+			//				return null;
 		}
 	}
 

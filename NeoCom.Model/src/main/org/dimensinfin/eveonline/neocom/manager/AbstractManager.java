@@ -95,7 +95,7 @@ public abstract class AbstractManager extends AbstractViewableNode {
 	 * @param asset
 	 * @param target
 	 */
-	@SuppressWarnings("unused")
+	//	@SuppressWarnings("unused")
 	protected void add2Container(final NeoComAsset asset, final NeoComAsset target) {
 		long id = asset.getLocationID();
 		NeoComAsset subtarget = containers.get(id);
@@ -104,7 +104,7 @@ public abstract class AbstractManager extends AbstractViewableNode {
 				((IAssetContainer) target).addContent(asset);
 			}
 			containers.put(target.getAssetID(), target);
-			this.add2Location(target);
+			//			this.add2Location(target);
 		} else {
 			subtarget.addChild(asset);
 		}
@@ -117,10 +117,8 @@ public abstract class AbstractManager extends AbstractViewableNode {
 			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
-		} else if (target instanceof IAssetContainer) {
-			((IAssetContainer) target).addContent(asset);
-			//		target.addChild(asset);
 		}
+		target.addContent(asset);
 	}
 
 	protected void add2Region(final EveLocation target) {
@@ -129,9 +127,8 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		if (null == region) {
 			region = new Region(target.getRegion());
 			regions.put(new Long(regionid), region);
-		} else {
-			region.addLocation(target);
 		}
+		region.addLocation(target);
 	}
 
 	/**
