@@ -71,9 +71,11 @@ public class Region extends AbstractViewableNode {
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (this.isVisible()) if (this.isExpanded()) {
+		if (this.isVisible()) {
+			//			if (this.isExpanded()) {
 			results.addAll(this.getLocations());
 		}
+		//		}
 		return results;
 	}
 

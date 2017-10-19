@@ -47,19 +47,13 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
 		// If the contents are already downloaded chanin the collaboration calls.
 		if (downloaded) {
-			for (NeoComAsset node : contents) {
-				results.addAll(node.collaborate2Model(variant));
-			}
+			results.addAll(contents);
 		} else {
 			//Go to the database and get the assets. 
-			//			if (variant == ENeoComVariants.ASSETS_BYLOCATION.name()) {
 			contents.clear();
 			contents.addAll(ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID()));
 			downloaded = true;
-			for (NeoComAsset node : contents) {
-				results.addAll(node.collaborate2Model(variant));
-			}
-			//			}
+			results.addAll(contents);
 		}
 		return results;
 	}

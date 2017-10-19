@@ -149,40 +149,12 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	/**
-	//	 * Intercept the use of the children and store the data on the location contents.
-	//	 */
-	//	@Deprecated
-	//	@Override
-	//	public void addChild(final IGEFNode child) {
-	//		//	this.clean();
-	//		if (child instanceof NeoComAsset) {
-	//			if (null != contentManager) {
-	//				contentManager.add((NeoComAsset) child);
-	//			}
-	//		}
-	//	}
-
-	//	public void addContent(final NeoComAsset asset) {
-	//		if (null != contentManager) {
-	//			contentManager.add(asset);
-	//		}
-	//	}
-
 	/**
-	 * Locations collaborate to the model by adding all their contents if already downloaded. If not downloaded
-	 * but are being expanded then we should first download all their contents and process them into the model
-	 * before generating a new collaboration hierarchy.<br>
-	 * During the resolution of the contents we check the download state to download the items if not already
-	 * done.
+	 * Locations do not collaborate to models because have no contents.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		return new ArrayList<AbstractComplexNode>();
-		//		if (this.isVisible()) {
-		//			if (this.isExpanded()) return (ArrayList<AbstractComplexNode>) contentManager.collaborate2Model(variant);
-		//		}
-		//		return results;
 	}
 
 	public boolean equals(final EveLocation obj) {

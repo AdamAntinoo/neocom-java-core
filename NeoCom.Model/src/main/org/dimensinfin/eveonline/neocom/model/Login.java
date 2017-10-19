@@ -82,16 +82,18 @@ public class Login extends AbstractViewableNode {
 	}
 
 	/**
-	 * Assets should collaborate to the model by adding the Characters if they are expanded. In the case the
-	 * Login has no associated chaactrs because their keys are not active, set an special Separator that says
-	 * the item is expanded but empty.
+	 * The collaboration to the model should add all elements below on the next level of the hierarchy. Only add
+	 * items for visible nodes but independently of the expansion state because that is something that is only
+	 * related to the final representation controlled by the Part or the Component.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (this.isVisible()) if (this.isExpanded()) {
+		if (this.isVisible()) {
+			//			if (this.isExpanded()) {
 			results.addAll(this.getCharacters());
 		}
+		//		}
 		return results;
 	}
 

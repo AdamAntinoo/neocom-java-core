@@ -44,6 +44,13 @@ public class ExtendedLocation extends EveLocation {
 			return 0;
 	}
 
+	/**
+	 * Locations collaborate to the model by adding all their contents if already downloaded. If not downloaded
+	 * but are being expanded then we should first download all their contents and process them into the model
+	 * before generating a new collaboration hierarchy.<br>
+	 * During the resolution of the contents we check the download state to download the items if not already
+	 * done.
+	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		return (ArrayList<AbstractComplexNode>) contentManager.collaborate2Model(variant);

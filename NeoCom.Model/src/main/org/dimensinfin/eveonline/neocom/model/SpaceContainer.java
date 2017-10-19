@@ -47,13 +47,9 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
-		this.clean();
-		// Classify the contents
-		for (NeoComAsset node : _contents) {
-			result.add(node);
-		}
-		return result;
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.addAll(_contents);
+		return results;
 	}
 
 	/**
@@ -90,6 +86,15 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	@Override
 	public List<NeoComAsset> getContents() {
 		return _contents;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer("SpaceContainer [");
+		buffer.append(this.getName()).append(" [");
+		buffer.append(super.toString());
+		buffer.append("]\n");
+		return buffer.toString();
 	}
 
 	private void downloadContainerData() {

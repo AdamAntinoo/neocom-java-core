@@ -60,10 +60,7 @@ public class PlanetaryAssetsContentManager extends AbstractContentManager implem
 	@Override
 	public List<AbstractComplexNode> collaborate2Model(final String variant) {
 		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		// If the contents are already downloaded chain the collaboration calls.
-		for (NeoComAsset node : contents) {
-			results.addAll(node.collaborate2Model(variant));
-		}
+		results.addAll(contents);
 		return results;
 	}
 

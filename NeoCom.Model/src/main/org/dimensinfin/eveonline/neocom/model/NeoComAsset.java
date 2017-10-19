@@ -128,6 +128,7 @@ public class NeoComAsset extends AbstractViewableNode implements INamed {
 		return category;
 	}
 
+	@Deprecated
 	public int getContentCount() {
 		return 0;
 	}
