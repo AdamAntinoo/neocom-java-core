@@ -89,6 +89,11 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	}
 
 	@Override
+	public boolean isEmpty() {
+		return (_contents.size() < 1) ? true : false;
+	}
+
+	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("SpaceContainer [");
 		buffer.append(this.getName()).append(" [");
