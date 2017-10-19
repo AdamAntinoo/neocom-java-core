@@ -70,7 +70,8 @@ public class Login extends AbstractViewableNode {
 					_characters.add(pilot);
 					// Update the pilot parentship.
 					pilot.connectLogin(this);
-					Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " to the _characters");
+					Login.logger.info(
+							"-- [Login.addKey]> Adding " + pilot.getName() + " [" + pilot.getCharacterID() + "] to the _characters");
 				}
 			}
 		} catch (ApiException apiex) {

@@ -40,7 +40,7 @@ public class ShipLocation extends EveLocation implements IViewableNode {
 		shiploc.setRegion(original.getRegion());
 		shiploc.setSecurity(original.getSecurity());
 		shiploc.typeID = original.typeID;
-		shiploc.citadel = original.citadel;
+		//		shiploc.citadel = original.citadel;
 
 		return shiploc;
 	}

@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import org.dimensinfin.android.model.AbstractViewableNode;
@@ -19,7 +18,6 @@ import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -76,10 +74,12 @@ public class EveLocation extends AbstractViewableNode {
 	protected String					typeID						= ELocationType.UNKNOWN.name();
 	//	@DatabaseField
 	//	protected String structureName="-NOT-STRUCTURE-";
-	protected boolean					citadel						= false;
+	//	protected boolean					citadel						= false;
 	public String							urlLocationIcon		= null;
+
 	@JsonIgnore
-	private List<NeoComAsset>	contents					= new Vector<NeoComAsset>();
+	//	private List<NeoComAsset>	contents					= new Vector<NeoComAsset>();
+	//	private final IContentManager	contentManager		= new DefaultAssetsContentManager();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
@@ -149,48 +149,40 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * Intercept the use of the children and store the data on the location contents.
-	 */
-	@Deprecated
-	@Override
-	public void addChild(final IGEFNode child) {
-		//	this.clean();
-		if (child instanceof NeoComAsset) {
-			contents.add((NeoComAsset) child);
-		}
-	}
+	//	/**
+	//	 * Intercept the use of the children and store the data on the location contents.
+	//	 */
+	//	@Deprecated
+	//	@Override
+	//	public void addChild(final IGEFNode child) {
+	//		//	this.clean();
+	//		if (child instanceof NeoComAsset) {
+	//			if (null != contentManager) {
+	//				contentManager.add((NeoComAsset) child);
+	//			}
+	//		}
+	//	}
 
-	public void addContent(final NeoComAsset asset) {
-		contents.add(asset);
-	}
+	//	public void addContent(final NeoComAsset asset) {
+	//		if (null != contentManager) {
+	//			contentManager.add(asset);
+	//		}
+	//	}
 
 	/**
 	 * Locations collaborate to the model by adding all their contents if already downloaded. If not downloaded
 	 * but are being expanded then we should first download all their contents and process them into the model
 	 * before generating a new collaboration hierarchy.<br>
-	 * During the obtention of the contents we check the download state to download the items if not already
+	 * During the resolution of the contents we check the download state to download the items if not already
 	 * done.
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (this.isExpanded()) {
-			if (this.isDownloaded()) {
-				results.addAll(contents);
-			} else {
-				//				if (download) {
-				if (variant == ENeoComVariants.ASSETS_BYLOCATION.name()) {
-					contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(id);
-				}
-				if (variant == ENeoComVariants.PLANETARY_BYLOCATION.name()) {
-					contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationPlanetaryContents(id);
-				}
-				this.setDownloaded(true);
-				results.addAll(contents);
-			}
-		}
-		return results;
+		return new ArrayList<AbstractComplexNode>();
+		//		if (this.isVisible()) {
+		//			if (this.isExpanded()) return (ArrayList<AbstractComplexNode>) contentManager.collaborate2Model(variant);
+		//		}
+		//		return results;
 	}
 
 	public boolean equals(final EveLocation obj) {
@@ -207,11 +199,12 @@ public class EveLocation extends AbstractViewableNode {
 	@Deprecated
 	@Override
 	public Vector<IGEFNode> getChildren() {
-		Vector<IGEFNode> result = new Vector<IGEFNode>();
-		for (NeoComAsset neoComAsset : contents) {
-			result.add(neoComAsset);
-		}
-		return result;
+		throw new RuntimeException("Using an already invalid method.");
+		//		Vector<IGEFNode> result = new Vector<IGEFNode>();
+		//		for (NeoComAsset neoComAsset : contents) {
+		//			result.add(neoComAsset);
+		//		}
+		//		return new Vector<IGEFNode>();
 	}
 
 	public String getConstellation() {
@@ -222,47 +215,39 @@ public class EveLocation extends AbstractViewableNode {
 		return constellationID;
 	}
 
-	public int getContentCount() {
-		if (this.isExpanded()) {
-			if (this.isDownloaded())
-				return contents.size();
-			else
-				return ModelAppConnector.getSingleton().getDBConnector().totalLocationContentCount(this.getID());
-		}
-		return contents.size();
-	}
+	//	/**
+	//	 * This operation should control the download state for the contents of this location. If the Location is
+	//	 * not downloaded the result is an empty list but if the flag is set then it should fire the download code
+	//	 * to get the list of elements stored at this Location.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	@JsonIgnore
+	//	public List<NeoComAsset> getContents() {
+	//		return this.getContents(false);
+	//	}
 
-	/**
-	 * This operation should control the download state for the contents of this location. If the Location is
-	 * not downloaded the result is an empty list but if the flag is set then it should fire the download code
-	 * to get the list of elements stored at this Location.
-	 * 
-	 * @return
-	 */
-	@JsonIgnore
-	public List<NeoComAsset> getContents() {
-		return this.getContents(false);
-	}
-
-	/**
-	 * The identifier to get the contents can change depending on the Locattion type. I have found that for
-	 * Citadels the resources are under the <code>parentAssetID</code> and not the <code>locationID</code>.
-	 * 
-	 * @param download
-	 * @return
-	 */
-	@JsonIgnore
-	public List<NeoComAsset> getContents(final boolean download) {
-		if (this.isDownloaded())
-			return contents;
-		else {
-			if (download) {
-				contents = ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(id);
-				this.setDownloaded(true);
-			}
-			return contents;
-		}
-	}
+	//	/**
+	//	 * The identifier to get the contents can change depending on the Locattion type. I have found that for
+	//	 * Citadels the resources are under the <code>parentAssetID</code> and not the <code>locationID</code>.
+	//	 * 
+	//	 * @param download
+	//	 * @return
+	//	 */
+	//	@JsonIgnore
+	//	public List<NeoComAsset> getContents(final boolean download) {
+	//		if (null != contentManager)
+	//			return contentManager.getContents();
+	//		else
+	//			return new ArrayList<NeoComAsset>();
+	//	}
+	//
+	//	public int getContentSize() {
+	//		if (null != contentManager)
+	//			return contentManager.getContentSize();
+	//		else
+	//			return 0;
+	//	}
 
 	public String getFullLocation() {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
@@ -281,6 +266,10 @@ public class EveLocation extends AbstractViewableNode {
 	 */
 	public String getName() {
 		return system + " - " + station;
+	}
+
+	public long getRealId() {
+		return id;
 	}
 
 	public String getRegion() {
@@ -343,13 +332,13 @@ public class EveLocation extends AbstractViewableNode {
 		return false;
 	}
 
-	@Override
-	public boolean isEmpty() {
-		if (this.isDownloaded())
-			return (contents.size() > 0) ? false : true;
-		else
-			return false;
-	}
+	//	@Override
+	//	public boolean isEmpty() {
+	//		if (null != contentManager)
+	//			return contentManager.isEmpty();
+	//		else
+	//			return true;
+	//	}
 
 	public final boolean isRegion() {
 		return ((this.getStationID() == 0) && (this.getSystemID() == 0) && (this.getRegionID() != 0));
@@ -368,9 +357,9 @@ public class EveLocation extends AbstractViewableNode {
 		return (id == -2);
 	}
 
-	public void setCitadel(final boolean citadel) {
-		this.citadel = citadel;
-	}
+	//	public void setCitadel(final boolean citadel) {
+	//		this.citadel = citadel;
+	//	}
 
 	public void setConstellation(final String constellation) {
 		this.constellation = constellation;
@@ -450,7 +439,7 @@ public class EveLocation extends AbstractViewableNode {
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("NeoComLocation [");
 		buffer.append("#").append(this.getID()).append(" ");
-		buffer.append("(").append(this.getContents(false).size()).append(") ");
+		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
 		buffer.append("[").append(this.getRegion()).append("] ");
 		if (null != system) {
 			buffer.append("system: ").append(system).append(" ");
@@ -468,7 +457,7 @@ public class EveLocation extends AbstractViewableNode {
 		stationID = id;
 		station = cit.name;
 		systemID = cit.systemId;
-		citadel = true;
+		//		citadel = true;
 	}
 
 	private void updateFromSystem(final long id) {
@@ -482,14 +471,14 @@ public class EveLocation extends AbstractViewableNode {
 		region = systemLocation.getRegion();
 		security = systemLocation.getSecurity();
 	}
-
-	private void updateLocationID() {
-		if (citadel) {
-			id = stationID;
-		} else {
-			id = this.getID();
-		}
-	}
+	//
+	//	private void updateLocationID() {
+	//		if (citadel) {
+	//			id = stationID;
+	//		} else {
+	//			id = this.getID();
+	//		}
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................
