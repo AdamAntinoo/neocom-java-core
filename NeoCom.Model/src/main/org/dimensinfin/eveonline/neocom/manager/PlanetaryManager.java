@@ -407,12 +407,23 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		} else {
 			if (resource.isContainer()) {
 				SpaceContainer cont = new SpaceContainer().copyFrom(resource);
-				this.add2Location(cont);
+				// Add to the Location only if not already registered.
+				NeoComAsset hit = containers.get(cont.getAssetID());
+				if (null == hit) {
+					this.add2Location(cont);
+					// Add the container to the list ot avoid processing it again.
+					containers.put(cont.getAssetID(), cont);
+				}
 				return cont;
 			}
 			if (resource.isShip()) {
 				Ship cont = new Ship().copyFrom(resource);
-				this.add2Location(cont);
+				NeoComAsset hit = containers.get(cont.getAssetID());
+				if (null == hit) {
+					this.add2Location(cont);
+					// Add the container to the list ot avoid processing it again.
+					containers.put(cont.getAssetID(), cont);
+				}
 				return cont;
 			}
 			this.add2Location(resource);
