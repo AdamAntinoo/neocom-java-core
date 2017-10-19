@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
@@ -27,16 +27,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractManager extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long											serialVersionUID	= -3012043551959443176L;
-	protected static Logger												logger						= Logger.getLogger("AbstractManager");
+	private static final long													serialVersionUID	= -3012043551959443176L;
+	protected static Logger														logger						= Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@JsonIgnore
-	private transient NeoComCharacter							pilot							= null;
-	protected boolean															initialized				= false;
-	protected final Hashtable<Long, Region>				regions						= new Hashtable<Long, Region>();
-	protected final Hashtable<Long, EveLocation>	locations					= new Hashtable<Long, EveLocation>();
-	protected final Hashtable<Long, NeoComAsset>	containers				= new Hashtable<Long, NeoComAsset>();
+	private transient NeoComCharacter									pilot							= null;
+	protected boolean																	initialized				= false;
+	protected final Hashtable<Long, Region>						regions						= new Hashtable<Long, Region>();
+	protected final Hashtable<Long, ExtendedLocation>	locations					= new Hashtable<Long, ExtendedLocation>();
+	protected final Hashtable<Long, NeoComAsset>			containers				= new Hashtable<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractManager(final NeoComCharacter pilot) {
@@ -110,16 +110,16 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		}
 	}
 
-	protected void add2Location(final NeoComAsset asset) {
-		long locid = asset.getLocationID();
-		EveLocation target = locations.get(locid);
-		if (null == target) {
-			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
-			locations.put(new Long(locid), target);
-			this.add2Region(target);
-		}
-		target.addContent(asset);
-	}
+	//	protected void add2Location(final NeoComAsset asset) {
+	//		long locid = asset.getLocationID();
+	//		EveLocation target = locations.get(locid);
+	//		if (null == target) {
+	//			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
+	//			locations.put(new Long(locid), target);
+	//			this.add2Region(target);
+	//		}
+	//		target.addContent(asset);
+	//	}
 
 	protected void add2Region(final EveLocation target) {
 		long regionid = target.getRegionID();
@@ -131,31 +131,31 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		region.addLocation(target);
 	}
 
-	/**
-	 * Get access to the parent and its Location and add it to the Locations list it it is the top of the chain.
-	 * THis can be performed recursively if the Parent has also another Parent.
-	 * 
-	 * @return
-	 */
-	private NeoComAsset processParent(final NeoComAsset parent) {
-		// This is the recursive part to get the complete chain.
-		if (parent.hasParent()) {
-			NeoComAsset target = this.processParent(parent.getParentContainer());
-			// Add asset to the chain.
-			if (target instanceof IAssetContainer) {
-				((IAssetContainer) target).addContent(parent);
-			}
-			return target;
-		} else {
-			// Get the asset (a Container or a Ship) and add it to the chain.
-			//			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
-			if (null != parent) {
-				this.add2Location(parent);
-				return parent;
-			} else
-				return null;
-		}
-	}
+	//	/**
+	//	 * Get access to the parent and its Location and add it to the Locations list it it is the top of the chain.
+	//	 * THis can be performed recursively if the Parent has also another Parent.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	private NeoComAsset processParent(final NeoComAsset parent) {
+	//		// This is the recursive part to get the complete chain.
+	//		if (parent.hasParent()) {
+	//			NeoComAsset target = this.processParent(parent.getParentContainer());
+	//			// Add asset to the chain.
+	//			if (target instanceof IAssetContainer) {
+	//				((IAssetContainer) target).addContent(parent);
+	//			}
+	//			return target;
+	//		} else {
+	//			// Get the asset (a Container or a Ship) and add it to the chain.
+	//			//			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
+	//			if (null != parent) {
+	//				this.add2Location(parent);
+	//				return parent;
+	//			} else
+	//				return null;
+	//		}
+	//	}
 
 }
 

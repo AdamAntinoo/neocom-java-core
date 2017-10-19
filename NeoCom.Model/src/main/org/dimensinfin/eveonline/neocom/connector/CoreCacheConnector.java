@@ -34,12 +34,12 @@ import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 public abstract class CoreCacheConnector implements ICacheConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger																	logger							= Logger.getLogger("CoreCacheConnector");
+	protected static Hashtable<Integer, MarketDataSet>		buyMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
+	protected static Hashtable<Integer, MarketDataSet>		sellMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
 
 	// - F I E L D - S E C T I O N ............................................................................
 	protected PriorityBlockingQueue<PendingRequestEntry>	_pendingRequests		= new PriorityBlockingQueue<PendingRequestEntry>(
 			100, ComparatorFactory.createComparator(EComparatorField.REQUEST_PRIORITY));
-	protected final Hashtable<Integer, MarketDataSet>			buyMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
-	protected final Hashtable<Integer, MarketDataSet>			sellMarketDataCache	= new Hashtable<Integer, MarketDataSet>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CoreCacheConnector() {
@@ -184,9 +184,9 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 		// Search on the cache. By default load the SELLER as If I am buying the item.
 
 		// Cache interception performed by EHCache. If we reach this point that means we have not cached the data.
-		Hashtable<Integer, MarketDataSet> cache = sellMarketDataCache;
+		Hashtable<Integer, MarketDataSet> cache = CoreCacheConnector.sellMarketDataCache;
 		if (side == EMarketSide.BUYER) {
-			cache = buyMarketDataCache;
+			cache = CoreCacheConnector.buyMarketDataCache;
 		}
 		//		MarketDataSet entry = null;
 		MarketDataSet entry = cache.get(itemID);
@@ -198,13 +198,13 @@ public abstract class CoreCacheConnector implements ICacheConnector {
 				Vector<MarketDataSet> entries = MarketDataService.marketDataServiceEntryPoint(itemID);
 				for (MarketDataSet data : entries) {
 					if (data.getSide() == EMarketSide.BUYER) {
-						buyMarketDataCache.put(itemID, entry);
+						CoreCacheConnector.buyMarketDataCache.put(itemID, entry);
 						if (side == data.getSide()) {
 							entry = data;
 						}
 					}
 					if (data.getSide() == EMarketSide.SELLER) {
-						sellMarketDataCache.put(itemID, entry);
+						CoreCacheConnector.sellMarketDataCache.put(itemID, entry);
 						if (side == data.getSide()) {
 							entry = data;
 						}

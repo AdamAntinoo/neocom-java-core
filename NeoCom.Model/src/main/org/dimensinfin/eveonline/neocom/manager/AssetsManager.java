@@ -31,6 +31,7 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
@@ -347,7 +348,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return blueprintCache;
 	}
 
-	public EveLocation getLocationById(final long id) {
+	public ExtendedLocation getLocationById(final long id) {
 		// Search for the location on the Location list.
 		for (Long key : locations.keySet()) {
 			if (key == id) return locations.get(key);
@@ -364,7 +365,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * 
 	 * @return
 	 */
-	public Hashtable<Long, EveLocation> getLocations() {
+	public Hashtable<Long, ExtendedLocation> getLocations() {
 		// If the list is empty the go to the database and get the assets
 		if (null == locations) {
 			this.initialize();
@@ -722,6 +723,29 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return buffer.toString();
 	}
 
+	protected void add2Location(final NeoComAsset asset) {
+		long locid = asset.getLocationID();
+		ExtendedLocation target = locations.get(locid);
+		if (null == target) {
+			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
+			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
+			ExtendedLocation newloc = new ExtendedLocation(intermediary);
+			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
+			locations.put(new Long(locid), target);
+			this.add2Region(target);
+			newloc.addContent(asset);
+		} else {
+			target.addContent(asset);
+		}
+	}
+
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
+
 	protected synchronized double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
 		double assetValueISK = 0.0;
@@ -740,13 +764,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		}
 		return assetValueISK;
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
 
 	/**
 	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
@@ -828,18 +845,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return null;
 	}
 
-	private void accessDao() {
-		if (null == assetDao) {
-			try {
-				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
-				if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
-			} catch (SQLException sqle) {
-				// Interrupt processing and signal a runtime exception.
-				throw new RuntimeException(sqle.getMessage());
-			}
-		}
-	}
-
 	//	/**
 	//	 * Search for this container reference on this Location's children until found. Then aggregates the asset to
 	//	 * that container calculating stacking if this is possible. There can be containers inside container like
@@ -901,6 +906,18 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		}
 	//		region.addLocation(target);
 	//	}
+
+	private void accessDao() {
+		if (null == assetDao) {
+			try {
+				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
+			} catch (SQLException sqle) {
+				// Interrupt processing and signal a runtime exception.
+				throw new RuntimeException(sqle.getMessage());
+			}
+		}
+	}
 
 	/**
 	 * Stacks blueprints that are equal and that are located on the same location. The also should be inside the
@@ -1114,7 +1131,10 @@ public class AssetsManager extends AbstractManager implements INamed {
 			return;
 		else {
 			EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(identifier);
-			locations.put(identifier, location);
+			// Convert the Location to a new Extended Location with the new Contents Manager.
+			ExtendedLocation newloc = new ExtendedLocation(location);
+			newloc.setContentManager(new DefaultAssetsContentManager(newloc));
+			locations.put(identifier, newloc);
 			long regid = location.getRegionID();
 			Region reg = regions.get(regid);
 			if (null == reg) {
