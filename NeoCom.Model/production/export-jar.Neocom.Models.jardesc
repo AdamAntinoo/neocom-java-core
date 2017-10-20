@@ -12,8 +12,6 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
         <folder path="/Neocom.Models/privatelibs"/>
-        <folder path="/Neocom.Models/target"/>
         <javaElement handleIdentifier="=Neocom.Models/src\/main"/>
-        <folder path="/Neocom.Models/src"/>
     </selectedElements>
 </jardesc>
