@@ -42,12 +42,13 @@ public class Login extends AbstractViewableNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Login() {
 		super();
+		this.setRenderWhenEmpty(false);
 		jsonClass = "Login";
 	}
 
 	public Login(final String name) {
+		this();
 		_name = name;
-		jsonClass = "Login";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -113,10 +114,19 @@ public class Login extends AbstractViewableNode {
 
 	@Override
 	public boolean isEmpty() {
-		if (_characters.size() > 0)
-			return false;
-		else
+		return (_characters.size() > 0) ? false : true;
+	}
+
+	@Override
+	public boolean isRenderWhenEmpty() {
+		if (renderWhenEmpty)
 			return true;
+		else {
+			if (this.isEmpty())
+				return false;
+			else
+				return true;
+		}
 	}
 
 	/**

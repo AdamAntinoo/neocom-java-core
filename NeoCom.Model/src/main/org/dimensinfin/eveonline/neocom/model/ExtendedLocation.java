@@ -23,8 +23,6 @@ public class ExtendedLocation extends EveLocation {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -4484922266027865406L;
 	private static Logger			logger						= Logger.getLogger("ExtendedLocation.java");
-	//	public static ExtendedLocation copyFrom(EveLocation target) {
-	//		}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private EveLocation				delegate					= null;
@@ -32,7 +30,14 @@ public class ExtendedLocation extends EveLocation {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ExtendedLocation(final EveLocation delegate) {
+		super();
+		this.setRenderWhenEmpty(false);
 		this.delegate = delegate;
+		// Copy important identifiers from delegate.
+		id = delegate.getRealId();
+		stationID = delegate.getStationID();
+		constellationID = delegate.getConstellationID();
+		regionID = delegate.getRegionID();
 		jsonClass = "ExtendedLocation";
 	}
 
@@ -59,11 +64,6 @@ public class ExtendedLocation extends EveLocation {
 	@Override
 	public String getConstellation() {
 		return delegate.getConstellation();
-	}
-
-	@Override
-	public long getConstellationID() {
-		return delegate.getConstellationID();
 	}
 
 	/**
@@ -104,18 +104,8 @@ public class ExtendedLocation extends EveLocation {
 	}
 
 	@Override
-	public long getRealId() {
-		return delegate.getRealId();
-	}
-
-	@Override
 	public String getRegion() {
 		return delegate.getRegion();
-	}
-
-	@Override
-	public long getRegionID() {
-		return delegate.getRegionID();
 	}
 
 	@Override
@@ -134,18 +124,8 @@ public class ExtendedLocation extends EveLocation {
 	}
 
 	@Override
-	public long getStationID() {
-		return delegate.getStationID();
-	}
-
-	@Override
 	public String getSystem() {
 		return delegate.getSystem();
-	}
-
-	@Override
-	public long getSystemID() {
-		return delegate.getSystemID();
 	}
 
 	@Override
@@ -178,7 +158,14 @@ public class ExtendedLocation extends EveLocation {
 
 	@Override
 	public boolean isRenderWhenEmpty() {
-		return delegate.isRenderWhenEmpty();
+		if (renderWhenEmpty)
+			return true;
+		else {
+			if (this.isEmpty())
+				return false;
+			else
+				return true;
+		}
 	}
 
 	@Override

@@ -30,7 +30,7 @@ import com.j256.ormlite.stmt.Where;
 public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger												logger																= Logger
-			.getLogger("CCPDatabaseConnector.java");
+			.getLogger("CCPDatabaseConnector");
 	private static final String									CCPDATABASE_URL												= "jdbc:sqlite:src/main/resources/eve.db";
 	private static Statistics										locationsCacheStatistics							= new Statistics();
 
@@ -219,13 +219,13 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 				//						"-- [CCPDatabaseConnector.searchLocationbyID]> Location: " + locationID + " not found on local Database.");
 				// Offices
 				long fixedLocationID = locationID;
-				if (fixedLocationID >= 66000000) {
-					if (fixedLocationID < 66014933) {
-						fixedLocationID = fixedLocationID - 6000001;
-					} else {
-						fixedLocationID = fixedLocationID - 6000000;
-					}
-				}
+				//				if (fixedLocationID >= 66000000) {
+				//					if (fixedLocationID < 66014933) {
+				//						fixedLocationID = fixedLocationID - 6000001;
+				//					} else {
+				//						fixedLocationID = fixedLocationID - 6000000;
+				//					}
+				//				}
 				hit = new EveLocation(fixedLocationID);
 				ResultSet cursor = null;
 				try {

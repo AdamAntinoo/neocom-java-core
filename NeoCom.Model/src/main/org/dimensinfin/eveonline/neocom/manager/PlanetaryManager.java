@@ -37,7 +37,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	//	private static Logger														logger						= Logger.getLogger("PlanetaryManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private long																		totalAssets				= 0;
+	public long																			totalAssets				= 0;
 	public double																		totalAssetsValue	= 0.0;
 	public String																		iconName					= "planets.png";
 
@@ -113,8 +113,17 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		ExtendedLocation hit = locations.get(locidnumber);
 		if (null != hit) {
 			List<NeoComAsset> contents = hit.getContents();
-			Vector<Resource> results = new Vector<Resource>(contents.size());
+			Vector<NeoComAsset> intermediate = new Vector<NeoComAsset>(contents.size());
 			for (NeoComAsset node : contents) {
+				// Check for containers to get also its contents.
+				if (node instanceof IAssetContainer) {
+					intermediate.addAll(((IAssetContainer) node).getContents());
+				}
+				intermediate.add(node);
+			}
+			// Convert the nodes to Resources.
+			Vector<Resource> results = new Vector<Resource>(intermediate.size());
+			for (NeoComAsset node : intermediate) {
 				results.add(new Resource(node.getTypeID(), node.getQuantity()));
 			}
 			return results;
@@ -125,6 +134,14 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	@Override
 	public String getOrderingName() {
 		return "Planetary Manager";
+	}
+
+	public long getTotalAssets() {
+		return totalAssets;
+	}
+
+	public double getTotalAssetsValue() {
+		return totalAssetsValue;
 	}
 
 	@Override

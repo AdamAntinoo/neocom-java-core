@@ -51,21 +51,21 @@ public class EveLocation extends AbstractViewableNode {
 	// - F I E L D - S E C T I O N ............................................................................
 	@JsonIgnore
 	@DatabaseField(id = true, index = true)
-	private long							id								= -2;
+	protected long						id								= -2;
 	@DatabaseField
-	private long							stationID					= -1;
+	protected long						stationID					= -1;
 	@DatabaseField
 	private String						station						= "SPACE";
 	@DatabaseField
-	private long							systemID					= -1;
+	protected long						systemID					= -1;
 	@DatabaseField
 	private String						system						= "UNKNOWN";
 	@DatabaseField
-	private long							constellationID		= -1;
+	protected long						constellationID		= -1;
 	@DatabaseField
 	private String						constellation			= "Echo Cluster";
 	@DatabaseField
-	private long							regionID					= -1;
+	protected long						regionID					= -1;
 	@DatabaseField
 	private String						region						= "-DEEP SPACE-";
 	@DatabaseField
@@ -84,12 +84,12 @@ public class EveLocation extends AbstractViewableNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
 		this.setDownloaded(false);
-		this.setRenderWhenEmpty(false);
 		jsonClass = "EveLocation";
 	}
 
 	public EveLocation(final long locationID) {
 		this();
+		id = locationID;
 		stationID = locationID;
 	}
 

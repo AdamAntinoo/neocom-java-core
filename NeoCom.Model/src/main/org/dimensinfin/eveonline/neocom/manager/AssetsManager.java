@@ -378,6 +378,10 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return "Assets Manager";
 	}
 
+	public List<NeoComAsset> getShips() {
+		return this.searchAsset4Category("Ship");
+	}
+
 	//	/**
 	//	 * Returns the list of different Regions found on the list of locations.
 	//	 * 
@@ -391,8 +395,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		return regions;
 	//	}
 
-	public List<NeoComAsset> getShips() {
-		return this.searchAsset4Category("Ship");
+	public long getTotalAssets() {
+		return totalAssets;
 	}
 
 	//	public int getLocationCount() {

@@ -143,7 +143,7 @@ public class PlanetaryProcessor {
 		// If current target is null this is then the first iteration on the search.
 		betterProfit = 0.0;
 		PlanetaryProcessor.logger
-				.info("-- [PlanetaryProcessor.startProfitSearch]> Initial resources: " + scenery.getResources());
+				.info("-- [PlanetaryProcessor.startProfitSearch]> Initial resources: " + scenery.getResources().size());
 		// Search for Tier2 optimizations
 		// Create the sequencer and start to iterate over it.
 		BitSequencer t2sequence = new BitSequencer(PlanetaryProcessor.t2ProductList);
