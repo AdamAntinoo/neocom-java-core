@@ -15,7 +15,7 @@ import java.util.List;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -35,7 +35,7 @@ public class PlanetaryAssetsContentManager extends AbstractContentManager implem
 	private int	containerCount	= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PlanetaryAssetsContentManager(final EveLocation newparent) {
+	public PlanetaryAssetsContentManager(final ExtendedLocation newparent) {
 		super(newparent);
 		jsonClass = "DefaultAssetsContentManager";
 	}

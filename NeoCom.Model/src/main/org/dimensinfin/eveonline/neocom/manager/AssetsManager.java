@@ -411,52 +411,29 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * AssetsManager.<br>
 	 * The initialization will load all the Locations and some of the counters. The method processed the result
 	 * to generate the root list of Regions, then the space Locations and then their contents in the case the
-	 * Location has been downloaded.
+	 * Location has been downloaded. There is an optimization that if the manager is already initialized then it
+	 * is not initialized again. This also simplifies the code because now there is no more need to check for
+	 * the initialization state.
 	 * 
 	 * @return
 	 */
 	@Override
 	public AssetsManager initialize() {
-		// INITIALIZE - Initialize the number of assets.
-		this.getAssetTotalCount();
-		// INITIALIZE - Initialize the Locations and the Regions
-		List<NeoComAsset> locs = ModelAppConnector.getSingleton().getDBConnector()
-				.queryAllAssetLocations(this.getPilot().getCharacterID());
-		regions.clear();
-		locations.clear();
-		// Process the locations to a new list of Regions.
-		for (NeoComAsset asset : locs) {
-			long locid = asset.getLocationID();
-			this.processLocation(locid);
+		if (!initialized) {
+			// INITIALIZE - Initialize the number of assets.
+			this.getAssetTotalCount();
+			// INITIALIZE - Initialize the Locations and the Regions
+			List<NeoComAsset> locs = ModelAppConnector.getSingleton().getDBConnector()
+					.queryAllAssetLocations(this.getPilot().getCharacterID());
+			regions.clear();
+			locations.clear();
+			// Process the locations to a new list of Regions.
+			for (NeoComAsset asset : locs) {
+				long locid = asset.getLocationID();
+				this.processLocation(locid);
+			}
+			initialized = true;
 		}
-		//		containers.clear();
-		//		// Process the containers to locate new dependencies.
-		//		List<NeoComAsset> conts = ModelAppConnector.getSingleton().getDBConnector()
-		//				.queryAllAssetContainers(this.getPilot().getCharacterID());
-		//		for (NeoComAsset asset : conts) {
-		//			long id = asset.getParentContainerId();
-		//			if (id < 0) {
-		//				// This is an asset already located.
-		//				continue;
-		//			}
-		//			if (containers.containsKey(id)) {
-		//				continue;
-		//			} else {
-		//				// Search this identifier as an extended location or as an asset.
-		//				EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(id);
-		//				if (location.isUnknown()) {
-		//					NeoComAsset container = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(id);
-		//					if (null == container) {
-		//						continue;
-		//					}
-		//					containers.put(id, container);
-		//					// Now Process the Location for this Container.
-		//					this.processLocation(container.getLocationID());
-		//				}
-		//				this.processLocation(id);
-		//			}
-		//		}
-		initialized = true;
 		return this;
 	}
 

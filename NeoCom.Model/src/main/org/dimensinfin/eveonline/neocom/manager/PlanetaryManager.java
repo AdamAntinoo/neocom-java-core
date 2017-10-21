@@ -91,9 +91,9 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	}
 
 	public long getAssetTotalCount() {
-		if (!this.isInitialized()) {
-			this.initialize();
-		}
+		//		if (!this.isInitialized()) {
+		this.initialize();
+		//		}
 		return totalAssets;
 		//		if (null == planetaryAssetList)
 		//			return 0;
@@ -146,8 +146,10 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 
 	@Override
 	public AbstractManager initialize() {
-		this.accessAllAssets();
-		initialized = true;
+		if (!initialized) {
+			this.accessAllAssets();
+			initialized = true;
+		}
 		return this;
 	}
 
@@ -155,13 +157,13 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 * Does additional checks besides the initialization flag status. For planetary we have to get sure we have
 	 * already downloaded and processed the Resources.
 	 */
-	@Override
-	public boolean isInitialized() {
-		if ((regions.size() < 1) && (locations.size() < 1))
-			return false;
-		else
-			return super.isInitialized();
-	}
+	//	@Override
+	//	public boolean isInitialized() {
+	//		if ((regions.size() < 1) && (locations.size() < 1))
+	//			return false;
+	//		else
+	//			return super.isInitialized();
+	//	}
 
 	//	/**
 	//	 * Returns the list of different Regions found on the list of locations.

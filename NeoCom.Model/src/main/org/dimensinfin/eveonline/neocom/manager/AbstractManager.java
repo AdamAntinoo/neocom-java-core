@@ -45,6 +45,12 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		jsonClass = "AbstractManager";
 	}
 
+	public boolean clearInitialization() {
+		boolean oldstate = initialized;
+		initialized = false;
+		return oldstate;
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
@@ -66,9 +72,9 @@ public abstract class AbstractManager extends AbstractViewableNode {
 	 * @return
 	 */
 	public Hashtable<Long, Region> getRegions() {
-		if (!this.isInitialized()) {
-			this.initialize();
-		}
+		//		if (!this.isInitialized()) {
+		this.initialize();
+		//		}
 		return regions;
 	}
 
@@ -79,9 +85,9 @@ public abstract class AbstractManager extends AbstractViewableNode {
 	 * 
 	 * @return
 	 */
-	public boolean isInitialized() {
-		return initialized;
-	}
+	//	public boolean isInitialized() {
+	//		return initialized;
+	//	}
 
 	public void setPilot(final NeoComCharacter newPilot) {
 		pilot = newPilot;

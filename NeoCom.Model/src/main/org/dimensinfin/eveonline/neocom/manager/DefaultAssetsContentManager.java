@@ -15,7 +15,7 @@ import java.util.List;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -32,7 +32,7 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 		jsonClass = "DefaultAssetsContentManager";
 	}
 
-	public DefaultAssetsContentManager(final EveLocation newparent) {
+	public DefaultAssetsContentManager(final ExtendedLocation newparent) {
 		super(newparent);
 		jsonClass = "DefaultAssetsContentManager";
 	}
@@ -40,7 +40,9 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * This method will access the database to get the assets contained at that Location. It is the default
-	 * behavior for a ContentManager, to get all the related items with no filtering.
+	 * behavior for a ContentManager, to get all the related items with no filtering. The download of the
+	 * contents is lazily evaluated and depends on the expanded state. For not expanded satets the contents are
+	 * empty but when the user expands the item we should then download the list.
 	 */
 	@Override
 	public List<AbstractComplexNode> collaborate2Model(final String variant) {
@@ -49,11 +51,14 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 		if (downloaded) {
 			results.addAll(contents);
 		} else {
-			//Go to the database and get the assets. 
-			contents.clear();
-			contents.addAll(ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID()));
-			downloaded = true;
-			results.addAll(contents);
+			// Download the assets only if the state is expended.
+			if (parent.isExpanded()) {
+				//Go to the database and get the assets. 
+				contents.clear();
+				contents.addAll(ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID()));
+				downloaded = true;
+				results.addAll(contents);
+			}
 		}
 		return results;
 	}

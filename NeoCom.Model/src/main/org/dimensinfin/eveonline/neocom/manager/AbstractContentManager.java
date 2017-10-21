@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.manager;
 import java.util.List;
 import java.util.Vector;
 
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -22,7 +22,7 @@ public class AbstractContentManager {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	protected String									jsonClass	= "AbstractContentManager";
-	protected EveLocation							parent		= null;
+	protected ExtendedLocation				parent		= null;
 	protected final List<NeoComAsset>	contents	= new Vector<NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -30,7 +30,7 @@ public class AbstractContentManager {
 		jsonClass = "";
 	}
 
-	public AbstractContentManager(final EveLocation newparent) {
+	public AbstractContentManager(final ExtendedLocation newparent) {
 		this();
 		parent = newparent;
 	}
