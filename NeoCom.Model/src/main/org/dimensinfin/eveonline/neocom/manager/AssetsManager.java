@@ -1139,14 +1139,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 			ExtendedLocation newloc = new ExtendedLocation(location);
 			newloc.setContentManager(new DefaultAssetsContentManager(newloc));
 			locations.put(identifier, newloc);
-			long regid = location.getRegionID();
+			long regid = newloc.getRegionID();
 			Region reg = regions.get(regid);
 			if (null == reg) {
-				reg = new Region(location.getRegion()).setDownloaded(true);
-				reg.addLocation(location);
+				reg = new Region(newloc.getRegion()).setDownloaded(true);
+				reg.addLocation(newloc);
 				regions.put(regid, reg);
 			} else {
-				reg.addLocation(location);
+				reg.addLocation(newloc);
 			}
 		}
 	}
