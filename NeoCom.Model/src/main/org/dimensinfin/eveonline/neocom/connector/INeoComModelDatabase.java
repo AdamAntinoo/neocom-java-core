@@ -31,7 +31,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 import com.j256.ormlite.dao.Dao;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface INeoComModelDatabase extends IDeprecatedDatabaseConnector {
+public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */ {
 	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
 
 	public void clearInvalidRecords(long pilotid);
@@ -56,16 +56,16 @@ public interface INeoComModelDatabase extends IDeprecatedDatabaseConnector {
 
 	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 
+	public void loadSeedData();
+
 	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
 	public Hashtable<String, Login> queryAllLogins();
 
-	@Override
 	public List<NeoComAsset> queryLocationContents(long id);
 
 	public void replaceAssets(long characterID);
 
-	@Override
 	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName);
@@ -79,6 +79,8 @@ public interface INeoComModelDatabase extends IDeprecatedDatabaseConnector {
 	public int searchRawPlanetaryOutput(int itemID);
 
 	public Vector<Schematics> searchSchematics4Output(int targetId);
+
+	public int totalLocationContentCount(final long identifier);
 }
 
 // - UNUSED CODE ............................................................................................

@@ -62,7 +62,7 @@ public interface IDeprecatedDatabaseConnector {
 	//
 	//	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 
-	public void loadSeedData();
+	//	public void loadSeedData();
 
 	public boolean openAppDataBase();
 
