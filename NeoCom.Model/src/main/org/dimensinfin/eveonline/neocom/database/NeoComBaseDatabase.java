@@ -9,12 +9,18 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.database;
 
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.model.ApiKey;
+import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -25,10 +31,40 @@ public class NeoComBaseDatabase {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	//	public NeoComBaseDatabase() {
-	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	/**
+	 * Reads all the keys stored at the database and classified them into a set of Login names.
+	 */
+	public Hashtable<String, Login> queryAllLogins() {
+		// Get access to all ApiKey registers
+		List<ApiKey> keyList = new Vector<ApiKey>();
+		try {
+			Dao<ApiKey, String> keysDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
+			QueryBuilder<ApiKey, String> queryBuilder = keysDao.queryBuilder();
+			PreparedQuery<ApiKey> preparedQuery = queryBuilder.prepare();
+			keyList = keysDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			NeoComBaseDatabase.logger
+					.warning("W [SpringDatabaseConnector.queryAllLogins]> Exception reading all Logins. " + sqle.getMessage());
+		}
+		// Classify the keys on they matching Logins.
+		Hashtable<String, Login> loginList = new Hashtable<String, Login>();
+		for (ApiKey apiKey : keyList) {
+			String name = apiKey.getLogin();
+			// Search for this on the list before creating a new Login.
+			Login hit = loginList.get(name);
+			if (null == hit) {
+				Login login = new Login(name).addKey(apiKey);
+				loginList.put(name, login);
+			} else {
+				hit.addKey(apiKey);
+			}
+		}
+		return loginList;
+	}
+
 	/**
 	 * Returns the number of items that are located at the specified location. There is another filter for the
 	 * character owner of the assets.

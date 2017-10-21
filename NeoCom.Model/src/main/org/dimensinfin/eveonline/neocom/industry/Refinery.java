@@ -58,7 +58,7 @@ public class Refinery {
 		HashMap<Integer, Resource> result = new HashMap<Integer, Resource>();
 		for (Resource resource : entryResources.values()) {
 			// Get access to the refining parameters
-			ArrayList<Resource> refineParameters = ModelAppConnector.getSingleton().getDBConnector()
+			ArrayList<Resource> refineParameters = ModelAppConnector.getSingleton().getCCPDBConnector()
 					.refineOre(resource.item.getItemID());
 
 			// Calculate the quantity to refine.

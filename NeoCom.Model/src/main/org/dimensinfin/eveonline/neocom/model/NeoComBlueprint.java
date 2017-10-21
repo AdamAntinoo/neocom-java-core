@@ -419,7 +419,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	 * @return
 	 */
 	private String obtainTech() {
-		return ModelAppConnector.getSingleton().getDBConnector().searchTech4Blueprint(typeID);
+		return ModelAppConnector.getSingleton().getCCPDBConnector().searchTech4Blueprint(typeID);
 	}
 }
 

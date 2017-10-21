@@ -9,6 +9,9 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
+import java.util.ArrayList;
+
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
@@ -16,7 +19,9 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 public interface ICCPDatabaseConnector {
 	public boolean openCCPDataBase();
 
-	//	public int queryBlueprintDependencies(int bpitemID);
+	public ArrayList<Resource> refineOre(int itemID);
+
+	public int searchBlueprint4Module(final int moduleID);
 
 	public EveItem searchItembyID(int typeID);
 
@@ -27,4 +32,6 @@ public interface ICCPDatabaseConnector {
 	public int searchModule4Blueprint(int bpitemID);
 
 	public int searchStationType(long systemID);
+
+	public String searchTech4Blueprint(int blueprintID);
 }

@@ -11,14 +11,12 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.planetary.ResourceList;
 
@@ -72,7 +70,7 @@ public interface IDeprecatedDatabaseConnector {
 
 	//	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
-	public Hashtable<String, Login> queryAllLogins();
+	//	public Hashtable<String, Login> queryAllLogins();
 
 	public List<NeoComAsset> queryContainerContents(long id);
 
@@ -80,7 +78,7 @@ public interface IDeprecatedDatabaseConnector {
 
 	public List<NeoComAsset> queryLocationPlanetaryContents(long id);
 
-	public ArrayList<Resource> refineOre(int itemID);
+	//	public ArrayList<Resource> refineOre(int itemID);
 
 	//	public void replaceAssets(long characterID);
 
@@ -98,7 +96,7 @@ public interface IDeprecatedDatabaseConnector {
 
 	//	public List<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
 
-	public int searchBlueprint4Module(final int moduleID);
+	//	public int searchBlueprint4Module(final int moduleID);
 
 	public Vector<Integer> searchInputResources(int target);
 
@@ -122,9 +120,9 @@ public interface IDeprecatedDatabaseConnector {
 
 	//	public Vector<Schematics> searchSchematics4Output(int targetId);
 
-	public String searchTech4Blueprint(int blueprintID);
+	//	public String searchTech4Blueprint(int blueprintID);
 
-	public int totalLocationContentCount(long id);
+	//	public int totalLocationContentCount(long id);
 }
 
 // - UNUSED CODE ............................................................................................

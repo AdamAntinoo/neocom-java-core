@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -19,6 +20,7 @@ import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
@@ -29,7 +31,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 import com.j256.ormlite.dao.Dao;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface INeoComModelDatabase {
+public interface INeoComModelDatabase extends IDeprecatedDatabaseConnector {
 	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
 
 	public void clearInvalidRecords(long pilotid);
@@ -56,10 +58,14 @@ public interface INeoComModelDatabase {
 
 	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
+	public Hashtable<String, Login> queryAllLogins();
+
+	@Override
 	public List<NeoComAsset> queryLocationContents(long id);
 
 	public void replaceAssets(long characterID);
 
+	@Override
 	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
 	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName);
