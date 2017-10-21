@@ -92,12 +92,6 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 		return true;
 	}
 
-	@Override
-	public int queryBlueprintDependencies(final int bpitemID) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	/**
 	 * Search on the eve.db database for the attributes that describe an Item. Items are the lowest data
 	 * structure for EVE resources or modules. Everything on Eve is an Item. We detect blueprints that require a
@@ -282,7 +276,6 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 					try {
 						cursor.close();
 					} catch (SQLException ex) {
-						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 				}
@@ -311,47 +304,18 @@ public class CCPDatabaseConnector implements ICCPDatabaseConnector {
 			cursor = prepStmt.executeQuery();
 			boolean detected = false;
 			while (cursor.next()) {
-				//				if (cursor.moveToFirst()) {
 				detected = true;
 				// Check returned values when doing the assignments.
 				long fragmentID = cursor.getInt(1);
 				if (fragmentID > 0) {
 					hit.setSystemID(fragmentID);
-					//					hit.setSystem(cursor.getString(6));
-					//				} else {
-					//					hit.setSystem(cursor.getString(3));
 				}
-				//				fragmentID = cursor.getLong(7);
-				//				if (fragmentID > 0) {
-				//					hit.setConstellationID(fragmentID);
-				//					hit.setConstellation(cursor.getString(8));
-				//				}
-				//				fragmentID = cursor.getLong(9);
-				//				if (fragmentID > 0) {
-				//					hit.setRegionID(fragmentID);
-				//					hit.setRegion(cursor.getString(10));
-				//				}
-				//				hit.setTypeID(cursor.getInt(2));
-				//				hit.setStation(cursor.getString(3));
-				//				hit.setLocationID(cursor.getLong(1));
-				//				hit.setSecurity(cursor.getString(4));
-				//				// Update the final ID
-				//				hit.getID();
 				detected = true;
 			}
-			//			if (!detected) // Search the location on the list of outposts.
-			//				hit = searchOutpostbyID(locationID);
-			//	}
 		} catch (final Exception ex) {
 			CCPDatabaseConnector.logger.warning("Location <" + name + "> not found.");
 		}
 		return this.searchLocationbyID(hit.getSystemID());
-	}
-
-	@Override
-	public int searchModule4Blueprint(final int bpitemID) {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	/**

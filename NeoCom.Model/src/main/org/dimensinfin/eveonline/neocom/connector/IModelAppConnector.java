@@ -13,21 +13,13 @@ import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IModelAppConnector {
-	//	public boolean checkExpiration(final Instant timestamp, final long window);
-	//
-	//	public boolean checkExpiration(final long timestamp, final long window);
-
 	public ICacheConnector getCacheConnector();
 
 	public ICCPDatabaseConnector getCCPDBConnector();
 
-	public IDatabaseConnector getDBConnector();
+	public INeoComModelDatabase getDBConnector();
 
 	public INeoComModelStore getModelStore();
-
-	//	public void startChrono();
-	//
-	//	public Duration timeLapse();
 }
 
 // - UNUSED CODE ............................................................................................

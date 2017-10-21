@@ -141,7 +141,9 @@ public class EveItem extends AbstractComplexNode {
 	}
 
 	public boolean hasInvention() {
-		return ModelAppConnector.getSingleton().getDBConnector().checkInvention(this.getTypeID());
+		// REFACTOR This has to be reimplemented
+		return false;
+		//		return ModelAppConnector.getSingleton().getDBConnector().checkInvention(this.getTypeID());
 	}
 
 	public boolean isBlueprint() {

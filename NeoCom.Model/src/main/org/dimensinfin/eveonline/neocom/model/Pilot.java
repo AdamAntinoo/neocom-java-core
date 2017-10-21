@@ -24,17 +24,14 @@ import org.dimensinfin.eveonline.neocom.manager.BlueprintManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.manager.SkillsManager;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
-import org.joda.time.Duration;
 import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
-import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
 import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
-import com.beimin.eveapi.parser.pilot.BlueprintsParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.IndustryJobsParser;
 import com.beimin.eveapi.parser.pilot.MarketOrdersParser;
@@ -44,7 +41,6 @@ import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
-import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.beimin.eveapi.response.shared.IndustryJobsResponse;
 import com.beimin.eveapi.response.shared.MarketOrdersResponse;
 import com.j256.ormlite.dao.Dao;
@@ -189,48 +185,48 @@ public class Pilot extends NeoComCharacter {
 	//		Pilot.logger.info("<< EveChar.updateAssets");
 	//	}
 
-	/**
-	 * Download the blueprint list for this character from CCP using the new API over the eveapi library and
-	 * then processes the response. It creates our model Blueprints that before being stored at the database are
-	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
-	 * Current grouping is by IF-LOCATION-CONTAINER.
-	 */
-	@Override
-	@SuppressWarnings("rawtypes")
-	public synchronized void downloadBlueprints() {
-		try {
-			ModelAppConnector.getSingleton().startChrono();
-			// Clear any previous records with owner -1 from database.
-			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getCharacterID());
-			// Download and parse the blueprints using the eveapi.
-			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
-			BlueprintsParser parser = new BlueprintsParser();
-			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
-			if (null != response) {
-				Set<Blueprint> blueprints = response.getAll();
-				for (Blueprint bp : blueprints) {
-					try {
-						bplist.add(this.convert2Blueprint(bp));
-					} catch (final RuntimeException rtex) {
-						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-						Pilot.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
-						Pilot.logger.info("W> " + bp.toString());
-					}
-				}
-			}
-			// Pack the blueprints and store them on the database.
-			this.getAssetsManager().storeBlueprints(bplist);
-			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getCharacterID());
-			// Update the caching time to the time set by the eveapi.
-			blueprintsCacheTime = new Instant(response.getCachedUntil());
-			// Update the dirty state to signal modification of store structures.
-			this.setDirty(true);
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
-	}
+	//	/**
+	//	 * Download the blueprint list for this character from CCP using the new API over the eveapi library and
+	//	 * then processes the response. It creates our model Blueprints that before being stored at the database are
+	//	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
+	//	 * Current grouping is by IF-LOCATION-CONTAINER.
+	//	 */
+	//	@Override
+	//	@SuppressWarnings("rawtypes")
+	//	public synchronized void downloadBlueprints() {
+	//		try {
+	//			ModelAppConnector.getSingleton().startChrono();
+	//			// Clear any previous records with owner -1 from database.
+	//			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getCharacterID());
+	//			// Download and parse the blueprints using the eveapi.
+	//			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
+	//			BlueprintsParser parser = new BlueprintsParser();
+	//			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
+	//			if (null != response) {
+	//				Set<Blueprint> blueprints = response.getAll();
+	//				for (Blueprint bp : blueprints) {
+	//					try {
+	//						bplist.add(this.convert2Blueprint(bp));
+	//					} catch (final RuntimeException rtex) {
+	//						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
+	//						Pilot.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
+	//						Pilot.logger.info("W> " + bp.toString());
+	//					}
+	//				}
+	//			}
+	//			// Pack the blueprints and store them on the database.
+	//			this.getAssetsManager().storeBlueprints(bplist);
+	//			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getCharacterID());
+	//			// Update the caching time to the time set by the eveapi.
+	//			blueprintsCacheTime = new Instant(response.getCachedUntil());
+	//			// Update the dirty state to signal modification of store structures.
+	//			this.setDirty(true);
+	//		} catch (final ApiException apie) {
+	//			apie.printStackTrace();
+	//		}
+	//		final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
+	//		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
+	//	}
 
 	/**
 	 * The industry jobs are obsolete so an update was triggered. Go to the CCP servers and get a fresh set of

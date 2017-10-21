@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.android.interfaces.INamed;
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.IDatabaseConnector;
+import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -267,7 +267,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
-			IDatabaseConnector dbConn = ModelAppConnector.getSingleton().getDBConnector();
+			INeoComModelDatabase dbConn = ModelAppConnector.getSingleton().getDBConnector();
 			synchronized (dbConn) {
 				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
 			}

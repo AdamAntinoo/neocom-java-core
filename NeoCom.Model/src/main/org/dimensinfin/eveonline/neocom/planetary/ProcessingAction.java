@@ -39,7 +39,7 @@ public class ProcessingAction extends AbstractGEFNode {
 	private final Vector<Schematics>					inputList					= new Vector<Schematics>();
 	private Schematics												output						= null;
 	private final HashMap<Integer, Resource>	actionResources		= new HashMap<Integer, Resource>();
-	public String															jsonClass					= "ProcessingAction";
+	//	public String															jsonClass					= "ProcessingAction";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -64,6 +64,9 @@ public class ProcessingAction extends AbstractGEFNode {
 				output = sche;
 			}
 		}
+		// Do some completion checks. If the Item ot the output are null then there is some error during the initialization.
+		if ((null == targetItem) || (null == output))
+			throw new RuntimeException("Some key element not found on database while initializing the Action.");
 		jsonClass = "ProcessingAction";
 	}
 
@@ -74,8 +77,8 @@ public class ProcessingAction extends AbstractGEFNode {
 
 	/**
 	 * Return the list of resources left and new from the action processing following the current schematics.
-	 * This is the result of substracting from the input resources the input quantity multiplied by the cycles
-	 * and adding to the result the outpur resource quantity multiplied by the same cycles.
+	 * This is the result of subtracting from the input resources the input quantity multiplied by the cycles
+	 * and adding to the result the output resource quantity multiplied by the same cycles.
 	 * 
 	 * @return
 	 */

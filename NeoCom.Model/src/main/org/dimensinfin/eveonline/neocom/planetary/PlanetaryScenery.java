@@ -94,6 +94,7 @@ public class PlanetaryScenery {
 			ProcessingAction action = new ProcessingAction(outputType);
 			action.addResource(resource);
 			Vector<Resource> results = action.getActionResults();
+			int w = 1;
 			for (Resource planetaryResource : results) {
 				sceneryResources.add(planetaryResource);
 			}

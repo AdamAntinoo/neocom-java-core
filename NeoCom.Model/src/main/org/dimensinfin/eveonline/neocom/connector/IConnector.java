@@ -18,7 +18,7 @@ public interface IConnector {
 
 	public ICCPDatabaseConnector getCCPDBConnector();
 
-	public IDatabaseConnector getDBConnector();
+	public IDeprecatedDatabaseConnector getDBConnector();
 
 	//	public boolean checkExpiration(final long timestamp, final long window);
 
