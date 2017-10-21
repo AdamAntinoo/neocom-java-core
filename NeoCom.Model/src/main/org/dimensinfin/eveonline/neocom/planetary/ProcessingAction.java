@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -28,7 +28,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
  * 
  * @author Adam Antinoo
  */
-public class ProcessingAction extends AbstractGEFNode {
+public class ProcessingAction extends AbstractComplexNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 3885877535917258089L;
 
@@ -54,7 +54,7 @@ public class ProcessingAction extends AbstractGEFNode {
 		// Get the item for the target id to be identified on the Json serialization.
 		targetItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(targetId);
 		// Get the schematics information.
-		schematics = ModelAppConnector.getSingleton().getDBConnector().searchSchematics4Output(targetId);
+		schematics = ModelAppConnector.getSingleton().getCCPDBConnector().searchSchematics4Output(targetId);
 		// Store the inputs into another list.
 		for (Schematics sche : schematics) {
 			if (sche.getDirection() == ESchematicDirection.INPUT) {

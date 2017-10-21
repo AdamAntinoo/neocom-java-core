@@ -90,11 +90,11 @@ public class PlanetaryScenery {
 	private void stock(final Resource resource) {
 		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
 		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
-			int outputType = ModelAppConnector.getSingleton().getDBConnector().searchRawPlanetaryOutput(resource.getTypeID());
+			int outputType = ModelAppConnector.getSingleton().getCCPDBConnector()
+					.searchRawPlanetaryOutput(resource.getTypeID());
 			ProcessingAction action = new ProcessingAction(outputType);
 			action.addResource(resource);
 			Vector<Resource> results = action.getActionResults();
-			int w = 1;
 			for (Resource planetaryResource : results) {
 				sceneryResources.add(planetaryResource);
 			}

@@ -10,10 +10,12 @@
 package org.dimensinfin.eveonline.neocom.connector;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 //- INTERFACE IMPLEMENTATION ...............................................................................
 public interface ICCPDatabaseConnector {
@@ -30,6 +32,10 @@ public interface ICCPDatabaseConnector {
 	public EveLocation searchLocationBySystem(String system);
 
 	public int searchModule4Blueprint(int bpitemID);
+
+	public int searchRawPlanetaryOutput(int typeID);
+
+	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public int searchStationType(long systemID);
 

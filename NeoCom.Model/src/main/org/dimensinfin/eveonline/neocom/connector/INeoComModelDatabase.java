@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
@@ -26,7 +25,6 @@ import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
 import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 import org.dimensinfin.eveonline.neocom.planetary.PlanetaryResource;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -75,10 +73,6 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 	public NeoComAsset searchAssetByID(long parentAssetID);
 
 	public List<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
-
-	public int searchRawPlanetaryOutput(int itemID);
-
-	public Vector<Schematics> searchSchematics4Output(int targetId);
 
 	public int totalLocationContentCount(final long identifier);
 }
