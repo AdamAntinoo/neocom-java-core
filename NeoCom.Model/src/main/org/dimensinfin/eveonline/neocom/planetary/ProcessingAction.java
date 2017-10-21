@@ -9,9 +9,11 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -28,7 +30,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
  * 
  * @author Adam Antinoo
  */
-public class ProcessingAction extends AbstractComplexNode {
+public class ProcessingAction extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 3885877535917258089L;
 
@@ -39,7 +41,6 @@ public class ProcessingAction extends AbstractComplexNode {
 	private final Vector<Schematics>					inputList					= new Vector<Schematics>();
 	private Schematics												output						= null;
 	private final HashMap<Integer, Resource>	actionResources		= new HashMap<Integer, Resource>();
-	//	public String															jsonClass					= "ProcessingAction";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	/**
@@ -73,6 +74,13 @@ public class ProcessingAction extends AbstractComplexNode {
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void addResource(final Resource resource) {
 		this.stockResource(resource);
+	}
+
+	@Override
+	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
+		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		results.add(new PlanetaryTarget(targetItem));
+		return results;
 	}
 
 	/**
