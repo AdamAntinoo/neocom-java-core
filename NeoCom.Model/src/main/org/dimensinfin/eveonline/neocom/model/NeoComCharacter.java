@@ -375,7 +375,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		parentLoginRef = newref;
 	}
 
-	public abstract void downloadBlueprints();
+	//	public abstract void downloadBlueprints();
 
 	public abstract void downloadIndustryJobs();
 
