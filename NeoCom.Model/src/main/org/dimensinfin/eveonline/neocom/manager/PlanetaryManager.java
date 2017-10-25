@@ -39,7 +39,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	// - F I E L D - S E C T I O N ............................................................................
 	public long																			totalAssets				= 0;
 	public double																		totalAssetsValue	= 0.0;
-	public String																		iconName					= "planets.png";
+	public final String															iconName					= "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
@@ -112,7 +112,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		long locidnumber = Long.valueOf(locationid);
 		ExtendedLocation hit = locations.get(locidnumber);
 		if (null != hit) {
-			List<NeoComAsset> contents = hit.getContents();
+			List<NeoComAsset> contents = hit.downloadContents();
 			Vector<NeoComAsset> intermediate = new Vector<NeoComAsset>(contents.size());
 			for (NeoComAsset node : contents) {
 				// Check for containers to get also its contents.
@@ -183,7 +183,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		if (null == target) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
-			ExtendedLocation newloc = new ExtendedLocation(intermediary);
+			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
 			newloc.setDownloaded(true);
 			locations.put(new Long(locid), newloc);

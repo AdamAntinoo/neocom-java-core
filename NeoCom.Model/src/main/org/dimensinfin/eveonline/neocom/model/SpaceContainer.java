@@ -16,15 +16,17 @@ import java.util.Vector;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+import org.dimensinfin.eveonline.neocom.interfaces.IExpandable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class SpaceContainer extends NeoComAsset implements IAssetContainer {
+public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	//	private static Logger					logger						= Logger.getLogger("org.dimensinfin.evedroid.model");
-	private static final long		serialVersionUID	= 2813029093080549286L;
+	private static final long					serialVersionUID	= 2813029093080549286L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
+	private final Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
+	private double										totalVolume				= 0.0;
+	private double										totalValue				= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public SpaceContainer() {
@@ -47,9 +49,17 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	 */
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll(_contents);
-		return results;
+		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+		// If the contents are already downloaded chain the collaboration calls.
+		if (this.isDownloaded()) {
+			results.addAll(_contents);
+		} else {
+			// Download the assets only if the state is expended.
+			//	if (this.isExpanded()) {
+			results.addAll(this.getContents());
+			//		}
+		}
+		return (ArrayList<AbstractComplexNode>) results;
 	}
 
 	/**
@@ -85,7 +95,26 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 
 	@Override
 	public List<NeoComAsset> getContents() {
+		if (!this.isDownloaded()) {
+			// Get the assets from the database.
+			_contents.clear();
+			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
+					.searchAssetContainedAt(this.getOwnerID(), this.getAssetID())));
+			this.setDownloaded(true);
+		}
 		return _contents;
+	}
+
+	public int getContentsSize() {
+		return _contents.size();
+	}
+
+	public double getTotalValue() {
+		return totalValue;
+	}
+
+	public double getTotalVolume() {
+		return totalVolume;
 	}
 
 	@Override
@@ -107,11 +136,52 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 		return buffer.toString();
 	}
 
-	private void downloadContainerData() {
-		_contents = (Vector<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-				.searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
-		this.setDownloaded(true);
+	/**
+	 * Process the assets being downloaded and convert to their new types. Warning!!. This methods need to know
+	 * the id of the current pilot but has no connection to the assets manager or the Character itself so I am
+	 * resorting to use the default Character stored at the AppModel.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private List<NeoComAsset> processDownloadedAssets(final List<NeoComAsset> input) {
+		ArrayList<NeoComAsset> results = new ArrayList<NeoComAsset>();
+		for (NeoComAsset asset : input) {
+			if (asset.isContainer()) {
+				// Check if the asset is packaged. If so leave as asset
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					SpaceContainer container = new SpaceContainer().copyFrom(asset);
+					results.add(container);
+					continue;
+				}
+			}
+			if (asset.isShip()) {
+				// Check if the ship is packaged. If packaged leave it as a simple asset.
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					Ship ship = new Ship(ModelAppConnector.getSingleton().getModelStore().getActiveCharacter().getCharacterID())
+							.copyFrom(asset);
+					// Calculate value and volume to register on the aggregation.
+					totalValue = +asset.getPrice();
+					//			totalVolume=+asset.getItem().getVolume()*asset.getQuantity();
+					results.add(ship);
+					continue;
+				}
+			}
+			// Calculate value and volume to register on the aggregation.
+			totalValue = +asset.getPrice() * asset.getQuantity();
+			totalVolume = +asset.getItem().getVolume() * asset.getQuantity();
+			results.add(asset);
+		}
+		return results;
 	}
+
+	//	private void downloadContainerData() {
+	//		_contents = (Vector<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
+	//				.searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
+	//		this.setDownloaded(true);
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................
