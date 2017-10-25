@@ -262,7 +262,6 @@ public class NeoComAsset extends AbstractViewableNode implements INamed {
 		return parentAssetID;
 	}
 
-	@JsonIgnore
 	public double getPrice() {
 		return this.getItem().getPrice();
 	}

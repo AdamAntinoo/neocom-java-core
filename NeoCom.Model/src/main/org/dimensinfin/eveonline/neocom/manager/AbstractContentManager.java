@@ -30,12 +30,12 @@ public class AbstractContentManager {
 		jsonClass = "";
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public AbstractContentManager(final ExtendedLocation newparent) {
 		this();
 		parent = newparent;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public int add(final NeoComAsset child) {
 		if (null != child) {
 			contents.add(child);

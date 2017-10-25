@@ -61,7 +61,6 @@ import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -121,7 +120,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
-		newcorp.assetTotalCount = new AssetsManager(newcorp).getAssetTotalCount();
+		newcorp.assetTotalCount = new AssetsManager(newcorp).getTotalAssets();
 		return newcorp;
 	}
 
@@ -177,61 +176,58 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
-		newchar.assetTotalCount = new AssetsManager(newchar).getAssetTotalCount();
+		newchar.assetTotalCount = new AssetsManager(newchar).getTotalAssets();
 		return newchar;
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Reference to the key that generated this character on the first place. */
-	@JsonInclude
-	private transient NeoComApiKey				apikey							= null;
-	@JsonInclude
-	private ApiAuthorization							authorization				= null;
+	private transient NeoComApiKey			apikey							= null;
+	private ApiAuthorization						authorization				= null;
 	/** Parent reference to the container Login. This is used when reconstructing the data chain. */
-	@JsonIgnore
-	private Login													parentLoginRef			= null;
+	private Login												parentLoginRef			= null;
 	/** Should contain a copy of this data value can can also be found at the delegatedCharacter. */
-	private long													characterID					= -1;
+	private long												characterID					= -1;
 	/** Reference to the original eveapi Character data. */
-	public Character											delegatedCharacter	= null;
+	private Character										delegatedCharacter	= null;
 	/**
 	 * Character detailed information from the CharacterInfoResponse CCP api call. This can apply to Pilots and
 	 * Corporations.
 	 */
-	public CharacterInfoResponse					characterInfo				= null;
+	private CharacterInfoResponse				characterInfo				= null;
 	/**
 	 * Character account balance from the AccountBalanceResponse CCP api call. This can apply to Pilots and
 	 * Corportations.
 	 */
-	public double													accountBalance			= 0.0;
+	private double											accountBalance			= 0.0;
 	/** Copy of the total number of assets got from one AssetsManager. */
-	public long														assetTotalCount			= 0;
+	protected long											assetTotalCount			= 0;
 	/**
 	 * State of this character. The use can deactivate the character so it is removed from the update lists even
 	 * the current data is still visible.
 	 */
-	private final boolean									active							= true;
+	private final boolean								active							= true;
 
 	// - T R A N S I E N T   D A T A
-	private transient Instant							lastCCPAccessTime		= null;
-	public ArrayList<Property>						locationRoles				= null;
-	public HashMap<Long, Property>				actions4Character		= null;
-	private transient Instant							assetsCacheTime			= null;
+	private transient Instant						lastCCPAccessTime		= null;
+	private ArrayList<Property>					locationRoles				= null;
+	private HashMap<Long, Property>			actions4Character		= null;
+	private transient Instant						assetsCacheTime			= null;
 
 	@JsonIgnore
-	@JsonInclude
-	protected transient AssetsManager			assetsManager				= null;
+	private transient AssetsManager			assetsManager				= null;
 	@JsonIgnore
-	protected transient PlanetaryManager	_planetaryManager		= null;
-	protected transient Instant						blueprintsCacheTime	= null;
-	protected transient Instant						jobsCacheTime				= null;
-	@JsonIgnore
-	protected transient ArrayList<Job>		jobList							= null;
-	protected transient Instant						marketCacheTime			= null;
+	private transient PlanetaryManager	_planetaryManager		= null;
+	private transient Instant						blueprintsCacheTime	= null;
+	protected transient Instant					jobsCacheTime				= null;
+	private transient ArrayList<Job>		jobList							= null;
+	protected transient Instant					marketCacheTime			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
+		super();
 		lastCCPAccessTime = Instant.now();
+		this.setDownloaded(false);
 		jsonClass = "NeoComCharacter";
 	}
 
@@ -404,14 +400,17 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return apikey.getDelegatedApiKey().getExpires();
 	}
 
+	public Date getApiKeyPaidUntil() {
+		return apikey.getPaidUntil();
+	}
+
 	/**
 	 * Delegate the request to the assets manager that will make a sql request to get the assets number.
 	 * 
 	 * @return
 	 */
-	@JsonIgnore
 	public long getAssetCount() {
-		return this.getAssetsManager().getAssetTotalCount();
+		return this.getAssetsManager().getTotalAssets();
 	}
 
 	@JsonIgnore
@@ -436,6 +435,11 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 			return delegatedCharacter.getCharacterID();
 	}
 
+	public CharacterInfoResponse getCharacterInfo() {
+		return characterInfo;
+	}
+
+	@Deprecated
 	public int getContentCount() {
 		return 0;
 	}
@@ -449,6 +453,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	@JsonIgnore
 	public EveLocation getDefaultLocation() {
 		return this.getAssetsManager().initialize().getLocations().values().iterator().next();
+	}
+
+	public Character getDelegatedCharacter() {
+		return delegatedCharacter;
 	}
 
 	@JsonIgnore
@@ -667,13 +675,13 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		characterID = newid;
 	}
 
-	public void setInfo(final CharacterInfoResponse inforesponse) {
-		characterInfo = inforesponse;
-	}
-
 	//	public void updateAssetsAccesscacheTime(final Date newCacheTime) {
 	//		assetsCacheTime = new Instant(newCacheTime);
 	//	}
+
+	public void setInfo(final CharacterInfoResponse inforesponse) {
+		characterInfo = inforesponse;
+	}
 
 	@Override
 	public String toString() {
@@ -687,10 +695,6 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 
 	public abstract void updateCharacterInfo();
 
-	public void updateLastAccess(final Date cachedUntil) {
-		lastCCPAccessTime = new Instant(cachedUntil);
-	}
-
 	//	/**
 	//	 * Updates the list of assets, regions and locations from the database. This code will initialize the
 	//	 * AssetsManager with that information on application load preferably and that lengthy operation will be
@@ -700,6 +704,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	//		// Do this on the assets manager or create one is reuired.
 	//		this.getAssetsManager().accessAllAssets();
 	//	}
+
+	public void updateLastAccess(final Date cachedUntil) {
+		lastCCPAccessTime = new Instant(cachedUntil);
+	}
 
 	protected double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
@@ -797,34 +805,6 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return newBlueprint;
 	}
 
-	protected Job convert2Job(final IndustryJob evejob) {
-		// Create the asset from the API asset.
-		final Job newJob = new Job(evejob.getJobID());
-		try {
-			newJob.setOwnerID(evejob.getInstallerID());
-			newJob.setFacilityID(evejob.getFacilityID());
-			newJob.setStationID(evejob.getStationID());
-			newJob.setActivityID(evejob.getActivityID());
-			newJob.setBlueprintID(evejob.getBlueprintID());
-			newJob.setBlueprintTypeID(evejob.getBlueprintTypeID());
-			newJob.setBlueprintLocationID(evejob.getBlueprintLocationID());
-			newJob.setRuns(evejob.getRuns());
-			newJob.setCost(evejob.getCost());
-			newJob.setLicensedRuns(evejob.getLicensedRuns());
-			newJob.setProductTypeID(evejob.getProductTypeID());
-			newJob.setStatus(evejob.getStatus());
-			newJob.setTimeInSeconds(evejob.getTimeInSeconds());
-			newJob.setStartDate(evejob.getStartDate());
-			newJob.setEndDate(evejob.getEndDate());
-			newJob.setCompletedDate(evejob.getCompletedDate());
-			newJob.setCompletedCharacterID(evejob.getCompletedCharacterID());
-			//			newJob.setSuccessfulRuns(evejob.getSuccessfulRuns());
-		} catch (final RuntimeException rtex) {
-			rtex.printStackTrace();
-		}
-		return newJob;
-	}
-
 	//	/**
 	//	 * Processes an asset and all their children. This method converts from a API record to a database asset
 	//	 * record.
@@ -874,6 +854,34 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	//		}
 	//	}
 
+	protected Job convert2Job(final IndustryJob evejob) {
+		// Create the asset from the API asset.
+		final Job newJob = new Job(evejob.getJobID());
+		try {
+			newJob.setOwnerID(evejob.getInstallerID());
+			newJob.setFacilityID(evejob.getFacilityID());
+			newJob.setStationID(evejob.getStationID());
+			newJob.setActivityID(evejob.getActivityID());
+			newJob.setBlueprintID(evejob.getBlueprintID());
+			newJob.setBlueprintTypeID(evejob.getBlueprintTypeID());
+			newJob.setBlueprintLocationID(evejob.getBlueprintLocationID());
+			newJob.setRuns(evejob.getRuns());
+			newJob.setCost(evejob.getCost());
+			newJob.setLicensedRuns(evejob.getLicensedRuns());
+			newJob.setProductTypeID(evejob.getProductTypeID());
+			newJob.setStatus(evejob.getStatus());
+			newJob.setTimeInSeconds(evejob.getTimeInSeconds());
+			newJob.setStartDate(evejob.getStartDate());
+			newJob.setEndDate(evejob.getEndDate());
+			newJob.setCompletedDate(evejob.getCompletedDate());
+			newJob.setCompletedCharacterID(evejob.getCompletedCharacterID());
+			//			newJob.setSuccessfulRuns(evejob.getSuccessfulRuns());
+		} catch (final RuntimeException rtex) {
+			rtex.printStackTrace();
+		}
+		return newJob;
+	}
+
 	protected NeoComMarketOrder convert2Order(final MarketOrder eveorder) {
 		// Create the asset from the API asset.
 		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
@@ -919,10 +927,6 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 			//			e.printStackTrace();
 		}
 		return null;
-	}
-
-	protected CharacterInfoResponse getCharacterInfo() {
-		return characterInfo;
 	}
 
 	protected ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {

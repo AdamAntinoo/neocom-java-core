@@ -49,21 +49,22 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	 * @param pilot
 	 */
 	public Ship(final long pilot) {
-		jsonClass = "Ship";
+		this();
+		//		jsonClass = "Ship";
 		pilotID = pilot;
-		this.setDownloaded(false);
+		//		this.setDownloaded(false);
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * By default the contents are added to the Cargo Hold of the Ship.
 	 */
 	@Override
 	public int addContent(final NeoComAsset asset) {
-		cargo.addChild(asset);
+		cargo.add(asset);
 		return cargo.size();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
 	 * The collaboration of the ship is different form the one of an asset. I will generate some groups to store
 	 * under them the different modules fitted and the cargo contents. <br>
@@ -100,10 +101,7 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 		this.setLocationID(asset.getLocationID());
 		this.setTypeID(asset.getTypeID());
 		this.setQuantity(asset.getQuantity());
-		//	this.flag = reference.flag;
 		this.setSingleton(asset.isPackaged());
-		// REFACTOR Get access to the unique asset identifier.
-		//		this.parentAssetID = reference.parentAssetID;
 
 		//- D E R I V E D   F I E L D S
 		this.setOwnerID(asset.getOwnerID());
@@ -111,7 +109,6 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 		this.setCategory(asset.getCategory());
 		this.setGroupName(asset.getGroupName());
 		this.setTech(asset.getTech());
-		//		this.blueprintFlag = reference.blueprintFlag;
 		this.setUserLabel(asset.getUserLabel());
 		this.setShip(asset.isShip());
 		this.setContainer(asset.isContainer());
@@ -119,10 +116,6 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	}
 
 	public List<NeoComAsset> getCargo() {
-		//		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		//		for (IGEFNode node : cargo.getChildren()) {
-		//			result.add((NeoComAsset) node);
-		//		}
 		return cargo.getContents();
 	}
 
@@ -173,6 +166,11 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	}
 
 	@Override
+	public boolean isExpandable() {
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("Ship [");
 		buffer.append("#").append(this.getTypeID()).append(" - ").append(this.getName()).append(" ");
@@ -202,20 +200,20 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 		for (NeoComAsset node : contents) {
 			int flag = node.getFlag();
 			if ((flag > 10) && (flag < 19)) {
-				highModules.addChild(node);
+				highModules.add(node);
 			} else if ((flag > 18) && (flag < 27)) {
-				medModules.addChild(node);
+				medModules.add(node);
 			} else if ((flag > 26) && (flag < 35)) {
-				lowModules.addChild(node);
+				lowModules.add(node);
 			} else if ((flag > 91) && (flag < 100)) {
-				rigs.addChild(node);
+				rigs.add(node);
 			} else {
 				// Check for drones
 				if (node.getCategory().equalsIgnoreCase("Drones")) {
-					drones.addChild(node);
+					drones.add(node);
 				} else {
 					// Contents on ships go to the cargohold.
-					cargo.addChild(node);
+					cargo.add(node);
 				}
 			}
 		}

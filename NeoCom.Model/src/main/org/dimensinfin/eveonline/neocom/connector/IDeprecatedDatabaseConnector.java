@@ -74,7 +74,7 @@ public interface IDeprecatedDatabaseConnector {
 
 	public List<NeoComAsset> queryContainerContents(long id);
 
-	public List<NeoComAsset> queryLocationContents(long id);
+	public List<NeoComAsset> searchAssetsAtLocation(long id);
 
 	public List<NeoComAsset> queryLocationPlanetaryContents(long id);
 

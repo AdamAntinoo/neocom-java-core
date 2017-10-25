@@ -60,7 +60,9 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	public Hashtable<String, Login> queryAllLogins();
 
-	public List<NeoComAsset> queryLocationContents(long id);
+	//	public List<NeoComAsset> queryContainerContents(final long identifier);
+	//
+	//	public List<NeoComAsset> searchAssetsAtLocation(long id);
 
 	public void replaceAssets(long characterID);
 
@@ -73,6 +75,8 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 	public NeoComAsset searchAssetByID(long parentAssetID);
 
 	public List<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
+
+	public List<NeoComAsset> searchAssetsAtLocation(final long ownerid, final long identifier);
 
 	public int totalLocationContentCount(final long identifier);
 }

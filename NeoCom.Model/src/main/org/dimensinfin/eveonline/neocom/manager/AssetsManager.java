@@ -51,7 +51,6 @@ import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -83,18 +82,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 	private transient Dao<NeoComAsset, String>							assetDao							= null;
 
 	// - L O C A T I O N   M A N A G E M E N T
-	//	private int																							locationCount						= -1;
-	//	private HashSet<String>																	regionNames							= null;
-	//	private ArrayList<EveLocation>													locationsList						= null;
-
 	// - A S S E T   M A N A G E M E N T
-	private long																						totalAssets						= -1;
-	//	private long																						verificationAssetCount	= 0;
-	@JsonInclude
+	public long																							totalAssets						= -1;
 	public double																						totalAssetsValue			= 0.0;
-	//	public final HashMap<Long, Region>											regions								= new HashMap<Long, Region>();
-	//	private final HashMap<Long, EveLocation>								locations							= new HashMap<Long, EveLocation>();
-	//	private final HashMap<Long, NeoComAsset>								containers						= new HashMap<Long, NeoComAsset>();
 	private TimeStamp																				assetsCacheTime				= null;;
 
 	/** Probably redundant with containers. */
@@ -110,9 +100,10 @@ public class AssetsManager extends AbstractManager implements INamed {
 	private final ArrayList<NeoComBlueprint>								t2BlueprintCache			= new ArrayList<NeoComBlueprint>();
 	private final ArrayList<NeoComBlueprint>								bpoCache							= new ArrayList<NeoComBlueprint>();
 
+	// USED BY OTHER CALSSES TO BE REVIEWED
 	public final HashMap<Long, ArrayList<NeoComAsset>>			assetCache						= new HashMap<Long, ArrayList<NeoComAsset>>();
 	public final HashMap<Long, ArrayList<NeoComAsset>>			asteroidCache					= new HashMap<Long, ArrayList<NeoComAsset>>();
-	public String																						iconName							= "assets.png";
+	public final String																			iconName							= "assets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
@@ -313,30 +304,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return assetsCacheTime;
 	}
 
-	/**
-	 * Counts the number of assets that belong to this character. If the current number of assets is negative
-	 * then this signals that the number has not been previously calculated.
-	 * 
-	 * @return the number of assets
-	 */
-	public long getAssetTotalCount() {
-		if (totalAssets == -1) {
-			try {
-				this.accessDao();
-				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
-				queryBuilder.setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID());
-				totalAssets = assetDao.countOf(queryBuilder.prepare());
-			} catch (SQLException sqle) {
-				AssetsManager.logger.info("W> Proglem calculating the number of assets for " + this.getPilot().getName());
-			}
-		}
-		return totalAssets;
-	}
-
-	//	@Override
-	//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-	//		return new ArrayList<AbstractComplexNode>();
-	//	}
 	@JsonIgnore
 	public ArrayList<NeoComBlueprint> getBlueprints() {
 		if (null == blueprintCache) {
@@ -382,29 +349,25 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return this.searchAsset4Category("Ship");
 	}
 
-	//	/**
-	//	 * Returns the list of different Regions found on the list of locations.
-	//	 * 
-	//	 * @return
-	//	 */
-	//	@Override
-	//	public Hashtable<Long, Region> getRegions() {
-	//		if (!this.isInitialized()) {
-	//			this.initialize();
-	//		}
-	//		return regions;
-	//	}
-
+	/**
+	 * Counts the number of assets that belong to this character. If the current number of assets is negative
+	 * then this signals that the number has not been previously calculated.
+	 * 
+	 * @return the number of assets
+	 */
 	public long getTotalAssets() {
+		if (totalAssets == -1) {
+			try {
+				this.accessDao();
+				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+				queryBuilder.setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID());
+				totalAssets = assetDao.countOf(queryBuilder.prepare());
+			} catch (SQLException sqle) {
+				AssetsManager.logger.info("W> Proglem calculating the number of assets for " + this.getPilot().getName());
+			}
+		}
 		return totalAssets;
 	}
-
-	//	public int getLocationCount() {
-	//		if (locationCount < 0) {
-	//			this.updateLocations();
-	//		}
-	//		return locationCount;
-	//	}
 
 	/**
 	 * This is the initialization code that we should always use when we need to operate with a loaded
@@ -421,7 +384,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	public AssetsManager initialize() {
 		if (!initialized) {
 			// INITIALIZE - Initialize the number of assets.
-			this.getAssetTotalCount();
+			this.getTotalAssets();
 			// INITIALIZE - Initialize the Locations and the Regions
 			List<NeoComAsset> locs = ModelAppConnector.getSingleton().getDBConnector()
 					.queryAllAssetLocations(this.getPilot().getCharacterID());
@@ -710,7 +673,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		if (null == target) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
-			ExtendedLocation newloc = new ExtendedLocation(intermediary);
+			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
@@ -1113,7 +1076,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 		else {
 			EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(identifier);
 			// Convert the Location to a new Extended Location with the new Contents Manager.
-			ExtendedLocation newloc = new ExtendedLocation(location);
+			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), location);
 			newloc.setContentManager(new DefaultAssetsContentManager(newloc));
 			locations.put(identifier, newloc);
 			long regid = newloc.getRegionID();

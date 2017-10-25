@@ -15,9 +15,10 @@ import java.util.Vector;
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.eveonline.neocom.interfaces.IExpandable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Region extends AbstractViewableNode {
+public class Region extends AbstractViewableNode implements IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long							serialVersionUID	= 3623925848703776069L;
 
@@ -89,7 +90,7 @@ public class Region extends AbstractViewableNode {
 		return result;
 	}
 
-	public int getContentCount() {
+	public int getLocationCount() {
 		return _locations.size();
 	}
 
@@ -104,6 +105,11 @@ public class Region extends AbstractViewableNode {
 	@Override
 	public boolean isEmpty() {
 		return (_locations.size() > 0) ? false : true;
+	}
+
+	@Override
+	public boolean isExpandable() {
+		return true;
 	}
 
 	@Override

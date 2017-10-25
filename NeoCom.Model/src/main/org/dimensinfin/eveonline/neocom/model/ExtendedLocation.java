@@ -16,21 +16,38 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
+import org.dimensinfin.eveonline.neocom.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.manager.DefaultAssetsContentManager;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ExtendedLocation extends EveLocation {
+public class ExtendedLocation extends EveLocation implements IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -4484922266027865406L;
 	private static Logger			logger						= Logger.getLogger("ExtendedLocation.java");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private EveLocation				delegate					= null;
-	private IContentManager		contentManager		= new DefaultAssetsContentManager();
+	private NeoComCharacter		pilot							= null;
+	private IContentManager		contentManager		= new DefaultAssetsContentManager(this);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ExtendedLocation(final EveLocation delegate) {
+	public ExtendedLocation() {
 		super();
+		this.setDownloaded(false);
+		this.setRenderWhenEmpty(false);
+		jsonClass = "ExtendedLocation";
+	}
+
+	public ExtendedLocation(final NeoComCharacter character, final EveLocation delegate) {
+		this(delegate);
+		pilot = character;
+	}
+
+	private ExtendedLocation(final EveLocation delegate) {
+		this();
+		this.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
 		this.delegate = delegate;
 		// Copy important identifiers from delegate.
@@ -61,24 +78,17 @@ public class ExtendedLocation extends EveLocation {
 		return (ArrayList<AbstractComplexNode>) contentManager.collaborate2Model(variant);
 	}
 
-	@Override
-	public String getConstellation() {
-		return delegate.getConstellation();
-	}
-
-	/**
-	 * The identifier to get the contents can change depending on the Locattion type. I have found that for
-	 * Citadels the resources are under the <code>parentAssetID</code> and not the <code>locationID</code>.
-	 * 
-	 * @param download
-	 * @return
-	 */
-	//	@JsonIgnore
-	public List<NeoComAsset> getContents() {
+	@JsonIgnore
+	public List<NeoComAsset> downloadContents() {
 		if (null != contentManager)
 			return contentManager.getContents();
 		else
 			return new ArrayList<NeoComAsset>();
+	}
+
+	@Override
+	public String getConstellation() {
+		return delegate.getConstellation();
 	}
 
 	public int getContentSize() {
@@ -101,6 +111,10 @@ public class ExtendedLocation extends EveLocation {
 	@Override
 	public String getName() {
 		return delegate.getName();
+	}
+
+	public long getPilotId() {
+		return pilot.getCharacterID();
 	}
 
 	@Override
@@ -149,6 +163,11 @@ public class ExtendedLocation extends EveLocation {
 			return contentManager.isEmpty();
 		else
 			return true;
+	}
+
+	@Override
+	public boolean isExpandable() {
+		return true;
 	}
 
 	@Override
@@ -208,6 +227,14 @@ public class ExtendedLocation extends EveLocation {
 	@Override
 	public boolean toggleVisible() {
 		return delegate.toggleVisible();
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("ExtendedLocation [");
+		buffer.append(delegate.toString());
+		buffer.append("]");
+		return buffer.toString();
 	}
 }
 

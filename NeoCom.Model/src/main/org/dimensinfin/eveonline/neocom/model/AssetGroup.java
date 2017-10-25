@@ -14,9 +14,11 @@ import java.util.Vector;
 
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetGroup extends AbstractViewableNode {
+public class AssetGroup extends AbstractViewableNode implements IContentManager {
 	/** Use the type to associate it with an icon. */
 	public enum EGroupType {
 		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
@@ -24,34 +26,48 @@ public class AssetGroup extends AbstractViewableNode {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long					serialVersionUID	= 8066964529677353362L;
-	//	private static Logger				logger						= Logger.getLogger("GroupAggregation");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public final Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
-	public EGroupType									_type							= EGroupType.DEFAULT;
-	public String											_title						= "-";
+	public final Vector<NeoComAsset>	contents					= new Vector<NeoComAsset>();
+	public EGroupType									type							= EGroupType.DEFAULT;
+	public String											title							= "-";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetGroup() {
 		super();
+		this.setDownloaded(true);
+		this.setExpanded(true);
 		jsonClass = "AssetGroup";
 	}
 
-	public AssetGroup(final String title) {
-		super();
-		_title = title;
+	public AssetGroup(final String newtitle) {
+		this();
+		title = newtitle;
 	}
 
-	public AssetGroup(final String title, final EGroupType type) {
-		super();
-		_title = title;
-		_type = type;
+	public AssetGroup(final String newtitle, final EGroupType newtype) {
+		this();
+		title = newtitle;
+		type = newtype;
+	}
+
+	@Override
+	public int add(final NeoComAsset asset) {
+		contents.add(asset);
+		return contents.size();
+	}
+
+	@Deprecated
+	@Override
+	public void addChild(final IGEFNode child) {
+		// TODO Auto-generated method stub
+		super.addChild(child);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public int addContent(final NeoComAsset asset) {
-		_contents.add(asset);
-		return _contents.size();
+		contents.add(asset);
+		return contents.size();
 	}
 
 	@Override
@@ -63,29 +79,44 @@ public class AssetGroup extends AbstractViewableNode {
 		return results;
 	}
 
+	@Override
 	public Vector<NeoComAsset> getContents() {
-		return _contents;
+		return contents;
+	}
+
+	@Override
+	public int getContentSize() {
+		return contents.size();
 	}
 
 	public String getTitle() {
-		return _title;
+		return title;
 	}
 
 	public EGroupType getType() {
-		return _type;
+		return type;
 	}
 
-	public void setTitle(final String title) {
-		_title = title;
+	public void setTitle(final String newtitle) {
+		title = newtitle;
 	}
 
-	public AssetGroup setType(final EGroupType type) {
-		_type = type;
+	public AssetGroup setType(final EGroupType newtype) {
+		type = newtype;
 		return this;
 	}
 
 	public int size() {
-		return _contents.size();
+		return contents.size();
+	}
+
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("AssetGroup [");
+		buffer.append(title).append(" type: ").append(type.name());
+		buffer.append(" [").append(this.getContentSize()).append("]");
+		buffer.append("]");
+		return buffer.toString();
 	}
 }
 

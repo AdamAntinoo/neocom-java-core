@@ -9,6 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.database;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -22,6 +23,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComBaseDatabase {
@@ -31,6 +33,19 @@ public class NeoComBaseDatabase {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
+	/**
+	 * Get the complete list of assets that are Planetary Materials.
+	 * 
+	 * @return
+	 */
+	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(final long characterID) {
+		// Select assets for each one of the Planetary categories.
+		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		assetList.addAll(this.searchAsset4Category(characterID, "Planetary Commodities"));
+		assetList.addAll(this.searchAsset4Category(characterID, "Planetary Resources"));
+		return assetList;
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	/**
@@ -47,7 +62,7 @@ public class NeoComBaseDatabase {
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			NeoComBaseDatabase.logger
-					.warning("W [SpringDatabaseConnector.queryAllLogins]> Exception reading all Logins. " + sqle.getMessage());
+					.warning("W [NeoComBaseDatabase.queryAllLogins]> Exception reading all Logins. " + sqle.getMessage());
 		}
 		// Classify the keys on they matching Logins.
 		Hashtable<String, Login> loginList = new Hashtable<String, Login>();
@@ -63,6 +78,60 @@ public class NeoComBaseDatabase {
 			}
 		}
 		return loginList;
+	}
+
+	/**
+	 * Gets the list of assets of a select Category.
+	 * 
+	 * @param characterID
+	 * @param typeID
+	 * @return
+	 */
+	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName) {
+		// Select assets for the owner and with an specific type id.
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		try {
+			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("ownerID", characterID);
+			where.and();
+			where.eq("category", categoryName);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			assetList = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<NeoComAsset>) assetList;
+	}
+
+	/**
+	 * Gets the assets located at an specific position by checking the pilot identifier and the asset reference
+	 * to a location stored at the <code>locationID</code> column value. We also filter out the assets that even
+	 * are located at the searched place they are inside another asset, like ships or containers.
+	 * 
+	 * @param ownerid
+	 * @param identifier
+	 * @return
+	 */
+	public List<NeoComAsset> searchAssetsAtLocation(final long ownerid, final long identifier) {
+		// Get access to one assets with a distinct location. Discard the rest of the data and only process the Location id
+		List<NeoComAsset> contents = new Vector<NeoComAsset>();
+		try {
+			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("ownerID", ownerid);
+			where.and().eq("locationID", identifier);
+			where.and().eq("parentAssetId", -1);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			contents = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			NeoComBaseDatabase.logger.warning(
+					"W [NeoComBaseDatabase.queryLocationContents]> Exception reading Location contents" + sqle.getMessage());
+		}
+		return contents;
 	}
 
 	/**
@@ -82,7 +151,7 @@ public class NeoComBaseDatabase {
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			NeoComBaseDatabase.logger
-					.warning("W [SpringDatabaseConnector.getLocationContentCount]> Exception reading Location contents count."
+					.warning("W [NeoComBaseDatabase.getLocationContentCount]> Exception reading Location contents count."
 							+ sqle.getMessage());
 			return 0;
 		}

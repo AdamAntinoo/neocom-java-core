@@ -17,23 +17,27 @@ import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.Ship;
+import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class DefaultAssetsContentManager extends AbstractContentManager implements IContentManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	//	private static Logger						logger		= Logger.getLogger("DefaultAssetsContentManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected boolean downloaded = false;
+	protected boolean	downloaded	= false;
+	private double		totalVolume	= 0.0;
+	private double		totalValue	= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public DefaultAssetsContentManager() {
-		super();
+	public DefaultAssetsContentManager(final ExtendedLocation newparent) {
+		super(newparent);
 		jsonClass = "DefaultAssetsContentManager";
 	}
 
-	public DefaultAssetsContentManager(final ExtendedLocation newparent) {
-		super(newparent);
+	@SuppressWarnings("unused")
+	private DefaultAssetsContentManager() {
+		super();
 		jsonClass = "DefaultAssetsContentManager";
 	}
 
@@ -47,28 +51,31 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 	@Override
 	public List<AbstractComplexNode> collaborate2Model(final String variant) {
 		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		// If the contents are already downloaded chanin the collaboration calls.
+		// If the contents are already downloaded chain the collaboration calls.
 		if (downloaded) {
 			results.addAll(contents);
 		} else {
 			// Download the assets only if the state is expended.
 			if (parent.isExpanded()) {
-				//Go to the database and get the assets. 
-				contents.clear();
-				contents.addAll(ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID()));
-				downloaded = true;
-				results.addAll(contents);
+				results.addAll(this.getContents());
 			}
 		}
 		return results;
 	}
 
+	/**
+	 * This methods is public so can be called by anyone at anytime. It will force the download of all the
+	 * assets for a Location being it expanded or net so any access to the method will trigger a database fetch
+	 * and their use of memory. Hut there should be a way to get the contents of a Location at some point in
+	 * time when we need to collaborate them to a ListView.
+	 */
 	@Override
 	public List<NeoComAsset> getContents() {
 		if (!downloaded) {
 			// Get the assets from the database.
 			contents.clear();
-			contents.addAll(ModelAppConnector.getSingleton().getDBConnector().queryLocationContents(this.getID()));
+			contents.addAll(this.processDownloadedAssets(
+					ModelAppConnector.getSingleton().getDBConnector().searchAssetsAtLocation(parent.getPilotId(), this.getID())));
 			downloaded = true;
 		}
 		return contents;
@@ -83,6 +90,14 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 			return ModelAppConnector.getSingleton().getDBConnector().totalLocationContentCount(this.getID());
 	}
 
+	public double getTotalValue() {
+		return totalValue;
+	}
+
+	public double getTotalVolume() {
+		return totalVolume;
+	}
+
 	@Override
 	public boolean isEmpty() {
 		if (downloaded)
@@ -92,6 +107,50 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 				return false;
 		else
 			return false;
+	}
+
+	/**
+	 * Process the assets being downloaded and convert to their new types. Warning!!. This methods need to know
+	 * the id of the current pilot but has no connection to the assets manager or the Character itself so I am
+	 * resorting to use the default Character stored at the AppModel.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	private List<NeoComAsset> processDownloadedAssets(final List<NeoComAsset> input) {
+		ArrayList<NeoComAsset> results = new ArrayList<NeoComAsset>();
+		for (NeoComAsset asset : input) {
+			if (asset.isContainer()) {
+				// Check if the asset is packaged. If so leave as asset
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					SpaceContainer container = new SpaceContainer().copyFrom(asset);
+					// Calculate value and volume to register on the aggregation.
+					//	totalValue=+asset.getPrice()*asset.getQuantity();
+					//	totalVolume=+asset.getItem().getVolume()*asset.getQuantity();
+					results.add(container);
+					continue;
+				}
+			}
+			if (asset.isShip()) {
+				// Check if the ship is packaged. If packaged leave it as a simple asset.
+				if (!asset.isPackaged()) {
+					// Transform the asset to a ship.
+					Ship ship = new Ship(ModelAppConnector.getSingleton().getModelStore().getActiveCharacter().getCharacterID())
+							.copyFrom(asset);
+					// Calculate value and volume to register on the aggregation.
+					totalValue = +asset.getPrice();
+					//			totalVolume=+asset.getItem().getVolume()*asset.getQuantity();
+					results.add(ship);
+					continue;
+				}
+			}
+			// Calculate value and volume to register on the aggregation.
+			totalValue = +asset.getPrice() * asset.getQuantity();
+			totalVolume = +asset.getItem().getVolume() * asset.getQuantity();
+			results.add(asset);
+		}
+		return results;
 	}
 }
 

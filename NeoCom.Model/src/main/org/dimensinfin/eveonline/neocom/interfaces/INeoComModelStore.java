@@ -34,8 +34,14 @@ public interface INeoComModelStore extends IModelStore {
 
 	public List<NeoComCharacter> getActiveCharacters();
 
+	public Login getActiveLogin();
+
+	public String getActiveLoginName();
+
+	@Deprecated
 	public NeoComCharacter getCurrentPilot();
 
+	@Deprecated
 	public String getLoginIdentifier();
 }
 

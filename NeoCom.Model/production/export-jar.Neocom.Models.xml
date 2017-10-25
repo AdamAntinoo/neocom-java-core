@@ -7,7 +7,7 @@
     <property name="dir.workspace" value="D:/Projects/Neocom Web Developments/Angular2 Web"/>
     <property name="dir.jarfile" value="${dir.buildfile}"/>
     <target name="create_run_jar">
-        <jar destfile="${dir.jarfile}/Neocom.Models-1.3.0.jar">
+        <jar destfile="${dir.jarfile}/Neocom.Models.libs-1.3.3.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="sun.tools.jar.Main"/>
@@ -15,6 +15,7 @@
                 <attribute name="Rsrc-Class-Path" value="./ slf4j-android-1.7.7.jar slf4j-api-1.7.7.jar joda-time-2.3.jar jeveassets.3.1.2.jar slf4j-api-1.7.21.jar jackson-annotations-2.8.0.jar ormlite-core-4.48.jar eveapi-6.0.6.jar"/>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="D:/Projects/NeoCom-libraries/AndroidLibraries/Neocom.Models/NeoCom.Model/target/classes"/>
             <fileset dir="D:/Projects/NeoCom-libraries/corebase/org.dimensinfin.android/bin/classes"/>
             <zipfileset dir="C:/Users/Adam/.m2/repository/org/slf4j/slf4j-android/1.7.7" includes="slf4j-android-1.7.7.jar"/>
             <zipfileset dir="C:/Users/Adam/.m2/repository/org/slf4j/slf4j-api/1.7.7" includes="slf4j-api-1.7.7.jar"/>

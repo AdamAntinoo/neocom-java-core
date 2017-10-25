@@ -25,9 +25,9 @@ public class SkillsManager extends AbstractManager implements INamed {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Set<Skill>							skills						= null;
-	public Set<SkillQueueItem>			skillQueue				= null;
-	public SkillInTrainingResponse	skillInTraining		= null;
-	public String										iconName					= "skills.png";
+	private Set<SkillQueueItem>			skillQueue				= null;
+	private SkillInTrainingResponse	skillInTraining		= null;
+	private final String						iconName					= "skills.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 
@@ -43,10 +43,12 @@ public class SkillsManager extends AbstractManager implements INamed {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
+	@Override
 	public String getOrderingName() {
 		return "Skills Manager";
 	}
 
+	@Override
 	public SkillsManager initialize() {
 		//		this.accessAllBlueprints();
 		return this;

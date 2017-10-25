@@ -11,11 +11,9 @@ package org.dimensinfin.eveonline.neocom.model;
 //- IMPORT SECTION .........................................................................................
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 
@@ -72,14 +70,7 @@ public class EveLocation extends AbstractViewableNode {
 	private String						security					= "0.0";
 	@DatabaseField
 	protected String					typeID						= ELocationType.UNKNOWN.name();
-	//	@DatabaseField
-	//	protected String structureName="-NOT-STRUCTURE-";
-	//	protected boolean					citadel						= false;
 	public String							urlLocationIcon		= null;
-
-	@JsonIgnore
-	//	private List<NeoComAsset>	contents					= new Vector<NeoComAsset>();
-	//	private final IContentManager	contentManager		= new DefaultAssetsContentManager();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
@@ -164,21 +155,6 @@ public class EveLocation extends AbstractViewableNode {
 		return true;
 	}
 
-	/**
-	 * Intercept this call and return the contents.
-	 * 
-	 */
-	@Deprecated
-	@Override
-	public Vector<IGEFNode> getChildren() {
-		throw new RuntimeException("Using an already invalid method.");
-		//		Vector<IGEFNode> result = new Vector<IGEFNode>();
-		//		for (NeoComAsset neoComAsset : contents) {
-		//			result.add(neoComAsset);
-		//		}
-		//		return new Vector<IGEFNode>();
-	}
-
 	public String getConstellation() {
 		return constellation;
 	}
@@ -186,40 +162,6 @@ public class EveLocation extends AbstractViewableNode {
 	public long getConstellationID() {
 		return constellationID;
 	}
-
-	//	/**
-	//	 * This operation should control the download state for the contents of this location. If the Location is
-	//	 * not downloaded the result is an empty list but if the flag is set then it should fire the download code
-	//	 * to get the list of elements stored at this Location.
-	//	 * 
-	//	 * @return
-	//	 */
-	//	@JsonIgnore
-	//	public List<NeoComAsset> getContents() {
-	//		return this.getContents(false);
-	//	}
-
-	//	/**
-	//	 * The identifier to get the contents can change depending on the Locattion type. I have found that for
-	//	 * Citadels the resources are under the <code>parentAssetID</code> and not the <code>locationID</code>.
-	//	 * 
-	//	 * @param download
-	//	 * @return
-	//	 */
-	//	@JsonIgnore
-	//	public List<NeoComAsset> getContents(final boolean download) {
-	//		if (null != contentManager)
-	//			return contentManager.getContents();
-	//		else
-	//			return new ArrayList<NeoComAsset>();
-	//	}
-	//
-	//	public int getContentSize() {
-	//		if (null != contentManager)
-	//			return contentManager.getContentSize();
-	//		else
-	//			return 0;
-	//	}
 
 	public String getFullLocation() {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
@@ -304,14 +246,6 @@ public class EveLocation extends AbstractViewableNode {
 		return false;
 	}
 
-	//	@Override
-	//	public boolean isEmpty() {
-	//		if (null != contentManager)
-	//			return contentManager.isEmpty();
-	//		else
-	//			return true;
-	//	}
-
 	public final boolean isRegion() {
 		return ((this.getStationID() == 0) && (this.getSystemID() == 0) && (this.getRegionID() != 0));
 	}
@@ -328,10 +262,6 @@ public class EveLocation extends AbstractViewableNode {
 	public final boolean isUnknown() {
 		return (id == -2);
 	}
-
-	//	public void setCitadel(final boolean citadel) {
-	//		this.citadel = citadel;
-	//	}
 
 	public void setConstellation(final String constellation) {
 		this.constellation = constellation;
@@ -361,27 +291,22 @@ public class EveLocation extends AbstractViewableNode {
 
 	public void setLocationID(final long stationID) {
 		this.stationID = stationID;
-		//		setDirty(true);
 	}
 
 	public void setRegion(final String region) {
 		this.region = region;
-		//		setDirty(true);
 	}
 
 	public void setRegionID(final long regionID) {
 		this.regionID = regionID;
-		//		setDirty(true);
 	}
 
 	public void setSecurity(final String security) {
 		this.security = security;
-		//		setDirty(true);
 	}
 
 	public void setStation(final String station) {
 		this.station = station;
-		//		setDirty(true);
 	}
 
 	public void setStationID(final long stationID) {
@@ -390,17 +315,14 @@ public class EveLocation extends AbstractViewableNode {
 
 	public void setSystem(final String system) {
 		this.system = system;
-		//		setDirty(true);
 	}
 
 	public void setSystemID(final long systemID) {
 		this.systemID = systemID;
-		//		setDirty(true);
 	}
 
 	public void setTypeID(final ELocationType typeID) {
 		this.typeID = typeID.name();
-		//		setDirty(true);
 	}
 
 	public void setUrlLocationIcon(final String urlLocationIcon) {
@@ -423,18 +345,18 @@ public class EveLocation extends AbstractViewableNode {
 		return buffer.toString();
 	}
 
-	private void updateFromCitadel(final long id, final Citadel cit) {
+	private void updateFromCitadel(final long newid, final Citadel cit) {
 		this.updateFromSystem(cit.systemId);
 		// Copy the data from the citadel location.
-		stationID = id;
+		stationID = newid;
 		station = cit.name;
 		systemID = cit.systemId;
 		//		citadel = true;
 	}
 
-	private void updateFromSystem(final long id) {
+	private void updateFromSystem(final long newid) {
 		// Get the system information from the CCP location tables.
-		EveLocation systemLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(id);
+		EveLocation systemLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(newid);
 		systemID = systemLocation.getSystemID();
 		system = systemLocation.getSystem();
 		constellationID = systemLocation.getConstellationID();
@@ -443,14 +365,6 @@ public class EveLocation extends AbstractViewableNode {
 		region = systemLocation.getRegion();
 		security = systemLocation.getSecurity();
 	}
-	//
-	//	private void updateLocationID() {
-	//		if (citadel) {
-	//			id = stationID;
-	//		} else {
-	//			id = this.getID();
-	//		}
-	//	}
 }
 
 // - UNUSED CODE ............................................................................................

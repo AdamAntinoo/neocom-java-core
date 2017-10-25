@@ -9,21 +9,36 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.util.List;
-
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.core.interfaces.IViewableNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-/**
- * This interface controls the methods that should be common to all Eve Online assets that can also contain
- * other assets like Locations, Containers, Holds or Ships and Citadels.
- * 
- * @author Adam Antinoo
- */
-public interface IAssetContainer extends IExpandable {
-	public int addContent(NeoComAsset asset);
+public interface IExpandable extends IViewableNode {
+	@Override
+	public boolean collapse();
 
-	public List<NeoComAsset> getContents();
+	@Override
+	public boolean expand();
+
+	@Override
+	public boolean isEmpty();
+
+	public boolean isExpandable();
+
+	@Override
+	public boolean isExpanded();
+
+	@Override
+	public boolean isRenderWhenEmpty();
+
+	@Override
+	public AbstractComplexNode setExpanded(final boolean newState);
+
+	@Override
+	public AbstractComplexNode setRenderWhenEmpty(final boolean renderWhenEmpty);
+
+	@Override
+	public boolean toggleVisible();
 }
 
 // - UNUSED CODE ............................................................................................

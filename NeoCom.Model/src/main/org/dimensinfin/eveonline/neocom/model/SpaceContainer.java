@@ -94,6 +94,11 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer {
 	}
 
 	@Override
+	public boolean isExpandable() {
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("SpaceContainer [");
 		buffer.append(this.getName()).append(" [");

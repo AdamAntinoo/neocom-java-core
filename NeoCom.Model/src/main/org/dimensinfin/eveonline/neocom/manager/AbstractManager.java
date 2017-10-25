@@ -34,6 +34,7 @@ public abstract class AbstractManager extends AbstractViewableNode {
 	@JsonIgnore
 	private transient NeoComCharacter									pilot							= null;
 	protected boolean																	initialized				= false;
+	// - L O C A T I O N   M A N A G E M E N T
 	protected final Hashtable<Long, Region>						regions						= new Hashtable<Long, Region>();
 	protected final Hashtable<Long, ExtendedLocation>	locations					= new Hashtable<Long, ExtendedLocation>();
 	protected final Hashtable<Long, NeoComAsset>			containers				= new Hashtable<Long, NeoComAsset>();
@@ -45,21 +46,21 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		jsonClass = "AbstractManager";
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean clearInitialization() {
 		boolean oldstate = initialized;
 		initialized = false;
 		return oldstate;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
 		return new ArrayList<AbstractComplexNode>();
 	}
 
-	public int getContentCount() {
-		return 0;
-	}
+	//	public int getContentCount() {
+	//		return 0;
+	//	}
 
 	@JsonIgnore
 	public NeoComCharacter getPilot() {
@@ -72,9 +73,7 @@ public abstract class AbstractManager extends AbstractViewableNode {
 	 * @return
 	 */
 	public Hashtable<Long, Region> getRegions() {
-		//		if (!this.isInitialized()) {
 		this.initialize();
-		//		}
 		return regions;
 	}
 
