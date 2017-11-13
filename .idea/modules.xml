@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" filepath="$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeoModels.iml" filepath="$PROJECT_DIR$/NeoModels.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
