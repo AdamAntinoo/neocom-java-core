@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/NeoCom-Model.iml" filepath="$PROJECT_DIR$/NeoCom-Model.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" filepath="$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NeoModels.iml" filepath="$PROJECT_DIR$/NeoModels.iml" />
     </modules>
   </component>
 </project>

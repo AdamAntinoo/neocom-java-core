@@ -3,16 +3,22 @@ apply plugin: 'java-library'
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
 
+sourceSets {
+    main.java.srcDirs += 'src/main/java-newcore'
+    main.java.srcDirs += 'src/main/java-android'
+}
+
 dependencies {
     // L I B R A R I E S   D E P E N D E N C I E S
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
     implementation 'com.beimin:eveapi:6.0.6'
+    implementation 'joda-time:joda-time:2.3'
 
 
     // A P P L I C A T I O N   M O D U L E S
-    implementation files('libs/jeveassets.3.1.2.jar')
-    implementation files('libs/CoreBase.core-1.5.1.jar')
+    compileOnly files('libs/jeveassets.3.1.2.jar')
+    compileOnly files('libs/CoreBase.core-1.5.1.jar')
 
     // T E S T I N G
     testImplementation 'junit:junit:4.12'

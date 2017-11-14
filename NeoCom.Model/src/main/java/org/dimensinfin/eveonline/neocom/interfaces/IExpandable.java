@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 import org.dimensinfin.core.interfaces.IViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 
-// - CLASS IMPLEMENTATION ...................................................................................
+// - INTERFACE IMPLEMENTATION ...............................................................................
 public interface IExpandable extends IViewableNode {
 	@Override
 	public boolean collapse();
@@ -22,7 +22,7 @@ public interface IExpandable extends IViewableNode {
 
 	@Override
 	public boolean isEmpty();
-
+@Deprecated
 	public boolean isExpandable();
 
 	@Override
@@ -32,12 +32,14 @@ public interface IExpandable extends IViewableNode {
 	public boolean isRenderWhenEmpty();
 
 	@Override
+	@Deprecated
 	public AbstractComplexNode setExpanded(final boolean newState);
 
 	@Override
 	public AbstractComplexNode setRenderWhenEmpty(final boolean renderWhenEmpty);
 
 	@Override
+	@Deprecated
 	public boolean toggleVisible();
 }
 
