@@ -9,17 +9,17 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
-import org.dimensinfin.eveonline.neocom.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.manager.DefaultAssetsContentManager;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ExtendedLocation extends EveLocation implements IExpandable {

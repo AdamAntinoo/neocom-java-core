@@ -9,13 +9,13 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.interfaces.IExpandable;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Region extends AbstractViewableNode implements IExpandable {

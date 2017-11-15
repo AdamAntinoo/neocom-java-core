@@ -22,4 +22,5 @@ dependencies {
 
     // T E S T I N G
     testImplementation 'junit:junit:4.12'
+    compile project(path: ':CoreBaseLibrary')
 }
