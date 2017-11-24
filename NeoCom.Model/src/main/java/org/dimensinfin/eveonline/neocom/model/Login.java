@@ -9,16 +9,16 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
+import com.beimin.eveapi.exception.ApiException;
+
+import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
-
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-
-import com.beimin.eveapi.exception.ApiException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -76,7 +76,9 @@ public class Login extends AbstractViewableNode {
 				}
 			}
 		} catch (ApiException apiex) {
-			apiex.printStackTrace();
+			Login.logger.info(
+					"EX [Login.addKey]> ApiException: " + apiex.getMessage());
+//			apiex.printStackTrace();
 		}
 
 		return this;

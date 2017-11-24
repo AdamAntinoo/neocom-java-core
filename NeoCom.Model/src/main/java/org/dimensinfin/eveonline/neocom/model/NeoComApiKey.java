@@ -10,17 +10,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.logging.Logger;
-
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.interfaces.IViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
-
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.CachingConnector;
@@ -35,6 +24,17 @@ import com.beimin.eveapi.parser.account.AccountStatusParser;
 import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
 import com.beimin.eveapi.response.account.AccountStatusResponse;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
+
+import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.core.interfaces.IViewableNode;
+import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComApiKey extends AbstractViewableNode implements IViewableNode {
@@ -94,7 +94,7 @@ public class NeoComApiKey extends AbstractViewableNode implements IViewableNode 
 	//	private Instant											paidUntil							= new Instant(0);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	private NeoComApiKey() {
+	protected NeoComApiKey() {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -218,12 +218,14 @@ public class NeoComApiKey extends AbstractViewableNode implements IViewableNode 
 		delegatedApiKey = response.getApiKeyInfo();
 	}
 
-	public void setKey(final int key) {
+	public NeoComApiKey setKey(final int key) {
 		this.key = key;
+		return this;
 	}
 
-	public void setValidationCode(final String validationcode) {
+	public NeoComApiKey setValidationCode(final String validationcode) {
 		validationCode = validationcode;
+		return this;
 	}
 
 	@Override

@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.enums;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum ENeoComVariants {
-	SPLASH_SCREEN,CAPSULEER_LIST, PILOT_DETAILS, ASSETS_BYLOCATION, PLANETARY_BYLOCATION, PLANETARY_OPTIMIZATION, PILOT_HEADER, PILOT_MANAGERS, ASSETS_BYCATEGORY, ASSETS_MATERIALS
+	SPLASH_SCREEN, CAPSULEER_LIST, NEW_LOGIN, PILOT_DETAILS, ASSETS_BYLOCATION, PLANETARY_BYLOCATION, PLANETARY_OPTIMIZATION, PILOT_HEADER, PILOT_MANAGERS, ASSETS_BYCATEGORY, ASSETS_MATERIALS
 }
 
 // - UNUSED CODE ............................................................................................
