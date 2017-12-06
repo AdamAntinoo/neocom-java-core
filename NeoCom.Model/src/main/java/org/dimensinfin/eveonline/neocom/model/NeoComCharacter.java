@@ -10,42 +10,14 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.interfaces.IViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
-import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
-import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
-import org.dimensinfin.eveonline.neocom.industry.Job;
-import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.dimensinfin.eveonline.neocom.market.MarketOrderAnalyticalGroup;
-import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
-import org.dimensinfin.eveonline.neocom.market.ScheduledSellsAnalyticalGroup;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
-import com.beimin.eveapi.model.shared.IndustryJob;
 import com.beimin.eveapi.model.shared.KeyType;
 import com.beimin.eveapi.model.shared.Location;
-import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.ApiAuthorization;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.eve.CharacterInfoParser;
@@ -66,9 +38,26 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.joda.time.Instant;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.Logger;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class NeoComCharacter extends AbstractViewableNode
-		implements IViewableNode, Comparable<NeoComCharacter> {
+public abstract class NeoComCharacter extends NeoComNode implements Comparable<NeoComCharacter> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3456210619258009170L;
 	private static Logger			logger						= Logger.getLogger("NeoComCharacter");
@@ -90,8 +79,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	 * @return
 	 * @throws ApiException
 	 */
-	private static Corporation createCorporation(final Character coreChar, final NeoComApiKey apikey)
-			throws ApiException {
+	private static Corporation createCorporation(final Character coreChar, final NeoComApiKey apikey) throws ApiException {
 		Corporation newcorp = new Corporation();
 		newcorp.setApiKey(apikey);
 		// Copy the authorization and add to it the characterID
@@ -212,89 +200,90 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	private transient Instant						lastCCPAccessTime		= null;
 	private ArrayList<Property>					locationRoles				= null;
 	private HashMap<Long, Property>			actions4Character		= null;
-	private transient Instant						assetsCacheTime			= null;
+	//	private transient Instant						assetsCacheTime			= null;
 
 	@JsonIgnore
 	private transient AssetsManager			assetsManager				= null;
 	@JsonIgnore
 	private transient PlanetaryManager	_planetaryManager		= null;
-	private transient Instant						blueprintsCacheTime	= null;
-	protected transient Instant					jobsCacheTime				= null;
-	private transient ArrayList<Job>		jobList							= null;
-	protected transient Instant					marketCacheTime			= null;
+
+	//	private transient Instant						blueprintsCacheTime	= null;
+	//	protected transient Instant					jobsCacheTime				= null;
+	//	private transient ArrayList<Job>		jobList							= null;
+	//	protected transient Instant					marketCacheTime			= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected NeoComCharacter() {
 		super();
 		lastCCPAccessTime = Instant.now();
-		this.setDownloaded(false);
+		//		this.setDownloaded(false);
 		jsonClass = "NeoComCharacter";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * This method is to process a request from the UI to get the model for the Market Orders. The market orders
-	 * are stored at the database and there are two sets, the orders that are downloaded from CCP and the orders
-	 * scheduled by the user through the UI. If this access does not find orders it posts a refresh to download
-	 * that information from CCP servers. There is no timing check to access the information.
-	 * 
-	 * @return the market order data hierarchy with the analytical groups and the orders.
-	 */
-	public ArrayList<MarketOrderAnalyticalGroup> accessMarketOrders() {
-		final ArrayList<NeoComMarketOrder> orders = this.searchMarketOrders();
-		// Create the analytical groups.
-		final MarketOrderAnalyticalGroup scheduledBuyGroup = new MarketOrderAnalyticalGroup(10, "SCHEDULED BUYS");
-		final MarketOrderAnalyticalGroup buyGroup = new MarketOrderAnalyticalGroup(30, "BUYS");
-		final MarketOrderAnalyticalGroup sellGroup = new MarketOrderAnalyticalGroup(40, "SELLS");
-		final MarketOrderAnalyticalGroup finishedGroup = new MarketOrderAnalyticalGroup(50, "FINISHED");
-
-		for (final NeoComMarketOrder order : orders) {
-			// Add the order to the scheduled aggregator that will also pack similar items into a single item.
-			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
-				scheduledBuyGroup.addChild(order);
-				continue;
-			}
-			if (order.getOrderState() == ModelWideConstants.orderstates.EXPIRED) {
-				finishedGroup.addChild(order);
-				continue;
-			}
-			// Detect buys and sells.				
-			final boolean bid = order.getBid();
-			if (bid) {
-				buyGroup.addChild(order);
-			} else {
-				sellGroup.addChild(order);
-			}
-		}
-		// Compose the output.
-		final ArrayList<MarketOrderAnalyticalGroup> result = new ArrayList<MarketOrderAnalyticalGroup>();
-		result.add(scheduledBuyGroup);
-		result.add(buyGroup);
-		result.add(sellGroup);
-		result.add(finishedGroup);
-		return result;
-	}
-
-	public MarketOrderAnalyticalGroup accessModules4Sell() {
-		final ScheduledSellsAnalyticalGroup scheduledSellGroup = new ScheduledSellsAnalyticalGroup(20, "SCHEDULED SELLS");
-		final ArrayList<NeoComAsset> modules = this.getAssetsManager().searchT2Modules();
-		final HashMap<String, Resource> mods = new HashMap<String, Resource>();
-		for (final NeoComAsset mc : modules) {
-			// Check if the item is already on the list.
-			final boolean hit = mods.containsKey(mc.getItemName());
-			// Only add to sell list the stacks with more than 10 elements.
-			if (mc.getQuantity() > 10) if (!hit) {
-				// TODO Instead defining a resoure I should create a new fake order.
-				final Resource mod4sell = new Resource(mc.getTypeID(), mc.getQuantity());
-				mods.put(mc.getItemName(), mod4sell);
-				scheduledSellGroup.addChild(mod4sell);
-			} else {
-				final Resource mod4sell = mods.get(mc.getItemName());
-				mod4sell.setQuantity(mod4sell.getQuantity() + mc.getQuantity());
-			}
-		}
-		return scheduledSellGroup;
-	}
+	//	/**
+	//	 * This method is to process a request from the UI to get the model for the Market Orders. The market orders
+	//	 * are stored at the database and there are two sets, the orders that are downloaded from CCP and the orders
+	//	 * scheduled by the user through the UI. If this access does not find orders it posts a refresh to download
+	//	 * that information from CCP servers. There is no timing check to access the information.
+	//	 * 
+	//	 * @return the market order data hierarchy with the analytical groups and the orders.
+	//	 */
+	//	public ArrayList<MarketOrderAnalyticalGroup> accessMarketOrders() {
+	//		final ArrayList<NeoComMarketOrder> orders = this.searchMarketOrders();
+	//		// Create the analytical groups.
+	//		final MarketOrderAnalyticalGroup scheduledBuyGroup = new MarketOrderAnalyticalGroup(10, "SCHEDULED BUYS");
+	//		final MarketOrderAnalyticalGroup buyGroup = new MarketOrderAnalyticalGroup(30, "BUYS");
+	//		final MarketOrderAnalyticalGroup sellGroup = new MarketOrderAnalyticalGroup(40, "SELLS");
+	//		final MarketOrderAnalyticalGroup finishedGroup = new MarketOrderAnalyticalGroup(50, "FINISHED");
+	//
+	//		for (final NeoComMarketOrder order : orders) {
+	//			// Add the order to the scheduled aggregator that will also pack similar items into a single item.
+	//			if (order.getOrderState() == ModelWideConstants.orderstates.SCHEDULED) {
+	//				scheduledBuyGroup.addChild(order);
+	//				continue;
+	//			}
+	//			if (order.getOrderState() == ModelWideConstants.orderstates.EXPIRED) {
+	//				finishedGroup.addChild(order);
+	//				continue;
+	//			}
+	//			// Detect buys and sells.				
+	//			final boolean bid = order.getBid();
+	//			if (bid) {
+	//				buyGroup.addChild(order);
+	//			} else {
+	//				sellGroup.addChild(order);
+	//			}
+	//		}
+	//		// Compose the output.
+	//		final ArrayList<MarketOrderAnalyticalGroup> result = new ArrayList<MarketOrderAnalyticalGroup>();
+	//		result.add(scheduledBuyGroup);
+	//		result.add(buyGroup);
+	//		result.add(sellGroup);
+	//		result.add(finishedGroup);
+	//		return result;
+	//	}
+	//
+	//	public MarketOrderAnalyticalGroup accessModules4Sell() {
+	//		final ScheduledSellsAnalyticalGroup scheduledSellGroup = new ScheduledSellsAnalyticalGroup(20, "SCHEDULED SELLS");
+	//		final ArrayList<NeoComAsset> modules = this.getAssetsManager().searchT2Modules();
+	//		final HashMap<String, Resource> mods = new HashMap<String, Resource>();
+	//		for (final NeoComAsset mc : modules) {
+	//			// Check if the item is already on the list.
+	//			final boolean hit = mods.containsKey(mc.getItemName());
+	//			// Only add to sell list the stacks with more than 10 elements.
+	//			if (mc.getQuantity() > 10) if (!hit) {
+	//				// TODO Instead defining a resoure I should create a new fake order.
+	//				final Resource mod4sell = new Resource(mc.getTypeID(), mc.getQuantity());
+	//				mods.put(mc.getItemName(), mod4sell);
+	//				scheduledSellGroup.addChild(mod4sell);
+	//			} else {
+	//				final Resource mod4sell = mods.get(mc.getItemName());
+	//				mod4sell.setQuantity(mod4sell.getQuantity() + mc.getQuantity());
+	//			}
+	//		}
+	//		return scheduledSellGroup;
+	//	}
 
 	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
 		if (null == locationRoles) {
@@ -310,28 +299,28 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		locationRoles.add(hit);
 	}
 
-	@Override
-	public void clean() {
-		assetsManager = null;
-		//		lastCCPAccessTime = null;
-		//		assetsCacheTime = null;
-		blueprintsCacheTime = null;
-		jobsCacheTime = null;
-		super.clean();
-	}
+	//	@Override
+	//	public void clean() {
+	//		assetsManager = null;
+	//		//		lastCCPAccessTime = null;
+	//		//		assetsCacheTime = null;
+	//		blueprintsCacheTime = null;
+	//		jobsCacheTime = null;
+	////		super.clean();
+	//	}
 
-	public void cleanJobs() {
-		jobList = null;
-		jobsCacheTime = new Instant();
-	}
-
-	/**
-	 * Does nothing because the list of orders is not cached on any structure and is read from database every
-	 * time we access that list.
-	 */
-	public void cleanOrders() {
-		marketCacheTime = null;
-	}
+	//	public void cleanJobs() {
+	//		jobList = null;
+	//		jobsCacheTime = new Instant();
+	//	}
+	//
+	//	/**
+	//	 * Does nothing because the list of orders is not cached on any structure and is read from database every
+	//	 * time we access that list.
+	//	 */
+	//	public void cleanOrders() {
+	//		marketCacheTime = null;
+	//	}
 
 	/**
 	 * Removes the records that define the association of roles to the selected location. This clears all the
@@ -357,10 +346,9 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 			}
 	}
 
-	@Override
-	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
+	//	@Override
+	//	public abstract ArrayList<AbstractComplexNode> collaborate2Model(String variant);
 
-	@Override
 	public int compareTo(final NeoComCharacter target) {
 		if (this.getCharacterID() > target.getCharacterID()) return -1;
 		if (this.getCharacterID() == target.getCharacterID()) return 0;
@@ -373,17 +361,17 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 
 	//	public abstract void downloadBlueprints();
 
-	public abstract void downloadIndustryJobs();
-
-	public abstract void downloadMarketOrders();
+	//	public abstract void downloadIndustryJobs();
+	//
+	//	public abstract void downloadMarketOrders();
 
 	//	public abstract void downloadAssets();
 
-	public void forceRefresh() {
-		this.clean();
-		assetsManager = new AssetsManager(this);
-		ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
-	}
+	//	public void forceRefresh() {
+	////		this.clean();
+	//		assetsManager = new AssetsManager(this);
+	//		ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
+	//	}
 
 	public double getAccountBalance() {
 		return accountBalance;
@@ -439,10 +427,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return characterInfo;
 	}
 
-	@Deprecated
-	public int getContentCount() {
-		return 0;
-	}
+	//	@Deprecated
+	//	public int getContentCount() {
+	//		return 0;
+	//	}
 
 	/**
 	 * Returns a non null default location so any Industry action has a location to be used as reference. Any
@@ -459,13 +447,13 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return delegatedCharacter;
 	}
 
-	@JsonIgnore
-	public ArrayList<Job> getIndustryJobs() {
-		if (null == jobList) {
-			jobList = this.searchIndustryJobs();
-		}
-		return jobList;
-	}
+	//	@JsonIgnore
+	//	public ArrayList<Job> getIndustryJobs() {
+	//		if (null == jobList) {
+	//			jobList = this.searchIndustryJobs();
+	//		}
+	//		return jobList;
+	//	}
 
 	/**
 	 * Returns the first location that matches the specified role. This is confusing because more that one
@@ -481,8 +469,9 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		}
 		for (Property role : locationRoles) {
 			String value = role.getPropertyType().toString();
-			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole)) return ModelAppConnector.getSingleton()
-					.getCCPDBConnector().searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
+			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole))
+				return ModelAppConnector.getSingleton().getCCPDBConnector()
+						.searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 			//		Property currentRole = locationRoles.get(locID);
 			//			if (matchingRole.equalsIgnoreCase(currentRole.getStringValue()))
 			//				return AppConnector.getDBConnector().searchLocationbyID(locID);
@@ -494,7 +483,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	 * Return the first location that matches that role at the specified Region.
 	 * 
 	 * @param matchingRole
-	 * @param Region
+	 * @param region
 	 * @return
 	 */
 	@JsonIgnore
@@ -545,10 +534,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return parentLoginRef;
 	}
 
-	@JsonIgnore
-	public ArrayList<NeoComMarketOrder> getMarketOrders() {
-		return this.searchMarketOrders();
-	}
+	//	@JsonIgnore
+	//	public ArrayList<NeoComMarketOrder> getMarketOrders() {
+	//		return this.searchMarketOrders();
+	//	}
 
 	public String getName() {
 		return delegatedCharacter.getName();
@@ -562,10 +551,10 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return _planetaryManager;
 	}
 
-	@JsonIgnore
-	public ArrayList<NeoComAsset> getShips() {
-		return this.searchAsset4Category(this.getCharacterID(), "Ship");
-	}
+	//	@JsonIgnore
+	//	public ArrayList<NeoComAsset> getShips() {
+	//		return this.searchAsset4Category(this.getCharacterID(), "Ship");
+	//	}
 
 	/**
 	 * Return the active state set by the user. The user can hide some characters from the application
@@ -636,23 +625,23 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		hit.setStringValue(taskName);
 	}
 
-	public ArrayList<NeoComMarketOrder> searchMarketOrders() {
-		//	Select assets of type blueprint and that are of T2.
-		List<NeoComMarketOrder> orderList = new ArrayList<NeoComMarketOrder>();
-		try {
-			ModelAppConnector.getSingleton().startChrono();
-			final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
-					.getMarketOrderDAO();
-			final QueryBuilder<NeoComMarketOrder, String> qb = marketOrderDao.queryBuilder();
-			qb.where().eq("ownerID", this.getCharacterID());
-			orderList = marketOrderDao.query(qb.prepare());
-			final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-			NeoComCharacter.logger.info("-- Time lapse for [SELECT MARKETORDERS] " + lapse);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return (ArrayList<NeoComMarketOrder>) orderList;
-	}
+	//	public ArrayList<NeoComMarketOrder> searchMarketOrders() {
+	//		//	Select assets of type blueprint and that are of T2.
+	//		List<NeoComMarketOrder> orderList = new ArrayList<NeoComMarketOrder>();
+	//		try {
+	//			ModelAppConnector.getSingleton().startChrono();
+	//			final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
+	//					.getMarketOrderDAO();
+	//			final QueryBuilder<NeoComMarketOrder, String> qb = marketOrderDao.queryBuilder();
+	//			qb.where().eq("ownerID", this.getCharacterID());
+	//			orderList = marketOrderDao.query(qb.prepare());
+	//			final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
+	//			NeoComCharacter.logger.info("-- Time lapse for [SELECT MARKETORDERS] " + lapse);
+	//		} catch (final SQLException sqle) {
+	//			sqle.printStackTrace();
+	//		}
+	//		return (ArrayList<NeoComMarketOrder>) orderList;
+	//	}
 
 	public void setAccountBalance(final double accountBalance) {
 		this.accountBalance = accountBalance;
@@ -729,8 +718,7 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	}
 
 	/**
-	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
-	 * <br>
+	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information. <br>
 	 * This method checks the location to detect if under the new flat model the location is an asset and then
 	 * we should convert it into a parent or the location is a real location. Initially this is done checking
 	 * the location id value if under 1000000000000.
@@ -854,57 +842,57 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 	//		}
 	//	}
 
-	protected Job convert2Job(final IndustryJob evejob) {
-		// Create the asset from the API asset.
-		final Job newJob = new Job(evejob.getJobID());
-		try {
-			newJob.setOwnerID(evejob.getInstallerID());
-			newJob.setFacilityID(evejob.getFacilityID());
-			newJob.setStationID(evejob.getStationID());
-			newJob.setActivityID(evejob.getActivityID());
-			newJob.setBlueprintID(evejob.getBlueprintID());
-			newJob.setBlueprintTypeID(evejob.getBlueprintTypeID());
-			newJob.setBlueprintLocationID(evejob.getBlueprintLocationID());
-			newJob.setRuns(evejob.getRuns());
-			newJob.setCost(evejob.getCost());
-			newJob.setLicensedRuns(evejob.getLicensedRuns());
-			newJob.setProductTypeID(evejob.getProductTypeID());
-			newJob.setStatus(evejob.getStatus());
-			newJob.setTimeInSeconds(evejob.getTimeInSeconds());
-			newJob.setStartDate(evejob.getStartDate());
-			newJob.setEndDate(evejob.getEndDate());
-			newJob.setCompletedDate(evejob.getCompletedDate());
-			newJob.setCompletedCharacterID(evejob.getCompletedCharacterID());
-			//			newJob.setSuccessfulRuns(evejob.getSuccessfulRuns());
-		} catch (final RuntimeException rtex) {
-			rtex.printStackTrace();
-		}
-		return newJob;
-	}
-
-	protected NeoComMarketOrder convert2Order(final MarketOrder eveorder) {
-		// Create the asset from the API asset.
-		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
-		try {
-			newMarketOrder.setOwnerID(eveorder.getCharID());
-			newMarketOrder.setStationID(eveorder.getStationID());
-			newMarketOrder.setVolEntered(eveorder.getVolEntered());
-			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
-			newMarketOrder.setMinVolume(eveorder.getMinVolume());
-			newMarketOrder.setOrderState(eveorder.getOrderState());
-			newMarketOrder.setTypeID(eveorder.getTypeID());
-			newMarketOrder.setRange(eveorder.getRange());
-			newMarketOrder.setAccountKey(eveorder.getAccountKey());
-			newMarketOrder.setDuration(eveorder.getDuration());
-			newMarketOrder.setEscrow(eveorder.getEscrow());
-			newMarketOrder.setPrice(eveorder.getPrice());
-			newMarketOrder.setBid(eveorder.getBid());
-			newMarketOrder.setIssuedDate(eveorder.getIssued());
-		} catch (final RuntimeException rtex) {
-			rtex.printStackTrace();
-		}
-		return newMarketOrder;
-	}
+	//	protected Job convert2Job(final IndustryJob evejob) {
+	//		// Create the asset from the API asset.
+	//		final Job newJob = new Job(evejob.getJobID());
+	//		try {
+	//			newJob.setOwnerID(evejob.getInstallerID());
+	//			newJob.setFacilityID(evejob.getFacilityID());
+	//			newJob.setStationID(evejob.getStationID());
+	//			newJob.setActivityID(evejob.getActivityID());
+	//			newJob.setBlueprintID(evejob.getBlueprintID());
+	//			newJob.setBlueprintTypeID(evejob.getBlueprintTypeID());
+	//			newJob.setBlueprintLocationID(evejob.getBlueprintLocationID());
+	//			newJob.setRuns(evejob.getRuns());
+	//			newJob.setCost(evejob.getCost());
+	//			newJob.setLicensedRuns(evejob.getLicensedRuns());
+	//			newJob.setProductTypeID(evejob.getProductTypeID());
+	//			newJob.setStatus(evejob.getStatus());
+	//			newJob.setTimeInSeconds(evejob.getTimeInSeconds());
+	//			newJob.setStartDate(evejob.getStartDate());
+	//			newJob.setEndDate(evejob.getEndDate());
+	//			newJob.setCompletedDate(evejob.getCompletedDate());
+	//			newJob.setCompletedCharacterID(evejob.getCompletedCharacterID());
+	//			//			newJob.setSuccessfulRuns(evejob.getSuccessfulRuns());
+	//		} catch (final RuntimeException rtex) {
+	//			rtex.printStackTrace();
+	//		}
+	//		return newJob;
+	//	}
+	//
+	//	protected NeoComMarketOrder convert2Order(final MarketOrder eveorder) {
+	//		// Create the asset from the API asset.
+	//		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
+	//		try {
+	//			newMarketOrder.setOwnerID(eveorder.getCharID());
+	//			newMarketOrder.setStationID(eveorder.getStationID());
+	//			newMarketOrder.setVolEntered(eveorder.getVolEntered());
+	//			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
+	//			newMarketOrder.setMinVolume(eveorder.getMinVolume());
+	//			newMarketOrder.setOrderState(eveorder.getOrderState());
+	//			newMarketOrder.setTypeID(eveorder.getTypeID());
+	//			newMarketOrder.setRange(eveorder.getRange());
+	//			newMarketOrder.setAccountKey(eveorder.getAccountKey());
+	//			newMarketOrder.setDuration(eveorder.getDuration());
+	//			newMarketOrder.setEscrow(eveorder.getEscrow());
+	//			newMarketOrder.setPrice(eveorder.getPrice());
+	//			newMarketOrder.setBid(eveorder.getBid());
+	//			newMarketOrder.setIssuedDate(eveorder.getIssued());
+	//		} catch (final RuntimeException rtex) {
+	//			rtex.printStackTrace();
+	//		}
+	//		return newMarketOrder;
+	//	}
 
 	protected String downloadAssetEveName(final long assetID) {
 		// Wait up to one second to avoid request rejections from CCP.
@@ -929,44 +917,44 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		return null;
 	}
 
-	protected ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {
-		//	Select assets for the owner and with an specific type id.
-		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
-		try {
-			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
-			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
-			Where<NeoComAsset, String> where = queryBuilder.where();
-			where.eq("ownerID", characterID);
-			where.and();
-			where.eq("category", category);
-			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
-			assetList = assetDao.query(preparedQuery);
-		} catch (java.sql.SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return (ArrayList<NeoComAsset>) assetList;
-
-	}
-
-	protected ArrayList<Job> searchIndustryJobs() {
-		NeoComCharacter.logger.info(">> EveChar.searchIndustryJobs");
-		//	Select assets of type blueprint and that are of T2.
-		List<Job> jobList = new ArrayList<Job>();
-		try {
-			ModelAppConnector.getSingleton().startChrono();
-			final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
-			final QueryBuilder<Job, String> qb = jobDao.queryBuilder();
-			qb.where().eq("ownerID", this.getCharacterID());
-			qb.orderBy("endDate", false);
-			jobList = jobDao.query(qb.prepare());
-			this.checkRefresh(jobList.size(), "JOBS");
-			final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-			NeoComCharacter.logger.info("-- Time lapse for [SELECT JOBS] " + lapse);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return (ArrayList<Job>) jobList;
-	}
+	//	protected ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String category) {
+	//		//	Select assets for the owner and with an specific type id.
+	//		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+	//		try {
+	//			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+	//			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+	//			Where<NeoComAsset, String> where = queryBuilder.where();
+	//			where.eq("ownerID", characterID);
+	//			where.and();
+	//			where.eq("category", category);
+	//			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+	//			assetList = assetDao.query(preparedQuery);
+	//		} catch (java.sql.SQLException sqle) {
+	//			sqle.printStackTrace();
+	//		}
+	//		return (ArrayList<NeoComAsset>) assetList;
+	//
+	//	}
+	//
+	//	protected ArrayList<Job> searchIndustryJobs() {
+	//		NeoComCharacter.logger.info(">> EveChar.searchIndustryJobs");
+	//		//	Select assets of type blueprint and that are of T2.
+	//		List<Job> jobList = new ArrayList<Job>();
+	//		try {
+	//			ModelAppConnector.getSingleton().startChrono();
+	//			final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
+	//			final QueryBuilder<Job, String> qb = jobDao.queryBuilder();
+	//			qb.where().eq("ownerID", this.getCharacterID());
+	//			qb.orderBy("endDate", false);
+	//			jobList = jobDao.query(qb.prepare());
+	//			this.checkRefresh(jobList.size(), "JOBS");
+	//			final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
+	//			NeoComCharacter.logger.info("-- Time lapse for [SELECT JOBS] " + lapse);
+	//		} catch (final SQLException sqle) {
+	//			sqle.printStackTrace();
+	//		}
+	//		return (ArrayList<Job>) jobList;
+	//	}
 
 	protected void setApiKey(final NeoComApiKey apikey) {
 		this.apikey = apikey;
@@ -1014,52 +1002,52 @@ public abstract class NeoComCharacter extends AbstractViewableNode
 		}
 	}
 
-	/**
-	 * Checks if the database is empty of a set of records so it may require a forced request to update their
-	 * data from CCP databases. If no records then it will reset the cache timers.
-	 * 
-	 * @param size
-	 * @param string
-	 */
-	private void checkRefresh(final int size, final String section) {
-		if (size < 1) {
-			if (section.equalsIgnoreCase("JOBS")) {
-				this.cleanJobs();
-				ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
-			}
-			if (section.equalsIgnoreCase("MARKETORDERS")) {
-				ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
-			}
-		}
-	}
+	//	/**
+	//	 * Checks if the database is empty of a set of records so it may require a forced request to update their
+	//	 * data from CCP databases. If no records then it will reset the cache timers.
+	//	 * 
+	//	 * @param size
+	//	 * @param string
+	//	 */
+	//	private void checkRefresh(final int size, final String section) {
+	//		if (size < 1) {
+	//			if (section.equalsIgnoreCase("JOBS")) {
+	//				//				this.cleanJobs();
+	//				ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
+	//			}
+	//			if (section.equalsIgnoreCase("MARKETORDERS")) {
+	//				ModelAppConnector.getSingleton().getCacheConnector().addCharacterUpdateRequest(this.getCharacterID());
+	//			}
+	//		}
+	//	}
+	//
+	//	private void clearTimers() {
+	//		lastCCPAccessTime = null;
+	//		assetsCacheTime = null;
+	//		blueprintsCacheTime = null;
+	//		jobsCacheTime = null;
+	//		marketCacheTime = null;
+	//		//		skillsCacheTime = null;
+	//	}
 
-	private void clearTimers() {
-		lastCCPAccessTime = null;
-		assetsCacheTime = null;
-		blueprintsCacheTime = null;
-		jobsCacheTime = null;
-		marketCacheTime = null;
-		//		skillsCacheTime = null;
-	}
-
-	private ArrayList<NeoComAsset> filterAssets4Name(final String moduleName) {
-		///	Optimize the update of the assets to just process the ones with the -1 owner.
-		List<NeoComAsset> accountList = new ArrayList<NeoComAsset>();
-		try {
-			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
-			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
-			final Where<NeoComAsset, String> where = queryBuilder.where();
-			where.eq("name", moduleName);
-			//			where.and();
-			//			where.gt("count", new Integer(9));
-			final PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
-			accountList = assetDao.query(preparedQuery);
-		} catch (final SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return (ArrayList<NeoComAsset>) accountList;
-	}
+	//	private ArrayList<NeoComAsset> filterAssets4Name(final String moduleName) {
+	//		///	Optimize the update of the assets to just process the ones with the -1 owner.
+	//		List<NeoComAsset> accountList = new ArrayList<NeoComAsset>();
+	//		try {
+	//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+	//			final QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+	//			final Where<NeoComAsset, String> where = queryBuilder.where();
+	//			where.eq("name", moduleName);
+	//			//			where.and();
+	//			//			where.gt("count", new Integer(9));
+	//			final PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+	//			accountList = assetDao.query(preparedQuery);
+	//		} catch (final SQLException e) {
+	//			// TODO Auto-generated catch block
+	//			e.printStackTrace();
+	//		}
+	//		return (ArrayList<NeoComAsset>) accountList;
+	//	}
 
 	//	private Instant getAssetsCacheTime() {
 	//		if (null == assetsCacheTime) {

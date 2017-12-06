@@ -9,10 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
@@ -23,16 +20,19 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long													serialVersionUID	= -3012043551959443176L;
-	private static final String												jsonClass					= "AbstractManager";
 	protected static Logger														logger						= Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	protected String																	jsonClass					= "AbstractManager";
 	@JsonIgnore
 	private transient NeoComCharacter									pilot							= null;
 	protected boolean																	initialized				= false;
@@ -45,7 +45,7 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	public AbstractManager(final NeoComCharacter pilot) {
 		super();
 		this.setPilot(pilot);
-		//		jsonClass = "AbstractManager";
+		jsonClass = "AbstractManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -57,6 +57,10 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 
 	public List<ICollaboration> collaborate2Model(final String variant) {
 		return new ArrayList<ICollaboration>();
+	}
+
+	public String getJsonClass() {
+		return jsonClass;
 	}
 
 	@JsonIgnore
@@ -100,15 +104,15 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	//	@SuppressWarnings("unused")
 	protected void add2Container(final NeoComAsset asset, final NeoComAsset target) {
 		long id = asset.getLocationID();
-		NeoComAsset subtarget = containers.get(id);
+		IAssetContainer subtarget = (IAssetContainer) containers.get(id);
 		if (null == subtarget) {
 			if (target instanceof IAssetContainer) {
-				((IAssetContainer) target).addContent(asset);
+				((IAssetContainer) target).addAsset(asset);
 			}
 			containers.put(target.getAssetID(), target);
 			//			this.add2Location(target);
 		} else {
-			subtarget.addChild(asset);
+			subtarget.addAsset(asset);
 		}
 	}
 

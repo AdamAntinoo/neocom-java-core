@@ -9,20 +9,19 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 //- IMPORT SECTION .........................................................................................
 
@@ -42,7 +41,7 @@ import java.util.logging.Logger;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends AbstractViewableNode {
+public class NeoComAsset extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -116,7 +115,7 @@ public class NeoComAsset extends AbstractViewableNode {
 	@Override
 	public List<ICollaboration> collaborate2Model(final String variant) {
 		ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
-		results = this.concatenateChildren(results, this.getChildren());
+		//		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
 
@@ -201,7 +200,6 @@ public class NeoComAsset extends AbstractViewableNode {
 		return name;
 	}
 
-	@Override
 	public String getOrderingName() {
 		return name;
 	}

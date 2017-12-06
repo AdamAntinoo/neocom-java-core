@@ -12,22 +12,23 @@ package org.dimensinfin.eveonline.neocom.manager;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class DefaultAssetsContentManager extends AbstractContentManager implements IContentManager {
+public class DefaultAssetsContentManager extends AbstractContentManager implements IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static final long	serialVersionUID	= -2753423369104215278L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected boolean	downloaded	= false;
-	private double		totalVolume	= 0.0;
-	private double		totalValue	= 0.0;
+	private boolean						_downloaded				= false;
+	private double						totalVolume				= 0.0;
+	private double						totalValue				= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public DefaultAssetsContentManager(final ExtendedLocation newparent) {
@@ -49,11 +50,11 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 	 * empty but when the user expands the item we should then download the list.
 	 */
 	@Override
-	public List<AbstractComplexNode> collaborate2Model(final String variant) {
-		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		List<ICollaboration> results = new ArrayList<ICollaboration>();
 		// If the contents are already downloaded chain the collaboration calls.
-		if (downloaded) {
-			results.addAll(contents);
+		if (this.isDownloaded()) {
+			results.addAll(_contents);
 		} else {
 			// Download the assets only if the state is expended.
 			if (parent.isExpanded()) {
@@ -71,20 +72,20 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 	 */
 	@Override
 	public List<NeoComAsset> getContents() {
-		if (!downloaded) {
+		if (!this.isDownloaded()) {
 			// Get the assets from the database.
-			contents.clear();
-			contents.addAll(this.processDownloadedAssets(
-					ModelAppConnector.getSingleton().getDBConnector().searchAssetsAtLocation(parent.getPilotId(), this.getID())));
-			downloaded = true;
+			_contents.clear();
+			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
+					.searchAssetsAtLocation(parent.getPilotId(), this.getID())));
+			this.setDownloaded(true);
 		}
-		return contents;
+		return _contents;
 	}
 
 	@Override
 	public int getContentSize() {
-		if (downloaded)
-			return contents.size();
+		if (this.isDownloaded())
+			return _contents.size();
 		else
 			// Go to the database and get an approximate count of the assets that are at this Location.
 			return ModelAppConnector.getSingleton().getDBConnector().totalLocationContentCount(this.getID());
@@ -100,8 +101,8 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 
 	@Override
 	public boolean isEmpty() {
-		if (downloaded)
-			if (contents.size() < 1)
+		if (this.isDownloaded())
+			if (_contents.size() < 1)
 				return true;
 			else
 				return false;
@@ -151,6 +152,15 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 			results.add(asset);
 		}
 		return results;
+	}
+
+	public boolean isDownloaded() {
+		return _downloaded;
+	}
+
+	public IDownloadable setDownloaded(final boolean downloadedstate) {
+		_downloaded = downloadedstate;
+		return this;
 	}
 }
 

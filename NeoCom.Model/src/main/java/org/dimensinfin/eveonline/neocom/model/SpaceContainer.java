@@ -9,24 +9,28 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IDownloadable;
+import org.dimensinfin.core.interfaces.IExpandable;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExpandable {
+public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long					serialVersionUID	= 2813029093080549286L;
+	private static final long							serialVersionUID	= 2813029093080549286L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
-	private double										totalVolume				= 0.0;
-	private double										totalValue				= 0.0;
+	private final Vector<ICollaboration>	_contents					= new Vector<ICollaboration>();
+	private boolean												_expanded					= false;
+	private boolean												_renderIfEmpty		= true;
+	private boolean												_downloaded				= false;
+	private double												totalVolume				= 0.0;
+	private double												totalValue				= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public SpaceContainer() {
@@ -36,8 +40,12 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExp
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public int addContent(final NeoComAsset asset) {
+	//	public int addContent(final NeoComAsset asset) {
+	//		_contents.add(asset);
+	//		return _contents.size();
+	//	}
+
+	public int addAsset(final NeoComAsset asset) {
 		_contents.add(asset);
 		return _contents.size();
 	}
@@ -48,8 +56,8 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExp
 	 * The Container can access the database to get its contents.
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		List<ICollaboration> results = new ArrayList<ICollaboration>();
 		// If the contents are already downloaded chain the collaboration calls.
 		if (this.isDownloaded()) {
 			results.addAll(_contents);
@@ -59,7 +67,12 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExp
 			results.addAll(this.getContents());
 			//		}
 		}
-		return (ArrayList<AbstractComplexNode>) results;
+		return results;
+	}
+
+	public boolean collapse() {
+		_expanded = false;
+		return _expanded;
 	}
 
 	/**
@@ -93,8 +106,12 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExp
 		return this;
 	}
 
-	@Override
-	public List<NeoComAsset> getContents() {
+	public boolean expand() {
+		_expanded = true;
+		return _expanded;
+	}
+
+	private List<ICollaboration> getContents() {
 		if (!this.isDownloaded()) {
 			// Get the assets from the database.
 			_contents.clear();
@@ -103,6 +120,14 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExp
 			this.setDownloaded(true);
 		}
 		return _contents;
+	}
+
+	public List<NeoComAsset> getAssets() {
+		Vector<NeoComAsset> result = new Vector<NeoComAsset>();
+		for (ICollaboration node : this.getContents()) {
+			result.add((NeoComAsset) node);
+		}
+		return result;
 	}
 
 	public int getContentsSize() {
@@ -117,14 +142,35 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IExp
 		return totalVolume;
 	}
 
-	@Override
+	public boolean isDownloaded() {
+		return _downloaded;
+	}
+
 	public boolean isEmpty() {
 		return (_contents.size() < 1) ? true : false;
 	}
 
-	@Override
+	@Deprecated
 	public boolean isExpandable() {
 		return true;
+	}
+
+	public boolean isExpanded() {
+		return _expanded;
+	}
+
+	public boolean isRenderWhenEmpty() {
+		return _renderIfEmpty;
+	}
+
+	public IDownloadable setDownloaded(final boolean downloadedstate) {
+		_downloaded = downloadedstate;
+		return this;
+	}
+
+	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+		_renderIfEmpty = renderWhenEmpty;
+		return this;
 	}
 
 	@Override

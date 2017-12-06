@@ -9,41 +9,28 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
-import org.dimensinfin.eveonline.neocom.industry.Job;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.BlueprintManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.dimensinfin.eveonline.neocom.manager.SkillsManager;
-import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
-import org.joda.time.Instant;
-
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
-import com.beimin.eveapi.model.shared.IndustryJob;
-import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
-import com.beimin.eveapi.parser.pilot.IndustryJobsParser;
-import com.beimin.eveapi.parser.pilot.MarketOrdersParser;
 import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
 import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
-import com.beimin.eveapi.response.shared.IndustryJobsResponse;
-import com.beimin.eveapi.response.shared.MarketOrdersResponse;
-import com.j256.ormlite.dao.Dao;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
@@ -112,13 +99,13 @@ public class Pilot extends NeoComCharacter {
 	 * Pilot or a Corporation. For a Pilot the result depends on the variant received as the parameter
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
 			// Add the Managers that apply to this Pilot
 			results.add(new AssetsManager(this));
-			results.add(new SkillsManager(this).initialize());
-			results.add(new BlueprintManager(this).initialize());
+//			results.add(new SkillsManager(this).initialize());
+//			results.add(new BlueprintManager(this).initialize());
 			results.add(new PlanetaryManager(this).initialize());
 		}
 		return results;
@@ -228,98 +215,98 @@ public class Pilot extends NeoComCharacter {
 	//		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	//	}
 
-	/**
-	 * The industry jobs are obsolete so an update was triggered. Go to the CCP servers and get a fresh set of
-	 * Industry Jobs data. After the processing write the records down to the database and then remove the CCP
-	 * records.<br>
-	 * After the processing check for User Jobs converted to running jobs and remove them from the app list
-	 * because the user has already launched them on the real EVE client.
-	 */
-	@Override
-	public void downloadIndustryJobs() {
-		Pilot.logger.info(">> EveChar.updateIndustryJobs");
-		try {
-			// Clear any previous record with owner -1 from database.
-			//		AppConnector.getDBConnector().clearInvalidRecords();
-			// Download and parse the industry jobs history.
-			IndustryJobsParser parserhist = new IndustryJobsParser();
-			IndustryJobsResponse responsehist = parserhist.getResponse(this.getAuthorization());
-			if (null != responsehist) {
-				Set<IndustryJob> jobs = responsehist.getAll();
-				jobsCacheTime = new Instant(responsehist.getCachedUntil());
-				for (final IndustryJob evejob : jobs) {
-					final Job myjob = this.convert2Job(evejob);
-					// Set the owner my there is not job cleanup.
-					//					myjob.setOwnerID(getCharacterID());
-					try {
-						final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
-						jobDao.createOrUpdate(myjob);
-						Pilot.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
-					} catch (final SQLException sqle) {
-						Pilot.logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
-						sqle.printStackTrace();
-					}
-				}
-			}
-
-			//			// Download and parse the industry jobs.
-			//			final NewIndustryJobsParser parser = NewIndustryJobsParser.getInstance();
-			//			final NewIndustryJobsResponse response = parser.getResponse(getAuthorization());
-			//			if (null != response) {
-			//				final HashSet<ApiNewIndustryJob> jobs = new HashSet<ApiNewIndustryJob>(response.getAll());
-			//				jobsCacheTime = new Instant(response.getCachedUntil());
-			//				for (final ApiNewIndustryJob evejob : jobs) {
-			//					final Job myjob = convert2Job(evejob);
-			//					// Set the owner my there is not job cleanup.
-			//					//					myjob.setOwnerID(getCharacterID());
-			//					try {
-			//						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
-			//						jobDao.createOrUpdate(myjob);
-			//						logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
-			//					} catch (final SQLException sqle) {
-			//						logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
-			//						sqle.printStackTrace();
-			//					}
-			//				}
-			//			}
-			//		AppConnector.getDBConnector().replaceJobs(getCharacterID());
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		this.setDirty(true);
-		Pilot.logger.info("<< EveChar.updateIndustryJobs");
-	}
-
-	@Override
-	public void downloadMarketOrders() {
-		Pilot.logger.info(">> EveChar.updateMarketOrders");
-		try {
-			// Download and parse the market orders.
-			MarketOrdersParser parser = new MarketOrdersParser();
-			final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
-			if (null != response) {
-				Set<MarketOrder> orders = response.getAll();
-				for (final MarketOrder eveorder : orders) {
-					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
-					try {
-						final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
-								.getMarketOrderDAO();
-						marketOrderDao.createOrUpdate(myorder);
-						Pilot.logger.finest(
-								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
-					} catch (final SQLException sqle) {
-						Pilot.logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
-						sqle.printStackTrace();
-					}
-				}
-				marketCacheTime = new Instant(response.getCachedUntil());
-			}
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		this.setDirty(true);
-		Pilot.logger.info("<< EveChar.updateMarketOrders");
-	}
+	//	/**
+	//	 * The industry jobs are obsolete so an update was triggered. Go to the CCP servers and get a fresh set of
+	//	 * Industry Jobs data. After the processing write the records down to the database and then remove the CCP
+	//	 * records.<br>
+	//	 * After the processing check for User Jobs converted to running jobs and remove them from the app list
+	//	 * because the user has already launched them on the real EVE client.
+	//	 */
+	//	@Override
+	//	public void downloadIndustryJobs() {
+	//		Pilot.logger.info(">> EveChar.updateIndustryJobs");
+	//		try {
+	//			// Clear any previous record with owner -1 from database.
+	//			//		AppConnector.getDBConnector().clearInvalidRecords();
+	//			// Download and parse the industry jobs history.
+	//			IndustryJobsParser parserhist = new IndustryJobsParser();
+	//			IndustryJobsResponse responsehist = parserhist.getResponse(this.getAuthorization());
+	//			if (null != responsehist) {
+	//				Set<IndustryJob> jobs = responsehist.getAll();
+	//				jobsCacheTime = new Instant(responsehist.getCachedUntil());
+	//				for (final IndustryJob evejob : jobs) {
+	//					final Job myjob = this.convert2Job(evejob);
+	//					// Set the owner my there is not job cleanup.
+	//					//					myjob.setOwnerID(getCharacterID());
+	//					try {
+	//						final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
+	//						jobDao.createOrUpdate(myjob);
+	//						Pilot.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
+	//					} catch (final SQLException sqle) {
+	//						Pilot.logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
+	//						sqle.printStackTrace();
+	//					}
+	//				}
+	//			}
+	//
+	//			//			// Download and parse the industry jobs.
+	//			//			final NewIndustryJobsParser parser = NewIndustryJobsParser.getInstance();
+	//			//			final NewIndustryJobsResponse response = parser.getResponse(getAuthorization());
+	//			//			if (null != response) {
+	//			//				final HashSet<ApiNewIndustryJob> jobs = new HashSet<ApiNewIndustryJob>(response.getAll());
+	//			//				jobsCacheTime = new Instant(response.getCachedUntil());
+	//			//				for (final ApiNewIndustryJob evejob : jobs) {
+	//			//					final Job myjob = convert2Job(evejob);
+	//			//					// Set the owner my there is not job cleanup.
+	//			//					//					myjob.setOwnerID(getCharacterID());
+	//			//					try {
+	//			//						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
+	//			//						jobDao.createOrUpdate(myjob);
+	//			//						logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
+	//			//					} catch (final SQLException sqle) {
+	//			//						logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
+	//			//						sqle.printStackTrace();
+	//			//					}
+	//			//				}
+	//			//			}
+	//			//		AppConnector.getDBConnector().replaceJobs(getCharacterID());
+	//		} catch (final ApiException apie) {
+	//			apie.printStackTrace();
+	//		}
+	//		this.setDirty(true);
+	//		Pilot.logger.info("<< EveChar.updateIndustryJobs");
+	//	}
+	//
+	//	@Override
+	//	public void downloadMarketOrders() {
+	//		Pilot.logger.info(">> EveChar.updateMarketOrders");
+	//		try {
+	//			// Download and parse the market orders.
+	//			MarketOrdersParser parser = new MarketOrdersParser();
+	//			final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
+	//			if (null != response) {
+	//				Set<MarketOrder> orders = response.getAll();
+	//				for (final MarketOrder eveorder : orders) {
+	//					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
+	//					try {
+	//						final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
+	//								.getMarketOrderDAO();
+	//						marketOrderDao.createOrUpdate(myorder);
+	//						Pilot.logger.finest(
+	//								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
+	//					} catch (final SQLException sqle) {
+	//						Pilot.logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
+	//						sqle.printStackTrace();
+	//					}
+	//				}
+	//				marketCacheTime = new Instant(response.getCachedUntil());
+	//			}
+	//		} catch (final ApiException apie) {
+	//			apie.printStackTrace();
+	//		}
+	//		this.setDirty(true);
+	//		Pilot.logger.info("<< EveChar.updateMarketOrders");
+	//	}
 
 	public String getLastKnownLocation() {
 		return this.getCharacterInfo().getLastKnownLocation();
@@ -388,7 +375,7 @@ public class Pilot extends NeoComCharacter {
 				this.setSkillInTraining(trainingresponse);
 			}
 			// Update the last updated timestamp from the CharacterInfoResponse.
-			this.updateLastAccess(sheetresponse.getCachedUntil());
+			//			this.updateLastAccess(sheetresponse.getCachedUntil());
 		} catch (ApiException ex) {
 			ex.printStackTrace();
 		}

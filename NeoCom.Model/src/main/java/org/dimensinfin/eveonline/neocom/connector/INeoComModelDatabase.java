@@ -9,13 +9,8 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.industry.Job;
-import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -24,9 +19,11 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
 import org.dimensinfin.eveonline.neocom.model.TimeStamp;
-import org.dimensinfin.eveonline.neocom.planetary.PlanetaryResource;
 
-import com.j256.ormlite.dao.Dao;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */ {
@@ -40,13 +37,13 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws SQLException;
 
-	public Dao<Job, String> getJobDAO() throws SQLException;
+//	public Dao<Job, String> getJobDAO() throws SQLException;
 
 	public Dao<EveLocation, String> getLocationDAO() throws SQLException;
 
-	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
+//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 
-	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
+//	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
 

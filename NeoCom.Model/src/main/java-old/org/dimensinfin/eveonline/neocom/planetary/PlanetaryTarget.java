@@ -11,12 +11,12 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import java.util.ArrayList;
 
-import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PlanetaryTarget extends AbstractViewableNode {
+public class PlanetaryTarget extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3759275643794264024L;
 

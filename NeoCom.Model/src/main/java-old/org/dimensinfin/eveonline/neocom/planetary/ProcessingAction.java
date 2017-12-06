@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -30,7 +30,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
  * 
  * @author Adam Antinoo
  */
-public class ProcessingAction extends AbstractViewableNode {
+public class ProcessingAction extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long									serialVersionUID	= 3885877535917258089L;
 

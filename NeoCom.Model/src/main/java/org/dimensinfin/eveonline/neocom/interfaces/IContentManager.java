@@ -11,15 +11,14 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 
 import java.util.List;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public interface IContentManager {
+public interface IContentManager extends ICollaboration, IJsonAngular {
 
 	public int add(NeoComAsset child);
-
-	public List<AbstractComplexNode> collaborate2Model(String variant);
 
 	public List<NeoComAsset> getContents();
 

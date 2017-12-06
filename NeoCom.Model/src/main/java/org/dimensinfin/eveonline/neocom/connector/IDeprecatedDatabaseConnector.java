@@ -9,18 +9,17 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.planetary.ResourceList;
 
-import com.j256.ormlite.dao.Dao;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 // - IMPORT SECTION .........................................................................................
 
@@ -84,7 +83,7 @@ public interface IDeprecatedDatabaseConnector {
 
 	public void replaceBlueprints(long characterID);
 
-	public void replaceJobs(long characterID);
+//	public void replaceJobs(long characterID);
 
 	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
@@ -104,11 +103,11 @@ public interface IDeprecatedDatabaseConnector {
 
 	public int searchInventionProduct(int typeID);
 
-	public List<Job> searchJob4Class(long characterID, String string);
+//	public List<Job> searchJob4Class(long characterID, String string);
 
-	public int searchJobExecutionTime(final int typeID, final int activityID);
+//	public int searchJobExecutionTime(final int typeID, final int activityID);
 
-	public ArrayList<Resource> searchListOfDatacores(final int itemID);
+//	public ArrayList<Resource> searchListOfDatacores(final int itemID);
 
 	public ArrayList<Resource> searchListOfMaterials(int itemID);
 

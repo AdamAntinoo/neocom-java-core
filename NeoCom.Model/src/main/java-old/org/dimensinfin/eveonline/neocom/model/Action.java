@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.model.AbstractViewableNode;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.ETaskCompletion;
@@ -33,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
  * 
  * @author Adam Antinoo
  */
-public class Action extends AbstractViewableNode implements IExpandable {
+public class Action extends NeoComNode implements IExpandable {
 
 	private class TaskBundle implements Serializable {
 		private static final long	serialVersionUID	= -5450309773660347151L;

@@ -6,7 +6,6 @@
 
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -17,7 +16,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveItem extends AbstractComplexNode {
+public class EveItem extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -2548296399305221197L;
 	private static EveItem		defaultItem				= new EveItem();
@@ -257,8 +256,8 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			buyerData = ModelAppConnector.getSingleton().getCacheConnector().searchMarketData(this.getTypeID(),
-					EMarketSide.BUYER);
+			buyerData = ModelAppConnector.getSingleton().getCacheConnector()
+					.searchMarketData(this.getTypeID(), EMarketSide.BUYER);
 			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
 			}
@@ -278,8 +277,8 @@ public class EveItem extends AbstractComplexNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			sellerData = ModelAppConnector.getSingleton().getCacheConnector().searchMarketData(this.getTypeID(),
-					EMarketSide.SELLER);
+			sellerData = ModelAppConnector.getSingleton().getCacheConnector()
+					.searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
 			}

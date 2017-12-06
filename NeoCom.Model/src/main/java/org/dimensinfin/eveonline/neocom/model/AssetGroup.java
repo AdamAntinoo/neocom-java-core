@@ -9,115 +9,138 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.IGEFNode;
-import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.model.Container;
+import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetGroup extends AbstractViewableNode implements IContentManager {
+public class AssetGroup extends Container implements IAssetContainer {
 	/** Use the type to associate it with an icon. */
 	public enum EGroupType {
 		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long					serialVersionUID	= 8066964529677353362L;
+	private static final long	serialVersionUID	= 8066964529677353362L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public final Vector<NeoComAsset>	contents					= new Vector<NeoComAsset>();
-	public EGroupType									type							= EGroupType.DEFAULT;
-	public String											title							= "-";
+	//	public final Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
+	//	private boolean										_expanded					= false;
+	//	private boolean										_renderIfEmpty		= true;
+	//	private final boolean							_downloaded				= false;
+	public EGroupType					groupType					= EGroupType.DEFAULT;
+
+	//	public String											title							= "-";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetGroup() {
 		super();
-		this.setDownloaded(true);
-		this.setExpanded(true);
+		//		this.setDownloaded(true);
+		this.expand();
 		jsonClass = "AssetGroup";
 	}
 
 	public AssetGroup(final String newtitle) {
-		this();
-		title = newtitle;
+		super(newtitle);
+		this.expand();
+		jsonClass = "AssetGroup";
 	}
 
 	public AssetGroup(final String newtitle, final EGroupType newtype) {
-		this();
-		title = newtitle;
-		type = newtype;
-	}
-
-	@Override
-	public int add(final NeoComAsset asset) {
-		contents.add(asset);
-		return contents.size();
-	}
-
-	@Deprecated
-	@Override
-	public void addChild(final IGEFNode child) {
-		// TODO Auto-generated method stub
-		super.addChild(child);
+		super(newtitle);
+		this.expand();
+		jsonClass = "AssetGroup";
+		groupType = newtype;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public int addContent(final NeoComAsset asset) {
-		contents.add(asset);
-		return contents.size();
+	//	@Override
+	//	public int addContent(final ICollaboration asset) {
+	//		super.addContent(asset);
+	//		return this.getContentSize();
+	//	}
+
+	public int addAsset(final NeoComAsset asset) {
+		super.addContent(asset);
+		return this.getContentSize();
 	}
 
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (this.isVisible()) if (this.isExpanded()) {
-			results.addAll(this.getContents());
+	public List<NeoComAsset> getAssets() {
+		Vector<NeoComAsset> result = new Vector<NeoComAsset>();
+		for (ICollaboration node : super.getContents()) {
+			result.add((NeoComAsset) node);
 		}
-		return results;
+		return result;
 	}
 
-	@Override
-	public Vector<NeoComAsset> getContents() {
-		return contents;
+	public EGroupType getGroupType() {
+		return groupType;
 	}
 
-	@Override
-	public int getContentSize() {
-		return contents.size();
-	}
+	//	public void setTitle(final String newtitle) {
+	//		title = newtitle;
+	//	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public EGroupType getType() {
-		return type;
-	}
-
-	public void setTitle(final String newtitle) {
-		title = newtitle;
-	}
-
-	public AssetGroup setType(final EGroupType newtype) {
-		type = newtype;
+	public AssetGroup setGroupType(final EGroupType newtype) {
+		groupType = newtype;
 		return this;
 	}
 
-	public int size() {
-		return contents.size();
-	}
+	//	public int size() {
+	//		return _contents.size();
+	//	}
 
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetGroup [");
-		buffer.append(title).append(" type: ").append(type.name());
+		buffer.append(this.getTitle()).append(" type: ").append(groupType.name());
 		buffer.append(" [").append(this.getContentSize()).append("]");
 		buffer.append("]");
 		return buffer.toString();
 	}
+	//	public boolean collapse() {
+	//		_expanded = false;
+	//		return _expanded;
+	//	}
+	//
+	//	public boolean expand() {
+	//		_expanded = true;
+	//		return _expanded;
+	//	}
+	//
+	//	//	public boolean isDownloaded() {
+	//	//		return _downloaded;
+	//	//	}
+	//
+	//	public boolean isEmpty() {
+	//		return (_contents.size() < 1) ? true : false;
+	//	}
+	//
+	//	@Deprecated
+	//	public boolean isExpandable() {
+	//		return true;
+	//	}
+	//
+	//	public boolean isExpanded() {
+	//		return _expanded;
+	//	}
+	//
+	//	public boolean isRenderWhenEmpty() {
+	//		return _renderIfEmpty;
+	//	}
+	//
+	//	//	public IDownloadable setDownloaded(final boolean downloadedstate) {
+	//	//		_downloaded = downloadedstate;
+	//	//		return this;
+	//	//	}
+	//
+	//	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+	//		_renderIfEmpty = renderWhenEmpty;
+	//		return this;
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................

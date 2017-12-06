@@ -9,14 +9,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import java.sql.SQLException;
-import java.util.ArrayList;
-
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -26,12 +18,16 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nikr.eve.jeveasset.data.Citadel;
 
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+
+import java.sql.SQLException;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
  * This class encapsulates the concept of Eve Location. There are different types of locations and the new CCP
  * release is adding even more. The first concept is Region. This is when the constellation and system are not
- * defined. The second level is constellation, then system and inside a system we can find some more elements.
- * <br>
+ * defined. The second level is constellation, then system and inside a system we can find some more elements. <br>
  * Once we have the system id we have to check if the Location is a point in space, a NPC station (in the CCP
  * database catalog), a corporation Outpost (in the list of outposts) or it can be a Player Structure. Now we
  * have to differentiate the player structures and also this can change because POS are going to be replaced
@@ -42,7 +38,7 @@ import net.nikr.eve.jeveasset.data.Citadel;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
-public class EveLocation extends AbstractViewableNode {
+public class EveLocation extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 1522765618286937377L;
 
@@ -74,7 +70,8 @@ public class EveLocation extends AbstractViewableNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
-		this.setDownloaded(false);
+		super();
+		//		this.setDownloaded(false);
 		jsonClass = "EveLocation";
 	}
 
@@ -100,27 +97,27 @@ public class EveLocation extends AbstractViewableNode {
 		}
 	}
 
-	/**
-	 * Create a location from an Outpost read on the current list of player outposts.
-	 * 
-	 * @param out
-	 */
-	public EveLocation(final Outpost out) {
-		this();
-		try {
-			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
-			// Calculate the locationID from the source item and update the rest of the fields.
-			this.updateFromSystem(out.getSolarSystem());
-			id = out.getFacilityID();
-			typeID = ELocationType.OUTPOST.name();
-			this.setStation(out.getName());
-			// Try to create the pair. It fails then  it was already created.
-			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			this.setDirty(true);
-		}
-	}
+	//	/**
+	//	 * Create a location from an Outpost read on the current list of player outposts.
+	//	 * 
+	//	 * @param out
+	//	 */
+	//	public EveLocation(final Outpost out) {
+	//		this();
+	//		try {
+	//			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+	//			// Calculate the locationID from the source item and update the rest of the fields.
+	//			this.updateFromSystem(out.getSolarSystemID());
+	//			id = out.getFacilityID();
+	//			typeID = ELocationType.OUTPOST.name();
+	//			this.setStation(out.getName());
+	//			// Try to create the pair. It fails then  it was already created.
+	//			locationDao.createOrUpdate(this);
+	//		} catch (final SQLException sqle) {
+	//			sqle.printStackTrace();
+	//			this.setDirty(true);
+	//		}
+	//	}
 
 	public EveLocation(final Station station) {
 		this();
@@ -140,13 +137,12 @@ public class EveLocation extends AbstractViewableNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * Locations do not collaborate to models because have no contents.
-	 */
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		return new ArrayList<AbstractComplexNode>();
-	}
+	//	/**
+	//	 * Locations do not collaborate to models because have no contents.
+	//	 */
+	//	public List<ICo> collaborate2Model(final String variant) {
+	//		return new ArrayList<AbstractComplexNode>();
+	//	}
 
 	public boolean equals(final EveLocation obj) {
 		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
@@ -229,9 +225,6 @@ public class EveLocation extends AbstractViewableNode {
 	/**
 	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
 	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
-	 * 
-	 * @param targetIcon
-	 * @param typeID
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
@@ -271,7 +264,6 @@ public class EveLocation extends AbstractViewableNode {
 		this.constellationID = constellationID;
 	}
 
-	@Override
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {

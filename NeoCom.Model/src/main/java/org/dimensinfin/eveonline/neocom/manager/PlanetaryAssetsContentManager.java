@@ -9,12 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
@@ -26,18 +21,18 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
  * 
  * @author Adam Antinoo
  */
-public class PlanetaryAssetsContentManager extends AbstractContentManager implements IContentManager {
+public class PlanetaryAssetsContentManager extends AbstractContentManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	//	private static Logger logger = Logger.getLogger("PlanetaryAssetsContentManager.java");
+	private static final long	serialVersionUID	= 3670107061380839436L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int	contentCount		= 0;
-	private int	containerCount	= 0;
+	private int								contentCount			= 0;
+	private int								containerCount		= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PlanetaryAssetsContentManager(final ExtendedLocation newparent) {
 		super(newparent);
-		jsonClass = "DefaultAssetsContentManager";
+		jsonClass = "PlanetaryAssetsContentManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -47,7 +42,7 @@ public class PlanetaryAssetsContentManager extends AbstractContentManager implem
 	@Override
 	public int add(final NeoComAsset child) {
 		if (null != child) {
-			contents.add(child);
+			super.add(child);
 			if (child instanceof IAssetContainer) {
 				containerCount++;
 			} else {
@@ -57,26 +52,8 @@ public class PlanetaryAssetsContentManager extends AbstractContentManager implem
 		return contentCount;
 	}
 
-	@Override
-	public List<AbstractComplexNode> collaborate2Model(final String variant) {
-		List<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		results.addAll(contents);
-		return results;
-	}
-
-	@Override
-	public List<NeoComAsset> getContents() {
-		return contents;
-	}
-
-	@Override
-	public int getContentSize() {
-		return contentCount;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return (contents.size() < 1) ? true : false;
+	public int getContainerCount() {
+		return containerCount;
 	}
 }
 

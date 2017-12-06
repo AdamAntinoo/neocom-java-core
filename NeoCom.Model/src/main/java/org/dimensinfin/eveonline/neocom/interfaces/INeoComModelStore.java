@@ -9,7 +9,7 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import org.dimensinfin.core.model.IModelStore;
+import org.dimensinfin.core.interfaces.IModelStore;
 import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
@@ -30,6 +30,8 @@ public interface INeoComModelStore extends IModelStore {
 
 	public NeoComCharacter activatePilot(final String characterstring);
 
+	public void cleanModel();
+
 	public NeoComCharacter getActiveCharacter();
 
 	public List<NeoComCharacter> getActiveCharacters();
@@ -43,8 +45,6 @@ public interface INeoComModelStore extends IModelStore {
 
 	@Deprecated
 	public String getLoginIdentifier();
-
-	public void cleanModel ();
 }
 
 // - UNUSED CODE ............................................................................................

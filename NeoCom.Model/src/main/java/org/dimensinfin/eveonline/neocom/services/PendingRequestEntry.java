@@ -8,12 +8,12 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.services;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PendingRequestEntry extends AbstractComplexNode implements Comparable<PendingRequestEntry> {
+public class PendingRequestEntry extends NeoComNode implements Comparable<PendingRequestEntry> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -7936869026974954271L;
 	//	private static Logger			logger						= Logger.getLogger("PendingRequestEntry");
@@ -40,7 +40,6 @@ public class PendingRequestEntry extends AbstractComplexNode implements Comparab
 	}
 
 	//- M E T H O D - S E C T I O N ..........................................................................
-	@Override
 	public int compareTo(final PendingRequestEntry o) {
 		if (null == o) return 1;
 		if ((reqClass == o.reqClass) && (state == o.state) && (content == o.content)) return 0;

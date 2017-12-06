@@ -9,16 +9,16 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.beimin.eveapi.exception.ApiException;
-
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IExpandable;
+
+import com.beimin.eveapi.exception.ApiException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -29,12 +29,14 @@ import java.util.logging.Logger;
  * 
  * @author Adam Antinoo
  */
-public class Login extends AbstractViewableNode {
+public class Login extends NeoComNode implements IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long								serialVersionUID	= -1654191267396975701L;
 	private static Logger										logger						= Logger.getLogger("Login");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private boolean													_expanded					= false;
+	private boolean													_renderIfEmpty		= true;
 	private String													_name							= "-Default-";
 	private final Vector<ApiKey>						_keys							= new Vector<ApiKey>();
 	private final TreeSet<NeoComCharacter>	_characters				= new TreeSet<NeoComCharacter>();
@@ -42,7 +44,7 @@ public class Login extends AbstractViewableNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Login() {
 		super();
-		this.setRenderWhenEmpty(false);
+		//		this.setRenderWhenEmpty(false);
 		jsonClass = "Login";
 	}
 
@@ -71,14 +73,13 @@ public class Login extends AbstractViewableNode {
 					_characters.add(pilot);
 					// Update the pilot parentship.
 					pilot.connectLogin(this);
-					Login.logger.info(
-							"-- [Login.addKey]> Adding " + pilot.getName() + " [" + pilot.getCharacterID() + "] to the _characters");
+					Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " [" + pilot.getCharacterID()
+							+ "] to the _characters");
 				}
 			}
 		} catch (ApiException apiex) {
-			Login.logger.info(
-					"EX [Login.addKey]> ApiException: " + apiex.getMessage());
-//			apiex.printStackTrace();
+			Login.logger.info("EX [Login.addKey]> ApiException: " + apiex.getMessage());
+			//			apiex.printStackTrace();
 		}
 
 		return this;
@@ -90,12 +91,12 @@ public class Login extends AbstractViewableNode {
 	 * related to the final representation controlled by the Part or the Component.
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-		if (this.isVisible()) {
-			//			if (this.isExpanded()) {
-			results.addAll(this.getCharacters());
-		}
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
+		//		if (this.isVisible()) {
+		//			if (this.isExpanded()) {
+		results.addAll(this.getCharacters());
+		//		}
 		//		}
 		return results;
 	}
@@ -106,7 +107,7 @@ public class Login extends AbstractViewableNode {
 		return result;
 	}
 
-	public int getContentCount() {
+	public int getContentSize() {
 		return _characters.size();
 	}
 
@@ -114,14 +115,12 @@ public class Login extends AbstractViewableNode {
 		return _name;
 	}
 
-	@Override
 	public boolean isEmpty() {
 		return (_characters.size() > 0) ? false : true;
 	}
 
-	@Override
 	public boolean isRenderWhenEmpty() {
-		if (renderWhenEmpty)
+		if (_renderIfEmpty)
 			return true;
 		else {
 			if (this.isEmpty())
@@ -144,15 +143,34 @@ public class Login extends AbstractViewableNode {
 		return null;
 	}
 
-	protected ArrayList<AbstractComplexNode> concatenateNeoComCharacter(final ArrayList<AbstractComplexNode> target,
-			final List<NeoComCharacter> children) {
-		for (NeoComCharacter node : children) {
-			if (node instanceof AbstractComplexNode) {
-				target.add(node);
-			}
-		}
-		return target;
+	public boolean collapse() {
+		_expanded = false;
+		return _expanded;
 	}
+
+	public boolean expand() {
+		_expanded = true;
+		return _expanded;
+	}
+
+	public boolean isExpanded() {
+		return _expanded;
+	}
+
+	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+		_renderIfEmpty = renderWhenEmpty;
+		return this;
+	}
+
+	//	protected ArrayList<AbstractComplexNode> concatenateNeoComCharacter(final ArrayList<AbstractComplexNode> target,
+	//			final List<NeoComCharacter> children) {
+	//		for (NeoComCharacter node : children) {
+	//			if (node instanceof AbstractComplexNode) {
+	//				target.add(node);
+	//			}
+	//		}
+	//		return target;
+	//	}
 }
 
 // - UNUSED CODE ............................................................................................

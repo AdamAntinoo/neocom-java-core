@@ -6,6 +6,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="src/main/java-old"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.dimensinfin.core"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>

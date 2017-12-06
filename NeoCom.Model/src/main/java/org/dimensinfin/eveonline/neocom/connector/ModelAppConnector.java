@@ -18,11 +18,12 @@ import org.joda.time.Instant;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelAppConnector implements IModelAppConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static ModelAppConnector _singleton = null;
+	private static ModelAppConnector	_singleton	= null;
 
 	public static ModelAppConnector getSingleton() {
-		if (null == ModelAppConnector._singleton) throw new RuntimeException(
-				"RTEX [ModelAppConnector.getSingleton]> Application chain not initialized. All class functionalities disabled.");
+		if (null == ModelAppConnector._singleton)
+			throw new RuntimeException(
+					"RTEX [ModelAppConnector.getSingleton]> Application chain not initialized. All class functionalities disabled.");
 		return ModelAppConnector._singleton;
 	}
 
@@ -61,31 +62,31 @@ public class ModelAppConnector implements IModelAppConnector {
 			return true;
 	}
 
-	@Override
 	public ICacheConnector getCacheConnector() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getCacheConnector]> Application connection not defined. Functionality 'getCacheConnector' disabled.");
+		if (null == _connector)
+			throw new RuntimeException(
+					"RTEX [GymAppConnector.getCacheConnector]> Application connection not defined. Functionality 'getCacheConnector' disabled.");
 		return _connector.getCacheConnector();
 	}
 
-	@Override
 	public ICCPDatabaseConnector getCCPDBConnector() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getCCPDBConnector]> Application connection not defined. Functionality 'getCCPDBConnector' disabled.");
+		if (null == _connector)
+			throw new RuntimeException(
+					"RTEX [GymAppConnector.getCCPDBConnector]> Application connection not defined. Functionality 'getCCPDBConnector' disabled.");
 		return _connector.getCCPDBConnector();
 	}
 
-	@Override
 	public INeoComModelDatabase getDBConnector() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getDBConnector]> Application connection not defined. Functionality 'getDBConnector' disabled.");
+		if (null == _connector)
+			throw new RuntimeException(
+					"RTEX [GymAppConnector.getDBConnector]> Application connection not defined. Functionality 'getDBConnector' disabled.");
 		return _connector.getDBConnector();
 	}
 
-	@Override
 	public INeoComModelStore getModelStore() {
-		if (null == _connector) throw new RuntimeException(
-				"RTEX [GymAppConnector.getModelStore]> Application connection not defined. Functionality 'getModelStore' disabled.");
+		if (null == _connector)
+			throw new RuntimeException(
+					"RTEX [GymAppConnector.getModelStore]> Application connection not defined. Functionality 'getModelStore' disabled.");
 		return _connector.getModelStore();
 	}
 

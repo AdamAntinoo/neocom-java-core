@@ -9,33 +9,36 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
-import org.dimensinfin.eveonline.neocom.manager.DefaultAssetsContentManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IDownloadable;
+import org.dimensinfin.core.interfaces.IExpandable;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
+import org.dimensinfin.eveonline.neocom.manager.DefaultAssetsContentManager;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ExtendedLocation extends EveLocation implements IExpandable {
+public class ExtendedLocation extends EveLocation implements IExpandable, IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -4484922266027865406L;
-	private static Logger			logger						= Logger.getLogger("ExtendedLocation.java");
+	private static Logger			logger						= Logger.getLogger("ExtendedLocation");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private EveLocation				delegate					= null;
 	private NeoComCharacter		pilot							= null;
 	private IContentManager		contentManager		= new DefaultAssetsContentManager(this);
+	private boolean						_expanded					= false;
+	private boolean						_renderIfEmpty		= true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ExtendedLocation() {
 		super();
-		this.setDownloaded(false);
+		//		contentManager.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
 		jsonClass = "ExtendedLocation";
 	}
@@ -47,7 +50,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable {
 
 	private ExtendedLocation(final EveLocation delegate) {
 		this();
-		this.setDownloaded(false);
+		//		this.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
 		this.delegate = delegate;
 		// Copy important identifiers from delegate.
@@ -74,8 +77,8 @@ public class ExtendedLocation extends EveLocation implements IExpandable {
 	 * done.
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		return (ArrayList<AbstractComplexNode>) contentManager.collaborate2Model(variant);
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		return contentManager.collaborate2Model(variant);
 	}
 
 	@JsonIgnore
@@ -152,12 +155,13 @@ public class ExtendedLocation extends EveLocation implements IExpandable {
 		return delegate.getUrlLocationIcon();
 	}
 
-	@Override
 	public boolean isDownloaded() {
-		return delegate.isDownloaded();
+		if (contentManager instanceof IDownloadable)
+			return ((IDownloadable) delegate).isDownloaded();
+		else
+			return true;
 	}
 
-	@Override
 	public boolean isEmpty() {
 		if (null != contentManager)
 			return contentManager.isEmpty();
@@ -165,32 +169,55 @@ public class ExtendedLocation extends EveLocation implements IExpandable {
 			return true;
 	}
 
-	@Override
-	public boolean isExpandable() {
-		return true;
+	public boolean collapse() {
+		_expanded = false;
+		return _expanded;
 	}
 
-	@Override
+	public boolean expand() {
+		_expanded = true;
+		return _expanded;
+	}
+
 	public boolean isExpanded() {
-		return delegate.isExpanded();
+		return _expanded;
 	}
 
-	@Override
 	public boolean isRenderWhenEmpty() {
-		if (renderWhenEmpty)
-			return true;
-		else {
-			if (this.isEmpty())
-				return false;
-			else
-				return true;
-		}
+		return _renderIfEmpty;
 	}
 
-	@Override
-	public boolean isVisible() {
-		return delegate.isVisible();
+	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+		_renderIfEmpty = renderWhenEmpty;
+		return this;
 	}
+
+	//	@Override
+	//	public boolean isExpandable() {
+	//		return true;
+	//	}
+	//
+	//	@Override
+	//	public boolean isExpanded() {
+	//		return delegate.isExpanded();
+	//	}
+	//
+	//	@Override
+	//	public boolean isRenderWhenEmpty() {
+	//		if (renderWhenEmpty)
+	//			return true;
+	//		else {
+	//			if (this.isEmpty())
+	//				return false;
+	//			else
+	//				return true;
+	//		}
+	//	}
+	//
+	//	@Override
+	//	public boolean isVisible() {
+	//		return delegate.isVisible();
+	//	}
 
 	@Override
 	public void setConstellation(final String constellation) {
@@ -206,28 +233,30 @@ public class ExtendedLocation extends EveLocation implements IExpandable {
 		contentManager = manager;
 	}
 
-	@Override
-	public AbstractComplexNode setDownloaded(final boolean downloadedstate) {
+	public IDownloadable setDownloaded(final boolean downloadedstate) {
 		if (null == delegate)
 			return this;
-		else
-			return delegate.setDownloaded(downloadedstate);
+		else if (contentManager instanceof IDownloadable) {
+			((IDownloadable) delegate).setDownloaded(downloadedstate);
+			return this;
+		} else
+			return this;
 	}
 
-	@Override
-	public AbstractComplexNode setExpanded(final boolean newState) {
-		return delegate.setExpanded(newState);
-	}
-
-	@Override
-	public boolean toggleExpanded() {
-		return delegate.toggleExpanded();
-	}
-
-	@Override
-	public boolean toggleVisible() {
-		return delegate.toggleVisible();
-	}
+	//	@Override
+	//	public AbstractComplexNode setExpanded(final boolean newState) {
+	//		return delegate.setExpanded(newState);
+	//	}
+	//
+	//	@Override
+	//	public boolean toggleExpanded() {
+	//		return delegate.toggleExpanded();
+	//	}
+	//
+	//	@Override
+	//	public boolean toggleVisible() {
+	//		return delegate.toggleVisible();
+	//	}
 
 	@Override
 	public String toString() {

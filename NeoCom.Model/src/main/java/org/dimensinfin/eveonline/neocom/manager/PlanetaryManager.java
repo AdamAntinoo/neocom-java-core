@@ -14,11 +14,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import org.dimensinfin.android.interfaces.INamed;
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -31,7 +28,7 @@ import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PlanetaryManager extends AbstractManager implements INamed {
+public class PlanetaryManager extends AbstractManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long												serialVersionUID	= 3794750126425122302L;
 	//	private static Logger														logger						= Logger.getLogger("PlanetaryManager");
@@ -117,7 +114,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 			for (NeoComAsset node : contents) {
 				// Check for containers to get also its contents.
 				if (node instanceof IAssetContainer) {
-					intermediate.addAll(((IAssetContainer) node).getContents());
+					intermediate.addAll(((IAssetContainer) node).getAssets());
 				}
 				intermediate.add(node);
 			}
@@ -131,7 +128,6 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		return new Vector<Resource>();
 	}
 
-	@Override
 	public String getOrderingName() {
 		return "Planetary Manager";
 	}
@@ -323,16 +319,16 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 					this.add2Location(ship);
 					// Remove all the assets contained because they will be added in the call to collaborate2Model
 					// REFACTOR set the default variant as a constant even that information if defined at other project
-					ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					List<ICollaboration> removableList = ship.collaborate2Model("DEFAULT");
 					// The list returned is not the real list of assets contained but the list of Separators
-					for (AbstractComplexNode node : removableList) {
+					for (ICollaboration node : removableList) {
 						this.removeNode(node);
 					}
 				} else {
 					this.add2Location(asset);
 				}
-				PlanetaryManager.logger
-						.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: " + asset.getAssetID());
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: "
+						+ asset.getAssetID());
 				return;
 			}
 			if (asset.isContainer()) {
@@ -367,8 +363,8 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 				//					assetMap.remove(((Container) node).getAssetID());
 				//				}
 				//	}
-				PlanetaryManager.logger
-						.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: " + asset.getAssetID());
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: "
+						+ asset.getAssetID());
 				return;
 			}
 			// Process the asset parent if this is the case because we should add first parent to the hierarchy
@@ -385,11 +381,11 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 					if (null != container) {
 						PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Added asset: " + asset.getAssetID()
 								+ " to Container: " + container.getAssetID());
-						container.addContent(asset);
+						container.addAsset(asset);
 					}
 				}
-				PlanetaryManager.logger
-						.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: " + asset.getAssetID());
+				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]<<<<< Completed processing: "
+						+ asset.getAssetID());
 				return;
 			}
 			// Check if the location identifier matches an asset. This item can be contained inside some other.
@@ -419,7 +415,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		if (resource.hasParent()) {
 			NeoComAsset processed = this.processPlanetaryResource(resource.getParentContainer());
 			if (processed instanceof IAssetContainer) {
-				((IAssetContainer) processed).addContent(resource);
+				((IAssetContainer) processed).addAsset(resource);
 			} else {
 				this.add2Location(resource);
 			}
@@ -454,6 +450,7 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 		}
 		return resource;
 	}
+
 	//	private void add2Container(final NeoComAsset asset) {
 	//		long id = asset.getLocationID();
 	//		NeoComAsset subtarget = containers.get(id);
@@ -510,16 +507,15 @@ public class PlanetaryManager extends AbstractManager implements INamed {
 	 * Remove the nodes collaborated and their own collaborations recursively from the list of assets to
 	 * process.
 	 */
-	private void removeNode(final AbstractComplexNode node) {
+	private void removeNode(final ICollaboration node) {
 		// Check that the class of the item is an Asset. Anyway check for its collaboration.
-		if (node instanceof AbstractViewableNode) {
+		if (node instanceof ICollaboration) {
 			// Try to remove the asset if found
 			if (node instanceof NeoComAsset) {
 				assetMap.remove(((NeoComAsset) node).getAssetID());
 			}
 			// Remove also the nodes collaborated by it.
-			for (AbstractComplexNode child : ((AbstractViewableNode) node)
-					.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name())) {
+			for (ICollaboration child : node.collaborate2Model("DEFAULT")) {
 				this.removeNode(child);
 			}
 		}

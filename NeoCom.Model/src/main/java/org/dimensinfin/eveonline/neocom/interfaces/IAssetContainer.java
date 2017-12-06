@@ -9,23 +9,27 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
+import java.util.List;
+
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-
-import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
 /**
  * This interface controls the methods that should be common to all Eve Online assets that can also contain
  * other assets like Locations, Containers, Holds or Ships and Citadels.
- *
+ * 
  * @author Adam Antinoo
  */
 public interface IAssetContainer extends IExpandable {
-	public int addContent (NeoComAsset asset);
+	//	public int addContent(NeoComAsset asset);
 
-	public List<NeoComAsset> getContents ();
+	//	public List<ICollaboration> getContents();
+
+	public int addAsset(NeoComAsset asset);
+
+	public List<NeoComAsset> getAssets();
 }
 
 // - UNUSED CODE ............................................................................................

@@ -9,39 +9,6 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.dimensinfin.android.interfaces.INamed;
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.CVariant.EDefaultVariant;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-import org.dimensinfin.eveonline.neocom.model.Region;
-import org.dimensinfin.eveonline.neocom.model.Ship;
-import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
-import org.dimensinfin.eveonline.neocom.model.TimeStamp;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
-
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Location;
@@ -55,6 +22,37 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.dimensinfin.eveonline.neocom.model.Region;
+import org.dimensinfin.eveonline.neocom.model.Ship;
+import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
+import org.dimensinfin.eveonline.neocom.model.TimeStamp;
+import org.joda.time.Duration;
+import org.joda.time.Instant;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to
@@ -74,7 +72,7 @@ import com.j256.ormlite.stmt.Where;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AssetsManager extends AbstractManager implements INamed {
+public class AssetsManager extends AbstractManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long																serialVersionUID			= -8502099148768297876L;
 	private static Logger																		logger								= Logger.getLogger("AssetsManager");
@@ -85,7 +83,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	// - A S S E T   M A N A G E M E N T
 	public long																							totalAssets						= -1;
 	public double																						totalAssetsValue			= 0.0;
-	private TimeStamp																				assetsCacheTime				= null;;
+	private TimeStamp assetsCacheTime				= null;																						;
 
 	/** Probably redundant with containers. */
 	private final HashMap<Long, NeoComAsset>								assetsAtContainer			= new HashMap<Long, NeoComAsset>();
@@ -158,8 +156,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 			}
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
-			AssetsManager.logger.severe(
-					"RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+			AssetsManager.logger
+					.severe("RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
 		}
 	}
 
@@ -249,8 +247,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * The assets downloaded are being written to a special set of records in the User database with an special
 	 * <code>ownerid</code> so we can work with a new set of records for an specific Character without
 	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
-	 * and stored in the database we remove the old list and replace the owner of the new list to the right
-	 * one.<br>
+	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
 	 * <br>
 	 * There are two flavour for the asset download process. One for Pilots and other for Corporation assets.
 	 */
@@ -315,6 +312,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return blueprintCache;
 	}
 
+	@Override
+	public String getJsonClass() {
+		return jsonClass;
+	}
+
 	public ExtendedLocation getLocationById(final long id) {
 		// Search for the location on the Location list.
 		for (Long key : locations.keySet()) {
@@ -340,7 +342,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return locations;
 	}
 
-	@Override
 	public String getOrderingName() {
 		return "Assets Manager";
 	}
@@ -461,21 +462,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 						+ this.getPilot().getCharacterID() + "] - " + lapse);
 				assetsAtLocationCache.put(location.getID(), (ArrayList<NeoComAsset>) assetList);
 				// Update the dirty state to signal modification of store structures.
-				this.setDirty(true);
+				//				this.setDirty(true);
 				AssetsManager.logger.info("<< AssetsManager.searchAsset4Location [" + assetList.size() + "]");
 			} catch (java.sql.SQLException sqle) {
 				sqle.printStackTrace();
 			}
 		}
 		return (ArrayList<NeoComAsset>) assetList;
-	}
-
-	public NeoComBlueprint searchBlueprintByID(final long assetid) {
-		for (NeoComBlueprint bp : this.getBlueprints()) {
-			String refs = bp.getStackIDRefences();
-			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
-		}
-		return null;
 	}
 
 	//	public HashSet<String> queryT2ModuleNames() {
@@ -486,6 +479,14 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		}
 	//		return names;
 	//	}
+
+	public NeoComBlueprint searchBlueprintByID(final long assetid) {
+		for (NeoComBlueprint bp : this.getBlueprints()) {
+			String refs = bp.getStackIDRefences();
+			if (refs.contains(Long.valueOf(assetid).toString())) return bp;
+		}
+		return null;
+	}
 
 	/**
 	 * From the list of blueprints returned from the AssetsManager we filter out all others that are not T1
@@ -517,6 +518,30 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return blueprintList;
 	}
 
+	//	/**
+	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
+	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
+	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
+	//	 * 
+	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
+	//	 */
+	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
+	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
+	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
+	//		EveFilter filter = new EveFilter(bps, techWhere);
+	//		return filter.getResults();
+	//	}
+
+	//	public ArrayList<Blueprint> queryT1Blueprints1() {
+	//		if (null == t1blueprints) getPilot().updateBlueprints();
+	//		return t1blueprints;
+	//	}
+	//
+	//	public ArrayList<Blueprint> queryT2Blueprints1() {
+	//		if (null == t2blueprints) getPilot().updateBlueprints();
+	//		return t2blueprints;
+	//	}
+
 	public ArrayList<NeoComAsset> searchT2Modules() {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
@@ -546,30 +571,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		AssetsManager.logger.info("<< EveChar.queryT2Modules");
 		return (ArrayList<NeoComAsset>) assetList;
 	}
-
-	//	/**
-	//	 * From the list of assets that have the Category "Blueprint" select only those that are of the Tech that is
-	//	 * received on the parameter. Warning with the values because the comparison is performed on string literals
-	//	 * and if the <code>qualifier</code> is not properly typed the result may be empty.
-	//	 * 
-	//	 * @return list of <code>Asset</code>s that are Blueprints Tech II.
-	//	 */
-	//	public ArrayList<Asset> queryBlueprints2(final String qualifier) {
-	//		ArrayList<Asset> bps = searchAsset4Category("Blueprint");
-	//		WhereClause techWhere = new WhereClause(EAssetsFields.TECH, EMode.EQUALS, qualifier);
-	//		EveFilter filter = new EveFilter(bps, techWhere);
-	//		return filter.getResults();
-	//	}
-
-	//	public ArrayList<Blueprint> queryT1Blueprints1() {
-	//		if (null == t1blueprints) getPilot().updateBlueprints();
-	//		return t1blueprints;
-	//	}
-	//
-	//	public ArrayList<Blueprint> queryT2Blueprints1() {
-	//		if (null == t2blueprints) getPilot().updateBlueprints();
-	//		return t2blueprints;
-	//	}
 
 	/**
 	 * Retrieves from the database all the stacks for an specific item type id. The method stores the results
@@ -631,12 +632,12 @@ public class AssetsManager extends AbstractManager implements INamed {
 				blueprintDao.create(blueprint);
 				AssetsManager.logger.info("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {
-				AssetsManager.logger
-						.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
+				AssetsManager.logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. "
+						+ sqle.getMessage());
 				sqle.printStackTrace();
 			} catch (final RuntimeException rtex) {
-				AssetsManager.logger
-						.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + rtex.getMessage());
+				AssetsManager.logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. "
+						+ rtex.getMessage());
 				rtex.printStackTrace();
 			}
 		}
@@ -667,6 +668,13 @@ public class AssetsManager extends AbstractManager implements INamed {
 		return buffer.toString();
 	}
 
+	//	/**
+	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
+	//	 * structures.
+	//	 */
+	//	public void reinstantiate() {
+	//	}
+
 	protected void add2Location(final NeoComAsset asset) {
 		long locid = asset.getLocationID();
 		ExtendedLocation target = locations.get(locid);
@@ -682,13 +690,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 			target.addContent(asset);
 		}
 	}
-
-	//	/**
-	//	 * This method initialized all the transient fields that are expected to be initialized with empty data
-	//	 * structures.
-	//	 */
-	//	public void reinstantiate() {
-	//	}
 
 	protected synchronized double calculateAssetValue(final NeoComAsset asset) {
 		// Skip blueprints from the value calculations
@@ -710,8 +711,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	}
 
 	/**
-	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information.
-	 * <br>
+	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information. <br>
 	 * This method checks the location to detect if under the new flat model the location is an asset and then
 	 * we should convert it into a parent or the location is a real location. Initially this is done checking
 	 * the location id value if under 1000000000000.
@@ -764,29 +764,6 @@ public class AssetsManager extends AbstractManager implements INamed {
 		// Add the asset value to the database.
 		newAsset.setIskValue(this.calculateAssetValue(newAsset));
 		return newAsset;
-	}
-
-	protected String downloadAssetEveName(final long assetID) {
-		// Wait up to one second to avoid request rejections from CCP.
-		try {
-			Thread.sleep(500); // 500 milliseconds is half second.
-		} catch (InterruptedException ex) {
-			Thread.currentThread().interrupt();
-		}
-		final Vector<Long> ids = new Vector<Long>();
-		ids.add(assetID);
-		try {
-			final LocationsParser parser = new LocationsParser();
-			final LocationsResponse response = parser.getResponse(this.getPilot().getAuthorization(), ids);
-			if (null != response) {
-				Set<Location> userNames = response.getAll();
-				if (userNames.size() > 0) return userNames.iterator().next().getItemName();
-			}
-		} catch (final ApiException e) {
-			AssetsManager.logger.info("W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
-			//			e.printStackTrace();
-		}
-		return null;
 	}
 
 	//	/**
@@ -851,6 +828,29 @@ public class AssetsManager extends AbstractManager implements INamed {
 	//		region.addLocation(target);
 	//	}
 
+	protected String downloadAssetEveName(final long assetID) {
+		// Wait up to one second to avoid request rejections from CCP.
+		try {
+			Thread.sleep(500); // 500 milliseconds is half second.
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+		}
+		final Vector<Long> ids = new Vector<Long>();
+		ids.add(assetID);
+		try {
+			final LocationsParser parser = new LocationsParser();
+			final LocationsResponse response = parser.getResponse(this.getPilot().getAuthorization(), ids);
+			if (null != response) {
+				Set<Location> userNames = response.getAll();
+				if (userNames.size() > 0) return userNames.iterator().next().getItemName();
+			}
+		} catch (final ApiException e) {
+			AssetsManager.logger.info("W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
+			//			e.printStackTrace();
+		}
+		return null;
+	}
+
 	private void accessDao() {
 		if (null == assetDao) {
 			try {
@@ -907,8 +907,8 @@ public class AssetsManager extends AbstractManager implements INamed {
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = (ArrayList<NeoComAsset>) assetDao.query(preparedQuery);
 			Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-			AssetsManager.logger
-					.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + this.getPilot().getCharacterID() + "] - " + lapse);
+			AssetsManager.logger.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + this.getPilot().getCharacterID()
+					+ "] - " + lapse);
 			AssetsManager.logger.info("-- Assets processed: " + assetList.size());
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
@@ -931,7 +931,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 	private void processAsset(final Asset eveAsset, final NeoComAsset parent) {
 		final NeoComAsset myasset = this.convert2Asset(eveAsset);
 		if (null != parent) {
-			myasset.setParent(parent);
+			//			myasset.setParent(parent);
 			myasset.setParentContainer(parent);
 			// Set the location to the parent's location is not set.
 			if (myasset.getLocationID() == -1) {
@@ -1013,9 +1013,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 					this.add2Location(ship);
 					// Remove all the assets contained because they will be added in the call to collaborate2Model
 					// REFACTOR set the default variant as a constant even that information if defined at other project
-					ArrayList<AbstractComplexNode> removableList = ship.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					List<ICollaboration> removableList = ship.collaborate2Model("DEFAULT");
 					// The list returned is not the real list of assets contained but the list of Separators
-					for (AbstractComplexNode node : removableList) {
+					for (ICollaboration node : removableList) {
 						this.removeNode(node);
 					}
 				} else {
@@ -1036,10 +1036,9 @@ public class AssetsManager extends AbstractManager implements INamed {
 					this.add2Location(container);
 					// Remove all the assets contained because they will be added in the call to collaborate2Model
 					// REFACTOR set the default variant as a constant even that information if defined at other project
-					ArrayList<AbstractComplexNode> removableList = container
-							.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name());
+					List<ICollaboration> removableList = container.collaborate2Model("DEFAULT");
 					// The list returned is not the real list of assets contained but the list of Separators
-					for (AbstractComplexNode node : removableList) {
+					for (ICollaboration node : removableList) {
 						this.removeNode(node);
 					}
 				} else {
@@ -1082,7 +1081,7 @@ public class AssetsManager extends AbstractManager implements INamed {
 			long regid = newloc.getRegionID();
 			Region reg = regions.get(regid);
 			if (null == reg) {
-				reg = new Region(newloc.getRegion()).setDownloaded(true);
+				reg = new Region(newloc.getRegion());
 				reg.addLocation(newloc);
 				regions.put(regid, reg);
 			} else {
@@ -1111,16 +1110,15 @@ public class AssetsManager extends AbstractManager implements INamed {
 	 * Remove the nodes collaborated and their own collaborations recursively from the list of assets to
 	 * process.
 	 */
-	private void removeNode(final AbstractComplexNode node) {
+	private void removeNode(final ICollaboration node) {
 		// Check that the class of the item is an Asset. Anyway check for its collaboration.
-		if (node instanceof AbstractViewableNode) {
+		if (node instanceof NeoComNode) {
 			// Try to remove the asset if found
 			if (node instanceof NeoComAsset) {
 				assetMap.remove(((NeoComAsset) node).getAssetID());
 			}
 			// Remove also the nodes collaborated by it.
-			for (AbstractComplexNode child : ((AbstractViewableNode) node)
-					.collaborate2Model(EDefaultVariant.DEFAULT_VARIANT.name())) {
+			for (ICollaboration child : node.collaborate2Model("DEFAULT")) {
 				this.removeNode(child);
 			}
 		}
@@ -1138,11 +1136,11 @@ public class AssetsManager extends AbstractManager implements INamed {
 			PreparedQuery<NeoComBlueprint> preparedQuery = queryBuilder.prepare();
 			blueprintCache.addAll(blueprintDao.query(preparedQuery));
 			Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-			AssetsManager.logger
-					.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + this.getPilot().getCharacterID() + "] - " + lapse);
+			AssetsManager.logger.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + this.getPilot().getCharacterID()
+					+ "] - " + lapse);
 			// Check if the list is empty. Then force a refresh download.
 			if (blueprintCache.size() < 1) {
-				this.getPilot().forceRefresh();
+				//				this.getPilot().forceRefresh();
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();

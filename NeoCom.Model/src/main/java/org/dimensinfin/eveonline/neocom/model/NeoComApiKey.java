@@ -10,6 +10,16 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.logging.Logger;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
+
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.CachingConnector;
@@ -25,19 +35,8 @@ import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
 import com.beimin.eveapi.response.account.AccountStatusResponse;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
 
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.interfaces.IViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.logging.Logger;
-
 // - CLASS IMPLEMENTATION ...................................................................................
-public class NeoComApiKey extends AbstractViewableNode implements IViewableNode {
+public class NeoComApiKey extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 4162373120742984305L;
 	private static Logger			logger						= Logger.getLogger("NeoComApiKey");
@@ -91,6 +90,7 @@ public class NeoComApiKey extends AbstractViewableNode implements IViewableNode 
 	private int																		key										= -1;
 	private String																validationCode				= "<INVALID>";
 	private Date																	cachedUntil						= GregorianCalendar.getInstance().getTime();
+
 	//	private Instant											paidUntil							= new Instant(0);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -103,8 +103,8 @@ public class NeoComApiKey extends AbstractViewableNode implements IViewableNode 
 	 * check the different yypes but the elements exported will all share a common interface.
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
 		try {
 			for (NeoComCharacter node : this.getApiCharacters()) {
 				result.add(node);

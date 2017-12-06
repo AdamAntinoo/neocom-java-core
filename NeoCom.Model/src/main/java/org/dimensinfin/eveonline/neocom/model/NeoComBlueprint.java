@@ -7,7 +7,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import org.dimensinfin.core.model.AbstractComplexNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
@@ -26,7 +25,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Blueprints")
-public class NeoComBlueprint extends AbstractComplexNode {
+public class NeoComBlueprint extends NeoComAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID		= -1284879453130050089L;
 
@@ -141,22 +140,27 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		}
 	}
 
+	@Override
 	public long getAssetID() {
 		return assetID;
 	}
 
+	@Override
 	public String getCategory() {
 		return this.getAssociatedAsset().getCategory();
 	}
 
+	@Override
 	public int getFlag() {
 		return flag;
 	}
 
+	@Override
 	public String getGroupName() {
 		return this.getAssociatedAsset().getGroupName();
 	}
 
+	@Override
 	public EveItem getItem() {
 		return this.getAssociatedAsset().getItem();
 	}
@@ -171,6 +175,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 	 * location of the associated asset for normal blueprints. Check the access to null elements and cache the
 	 * result.
 	 */
+	@Override
 	public EveLocation getLocation() {
 		if (null == locationCache) {
 			if (null == this.getAssociatedAsset())
@@ -182,6 +187,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		return locationCache;
 	}
 
+	@Override
 	public long getLocationID() {
 		return containerID;
 	}
@@ -234,14 +240,17 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		return moduleTypeID;
 	}
 
+	@Override
 	public String getName() {
 		return this.getTypeName();
 	}
 
+	@Override
 	public NeoComAsset getParentContainer() {
 		return this.getAssociatedAsset().getParentContainer();
 	}
 
+	@Override
 	public int getQuantity() {
 		return quantity;
 	}
@@ -260,6 +269,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		return stackIDRefences;
 	}
 
+	@Override
 	public String getTech() {
 		return tech;
 	}
@@ -268,6 +278,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		return timeEfficiency;
 	}
 
+	@Override
 	public int getTypeID() {
 		return typeID;
 	}
@@ -280,6 +291,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		return bpo;
 	}
 
+	@Override
 	public boolean isPackaged() {
 		return packaged;
 	}
@@ -314,6 +326,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		this.bpo = bpo;
 	}
 
+	@Override
 	public void setFlag(final int flag) {
 		this.flag = flag;
 	}
@@ -322,6 +335,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		this.jobProductionCost = jobProductionCost;
 	}
 
+	@Override
 	public void setLocationID(final long locationID) {
 		containerID = locationID;
 	}
@@ -342,6 +356,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		moduleTypeID = moduleID;
 	}
 
+	@Override
 	public void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
 	}
@@ -350,6 +365,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		this.packaged = packaged;
 	}
 
+	@Override
 	public void setQuantity(final int quantity) {
 		this.quantity = quantity;
 	}
@@ -358,6 +374,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		this.runs = runs;
 	}
 
+	@Override
 	public void setTech(final String tech) {
 		this.tech = tech;
 	}
@@ -366,6 +383,7 @@ public class NeoComBlueprint extends AbstractComplexNode {
 		this.timeEfficiency = timeEfficiency;
 	}
 
+	@Override
 	public void setTypeID(final int typeID) {
 		this.typeID = typeID;
 	}

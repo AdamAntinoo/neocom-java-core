@@ -13,30 +13,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.IGEFNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IDownloadable;
+import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.AssetGroup.EGroupType;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Ship extends NeoComAsset implements IAssetContainer {
+public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger			logger						= Logger.getLogger("Ship");
 	private static final long	serialVersionUID	= 1782782104428714849L;
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private boolean						_expanded					= false;
+	private boolean						_renderIfEmpty		= true;
+	private boolean						_downloaded				= false;
 	private long							pilotID						= 0;
-	private final AssetGroup	highModules				= new AssetGroup("HIGH").setType(EGroupType.SHIPSECTION_HIGH);
-	private final AssetGroup	medModules				= new AssetGroup("MED").setType(EGroupType.SHIPSECTION_MED);
-	private final AssetGroup	lowModules				= new AssetGroup("LOW").setType(EGroupType.SHIPSECTION_LOW);
-	private final AssetGroup	rigs							= new AssetGroup("RIGS").setType(EGroupType.SHIPSECTION_RIGS);
-	private final AssetGroup	drones						= new AssetGroup("DRONES").setType(EGroupType.SHIPSECTION_DRONES);
-	private final AssetGroup	cargo							= new AssetGroup("CARGO HOLD").setType(EGroupType.SHIPSECTION_CARGO);
-	private final AssetGroup	orecargo					= new AssetGroup("ORE HOLD").setType(EGroupType.SHIPSECTION_CARGO);
+	private final AssetGroup	highModules				= new AssetGroup("HIGH").setGroupType(EGroupType.SHIPSECTION_HIGH);
+	private final AssetGroup	medModules				= new AssetGroup("MED").setGroupType(EGroupType.SHIPSECTION_MED);
+	private final AssetGroup	lowModules				= new AssetGroup("LOW").setGroupType(EGroupType.SHIPSECTION_LOW);
+	private final AssetGroup	rigs							= new AssetGroup("RIGS").setGroupType(EGroupType.SHIPSECTION_RIGS);
+	private final AssetGroup	drones						= new AssetGroup("DRONES").setGroupType(EGroupType.SHIPSECTION_DRONES);
+	private final AssetGroup	cargo							= new AssetGroup("CARGO HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
+	private final AssetGroup	orecargo					= new AssetGroup("ORE HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Ship() {
+		super();
 		// Ships have contents and are not available upon creation.
 		this.setDownloaded(false);
 		jsonClass = "Ship";
@@ -50,19 +55,21 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	 */
 	public Ship(final long pilot) {
 		this();
-		//		jsonClass = "Ship";
 		pilotID = pilot;
-		//		this.setDownloaded(false);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * By default the contents are added to the Cargo Hold of the Ship.
-	 */
-	@Override
-	public int addContent(final NeoComAsset asset) {
-		cargo.add(asset);
-		return cargo.size();
+	//	/**
+	//	 * By default the contents are added to the Cargo Hold of the Ship.
+	//	 */
+	//	public int addContent(final NeoComAsset asset) {
+	//		cargo.add(asset);
+	//		return cargo.size();
+	//	}
+
+	public int addAsset(final NeoComAsset asset) {
+		cargo.addAsset(asset);
+		return cargo.getContentSize();
 	}
 
 	/**
@@ -74,8 +81,8 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	 * Use the downloaded flag for this purpose.
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> result = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
 		if (!this.isDownloaded()) {
 			this.downloadShipData();
 		}
@@ -116,23 +123,21 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	}
 
 	public List<NeoComAsset> getCargo() {
-		return cargo.getContents();
+		return cargo.getAssets();
 	}
 
-	@Override
-	public int getContentCount() {
-		return highModules.size() + medModules.size() + lowModules.size() + rigs.size() + drones.size() + cargo.size()
-				+ orecargo.size();
+	public int getContentSize() {
+		return highModules.getContentSize() + medModules.getContentSize() + lowModules.getContentSize()
+				+ rigs.getContentSize() + drones.getContentSize() + cargo.getContentSize() + orecargo.getContentSize();
 	}
 
-	@Override
-	public List<NeoComAsset> getContents() {
-		return cargo.getContents();
-	}
+	//	public List<NeoComAsset> getContents() {
+	//		return cargo.getAssets();
+	//	}
 
 	public ArrayList<NeoComAsset> getDrones() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (IGEFNode node : drones.getChildren()) {
+		for (ICollaboration node : drones.getContents()) {
 			result.add((NeoComAsset) node);
 		}
 		return result;
@@ -145,13 +150,13 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 	 */
 	public ArrayList<NeoComAsset> getModules() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (IGEFNode node : highModules.getChildren()) {
+		for (ICollaboration node : highModules.getContents()) {
 			result.add((NeoComAsset) node);
 		}
-		for (IGEFNode node : medModules.getChildren()) {
+		for (ICollaboration node : medModules.getContents()) {
 			result.add((NeoComAsset) node);
 		}
-		for (IGEFNode node : lowModules.getChildren()) {
+		for (ICollaboration node : lowModules.getContents()) {
 			result.add((NeoComAsset) node);
 		}
 		return result;
@@ -159,13 +164,12 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 
 	public ArrayList<NeoComAsset> getRigs() {
 		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (IGEFNode node : rigs.getChildren()) {
+		for (ICollaboration node : rigs.getContents()) {
 			result.add((NeoComAsset) node);
 		}
 		return result;
 	}
 
-	@Override
 	public boolean isExpandable() {
 		return true;
 	}
@@ -200,24 +204,67 @@ public class Ship extends NeoComAsset implements IAssetContainer {
 		for (NeoComAsset node : contents) {
 			int flag = node.getFlag();
 			if ((flag > 10) && (flag < 19)) {
-				highModules.add(node);
+				highModules.addAsset(node);
 			} else if ((flag > 18) && (flag < 27)) {
-				medModules.add(node);
+				medModules.addAsset(node);
 			} else if ((flag > 26) && (flag < 35)) {
-				lowModules.add(node);
+				lowModules.addAsset(node);
 			} else if ((flag > 91) && (flag < 100)) {
-				rigs.add(node);
+				rigs.addAsset(node);
 			} else {
 				// Check for drones
 				if (node.getCategory().equalsIgnoreCase("Drones")) {
-					drones.add(node);
+					drones.addAsset(node);
 				} else {
 					// Contents on ships go to the cargohold.
-					cargo.add(node);
+					cargo.addAsset(node);
 				}
 			}
 		}
 		this.setDownloaded(true);
+	}
+
+	public boolean collapse() {
+		_expanded = false;
+		return _expanded;
+	}
+
+	public boolean expand() {
+		_expanded = true;
+		return _expanded;
+	}
+
+	public boolean isEmpty() {
+		if (this.getContentSize() > 0)
+			return true;
+		else
+			return false;
+	}
+
+	public boolean isExpanded() {
+		return _expanded;
+	}
+
+	public boolean isRenderWhenEmpty() {
+		return _renderIfEmpty;
+	}
+
+	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+		_renderIfEmpty = renderWhenEmpty;
+		return this;
+	}
+
+	public boolean isDownloaded() {
+		return _downloaded;
+	}
+
+	public IDownloadable setDownloaded(final boolean downloadedstate) {
+		_downloaded = downloadedstate;
+		return this;
+	}
+
+	public List<NeoComAsset> getAssets() {
+		return cargo.getAssets();
 	}
 }
 

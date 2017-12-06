@@ -9,42 +9,67 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class AbstractContentManager {
+public abstract class AbstractContentManager implements IContentManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	//	private static Logger logger = Logger.getLogger("AbstractContentManager");
+	private static final long					serialVersionUID	= 7033665841859754757L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected String									jsonClass	= "AbstractContentManager";
-	protected ExtendedLocation				parent		= null;
-	protected final List<NeoComAsset>	contents	= new Vector<NeoComAsset>();
+	protected String									jsonClass					= "AbstractContentManager";
+	protected ExtendedLocation				parent						= null;
+	protected final List<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractContentManager() {
-		jsonClass = "";
+		jsonClass = "AbstractContentManager";
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public AbstractContentManager(final ExtendedLocation newparent) {
 		this();
 		parent = newparent;
 	}
 
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public int add(final NeoComAsset child) {
 		if (null != child) {
-			contents.add(child);
+			_contents.add(child);
 		}
-		return contents.size();
+		return _contents.size();
+	}
+
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		List<ICollaboration> results = new ArrayList<ICollaboration>();
+		results.addAll(_contents);
+		return results;
 	}
 
 	public long getID() {
 		return parent.getRealId();
+	}
+
+	public List<NeoComAsset> getContents() {
+		return _contents;
+	}
+
+	public int getContentSize() {
+		return _contents.size();
+	}
+
+	public boolean isEmpty() {
+		return (_contents.size() < 1) ? true : false;
+	}
+
+	public String getJsonClass() {
+		return jsonClass;
 	}
 }
 

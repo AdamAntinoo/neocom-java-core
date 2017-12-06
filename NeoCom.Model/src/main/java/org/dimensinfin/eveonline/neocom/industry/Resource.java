@@ -10,13 +10,14 @@ package org.dimensinfin.eveonline.neocom.industry;
 
 // - IMPORT SECTION .........................................................................................
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.core.model.AbstractGEFNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -36,7 +37,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  * @author Adam Antinoo
  */
-public class Resource extends AbstractComplexNode {
+public class Resource extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID					= 921961484632479376L;
 	private static Logger			logger										= Logger.getLogger("Resource");
@@ -99,8 +100,8 @@ public class Resource extends AbstractComplexNode {
 	 * 
 	 * @return
 	 */
-	public ArrayList<AbstractGEFNode> collaborate2Model() {
-		final ArrayList<AbstractGEFNode> result = new ArrayList<AbstractGEFNode>();
+	public List<ICollaboration> collaborate2Model() {
+		final ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
 		result.add(this);
 		return result;
 	}

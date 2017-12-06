@@ -10,28 +10,17 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.industry.Job;
-import org.dimensinfin.eveonline.neocom.market.NeoComMarketOrder;
-import org.joda.time.Instant;
+import org.dimensinfin.core.interfaces.ICollaboration;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
-import com.beimin.eveapi.model.shared.IndustryJob;
-import com.beimin.eveapi.model.shared.MarketOrder;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
-import com.beimin.eveapi.parser.corporation.IndustryJobsParser;
-import com.beimin.eveapi.parser.corporation.MarketOrdersParser;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
-import com.beimin.eveapi.response.shared.IndustryJobsResponse;
-import com.beimin.eveapi.response.shared.MarketOrdersResponse;
-import com.j256.ormlite.dao.Dao;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Corporation extends NeoComCharacter {
@@ -52,8 +41,8 @@ public class Corporation extends NeoComCharacter {
 	 * Pilot or a Corporation. For a Pilot the result depends on the variant received as the parameter
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		return results;
 	}
 
@@ -177,100 +166,100 @@ public class Corporation extends NeoComCharacter {
 	//		Corporation.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
 	//	}
 
-	/**
-	 * The industry jobs are obsolete so an update was triggered. Go to the CCP servers and get a fresh set of
-	 * Industry Jobs data. After the processing write the records down to the database and then remove the CCP
-	 * records.<br>
-	 * After the processing check for User Jobs converted to running jobs and remove them from the app list
-	 * because the user has already launched them on the real EVE client.
-	 */
-	@Override
-	public void downloadIndustryJobs() {
-		Corporation.logger.info(">> EveChar.updateIndustryJobs");
-		try {
-			// Clear any previous record with owner -1 from database.
-			//		AppConnector.getDBConnector().clearInvalidRecords();
-			// Download and parse the industry jobs history.
-			IndustryJobsParser parserhist = new IndustryJobsParser();
-			IndustryJobsResponse responsehist = parserhist.getResponse(this.getAuthorization());
-			if (null != responsehist) {
-				Set<IndustryJob> jobs = responsehist.getAll();
-				jobsCacheTime = new Instant(responsehist.getCachedUntil());
-				for (final IndustryJob evejob : jobs) {
-					final Job myjob = this.convert2Job(evejob);
-					// Set the owner my there is not job cleanup.
-					//					myjob.setOwnerID(getCharacterID());
-					try {
-						final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
-						jobDao.createOrUpdate(myjob);
-						Corporation.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
-					} catch (final SQLException sqle) {
-						Corporation.logger
-								.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
-						sqle.printStackTrace();
-					}
-				}
-			}
-
-			//			// Download and parse the industry jobs.
-			//			final NewIndustryJobsParser parser = NewIndustryJobsParser.getInstance();
-			//			final NewIndustryJobsResponse response = parser.getResponse(getAuthorization());
-			//			if (null != response) {
-			//				final HashSet<ApiNewIndustryJob> jobs = new HashSet<ApiNewIndustryJob>(response.getAll());
-			//				jobsCacheTime = new Instant(response.getCachedUntil());
-			//				for (final ApiNewIndustryJob evejob : jobs) {
-			//					final Job myjob = convert2Job(evejob);
-			//					// Set the owner my there is not job cleanup.
-			//					//					myjob.setOwnerID(getCharacterID());
-			//					try {
-			//						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
-			//						jobDao.createOrUpdate(myjob);
-			//						logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
-			//					} catch (final SQLException sqle) {
-			//						logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
-			//						sqle.printStackTrace();
-			//					}
-			//				}
-			//			}
-			//		AppConnector.getDBConnector().replaceJobs(getCharacterID());
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		this.setDirty(true);
-		Corporation.logger.info("<< EveChar.updateIndustryJobs");
-	}
-
-	@Override
-	public void downloadMarketOrders() {
-		Corporation.logger.info(">> EveChar.updateMarketOrders");
-		try {
-			// Download and parse the market orders.
-			MarketOrdersParser parser = new MarketOrdersParser();
-			final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
-			if (null != response) {
-				Set<MarketOrder> orders = response.getAll();
-				for (final MarketOrder eveorder : orders) {
-					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
-					try {
-						final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
-								.getMarketOrderDAO();
-						marketOrderDao.createOrUpdate(myorder);
-						Corporation.logger.finest(
-								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
-					} catch (final SQLException sqle) {
-						Corporation.logger
-								.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
-						sqle.printStackTrace();
-					}
-				}
-				marketCacheTime = new Instant(response.getCachedUntil());
-			}
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		this.setDirty(true);
-		Corporation.logger.info("<< EveChar.updateMarketOrders");
-	}
+	//	/**
+	//	 * The industry jobs are obsolete so an update was triggered. Go to the CCP servers and get a fresh set of
+	//	 * Industry Jobs data. After the processing write the records down to the database and then remove the CCP
+	//	 * records.<br>
+	//	 * After the processing check for User Jobs converted to running jobs and remove them from the app list
+	//	 * because the user has already launched them on the real EVE client.
+	//	 */
+	//	@Override
+	//	public void downloadIndustryJobs() {
+	//		Corporation.logger.info(">> EveChar.updateIndustryJobs");
+	//		try {
+	//			// Clear any previous record with owner -1 from database.
+	//			//		AppConnector.getDBConnector().clearInvalidRecords();
+	//			// Download and parse the industry jobs history.
+	//			IndustryJobsParser parserhist = new IndustryJobsParser();
+	//			IndustryJobsResponse responsehist = parserhist.getResponse(this.getAuthorization());
+	//			if (null != responsehist) {
+	//				Set<IndustryJob> jobs = responsehist.getAll();
+	//				jobsCacheTime = new Instant(responsehist.getCachedUntil());
+	//				for (final IndustryJob evejob : jobs) {
+	//					final Job myjob = this.convert2Job(evejob);
+	//					// Set the owner my there is not job cleanup.
+	//					//					myjob.setOwnerID(getCharacterID());
+	//					try {
+	//						final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
+	//						jobDao.createOrUpdate(myjob);
+	//						Corporation.logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
+	//					} catch (final SQLException sqle) {
+	//						Corporation.logger
+	//								.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
+	//						sqle.printStackTrace();
+	//					}
+	//				}
+	//			}
+	//
+	//			//			// Download and parse the industry jobs.
+	//			//			final NewIndustryJobsParser parser = NewIndustryJobsParser.getInstance();
+	//			//			final NewIndustryJobsResponse response = parser.getResponse(getAuthorization());
+	//			//			if (null != response) {
+	//			//				final HashSet<ApiNewIndustryJob> jobs = new HashSet<ApiNewIndustryJob>(response.getAll());
+	//			//				jobsCacheTime = new Instant(response.getCachedUntil());
+	//			//				for (final ApiNewIndustryJob evejob : jobs) {
+	//			//					final Job myjob = convert2Job(evejob);
+	//			//					// Set the owner my there is not job cleanup.
+	//			//					//					myjob.setOwnerID(getCharacterID());
+	//			//					try {
+	//			//						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
+	//			//						jobDao.createOrUpdate(myjob);
+	//			//						logger.finest("-- Wrote job to database id [" + myjob.getJobID() + "]");
+	//			//					} catch (final SQLException sqle) {
+	//			//						logger.severe("E> Unable to create the new Job [" + myjob.getJobID() + "]. " + sqle.getMessage());
+	//			//						sqle.printStackTrace();
+	//			//					}
+	//			//				}
+	//			//			}
+	//			//		AppConnector.getDBConnector().replaceJobs(getCharacterID());
+	//		} catch (final ApiException apie) {
+	//			apie.printStackTrace();
+	//		}
+	//		this.setDirty(true);
+	//		Corporation.logger.info("<< EveChar.updateIndustryJobs");
+	//	}
+	//
+	//	@Override
+	//	public void downloadMarketOrders() {
+	//		Corporation.logger.info(">> EveChar.updateMarketOrders");
+	//		try {
+	//			// Download and parse the market orders.
+	//			MarketOrdersParser parser = new MarketOrdersParser();
+	//			final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
+	//			if (null != response) {
+	//				Set<MarketOrder> orders = response.getAll();
+	//				for (final MarketOrder eveorder : orders) {
+	//					final NeoComMarketOrder myorder = this.convert2Order(eveorder);
+	//					try {
+	//						final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
+	//								.getMarketOrderDAO();
+	//						marketOrderDao.createOrUpdate(myorder);
+	//						Corporation.logger.finest(
+	//								"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
+	//					} catch (final SQLException sqle) {
+	//						Corporation.logger
+	//								.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
+	//						sqle.printStackTrace();
+	//					}
+	//				}
+	//				marketCacheTime = new Instant(response.getCachedUntil());
+	//			}
+	//		} catch (final ApiException apie) {
+	//			apie.printStackTrace();
+	//		}
+	//		this.setDirty(true);
+	//		Corporation.logger.info("<< EveChar.updateMarketOrders");
+	//	}
 
 	/**
 	 * At the Character creation we only have the key values to locate it into the CCP databases. During this
