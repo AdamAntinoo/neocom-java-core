@@ -32,7 +32,7 @@
 			<artifactId>jeveassets</artifactId>
 			<version>3.1.2</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/privatelibs/jeveassets.3.1.2.jar</systemPath>
+			<systemPath>${project.basedir}/libs/jeveassets.3.1.2.jar</systemPath>
 		</dependency>
 
 		<dependency>

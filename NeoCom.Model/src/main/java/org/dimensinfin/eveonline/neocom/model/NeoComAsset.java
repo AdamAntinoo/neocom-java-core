@@ -9,21 +9,22 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-//- IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
-import java.util.logging.Logger;
-
-import org.dimensinfin.android.interfaces.INamed;
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.dimensinfin.android.model.AbstractViewableNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
+//- IMPORT SECTION .........................................................................................
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -41,7 +42,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends AbstractViewableNode implements INamed {
+public class NeoComAsset extends AbstractViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long			serialVersionUID	= -2662145568311324496L;
 	private static Logger					logger						= Logger.getLogger("Asset");
@@ -113,8 +114,8 @@ public class NeoComAsset extends AbstractViewableNode implements INamed {
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
 	 */
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
@@ -368,7 +369,6 @@ public class NeoComAsset extends AbstractViewableNode implements INamed {
 		containerFlag = value;
 	}
 
-	@Override
 	public void setDirty(final boolean flag) {
 		if (flag) {
 			try {

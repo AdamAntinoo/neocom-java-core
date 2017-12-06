@@ -9,9 +9,9 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.generator;
 
-import org.dimensinfin.android.datasource.AbstractGenerator;
-import org.dimensinfin.android.datasource.DataSourceLocator;
-import org.dimensinfin.android.interfaces.IModelGenerator;
+import org.dimensinfin.core.datasource.AbstractGenerator;
+import org.dimensinfin.core.datasource.DataSourceLocator;
+import org.dimensinfin.core.interfaces.IModelGenerator;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 
@@ -24,8 +24,7 @@ public class PilotManagersGenerator extends AbstractGenerator implements IModelG
 	private NeoComCharacter	character	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotManagersGenerator(final DataSourceLocator locator, final String variant,
-			final NeoComCharacter pilotCorp) {
+	public PilotManagersGenerator(final DataSourceLocator locator, final String variant, final NeoComCharacter pilotCorp) {
 		super(locator, variant);
 		character = pilotCorp;
 	}
@@ -37,7 +36,6 @@ public class PilotManagersGenerator extends AbstractGenerator implements IModelG
 	 * that is already selected. This is performed internally in a recursive way by calling the model
 	 * collaboration depending on the variant.
 	 */
-	@Override
 	public RootNode collaborate2Model() {
 		AbstractGenerator.logger.info(">> [PilotDirectorsGenerator.collaborate2Model]");
 		// Initialize the Adapter data structures.

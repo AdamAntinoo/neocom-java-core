@@ -9,9 +9,9 @@ package org.dimensinfin.eveonline.neocom.generator;
 
 import java.util.List;
 
-import org.dimensinfin.android.datasource.AbstractGenerator;
-import org.dimensinfin.android.datasource.DataSourceLocator;
-import org.dimensinfin.android.interfaces.IModelGenerator;
+import org.dimensinfin.core.datasource.AbstractGenerator;
+import org.dimensinfin.core.datasource.DataSourceLocator;
+import org.dimensinfin.core.interfaces.IModelGenerator;
 import org.dimensinfin.core.model.RootNode;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
@@ -21,7 +21,7 @@ public class PilotRoasterGenerator extends AbstractGenerator implements IModelGe
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String _login = null;
+	private String	_login	= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotRoasterGenerator(final DataSourceLocator locator, final String variant, final String login) {
@@ -36,7 +36,6 @@ public class PilotRoasterGenerator extends AbstractGenerator implements IModelGe
 	 * along the api key on the Neocom database for retrieval. So from the unique login we get access to the set
 	 * of keys and from there to the set of characters.
 	 */
-	@Override
 	public RootNode collaborate2Model() {
 		AbstractGenerator.logger.info(">> [PilotRoasterModelAdapter.collaborate2Model]");
 		// Get the list for characters associates to the current login. This should be already accessible at the AppModelStore.

@@ -11,10 +11,11 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.dimensinfin.android.model.AbstractViewableNode;
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
@@ -25,9 +26,10 @@ import org.dimensinfin.eveonline.neocom.model.Region;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public abstract class AbstractManager extends AbstractViewableNode {
+public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long													serialVersionUID	= -3012043551959443176L;
+	private static final String												jsonClass					= "AbstractManager";
 	protected static Logger														logger						= Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -43,7 +45,7 @@ public abstract class AbstractManager extends AbstractViewableNode {
 	public AbstractManager(final NeoComCharacter pilot) {
 		super();
 		this.setPilot(pilot);
-		jsonClass = "AbstractManager";
+		//		jsonClass = "AbstractManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -53,14 +55,9 @@ public abstract class AbstractManager extends AbstractViewableNode {
 		return oldstate;
 	}
 
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		return new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		return new ArrayList<ICollaboration>();
 	}
-
-	//	public int getContentCount() {
-	//		return 0;
-	//	}
 
 	@JsonIgnore
 	public NeoComCharacter getPilot() {

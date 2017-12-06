@@ -9,13 +9,13 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
-
 import org.dimensinfin.core.model.IModelStore;
 import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelStore extends IModelStore {
@@ -43,6 +43,8 @@ public interface INeoComModelStore extends IModelStore {
 
 	@Deprecated
 	public String getLoginIdentifier();
+
+	public void cleanModel ();
 }
 
 // - UNUSED CODE ............................................................................................
