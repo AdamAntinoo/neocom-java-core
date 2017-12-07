@@ -6,7 +6,7 @@ package org.dimensinfin.eveonline.neocom.market;
 //- IMPORT SECTION .........................................................................................
 import java.util.Vector;
 
-import org.dimensinfin.core.model.IModelStore;
+import org.dimensinfin.core.interfaces.IModelStore;
 import org.dimensinfin.core.parser.AbstractXMLHandler;
 import org.xml.sax.Attributes;
 
@@ -69,7 +69,9 @@ public class EVEMarketDataParser extends AbstractXMLHandler {
 			if (localName.equalsIgnoreCase("td")) {
 				if (!tagContent.isEmpty()) {
 					if (awaitingQty) {
-						if (null != entry) entry.setQty(tagContent);
+						if (null != entry) {
+							entry.setQty(tagContent);
+						}
 						awaitingQty = false;
 					}
 					if (awaitingPrice) {
@@ -114,7 +116,7 @@ public class EVEMarketDataParser extends AbstractXMLHandler {
 					tagContent = "";
 					return;
 				}
-				String classValue = getAttributeValue(attributes, "class");
+				String classValue = this.getAttributeValue(attributes, "class");
 				if (null != classValue) {
 					if (classValue.equalsIgnoreCase("sec_high")) {
 						entry = new TrackEntry();
@@ -147,16 +149,22 @@ public class EVEMarketDataParser extends AbstractXMLHandler {
 				}
 			}
 			if (localName.equalsIgnoreCase("td")) {
-				String classValue = getAttributeValue(attributes, "class");
+				String classValue = this.getAttributeValue(attributes, "class");
 				if (null != classValue) {
 					if (classValue.startsWith("qty")) {
-						if (null != entry) awaitingQty = true;
+						if (null != entry) {
+							awaitingQty = true;
+						}
 					}
 					if (classValue.startsWith("isk")) {
-						if (null != entry) awaitingPrice = true;
+						if (null != entry) {
+							awaitingPrice = true;
+						}
 					}
 					if (classValue.startsWith("range")) {
-						if (null != entry) awaitingRange = true;
+						if (null != entry) {
+							awaitingRange = true;
+						}
 					}
 				}
 			}

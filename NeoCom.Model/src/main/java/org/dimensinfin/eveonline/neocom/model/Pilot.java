@@ -9,6 +9,17 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
 import com.beimin.eveapi.model.shared.EveAccountBalance;
@@ -20,17 +31,6 @@ import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
@@ -104,8 +104,8 @@ public class Pilot extends NeoComCharacter {
 		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
 			// Add the Managers that apply to this Pilot
 			results.add(new AssetsManager(this));
-//			results.add(new SkillsManager(this).initialize());
-//			results.add(new BlueprintManager(this).initialize());
+			//			results.add(new SkillsManager(this).initialize());
+			//			results.add(new BlueprintManager(this).initialize());
 			results.add(new PlanetaryManager(this).initialize());
 		}
 		return results;
@@ -308,10 +308,6 @@ public class Pilot extends NeoComCharacter {
 	//		Pilot.logger.info("<< EveChar.updateMarketOrders");
 	//	}
 
-	public String getLastKnownLocation() {
-		return this.getCharacterInfo().getLastKnownLocation();
-	}
-
 	public int getSkillLevel(final int skillID) {
 		// Corporation api will have all skills maxed.
 		//		if (isCorporation()) return 5;
@@ -321,9 +317,9 @@ public class Pilot extends NeoComCharacter {
 		return 0;
 	}
 
-	public String getURLForAvatar() {
-		return "http://image.eveonline.com/character/" + this.getCharacterID() + "_256.jpg";
-	}
+	//	public String getURLForAvatar() {
+	//		return "http://image.eveonline.com/character/" + this.getCharacterID() + "_256.jpg";
+	//	}
 
 	public void setCharacterSheet(final CharacterSheetResponse sheet) {
 		characterSheet = sheet;

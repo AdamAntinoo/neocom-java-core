@@ -11,6 +11,24 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.Logger;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.joda.time.Instant;
+
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.model.shared.Asset;
@@ -38,24 +56,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
-import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
-import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.joda.time.Instant;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.Logger;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class NeoComCharacter extends NeoComNode implements Comparable<NeoComCharacter> {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -68,6 +68,14 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		if (apikey.getType() == KeyType.Corporation) return NeoComCharacter.createCorporation(coreChar, apikey);
 		// By default create a Pilot.
 		return NeoComCharacter.createPilot(coreChar, apikey);
+	}
+
+	public String getURLForAvatar() {
+		return "http://image.eveonline.com/character/" + this.getCharacterID() + "_256.jpg";
+	}
+
+	public String getLastKnownLocation() {
+		return this.getCharacterInfo().getLastKnownLocation();
 	}
 
 	/**
