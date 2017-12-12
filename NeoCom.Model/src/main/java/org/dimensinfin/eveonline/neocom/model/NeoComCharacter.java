@@ -11,24 +11,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
-import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
-import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.joda.time.Instant;
-
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.model.shared.Asset;
@@ -39,15 +21,9 @@ import com.beimin.eveapi.model.shared.Location;
 import com.beimin.eveapi.parser.ApiAuthorization;
 import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
 import com.beimin.eveapi.parser.eve.CharacterInfoParser;
-import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
 import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser;
-import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
-import com.beimin.eveapi.parser.pilot.SkillQueueParser;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
-import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
-import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
-import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,6 +31,24 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.joda.time.Instant;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class NeoComCharacter extends NeoComNode implements Comparable<NeoComCharacter> {
@@ -146,24 +140,24 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		if (null != inforesponse) {
 			newchar.setInfo(inforesponse);
 		}
-		// Character sheet information
-		CharacterSheetParser sheetparser = new CharacterSheetParser();
-		CharacterSheetResponse sheetresponse = sheetparser.getResponse(authcopy);
-		if (null != sheetresponse) {
-			newchar.setCharacterSheet(sheetresponse);
-		}
-		// Skill list
-		SkillQueueParser skillparser = new SkillQueueParser();
-		SkillQueueResponse skillresponse = skillparser.getResponse(authcopy);
-		if (null != skillresponse) {
-			newchar.setSkillQueue(skillresponse.getAll());
-		}
-		// Skill in training
-		SkillInTrainingParser trainingparser = new SkillInTrainingParser();
-		SkillInTrainingResponse trainingresponse = trainingparser.getResponse(authcopy);
-		if (null != skillresponse) {
-			newchar.setSkillInTraining(trainingresponse);
-		}
+//		// Character sheet information
+//		CharacterSheetParser sheetparser = new CharacterSheetParser();
+//		CharacterSheetResponse sheetresponse = sheetparser.getResponse(authcopy);
+//		if (null != sheetresponse) {
+//			newchar.setCharacterSheet(sheetresponse);
+//		}
+//		// Skill list
+//		SkillQueueParser skillparser = new SkillQueueParser();
+//		SkillQueueResponse skillresponse = skillparser.getResponse(authcopy);
+//		if (null != skillresponse) {
+//			newchar.setSkillQueue(skillresponse.getAll());
+//		}
+//		// Skill in training
+//		SkillInTrainingParser trainingparser = new SkillInTrainingParser();
+//		SkillInTrainingResponse trainingresponse = trainingparser.getResponse(authcopy);
+//		if (null != skillresponse) {
+//			newchar.setSkillInTraining(trainingresponse);
+//		}
 		// Full list of assets from database.
 		//	newchar.accessAllAssets();
 
