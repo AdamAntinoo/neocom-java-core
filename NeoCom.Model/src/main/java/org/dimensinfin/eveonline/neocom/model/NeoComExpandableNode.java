@@ -9,11 +9,7 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.List;
-import java.util.Vector;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IJsonAngular;
+import org.dimensinfin.core.interfaces.IExpandable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -21,30 +17,51 @@ import org.dimensinfin.core.interfaces.IJsonAngular;
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComNode implements ICollaboration, IJsonAngular {
+public abstract class NeoComExpandableNode extends NeoComNode implements IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 6506043294337948561L;
+	private static final long	serialVersionUID	= -3742179733511283434L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected String					jsonClass					= "NeoComNode";
+	private boolean						_expanded					= false;
+	private boolean						_renderIfEmpty		= true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComNode() {
-		jsonClass = "NeoComNode";
+	public NeoComExpandableNode() {
+		super();
+		jsonClass = "NeoComExpandableNode";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public List<ICollaboration> collaborate2Model(final String variant) {
-		return new Vector<ICollaboration>();
+	public boolean collapse() {
+		_expanded = false;
+		return _expanded;
 	}
 
-	public String getJsonClass() {
-		return jsonClass;
+	public boolean expand() {
+		_expanded = true;
+		return _expanded;
+	}
+
+	public boolean isEmpty() {
+		return true;
+	}
+
+	public boolean isExpanded() {
+		return _expanded;
+	}
+
+	public boolean isRenderWhenEmpty() {
+		return _renderIfEmpty;
+	}
+
+	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+		_renderIfEmpty = renderWhenEmpty;
+		return this;
 	}
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("NeoComNode [");
+		final StringBuffer buffer = new StringBuffer("NeoComExpandableNode [");
 		buffer.append(" ]");
 		return buffer.toString();
 	}

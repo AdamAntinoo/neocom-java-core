@@ -9,13 +9,15 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ItemCategory;
+import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
+
+import java.util.ArrayList;
+import java.util.Vector;
 
 //- INTERFACE IMPLEMENTATION ...............................................................................
 public interface ICCPDatabaseConnector {
@@ -40,4 +42,8 @@ public interface ICCPDatabaseConnector {
 	public int searchStationType(long systemID);
 
 	public String searchTech4Blueprint(int blueprintID);
+
+	public ItemGroup searchItemGroup4Id(final int targetGroupId);
+
+	public ItemCategory searchItemCategory4Id(final int targetCategoryId);
 }

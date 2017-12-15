@@ -1,10 +1,15 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//	PROJECT:      NeoCom.model (NEOC.M)
+//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
+//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:	Java 1.8 Library.
+//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
+//								available databases.
+//								This version includes the access to the latest 6.x version of eveapi libraries to
+//								download and parse the CCP XML API data.
+//								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -12,8 +17,6 @@ import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveItem extends NeoComNode {
@@ -35,8 +38,12 @@ public class EveItem extends NeoComNode {
 	// - F I E L D - S E C T I O N ............................................................................
 	private int												id						= 34;
 	private String										name					= "<NAME>";
-	private String										groupname			= "<GROUPNAME>";
-	private String										category			= "<CATEGORY>";
+	private int												groupid				= -1;
+	private int												categoryid		= -1;
+	private ItemGroup									group					= null;
+	private ItemCategory							category			= null;
+	//	private String										getGroupName()			= "<getGroupName()>";
+	//	private String										getCategory()			= "<getCategory()>";
 	/**
 	 * This is the default price set for an item at the SDE database. I should get other prices from market
 	 * information blocks. This price will be updated from market data with the Jita lowest seller price when
@@ -51,8 +58,7 @@ public class EveItem extends NeoComNode {
 	public double											defaultprice	= -1.0;
 	private double										volume				= 0.0;
 	private String										tech					= ModelWideConstants.eveglobal.TechI;
-
-	private boolean										isBlueprint		= false;
+	//	private boolean										isBlueprint		= false;
 	// - A D D I T I O N A L   F I E L D S
 	private transient EIndustryGroup	industryGroup	= EIndustryGroup.UNDEFINED;
 	private transient MarketDataSet		buyerData			= null;
@@ -60,6 +66,7 @@ public class EveItem extends NeoComNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveItem() {
+		super();
 		jsonClass = "EveItem";
 	}
 
@@ -68,12 +75,48 @@ public class EveItem extends NeoComNode {
 		return baseprice;
 	}
 
+	public int getCategoryId() {
+		if (null == category) {
+			category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+		}
+		return category.getCategoryId();
+	}
+
+	public int getGroupId() {
+		if (null == group) {
+			group = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemGroup4Id(groupid);
+		}
+		return group.getGroupId();
+	}
+
 	public String getCategory() {
-		return category;
+		if (null == category) {
+			category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+		}
+		return category.getCategoryName();
+	}
+	public String getCategoryName() {
+		if (null == category) {
+			category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+		}
+		return category.getCategoryName();
 	}
 
 	public String getGroupName() {
-		return groupname;
+		if (null == group) {
+			group = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemGroup4Id(groupid);
+		}
+		return group.getGroupName();
+	}
+
+	public void setGroupId(final int groupid) {
+		this.groupid = groupid;
+		group = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemGroup4Id(groupid);
+	}
+
+	public void setCategoryId(final int categoryid) {
+		this.categoryid = categoryid;
+		category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
 	}
 
 	@JsonIgnore
@@ -110,8 +153,6 @@ public class EveItem extends NeoComNode {
 	 * represent the income I will obtain in case I sell that item.<br>
 	 * For simple item it is not an important point since the interface allows to get the original data to any
 	 * higher level model object.
-	 * 
-	 * @param price
 	 */
 	@JsonIgnore
 	public double getPrice() {
@@ -124,8 +165,6 @@ public class EveItem extends NeoComNode {
 	/**
 	 * Some items have tech while others don't. Tech information has to be calculated for some items when I
 	 * download them as assets or blueprints. Set it to a default value that by now I can consider valid.
-	 * 
-	 * @return
 	 */
 	public String getTech() {
 		return tech;
@@ -146,7 +185,7 @@ public class EveItem extends NeoComNode {
 	}
 
 	public boolean isBlueprint() {
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
+		if (this.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
 			return true;
 		else
 			return false;
@@ -156,17 +195,13 @@ public class EveItem extends NeoComNode {
 		baseprice = price;
 	}
 
-	public void setBlueprint(final boolean state) {
-		isBlueprint = state;
-	}
+	//	public void setBlueprint(final boolean state) {
+	//		isBlueprint = state;
+	//	}
 
-	public void setCategory(final String category) {
-		this.category = category;
-	}
-
-	public void setGroupname(final String groupname) {
-		this.groupname = groupname;
-	}
+	//	public void setCategory()(final String newcategory) {
+	//		category = newcategory;
+	//	}
 
 	public void setName(final String name) {
 		this.name = name;
@@ -186,9 +221,9 @@ public class EveItem extends NeoComNode {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("EveItem [");
+		final StringBuffer buffer = new StringBuffer("EveItem [");
 		buffer.append("#").append(this.getItemID()).append(" - ").append(this.getName()).append(" ");
-		//		buffer.append(getGroupName()).append("/").append(getCategory()).append(" [").append(getPrice()).append(" ISK]")
+		//		buffer.append(getgetGroupName()()).append("/").append(getgetCategory()()).append(" [").append(getPrice()).append(" ISK]")
 		//		.append(" ");
 		buffer.append(this.getGroupName()).append("/").append(this.getCategory()).append(" [").append(" ");
 		buffer.append("IC:").append(industryGroup).append(" ");
@@ -197,49 +232,49 @@ public class EveItem extends NeoComNode {
 	}
 
 	private void classifyIndustryGroup() {
-		if ((groupname.equalsIgnoreCase("Composite")) && (category.equalsIgnoreCase("Material"))) {
+		if ((this.getGroupName().equalsIgnoreCase("Composite")) && (this.getCategory().equalsIgnoreCase("Material"))) {
 			industryGroup = EIndustryGroup.REACTIONMATERIALS;
 		}
-		if (category.equalsIgnoreCase("Asteroid")) {
+		if (this.getCategory().equalsIgnoreCase("Asteroid")) {
 			industryGroup = EIndustryGroup.OREMATERIALS;
 		}
-		if ((groupname.equalsIgnoreCase("Mining Crystal")) && (category.equalsIgnoreCase("Charge"))) {
+		if ((this.getGroupName().equalsIgnoreCase("Mining Crystal")) && (this.getCategory().equalsIgnoreCase("Charge"))) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
-		if (category.equalsIgnoreCase("Charge")) {
+		if (this.getCategory().equalsIgnoreCase("Charge")) {
 			industryGroup = EIndustryGroup.CHARGE;
 		}
-		if (groupname.equalsIgnoreCase("Tool")) {
+		if (this.getGroupName().equalsIgnoreCase("Tool")) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
-		if (category.equalsIgnoreCase("Commodity")) {
+		if (this.getCategory().equalsIgnoreCase("Commodity")) {
 			industryGroup = EIndustryGroup.COMMODITY;
 		}
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+		if (this.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			industryGroup = EIndustryGroup.BLUEPRINT;
 		}
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+		if (this.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 			industryGroup = EIndustryGroup.SKILL;
 		}
-		if (groupname.equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
+		if (this.getGroupName().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
 			industryGroup = EIndustryGroup.REFINEDMATERIAL;
 		}
-		if (category.equalsIgnoreCase("Module")) {
+		if (this.getCategory().equalsIgnoreCase("Module")) {
 			industryGroup = EIndustryGroup.COMPONENTS;
 		}
-		if (category.equalsIgnoreCase("Drone")) {
+		if (this.getCategory().equalsIgnoreCase("Drone")) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
-		if (category.equalsIgnoreCase("Planetary Commodities")) {
+		if (this.getCategory().equalsIgnoreCase("Planetary Commodities")) {
 			industryGroup = EIndustryGroup.PLANETARYMATERIALS;
 		}
-		if (groupname.equalsIgnoreCase("Datacores")) {
+		if (this.getGroupName().equalsIgnoreCase("Datacores")) {
 			industryGroup = EIndustryGroup.DATACORES;
 		}
-		if (groupname.equalsIgnoreCase("Salvaged Materials")) {
+		if (this.getGroupName().equalsIgnoreCase("Salvaged Materials")) {
 			industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
 		}
-		if (category.equalsIgnoreCase("Ship")) {
+		if (this.getCategory().equalsIgnoreCase("Ship")) {
 			industryGroup = EIndustryGroup.HULL;
 		}
 	}
@@ -251,8 +286,6 @@ public class EveItem extends NeoComNode {
 	 * This method can fail by some causes. First of them because there are no connection to the sources of by
 	 * errors during the parsing of the information. In such cases I should be ready to get the price
 	 * information from other sources like the default price information.
-	 * 
-	 * @return
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
@@ -272,8 +305,6 @@ public class EveItem extends NeoComNode {
 	 * This method can fail by some causes. First of them because there are no connection to the sources of by
 	 * errors during the parsing of the information. In such cases I should be ready to get the price
 	 * information from other sources like the default price information.
-	 * 
-	 * @return
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
@@ -286,5 +317,4 @@ public class EveItem extends NeoComNode {
 		return sellerData;
 	}
 }
-
 // - UNUSED CODE ............................................................................................
