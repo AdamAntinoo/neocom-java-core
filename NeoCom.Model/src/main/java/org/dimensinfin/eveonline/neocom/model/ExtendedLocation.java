@@ -9,9 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
@@ -20,7 +18,9 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.manager.DefaultAssetsContentManager;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ExtendedLocation extends EveLocation implements IExpandable, IDownloadable {
@@ -183,9 +183,9 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		return _expanded;
 	}
 
-	public boolean isRenderWhenEmpty() {
-		return _renderIfEmpty;
-	}
+//	public boolean isRenderWhenEmpty() {
+//		return _renderIfEmpty;
+//	}
 
 	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
 		_renderIfEmpty = renderWhenEmpty;
@@ -203,16 +203,16 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	//	}
 	//
 	//	@Override
-	//	public boolean isRenderWhenEmpty() {
-	//		if (renderWhenEmpty)
-	//			return true;
-	//		else {
-	//			if (this.isEmpty())
-	//				return false;
-	//			else
-	//				return true;
-	//		}
-	//	}
+		public boolean isRenderWhenEmpty() {
+			if (_renderIfEmpty)
+				return true;
+			else {
+				if (this.isEmpty())
+					return false;
+				else
+					return true;
+			}
+		}
 	//
 	//	@Override
 	//	public boolean isVisible() {

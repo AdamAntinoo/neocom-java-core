@@ -10,14 +10,14 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 // - IMPORT SECTION .........................................................................................
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.beimin.eveapi.model.shared.Asset;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Assets")
@@ -100,6 +100,21 @@ public class NeoComSimpleAsset extends NeoComNode {
 
 	public void setTypeID(final int typeID) {
 		this.typeID = typeID;
+	}
+	/**
+	 * New optimization will leave this filed for lazy evaluation. So check if this is empty before getting any
+	 * access and if so download from the Item Cache.
+	 *
+	 * @return
+	 */
+	public EveItem getItem() {
+		if (null == itemCache) {
+			itemCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
+		}
+		return itemCache;
+	}
+	public double getPrice() {
+		return this.getItem().getPrice();
 	}
 
 	public long getLocationID() {

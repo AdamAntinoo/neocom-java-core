@@ -53,7 +53,7 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	public void loadSeedData();
 
-	public List<NeoComAsset> queryAllAssetLocations(long identifier);
+//	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
 	public Hashtable<String, Login> queryAllLogins();
 

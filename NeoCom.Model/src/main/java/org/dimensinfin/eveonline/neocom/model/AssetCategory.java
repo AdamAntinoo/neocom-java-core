@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Vector;
 
 //- CLASS IMPLEMENTATION ...................................................................................
-public class CategoryGroup extends NeoComExpandableNode implements IExpandable {
+public class AssetCategory extends NeoComExpandableNode implements IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1250693939026390391L;
 
@@ -29,15 +29,15 @@ public class CategoryGroup extends NeoComExpandableNode implements IExpandable {
 	private final Vector<NeoComSimpleAsset> _contents = new Vector();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public CategoryGroup () {
-		super();
+	public AssetCategory () {
+		super();jsonClass = "AssetCategory";
 	}
 
-	public CategoryGroup (int categoryid) {
+	public AssetCategory (int categoryid) {
 		this();
 		_categoryDelegate = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
 	}
-	//	public CategoryGroup (String title) {
+	//	public AssetCategory (String title) {
 	//		this();
 	//		_title = title;
 	//	}
@@ -70,7 +70,7 @@ public class CategoryGroup extends NeoComExpandableNode implements IExpandable {
 
 	@Override
 	public String toString () {
-		StringBuffer buffer = new StringBuffer("CategoryGroup [");
+		StringBuffer buffer = new StringBuffer("AssetCategory [");
 		buffer.append(getCategoryName()).append(" ");
 		buffer.append("nro cat: ").append(getContentSize()).append(" ");
 		buffer.append(" ]");

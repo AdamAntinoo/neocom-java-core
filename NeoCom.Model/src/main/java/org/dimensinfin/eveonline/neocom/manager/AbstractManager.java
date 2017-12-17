@@ -28,68 +28,63 @@ import java.util.logging.Logger;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long													serialVersionUID	= -3012043551959443176L;
-	protected static Logger														logger						= Logger.getLogger("AbstractManager");
+	private static final long serialVersionUID = -3012043551959443176L;
+	protected static Logger logger = Logger.getLogger("AbstractManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected String																	jsonClass					= "AbstractManager";
+	protected String jsonClass = "AbstractManager";
 	@JsonIgnore
-	private transient NeoComCharacter									pilot							= null;
-	protected boolean																	initialized				= false;
+	private transient NeoComCharacter pilot = null;
+	protected boolean initialized = false;
 	// - L O C A T I O N   M A N A G E M E N T
-	protected final Hashtable<Long, Region>						regions						= new Hashtable<Long, Region>();
-	protected final Hashtable<Long, ExtendedLocation>	locations					= new Hashtable<Long, ExtendedLocation>();
-	protected final Hashtable<Long, NeoComAsset>			containers				= new Hashtable<Long, NeoComAsset>();
+	protected final Hashtable<Long, Region> regions = new Hashtable<Long, Region>();
+	protected final Hashtable<Long, ExtendedLocation> locations = new Hashtable<Long, ExtendedLocation>();
+	protected final Hashtable<Long, NeoComAsset> containers = new Hashtable<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AbstractManager(final NeoComCharacter pilot) {
+	public AbstractManager (final NeoComCharacter pilot) {
 		super();
 		this.setPilot(pilot);
 		jsonClass = "AbstractManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public boolean clearInitialization() {
+	public boolean clearInitialization () {
 		boolean oldstate = initialized;
 		initialized = false;
 		return oldstate;
 	}
 
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model (final String variant) {
 		return new ArrayList<ICollaboration>();
 	}
 
-	public String getJsonClass() {
+	public String getJsonClass () {
 		return jsonClass;
 	}
 
 	@JsonIgnore
-	public NeoComCharacter getPilot() {
+	public NeoComCharacter getPilot () {
 		return pilot;
 	}
 
 	/**
 	 * Returns the list of different Regions found on the list of locations.
-	 * 
-	 * @return
 	 */
-	public Hashtable<Long, Region> getRegions() {
+	public Hashtable<Long, Region> getRegions () {
 		this.initialize();
 		return regions;
 	}
 
-	public abstract AbstractManager initialize();
+	public abstract AbstractManager initialize ();
 
 	/**
 	 * Checks if the initialization method and the load of the resources has been already executed.
-	 * 
-	 * @return
 	 */
 	//	public boolean isInitialized() {
 	//		return initialized;
 	//	}
-
-	public void setPilot(final NeoComCharacter newPilot) {
+	public void setPilot (final NeoComCharacter newPilot) {
 		pilot = newPilot;
 	}
 
@@ -97,16 +92,13 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	 * This adds the Asset to the target Container. If the Container is not already on the list of Containers
 	 * then it is added to that list no other assets get added to the same Container. The same with the Location
 	 * of the container. The Container is then added to its own Location.
-	 * 
-	 * @param asset
-	 * @param target
 	 */
 	//	@SuppressWarnings("unused")
-	protected void add2Container(final NeoComAsset asset, final NeoComAsset target) {
+	protected void add2Container (final NeoComAsset asset, final NeoComAsset target) {
 		long id = asset.getLocationID();
 		IAssetContainer subtarget = (IAssetContainer) containers.get(id);
-		if (null == subtarget) {
-			if (target instanceof IAssetContainer) {
+		if ( null == subtarget ) {
+			if ( target instanceof IAssetContainer ) {
 				((IAssetContainer) target).addAsset(asset);
 			}
 			containers.put(target.getAssetID(), target);
@@ -127,10 +119,10 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	//		target.addContent(asset);
 	//	}
 
-	protected void add2Region(final EveLocation target) {
+	protected void add2Region (final EveLocation target) {
 		long regionid = target.getRegionID();
 		Region region = regions.get(regionid);
-		if (null == region) {
+		if ( null == region ) {
 			region = new Region(target.getRegion());
 			regions.put(new Long(regionid), region);
 		}

@@ -110,7 +110,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
-		newcorp.assetTotalCount = new AssetsManager(newcorp).getTotalAssets();
+		newcorp.assetTotalCount = new AssetsManager(newcorp).getTotalAssetsNumber();
 		return newcorp;
 	}
 
@@ -166,7 +166,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
-		newchar.assetTotalCount = new AssetsManager(newchar).getTotalAssets();
+		newchar.assetTotalCount = new AssetsManager(newchar).getTotalAssetsNumber();
 		return newchar;
 	}
 
@@ -400,7 +400,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	 * @return
 	 */
 	public long getAssetCount() {
-		return this.getAssetsManager().getTotalAssets();
+		return this.getAssetsManager().getTotalAssetsNumber();
 	}
 
 	@JsonIgnore
