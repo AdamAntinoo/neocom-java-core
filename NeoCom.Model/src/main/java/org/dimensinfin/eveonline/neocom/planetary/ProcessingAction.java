@@ -9,16 +9,17 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.planetary;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
-
-import org.dimensinfin.core.model.AbstractComplexNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -57,7 +58,7 @@ public class ProcessingAction extends NeoComNode {
 		// Get the schematics information.
 		schematics = ModelAppConnector.getSingleton().getCCPDBConnector().searchSchematics4Output(targetId);
 		// Store the inputs into another list.
-		for (Schematics sche : schematics) {
+		for (final Schematics sche : schematics) {
 			if (sche.getDirection() == ESchematicDirection.INPUT) {
 				inputList.add(sche);
 			}
@@ -77,8 +78,8 @@ public class ProcessingAction extends NeoComNode {
 	}
 
 	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		results.add(new PlanetaryTarget(targetItem));
 		return results;
 	}
@@ -91,10 +92,10 @@ public class ProcessingAction extends NeoComNode {
 	 * @return
 	 */
 	public Vector<Resource> getActionResults() {
-		int cycles = this.getPossibleCycles();
-		Vector<Resource> results = new Vector<Resource>();
+		final int cycles = this.getPossibleCycles();
+		final Vector<Resource> results = new Vector<Resource>();
 		if (cycles > 0) {
-			for (Schematics sche : inputList) {
+			for (final Schematics sche : inputList) {
 				results.add(this.processResource(sche, cycles));
 			}
 			// Add the output
@@ -119,9 +120,9 @@ public class ProcessingAction extends NeoComNode {
 	 */
 	public int getPossibleCycles() {
 		int cycles = Integer.MAX_VALUE;
-		for (Schematics schematics : inputList) {
-			int inputType = schematics.getTypeId();
-			Resource resource = actionResources.get(inputType);
+		for (final Schematics schematics : inputList) {
+			final int inputType = schematics.getTypeId();
+			final Resource resource = actionResources.get(inputType);
 			if (null == resource)
 				return 0;
 			else {
@@ -147,7 +148,8 @@ public class ProcessingAction extends NeoComNode {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("ProcessingAction [");
-		buffer.append(inputList).append(" ").append(output).append(" ");
+		buffer.append(inputList).append(" ").append(output).append("\n");
+		buffer.append("output: #").append(targetItem.getTypeID()).append(" ").append(targetItem.getName()).append(" ");
 		buffer.append("resources: ").append(actionResources).append(" ");
 		buffer.append("]");
 		return buffer.toString();
@@ -155,8 +157,8 @@ public class ProcessingAction extends NeoComNode {
 
 	@Override
 	protected ProcessingAction clone() throws CloneNotSupportedException {
-		ProcessingAction clone = new ProcessingAction(targetId);
-		for (Integer resource : actionResources.keySet()) {
+		final ProcessingAction clone = new ProcessingAction(targetId);
+		for (final Integer resource : actionResources.keySet()) {
 			clone.addResource(new Resource(resource, actionResources.get(resource).getQuantity()));
 		}
 		return clone;
@@ -170,7 +172,7 @@ public class ProcessingAction extends NeoComNode {
 	 */
 	private Resource processResource(final Schematics sche, final int cycles) {
 		// Get the resource from the list of available resources.
-		Resource res = actionResources.get(sche.getTypeId());
+		final Resource res = actionResources.get(sche.getTypeId());
 		if (null != res)
 			return new Resource(sche.getTypeId(), res.getQuantity() - (sche.getQty() * cycles));
 		else
@@ -181,14 +183,12 @@ public class ProcessingAction extends NeoComNode {
 	 * Adds a new PlanetaryResource to the list of current resources stacking it to an already existing
 	 * resource. If the resource is not already in the list then we put it on the aaction resource list.
 	 * 
-	 * @param typeid
-	 *          the resource item id
-	 * @param quantity
-	 *          the quantity of the resource to stack.
+	 * @param newResource
+	 *          the resource to stack.
 	 */
 	private void stockResource(final Resource newResource) {
 		//		logger.info(">> [ProcessingAction.stockResource]");
-		Resource hit = actionResources.get(newResource.getTypeID());
+		final Resource hit = actionResources.get(newResource.getTypeID());
 		if (null == hit) {
 			actionResources.put(newResource.getTypeID(), newResource);
 		} else {

@@ -84,7 +84,7 @@ public class EveLocation extends NeoComNode {
 	public EveLocation(final long citadelid, final Citadel cit) {
 		this();
 		try {
-			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
@@ -97,32 +97,32 @@ public class EveLocation extends NeoComNode {
 		}
 	}
 
-	//	/**
-	//	 * Create a location from an Outpost read on the current list of player outposts.
-	//	 * 
-	//	 * @param out
-	//	 */
-	//	public EveLocation(final Outpost out) {
-	//		this();
-	//		try {
-	//			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
-	//			// Calculate the locationID from the source item and update the rest of the fields.
-	//			this.updateFromSystem(out.getSolarSystemID());
-	//			id = out.getFacilityID();
-	//			typeID = ELocationType.OUTPOST.name();
-	//			this.setStation(out.getName());
-	//			// Try to create the pair. It fails then  it was already created.
-	//			locationDao.createOrUpdate(this);
-	//		} catch (final SQLException sqle) {
-	//			sqle.printStackTrace();
-	//			this.setDirty(true);
-	//		}
-	//	}
+	/**
+	 * Create a location from an Outpost read on the current list of player outposts.
+	 * 
+	 * @param out
+	 */
+	public EveLocation(final Outpost out) {
+		this();
+		try {
+			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+			// Calculate the locationID from the source item and update the rest of the fields.
+			this.updateFromSystem(out.getSolarSystem());
+			id = out.getFacilityID();
+			typeID = ELocationType.OUTPOST.name();
+			this.setStation(out.getName());
+			// Try to create the pair. It fails then  it was already created.
+			locationDao.createOrUpdate(this);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+			this.setDirty(true);
+		}
+	}
 
 	public EveLocation(final Station station) {
 		this();
 		try {
-			Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
@@ -197,7 +197,7 @@ public class EveLocation extends NeoComNode {
 	public double getSecurityValue() {
 		try {
 			return Double.parseDouble(security);
-		} catch (RuntimeException rtex) {
+		} catch (final RuntimeException rtex) {
 		}
 		return 0.0;
 	}
@@ -267,7 +267,7 @@ public class EveLocation extends NeoComNode {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+				final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
 				locationDao.update(this);
 				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {
@@ -323,7 +323,7 @@ public class EveLocation extends NeoComNode {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("NeoComLocation [");
+		final StringBuffer buffer = new StringBuffer("NeoComLocation [");
 		buffer.append("#").append(this.getID()).append(" ");
 		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
 		buffer.append("[").append(this.getRegion()).append("] ");
@@ -348,7 +348,7 @@ public class EveLocation extends NeoComNode {
 
 	private void updateFromSystem(final long newid) {
 		// Get the system information from the CCP location tables.
-		EveLocation systemLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(newid);
+		final EveLocation systemLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(newid);
 		systemID = systemLocation.getSystemID();
 		system = systemLocation.getSystem();
 		constellationID = systemLocation.getConstellationID();

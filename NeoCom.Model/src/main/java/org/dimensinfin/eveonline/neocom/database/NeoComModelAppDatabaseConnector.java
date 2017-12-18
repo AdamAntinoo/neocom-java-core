@@ -7,45 +7,23 @@
 //								This version includes the access to the latest 6.x version of eveapi libraries to
 //								download ad parse the CCP XML API data.
 //								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.planetary;
+package org.dimensinfin.eveonline.neocom.database;
 
-import java.util.ArrayList;
-
-import org.dimensinfin.core.model.AbstractComplexNode;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+// - IMPORT SECTION .........................................................................................
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PlanetaryTarget extends NeoComNode {
+public class NeoComModelAppDatabaseConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 3759275643794264024L;
+	private static Logger	logger	= Logger.getLogger("NeoComModelAppDatabaseConnector");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private EveItem						privateItem				= null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PlanetaryTarget(final EveItem item) {
-		privateItem = item;
-	}
+	//	public NeoComModelAppDatabaseConnector() {
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-		return new ArrayList<AbstractComplexNode>();
-	}
-
-	public String getName() {
-		return privateItem.getName();
-	}
-
-	public double getPrice() {
-		return privateItem.getPrice();
-	}
-
-	public double getVolume() {
-		return privateItem.getVolume();
-	}
-
 }
 
 // - UNUSED CODE ............................................................................................
