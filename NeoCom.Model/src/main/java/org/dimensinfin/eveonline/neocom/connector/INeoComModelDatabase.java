@@ -9,7 +9,10 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import com.j256.ormlite.dao.Dao;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
@@ -20,16 +23,14 @@ import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
 import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import com.j256.ormlite.dao.Dao;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */ {
 	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
 
-	public void clearInvalidRecords(long pilotid);
+	public void clearInvalidRecords(final long pilotid);
+	public void replaceBlueprints (final long characterID);
 
 	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
 
@@ -37,13 +38,13 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws SQLException;
 
-//	public Dao<Job, String> getJobDAO() throws SQLException;
+	//	public Dao<Job, String> getJobDAO() throws SQLException;
 
 	public Dao<EveLocation, String> getLocationDAO() throws SQLException;
 
-//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
+	//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 
-//	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
+	//	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
 	public Dao<Property, String> getPropertyDAO() throws SQLException;
 
@@ -53,7 +54,7 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	public void loadSeedData();
 
-//	public List<NeoComAsset> queryAllAssetLocations(long identifier);
+	//	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
 	public Hashtable<String, Login> queryAllLogins();
 

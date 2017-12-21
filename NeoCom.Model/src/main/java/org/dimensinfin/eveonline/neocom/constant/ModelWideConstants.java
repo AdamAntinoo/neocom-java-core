@@ -3,7 +3,6 @@
 //	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
 //	ENVIRONMENT:		JRE 1.7.
 //	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
 package org.dimensinfin.eveonline.neocom.constant;
 
 // - IMPORT SECTION .........................................................................................
@@ -60,7 +59,7 @@ public class ModelWideConstants {
 
 		public static final String	TechI			= "Tech I";
 		public static final String	TechII		= "Tech II";
-		public static final String	TechIII		= "TechIII";
+		public static final String	TechIII		= "Tech III";
 		public static final String	Blueprint	= "Blueprint";
 		public static final String	Module		= "Module";
 		public static final String	Mineral		= "Mineral";

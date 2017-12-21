@@ -16,7 +16,7 @@ import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
-import org.dimensinfin.eveonline.neocom.manager.DefaultAssetsContentManager;
+import org.dimensinfin.eveonline.neocom.manager.AllLazyAssetsContentManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,30 +25,37 @@ import java.util.logging.Logger;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ExtendedLocation extends EveLocation implements IExpandable, IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -4484922266027865406L;
-	private static Logger			logger						= Logger.getLogger("ExtendedLocation");
+	private static final long serialVersionUID = -4484922266027865406L;
+	private static Logger logger = Logger.getLogger("ExtendedLocation");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private EveLocation				delegate					= null;
-	private NeoComCharacter		pilot							= null;
-	private IContentManager		contentManager		= new DefaultAssetsContentManager(this);
-	private boolean						_expanded					= false;
-	private boolean						_renderIfEmpty		= true;
+	private EveLocation delegate = null;
+	//	private NeoComCharacter		pilot							= null;
+	private long _characterIdentifier = -1;
+	private IContentManager contentManager = new AllLazyAssetsContentManager(this);
+	private boolean _expanded = false;
+	private boolean _renderIfEmpty = true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ExtendedLocation() {
+	public ExtendedLocation () {
 		super();
 		//		contentManager.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
 		jsonClass = "ExtendedLocation";
 	}
 
-	public ExtendedLocation(final NeoComCharacter character, final EveLocation delegate) {
+	@Deprecated
+	public ExtendedLocation (final NeoComCharacter character, final EveLocation delegate) {
 		this(delegate);
-		pilot = character;
+		_characterIdentifier = character.getCharacterID();
 	}
 
-	private ExtendedLocation(final EveLocation delegate) {
+	public ExtendedLocation (final long characterId, final EveLocation delegate) {
+		this(delegate);
+		_characterIdentifier = characterId;
+	}
+
+	private ExtendedLocation (final EveLocation delegate) {
 		this();
 		//		this.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
@@ -62,8 +69,8 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public int addContent(final NeoComAsset asset) {
-		if (null != contentManager)
+	public int addContent (final NeoComAsset asset) {
+		if ( null != contentManager )
 			return contentManager.add(asset);
 		else
 			return 0;
@@ -77,117 +84,118 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	 * done.
 	 */
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model (final String variant) {
 		return contentManager.collaborate2Model(variant);
 	}
 
 	@JsonIgnore
-	public List<NeoComAsset> downloadContents() {
-		if (null != contentManager)
+	public List<NeoComAsset> downloadContents () {
+		if ( null != contentManager )
 			return contentManager.getContents();
 		else
 			return new ArrayList<NeoComAsset>();
 	}
 
 	@Override
-	public String getConstellation() {
+	public String getConstellation () {
 		return delegate.getConstellation();
 	}
 
-	public int getContentSize() {
-		if (null != contentManager)
+	public int getContentSize () {
+		if ( null != contentManager )
 			return contentManager.getContentSize();
 		else
 			return 0;
 	}
 
 	@Override
-	public String getFullLocation() {
+	public String getFullLocation () {
 		return delegate.getFullLocation();
 	}
 
 	@Override
-	public long getID() {
+	public long getID () {
 		return delegate.getID();
 	}
 
 	@Override
-	public String getName() {
+	public String getName () {
 		return delegate.getName();
 	}
 
-	public long getPilotId() {
-		return pilot.getCharacterID();
+	public long getPilotId () {
+		return _characterIdentifier;
+//		return pilot.getCharacterID();
 	}
 
 	@Override
-	public String getRegion() {
+	public String getRegion () {
 		return delegate.getRegion();
 	}
 
 	@Override
-	public String getSecurity() {
+	public String getSecurity () {
 		return delegate.getSecurity();
 	}
 
 	@Override
-	public double getSecurityValue() {
+	public double getSecurityValue () {
 		return delegate.getSecurityValue();
 	}
 
 	@Override
-	public String getStation() {
+	public String getStation () {
 		return delegate.getStation();
 	}
 
 	@Override
-	public String getSystem() {
+	public String getSystem () {
 		return delegate.getSystem();
 	}
 
 	@Override
-	public ELocationType getTypeID() {
+	public ELocationType getTypeID () {
 		return delegate.getTypeID();
 	}
 
 	@Override
-	public String getUrlLocationIcon() {
+	public String getUrlLocationIcon () {
 		return delegate.getUrlLocationIcon();
 	}
 
-	public boolean isDownloaded() {
-		if (contentManager instanceof IDownloadable)
+	public boolean isDownloaded () {
+		if ( contentManager instanceof IDownloadable )
 			return ((IDownloadable) delegate).isDownloaded();
 		else
 			return true;
 	}
 
-	public boolean isEmpty() {
-		if (null != contentManager)
+	public boolean isEmpty () {
+		if ( null != contentManager )
 			return contentManager.isEmpty();
 		else
 			return true;
 	}
 
-	public boolean collapse() {
+	public boolean collapse () {
 		_expanded = false;
 		return _expanded;
 	}
 
-	public boolean expand() {
+	public boolean expand () {
 		_expanded = true;
 		return _expanded;
 	}
 
-	public boolean isExpanded() {
+	public boolean isExpanded () {
 		return _expanded;
 	}
 
-//	public boolean isRenderWhenEmpty() {
-//		return _renderIfEmpty;
-//	}
+	//	public boolean isRenderWhenEmpty() {
+	//		return _renderIfEmpty;
+	//	}
 
-	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+	public IExpandable setRenderWhenEmpty (final boolean renderWhenEmpty) {
 		_renderIfEmpty = renderWhenEmpty;
 		return this;
 	}
@@ -203,16 +211,16 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	//	}
 	//
 	//	@Override
-		public boolean isRenderWhenEmpty() {
-			if (_renderIfEmpty)
+	public boolean isRenderWhenEmpty () {
+		if ( _renderIfEmpty )
+			return true;
+		else {
+			if ( this.isEmpty() )
+				return false;
+			else
 				return true;
-			else {
-				if (this.isEmpty())
-					return false;
-				else
-					return true;
-			}
 		}
+	}
 	//
 	//	@Override
 	//	public boolean isVisible() {
@@ -220,23 +228,23 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	//	}
 
 	@Override
-	public void setConstellation(final String constellation) {
+	public void setConstellation (final String constellation) {
 		delegate.setConstellation(constellation);
 	}
 
 	@Override
-	public void setConstellationID(final long constellationID) {
+	public void setConstellationID (final long constellationID) {
 		delegate.setConstellationID(constellationID);
 	}
 
-	public void setContentManager(final IContentManager manager) {
+	public void setContentManager (final IContentManager manager) {
 		contentManager = manager;
 	}
 
-	public IDownloadable setDownloaded(final boolean downloadedstate) {
-		if (null == delegate)
+	public IDownloadable setDownloaded (final boolean downloadedstate) {
+		if ( null == delegate )
 			return this;
-		else if (contentManager instanceof IDownloadable) {
+		else if ( contentManager instanceof IDownloadable ) {
 			((IDownloadable) delegate).setDownloaded(downloadedstate);
 			return this;
 		} else
@@ -259,7 +267,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	//	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		StringBuffer buffer = new StringBuffer("ExtendedLocation [");
 		buffer.append(delegate.toString());
 		buffer.append("]");

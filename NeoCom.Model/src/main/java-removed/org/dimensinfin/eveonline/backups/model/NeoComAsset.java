@@ -7,7 +7,7 @@
 //									This version includes the access to the latest 6.x version of eveapi libraries to
 //									download ad parse the CCP XML API data.
 //									Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.android.model;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+//- IMPORT SECTION .........................................................................................
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -112,7 +114,7 @@ public class NeoComAsset extends NeoComNode {
 	 */
 	@Override
 	public List<ICollaboration> collaborate2Model(final String variant) {
-		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
+		ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		//		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
@@ -184,7 +186,7 @@ public class NeoComAsset extends NeoComNode {
 				return -1L;
 			else {
 				// Get the location from the parent.
-				final NeoComAsset par = this.getParentContainer();
+				NeoComAsset par = this.getParentContainer();
 				if (null == par)
 					return -1L;
 				else
@@ -221,14 +223,14 @@ public class NeoComAsset extends NeoComNode {
 			// Search for the parent asset. If not found then go to the transformation method.
 			parentAssetCache = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parentAssetID);
 			if (null == parentAssetCache) {
-				final long newlocationId = parentAssetID;
-				final EveLocation loc = this.moveAssetToUnknown(newlocationId);
+				long newlocationId = parentAssetID;
+				EveLocation loc = this.moveAssetToUnknown(newlocationId);
 				this.setLocationID(newlocationId);
 				parentAssetID = -1;
 				locationCache = loc;
 				// Save the asset to disk.
 				try {
-					final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+					Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 					// Try to create the pair. It fails then  it was already created.
 					assetDao.createOrUpdate(this);
 				} catch (final SQLException sqle) {
@@ -368,7 +370,7 @@ public class NeoComAsset extends NeoComNode {
 	public void setDirty(final boolean flag) {
 		if (flag) {
 			try {
-				final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 				// Try to create the pair. It fails then  it was already created.
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {
@@ -475,7 +477,7 @@ public class NeoComAsset extends NeoComNode {
 	 * @return
 	 */
 	private EveLocation moveAssetToUnknown(final long newlocationid) {
-		final EveLocation newundefloc = new EveLocation();
+		EveLocation newundefloc = new EveLocation();
 		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");
 		newundefloc.setSystem("Undefined");

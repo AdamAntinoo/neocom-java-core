@@ -9,9 +9,6 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
@@ -20,8 +17,11 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // - CLASS IMPLEMENTATION ...................................................................................
-public class DefaultAssetsContentManager extends AbstractContentManager implements IDownloadable {
+public class AllLazyAssetsContentManager extends AbstractContentManager implements IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= -2753423369104215278L;
 
@@ -31,15 +31,15 @@ public class DefaultAssetsContentManager extends AbstractContentManager implemen
 	private double						totalValue				= 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public DefaultAssetsContentManager(final ExtendedLocation newparent) {
+	public AllLazyAssetsContentManager (final ExtendedLocation newparent) {
 		super(newparent);
-		jsonClass = "DefaultAssetsContentManager";
+		jsonClass = "AllLazyAssetsContentManager";
 	}
 
 	@SuppressWarnings("unused")
-	private DefaultAssetsContentManager() {
+	private AllLazyAssetsContentManager () {
 		super();
-		jsonClass = "DefaultAssetsContentManager";
+		jsonClass = "AllLazyAssetsContentManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
