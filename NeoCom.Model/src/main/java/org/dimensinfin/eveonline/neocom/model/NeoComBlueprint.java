@@ -7,12 +7,12 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -25,7 +25,7 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 
 @DatabaseTable(tableName = "Blueprints")
-public class NeoComBlueprint extends NeoComAsset {
+public class NeoComBlueprint extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID		= -1284879453130050089L;
 
@@ -140,32 +140,27 @@ public class NeoComBlueprint extends NeoComAsset {
 		}
 	}
 
-	@Override
+	// - M E T H O D - S E C T I O N ..........................................................................
 	public long getAssetID() {
 		return assetID;
 	}
 
-	@Override
 	public String getCategory() {
 		return this.getAssociatedAsset().getCategory();
 	}
 
-	@Override
 	public int getFlag() {
 		return flag;
 	}
 
-	@Override
 	public String getGroupName() {
 		return this.getAssociatedAsset().getGroupName();
 	}
 
-	@Override
 	public EveItem getItem() {
 		return this.getAssociatedAsset().getItem();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public double getJobProductionCost() {
 		return jobProductionCost;
 	}
@@ -175,7 +170,6 @@ public class NeoComBlueprint extends NeoComAsset {
 	 * location of the associated asset for normal blueprints. Check the access to null elements and cache the
 	 * result.
 	 */
-	@Override
 	public EveLocation getLocation() {
 		if (null == locationCache) {
 			if (null == this.getAssociatedAsset())
@@ -187,7 +181,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		return locationCache;
 	}
 
-	@Override
 	public long getLocationID() {
 		return containerID;
 	}
@@ -240,17 +233,14 @@ public class NeoComBlueprint extends NeoComAsset {
 		return moduleTypeID;
 	}
 
-	@Override
 	public String getName() {
 		return this.getTypeName();
 	}
 
-	@Override
 	public NeoComAsset getParentContainer() {
 		return this.getAssociatedAsset().getParentContainer();
 	}
 
-	@Override
 	public int getQuantity() {
 		return quantity;
 	}
@@ -260,7 +250,7 @@ public class NeoComBlueprint extends NeoComAsset {
 	}
 
 	public String getStackID() {
-		StringBuffer stackid = new StringBuffer();
+		final StringBuffer stackid = new StringBuffer();
 		stackid.append(typeID).append(".").append(this.getLocationID()).append(this.getRuns());
 		return stackid.toString();
 	}
@@ -269,7 +259,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		return stackIDRefences;
 	}
 
-	@Override
 	public String getTech() {
 		return tech;
 	}
@@ -278,7 +267,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		return timeEfficiency;
 	}
 
-	@Override
 	public int getTypeID() {
 		return typeID;
 	}
@@ -291,7 +279,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		return bpo;
 	}
 
-	@Override
 	public boolean isPackaged() {
 		return packaged;
 	}
@@ -326,7 +313,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		this.bpo = bpo;
 	}
 
-	@Override
 	public void setFlag(final int flag) {
 		this.flag = flag;
 	}
@@ -335,7 +321,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		this.jobProductionCost = jobProductionCost;
 	}
 
-	@Override
 	public void setLocationID(final long locationID) {
 		containerID = locationID;
 	}
@@ -356,7 +341,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		moduleTypeID = moduleID;
 	}
 
-	@Override
 	public void setOwnerID(final long ownerID) {
 		this.ownerID = ownerID;
 	}
@@ -365,7 +349,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		this.packaged = packaged;
 	}
 
-	@Override
 	public void setQuantity(final int quantity) {
 		this.quantity = quantity;
 	}
@@ -374,7 +357,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		this.runs = runs;
 	}
 
-	@Override
 	public void setTech(final String tech) {
 		this.tech = tech;
 	}
@@ -383,7 +365,6 @@ public class NeoComBlueprint extends NeoComAsset {
 		this.timeEfficiency = timeEfficiency;
 	}
 
-	@Override
 	public void setTypeID(final int typeID) {
 		this.typeID = typeID;
 	}
@@ -394,12 +375,12 @@ public class NeoComBlueprint extends NeoComAsset {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("Blueprint [");
+		final StringBuffer buffer = new StringBuffer("Blueprint [");
 		if (associatedAsset == null) {
 			buffer.append("[PROTO]").append(" ");
 		} else {
 			buffer.append("[").append(this.getAssociatedAsset().getAssetID()).append("]").append(" ")
-					.append(this.getStackIDRefences()).append(" ");
+			.append(this.getStackIDRefences()).append(" ");
 		}
 		buffer.append(typeName).append(" ");
 		buffer.append("[").append(typeID).append("/").append(moduleTypeID).append("] ");
@@ -416,7 +397,7 @@ public class NeoComBlueprint extends NeoComAsset {
 
 	private void accessAssociatedAsset() {
 		try {
-			Dao<NeoComAsset, String> dao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			final Dao<NeoComAsset, String> dao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
 			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");

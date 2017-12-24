@@ -9,9 +9,14 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -21,18 +26,19 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
  * 
  * @author Adam Antinoo
  */
-public class BaseContentManager extends AbstractContentManager {
+public class BlueprintContentManager extends AbstractContentManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 3670100761380839436L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int								contentCount			= 0;
 	private int								containerCount		= 0;
+	protected final List<NeoComBlueprint> _blueprints = new Vector<NeoComBlueprint>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public BaseContentManager(final ExtendedLocation newdelegate) {
+	public BlueprintContentManager (final ExtendedLocation newdelegate) {
 		super(newdelegate);
-		jsonClass = "BaseContentManager";
+		jsonClass = "BlueprintContentManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -40,10 +46,11 @@ public class BaseContentManager extends AbstractContentManager {
 	 * We add the new Asset to the Location contents. If the Asset is a Container then it is added to the list
 	 * of Containers.
 	 */
-	@Override
-	public int add(final NeoComAsset child) {
+	public int addBlueprint(final NeoComBlueprint child) {
 		if (null != child) {
-			super.add(child);
+			if (null != child) {
+				_blueprints.add(child);
+			}
 			if (child instanceof IAssetContainer) {
 				containerCount++;
 			} else {
@@ -51,6 +58,22 @@ public class BaseContentManager extends AbstractContentManager {
 			}
 		}
 		return contentCount;
+	}
+	public List<ICollaboration> collaborate2Model(final String variant) {
+		List<ICollaboration> results = new ArrayList<ICollaboration>();
+		results.addAll(_blueprints);
+		return results;
+	}
+	public List<NeoComBlueprint> getBlueprints() {
+		return _blueprints;
+	}
+
+	public int getContentSize() {
+		return _blueprints.size();
+	}
+
+	public boolean isEmpty() {
+		return (_blueprints.size() < 1) ? true : false;
 	}
 
 	public int getContainerCount() {

@@ -9,14 +9,14 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class AbstractContentManager implements IContentManager {

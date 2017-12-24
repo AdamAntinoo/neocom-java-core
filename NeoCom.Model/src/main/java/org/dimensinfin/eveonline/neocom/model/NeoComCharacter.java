@@ -29,7 +29,6 @@ import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.BlueprintManager;
 import org.dimensinfin.eveonline.neocom.manager.DownloadManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.joda.time.Instant;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -79,7 +78,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 			newcorp.setInfo(inforesponse);
 		}
 		// Update the last updated timestamp from the CharacterInfoResponse.
-		//		newcorp.updateLastAccess(balanceresponse.getCachedUntil());
+		newcorp.getDownloadManager().updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
@@ -108,8 +107,8 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 			}
 		}
 		// Character information
-		CharacterInfoParser infoparser = new CharacterInfoParser();
-		CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
+		final CharacterInfoParser infoparser = new CharacterInfoParser();
+		final CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
 		if ( null != inforesponse ) {
 			newchar.setInfo(inforesponse);
 		}
@@ -135,7 +134,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		//	newchar.accessAllAssets();
 
 		// Update the last updated timestamp from the CharacterInfoResponse.
-		newchar.updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
+		newchar.getDownloadManager().updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
@@ -165,12 +164,6 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	private double accountBalance = 0.0;
 
 	// - T R A N S I E N T   D A T A
-	/** Time stamp for the time when character data is cached. */
-	private TimeStamp _characterCacheTime = null;
-	/** Time stamp for the time when the asset data downloaded is cached. */
-	private TimeStamp _assetsCacheTime = null;
-	/** Time stamp for the time when the asset data downloaded is cached. */
-	private TimeStamp _blueprintsCacheTime = null;
 
 	//	private transient Instant lastCCPAccessTime = null;
 	@JsonIgnore
@@ -214,7 +207,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	}
 
 	public String getLastKnownLocation () {
-		final CharacterInfoResponse info = getCharacterInfo();
+		final CharacterInfoResponse info = this.getCharacterInfo();
 		if ( null == info ) return "-Unknown-";
 		else return info.getLastKnownLocation();
 	}
@@ -228,16 +221,6 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		return _downloadManager;
 	}
 
-	public void updateCharacterDataTimeStamp (final Date cachedUntil) {
-		// Update the caching time to the time set by the eveapi.
-		String reference = getCharacterID() + ".CHARACTERDATA";
-		if ( null == _characterCacheTime ) {
-			_characterCacheTime = new TimeStamp(reference, new Instant(cachedUntil));
-		} else {
-			_characterCacheTime.updateTimeStamp(new Instant(cachedUntil));
-		}
-	}
-
 	/**
 	 * Check all the cache time stamps for existence and in case the TS exists if the time has already passed.
 	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
@@ -245,43 +228,43 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	 */
 	public EDataBlock needsUpdate () {
 		// Check for character data cache.
-		if ( null == _characterCacheTime ) {
+		if ( null == getDownloadManager()._characterCacheTime ) {
 			try {
 				// Get access to the database record for this Character cache time stamp.
-				String reference = getCharacterID() + ".CHARACTERDATA";
-				_characterCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
-				if ( null == _characterCacheTime ) return EDataBlock.CHARACTERDATA;
-			} catch (SQLException sqle) {
+				final String reference = this.getCharacterID() + ".CHARACTERDATA";
+				getDownloadManager()._characterCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
+				if ( null == getDownloadManager()._characterCacheTime ) return EDataBlock.CHARACTERDATA;
+			} catch (final SQLException sqle) {
 				return EDataBlock.CHARACTERDATA;
 			}
 		}
-		if ( ModelAppConnector.getSingleton().checkExpiration(_characterCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
+		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._characterCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
 			return EDataBlock.CHARACTERDATA;
 		// Check for asset cached time.
-		if ( null == _assetsCacheTime ) {
+		if ( null == getDownloadManager()._assetsCacheTime ) {
 			try {
 				// Get access to the database record for this Character cache time stamp.
-				String reference = getCharacterID() + ".ASSETDATA";
-				_assetsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
-				if ( null == _assetsCacheTime ) return EDataBlock.ASSETDATA;
-			} catch (SQLException sqle) {
+				final String reference = this.getCharacterID() + ".ASSETDATA";
+				getDownloadManager()._assetsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
+				if ( null == getDownloadManager()._assetsCacheTime ) return EDataBlock.ASSETDATA;
+			} catch (final SQLException sqle) {
 				return EDataBlock.ASSETDATA;
 			}
 		}
-		if ( ModelAppConnector.getSingleton().checkExpiration(_assetsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
+		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._assetsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
 			return EDataBlock.ASSETDATA;
 		// Check for blueprints cached time.
-		if ( null == _blueprintsCacheTime ) {
+		if ( null == getDownloadManager()._blueprintsCacheTime ) {
 			try {
 				// Get access to the database record for this Character cache time stamp.
-				String reference = getCharacterID() + ".BLUEPRINTDATA";
-				_blueprintsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
-				if ( null == _blueprintsCacheTime ) return EDataBlock.BLUEPRINTDATA;
-			} catch (SQLException sqle) {
+				final String reference = this.getCharacterID() + ".BLUEPRINTDATA";
+				getDownloadManager()._blueprintsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
+				if ( null == getDownloadManager()._blueprintsCacheTime ) return EDataBlock.BLUEPRINTDATA;
+			} catch (final SQLException sqle) {
 				return EDataBlock.BLUEPRINTDATA;
 			}
 		}
-		if ( ModelAppConnector.getSingleton().checkExpiration(_blueprintsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
+		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._blueprintsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
 			return EDataBlock.BLUEPRINTDATA;
 
 		// If not returned before we have nothing to update
@@ -356,14 +339,14 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		if ( null == characterInfo ) {
 			try {
 				// Character information
-				CharacterInfoParser infoparser = new CharacterInfoParser();
+				final CharacterInfoParser infoparser = new CharacterInfoParser();
 				CharacterInfoResponse inforesponse = null;
-				inforesponse = infoparser.getResponse(getAuthorization());
+				inforesponse = infoparser.getResponse(this.getAuthorization());
 				if ( null != inforesponse ) {
-					setInfo(inforesponse);
+					this.setInfo(inforesponse);
 				}
-			} catch (ApiException apie) {
-				logger.warning("W- [NeoComCharacter.getCharacterInfo]> Exception: " + apie.getMessage());
+			} catch (final ApiException apie) {
+				NeoComCharacter.logger.warning("W- [NeoComCharacter.getCharacterInfo]> Exception: " + apie.getMessage());
 			}
 		}
 		return characterInfo;

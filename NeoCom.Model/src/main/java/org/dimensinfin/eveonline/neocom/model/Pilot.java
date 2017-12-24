@@ -9,19 +9,27 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.pilot.SkillQueueItem;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.parser.corporation.AccountBalanceParser;
+import com.beimin.eveapi.parser.pilot.CharacterSheetParser;
+import com.beimin.eveapi.parser.pilot.SkillInTrainingParser;
+import com.beimin.eveapi.parser.pilot.SkillQueueParser;
+import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
+import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
+import com.beimin.eveapi.response.pilot.SkillQueueResponse;
+import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 
-import com.beimin.eveapi.model.pilot.SkillQueueItem;
-import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
-import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
@@ -290,40 +298,40 @@ public class Pilot extends NeoComCharacter {
 	 */
 	@Override
 	public synchronized void updateCharacterInfo() {
-		//		try {
-		//			// Go to the API and get more information for this character.
-		//			// Balance information
-		//			AccountBalanceParser balanceparser = new AccountBalanceParser();
-		//			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
-		//			if (null != balanceresponse) {
-		//				Set<EveAccountBalance> balance = balanceresponse.getAll();
-		//				if (balance.size() > 0) {
-		//					this.setAccountBalance(balance.iterator().next().getBalance());
-		//				}
-		//			}
-		//			// Character sheet information
-		//			CharacterSheetParser sheetparser = new CharacterSheetParser();
-		//			CharacterSheetResponse sheetresponse = sheetparser.getResponse(this.getAuthorization());
-		//			if (null != sheetresponse) {
-		//				this.setCharacterSheet(sheetresponse);
-		//			}
-		//			// Skill list
-		//			SkillQueueParser skillparser = new SkillQueueParser();
-		//			SkillQueueResponse skillresponse = skillparser.getResponse(this.getAuthorization());
-		//			if (null != skillresponse) {
-		//				this.setSkillQueue(skillresponse.getAll());
-		//			}
-		//			// Skill in training
-		//			SkillInTrainingParser trainingparser = new SkillInTrainingParser();
-		//			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(this.getAuthorization());
-		//			if (null != skillresponse) {
-		//				this.setSkillInTraining(trainingresponse);
-		//			}
-		//			// Update the last updated timestamp from the CharacterInfoResponse.
-		//			//			this.updateLastAccess(sheetresponse.getCachedUntil());
-		//		} catch (ApiException ex) {
-		//			ex.printStackTrace();
-		//		}
+		try {
+			// Go to the API and get more information for this character.
+			// Balance information
+			AccountBalanceParser balanceparser = new AccountBalanceParser();
+			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
+			if ( null != balanceresponse ) {
+				Set<EveAccountBalance> balance = balanceresponse.getAll();
+				if ( balance.size() > 0 ) {
+					this.setAccountBalance(balance.iterator().next().getBalance());
+				}
+			}
+			// Character sheet information
+			CharacterSheetParser sheetparser = new CharacterSheetParser();
+			CharacterSheetResponse sheetresponse = sheetparser.getResponse(this.getAuthorization());
+			if ( null != sheetresponse ) {
+				this.setCharacterSheet(sheetresponse);
+			}
+			// Skill list
+			SkillQueueParser skillparser = new SkillQueueParser();
+			SkillQueueResponse skillresponse = skillparser.getResponse(this.getAuthorization());
+			if ( null != skillresponse ) {
+				this.setSkillQueue(skillresponse.getAll());
+			}
+			// Skill in training
+			SkillInTrainingParser trainingparser = new SkillInTrainingParser();
+			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(this.getAuthorization());
+			if ( null != skillresponse ) {
+				this.setSkillInTraining(trainingresponse);
+			}
+			// Update the last updated timestamp from the CharacterInfoResponse.
+			getDownloadManager().updateCharacterDataTimeStamp(sheetresponse.getCachedUntil());
+		} catch (ApiException ex) {
+			ex.printStackTrace();
+		}
 	}
 }
 

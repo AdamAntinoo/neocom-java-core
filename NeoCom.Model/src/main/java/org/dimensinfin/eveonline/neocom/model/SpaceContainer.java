@@ -9,15 +9,15 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDownloadable {
@@ -40,11 +40,6 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	public int addContent(final NeoComAsset asset) {
-	//		_contents.add(asset);
-	//		return _contents.size();
-	//	}
-
 	public int addAsset(final NeoComAsset asset) {
 		_contents.add(asset);
 		return _contents.size();
@@ -222,12 +217,6 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 		}
 		return results;
 	}
-
-	//	private void downloadContainerData() {
-	//		_contents = (Vector<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-	//				.searchAssetContainedAt(this.getOwnerID(), this.getAssetID());
-	//		this.setDownloaded(true);
-	//	}
 }
 
 // - UNUSED CODE ............................................................................................

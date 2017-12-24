@@ -240,6 +240,9 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	public void setContentManager (final IContentManager manager) {
 		contentManager = manager;
 	}
+	public IContentManager getContentManager () {
+		return contentManager;
+	}
 
 	public IDownloadable setDownloaded (final boolean downloadedstate) {
 		if ( null == delegate )

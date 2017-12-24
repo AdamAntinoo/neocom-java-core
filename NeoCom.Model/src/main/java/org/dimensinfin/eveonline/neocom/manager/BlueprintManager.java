@@ -103,10 +103,10 @@ public class BlueprintManager extends AbstractManager {
 					final EveLocation targetLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(blue.getLocationID());
 					// Convert the Location to a new Extended Location with the new Contents Manager.
 					hit = new ExtendedLocation(characterId, targetLocation);
-					hit.setContentManager(new BaseContentManager(hit));
+					hit.setContentManager(new BlueprintContentManager(hit));
 					locations.put(blue.getLocationID(), hit);
 				}
-				hit.addContent(blue);
+				((BlueprintContentManager) hit.getContentManager()).addBlueprint(blue);
 			}
 			return (List<ExtendedLocation>) locations.values();
 		}
@@ -156,12 +156,22 @@ public class BlueprintManager extends AbstractManager {
 		return this;
 	}
 
+	public List<NeoComBlueprint> accessAllT1Blueprints () {
+		if ( null == blueDelegateT1 )
+			blueDelegateT1 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechI);
+		return blueDelegateT1.accessAllBlueprints();
+	}
 	public List<NeoComBlueprint> accessAllT2Blueprints () {
 		if ( null == blueDelegateT2 )
 			blueDelegateT2 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechII);
 		return blueDelegateT2.accessAllBlueprints();
 	}
 
+	public BlueprintDelegate getT1Delegate () {
+		if ( null == blueDelegateT1 )
+			blueDelegateT1 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechI);
+		return blueDelegateT1;
+	}
 	public BlueprintDelegate getT2Delegate () {
 		if ( null == blueDelegateT2 )
 			blueDelegateT2 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechII);

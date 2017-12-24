@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +59,12 @@ public class DownloadManager {
 	private transient NeoComCharacter _pilot = null;
 	private transient Dao<NeoComAsset, String> assetDao = null;
 	private Vector<NeoComAsset> unlocatedAssets = null;
-	private TimeStamp assetsCacheTime = null;
+	/** Time stamp for the time when character data is cached. */
+	public TimeStamp _characterCacheTime = null;
+	/** Time stamp for the time when the asset data downloaded is cached. */
+	public TimeStamp _assetsCacheTime = null;
+	/** Time stamp for the time when the asset data downloaded is cached. */
+	public TimeStamp _blueprintsCacheTime = null;
 	/** The complete list of blueprints maybe is not used */
 	private final Vector<NeoComBlueprint> blueprintCache = new Vector<NeoComBlueprint>();
 
@@ -79,6 +85,15 @@ public class DownloadManager {
 
 	public String getJsonClass () {
 		return jsonClass;
+	}
+	public void updateCharacterDataTimeStamp (final Date cachedUntil) {
+		// Update the caching time to the time set by the eveapi.
+		final String reference = getPilot().getCharacterID() + ".CHARACTERDATA";
+		if ( null == _characterCacheTime ) {
+			_characterCacheTime = new TimeStamp(reference, new Instant(cachedUntil));
+		} else {
+			_characterCacheTime.updateTimeStamp(new Instant(cachedUntil));
+		}
 	}
 
 	/**
@@ -127,11 +142,11 @@ public class DownloadManager {
 					dbConn.replaceAssets(this.getPilot().getCharacterID());
 				}
 				// Update the caching time to the time set by the eveapi.
-				String reference = this.getPilot().getCharacterID() + ".ASSETS";
-				if ( null == assetsCacheTime ) {
-					assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+				String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
+				if ( null ==_assetsCacheTime ) {
+					_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
 				} else {
-					assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+					_assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
 				}
 			}
 		} catch (final ApiException apie) {
@@ -173,11 +188,11 @@ public class DownloadManager {
 			storeBlueprints(bplist);
 			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getPilot().getCharacterID());
 			// Update the caching time to the time set by the eveapi.
-			String reference = this.getPilot().getCharacterID() + ".BLUEPRINTS";
-			if ( null == assetsCacheTime ) {
-				assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+			String reference = this.getPilot().getCharacterID() + ".BLUEPRINTDATA";
+			if ( null == _blueprintsCacheTime ) {
+				_blueprintsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
 			} else {
-				assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+				_blueprintsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
 			}
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
@@ -237,9 +252,13 @@ public class DownloadManager {
 			//			}
 			ModelAppConnector.getSingleton().getDBConnector().replaceAssets(this.getPilot().getCharacterID());
 
-			//				// Update the caching time to the time set by the eveapi.
-			String reference = this.getPilot().getCharacterID() + ".ASSETS";
-			new TimeStamp(reference, new Instant(response.getCachedUntil()));
+			// Update the caching time to the time set by the eveapi.
+			String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
+			if ( null == _assetsCacheTime) {
+				_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+			} else {
+				_assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+			}
 		} catch (final ApiException apie) {
 			apie.printStackTrace();
 		}
