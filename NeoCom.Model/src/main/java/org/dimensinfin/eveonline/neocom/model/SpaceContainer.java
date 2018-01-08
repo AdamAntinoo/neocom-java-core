@@ -22,25 +22,26 @@ import java.util.Vector;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long							serialVersionUID	= 2813029093080549286L;
+	private static final long serialVersionUID = 2813029093080549286L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Vector<ICollaboration>	_contents					= new Vector<ICollaboration>();
-	private boolean												_expanded					= false;
-	private boolean												_renderIfEmpty		= true;
-	private boolean												_downloaded				= false;
-	private double												totalVolume				= 0.0;
-	private double												totalValue				= 0.0;
+	private final Vector<ICollaboration> _contents = new Vector<ICollaboration>();
+	private boolean _expanded = false;
+	private boolean _renderIfEmpty = true;
+	private boolean _downloaded = false;
+	private boolean _downloading = false;
+	private double totalVolume = 0.0;
+	private double totalValue = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public SpaceContainer() {
+	public SpaceContainer () {
 		super();
 		this.setDownloaded(false);
 		jsonClass = "SpaceContainer";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public int addAsset(final NeoComAsset asset) {
+	public int addAsset (final NeoComAsset asset) {
 		_contents.add(asset);
 		return _contents.size();
 	}
@@ -51,10 +52,10 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 	 * The Container can access the database to get its contents.
 	 */
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model (final String variant) {
 		List<ICollaboration> results = new ArrayList<ICollaboration>();
 		// If the contents are already downloaded chain the collaboration calls.
-		if (this.isDownloaded()) {
+		if ( this.isDownloaded() ) {
 			results.addAll(_contents);
 		} else {
 			// Download the assets only if the state is expended.
@@ -65,7 +66,7 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 		return results;
 	}
 
-	public boolean collapse() {
+	public boolean collapse () {
 		_expanded = false;
 		return _expanded;
 	}
@@ -74,10 +75,10 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 	 * Even this object inherits from the asset structure, it is a new instance of the object and we should copy
 	 * the data from the original reference to this instance instead using delegates that will not work when
 	 * accessing directly to fields.
-	 * 
+	 *
 	 * @return this same instance updated with the reference data.
 	 */
-	public SpaceContainer copyFrom(final NeoComAsset asset) {
+	public SpaceContainer copyFrom (final NeoComAsset asset) {
 		// REFACTOR Get access to the unique asset identifier.
 		this.setAssetID(asset.getAssetID());
 		this.setLocationID(asset.getLocationID());
@@ -101,23 +102,23 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 		return this;
 	}
 
-	public boolean expand() {
+	public boolean expand () {
 		_expanded = true;
 		return _expanded;
 	}
 
-	private List<ICollaboration> getContents() {
-		if (!this.isDownloaded()) {
+	private List<ICollaboration> getContents () {
+		if ( !this.isDownloaded() ) {
 			// Get the assets from the database.
 			_contents.clear();
 			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
-					.searchAssetContainedAt(this.getOwnerID(), this.getAssetID())));
+			                                                               .searchAssetContainedAt(this.getOwnerID(), this.getAssetID())));
 			this.setDownloaded(true);
 		}
 		return _contents;
 	}
 
-	public List<NeoComAsset> getAssets() {
+	public List<NeoComAsset> getAssets () {
 		Vector<NeoComAsset> result = new Vector<NeoComAsset>();
 		for (ICollaboration node : this.getContents()) {
 			result.add((NeoComAsset) node);
@@ -125,51 +126,61 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 		return result;
 	}
 
-	public int getContentsSize() {
+	public int getContentsSize () {
 		return _contents.size();
 	}
 
-	public double getTotalValue() {
+	public double getTotalValue () {
 		return totalValue;
 	}
 
-	public double getTotalVolume() {
+	public double getTotalVolume () {
 		return totalVolume;
 	}
 
-	public boolean isDownloaded() {
+	public boolean isDownloaded () {
 		return _downloaded;
 	}
 
-	public boolean isEmpty() {
+	public boolean isEmpty () {
 		return (_contents.size() < 1) ? true : false;
 	}
 
 	@Deprecated
-	public boolean isExpandable() {
+	public boolean isExpandable () {
 		return true;
 	}
 
-	public boolean isExpanded() {
+	public boolean isExpanded () {
 		return _expanded;
 	}
 
-	public boolean isRenderWhenEmpty() {
+	public boolean isRenderWhenEmpty () {
 		return _renderIfEmpty;
 	}
 
-	public IDownloadable setDownloaded(final boolean downloadedstate) {
+	public IDownloadable setDownloaded (final boolean downloadedstate) {
 		_downloaded = downloadedstate;
 		return this;
 	}
 
-	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+	public IExpandable setRenderWhenEmpty (final boolean renderWhenEmpty) {
 		_renderIfEmpty = renderWhenEmpty;
 		return this;
 	}
+	public IDownloadable setDownloading (final boolean downloading) {
+		this._downloading = downloading;
+		return this;
+	}
+
+
+	public boolean isDownloading () {
+		return _downloading;
+	}
+
 
 	@Override
-	public String toString() {
+	public String toString () {
 		final StringBuffer buffer = new StringBuffer("SpaceContainer [");
 		buffer.append(this.getName()).append(" [");
 		buffer.append(super.toString());
@@ -181,25 +192,22 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 	 * Process the assets being downloaded and convert to their new types. Warning!!. This methods need to know
 	 * the id of the current pilot but has no connection to the assets manager or the Character itself so I am
 	 * resorting to use the default Character stored at the AppModel.
-	 * 
-	 * @param input
-	 * @return
 	 */
-	private List<NeoComAsset> processDownloadedAssets(final List<NeoComAsset> input) {
+	private List<NeoComAsset> processDownloadedAssets (final List<NeoComAsset> input) {
 		ArrayList<NeoComAsset> results = new ArrayList<NeoComAsset>();
 		for (NeoComAsset asset : input) {
-			if (asset.isContainer()) {
+			if ( asset.isContainer() ) {
 				// Check if the asset is packaged. If so leave as asset
-				if (!asset.isPackaged()) {
+				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					SpaceContainer container = new SpaceContainer().copyFrom(asset);
 					results.add(container);
 					continue;
 				}
 			}
-			if (asset.isShip()) {
+			if ( asset.isShip() ) {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
-				if (!asset.isPackaged()) {
+				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					Ship ship = new Ship(ModelAppConnector.getSingleton().getModelStore().getActiveCharacter().getCharacterID())
 							.copyFrom(asset);

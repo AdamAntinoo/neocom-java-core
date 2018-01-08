@@ -9,12 +9,8 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.List;
-import java.util.Vector;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IJsonAngular;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
+import org.dimensinfin.core.interfaces.IDownloadable;
+import org.dimensinfin.core.interfaces.IExpandable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -22,30 +18,43 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComNode extends AbstractPropertyChanger implements ICollaboration, IJsonAngular {
+public abstract class NeoComDownloadableNode extends NeoComExpandableNode implements IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 6506043294337948561L;
+	private static final long serialVersionUID = -3742179733663283434L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected String					jsonClass					= "NeoComNode";
+	private boolean _downloading = false;
+	private boolean _downloaded = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComNode() {
-		jsonClass = "NeoComNode";
+	public NeoComDownloadableNode () {
+		super();
+		jsonClass = "NeoComDownloadableNode";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public List<ICollaboration> collaborate2Model(final String variant) {
-		return new Vector<ICollaboration>();
+
+	public IDownloadable setDownloading (final boolean downloading) {
+		this._downloading = downloading;
+		return this;
 	}
 
-	public String getJsonClass() {
-		return jsonClass;
+	public IDownloadable setDownloaded (final boolean downloaded) {
+		this._downloaded = downloaded;
+		return this;
+	}
+
+	public boolean isDownloading () {
+		return _downloading;
+	}
+
+	public boolean isDownloaded () {
+		return _downloaded;
 	}
 
 	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("NeoComNode [");
+	public String toString () {
+		final StringBuffer buffer = new StringBuffer("NeoComExpandableNode [");
 		buffer.append(" ]");
 		return buffer.toString();
 	}

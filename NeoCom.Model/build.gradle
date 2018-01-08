@@ -1,23 +1,36 @@
 apply plugin: 'java-library'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
 sourceSets {
 //    main.java.srcDirs += 'src/main/java-newcore'
 //    main.java.srcDirs += 'src/main/java-android'
 }
 
 dependencies {
-    // A P P L I C A T I O N   M O D U L E S
+    // P R O J E C T    D E P E N D E N C I E S
+    implementation project(path: ':CoreBaseLibrary')
+
+    // L O C A L    L I B R A R I E S
     compileOnly files('libs/jeveassets.3.1.2.jar')
-//    compileOnly files('libs/CoreBase.core-1.5.1.jar')
 
-    // L I B R A R I E S   D E P E N D E N C I E S
-    compileOnly 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
-    compileOnly 'com.j256.ormlite:ormlite-core:4.48'
-    compileOnly 'com.beimin:eveapi:6.0.6'
-    compileOnly 'joda-time:joda-time:2.3'
+    // M O D U L E    D E P E N D E N C I E S
+    implementation 'com.j256.ormlite:ormlite-core:4.48'
+    implementation 'com.beimin:eveapi:6.0.6'
 
+    // P L A T F O R M    D E P E N D E N C I E S
+    // D E P E N D E N C Y    F R O M    L I B R A R I E S
+    implementation 'joda-time:joda-time:2.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
 
     // T E S T I N G
     testImplementation 'junit:junit:4.12'
-    compile project(path: ':CoreBaseLibrary')
 }

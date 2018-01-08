@@ -23,12 +23,13 @@ import java.util.List;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AllLazyAssetsContentManager extends AbstractContentManager implements IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -2753423369104215278L;
+	private static final long serialVersionUID = -2753423369104215278L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private boolean						_downloaded				= false;
-	private double						totalVolume				= 0.0;
-	private double						totalValue				= 0.0;
+	private boolean _downloading = false;
+	private boolean _downloaded = false;
+	private double totalVolume = 0.0;
+	private double totalValue = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AllLazyAssetsContentManager (final ExtendedLocation newparent) {
@@ -43,6 +44,7 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	/**
 	 * This method will access the database to get the assets contained at that Location. It is the default
 	 * behavior for a ContentManager, to get all the related items with no filtering. The download of the
@@ -50,14 +52,14 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 	 * empty but when the user expands the item we should then download the list.
 	 */
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model (final String variant) {
 		List<ICollaboration> results = new ArrayList<ICollaboration>();
 		// If the contents are already downloaded chain the collaboration calls.
-		if (this.isDownloaded()) {
+		if ( this.isDownloaded() ) {
 			results.addAll(_contents);
 		} else {
 			// Download the assets only if the state is expended.
-			if (parent.isExpanded()) {
+			if ( parent.isExpanded() ) {
 				results.addAll(this.getContents());
 			}
 		}
@@ -71,38 +73,38 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 	 * time when we need to collaborate them to a ListView.
 	 */
 	@Override
-	public List<NeoComAsset> getContents() {
-		if (!this.isDownloaded()) {
+	public List<NeoComAsset> getContents () {
+		if ( !this.isDownloaded() ) {
 			// Get the assets from the database.
 			_contents.clear();
 			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
-					.searchAssetsAtLocation(parent.getPilotId(), this.getID())));
+			                                                               .searchAssetsAtLocation(parent.getPilotId(), this.getID())));
 			this.setDownloaded(true);
 		}
 		return _contents;
 	}
 
 	@Override
-	public int getContentSize() {
-		if (this.isDownloaded())
+	public int getContentSize () {
+		if ( this.isDownloaded() )
 			return _contents.size();
 		else
 			// Go to the database and get an approximate count of the assets that are at this Location.
 			return ModelAppConnector.getSingleton().getDBConnector().totalLocationContentCount(this.getID());
 	}
 
-	public double getTotalValue() {
+	public double getTotalValue () {
 		return totalValue;
 	}
 
-	public double getTotalVolume() {
+	public double getTotalVolume () {
 		return totalVolume;
 	}
 
 	@Override
-	public boolean isEmpty() {
-		if (this.isDownloaded())
-			if (_contents.size() < 1)
+	public boolean isEmpty () {
+		if ( this.isDownloaded() )
+			if ( _contents.size() < 1 )
 				return true;
 			else
 				return false;
@@ -114,16 +116,13 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 	 * Process the assets being downloaded and convert to their new types. Warning!!. This methods need to know
 	 * the id of the current pilot but has no connection to the assets manager or the Character itself so I am
 	 * resorting to use the default Character stored at the AppModel.
-	 * 
-	 * @param input
-	 * @return
 	 */
-	private List<NeoComAsset> processDownloadedAssets(final List<NeoComAsset> input) {
+	private List<NeoComAsset> processDownloadedAssets (final List<NeoComAsset> input) {
 		ArrayList<NeoComAsset> results = new ArrayList<NeoComAsset>();
 		for (NeoComAsset asset : input) {
-			if (asset.isContainer()) {
+			if ( asset.isContainer() ) {
 				// Check if the asset is packaged. If so leave as asset
-				if (!asset.isPackaged()) {
+				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					SpaceContainer container = new SpaceContainer().copyFrom(asset);
 					// Calculate value and volume to register on the aggregation.
@@ -133,9 +132,9 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 					continue;
 				}
 			}
-			if (asset.isShip()) {
+			if ( asset.isShip() ) {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
-				if (!asset.isPackaged()) {
+				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					Ship ship = new Ship(ModelAppConnector.getSingleton().getModelStore().getActiveCharacter().getCharacterID())
 							.copyFrom(asset);
@@ -154,13 +153,22 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 		return results;
 	}
 
-	public boolean isDownloaded() {
-		return _downloaded;
+	public IDownloadable setDownloading (final boolean downloading) {
+		this._downloading = downloading;
+		return this;
 	}
 
-	public IDownloadable setDownloaded(final boolean downloadedstate) {
-		_downloaded = downloadedstate;
+	public IDownloadable setDownloaded (final boolean downloaded) {
+		this._downloaded = downloaded;
 		return this;
+	}
+
+	public boolean isDownloading () {
+		return _downloading;
+	}
+
+	public boolean isDownloaded () {
+		return _downloaded;
 	}
 }
 

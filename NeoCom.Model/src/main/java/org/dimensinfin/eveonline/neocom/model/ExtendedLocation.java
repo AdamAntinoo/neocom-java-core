@@ -35,6 +35,8 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	private IContentManager contentManager = new AllLazyAssetsContentManager(this);
 	private boolean _expanded = false;
 	private boolean _renderIfEmpty = true;
+	private boolean _downloading = false;
+	private boolean _downloaded = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ExtendedLocation () {
@@ -268,6 +270,15 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	//	public boolean toggleVisible() {
 	//		return delegate.toggleVisible();
 	//	}
+	public IDownloadable setDownloading (final boolean downloading) {
+		this._downloading = downloading;
+		return this;
+	}
+
+
+	public boolean isDownloading () {
+		return _downloading;
+	}
 
 	@Override
 	public String toString () {
