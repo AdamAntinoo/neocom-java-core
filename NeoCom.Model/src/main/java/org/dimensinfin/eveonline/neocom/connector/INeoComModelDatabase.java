@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
+import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Login;
@@ -32,6 +33,7 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 	public void clearInvalidRecords(final long pilotid);
 	public void replaceBlueprints (final long characterID);
 
+	public Dao<Credential, String> getCredentialDao() throws SQLException;
 	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
 
 	public Dao<NeoComAsset, String> getAssetDAO() throws SQLException;
