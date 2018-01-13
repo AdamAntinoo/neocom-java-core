@@ -9,57 +9,85 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
+import org.dimensinfin.eveonline.neocom.planetary.Colony;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
+import org.modelmapper.ModelMapper;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.IOException;
+import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit.Builder;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PlanetaryManager extends AbstractManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long												serialVersionUID	= 3794750126425122302L;
+	private static final long serialVersionUID = 3794750126425122302L;
 	//	private static Logger														logger						= Logger.getLogger("PlanetaryManager");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public long																			totalAssets				= 0;
-	public double																		totalAssetsValue	= 0.0;
-	public final String															iconName					= "planets.png";
+	public long totalAssets = 0;
+	public double totalAssetsValue = 0.0;
+	public final String iconName = "planets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
 	/** Shared field to allow to share the list of assets to process between methods during the processing. */
 	@JsonIgnore
-	private transient Hashtable<Long, NeoComAsset>	assetMap					= new Hashtable<Long, NeoComAsset>();
+	private transient Hashtable<Long, NeoComAsset> assetMap = new Hashtable<Long, NeoComAsset>();
 
-	private SpaceContainer													container					= null;
+	private SpaceContainer container = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PlanetaryManager(final NeoComCharacter pilot) {
+	public PlanetaryManager (final Credential credential) {
+		super(credential);
+		jsonClass = "PlanetaryManager";
+	}
+
+	@Deprecated
+	public PlanetaryManager (final NeoComCharacter pilot) {
 		super(pilot);
 		jsonClass = "PlanetaryManager";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	/**
 	 * Reads from the database all the Planetary assets and classifies them into their contained Locations.
 	 * Planetary assets can be located at Locations or inside Containers or at Ships. Now that the parentship
 	 * hierarchies are back we should not process the old way but be able to access Ships or Containers on
 	 * demand to reconstruct the Resource hierarchy.
 	 */
-	public void accessAllAssets() {
+	public void accessAllAssets () {
 		// Initialize the model
 		regions.clear();
 		locations.clear();
@@ -67,7 +95,7 @@ public class PlanetaryManager extends AbstractManager {
 		try {
 			// Read all the assets for this character if not done already.
 			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
-					.accessAllPlanetaryAssets(this.getPilot().getCharacterID());
+																																	 .accessAllPlanetaryAssets(this.getPilot().getCharacterID());
 			totalAssets = planetaryAssetList.size();
 			// Process the Resources and search for the parent assets to classify them into the Locations.
 			for (NeoComAsset resource : planetaryAssetList) {
@@ -87,7 +115,126 @@ public class PlanetaryManager extends AbstractManager {
 		}
 	}
 
-	public long getAssetTotalCount() {
+	private long getCharacterId () {
+		return _credential.getAccountId();
+	}
+
+	public interface ColonyApi {
+		@GET("characters/{character_id}/planets/")
+		Call<List<GetCharactersCharacterIdPlanets200Ok>> getCharactersCharacterIdPlanets (
+				@Path("character_id") Integer characterId, @Query("datasource") String datasource, @Query("token") String token, @Query("user_agent") String userAgent, @Header("X-User-Agent") String xUserAgent
+		);
+
+		@GET("characters/{character_id}/planets/{planet_id}/")
+		Call<GetCharactersCharacterIdPlanetsPlanetIdOk> getCharactersCharacterIdPlanetsPlanetId (
+				@Path("character_id") Integer characterId, @Path("planet_id") Integer planetId, @Query("datasource") String datasource, @Query("token") String token, @Query("user_agent") String userAgent, @Header("X-User-Agent") String xUserAgent
+		);
+	}
+
+	/**
+	 * Get all the Planetary Colonies for a selected character. After getting the list of colonies and wrapping
+	 * all that data into MVC compatible classes it will launch background jobs to retrieve each colony detailed
+	 * data.
+	 */
+	public List<Colony> accessAllColonies () {
+		logger.info(">> [ColonyManager.accessAllColonies]");
+		final Chrono accessFullTime = new Chrono();
+
+		try {
+			// Create a request to the ESI api downloader to get the list of Planets to the current Character.
+			final long charId = getCharacterId();
+			final ColonyApi colonyApiRetrofit = new Builder()
+					.baseUrl("https://login.eveonline.com")
+					.addConverterFactory(JacksonConverterFactory.create())
+					.build()
+					.create(ColonyApi.class);
+			final Response<List<GetCharactersCharacterIdPlanets200Ok>> r = colonyApiRetrofit
+					.getCharactersCharacterIdPlanets((int) charId, null, null, null, null)
+					.execute();
+			if ( !r.isSuccessful() ) {
+				return new Vector();
+			}
+
+			// Transform the received OK instance into a NeoCom compatible model instance.
+			ModelMapper modelMapper = new ModelMapper();
+			List<Colony> colonies = new Vector();
+			for(GetCharactersCharacterIdPlanets200Ok colonyOK :r.body()) {
+				Colony col = modelMapper.map(r.body(), Colony.class);
+				colonies.add(col);
+			}
+
+			// For each of the received planets, get their structures and do the same transformations.
+			Stream.of(colonies).forEach(c -> {
+				try {
+					final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> rp =
+							this.planetaryApi.getCharactersCharacterIdPlanetsPlanetId((int) charId, (int) c.getPlanetId(), this.datasource, null, null, null)
+															 .execute();
+					if ( rp.isSuccessful() ) {
+						//>>> Modified by Adam Antinoo
+						ESIMapper.map(rp.body(), c);
+					}
+				} catch (IOException e) {
+					LOG.debug(e.getLocalizedMessage(), e);
+					LOG.error(e.getLocalizedMessage());
+				}
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+		return colonies;
+
+
+		final PlanetaryColoniesRequest request = _network.PlanetaryColoniesRequest();
+		final PlanetaryColoniesResponse colonies = _network.execute(request);
+		logger.debug(">> [ColonyManager.accessAllColonies]> [Elapsed Time]- PlanetaryColoniesRequest ", chrono.printElapsed(ChonoOptions.SHOWMILLIS));
+		// Converts data to MVC
+		List<Colony> presentColonies = new Vector();
+		for (PlanetaryColony col : colonies.getColonies()) {
+			final Colony newcol = ColonyFactory.from(col);
+			presentColonies.add(newcol);
+			logger.debug(">> [ColonyManager.accessAllColonies]> newcol: ", newcol.toString());
+			logger.debug(">> [ColonyManager.accessAllColonies]> Submitting another job to Executor");
+			newcol.setDownloading(true);
+			ApplicationCloudAdapter.getSingleton().getDownloadExecutor().submit(
+					new OneParameterTask<Colony>(newcol) {
+						public void run () {
+							logger.info(">> [ColonyManager.accessAllColonies.OneParameterTask.run]");
+							Chrono chrono = new Chrono();
+
+							final PlanetaryPinsRequest pinrequest = _network.PlanetaryPinsRequest(getTarget().getPlanetID());
+							final PlanetaryPinsResponse pins = _network.execute(pinrequest);
+							logger.debug(">> [ColonyManager.accessAllColonies.OneParameterTask.run]> [Elapsed Time]- PlanetaryPinsRequest "
+									, chrono.printElapsed(ChonoOptions.SHOWMILLIS));
+							for (PlanetaryPin pin : pins.getPins()) {
+								final ColonyStructure structure = ColonyStructureFactory.from(pin);
+								getTarget().addStructure(structure);
+							}
+							// Mark the download complete.
+							getTarget().setDownloading(false);
+							getTarget().setDownloaded(true);
+							// Wait a delay of 1 second to allow to watch the counter.
+							try {
+								Thread.sleep(TimeUnit.SECONDS.toMillis(4));
+							} catch (InterruptedException ex) {
+							}
+							// Send message to the model to update the rendering.
+							logger.debug(">> [ColonyManager.accessAllColonies]> Target: ", getTarget().toString());
+							logger.debug(">> [ColonyManager.accessAllColonies.OneParameterTask.run]> Going to fire the STRUCTURE message");
+							getTarget().fireStructureChange("EVENTSTRUCTURE_DOWNLOADDATA", getTarget(), null);
+
+							logger.info("<< [ColonyManager.accessAllColonies.OneParameterTask.run]> Time Elapsed: " + chrono.printElapsed(Chrono.ChonoOptions.SHOWMILLIS));
+						}
+					}
+			);
+		}
+		logger.debug("-- [ColonyManager.accessAllColonies]> [Elapsed Time]- Colony Model Generation", chrono.printElapsed(ChonoOptions.SHOWMILLIS));
+		logger.info("<< [ColonyManager.accessAllColonies]> Colonies on list: ", presentColonies.size());
+		return presentColonies;
+	}
+
+	public long getAssetTotalCount () {
 		//		if (!this.isInitialized()) {
 		this.initialize();
 		//		}
@@ -101,19 +248,16 @@ public class PlanetaryManager extends AbstractManager {
 	/**
 	 * Get the list of Planetary Resources that are at the indicated location. If the location is not found or
 	 * the contents are not initializes then return an empty list.
-	 * 
-	 * @param locationid
-	 * @return
 	 */
-	public Vector<Resource> getLocationContents(final String locationid) {
+	public Vector<Resource> getLocationContents (final String locationid) {
 		long locidnumber = Long.valueOf(locationid);
 		ExtendedLocation hit = locations.get(locidnumber);
-		if (null != hit) {
+		if ( null != hit ) {
 			List<NeoComAsset> contents = hit.downloadContents();
 			Vector<NeoComAsset> intermediate = new Vector<NeoComAsset>(contents.size());
 			for (NeoComAsset node : contents) {
 				// Check for containers to get also its contents.
-				if (node instanceof IAssetContainer) {
+				if ( node instanceof IAssetContainer ) {
 					intermediate.addAll(((IAssetContainer) node).getAssets());
 				}
 				intermediate.add(node);
@@ -128,21 +272,21 @@ public class PlanetaryManager extends AbstractManager {
 		return new Vector<Resource>();
 	}
 
-	public String getOrderingName() {
+	public String getOrderingName () {
 		return "Planetary Manager";
 	}
 
-	public long getTotalAssets() {
+	public long getTotalAssets () {
 		return totalAssets;
 	}
 
-	public double getTotalAssetsValue() {
+	public double getTotalAssetsValue () {
 		return totalAssetsValue;
 	}
 
 	@Override
-	public AbstractManager initialize() {
-		if (!initialized) {
+	public AbstractManager initialize () {
+		if ( !initialized ) {
 			this.accessAllAssets();
 			initialized = true;
 		}
@@ -172,11 +316,10 @@ public class PlanetaryManager extends AbstractManager {
 	//		}
 	//		return regions;
 	//	}
-
-	protected void add2Location(final NeoComAsset asset) {
+	protected void add2Location (final NeoComAsset asset) {
 		long locid = asset.getLocationID();
 		ExtendedLocation target = locations.get(locid);
-		if (null == target) {
+		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), intermediary);
@@ -190,15 +333,15 @@ public class PlanetaryManager extends AbstractManager {
 		}
 	}
 
-	private boolean isContainer(final long identifier) {
+	private boolean isContainer (final long identifier) {
 		// Search for this asset on the database. If it is a ship or a container, add it to the list of assets.
 		NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(identifier);
-		if (null == target)
+		if ( null == target )
 			return false;
 		else {
 			// It it is a ship then add the bay as a container. Otherwise add the container and process it as a new asset.
-			if (target.isContainer()) return true;
-			if (target.isShip()) return true;
+			if ( target.isContainer() ) return true;
+			if ( target.isShip() ) return true;
 		}
 		return false;
 	}
@@ -291,10 +434,8 @@ public class PlanetaryManager extends AbstractManager {
 	 * If it found one of those items gets the list of contents to be removed to the to be processed list
 	 * because the auto model generation will already include those items. Only Locations or Regions behave
 	 * differently.
-	 * 
-	 * @param asset
 	 */
-	private void processElement(final NeoComAsset asset) {
+	private void processElement (final NeoComAsset asset) {
 		PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]>>>>> Asset: " + asset);
 		PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]>>>>> Pending assrts count: " + assetMap.size());
 		try {
@@ -305,15 +446,15 @@ public class PlanetaryManager extends AbstractManager {
 			// Add the asset value to the owner balance.
 			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container
-			if (asset.isShip()) {
+			if ( asset.isShip() ) {
 				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Detected ship");
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
-				if (!asset.isPackaged()) {
+				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
 					//					ships.put(ship.getAssetID(), ship);
 					// The ship is a container so add it and forget about this asset.
-					if (ship.hasParent()) {
+					if ( ship.hasParent() ) {
 						this.processElement(ship.getParentContainer());
 					} //else {
 					this.add2Location(ship);
@@ -331,15 +472,15 @@ public class PlanetaryManager extends AbstractManager {
 						+ asset.getAssetID());
 				return;
 			}
-			if (asset.isContainer()) {
+			if ( asset.isContainer() ) {
 				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Detected container");
 				// Check if the asset is packaged. If so leave as asset
-				if (!asset.isPackaged()) {
+				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					container = new SpaceContainer().copyFrom(asset);
 					containers.put(container.getAssetID(), container);
 					// The container is a container so add it and forget about this asset.
-					if (container.hasParent()) {
+					if ( container.hasParent() ) {
 						this.processElement(container.getParentContainer());
 					} // else {
 					PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Container added to Location");
@@ -368,17 +509,17 @@ public class PlanetaryManager extends AbstractManager {
 				return;
 			}
 			// Process the asset parent if this is the case because we should add first parent to the hierarchy
-			if (asset.hasParent()) {
+			if ( asset.hasParent() ) {
 				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Detected parent");
 				NeoComAsset parent = asset.getParentContainer();
 				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Parent: " + parent);
-				if (null == parent) {
+				if ( null == parent ) {
 					this.add2Location(asset);
 				} else {
 					this.processElement(parent);
 					// Add the current element to the parent already processed.
 					// REFACTOR The container for the recursion is stored on a field. This is not a good practice.
-					if (null != container) {
+					if ( null != container ) {
 						PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Added asset: " + asset.getAssetID()
 								+ " to Container: " + container.getAssetID());
 						container.addAsset(asset);
@@ -390,7 +531,7 @@ public class PlanetaryManager extends AbstractManager {
 			}
 			// Check if the location identifier matches an asset. This item can be contained inside some other.
 			PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Checking Location: " + asset.getLocationID());
-			if (this.isContainer(asset.getLocationID())) {
+			if ( this.isContainer(asset.getLocationID()) ) {
 				NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(asset.getLocationID());
 				PlanetaryManager.logger.info("DD [PlanetaryManager.processElement]> Asset connection found: " + target);
 				asset.setParentContainer(target);
@@ -408,22 +549,20 @@ public class PlanetaryManager extends AbstractManager {
 	/**
 	 * Process a resource and connect it to all the hierarchy elements required. If the assets has a parent then
 	 * process first that parent and then connect the resource to the already ready structure.
-	 * 
-	 * @return
 	 */
-	private NeoComAsset processPlanetaryResource(final NeoComAsset resource) {
-		if (resource.hasParent()) {
+	private NeoComAsset processPlanetaryResource (final NeoComAsset resource) {
+		if ( resource.hasParent() ) {
 			NeoComAsset processed = this.processPlanetaryResource(resource.getParentContainer());
-			if (processed instanceof IAssetContainer) {
+			if ( processed instanceof IAssetContainer ) {
 				((IAssetContainer) processed).addAsset(resource);
 			} else {
 				this.add2Location(resource);
 			}
 		} else {
-			if (resource.isContainer()) {
+			if ( resource.isContainer() ) {
 				// Search for this container id on the list of Containers. Each assets has ita own Container instance.
 				NeoComAsset hit = containers.get(resource.getAssetID());
-				if (null == hit) {
+				if ( null == hit ) {
 					SpaceContainer cont = new SpaceContainer().copyFrom(resource);
 					// Add to the Location only if not already registered.
 					this.add2Location(cont);
@@ -433,10 +572,10 @@ public class PlanetaryManager extends AbstractManager {
 				} else
 					return hit;
 			}
-			if (resource.isShip()) {
+			if ( resource.isShip() ) {
 				// Search for this container id on the list of Containers. Each assets has ita own Container instance.
 				NeoComAsset hit = containers.get(resource.getAssetID());
-				if (null == hit) {
+				if ( null == hit ) {
 					Ship cont = new Ship().copyFrom(resource);
 					// Add to the Location only if not already registered.
 					this.add2Location(cont);
@@ -507,11 +646,11 @@ public class PlanetaryManager extends AbstractManager {
 	 * Remove the nodes collaborated and their own collaborations recursively from the list of assets to
 	 * process.
 	 */
-	private void removeNode(final ICollaboration node) {
+	private void removeNode (final ICollaboration node) {
 		// Check that the class of the item is an Asset. Anyway check for its collaboration.
-		if (node instanceof ICollaboration) {
+		if ( node instanceof ICollaboration ) {
 			// Try to remove the asset if found
-			if (node instanceof NeoComAsset) {
+			if ( node instanceof NeoComAsset ) {
 				assetMap.remove(((NeoComAsset) node).getAssetID());
 			}
 			// Remove also the nodes collaborated by it.

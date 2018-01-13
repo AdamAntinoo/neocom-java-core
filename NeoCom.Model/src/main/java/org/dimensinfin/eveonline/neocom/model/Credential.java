@@ -1,12 +1,16 @@
-//	PROJECT:      NeoCom.model (NEOC.M)
-//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:	Java 1.8 Library.
-//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
-//								available databases.
-//								This version includes the access to the latest 6.x version of eveapi libraries to
-//								download ad parse the CCP XML API data.
-//								Code integration that is not dependent on any specific platform.
+//  PROJECT:      NeoCom.Model (NEOC.M)
+//  AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:    (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT:  Java 1.8 Library.
+//  DESCRIPTION:  Java library for the NeoCom project that contains the model classes and all the
+//                data management code to maintain the different model structures and functionalities.
+//                The module integrates all data conversion and functionalities that can be
+//                used on any platform not being dependant on Android development.
+//                New functionalities allow the access of Eve Online CCP data with the new
+//                developer ESI api and keeps the transformations and the code for the persistence
+//                of the downloaded data on an external database.
+//                The code isolates from the external database implementation to the extent to keep
+//                the code compatible with Android and SpringBoot.
 package org.dimensinfin.eveonline.neocom.model;
 
 import com.j256.ormlite.dao.Dao;
@@ -14,15 +18,16 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Credential")
 public class Credential extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("Credential");
+	private static Logger logger = LoggerFactory.getLogger("Credential");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(generatedId = true)
@@ -35,6 +40,7 @@ public class Credential extends NeoComNode {
 	public String accessToken;
 	@DatabaseField
 	public String tokenType;
+	/** Future expitation Instant time in millisecons */
 	@DatabaseField
 	public long expires;
 	@DatabaseField
@@ -44,6 +50,7 @@ public class Credential extends NeoComNode {
 	private int keycode = -1;
 	@DatabaseField
 	private String validationcode = "";
+
 	@DatabaseField
 	private boolean active = true;
 

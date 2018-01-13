@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -34,6 +35,8 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - F I E L D - S E C T I O N ............................................................................
 	protected String jsonClass = "AbstractManager";
 	@JsonIgnore
+	protected transient Credential _credential;
+	@JsonIgnore
 	private transient NeoComCharacter pilot = null;
 	protected boolean initialized = false;
 	// - L O C A T I O N   M A N A G E M E N T
@@ -42,6 +45,14 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	protected final Hashtable<Long, NeoComAsset> containers = new Hashtable<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public AbstractManager (final Credential credential) {
+		super();
+		_credential=credential;
+//		this.setPilot(pilot);
+		jsonClass = "AbstractManager";
+	}
+
+	@Deprecated
 	public AbstractManager (final NeoComCharacter pilot) {
 		super();
 		this.setPilot(pilot);
