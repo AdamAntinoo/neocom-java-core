@@ -1,0 +1,84 @@
+apply plugin: 'java-library'
+
+archivesBaseName = 'NeoCom.Model'
+version = '1.5.0'
+group = 'org.dimensinfin.core'
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+sourceSets {
+//    main.java.srcDirs += 'src/main/java-newcore'
+//    main.java.srcDirs += 'src/main/java-android'
+}
+
+dependencies {
+    // P R O J E C T    D E P E N D E N C I E S
+    implementation project(path: ':CoreBaseLibrary')
+    implementation project(path: ':ESISwaggerApi')
+
+    // L O C A L    L I B R A R I E S
+    api files('libs/jeveassets.3.1.2.jar')
+
+    // M O D U L E    D E P E N D E N C I E S
+    // N E O C O M . M O D E L
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'joda-time:joda-time:2.3'
+    implementation 'com.j256.ormlite:ormlite-core:4.48'
+    implementation 'com.beimin:eveapi:6.0.6'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
+    implementation 'org.modelmapper:modelmapper:1.1.0'
+    implementation 'com.annimon:stream:1.1.9'
+
+    // P L A T F O R M    D E P E N D E N C I E S
+    // D E P E N D E N C Y    F R O M    L I B R A R I E S
+
+    // T E S T I N G
+    testImplementation 'junit:junit:4.12'
+}
+
+
+apply plugin: 'java-library'
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+sourceSets {
+//    main.java.srcDirs += 'src/main/java-android'
+//    main.java.srcDirs += 'src/main/java-corebase'
+}
+
+dependencies {
+    // P R O J E C T    D E P E N D E N C I E S
+
+    // L O C A L    L I B R A R I E S
+
+    // M O D U L E    D E P E N D E N C I E S
+    // C O R E B A S E
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'joda-time:joda-time:2.3'
+
+    // P L A T F O R M    D E P E N D E N C I E S
+
+    // T E S T I N G
+    testImplementation 'junit:junit:4.12'
+}
+
+
+
+

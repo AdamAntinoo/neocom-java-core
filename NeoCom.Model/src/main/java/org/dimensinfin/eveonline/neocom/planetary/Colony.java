@@ -11,11 +11,15 @@
 //                 time depending on destination platform.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //- INTERFACE IMPLEMENTATION ...............................................................................
-public class Colony /*extends IDownloadable, IExpandable, IJsonAngular*/ {
+public class Colony implements ICollaboration/*extends IDownloadable, IExpandable, IJsonAngular*/ {
 	private Integer solarSystemId = null;
 	private Integer planetId = null;
 	private PlanetTypeEnum planetType=null;
@@ -78,6 +82,11 @@ public class Colony /*extends IDownloadable, IExpandable, IJsonAngular*/ {
 
 	public void setPlanetType (final PlanetTypeEnum planetType) {
 		this.planetType = planetType;
+	}
+
+	@Override
+	public List<ICollaboration> collaborate2Model (final String variation) {
+		return new ArrayList<>();
 	}
 	//	public void addStructure (ColonyStructure structure);
 //
