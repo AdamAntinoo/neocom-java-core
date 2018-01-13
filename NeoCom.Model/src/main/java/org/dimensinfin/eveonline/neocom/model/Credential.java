@@ -32,6 +32,12 @@ public class Credential extends NeoComNode {
 	@DatabaseField
 	private String accountName = "-NAME-";
 	@DatabaseField
+	public String accessToken;
+	@DatabaseField
+	public String tokenType;
+	@DatabaseField
+	public long expires;
+	@DatabaseField
 	private String refreshToken = "-TOKEN-";
 
 	@DatabaseField
@@ -87,6 +93,33 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
+	public String getAccessToken () {
+		return accessToken;
+	}
+
+	public Credential setAccessToken (final String accessToken) {
+		this.accessToken = accessToken;
+		return this;
+	}
+
+	public String getTokenType () {
+		return tokenType;
+	}
+
+	public Credential setTokenType (final String tokenType) {
+		this.tokenType = tokenType;
+		return this;
+	}
+
+	public long getExpires () {
+		return expires;
+	}
+
+	public Credential setExpires (final long expires) {
+		this.expires = expires;
+		return this;
+	}
+
 	public String getRefreshToken () {
 		return refreshToken;
 	}
@@ -108,8 +141,9 @@ public class Credential extends NeoComNode {
 	/**
 	 * Update the values at the database record.
 	 */
-	public void store () {
+	public Credential store () {
 		setDirty(true);
+		return this;
 	}
 }
 
