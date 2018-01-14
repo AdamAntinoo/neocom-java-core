@@ -1,7 +1,11 @@
 apply plugin: 'java-library'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+archivesBaseName = 'NeoCom.Model'
+version = '1.5.0'
+group = 'org.dimensinfin.core'
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 repositories {
     mavenCentral()
@@ -24,15 +28,18 @@ dependencies {
     api files('libs/jeveassets.3.1.2.jar')
 
     // M O D U L E    D E P E N D E N C I E S
+    // N E O C O M . M O D E L
     implementation 'org.slf4j:slf4j-api:1.7.25'
-    api 'com.j256.ormlite:ormlite-core:4.48'
-    api 'com.beimin:eveapi:6.0.6'
+    implementation 'joda-time:joda-time:2.3'
+    implementation 'com.j256.ormlite:ormlite-core:4.48'
+    implementation 'com.beimin:eveapi:6.0.6'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'org.modelmapper:modelmapper:1.1.0'
     implementation 'com.annimon:stream:1.1.9'
 
     // P L A T F O R M    D E P E N D E N C I E S
+
     // D E P E N D E N C Y    F R O M    L I B R A R I E S
 
     // T E S T I N G
