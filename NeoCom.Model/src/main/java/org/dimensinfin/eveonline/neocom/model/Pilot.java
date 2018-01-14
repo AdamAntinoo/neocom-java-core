@@ -22,9 +22,6 @@ import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,13 +97,13 @@ public class Pilot extends NeoComCharacter {
 	@Override
 	public List<ICollaboration> collaborate2Model(final String variant) {
 		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
-		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
-			// Add the Managers that apply to this Pilot
-			results.add(new AssetsManager(this));
-			//			results.add(new SkillsManager(this).initialize());
-			//			results.add(new BlueprintManager(this).initialize());
-			results.add(new PlanetaryManager(this).initialize());
-		}
+//		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
+//			// Add the Managers that apply to this Pilot
+//			results.add(new AssetsManager(this));
+//			//			results.add(new SkillsManager(this).initialize());
+//			//			results.add(new BlueprintManager(this).initialize());
+//			results.add(new PlanetaryManager(this).initialize());
+//		}
 		return results;
 	}
 

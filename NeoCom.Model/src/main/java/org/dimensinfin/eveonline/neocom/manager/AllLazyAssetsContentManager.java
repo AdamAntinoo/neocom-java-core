@@ -78,7 +78,7 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 			// Get the assets from the database.
 			_contents.clear();
 			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
-			                                                               .searchAssetsAtLocation(parent.getPilotId(), this.getID())));
+			                                                               .searchAssetsAtLocation(parent.getCredentialIdentifier(), this.getID())));
 			this.setDownloaded(true);
 		}
 		return _contents;
@@ -136,7 +136,7 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
-					Ship ship = new Ship(ModelAppConnector.getSingleton().getModelStore().getActiveCharacter().getCharacterID())
+					Ship ship = new Ship(parent.getCredentialIdentifier())
 							.copyFrom(asset);
 					// Calculate value and volume to register on the aggregation.
 					totalValue = +asset.getPrice();

@@ -17,10 +17,10 @@ import com.j256.ormlite.stmt.Where;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.joda.time.Duration;
 
 import java.sql.SQLException;
@@ -134,8 +134,8 @@ public class BlueprintManager extends AbstractManager {
 	//	private transient HashMap<Long, NeoComAsset> assetMap = new HashMap<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public BlueprintManager (final NeoComCharacter pilot) {
-		super(pilot);
+	public BlueprintManager (final Credential credential) {
+		super(credential);
 		jsonClass = "BlueprintManager";
 	}
 
@@ -144,11 +144,11 @@ public class BlueprintManager extends AbstractManager {
 	public BlueprintManager initialize () {
 		if ( !initialized ) {
 			if ( null == blueDelegateT1 )
-				blueDelegateT1 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechI);
+				blueDelegateT1 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechI);
 			if ( null == blueDelegateT2 )
-				blueDelegateT2 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechII);
+				blueDelegateT2 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechII);
 			if ( null == blueDelegateT3 )
-				blueDelegateT3 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechIII);
+				blueDelegateT3 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechIII);
 			// Just count the total numbers of blueprints.
 			blueprintTotalCount = queryTotalBlueprintCount();
 			initialized = true;
@@ -158,23 +158,23 @@ public class BlueprintManager extends AbstractManager {
 
 	public List<NeoComBlueprint> accessAllT1Blueprints () {
 		if ( null == blueDelegateT1 )
-			blueDelegateT1 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechI);
+			blueDelegateT1 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechI);
 		return blueDelegateT1.accessAllBlueprints();
 	}
 	public List<NeoComBlueprint> accessAllT2Blueprints () {
 		if ( null == blueDelegateT2 )
-			blueDelegateT2 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechII);
+			blueDelegateT2 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechII);
 		return blueDelegateT2.accessAllBlueprints();
 	}
 
 	public BlueprintDelegate getT1Delegate () {
 		if ( null == blueDelegateT1 )
-			blueDelegateT1 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechI);
+			blueDelegateT1 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechI);
 		return blueDelegateT1;
 	}
 	public BlueprintDelegate getT2Delegate () {
 		if ( null == blueDelegateT2 )
-			blueDelegateT2 = new BlueprintDelegate(getPilot().getCharacterID(), ModelWideConstants.eveglobal.TechII);
+			blueDelegateT2 = new BlueprintDelegate(getCredentialIdentifier(), ModelWideConstants.eveglobal.TechII);
 		return blueDelegateT2;
 	}
 
@@ -185,7 +185,7 @@ public class BlueprintManager extends AbstractManager {
 		try {
 			if ( null == blueprintDao ) blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDAO();
 			QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
-			queryBuilder.setCountOf(true).where().eq("ownerID", getPilot().getCharacterID());
+			queryBuilder.setCountOf(true).where().eq("ownerID", getCredentialIdentifier());
 			long totalAssets = blueprintDao.countOf(queryBuilder.prepare());
 			return Long.valueOf(totalAssets).intValue();
 		} catch (java.sql.SQLException sqle) {
@@ -214,11 +214,11 @@ public class BlueprintManager extends AbstractManager {
 			Dao<NeoComBlueprint, String> blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDAO();
 			QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
 			Where<NeoComBlueprint, String> where = queryBuilder.where();
-			where.eq("ownerID", this.getPilot().getCharacterID());
+			where.eq("ownerID", getCredentialIdentifier());
 			PreparedQuery<NeoComBlueprint> preparedQuery = queryBuilder.prepare();
 			blueprintCache.addAll(blueprintDao.query(preparedQuery));
 			Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-			logger.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + this.getPilot().getCharacterID()
+			logger.info("~~ Time lapse for BLUEPRINT [SELECT OWNERID = " + getCredentialIdentifier()
 					+ "] - " + lapse);
 			// Check if the list is empty. Then force a refresh download.
 			if ( blueprintCache.size() < 1 ) {

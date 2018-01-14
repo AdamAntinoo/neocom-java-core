@@ -18,7 +18,6 @@ import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
 import java.util.ArrayList;
@@ -36,9 +35,10 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	protected String jsonClass = "AbstractManager";
 	@JsonIgnore
 	protected transient Credential _credential;
-	@JsonIgnore
-	private transient NeoComCharacter pilot = null;
+	//	@JsonIgnore
+	//	private transient NeoComCharacter pilot = null;
 	protected boolean initialized = false;
+
 	// - L O C A T I O N   M A N A G E M E N T
 	protected final Hashtable<Long, Region> regions = new Hashtable<Long, Region>();
 	protected final Hashtable<Long, ExtendedLocation> locations = new Hashtable<Long, ExtendedLocation>();
@@ -47,37 +47,48 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractManager (final Credential credential) {
 		super();
-		_credential=credential;
-//		this.setPilot(pilot);
+		_credential = credential;
 		jsonClass = "AbstractManager";
 	}
 
-	@Deprecated
-	public AbstractManager (final NeoComCharacter pilot) {
-		super();
-		this.setPilot(pilot);
-		jsonClass = "AbstractManager";
-	}
+	//	@Deprecated
+	//	public AbstractManager (final NeoComCharacter pilot) {
+	//		super();
+	//		this.setPilot(pilot);
+	//		jsonClass = "AbstractManager";
+	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public List<ICollaboration> collaborate2Model (final String variant) {
+		return new ArrayList<ICollaboration>();
+	}
+
+	public long getCredentialIdentifier () {
+		if ( null == _credential )
+			throw new RuntimeException("RT [AbstractManager]> Credential is not set on current Manager. Bad initialization.");
+		return _credential.getAccountId();
+	}
+	public String getCredentialName () {
+		if ( null == _credential )
+			throw new RuntimeException("RT [AbstractManager]> Credential is not set on current Manager. Bad initialization.");
+		return _credential.getAccountName();
+	}
+
+	/**
+	 * Clears the initialization state and returns the last value contained on this flag.
+	 */
 	public boolean clearInitialization () {
 		boolean oldstate = initialized;
 		initialized = false;
 		return oldstate;
 	}
 
-	public List<ICollaboration> collaborate2Model (final String variant) {
-		return new ArrayList<ICollaboration>();
-	}
 
-	public String getJsonClass () {
-		return jsonClass;
-	}
-
-	@JsonIgnore
-	public NeoComCharacter getPilot () {
-		return pilot;
-	}
+	//@Deprecated
+	//	@JsonIgnore
+	//	public NeoComCharacter getPilot () {
+	//		return pilot;
+	//	}
 
 	/**
 	 * Returns the list of different Regions found on the list of locations.
@@ -89,15 +100,15 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 
 	public abstract AbstractManager initialize ();
 
-	/**
-	 * Checks if the initialization method and the load of the resources has been already executed.
-	 */
-	//	public boolean isInitialized() {
-	//		return initialized;
+	//	/**
+	//	 * Checks if the initialization method and the load of the resources has been already executed.
+	//	 */
+	//	//	public boolean isInitialized() {
+	//	//		return initialized;
+	//	//	}
+	//	public void setPilot (final NeoComCharacter newPilot) {
+	//		pilot = newPilot;
 	//	}
-	public void setPilot (final NeoComCharacter newPilot) {
-		pilot = newPilot;
-	}
 
 	/**
 	 * This adds the Asset to the target Container. If the Container is not already on the list of Containers
@@ -119,17 +130,6 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 		}
 	}
 
-	//	protected void add2Location(final NeoComAsset asset) {
-	//		long locid = asset.getLocationID();
-	//		EveLocation target = locations.get(locid);
-	//		if (null == target) {
-	//			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
-	//			locations.put(new Long(locid), target);
-	//			this.add2Region(target);
-	//		}
-	//		target.addContent(asset);
-	//	}
-
 	protected void add2Region (final EveLocation target) {
 		long regionid = target.getRegionID();
 		Region region = regions.get(regionid);
@@ -140,32 +140,9 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 		region.addLocation(target);
 	}
 
-	//	/**
-	//	 * Get access to the parent and its Location and add it to the Locations list it it is the top of the chain.
-	//	 * THis can be performed recursively if the Parent has also another Parent.
-	//	 * 
-	//	 * @return
-	//	 */
-	//	private NeoComAsset processParent(final NeoComAsset parent) {
-	//		// This is the recursive part to get the complete chain.
-	//		if (parent.hasParent()) {
-	//			NeoComAsset target = this.processParent(parent.getParentContainer());
-	//			// Add asset to the chain.
-	//			if (target instanceof IAssetContainer) {
-	//				((IAssetContainer) target).addContent(parent);
-	//			}
-	//			return target;
-	//		} else {
-	//			// Get the asset (a Container or a Ship) and add it to the chain.
-	//			//			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parent.getAssetID());
-	//			if (null != parent) {
-	//				this.add2Location(parent);
-	//				return parent;
-	//			} else
-	//				return null;
-	//		}
-	//	}
-
+	public String getJsonClass () {
+		return jsonClass;
+	}
 }
 
 // - UNUSED CODE ............................................................................................

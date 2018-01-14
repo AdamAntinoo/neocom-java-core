@@ -31,7 +31,7 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 	private boolean _renderIfEmpty = true;
 	private boolean _downloading = false;
 	private boolean _downloaded = false;
-	private long pilotID = 0;
+	private long _credentialIdentifier = 0;
 	private final AssetGroup highModules = new AssetGroup("HIGH").setGroupType(EGroupType.SHIPSECTION_HIGH);
 	private final AssetGroup medModules = new AssetGroup("MED").setGroupType(EGroupType.SHIPSECTION_MED);
 	private final AssetGroup lowModules = new AssetGroup("LOW").setGroupType(EGroupType.SHIPSECTION_LOW);
@@ -41,6 +41,7 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 	private final AssetGroup orecargo = new AssetGroup("ORE HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	@Deprecated
 	public Ship () {
 		super();
 		// Ships have contents and are not available upon creation.
@@ -52,9 +53,9 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 	 * Get the Pilot when the ship is created to be able to search for its contents. Check if this value matches
 	 * the owner ID.
 	 */
-	public Ship (final long pilot) {
+	public Ship (final long identifier) {
 		this();
-		pilotID = pilot;
+		_credentialIdentifier = identifier;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -190,7 +191,7 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 
 	private void downloadShipData () {
 		ArrayList<NeoComAsset> contents = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-		                                                                            .searchAssetContainedAt(pilotID, this.getAssetID());
+		                                                                            .searchAssetContainedAt(_credentialIdentifier, this.getAssetID());
 		highModules.clean();
 		medModules.clean();
 		lowModules.clean();

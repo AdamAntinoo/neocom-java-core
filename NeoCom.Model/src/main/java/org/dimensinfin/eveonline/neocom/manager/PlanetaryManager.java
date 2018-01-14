@@ -24,7 +24,6 @@ import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 import org.dimensinfin.eveonline.neocom.planetary.Colony;
@@ -72,11 +71,11 @@ public class PlanetaryManager extends AbstractManager {
 		jsonClass = "PlanetaryManager";
 	}
 
-	@Deprecated
-	public PlanetaryManager (final NeoComCharacter pilot) {
-		super(pilot);
-		jsonClass = "PlanetaryManager";
-	}
+//	@Deprecated
+//	public PlanetaryManager (final NeoComCharacter pilot) {
+//		super(pilot);
+//		jsonClass = "PlanetaryManager";
+//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
@@ -94,7 +93,7 @@ public class PlanetaryManager extends AbstractManager {
 		try {
 			// Read all the assets for this character if not done already.
 			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
-																																	 .accessAllPlanetaryAssets(this.getPilot().getCharacterID());
+																																	 .accessAllPlanetaryAssets(getCredentialIdentifier());
 			totalAssets = planetaryAssetList.size();
 			// Process the Resources and search for the parent assets to classify them into the Locations.
 			for (NeoComAsset resource : planetaryAssetList) {
@@ -318,7 +317,7 @@ public class PlanetaryManager extends AbstractManager {
 		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
-			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), intermediary);
+			ExtendedLocation newloc = new ExtendedLocation(_credential, intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
 			newloc.setDownloaded(true);
 			locations.put(new Long(locid), newloc);
@@ -447,7 +446,7 @@ public class PlanetaryManager extends AbstractManager {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
-					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
+					Ship ship = new Ship(getCredentialIdentifier()).copyFrom(asset);
 					//					ships.put(ship.getAssetID(), ship);
 					// The ship is a container so add it and forget about this asset.
 					if ( ship.hasParent() ) {

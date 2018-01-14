@@ -47,9 +47,9 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	@Deprecated
-	public ExtendedLocation (final NeoComCharacter character, final EveLocation delegate) {
+	public ExtendedLocation (final Credential credential, final EveLocation delegate) {
 		this(delegate);
-		_characterIdentifier = character.getCharacterID();
+		_characterIdentifier = credential.getAccountId();
 	}
 
 	public ExtendedLocation (final long characterId, final EveLocation delegate) {
@@ -115,8 +115,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		return delegate.getFullLocation();
 	}
 
-	@Override
-	public long getID () {
+	public long getLocationId () {
 		return delegate.getID();
 	}
 
@@ -125,9 +124,8 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		return delegate.getName();
 	}
 
-	public long getPilotId () {
+	public long getCredentialIdentifier () {
 		return _characterIdentifier;
-//		return pilot.getCharacterID();
 	}
 
 	@Override

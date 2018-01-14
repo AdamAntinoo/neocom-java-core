@@ -10,41 +10,35 @@
 package org.dimensinfin.eveonline.neocom.interfaces;
 
 import org.dimensinfin.core.interfaces.IModelStore;
-import org.dimensinfin.eveonline.neocom.model.Login;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelStore extends IModelStore {
 
-	public Set<NeoComCharacter> accessCharacterList();
-
-	public Hashtable<String, Login> accessLoginList();
-
-	public Login activateLoginIdentifier(final String loginTarget);
-
-	public NeoComCharacter activatePilot(long characterID);
-
-	public NeoComCharacter activatePilot(final String characterstring);
+//	public Set<NeoComCharacter> accessCharacterList();
+//
+//	public Hashtable<String, Login> accessLoginList();
+//
+//	public Login activateLoginIdentifier(final String loginTarget);
+//
+//	public NeoComCharacter activatePilot(long characterID);
+//
+//	public NeoComCharacter activatePilot(final String characterstring);
 
 	public void cleanModel();
 
-	public NeoComCharacter getActiveCharacter();
-
-	public List<NeoComCharacter> getActiveCharacters();
-
-	public Login getActiveLogin();
-
-	public String getActiveLoginName();
-
-	@Deprecated
-	public NeoComCharacter getCurrentPilot();
-
-	@Deprecated
-	public String getLoginIdentifier();
+//	public NeoComCharacter getActiveCharacter();
+//
+//	public List<NeoComCharacter> getActiveCharacters();
+//
+//	public Login getActiveLogin();
+//
+//	public String getActiveLoginName();
+//
+//	@Deprecated
+//	public NeoComCharacter getCurrentPilot();
+//
+//	@Deprecated
+//	public String getLoginIdentifier();
 }
 
 // - UNUSED CODE ............................................................................................

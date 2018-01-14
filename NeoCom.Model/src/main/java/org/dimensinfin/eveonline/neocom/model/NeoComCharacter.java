@@ -29,10 +29,7 @@ import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.BlueprintManager;
 import org.dimensinfin.eveonline.neocom.manager.DownloadManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 
 import java.sql.SQLException;
 import java.util.Date;
@@ -172,12 +169,12 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//	private transient Instant lastCCPAccessTime = null;
 	@JsonIgnore
 	private transient DownloadManager _downloadManager = null;
-	@JsonIgnore
-	private transient AssetsManager _assetsManager = null;
-	@JsonIgnore
-	private transient PlanetaryManager _planetaryManager = null;
-	@JsonIgnore
-	private transient BlueprintManager _blueprintManager = null;
+//	@JsonIgnore
+//	private transient AssetsManager _assetsManager = null;
+//	@JsonIgnore
+//	private transient PlanetaryManager _planetaryManager = null;
+//	@JsonIgnore
+//	private transient BlueprintManager _blueprintManager = null;
 
 	// - F I E L D S   T O   R E V I E W
 	//	/** Copy of the total number of assets got from one AssetsManager. */
@@ -308,24 +305,24 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		return this.getAssetsManager().getTotalAssetsNumber();
 	//	}
 
-	@JsonIgnore
-	public AssetsManager getAssetsManager () {
-		if ( null == _assetsManager ) {
-			_assetsManager = new AssetsManager(this);
-		}
-		// Make sure the Manager is already connected to the Pilot.
-		_assetsManager.setPilot(this);
-		return _assetsManager;
-	}
-
-	public BlueprintManager getBlueprintsManager () {
-		if ( null == _blueprintManager ) {
-			_blueprintManager = new BlueprintManager(this);
-		}
-		// Make sure the Manager is already connected to the Pilot.
-		_blueprintManager.setPilot(this);
-		return _blueprintManager;
-	}
+//	@JsonIgnore
+//	public AssetsManager getAssetsManager () {
+//		if ( null == _assetsManager ) {
+//			_assetsManager = new AssetsManager(this);
+//		}
+//		// Make sure the Manager is already connected to the Pilot.
+//		_assetsManager.setPilot(this);
+//		return _assetsManager;
+//	}
+//
+//	public BlueprintManager getBlueprintsManager () {
+//		if ( null == _blueprintManager ) {
+//			_blueprintManager = new BlueprintManager(this);
+//		}
+//		// Make sure the Manager is already connected to the Pilot.
+//		_blueprintManager.setPilot(this);
+//		return _blueprintManager;
+//	}
 
 	public ApiAuthorization getAuthorization () {
 		return authorization;
@@ -356,14 +353,14 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		return characterInfo;
 	}
 
-	/**
-	 * Returns a non null default location so any Industry action has a location to be used as reference. Any
-	 * location is valid.
-	 */
-	@JsonIgnore
-	public EveLocation getDefaultLocation () {
-		return this.getAssetsManager().initialize().getLocations().values().iterator().next();
-	}
+//	/**
+//	 * Returns a non null default location so any Industry action has a location to be used as reference. Any
+//	 * location is valid.
+//	 */
+//	@JsonIgnore
+//	public EveLocation getDefaultLocation () {
+//		return this.getAssetsManager().initialize().getLocations().values().iterator().next();
+//	}
 
 	public Character getDelegatedCharacter () {
 		return delegatedCharacter;
@@ -381,13 +378,13 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		return delegatedCharacter.getName();
 	}
 
-	@JsonIgnore
-	public PlanetaryManager getPlanetaryManager () {
-		if ( null == _planetaryManager ) {
-			_planetaryManager = new PlanetaryManager(this);
-		}
-		return _planetaryManager;
-	}
+//	@JsonIgnore
+//	public PlanetaryManager getPlanetaryManager () {
+//		if ( null == _planetaryManager ) {
+//			_planetaryManager = new PlanetaryManager(this);
+//		}
+//		return _planetaryManager;
+//	}
 
 	/**
 	 * Return the active state set by the user. The user can hide some characters from the application

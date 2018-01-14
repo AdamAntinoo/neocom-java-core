@@ -9,11 +9,10 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.util.GregorianCalendar;
-
-import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+
+import java.util.GregorianCalendar;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelAppConnector implements IModelAppConnector {
@@ -83,12 +82,12 @@ public class ModelAppConnector implements IModelAppConnector {
 		return _connector.getDBConnector();
 	}
 
-	public INeoComModelStore getModelStore() {
-		if (null == _connector)
-			throw new RuntimeException(
-					"RTEX [GymAppConnector.getModelStore]> Application connection not defined. Functionality 'getModelStore' disabled.");
-		return _connector.getModelStore();
-	}
+//	public INeoComModelStore getModelStore() {
+//		if (null == _connector)
+//			throw new RuntimeException(
+//					"RTEX [GymAppConnector.getModelStore]> Application connection not defined. Functionality 'getModelStore' disabled.");
+//		return _connector.getModelStore();
+//	}
 
 	public void startChrono() {
 		chrono = new Instant();

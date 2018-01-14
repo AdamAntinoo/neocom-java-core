@@ -50,15 +50,18 @@ public class Credential extends NeoComNode {
 	private int keycode = -1;
 	@DatabaseField
 	private String validationcode = "";
-
+//	@DatabaseField
+//	private String authorizationMask = "";
 	@DatabaseField
 	private boolean active = true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected Credential () {
+		super();
+		jsonClass="Credential";
 	}
-
 	public Credential (final long newAccountIdentifier) {
+		this();
 		accountId = newAccountIdentifier;
 		try {
 			final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getDBConnector().getCredentialDao();
@@ -95,6 +98,10 @@ public class Credential extends NeoComNode {
 		return accountName;
 	}
 
+	public String getName () {
+		return accountName;
+	}
+
 	public Credential setAccountName (final String accountName) {
 		this.accountName = accountName;
 		return this;
@@ -126,13 +133,29 @@ public class Credential extends NeoComNode {
 		this.expires = expires;
 		return this;
 	}
-
 	public String getRefreshToken () {
 		return refreshToken;
 	}
-
 	public Credential setRefreshToken (final String refreshToken) {
 		this.refreshToken = refreshToken;
+		return this;
+	}
+
+	public int getKeyCode () {
+		return keycode;
+	}
+
+	public Credential setKeyCode (final int keycode) {
+		this.keycode = keycode;
+		return this;
+	}
+
+	public String getValidationCode () {
+		return validationcode;
+	}
+
+	public Credential setValidationCode (final String validationcode) {
+		this.validationcode = validationcode;
 		return this;
 	}
 

@@ -6,8 +6,6 @@
 
 package org.dimensinfin.eveonline.neocom.connector;
 
-import org.dimensinfin.eveonline.neocom.interfaces.INeoComModelStore;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IConnector {
 	public void addCharacterUpdateRequest(long characterID);
@@ -29,7 +27,7 @@ public interface IConnector {
 	//	public boolean getAssetsFormat();
 	//	public Class<?> getFirstActivity();
 
-	public INeoComModelStore getModelStore();
+//	public INeoComModelStore getModelStore();
 
 	public IStorageConnector getStorageConnector();
 

@@ -17,12 +17,12 @@ import com.j256.ormlite.stmt.Where;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
@@ -93,8 +93,8 @@ public class AssetsManager extends AbstractManager {
 	private Vector<NeoComAsset> unlocatedAssets = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetsManager (final NeoComCharacter pilot) {
-		super(pilot);
+	public AssetsManager (final Credential credential) {
+		super(credential);
 		// Load the timestamp from the database to control the refresh status of all the assets.
 		this.readTimeStamps();
 		jsonClass = "AssetsManager";
@@ -202,10 +202,10 @@ public class AssetsManager extends AbstractManager {
 			try {
 				this.accessDaos();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
-				queryBuilder.setCountOf(true).where().eq("ownerID", this.getPilot().getCharacterID());
+				queryBuilder.setCountOf(true).where().eq("ownerID", getCredentialIdentifier());
 				totalAssets = assetDao.countOf(queryBuilder.prepare());
 			} catch (SQLException sqle) {
-				AssetsManager.logger.info("W> [AssetsManager.getTotalAssetsNumber]> Problem calculating the number of assets. Pilot: " + this.getPilot().getName());
+				AssetsManager.logger.info("W> [AssetsManager.getTotalAssetsNumber]> Problem calculating the number of assets. Pilot: " + getCredentialName());
 			}
 		}
 		return totalAssets;
@@ -226,7 +226,7 @@ public class AssetsManager extends AbstractManager {
 			// INITIALIZE - Initialize the number of assets.
 			this.getTotalAssetsNumber();
 			// INITIALIZE - Initialize the Locations and the Regions
-			List<NeoComAsset> locs = queryAllAssetLocations(this.getPilot().getCharacterID());
+			List<NeoComAsset> locs = queryAllAssetLocations(getCredentialIdentifier());
 			regions.clear();
 			locations.clear();
 			// Process the locations to a new list of Regions.
@@ -249,11 +249,11 @@ public class AssetsManager extends AbstractManager {
 		assetsCategoryList = assetsAtCategoryCache.get(category);
 		if ( null == assetsCategoryList ) {
 			assetsCategoryList = ModelAppConnector.getSingleton().getDBConnector()
-			                                      .searchAsset4Category(this.getPilot().getCharacterID(), category);
+			                                      .searchAsset4Category(getCredentialIdentifier(), category);
 			assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
 		} else {
 			AssetsManager.logger.info("~~ [AssetsManager.searchAsset4Category]> Cache hit [SELECT CATEGORY=" + category
-					+ " OWNERID = " + this.getPilot().getCharacterID() + "]");
+					+ " OWNERID = " + getCredentialIdentifier() + "]");
 		}
 		return assetsCategoryList;
 	}
@@ -265,7 +265,7 @@ public class AssetsManager extends AbstractManager {
 			this.accessDaos();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
-			where.eq("ownerID", this.getPilot().getCharacterID());
+			where.eq("ownerID", getCredentialIdentifier());
 			where.and();
 			where.eq("groupName", group);
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
@@ -287,14 +287,14 @@ public class AssetsManager extends AbstractManager {
 				this.accessDaos();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
-				where.eq("ownerID", this.getPilot().getCharacterID());
+				where.eq("ownerID", getCredentialIdentifier());
 				where.and();
 				where.eq("locationID", location.getID());
 				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
 				Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT LOCATIONID=" + location.getID() + " OWNERID = "
-						+ this.getPilot().getCharacterID() + "] - " + lapse);
+						+ getCredentialIdentifier() + "] - " + lapse);
 				assetsAtLocationCache.put(location.getID(), (ArrayList<NeoComAsset>) assetList);
 				// Update the dirty state to signal modification of store structures.
 				//				this.setDirty(true);
@@ -351,7 +351,7 @@ public class AssetsManager extends AbstractManager {
 				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
-				where.eq("ownerID", this.getPilot().getCharacterID());
+				where.eq("ownerID", getCredentialIdentifier());
 				where.and();
 				where.eq("category", ModelWideConstants.eveglobal.Module);
 				where.and();
@@ -360,7 +360,7 @@ public class AssetsManager extends AbstractManager {
 				assetList = assetDao.query(preparedQuery);
 				Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT CATEGORY=MODULE TECH=TECH II OWNERID = "
-						+ this.getPilot().getCharacterID() + "] - " + lapse);
+						+ getCredentialIdentifier() + "] - " + lapse);
 				assetsAtCategoryCache.put("T2Modules", (ArrayList<NeoComAsset>) assetList);
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
@@ -386,7 +386,7 @@ public class AssetsManager extends AbstractManager {
 			this.accessDaos();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
-			where.eq("ownerID", this.getPilot().getCharacterID());
+			where.eq("ownerID", getCredentialIdentifier());
 			where.and();
 			where.eq("typeID", item.getItemID());
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
@@ -400,7 +400,7 @@ public class AssetsManager extends AbstractManager {
 	@Override
 	public String toString () {
 		StringBuffer buffer = new StringBuffer("AssetsManager [");
-		buffer.append("owner:").append(this.getPilot().getName()).append(" ");
+		buffer.append("owner:").append(getCredentialName()).append(" ");
 		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
 		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
 		if ( assetsAtCategoryCache.size() > 0 ) {
@@ -435,7 +435,7 @@ public class AssetsManager extends AbstractManager {
 		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
-			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), intermediary);
+			ExtendedLocation newloc = new ExtendedLocation(_credential, intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
@@ -529,11 +529,11 @@ public class AssetsManager extends AbstractManager {
 			ModelAppConnector.getSingleton().startChrono();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
-			where.eq("ownerID", this.getPilot().getCharacterID());
+			where.eq("ownerID", getCredentialIdentifier());
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = (ArrayList<NeoComAsset>) assetDao.query(preparedQuery);
 			Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-			AssetsManager.logger.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + this.getPilot().getCharacterID()
+			AssetsManager.logger.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + getCredentialIdentifier()
 					+ "] - " + lapse);
 			AssetsManager.logger.info("-- Assets processed: " + assetList.size());
 		} catch (java.sql.SQLException sqle) {
@@ -543,7 +543,7 @@ public class AssetsManager extends AbstractManager {
 	}
 
 	private String getTSAssetsReference () {
-		return this.getPilot().getCharacterID() + ".ASSETS";
+		return getCredentialIdentifier() + ".ASSETS";
 	}
 
 	/**
@@ -568,7 +568,7 @@ public class AssetsManager extends AbstractManager {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
-					Ship ship = new Ship(this.getPilot().getCharacterID()).copyFrom(asset);
+					Ship ship = new Ship(getCredentialIdentifier()).copyFrom(asset);
 					ships.put(ship.getAssetID(), ship);
 					// The ship is a container so add it and forget about this asset.
 					if ( ship.hasParent() ) {
@@ -755,7 +755,7 @@ public class AssetsManager extends AbstractManager {
 		else {
 			EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(identifier);
 			// Convert the Location to a new Extended Location with the new Contents Manager.
-			ExtendedLocation newloc = new ExtendedLocation(this.getPilot(), location);
+			ExtendedLocation newloc = new ExtendedLocation(_credential, location);
 			newloc.setContentManager(new AllLazyAssetsContentManager(newloc));
 			locations.put(identifier, newloc);
 			long regid = newloc.getRegionID();

@@ -178,7 +178,7 @@ public class Action extends NeoComNode implements IExpandable {
 			//			for (TaskBundle current : tasksRegistered) {
 			//				EveTask currentTask = current.task;
 			//				if ((task.getTypeID() == currentTask.getTypeID()) && (task.getTaskType() == currentTask.getTaskType()))
-			//					if (task.getLocation().getID() == currentTask.getLocation().getID()) {
+			//					if (task.getLocation().getLocationId() == currentTask.getLocation().getLocationId()) {
 			//						//						currentTask.setQty(currentTask.getQty() + task.getQty());
 			//						return;
 			//					}
