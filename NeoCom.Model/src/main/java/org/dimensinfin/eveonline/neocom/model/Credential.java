@@ -18,6 +18,8 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation.LocationTypeEnum;
+import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore.CorePilot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,8 @@ public class Credential extends NeoComNode {
 //	private String authorizationMask = "";
 	@DatabaseField
 	private boolean active = true;
+
+	private transient CorePilot pilot=null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected Credential () {
@@ -166,6 +170,26 @@ public class Credential extends NeoComNode {
 	public Credential setActive (final boolean active) {
 		this.active = active;
 		return this;
+	}
+
+	public void setCharacterCoreData (final CorePilot pilot) {
+		this.pilot=pilot;
+	}
+
+	public long getLocationId () {
+		return pilot.getLocationId();
+	}
+
+	public LocationTypeEnum getLocationType () {
+		return pilot.getLocationType();
+	}
+
+	public EveLocation getLocation () {
+		return pilot.getLocation();
+	}
+
+	public String getURLForAvatar () {
+		return pilot.getURLForAvatar();
 	}
 
 	/**
