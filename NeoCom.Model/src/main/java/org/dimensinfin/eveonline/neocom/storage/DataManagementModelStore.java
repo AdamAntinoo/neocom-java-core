@@ -156,19 +156,19 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
-//	public static Credential fromRefresh (final String refresh) {
-//		try {
-//			ESIToken existing = this.store.get(refresh);
-//			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
-//				final OAuth2AccessToken token = this.oAuth.refreshAccessToken(refresh);
-//				return save(token);
-//			}
-//			return existing;
-//		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
-//			LOG.error(e.getMessage(), e);
-//			return null;
-//		}
-//	}
+	//	public static Credential fromRefresh (final String refresh) {
+	//		try {
+	//			ESIToken existing = this.store.get(refresh);
+	//			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
+	//				final OAuth2AccessToken token = this.oAuth.refreshAccessToken(refresh);
+	//				return save(token);
+	//			}
+	//			return existing;
+	//		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
+	//			LOG.error(e.getMessage(), e);
+	//			return null;
+	//		}
+	//	}
 
 
 	/**
@@ -207,6 +207,8 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 											@Override
 											public void run () {
 												testCharacterESIRequest(getTarget());
+												// Start an event chain to update the presentation ui with the new data.
+												getTarget().fireStructureChange("EVENTSTRUCTURE_NEWDATA", getTarget(), getTarget());
 											}
 										});
 							}
@@ -223,7 +225,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	}
 
 	private File createCacheFile (final String fileName) {
-			File esiCacheFile = new File(fileName);
+		File esiCacheFile = new File(fileName);
 		return esiCacheFile;
 	}
 
@@ -246,11 +248,8 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 			scopes.add("esi-clones.read_clones.v1");
 			final String cacheFilename = "./NeoComESIcache.store";
 			final File cache = createCacheFile(cacheFilename);
-			final long cacheSize=1000000;
-			final long timeout=10000;
-
-
-
+			final long cacheSize = 1000000;
+			final long timeout = 10000;
 
 
 			// Initialization of instances required later.
@@ -260,51 +259,50 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 			final Response<GetCharactersCharacterIdClonesOk> request = clonesApiRetrofit.getCharactersCharacterIdClones(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
 
 
-//			OkHttpClient.Builder retrofitClient =
-//					new OkHttpClient.Builder()
-//							.addInterceptor(chain -> {
-//								Request.Builder builder = chain.request().newBuilder()
-//																							 .addHeader("User-Agent", "org.dimensinfin.eveonline.neocom");
-//								return chain.proceed(builder.build());
-//							})
-//							.addInterceptor(chain -> {
-//								if ( StringUtils.isBlank(refresh) ) {
-//									return chain.proceed(chain.request());
-//								}
-//
-//								Request.Builder builder = chain.request().newBuilder();
-//								final ESIToken token = auth.fromRefresh(refresh);
-//								if ( null != token ) {
-//									builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
-//								}
-//								return chain.proceed(builder.build());
-//							})
-//							.addInterceptor(chain -> {
-//								if ( StringUtils.isBlank(refresh) ) {
-//									return chain.proceed(chain.request());
-//								}
-//
-//								okhttp3.Response r = chain.proceed(chain.request());
-//								if ( r.isSuccessful() ) {
-//									return r;
-//								}
-//								if ( r.body().string().contains("invalid_token") ) {
-//									auth.fromRefresh(refresh);
-//									r = chain.proceed(chain.request());
-//								}
-//								return r;
-//							});
+			//			OkHttpClient.Builder retrofitClient =
+			//					new OkHttpClient.Builder()
+			//							.addInterceptor(chain -> {
+			//								Request.Builder builder = chain.request().newBuilder()
+			//																							 .addHeader("User-Agent", "org.dimensinfin.eveonline.neocom");
+			//								return chain.proceed(builder.build());
+			//							})
+			//							.addInterceptor(chain -> {
+			//								if ( StringUtils.isBlank(refresh) ) {
+			//									return chain.proceed(chain.request());
+			//								}
+			//
+			//								Request.Builder builder = chain.request().newBuilder();
+			//								final ESIToken token = auth.fromRefresh(refresh);
+			//								if ( null != token ) {
+			//									builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
+			//								}
+			//								return chain.proceed(builder.build());
+			//							})
+			//							.addInterceptor(chain -> {
+			//								if ( StringUtils.isBlank(refresh) ) {
+			//									return chain.proceed(chain.request());
+			//								}
+			//
+			//								okhttp3.Response r = chain.proceed(chain.request());
+			//								if ( r.isSuccessful() ) {
+			//									return r;
+			//								}
+			//								if ( r.body().string().contains("invalid_token") ) {
+			//									auth.fromRefresh(refresh);
+			//									r = chain.proceed(chain.request());
+			//								}
+			//								return r;
+			//							});
 
 
-
-//			final ClonesApi clonesRetrofit = new Builder()
-//					.baseUrl("https://esi.tech.ccp.is/latest/")
-//					.addConverterFactory(JacksonConverterFactory.create())
-//					.build()
-//					.create(ClonesApi.class);
-//			final Response<GetCharactersCharacterIdClonesOk> r = clonesRetrofit
-//					.getCharactersCharacterIdClones((int) charId, null, null, null, null)
-//					.execute();
+			//			final ClonesApi clonesRetrofit = new Builder()
+			//					.baseUrl("https://esi.tech.ccp.is/latest/")
+			//					.addConverterFactory(JacksonConverterFactory.create())
+			//					.build()
+			//					.create(ClonesApi.class);
+			//			final Response<GetCharactersCharacterIdClonesOk> r = clonesRetrofit
+			//					.getCharactersCharacterIdClones((int) charId, null, null, null, null)
+			//					.execute();
 			if ( request.isSuccessful() ) {
 				// Create a minimum Character profile and fill it up with the available information.
 				final CorePilot pilot = new CorePilot()
