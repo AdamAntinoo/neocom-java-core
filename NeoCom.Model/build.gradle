@@ -34,10 +34,13 @@ dependencies {
     // N E O C O M . M O D E L
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'joda-time:joda-time:2.3'
+    implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
     implementation 'com.beimin:eveapi:6.0.6'
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.github.scribejava:scribejava-core:4.2.0'
+//    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'org.modelmapper:modelmapper:1.1.0'
     implementation 'com.annimon:stream:1.1.9'
 

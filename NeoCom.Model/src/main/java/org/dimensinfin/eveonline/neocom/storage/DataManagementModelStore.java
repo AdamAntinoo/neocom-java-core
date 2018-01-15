@@ -16,6 +16,9 @@ import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.core.util.OneParameterTask;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
+import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
@@ -28,14 +31,14 @@ import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 import retrofit2.Response;
-import retrofit2.Retrofit.Builder;
-import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.Retrofit;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -153,6 +156,21 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
+//	public static Credential fromRefresh (final String refresh) {
+//		try {
+//			ESIToken existing = this.store.get(refresh);
+//			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
+//				final OAuth2AccessToken token = this.oAuth.refreshAccessToken(refresh);
+//				return save(token);
+//			}
+//			return existing;
+//		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
+//			LOG.error(e.getMessage(), e);
+//			return null;
+//		}
+//	}
+
+
 	/**
 	 * Returns the current list of active credentials. At this stage credentials are generated from a mix of
 	 * api keys and esi tokens. After march 2018 only ESI tokens will be available.
@@ -188,33 +206,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 										new OneParameterTask<Credential>(current) {
 											@Override
 											public void run () {
-												logger.info(">> [DataManagementModelStore.accessCredentialList]");
-												final Chrono downloadTotalTime = new Chrono();
-												try {
-													// Create a request to the ESI api downloader to get Character clones and locations.
-													final long charId = getTarget().getAccountId();
-													final ClonesApi clonesRetrofit = new Builder()
-															.baseUrl("https://esi.tech.ccp.is/latest/")
-															.addConverterFactory(JacksonConverterFactory.create())
-															.build()
-															.create(ClonesApi.class);
-													final Response<GetCharactersCharacterIdClonesOk> r = clonesRetrofit
-															.getCharactersCharacterIdClones((int) charId, null, null, null, null)
-															.execute();
-													if ( r.isSuccessful() ) {
-														// Create a minimum Character profile and fill it up with the available information.
-														final CorePilot pilot = new CorePilot()
-																.setIdentifier(getTarget().getAccountId())
-														.setLocationId(r.body().getHomeLocation().getLocationId())
-														.setLocationType(r.body().getHomeLocation().getLocationType());
-														// Add this data to the Credential.
-														getTarget().setCharacterCoreData(pilot);
-													}
-												} catch (IOException e) {
-													e.printStackTrace();
-												} finally {
-													logger.info("<< [DataManagementModelStore.accessCredentialList]> [TIMING] Full elapsed: ", downloadTotalTime.printElapsed(ChonoOptions.SHOWMILLIS));
-												}
+												testCharacterESIRequest(getTarget());
 											}
 										});
 							}
@@ -230,11 +222,110 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		return _credentialList;
 	}
 
+	private File createCacheFile (final String fileName) {
+			File esiCacheFile = new File(fileName);
+		return esiCacheFile;
+	}
+
+	private void testCharacterESIRequest (final Credential cred) {
+		logger.info(">> [DataManagementModelStore.accessCredentialList]");
+		final Chrono downloadTotalTime = new Chrono();
+		try {
+			// Create a request to the ESI api downloader to get Character clones and locations.
+			// Initialization of data that are required.
+			final long charId = cred.getAccountId();
+			final String refresh = cred.getRefreshToken();
+			final String datasource = "tranquility";
+			final String CLIENT_ID = "396e0b6cbed2488284ed4ae426133c90";
+			final String SECRET_KEY = "gf8X16xbdaO6soJWCdYHPFfftczZyvfo63z6WUjO";
+			final String CALLBACK = "eveauth-neotest://authentication";
+			final String agent = "org.dimensinfin.eveonline.neocom; Dimensinfin Industries";
+			final ESIStore store = ESIStore.DEFAULT;
+			final List<String> scopes = new ArrayList<>(2);
+			scopes.add("publicData");
+			scopes.add("esi-clones.read_clones.v1");
+			final String cacheFilename = "./NeoComESIcache.store";
+			final File cache = createCacheFile(cacheFilename);
+			final long cacheSize=1000000;
+			final long timeout=10000;
+
+
+
+
+
+			// Initialization of instances required later.
+			final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, agent, store, scopes);
+			final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(refresh, neocomAuth20, agent, cache, cacheSize, timeout);
+			final ClonesApi clonesApiRetrofit = neocomRetrofit.create(ClonesApi.class);
+			final Response<GetCharactersCharacterIdClonesOk> request = clonesApiRetrofit.getCharactersCharacterIdClones(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
+
+
+//			OkHttpClient.Builder retrofitClient =
+//					new OkHttpClient.Builder()
+//							.addInterceptor(chain -> {
+//								Request.Builder builder = chain.request().newBuilder()
+//																							 .addHeader("User-Agent", "org.dimensinfin.eveonline.neocom");
+//								return chain.proceed(builder.build());
+//							})
+//							.addInterceptor(chain -> {
+//								if ( StringUtils.isBlank(refresh) ) {
+//									return chain.proceed(chain.request());
+//								}
+//
+//								Request.Builder builder = chain.request().newBuilder();
+//								final ESIToken token = auth.fromRefresh(refresh);
+//								if ( null != token ) {
+//									builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
+//								}
+//								return chain.proceed(builder.build());
+//							})
+//							.addInterceptor(chain -> {
+//								if ( StringUtils.isBlank(refresh) ) {
+//									return chain.proceed(chain.request());
+//								}
+//
+//								okhttp3.Response r = chain.proceed(chain.request());
+//								if ( r.isSuccessful() ) {
+//									return r;
+//								}
+//								if ( r.body().string().contains("invalid_token") ) {
+//									auth.fromRefresh(refresh);
+//									r = chain.proceed(chain.request());
+//								}
+//								return r;
+//							});
+
+
+
+//			final ClonesApi clonesRetrofit = new Builder()
+//					.baseUrl("https://esi.tech.ccp.is/latest/")
+//					.addConverterFactory(JacksonConverterFactory.create())
+//					.build()
+//					.create(ClonesApi.class);
+//			final Response<GetCharactersCharacterIdClonesOk> r = clonesRetrofit
+//					.getCharactersCharacterIdClones((int) charId, null, null, null, null)
+//					.execute();
+			if ( request.isSuccessful() ) {
+				// Create a minimum Character profile and fill it up with the available information.
+				final CorePilot pilot = new CorePilot()
+						.setIdentifier(cred.getAccountId())
+						.setLocationId(request.body().getHomeLocation().getLocationId())
+						.setLocationType(request.body().getHomeLocation().getLocationType());
+				// Add this data to the Credential.
+				cred.setCharacterCoreData(pilot);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [DataManagementModelStore.accessCredentialList]> [TIMING] Full elapsed: ", downloadTotalTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+	}
+
 	public static class CorePilot {
-		private long identifier=-1;
+		private long identifier = -1;
 		private long locationId = -1;
 		private LocationTypeEnum locationType;
-		private EveLocation location=null;
+		private EveLocation location = null;
 
 		public long getIdentifier () {
 			return identifier;
@@ -268,7 +359,8 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		public EveLocation getLocation () {
 			return location;
 		}
-		public String getURLForAvatar(){
+
+		public String getURLForAvatar () {
 			return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
 		}
 	}
