@@ -192,6 +192,10 @@ public class Credential extends NeoComNode {
 		return pilot.getURLForAvatar();
 	}
 
+	public boolean checkPilotDownload(){
+		if(null==pilot)return false;
+		return true;
+	}
 	/**
 	 * Update the values at the database record.
 	 */

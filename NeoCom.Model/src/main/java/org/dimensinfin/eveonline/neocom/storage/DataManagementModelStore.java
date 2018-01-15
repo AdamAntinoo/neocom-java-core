@@ -341,7 +341,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		public CorePilot setLocationId (final long locationId) {
 			this.locationId = locationId;
 			// Search this location identifier at the Location service.
-			final EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
+			location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
 			return this;
 		}
 
