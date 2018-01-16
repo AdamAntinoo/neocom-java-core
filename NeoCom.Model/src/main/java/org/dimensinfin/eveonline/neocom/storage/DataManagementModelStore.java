@@ -9,25 +9,26 @@
 //                  rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.storage;
 
-import com.tlabs.android.evanova.adapter.ApplicationCloudAdapter;
+import com.beimin.eveapi.model.account.Character;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChonoOptions;
-import org.dimensinfin.core.util.OneParameterTask;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation.LocationTypeEnum;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Login;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Vector;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -111,22 +113,41 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		logger.info("<< [AppModelStore.initialize]");
 	}
 
-	public static Credential getActiveCredential () {
-		return getSingleton().getActiveCredentialMethod();
+	public static List<Credential> accessCredentialList () {
+		return getSingleton().accessCredentialListImpl();
 	}
+
+	public static Credential getActiveCredential () {
+		return getSingleton().getActiveCredentialImpl();
+	}
+
+	/**
+	 * Search this identifier on the list of credentials and returns the findings.
+	 */
+	public static Credential getCredential4Id (final long identifier) {
+		return getSingleton().getCredential4IdImpl(identifier);
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
-	/** Reference to the application menu to make it accessible to any level. */
-	//	private transient Menu _appMenu = null;
-	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
-	//	private transient Activity _activity = null;
 	/** This is the unique list for all registered distinct credentials at the database. */
-	//	private Hashtable<String, Login> _loginList = null;
-	private final List<Credential> _credentialList = new ArrayList<>();
+	private final List<Credential> _credentialList = new Vector<>();
 	/**
 	 * Reference to the Active Credential that points to the Active Character. If null we should go back to the Login
 	 * Activity to select a new Credential.
 	 */
 	private Credential _activeCredential = null;
+
+
+	//	/** This is the list of available characters that are connected to the available Credentials */
+	//	private final List<NeoComCharacter> _characters = new vector();
+
+
+	/** Reference to the application menu to make it accessible to any level. */
+	//	private transient Menu _appMenu = null;
+	/** Reference to the current active Activity. Sometimes this is needed to access application resources. */
+	//	private transient Activity _activity = null;
+	//	private Hashtable<String, Login> _loginList = null;
+
 	/**
 	 * Reference to the current active Character. If this field is null we have to go back to the Login Activity to select
 	 * another one.
@@ -183,7 +204,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * In addition to generate the list of Credentials, with each of them I will download some of the Character
 	 * data during the creation of the list and connect that data to the parent Credential.
 	 */
-	public List<Credential> accessCredentialList () {
+	private List<Credential> accessCredentialListImpl () {
 		if ( _credentialList.size() < 1 ) {
 			try {
 				// Read and process the list of ApiKeys and Credentials to get a single Character list.
@@ -191,27 +212,29 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 				final List<Credential> credentials = NeoComDatabase.accessAllCredentials();
 				_credentialList.clear();
 				// Process the list to unify the results.
-				for (Credential current : credentials) {
-					_credentialList.add(current);
+				for (Credential currentCredential : credentials) {
+					_credentialList.add(currentCredential);
 					// Scan the keys to search for matches.
-					final long cid = current.getAccountId();
+					final long cid = currentCredential.getAccountId();
 					for (Login login : logins.values()) {
-						for (NeoComCharacter character : login.getCharacters()) {
-							if ( character.getCharacterID() == cid ) {
-								current.setKeyCode(character.getAuthorization().getKeyID())
-											 .setValidationCode(character.getAuthorization().getVCode())
-											 .store();
-								// Post a backend request to create som Character information to connect to the credential.
-								ApplicationCloudAdapter.submit2downloadExecutor(
-										new OneParameterTask<Credential>(current) {
-											@Override
-											public void run () {
-												testCharacterESIRequest(getTarget());
-												// Start an event chain to update the presentation ui with the new data.
-												getTarget().fireStructureChange("EVENTSTRUCTURE_NEWDATA", getTarget(), getTarget());
-											}
-										});
-							}
+						for (NeoComApiKey apikey : login.getKeys()) {
+							for (Character character : apikey.getDelegatedApiKey().getEveCharacters())
+								if ( character.getCharacterID() == cid ) {
+									currentCredential.setKeyCode(apikey.getAuthorization().getKeyID())
+																	 .setValidationCode(apikey.getAuthorization().getVCode())
+																	 //			 .setCharacterXML(character)
+																	 .store();
+									// Post a backend request to create som Character information to connect to the credential.
+									//								ApplicationCloudAdapter.submit2downloadExecutor(
+									//										new OneParameterTask<Credential>(currentCredential) {
+									//											@Override
+									//											public void run () {
+									//			testCharacterESIRequest(currentCredential);
+									// Start an event chain to update the presentation ui with the new data.
+									//			currentCredential.fireStructureChange("EVENTSTRUCTURE_NEWDATA",currentCredential,currentCredential);
+									//											}
+									//										});
+								}
 						}
 					}
 				}
@@ -222,6 +245,26 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 			}
 		}
 		return _credentialList;
+	}
+
+	/**
+	 * Returns the current active Credential that matched the active character. Raises a runtime exception if the
+	 * character is null.
+	 */
+	private Credential getActiveCredentialImpl () {
+		if ( null == _activeCredential )
+			throw new RuntimeException("RT> Accessing an invalid Credential. Select a new character from the list of Credentials.");
+		return _activeCredential;
+	}
+
+	/**
+	 * Search this identifier on the list of credentials and returns the findings.
+	 */
+	private Credential getCredential4IdImpl (final long identifier) {
+		for (Credential cred : _credentialList) {
+			if ( cred.getAccountId() == identifier ) return cred;
+		}
+		return null;
 	}
 
 	private File createCacheFile (final String fileName) {
@@ -255,62 +298,25 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 			// Initialization of instances required later.
 			final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, agent, store, scopes);
 			final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(refresh, neocomAuth20, agent, cache, cacheSize, timeout);
+
+			// Access the current clone location and the list of jump clones
 			final ClonesApi clonesApiRetrofit = neocomRetrofit.create(ClonesApi.class);
-			final Response<GetCharactersCharacterIdClonesOk> request = clonesApiRetrofit.getCharactersCharacterIdClones(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
-
-
-			//			OkHttpClient.Builder retrofitClient =
-			//					new OkHttpClient.Builder()
-			//							.addInterceptor(chain -> {
-			//								Request.Builder builder = chain.request().newBuilder()
-			//																							 .addHeader("User-Agent", "org.dimensinfin.eveonline.neocom");
-			//								return chain.proceed(builder.build());
-			//							})
-			//							.addInterceptor(chain -> {
-			//								if ( StringUtils.isBlank(refresh) ) {
-			//									return chain.proceed(chain.request());
-			//								}
-			//
-			//								Request.Builder builder = chain.request().newBuilder();
-			//								final ESIToken token = auth.fromRefresh(refresh);
-			//								if ( null != token ) {
-			//									builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
-			//								}
-			//								return chain.proceed(builder.build());
-			//							})
-			//							.addInterceptor(chain -> {
-			//								if ( StringUtils.isBlank(refresh) ) {
-			//									return chain.proceed(chain.request());
-			//								}
-			//
-			//								okhttp3.Response r = chain.proceed(chain.request());
-			//								if ( r.isSuccessful() ) {
-			//									return r;
-			//								}
-			//								if ( r.body().string().contains("invalid_token") ) {
-			//									auth.fromRefresh(refresh);
-			//									r = chain.proceed(chain.request());
-			//								}
-			//								return r;
-			//							});
-
-
-			//			final ClonesApi clonesRetrofit = new Builder()
-			//					.baseUrl("https://esi.tech.ccp.is/latest/")
-			//					.addConverterFactory(JacksonConverterFactory.create())
-			//					.build()
-			//					.create(ClonesApi.class);
-			//			final Response<GetCharactersCharacterIdClonesOk> r = clonesRetrofit
-			//					.getCharactersCharacterIdClones((int) charId, null, null, null, null)
-			//					.execute();
-			if ( request.isSuccessful() ) {
+			final Response<GetCharactersCharacterIdClonesOk> characterCloneResponse = clonesApiRetrofit.getCharactersCharacterIdClones(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
+			if ( characterCloneResponse.isSuccessful() ) {
 				// Create a minimum Character profile and fill it up with the available information.
-				final CorePilot pilot = new CorePilot()
+				final CorePilot pilot = new CorePilot(characterCloneResponse.body())
 						.setIdentifier(cred.getAccountId())
-						.setLocationId(request.body().getHomeLocation().getLocationId())
-						.setLocationType(request.body().getHomeLocation().getLocationType());
+						.setLocationId(characterCloneResponse.body().getHomeLocation().getLocationId())
+						.setLocationType(characterCloneResponse.body().getHomeLocation().getLocationType());
 				// Add this data to the Credential.
 				cred.setCharacterCoreData(pilot);
+			}
+
+			final PlanetaryInteractionApi colonyApiRetrofit = neocomRetrofit.create(PlanetaryInteractionApi.class);
+			final Response<List<GetCharactersCharacterIdPlanets200Ok>> colonyApiResponse = colonyApiRetrofit.getCharactersCharacterIdPlanets(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
+			if ( colonyApiResponse.isSuccessful() ) {
+				// Add Colony information to the Pilot.
+				cred.addPlanetaryData(colonyApiResponse.body());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -320,10 +326,16 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	}
 
 	public static class CorePilot {
+		private final GetCharactersCharacterIdClonesOk delegate;
 		private long identifier = -1;
 		private long locationId = -1;
 		private LocationTypeEnum locationType;
 		private EveLocation location = null;
+		private List<GetCharactersCharacterIdPlanets200Ok> planetaryData;
+
+		public CorePilot (final GetCharactersCharacterIdClonesOk delegate) {
+			this.delegate = delegate;
+		}
 
 		public long getIdentifier () {
 			return identifier;
@@ -361,6 +373,11 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		public String getURLForAvatar () {
 			return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
 		}
+
+		public CorePilot setPlanetaryData (final List<GetCharactersCharacterIdPlanets200Ok> data) {
+			this.planetaryData = data;
+			return this;
+		}
 	}
 
 	/**
@@ -385,16 +402,6 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		}
 		// If we reach this point this means that we have not found the credential. This is an exception.
 		throw new RuntimeException("RT [NeoComModelStore]> Credential with id " + identifier + " not found.");
-	}
-
-	/**
-	 * Returns the current active Credential that matched the active character. Raises a runtime exception if the
-	 * character is null.
-	 */
-	private Credential getActiveCredentialMethod () {
-		if ( null == _activeCredential )
-			throw new RuntimeException("RT> Accessing an invalid Credential. Select a new character from the list of Credentials.");
-		return _activeCredential;
 	}
 
 	@Override

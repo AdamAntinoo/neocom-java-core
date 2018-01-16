@@ -65,6 +65,8 @@ public class NeoComDatabase {
 		return implementer;
 	}
 
+	// - S T A T I C   R E P L I C A T E D   M E T H O D S
+	@Deprecated
 	public static Hashtable<String, Login> accessAllLogins () {
 		_accessCount++;
 		return singleton.accessAllLoginsMethod();
@@ -88,6 +90,7 @@ public class NeoComDatabase {
 	/**
 	 * Reads all the keys stored at the database and classifies them into a set of Login names.
 	 */
+	@Deprecated
 	private Hashtable<String, Login> accessAllLoginsMethod () {
 		// Get access to all ApiKey registers
 		List<ApiKey> keyList = new Vector<ApiKey>();

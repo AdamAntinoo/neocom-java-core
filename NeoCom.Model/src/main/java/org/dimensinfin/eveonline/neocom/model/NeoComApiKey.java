@@ -10,16 +10,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.logging.Logger;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
-
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.CachingConnector;
@@ -34,6 +24,16 @@ import com.beimin.eveapi.parser.account.AccountStatusParser;
 import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
 import com.beimin.eveapi.response.account.AccountStatusResponse;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComApiKey extends NeoComNode {
@@ -126,6 +126,7 @@ public class NeoComApiKey extends NeoComNode {
 	 * @return
 	 * @throws ApiException
 	 */
+	@Deprecated
 	public ArrayList<NeoComCharacter> getApiCharacters() throws ApiException {
 		if (null == neocomCharactersCache) {
 			neocomCharactersCache = new ArrayList<NeoComCharacter>();

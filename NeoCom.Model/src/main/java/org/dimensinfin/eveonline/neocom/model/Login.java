@@ -10,10 +10,12 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.account.Character;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IExpandable;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -38,8 +40,9 @@ public class Login extends NeoComNode implements IExpandable {
 	private boolean _expanded = false;
 	private boolean _renderIfEmpty = true;
 	private String _name = "-Default-";
-	private final Vector<ApiKey> _keys = new Vector<ApiKey>();
+	private final List<NeoComApiKey> _keys = new Vector<NeoComApiKey>();
 	private final TreeSet<NeoComCharacter> _characters = new TreeSet<NeoComCharacter>();
+	private Collection<Character> _coreCharacterList;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Login () {
@@ -60,20 +63,23 @@ public class Login extends NeoComNode implements IExpandable {
 	 * Character data into the character list of this login.
 	 */
 	public Login addKey (final ApiKey newkey) {
-		_keys.add(newkey);
+//		_keys.add(newkey);
 		// Process the key to get the next level of data.
 		try {
 			if ( newkey.isActive() ) {
 				NeoComApiKey key = NeoComApiKey.build(newkey.getKeynumber(), newkey.getValidationcode());
+				_keys.add(key);
 				// Add the Characters only if the Key is active.
 				// Scan for the characters declared into this key.
-				for (NeoComCharacter pilot : key.getApiCharacters()) {
-					_characters.add(pilot);
-					// Update the pilot parentship.
-					pilot.connectLogin(this);
-					Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " [" + pilot.getCharacterID()
-							+ "] to the _characters");
-				}
+				// TODO REFACTOR - This code is removed because the Characters are not being added to Login neither to Keys.
+				_coreCharacterList = key.getDelegatedApiKey().getEveCharacters();
+				//				for (NeoComCharacter pilot : key.getApiCharacters()) {
+//					_characters.add(pilot);
+//					// Update the pilot parentship.
+//					pilot.connectLogin(this);
+//					Login.logger.info("-- [Login.addKey]> Adding " + pilot.getName() + " [" + pilot.getCharacterID()
+//							+ "] to the _characters");
+//				}
 			}
 		} catch (ApiException apiex) {
 			Login.logger.info("EX [Login.addKey]> ApiException: " + apiex.getMessage());
@@ -82,6 +88,9 @@ public class Login extends NeoComNode implements IExpandable {
 		return this;
 	}
 
+	public List<NeoComApiKey> getKeys(){
+		return _keys;
+	}
 	/**
 	 * The collaboration to the model should add all elements below on the next level of the hierarchy. Only add
 	 * items for visible nodes but independently of the expansion state because that is something that is only
@@ -90,14 +99,14 @@ public class Login extends NeoComNode implements IExpandable {
 	@Override
 	public List<ICollaboration> collaborate2Model (final String variant) {
 		Vector<ICollaboration> results = new Vector<ICollaboration>();
-		results.addAll(this.getCharacters());
+//		results.addAll(this.getCharacters());
 		return results;
 	}
 
-	public List<NeoComCharacter> getCharacters () {
-		Vector<NeoComCharacter> result = new Vector<NeoComCharacter>();
-		result.addAll(_characters);
-		return result;
+	public Collection<Character> getCharacters () {
+//		Vector<NeoComCharacter> result = new Vector<NeoComCharacter>();
+//		result.addAll(_characters);
+		return _coreCharacterList;
 	}
 
 	public int getContentSize () {
