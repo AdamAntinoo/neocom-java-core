@@ -226,9 +226,9 @@ public class Credential extends NeoComNode {
 		return pilot.getLocation();
 	}
 
-	public String getURLForAvatar () {
-		return pilot.getURLForAvatar();
-	}
+//	public String getURLForAvatar () {
+//		return pilot.getURLForAvatar();
+//	}
 
 	public double getAccountBalance () {
 		return character.getAccountBalance();

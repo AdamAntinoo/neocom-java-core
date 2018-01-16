@@ -62,6 +62,12 @@ import retrofit2.Retrofit;
  * There should be some type of notification mechanism to report the UI about changes on the data contents
  * performed with background tasks. This is integrated on the GEF model hierarchy but has to be reviewed
  * inside Android special UI/non UI threads structure.
+ * <p>
+ * WARNING.
+ * Due to the singleton inheritance and the delayed singleton creation we should avoid the use of the
+ * <code>getSingleton()</code> method because it can return the wrong singleton depending on the class being
+ * called. We should use ever the <code>singleton</code> instance and then we should be sure it is
+ * properly initialized.
  *
  * @author Adam Antinoo
  */
@@ -71,7 +77,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	private static final long serialVersionUID = 8777607802616543118L;
 
 	private static Logger logger = LoggerFactory.getLogger(DataManagementModelStore.class);
-	private static DataManagementModelStore singleton = null;
+	protected static DataManagementModelStore singleton = null;
 
 	/**
 	 * Returns the single global instance of the Store to be used as an instance. In case the instance does not
@@ -80,7 +86,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 *
 	 * @return the single global sinleton.
 	 */
-	public static DataManagementModelStore getSingleton () {
+	protected static DataManagementModelStore getSingleton () {
 		//		NeoComModelStore.logger.info(">> [NeoComModelStore.getSingleton]");
 		if ( null == DataManagementModelStore.singleton ) {
 			// Initiate the recovery.
@@ -96,7 +102,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * implementation the persistence of the Model is not required since we can replicate its stae from scratch with the
 	 * parameters recovered at the Activities. We still connect the persistence Handler but should not be used.</p>
 	 */
-	public static void initialize () {
+	private static void initialize () {
 		logger.info(">> [AppModelStore.initialize]");
 		// Create a new from scratch. Tag it with the persistence handler so we can read/write its state.
 		DataManagementModelStore.singleton = new DataManagementModelStore(new NoOpPersistenceHandler());
@@ -113,19 +119,28 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		logger.info("<< [AppModelStore.initialize]");
 	}
 
+	// - S T A T I C   R E P L I C A T E D   M E T H O D S
 	public static List<Credential> accessCredentialList () {
-		return getSingleton().accessCredentialListImpl();
+		if ( null == singleton ) DataManagementModelStore.initialize();
+		return singleton.accessCredentialListImpl();
+	}
+
+	public static Credential activateCredential (final long identifier) {
+		if ( null == singleton ) DataManagementModelStore.initialize();
+		return singleton.activateCredentialImpl(identifier);
 	}
 
 	public static Credential getActiveCredential () {
-		return getSingleton().getActiveCredentialImpl();
+		if ( null == singleton ) DataManagementModelStore.initialize();
+		return singleton.getActiveCredentialImpl();
 	}
 
 	/**
 	 * Search this identifier on the list of credentials and returns the findings.
 	 */
 	public static Credential getCredential4Id (final long identifier) {
-		return getSingleton().getCredential4IdImpl(identifier);
+		if ( null == singleton ) DataManagementModelStore.initialize();
+		return singleton.getCredential4IdImpl(identifier);
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -388,7 +403,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * @param identifier unique account number of character identifier.
 	 * @return the new credential made active. Raises a RuntimeException if the Credential is not found.
 	 */
-	public Credential activateCredential (final long identifier) {
+	private Credential activateCredentialImpl (final long identifier) {
 		// Check if the list of credentials is already loaded. If not get it from the database.
 		if ( _credentialList.size() < 1 ) accessCredentialList();
 		if ( null != _activeCredential )
