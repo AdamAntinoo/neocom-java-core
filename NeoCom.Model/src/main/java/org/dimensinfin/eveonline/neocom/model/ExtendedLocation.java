@@ -30,18 +30,16 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private EveLocation delegate = null;
-	//	private NeoComCharacter		pilot							= null;
 	private long _characterIdentifier = -1;
+	/** Set the default content manager to one that is managed manually through method calls. */
 	private IContentManager contentManager = new AllLazyAssetsContentManager(this);
 	private boolean _expanded = false;
 	private boolean _renderIfEmpty = true;
 	private boolean _downloading = false;
-	private boolean _downloaded = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ExtendedLocation () {
 		super();
-		//		contentManager.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
 		jsonClass = "ExtendedLocation";
 	}
@@ -191,26 +189,10 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		return _expanded;
 	}
 
-	//	public boolean isRenderWhenEmpty() {
-	//		return _renderIfEmpty;
-	//	}
-
 	public IExpandable setRenderWhenEmpty (final boolean renderWhenEmpty) {
 		_renderIfEmpty = renderWhenEmpty;
 		return this;
 	}
-
-	//	@Override
-	//	public boolean isExpandable() {
-	//		return true;
-	//	}
-	//
-	//	@Override
-	//	public boolean isExpanded() {
-	//		return delegate.isExpanded();
-	//	}
-	//
-	//	@Override
 	public boolean isRenderWhenEmpty () {
 		if ( _renderIfEmpty )
 			return true;
@@ -221,12 +203,6 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 				return true;
 		}
 	}
-	//
-	//	@Override
-	//	public boolean isVisible() {
-	//		return delegate.isVisible();
-	//	}
-
 	@Override
 	public void setConstellation (final String constellation) {
 		delegate.setConstellation(constellation);
@@ -253,27 +229,10 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		} else
 			return this;
 	}
-
-	//	@Override
-	//	public AbstractComplexNode setExpanded(final boolean newState) {
-	//		return delegate.setExpanded(newState);
-	//	}
-	//
-	//	@Override
-	//	public boolean toggleExpanded() {
-	//		return delegate.toggleExpanded();
-	//	}
-	//
-	//	@Override
-	//	public boolean toggleVisible() {
-	//		return delegate.toggleVisible();
-	//	}
 	public IDownloadable setDownloading (final boolean downloading) {
 		this._downloading = downloading;
 		return this;
 	}
-
-
 	public boolean isDownloading () {
 		return _downloading;
 	}

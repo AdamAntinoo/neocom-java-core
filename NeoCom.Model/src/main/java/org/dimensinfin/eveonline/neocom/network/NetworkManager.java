@@ -21,7 +21,10 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +74,7 @@ public class NetworkManager {
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
 	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets (final int identifier, final String refreshToken, final String server) {
-		logger.info(">> [ColonyManager.accessAllColonies]");
+		logger.info(">> [NetworkManager.getCharactersCharacterIdPlanets]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
@@ -86,26 +89,56 @@ public class NetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ColonyManager.accessAllColonies]> [TIMING] Full elapsed: ", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [NetworkManager.getCharactersCharacterIdPlanets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
-	//		final Response<List<GetCharactersCharacterIdPlanets200Ok>> colonyApiResponse = colonyApiRetrofit.getCharactersCharacterIdPlanets(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
-	//
-	//
-	//		return neocomRetrofit;
-	//
-	//
-	//		final String refresh = _credential.getRefreshToken();
-	//		final String cacheFilename = "./NeoComESIcache.store";
-	//		final File cache = createCacheFile(cacheFilename);
-	//
-	//
-	//		// Initialization of instances required later.
-	//
-	//
-	//	}
+	public static GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId (final int identifier, final String refreshToken, final String server) {
+		logger.info(">> [NetworkManager.getUniversePlanetsPlanetId]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if ( null != server ) datasource = server;
+			// Create the request to be returned so it can be called.
+			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
+			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofit
+					.create(UniverseApi.class)
+					.getUniversePlanetsPlanetId(identifier, datasource, null, null).execute();
+			if ( !universeApiResponse.isSuccessful() ) {
+				return null;
+			} else return universeApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [NetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
+	public static GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId (final long identifier, final int planetid, final String refreshToken, final String server) {
+		logger.info(">> [NetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if ( null != server ) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> colonyApiResponse = neocomRetrofit
+					.create(PlanetaryInteractionApi.class)
+					.getCharactersCharacterIdPlanetsPlanetId(Long.valueOf(identifier).intValue(), planetid, datasource, null, null, null).execute();
+			if ( !colonyApiResponse.isSuccessful() ) {
+				return null;
+			} else return colonyApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [NetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -117,7 +150,7 @@ public class NetworkManager {
 	@Override
 	public String toString () {
 		StringBuffer buffer = new StringBuffer("NetworkManager [");
-//		buffer.append("Status: ").append(0);
+		//		buffer.append("Status: ").append(0);
 		buffer.append("]");
 		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
