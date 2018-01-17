@@ -15,14 +15,17 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 import org.joda.time.DateTime;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +41,16 @@ import java.util.List;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Colony extends NeoComNode {
+public class Colony extends NeoComExpandableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(Colony.class);
+
+	private static final ModelMapper modelMapper = new ModelMapper();
+	static {
+		modelMapper.getConfiguration()
+							 .setFieldMatchingEnabled(true)
+							 .setMethodAccessLevel(AccessLevel.PRIVATE);
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Integer solarSystemId = null;
@@ -52,6 +62,7 @@ public class Colony extends NeoComNode {
 	private DateTime lastUpdate = null;
 	private EveLocation location = null;
 	private GetUniversePlanetsPlanetIdOk planetData = null;
+	private GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
 	private List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -60,6 +71,18 @@ public class Colony extends NeoComNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
+	@Override
+	public List<ICollaboration> collaborate2Model (final String variant) {
+		List<ICollaboration> results = new ArrayList<>();
+		for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : getStructures()) {
+			// Map the structure into a compatible MVC node.
+			ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
+			results.add(newstruct);
+		}
+		return results;
+	}
+
 	// --- G E T T E R S   &   S E T T E R S
 	public Integer getSolarSystemId () {
 		return solarSystemId;
@@ -133,6 +156,7 @@ public class Colony extends NeoComNode {
 	}
 
 	public void setStructuresData (final GetCharactersCharacterIdPlanetsPlanetIdOk structures) {
+		this.structureData = structures;
 		this.pins = structures.getPins();
 	}
 
@@ -144,6 +168,10 @@ public class Colony extends NeoComNode {
 
 	public List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getStructures () {
 		return pins;
+	}
+
+	public GetCharactersCharacterIdPlanetsPlanetIdOk getStructureData () {
+		return structureData;
 	}
 
 	@Override

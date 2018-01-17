@@ -9,12 +9,12 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -36,7 +36,7 @@ public abstract class NeoComNode extends AbstractPropertyChanger implements ICol
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public List<ICollaboration> collaborate2Model(final String variant) {
-		return new Vector<ICollaboration>();
+		return new ArrayList<>();
 	}
 
 	public String getJsonClass() {

@@ -9,9 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.manager;
 
-import com.annimon.stream.Stream;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tlabs.android.evanova.adapter.ApplicationCloudAdapter;
 
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
@@ -136,12 +134,12 @@ public class PlanetaryManager extends AbstractManager {
 			Colony col = modelMapper.map(colonyOK, Colony.class);
 			// Block to add additional data not downloaded on this call.
 			// To set mre information about this particular planet we should call the Universe database.
-			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
+//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
 				final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
 				if ( null != planetData ) col.setPlanetData(planetData);
-			});
+//			});
 			// For each of the received planets, get their structures and do the same transformations.
-			Stream.of(colonies).forEach(c -> {
+//			Stream.of(colonies).forEach(c -> {
 	//			try {
 					final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(_credential.getAccountId(), col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
 					if ( null!=colonyStructures ) {
@@ -150,7 +148,7 @@ public class PlanetaryManager extends AbstractManager {
 						// Process the Colony contents indirectly using the mapper again.
 //						modelMapper.map(colonyStructures, c);
 					}
-			});
+	//		});
 			colonies.add(col);
 		}
 
