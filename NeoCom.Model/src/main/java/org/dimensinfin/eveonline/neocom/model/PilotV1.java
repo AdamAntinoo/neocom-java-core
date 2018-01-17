@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
+// TODO We inherit from NeoComCharacter temporarily until the parts and renders are upgraded.
 public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(PilotV1.class);
@@ -99,7 +100,6 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 		this.characterInfo = characterInfo;
 	}
 
-	@Override
 	public int compareTo (final PilotV1 o) {
 		if ( o.getCharacterId() == getCharacterId() ) return 0;
 		else return o.getName().compareTo(getName());

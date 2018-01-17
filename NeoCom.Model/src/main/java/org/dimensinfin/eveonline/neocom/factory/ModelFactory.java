@@ -140,6 +140,7 @@ public class ModelFactory {
 						//		newchar.setAuthorization(authcopy);
 						// Copy the id to a non volatile field.
 						newchar.setCharacterId(identifier);
+						newchar.setName(credential.getAccountName());
 						newchar.setDelegatedCharacter(accessApiKeyCoreChar(identifier, authcopy));
 
 						// Balance information

@@ -17,6 +17,7 @@ package org.dimensinfin.eveonline.neocom.factory;
 
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ import java.util.Hashtable;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ManagerStore {
 	private enum EManagerCodes {
-		ASSETS_MANAGER
+		PLANETARY_MANAGER, ASSETS_MANAGER
 	}
 
 	// - CLASS IMPLEMENTATION ...................................................................................
@@ -75,6 +76,13 @@ public class ManagerStore {
 	public static AssetsManager getAssetsManager (final long identifier, final boolean forceNew) {
 		return singleton.getAssetsManagerImpl(identifier, forceNew);
 	}
+	public static PlanetaryManager getPlanetaryManager (final long identifier) {
+		return singleton.getPlanetaryManagerImpl(identifier, false);
+	}
+
+	public static PlanetaryManager getPlanetaryManager (final long identifier, final boolean forceNew) {
+		return singleton.getPlanetaryManagerImpl(identifier, forceNew);
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 
@@ -90,6 +98,15 @@ public class ManagerStore {
 		if ( (null == hit) || (forceNew) ) {
 			final AssetsManager manager = new AssetsManager(DataManagementModelStore.getCredential4Id(identifier));
 			managerCache.store(EManagerCodes.ASSETS_MANAGER,manager,identifier);
+			return manager;
+		} else return hit;
+	}
+	private PlanetaryManager getPlanetaryManagerImpl (final long identifier, final boolean forceNew) {
+		// Check if this request is already available on the cache.
+		final PlanetaryManager hit = (PlanetaryManager) managerCache.access(EManagerCodes.PLANETARY_MANAGER, identifier);
+		if ( (null == hit) || (forceNew) ) {
+			final PlanetaryManager manager = new PlanetaryManager(DataManagementModelStore.getCredential4Id(identifier));
+			managerCache.store(EManagerCodes.PLANETARY_MANAGER,manager,identifier);
 			return manager;
 		} else return hit;
 	}

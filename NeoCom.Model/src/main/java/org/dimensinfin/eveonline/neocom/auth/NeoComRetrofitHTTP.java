@@ -49,7 +49,7 @@ public class NeoComRetrofitHTTP {
 	public static class GSONDateTimeDeserializer implements com.google.gson.JsonDeserializer<DateTime> {
 
 		@Override
-		public DateTime deserialize(
+		public DateTime deserialize (
 				com.google.gson.JsonElement element,
 				Type arg1,
 				com.google.gson.JsonDeserializationContext arg2) throws JsonParseException {
@@ -63,7 +63,7 @@ public class NeoComRetrofitHTTP {
 		private static final DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
 
 		@Override
-		public LocalDate deserialize(
+		public LocalDate deserialize (
 				com.google.gson.JsonElement element,
 				Type arg1,
 				com.google.gson.JsonDeserializationContext arg2) throws JsonParseException {
@@ -78,6 +78,13 @@ public class NeoComRetrofitHTTP {
 							.registerTypeAdapter(DateTime.class, new GSONDateTimeDeserializer())
 							.registerTypeAdapter(LocalDate.class, new GSONLocalDateDeserializer())
 							.create());
+	private static String refreshToken = "";
+	private static String getRefreshToken(){
+		return refreshToken;
+	}
+	public static void setRefeshToken(final String token){
+		refreshToken=token;
+	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(NeoComRetrofitHTTP.class);
@@ -93,6 +100,12 @@ public class NeoComRetrofitHTTP {
 	public static Retrofit build (final String refresh, final NeoComOAuth20 auth, final String agent, final File cache
 			, final long cacheSize
 			, final long timeout) {
+		NeoComRetrofitHTTP.setRefeshToken(refresh);
+		return build(auth,  agent,  cache,  cacheSize,  timeout);
+	}
+	public static Retrofit build (final NeoComOAuth20 auth, final String agent, final File cache
+			, final long cacheSize
+			, final long timeout) {
 
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
@@ -102,19 +115,19 @@ public class NeoComRetrofitHTTP {
 							return chain.proceed(builder.build());
 						})
 						.addInterceptor(chain -> {
-							if ( StringUtils.isBlank(refresh) ) {
+							if ( StringUtils.isBlank(getRefreshToken()) ) {
 								return chain.proceed(chain.request());
 							}
 
 							Request.Builder builder = chain.request().newBuilder();
-							final TokenTranslationResponse token = auth.fromRefresh(refresh);
+							final TokenTranslationResponse token = auth.fromRefresh(getRefreshToken());
 							if ( null != token ) {
 								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
 							}
 							return chain.proceed(builder.build());
 						})
 						.addInterceptor(chain -> {
-							if ( StringUtils.isBlank(refresh) ) {
+							if ( StringUtils.isBlank(getRefreshToken()) ) {
 								return chain.proceed(chain.request());
 							}
 
@@ -123,7 +136,7 @@ public class NeoComRetrofitHTTP {
 								return r;
 							}
 							if ( r.body().string().contains("invalid_token") ) {
-								auth.fromRefresh(refresh);
+								auth.fromRefresh(getRefreshToken());
 								r = chain.proceed(chain.request());
 							}
 							return r;
