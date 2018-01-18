@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.datamanagement;
+package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
 		// Context of the app under test.
 		Context appContext = InstrumentationRegistry.getTargetContext();
 
-		assertEquals("org.dimensinfin.eveonline.neocom.datamanagement", appContext.getPackageName());
+		assertEquals("org.dimensinfin.eveonline.neocom.datamngmt", appContext.getPackageName());
 	}
 }

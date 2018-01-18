@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.datamanagement;
+package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import org.junit.Test;
 
