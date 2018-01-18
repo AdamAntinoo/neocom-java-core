@@ -15,7 +15,9 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.planetary;
 
-import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -29,55 +31,66 @@ import java.util.List;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ColonyCoreStructure extends NeoComExpandableNode {
+public class ColonyCoreStructure extends NeoComNode {
 	public enum EPlanetaryStructureType {
 		DEFAULT, COMMAND_CENTER, EXTRACTOR, BASIC_INDUSTRY, ADVANCED_INDUSTRY, HIGH_TECH_PRODUCTION, STORAGE, LAUNCHPAD
 	}
-	public static class ColonyExtractor extends NeoComNode{
+
+	public static class ColonyExtractor extends NeoComNode {
 		private List<ColonyStructure.ColonyExtractorHead> heads = new ArrayList<ColonyStructure.ColonyExtractorHead>();
 		private Integer productTypeId = null;
+		private EveItem item = null;
 		private Integer cycleTime = null;
 		private Float headRadius = null;
 		private Integer qtyPerCycle = null;
 
+		// --- G E T T E R S   &   S E T T E R S
 		public List<ColonyStructure.ColonyExtractorHead> getHeads () {
 			return heads;
-		}
-
-		public void setHeads (final List<ColonyStructure.ColonyExtractorHead> heads) {
-			this.heads = heads;
 		}
 
 		public Integer getProductTypeId () {
 			return productTypeId;
 		}
 
-		public void setProductTypeId (final Integer productTypeId) {
-			this.productTypeId = productTypeId;
-		}
-
 		public Integer getCycleTime () {
 			return cycleTime;
-		}
-
-		public void setCycleTime (final Integer cycleTime) {
-			this.cycleTime = cycleTime;
 		}
 
 		public Float getHeadRadius () {
 			return headRadius;
 		}
 
-		public void setHeadRadius (final Float headRadius) {
-			this.headRadius = headRadius;
-		}
-
 		public Integer getQtyPerCycle () {
 			return qtyPerCycle;
 		}
 
+		public void setHeads (final List<ColonyStructure.ColonyExtractorHead> heads) {
+			this.heads = heads;
+		}
+
+		public void setCycleTime (final Integer cycleTime) {
+			this.cycleTime = cycleTime;
+		}
+
+		public void setHeadRadius (final Float headRadius) {
+			this.headRadius = headRadius;
+		}
+
+		public void setProductTypeId (final Integer productTypeId) {
+			this.productTypeId = productTypeId;
+			// Update the production type with the Item data from the SDE.
+			item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(productTypeId);
+		}
+
 		public void setQtyPerCycle (final Integer qtyPerCycle) {
 			this.qtyPerCycle = qtyPerCycle;
+		}
+
+		// --- D E L E G A T E D   M E T H O D S
+		public String getProductTypeName () {
+			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(productTypeId);
+			return item.getName();
 		}
 	}
 
@@ -123,24 +136,59 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		}
 	}
 
-	public static class ColonyContent extends NeoComNode{
+	public static class ColonyContent extends NeoComNode {
 		private Integer typeId = null;
+		private EveItem item = null;
 		private Long amount = null;
 
+		// --- G E T T E R S   &   S E T T E R S
 		public Integer getTypeId () {
 			return typeId;
-		}
-
-		public void setTypeId (final Integer typeId) {
-			this.typeId = typeId;
 		}
 
 		public Long getAmount () {
 			return amount;
 		}
 
+		public EveItem getItem () {
+			// Check if the item is loaded. If not try to get it from the SDE.
+			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
+			return item;
+		}
+
 		public void setAmount (final Long amount) {
 			this.amount = amount;
+		}
+
+		public void setTypeId (final Integer typeId) {
+			this.typeId = typeId;
+			// Get the Eve item data from the SDE so we can perform calculations.
+			item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
+		}
+
+		public void setItem (final EveItem item) {
+			this.item = item;
+		}
+
+		// --- D E L E G A T E D   M E T H O D S
+		public String getCategoryName () {
+			return getItem().getCategoryName();
+		}
+
+		public String getGroupName () {
+			return getItem().getGroupName();
+		}
+
+		public String getName () {
+			return getItem().getName();
+		}
+
+		public double getVolume () {
+			return getItem().getVolume();
+		}
+
+		public double getPrice () {
+			return getItem().getPrice();
 		}
 	}
 
@@ -160,28 +208,92 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 	private DateTime expiryTime = null;
 	private DateTime lastCycleStart = null;
 
+	private EPlanetaryStructureType structureType = EPlanetaryStructureType.DEFAULT;
+	// Add fields for Command, Storage and Launchpad contents.
+	private double volumeUsed = 0.0;
+	private double contentValue = 0.0;
+	private double capacity = -1.0;
+
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public ColonyCoreStructure () {
 		super();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public List<ICollaboration> collaborate2Model (final String s) {
+		List<ICollaboration> results = new ArrayList<>();
+		if ( null != contents ) {
+			if ( contents.size() > 0 ) {
+				results.addAll(contents);
+			}
+		}
+		return results;
+	}
+
+	// --- G E T T E R S   &   S E T T E R S
 	public Float getLatitude () {
 		return latitude;
-	}public Float getLongitude () {
+	}
+
+	public Float getLongitude () {
 		return longitude;
-	}public Long getPinId () {
+	}
+
+	public Long getPinId () {
 		return pinId;
-	}public Integer getTypeId () {
+	}
+
+	public Integer getTypeId () {
 		return typeId;
-	}public Integer getSchematicId () {
+	}
+
+	public Integer getSchematicId () {
 		return schematicId;
-	}public DateTime getInstallTime () {
+	}
+
+	public DateTime getInstallTime () {
 		return installTime;
-	}public DateTime getExpiryTime () {
+	}
+
+	public DateTime getExpiryTime () {
 		return expiryTime;
-	}public DateTime getLastCycleStart () {
+	}
+
+	public DateTime getLastCycleStart () {
 		return lastCycleStart;
+	}
+
+	public EPlanetaryStructureType getStructureTypeCode () {
+		if ( structureType == EPlanetaryStructureType.DEFAULT ) structureType = calculateStructureTypeCode();
+		return structureType;
+	}
+
+	public double getVolumeUsed () {
+		return volumeUsed;
+	}
+
+	public double getVolumeUsedPct () {
+		if ( capacity < 0.0 )
+			switch (getStructureTypeCode()) {
+				case COMMAND_CENTER:
+					capacity = 500.0;
+					break;
+				case STORAGE:
+					capacity = 12000.0;
+					break;
+				case LAUNCHPAD:
+					capacity = 10000.0;
+					break;
+			}
+		return volumeUsed / capacity * 100.0;
+	}
+
+	public double getContentValue () {
+		return contentValue;
+	}
+
+	public ColonyExtractor getExtractorDetails () {
+		return extractorDetails;
 	}
 
 	public void setLatitude (final Float latitude) {
@@ -214,6 +326,26 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 
 	public void setContents (final List<ColonyContent> contents) {
 		this.contents = contents;
+		// Calculate the value and volume of the contents of the structure.
+		volumeUsed = 0.0;
+		contentValue = 0.0;
+		for (ColonyContent content : contents) {
+			volumeUsed += content.getAmount() * content.getItem().getVolume();
+			contentValue += content.getAmount() * content.getItem().getHighestBuyerPrice().getPrice();
+		}
+		// Cross use of other properties is desallowed because load order is not guaranteed.
+		//		if ( capacity < 0 )
+		//			switch (getStructureTypeCode()) {
+		//				case COMMAND_CENTER:
+		//					capacity = 500.0;
+		//					break;
+		//				case STORAGE:
+		//					capacity = 12000.0;
+		//					break;
+		//				case LAUNCHPAD:
+		//					capacity = 10000.0;
+		//					break;
+		//			}
 	}
 
 	public void setInstallTime (final DateTime installTime) {
@@ -228,14 +360,16 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		this.lastCycleStart = lastCycleStart;
 	}
 
-	private EPlanetaryStructureType structureType = EPlanetaryStructureType.DEFAULT;
-
-	public EPlanetaryStructureType getStructureTypeCode() {
-		if ( structureType == EPlanetaryStructureType.DEFAULT ) structureType=calculateStructureTypeCode();
-		return structureType;
+	public void setVolumeUsed (final double volumeUsed) {
+		this.volumeUsed = volumeUsed;
 	}
 
-	public EPlanetaryStructureType calculateStructureTypeCode() {
+	public void setContentValue (final double contentValue) {
+		this.contentValue = contentValue;
+	}
+
+	// --- D E L E G A T E D   M E T H O D S
+	private EPlanetaryStructureType calculateStructureTypeCode () {
 		// Barren structures
 		if ( getTypeId() == 2524 ) return EPlanetaryStructureType.COMMAND_CENTER;
 		if ( getTypeId() == 2544 ) return EPlanetaryStructureType.LAUNCHPAD;

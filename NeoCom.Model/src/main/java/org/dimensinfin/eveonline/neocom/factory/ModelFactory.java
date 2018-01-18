@@ -32,8 +32,10 @@ import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
+import org.dimensinfin.eveonline.neocom.network.NetworkManager;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
@@ -130,9 +132,6 @@ public class ModelFactory {
 				// Check the Credential type.
 				if ( credential.isXMLCompatible() ) {
 					try {
-						// Obtain the credential data to make requests to the XML api.
-						//			final int key = credential.getKeyCode();
-						//		newchar.setApiKey(apikey);
 						// Copy the authorization and add to it the characterID
 						final ApiAuthorization authcopy = new ApiAuthorization(credential.getKeyCode(), identifier,
 								credential.getValidationCode());
@@ -159,6 +158,10 @@ public class ModelFactory {
 						if ( null != inforesponse ) {
 							newchar.setCharacterInfo(inforesponse);
 						}
+
+						// Clone data
+						final GetCharactersCharacterIdClonesOk cloneInformation = NetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
+						if ( null != cloneInformation ) newchar.setHomeLocation(cloneInformation.getHomeLocation());
 
 						// Store the result on the cache with the timing indicator to where this entry is valid.
 						modelCache.store(EModelVariants.PILOTV1, newchar, new Instant(inforesponse.getCachedUntil()), identifier);

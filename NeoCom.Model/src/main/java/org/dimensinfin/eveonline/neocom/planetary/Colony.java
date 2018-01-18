@@ -46,6 +46,7 @@ public class Colony extends NeoComExpandableNode {
 	private static Logger logger = LoggerFactory.getLogger(Colony.class);
 
 	private static final ModelMapper modelMapper = new ModelMapper();
+
 	static {
 		modelMapper.getConfiguration()
 							 .setFieldMatchingEnabled(true)
@@ -81,6 +82,12 @@ public class Colony extends NeoComExpandableNode {
 			results.add(newstruct);
 		}
 		return results;
+	}
+
+	public boolean isEmpty () {
+		if ( null == pins ) return true;
+		if ( pins.size() < 1 ) return true;
+		return false;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S

@@ -20,8 +20,10 @@ import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
@@ -135,6 +137,27 @@ public class NetworkManager {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [NetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones (final int identifier, final String refreshToken, final String server) {
+		logger.info(">> [NetworkManager.getCharactersCharacterIdClones]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if ( null != server ) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCharactersCharacterIdClonesOk> cloneApiResponse = neocomRetrofit
+					.create(ClonesApi.class)
+					.getCharactersCharacterIdClones(identifier, datasource, null, null, null).execute();
+			if ( !cloneApiResponse.isSuccessful() ) {
+				return null;
+			} else return cloneApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [NetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
 		}
 		return null;
 	}

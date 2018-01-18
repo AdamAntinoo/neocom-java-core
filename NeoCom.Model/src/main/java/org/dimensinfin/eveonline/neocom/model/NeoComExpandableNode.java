@@ -42,9 +42,7 @@ public abstract class NeoComExpandableNode extends NeoComNode implements IExpand
 		return _expanded;
 	}
 
-	public boolean isEmpty() {
-		return true;
-	}
+	public abstract boolean isEmpty();
 
 	public boolean isExpanded() {
 		return _expanded;

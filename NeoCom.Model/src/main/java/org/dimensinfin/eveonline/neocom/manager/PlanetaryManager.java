@@ -48,6 +48,7 @@ public class PlanetaryManager extends AbstractManager {
 	public double totalAssetsVolume = 0.0;
 	/** This field should be serialized to get the correct icon at the Angular UI. */
 	public final String iconName = "planets.png";
+	private final List<Colony> colonies = new ArrayList<>();
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/** Used during the processing of the assets into the different structures. */
@@ -98,60 +99,50 @@ public class PlanetaryManager extends AbstractManager {
 	private long getCharacterId () {
 		return _credential.getAccountId();
 	}
-
-	//	public interface ColonyApi {
-	//		@GET("characters/{character_id}/planets/")
-	//		Call<List<GetCharactersCharacterIdPlanets200Ok>> getCharactersCharacterIdPlanets (
-	//				@Path("character_id") Integer characterId, @Query("datasource") String datasource, @Query("token") String token, @Query("user_agent") String userAgent, @Header("X-User-Agent") String xUserAgent
-	//		);
-	//
-	//		@GET("characters/{character_id}/planets/{planet_id}/")
-	//		Call<GetCharactersCharacterIdPlanetsPlanetIdOk> getCharactersCharacterIdPlanetsPlanetId (
-	//				@Path("character_id") Integer characterId, @Path("planet_id") Integer planetId, @Query("datasource") String datasource, @Query("token") String token, @Query("user_agent") String userAgent, @Header("X-User-Agent") String xUserAgent
-	//		);
-	//	}
-
 	/**
 	 * Get all the Planetary Colonies for a selected character. After getting the list of colonies and wrapping
 	 * all that data into MVC compatible classes it will launch background jobs to retrieve each colony detailed
 	 * data.
 	 */
-	public List<Colony> accessAllColonies () {
+	public synchronized List<Colony> accessAllColonies () {
 		logger.info(">> [ColonyManager.accessAllColonies]");
-		final Chrono accessFullTime = new Chrono();
-		List<Colony> colonies = new Vector();
-		// Create a request to the ESI api downloader to get the list of Planets of the current Character.
-		//		NetworkManager.accessEsi(_credential.getRefreshToken(),PlanetaryInteractionApi.class)
-		final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = NetworkManager.getCharactersCharacterIdPlanets(Long.valueOf(getCharacterId()).intValue(), _credential.getRefreshToken(), "tranquility");
-		//		_credential.addPlanetaryData(colonyInstances);
+		// Optimize the access tot the Colony data.
+		if(colonies.size()<1) {
+			final Chrono accessFullTime = new Chrono();
+	//		List<Colony> colonies = new ArrayList<>();
+			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
+			//		NetworkManager.accessEsi(_credential.getRefreshToken(),PlanetaryInteractionApi.class)
+			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = NetworkManager.getCharactersCharacterIdPlanets(Long.valueOf(getCharacterId()).intValue(), _credential.getRefreshToken(), "tranquility");
+			//		_credential.addPlanetaryData(colonyInstances);
 
-		// Transform the received OK instance into a NeoCom compatible model instance.
-		ModelMapper modelMapper = new ModelMapper();
-		modelMapper.getConfiguration()
-							 .setFieldMatchingEnabled(true)
-							 .setMethodAccessLevel(AccessLevel.PRIVATE);
-		for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
-			Colony col = modelMapper.map(colonyOK, Colony.class);
-			// Block to add additional data not downloaded on this call.
-			// To set mre information about this particular planet we should call the Universe database.
-//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
+			// Transform the received OK instance into a NeoCom compatible model instance.
+			ModelMapper modelMapper = new ModelMapper();
+			modelMapper.getConfiguration()
+								 .setFieldMatchingEnabled(true)
+								 .setMethodAccessLevel(AccessLevel.PRIVATE);
+			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
+				Colony col = modelMapper.map(colonyOK, Colony.class);
+				// Block to add additional data not downloaded on this call.
+				// To set mre information about this particular planet we should call the Universe database.
+				//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
 				final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
 				if ( null != planetData ) col.setPlanetData(planetData);
-//			});
-			// For each of the received planets, get their structures and do the same transformations.
-//			Stream.of(colonies).forEach(c -> {
-	//			try {
-					final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(_credential.getAccountId(), col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
-					if ( null!=colonyStructures ) {
-						// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
-						col.setStructuresData(colonyStructures);
-						// Process the Colony contents indirectly using the mapper again.
-//						modelMapper.map(colonyStructures, c);
-					}
-	//		});
-			colonies.add(col);
+				//			});
+				// For each of the received planets, get their structures and do the same transformations.
+				//			Stream.of(colonies).forEach(c -> {
+				//			try {
+				final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(_credential.getAccountId(), col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
+				if ( null != colonyStructures ) {
+					// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
+					col.setStructuresData(colonyStructures);
+					// Process the Colony contents indirectly using the mapper again.
+					//						modelMapper.map(colonyStructures, c);
+				}
+				//		});
+				colonies.add(col);
+			}
+	//		_colonies=colonies;
 		}
-
 		return colonies;
 
 

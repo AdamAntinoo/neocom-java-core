@@ -18,6 +18,8 @@ package org.dimensinfin.eveonline.neocom.model;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
 
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,8 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	 * Corporations.
 	 */
 	private CharacterInfoResponse characterInfo = null;
+	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation=null;
+	private EveLocation lastKnownLocation = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV1 () {
@@ -55,15 +59,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public String getURLForAvatar () {
-		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
-	}
-
-	public String getLastKnownLocation () {
-		final CharacterInfoResponse info = this.getCharacterInfo();
-		if ( null == info ) return "-Unknown-";
-		else return info.getLastKnownLocation();
-	}
+	// --- G E T T E R S   &   S E T T E R S
 	public long getCharacterId () {
 		return characterID;
 	}
@@ -100,6 +96,19 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 		this.characterInfo = characterInfo;
 	}
 
+	public void setHomeLocation(final GetCharactersCharacterIdClonesOkHomeLocation homeLocation){
+		this.homeLocation=homeLocation;
+		// Convert this location pointer to a NeoCom location.
+		lastKnownLocation= ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(homeLocation.getLocationId());
+	}
+	// --- D E L E G A T E D   M E T H O D S
+	public String getURLForAvatar () {
+		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
+	}
+	public EveLocation getLastKnownLocation () {
+		if(null!=lastKnownLocation)return lastKnownLocation;
+		else return new EveLocation();
+	}
 	public int compareTo (final PilotV1 o) {
 		if ( o.getCharacterId() == getCharacterId() ) return 0;
 		else return o.getName().compareTo(getName());

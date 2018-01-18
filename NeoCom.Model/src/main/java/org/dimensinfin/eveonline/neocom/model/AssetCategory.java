@@ -52,6 +52,12 @@ public class AssetCategory extends NeoComExpandableNode implements IExpandable {
 		return results;
 	}
 
+	@Override
+	public boolean isEmpty () {
+		if(_contents.size()<1)return true;
+		return false;
+	}
+
 	public String getIconLinkName () {
 		return _categoryDelegate.getIconLinkName();
 	}
