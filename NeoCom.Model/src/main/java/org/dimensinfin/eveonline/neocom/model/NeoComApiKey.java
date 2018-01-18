@@ -94,7 +94,7 @@ public class NeoComApiKey extends NeoComNode {
 	//	private Instant											paidUntil							= new Instant(0);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	protected NeoComApiKey() {
+	public NeoComApiKey() {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -251,7 +251,7 @@ public class NeoComApiKey extends NeoComNode {
 	//		}
 	//	}
 
-	private void setAuthorization(final ApiAuthorization auth) {
+	public void setAuthorization (final ApiAuthorization auth) {
 		authorization = auth;
 	}
 

@@ -10,18 +10,21 @@
 package org.dimensinfin.eveonline.neocom.storage;
 
 import com.beimin.eveapi.model.account.Character;
+import com.tlabs.android.evanova.adapter.ApplicationCloudAdapter;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
+import org.dimensinfin.core.util.OneParameterTask;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
+import org.dimensinfin.eveonline.neocom.factory.ModelFactory;
+import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.Credential;
-import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
+import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -206,7 +209,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		if ( _credentialList.size() < 1 ) {
 			try {
 				// Read and process the list of ApiKeys and Credentials to get a single Character list.
-				final Hashtable<String, Login> logins = NeoComDatabase.accessAllLogins();
+				final List<ApiKey> keyList = NeoComDatabase.accessAllLogins();
 				final List<Credential> credentials = NeoComDatabase.accessAllCredentials();
 				_credentialList.clear();
 				// Process the list to unify the results.
@@ -214,26 +217,26 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 					_credentialList.add(currentCredential);
 					// Scan the keys to search for matches.
 					final long cid = currentCredential.getAccountId();
-					for (Login login : logins.values()) {
-						for (NeoComApiKey apikey : login.getKeys()) {
-							for (Character character : apikey.getDelegatedApiKey().getEveCharacters())
+					for (ApiKey apikey : keyList) {
+						//		for (NeoComApiKey apikey : apikey.getKeys()) {
+						// Access the XML api to get the contents for this key so we can match the characters.
+						final NeoComApiKey apikeyInfo = ModelFactory.getApiKey(apikey.getKeynumber(), apikey.getValidationcode());
+						if ( null != apikeyInfo ) {
+							for (Character character : apikeyInfo.getDelegatedApiKey().getEveCharacters())
 								if ( character.getCharacterID() == cid ) {
-									currentCredential.setKeyCode(apikey.getAuthorization().getKeyID())
-																	 .setValidationCode(apikey.getAuthorization().getVCode())
-																	 //			 .setCharacterXML(character)
+									currentCredential.setKeyCode(apikey.getKeynumber())
+																	 .setValidationCode(apikey.getValidationcode())
 																	 .store();
-									// Post a backend request to create som Character information to connect to the credential.
-									//								ApplicationCloudAdapter.submit2downloadExecutor(
-									//										new OneParameterTask<Credential>(currentCredential) {
-									//											@Override
-									//											public void run () {
-									//			testCharacterESIRequest(currentCredential);
-									// Start an event chain to update the presentation ui with the new data.
-									//			currentCredential.fireStructureChange("EVENTSTRUCTURE_NEWDATA",currentCredential,currentCredential);
-									//											}
-									//										});
 								}
 						}
+						// Post a backend request to start the download of the Character basic information.
+						ApplicationCloudAdapter.submit2downloadExecutor(
+								new OneParameterTask<Long>(cid) {
+									@Override
+									public void run () {
+										final PilotV1 pilot = ModelFactory.getPilotV1(getTarget());
+									}
+								});
 					}
 				}
 			} catch (RuntimeException rtex) {
@@ -270,113 +273,113 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		return esiCacheFile;
 	}
 
-//	private void testCharacterESIRequest (final Credential cred) {
-//		logger.info(">> [DataManagementModelStore.accessCredentialList]");
-//		final Chrono downloadTotalTime = new Chrono();
-//		try {
-//			// Create a request to the ESI api downloader to get Character clones and locations.
-//			// Initialization of data that are required.
-//			final long charId = cred.getAccountId();
-//			final String refresh = cred.getRefreshToken();
-//			final String datasource = "tranquility";
-//			final String CLIENT_ID = "396e0b6cbed2488284ed4ae426133c90";
-//			final String SECRET_KEY = "gf8X16xbdaO6soJWCdYHPFfftczZyvfo63z6WUjO";
-//			final String CALLBACK = "eveauth-neotest://authentication";
-//			final String agent = "org.dimensinfin.eveonline.neocom; Dimensinfin Industries";
-//			final ESIStore store = ESIStore.DEFAULT;
-//			final List<String> scopes = new ArrayList<>(2);
-//			scopes.add("publicData");
-//			scopes.add("esi-clones.read_clones.v1");
-//			final String cacheFilename = "./NeoComESIcache.store";
-//			final File cache = createCacheFile(cacheFilename);
-//			final long cacheSize = 1000000;
-//			final long timeout = 10000;
-//
-//
-//			// Initialization of instances required later.
-//			final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, agent, store, scopes);
-//			final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(refresh, neocomAuth20, agent, cache, cacheSize, timeout);
-//
-//			// Access the current clone location and the list of jump clones
-//			final ClonesApi clonesApiRetrofit = neocomRetrofit.create(ClonesApi.class);
-//			final Response<GetCharactersCharacterIdClonesOk> characterCloneResponse = clonesApiRetrofit.getCharactersCharacterIdClones(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
-//			if ( characterCloneResponse.isSuccessful() ) {
-//				// Create a minimum Character profile and fill it up with the available information.
-//				final CorePilot pilot = new CorePilot(characterCloneResponse.body())
-//						.setIdentifier(cred.getAccountId())
-//						.setLocationId(characterCloneResponse.body().getHomeLocation().getLocationId())
-//						.setLocationType(characterCloneResponse.body().getHomeLocation().getLocationType());
-//				// Add this data to the Credential.
-//				cred.setCharacterCoreData(pilot);
-//			}
-//
-//			final PlanetaryInteractionApi colonyApiRetrofit = neocomRetrofit.create(PlanetaryInteractionApi.class);
-//			final Response<List<GetCharactersCharacterIdPlanets200Ok>> colonyApiResponse = colonyApiRetrofit.getCharactersCharacterIdPlanets(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
-//			if ( colonyApiResponse.isSuccessful() ) {
-//				// Add Colony information to the Pilot.
-//				cred.addPlanetaryData(colonyApiResponse.body());
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} finally {
-//			logger.info("<< [DataManagementModelStore.accessCredentialList]> [TIMING] Full elapsed: ", downloadTotalTime.printElapsed(ChonoOptions.SHOWMILLIS));
-//		}
-//	}
+	//	private void testCharacterESIRequest (final Credential cred) {
+	//		logger.info(">> [DataManagementModelStore.accessCredentialList]");
+	//		final Chrono downloadTotalTime = new Chrono();
+	//		try {
+	//			// Create a request to the ESI api downloader to get Character clones and locations.
+	//			// Initialization of data that are required.
+	//			final long charId = cred.getAccountId();
+	//			final String refresh = cred.getRefreshToken();
+	//			final String datasource = "tranquility";
+	//			final String CLIENT_ID = "396e0b6cbed2488284ed4ae426133c90";
+	//			final String SECRET_KEY = "gf8X16xbdaO6soJWCdYHPFfftczZyvfo63z6WUjO";
+	//			final String CALLBACK = "eveauth-neotest://authentication";
+	//			final String agent = "org.dimensinfin.eveonline.neocom; Dimensinfin Industries";
+	//			final ESIStore store = ESIStore.DEFAULT;
+	//			final List<String> scopes = new ArrayList<>(2);
+	//			scopes.add("publicData");
+	//			scopes.add("esi-clones.read_clones.v1");
+	//			final String cacheFilename = "./NeoComESIcache.store";
+	//			final File cache = createCacheFile(cacheFilename);
+	//			final long cacheSize = 1000000;
+	//			final long timeout = 10000;
+	//
+	//
+	//			// Initialization of instances required later.
+	//			final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, agent, store, scopes);
+	//			final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(refresh, neocomAuth20, agent, cache, cacheSize, timeout);
+	//
+	//			// Access the current clone location and the list of jump clones
+	//			final ClonesApi clonesApiRetrofit = neocomRetrofit.create(ClonesApi.class);
+	//			final Response<GetCharactersCharacterIdClonesOk> characterCloneResponse = clonesApiRetrofit.getCharactersCharacterIdClones(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
+	//			if ( characterCloneResponse.isSuccessful() ) {
+	//				// Create a minimum Character profile and fill it up with the available information.
+	//				final CorePilot pilot = new CorePilot(characterCloneResponse.body())
+	//						.setIdentifier(cred.getAccountId())
+	//						.setLocationId(characterCloneResponse.body().getHomeLocation().getLocationId())
+	//						.setLocationType(characterCloneResponse.body().getHomeLocation().getLocationType());
+	//				// Add this data to the Credential.
+	//				cred.setCharacterCoreData(pilot);
+	//			}
+	//
+	//			final PlanetaryInteractionApi colonyApiRetrofit = neocomRetrofit.create(PlanetaryInteractionApi.class);
+	//			final Response<List<GetCharactersCharacterIdPlanets200Ok>> colonyApiResponse = colonyApiRetrofit.getCharactersCharacterIdPlanets(Long.valueOf(charId).intValue(), datasource, null, null, null).execute();
+	//			if ( colonyApiResponse.isSuccessful() ) {
+	//				// Add Colony information to the Pilot.
+	//				cred.addPlanetaryData(colonyApiResponse.body());
+	//			}
+	//		} catch (IOException e) {
+	//			e.printStackTrace();
+	//		} finally {
+	//			logger.info("<< [DataManagementModelStore.accessCredentialList]> [TIMING] Full elapsed: ", downloadTotalTime.printElapsed(ChonoOptions.SHOWMILLIS));
+	//		}
+	//	}
 
-//	public static class CorePilot {
-//		private final GetCharactersCharacterIdClonesOk delegate;
-//		private long identifier = -1;
-//		private long locationId = -1;
-//		private LocationTypeEnum locationType;
-//		private EveLocation location = null;
-//		private List<GetCharactersCharacterIdPlanets200Ok> planetaryData;
-//
-//		public CorePilot (final GetCharactersCharacterIdClonesOk delegate) {
-//			this.delegate = delegate;
-//		}
-//
-//		public long getIdentifier () {
-//			return identifier;
-//		}
-//
-//		public CorePilot setIdentifier (final long identifier) {
-//			this.identifier = identifier;
-//			return this;
-//		}
-//
-//		public long getLocationId () {
-//			return locationId;
-//		}
-//
-//		public CorePilot setLocationId (final long locationId) {
-//			this.locationId = locationId;
-//			// Search this location identifier at the Location service.
-//			location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
-//			return this;
-//		}
-//
-//		public LocationTypeEnum getLocationType () {
-//			return locationType;
-//		}
-//
-//		public CorePilot setLocationType (final LocationTypeEnum locationType) {
-//			this.locationType = locationType;
-//			return this;
-//		}
-//
-//		public EveLocation getLocation () {
-//			return location;
-//		}
-//
-//		public String getURLForAvatar () {
-//			return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
-//		}
-//
-//		public CorePilot setPlanetaryData (final List<GetCharactersCharacterIdPlanets200Ok> data) {
-//			this.planetaryData = data;
-//			return this;
-//		}
-//	}
+	//	public static class CorePilot {
+	//		private final GetCharactersCharacterIdClonesOk delegate;
+	//		private long identifier = -1;
+	//		private long locationId = -1;
+	//		private LocationTypeEnum locationType;
+	//		private EveLocation location = null;
+	//		private List<GetCharactersCharacterIdPlanets200Ok> planetaryData;
+	//
+	//		public CorePilot (final GetCharactersCharacterIdClonesOk delegate) {
+	//			this.delegate = delegate;
+	//		}
+	//
+	//		public long getIdentifier () {
+	//			return identifier;
+	//		}
+	//
+	//		public CorePilot setIdentifier (final long identifier) {
+	//			this.identifier = identifier;
+	//			return this;
+	//		}
+	//
+	//		public long getLocationId () {
+	//			return locationId;
+	//		}
+	//
+	//		public CorePilot setLocationId (final long locationId) {
+	//			this.locationId = locationId;
+	//			// Search this location identifier at the Location service.
+	//			location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
+	//			return this;
+	//		}
+	//
+	//		public LocationTypeEnum getLocationType () {
+	//			return locationType;
+	//		}
+	//
+	//		public CorePilot setLocationType (final LocationTypeEnum locationType) {
+	//			this.locationType = locationType;
+	//			return this;
+	//		}
+	//
+	//		public EveLocation getLocation () {
+	//			return location;
+	//		}
+	//
+	//		public String getURLForAvatar () {
+	//			return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
+	//		}
+	//
+	//		public CorePilot setPlanetaryData (final List<GetCharactersCharacterIdPlanets200Ok> data) {
+	//			this.planetaryData = data;
+	//			return this;
+	//		}
+	//	}
 
 	/**
 	 * Activated the selected credential as the active Credential. This will also point to the current Character but

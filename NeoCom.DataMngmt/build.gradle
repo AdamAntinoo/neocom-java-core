@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 
 archivesBaseName = 'NeoCom.DataMngmt'
-version = '3.0.0'
+version = '2.0.0'
 group = 'org.dimensinfin.eveonline.neocom'
 
 sourceCompatibility = "1.7"
@@ -21,6 +21,7 @@ sourceSets {
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
+//    implementation project(path: ':NeoCom.Model')
 
     // L O C A L    L I B R A R I E S
 

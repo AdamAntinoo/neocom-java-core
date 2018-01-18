@@ -15,19 +15,20 @@ repositories {
 }
 
 sourceSets {
-//    main.java.srcDirs += 'src/main/java-newcore'
+    main.java.srcDirs += 'src/main/java-datamngmt'
 //    main.java.srcDirs += 'src/main/java-android'
 }
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
-//    implementation project(path: ':CoreBaseLibrary')
+    implementation project(path: ':CoreBaseLibrary')
+//    implementation project(path: ':NeoCom.DataMngmt')
     implementation project(path: ':ESI.SwaggerApi')
     implementation project(path: ':ApplicationCloudAdapter')
 
     // L O C A L    L I B R A R I E S
     api files('libs/jeveassets.3.1.2.jar')
-    api files('libs/CoreBase.core-2.0.1.jar')
+//    api files('libs/CoreBase.core-2.0.1.jar')
 //    api files('libs/ESISwaggerApi-1.0.0.jar')
 
     // M O D U L E    D E P E N D E N C I E S

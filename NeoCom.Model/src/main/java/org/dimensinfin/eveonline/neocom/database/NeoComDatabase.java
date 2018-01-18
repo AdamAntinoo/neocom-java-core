@@ -23,13 +23,11 @@ import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.Credential;
-import org.dimensinfin.eveonline.neocom.model.Login;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -67,7 +65,7 @@ public class NeoComDatabase {
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
 	@Deprecated
-	public static Hashtable<String, Login> accessAllLogins () {
+	public static List<ApiKey> accessAllLogins () {
 		_accessCount++;
 		return singleton.accessAllLoginsMethod();
 	}
@@ -91,7 +89,8 @@ public class NeoComDatabase {
 	 * Reads all the keys stored at the database and classifies them into a set of Login names.
 	 */
 	@Deprecated
-	private Hashtable<String, Login> accessAllLoginsMethod () {
+	private List<ApiKey> accessAllLoginsMethod () {
+		logger.info(">> [NeoComDatabase.accessAllLogins]");
 		// Get access to all ApiKey registers
 		List<ApiKey> keyList = new Vector<ApiKey>();
 		try {
@@ -102,21 +101,24 @@ public class NeoComDatabase {
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [NeoComDatabase.accessAllLogins]> Exception reading all Logins. " + sqle.getMessage());
+		}finally {
+			logger.info("<< [NeoComDatabase.accessAllLogins]");
 		}
-		// Classify the keys on they matching Logins.
-		Hashtable<String, Login> loginList = new Hashtable<String, Login>();
-		for (ApiKey apiKey : keyList) {
-			String name = apiKey.getLogin();
-			// Search for this on the list before creating a new Login.
-			Login hit = loginList.get(name);
-			if ( null == hit ) {
-				Login login = new Login(name).addKey(apiKey);
-				loginList.put(name, login);
-			} else {
-				hit.addKey(apiKey);
-			}
-		}
-		return loginList;
+//		// Classify the keys on they matching Logins.
+//		Hashtable<String, Login> loginList = new Hashtable<String, Login>();
+//		for (ApiKey apiKey : keyList) {
+//			String name = apiKey.getLogin();
+//			// Search for this on the list before creating a new Login.
+//			Login hit = loginList.get(name);
+//			if ( null == hit ) {
+//				Login login = new Login(name).addKey(apiKey);
+//				loginList.put(name, login);
+//			} else {
+//				hit.addKey(apiKey);
+//			}
+//		}
+//		return loginList;
+		return keyList;
 	}
 
 	/**

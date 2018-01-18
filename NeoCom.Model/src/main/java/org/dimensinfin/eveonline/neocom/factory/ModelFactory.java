@@ -34,6 +34,7 @@ import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.dimensinfin.eveonline.neocom.network.NetworkManager;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
@@ -60,7 +61,7 @@ import java.util.Set;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelFactory {
 	public enum EModelVariants {
-		PILOTV1
+		PILOTV1, APIKEY
 	}
 
 	// - CLASS IMPLEMENTATION ...................................................................................
@@ -71,9 +72,10 @@ public class ModelFactory {
 		private Hashtable<String, Instant> _timeCacheStore = new Hashtable();
 
 		// - M E T H O D - S E C T I O N ..........................................................................
-		public int size(){
+		public int size () {
 			return _instanceCacheStore.size();
 		}
+
 		public ICollaboration access (final EModelVariants variant, long longIdentifier) {
 			if ( variant == EModelVariants.PILOTV1 ) {
 				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
@@ -86,9 +88,18 @@ public class ModelFactory {
 			}
 			return null;
 		}
+
 		public boolean store (final EModelVariants variant, final ICollaboration instance, final Instant expirationTime, final long longIdentifier) {
+			// Store command for PILOTV1 instances.
 			if ( variant == EModelVariants.PILOTV1 ) {
 				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
+				_instanceCacheStore.put(locator, instance);
+				_timeCacheStore.put(locator, expirationTime);
+				return true;
+			}
+			// Store command for APIKEY instances.
+			if ( variant == EModelVariants.APIKEY ) {
+				final String locator = EModelVariants.APIKEY.name() + "/" + Long.valueOf(longIdentifier).toString();
 				_instanceCacheStore.put(locator, instance);
 				_timeCacheStore.put(locator, expirationTime);
 				return true;
@@ -102,10 +113,21 @@ public class ModelFactory {
 	private static final ModelFactory singleton = new ModelFactory();
 	private static ModelTimedCache modelCache = new ModelTimedCache();
 
+	static {
+		EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
+		// Remove the secure XML access and configure the ApiConnector.
+		ApiConnector.setSecureXmlProcessing(false);
+	}
+
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
 	public static PilotV1 getPilotV1 (final long identifier) {
 		return singleton.getPilotV1Impl(identifier);
 	}
+
+	public static NeoComApiKey getApiKey (final int keynumber, final String validationcode) {
+		return singleton.getApiKeyImpl(keynumber, validationcode);
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -113,6 +135,7 @@ public class ModelFactory {
 		super();
 	}
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	/**
 	 * Construct a minimal implementation of a Pilot from the XML api. This will get deprecated soon but during
 	 * some time It will be compatible and I will have a better view of what variants are being used.
@@ -173,6 +196,36 @@ public class ModelFactory {
 			return newchar;
 		} else return (PilotV1) hit;
 	}
+
+	private NeoComApiKey getApiKeyImpl (final int keynumber, final String validationcode) {
+		// Check if this request is already available on the cache.
+		final ICollaboration hit = modelCache.access(EModelVariants.APIKEY, keynumber);
+		if ( null == hit ) {
+			try {
+				// Get the ApiKey Information block.
+				ApiAuthorization authorization = new ApiAuthorization(keynumber, validationcode);
+				ApiKeyInfoParser infoparser = new ApiKeyInfoParser();
+				ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
+				NeoComApiKey apiKey = null;
+				if ( null != inforesponse ) {
+					apiKey = new NeoComApiKey();
+					apiKey.setAuthorization(authorization);
+					apiKey.setDelegate(inforesponse);
+					apiKey.setKey(keynumber);
+					apiKey.setValidationCode(validationcode);
+					apiKey.setCachedUntil(inforesponse.getCachedUntil());
+					// Store the result on the cache with the timing indicator to where this entry is valid.
+					modelCache.store(EModelVariants.APIKEY, apiKey, new Instant(inforesponse.getCachedUntil()), keynumber);
+					return apiKey;
+				} else return null;
+			} catch (ApiException apie) {
+				apie.printStackTrace();
+			}
+		} else return (NeoComApiKey) hit;
+		return null;
+	}
+
+	// --- N O T   E X P O R T E D   M E T H O D S
 	private Character accessApiKeyCoreChar (final long identifier, final ApiAuthorization auth) {
 		try {
 			EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
@@ -198,7 +251,7 @@ public class ModelFactory {
 		StringBuffer buffer = new StringBuffer("ModelFactory [");
 		buffer.append("Models cached: ").append(modelCache.size());
 		buffer.append("]");
-//		buffer.append("->").append(super.toString());
+		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
 }
