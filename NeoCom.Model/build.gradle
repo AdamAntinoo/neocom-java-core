@@ -2,7 +2,7 @@ apply plugin: 'java-library'
 
 archivesBaseName = 'NeoCom.Model'
 version = '1.5.0'
-group = 'org.dimensinfin.core'
+group = 'org.dimensinfin.eveonline.neocom'
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -21,12 +21,12 @@ sourceSets {
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
-    implementation project(path: ':CoreBaseLibrary')
-    implementation project(path: ':ESISwaggerApi')
-    implementation project(path: ':ApplicationCloudAdapter')
+//    implementation project(path: ':CoreBaseLibrary')
+//    implementation project(path: ':ESI.SwaggerApi')
+//    implementation project(path: ':ApplicationCloudAdapter')
 
     // L O C A L    L I B R A R I E S
-    api files('libs/jeveassets.3.1.2.jar')
+//    api files('libs/jeveassets.3.1.2.jar')
 //    api files('libs/CoreBase.core-2.0.1.jar')
 //    api files('libs/ESISwaggerApi-1.0.0.jar')
 

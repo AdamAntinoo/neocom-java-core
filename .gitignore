@@ -7,11 +7,3 @@
 /build
 /captures
 .externalNativeBuild
-*.diff
-*.db
-*.log
-.recommenders/
-.metadata/
-SBPlanetaryService/src/main/resources/static/
-POC-IntegratorServer/
-NeoCom.Model/production/jar-in-jar-loader.zip

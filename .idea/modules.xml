@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1421415651/CoreBaseLibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/1421415651/CoreBaseLibrary.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NeoCom-Model.iml" filepath="$PROJECT_DIR$/NeoCom-Model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../Corebase 2.0.x/CoreBase/CoreBaseLibrary/CoreBaseLibrary.iml" filepath="$PROJECT_DIR$/../../Corebase 2.0.x/CoreBase/CoreBaseLibrary/CoreBaseLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NeoCom-DataMngmt.iml" filepath="$PROJECT_DIR$/NeoCom-DataMngmt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NeoCom.DataMngmt/NeoCom.DataMngmt.iml" filepath="$PROJECT_DIR$/NeoCom.DataMngmt/NeoCom.DataMngmt.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" filepath="$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
