@@ -21,14 +21,14 @@ sourceSets {
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
-    implementation project(path: ':CoreBaseLibrary')
+//    implementation project(path: ':CoreBaseLibrary')
 //    implementation project(path: ':NeoCom.DataMngmt')
     implementation project(path: ':ESI.SwaggerApi')
     implementation project(path: ':ApplicationCloudAdapter')
 
     // L O C A L    L I B R A R I E S
     api files('libs/jeveassets.3.1.2.jar')
-//    api files('libs/CoreBase.core-2.0.1.jar')
+    implementation files('libs/CoreBase.core-2.0.1.jar')
 //    api files('libs/ESISwaggerApi-1.0.0.jar')
 
     // M O D U L E    D E P E N D E N C I E S
@@ -37,6 +37,8 @@ dependencies {
     implementation 'joda-time:joda-time:2.3'
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
+// https://mvnrepository.com/artifact/com.j256.ormlite/ormlite-jdbc
+    compile group: 'com.j256.ormlite', name: 'ormlite-jdbc', version: '4.48'
     implementation 'com.beimin:eveapi:6.0.6'
     implementation 'com.github.scribejava:scribejava-core:4.2.0'
 //    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
@@ -44,6 +46,12 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'org.modelmapper:modelmapper:1.1.0'
     implementation 'com.annimon:stream:1.1.9'
+ //   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.6.3'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
+//    implementation 'com.fasterxml.jackson.core:jackson-datatype:2.8.6'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
 
     // P L A T F O R M    D E P E N D E N C I E S
 

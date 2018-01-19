@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeoCom-DataMngmt.iml" filepath="$PROJECT_DIR$/NeoCom-DataMngmt.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeoCom.DataMngmt/NeoCom.DataMngmt.iml" filepath="$PROJECT_DIR$/NeoCom.DataMngmt/NeoCom.DataMngmt.iml" />
+      <module fileurl="file://D:\Development\Libraries Base\NeoCom-DM 3.0.x\NeoCom-DataMngmt\NeoCom.DataMngmt\NeoCom.DataMngmt.iml" filepath="D:\Development\Libraries Base\NeoCom-DM 3.0.x\NeoCom-DataMngmt\NeoCom.DataMngmt\NeoCom.DataMngmt.iml" />
       <module fileurl="file://$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" filepath="$PROJECT_DIR$/NeoCom.Model/NeoCom.Model.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
