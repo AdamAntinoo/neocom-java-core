@@ -33,25 +33,23 @@ dependencies {
 
     // M O D U L E    D E P E N D E N C I E S
     // N E O C O M . M O D E L
-    implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'joda-time:joda-time:2.3'
-    implementation 'org.apache.commons:commons-lang3:3.7'
-    implementation 'com.j256.ormlite:ormlite-core:4.48'
-// https://mvnrepository.com/artifact/com.j256.ormlite/ormlite-jdbc
-    compile group: 'com.j256.ormlite', name: 'ormlite-jdbc', version: '4.48'
     implementation 'com.beimin:eveapi:6.0.6'
     implementation 'com.github.scribejava:scribejava-core:4.2.0'
-//    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'org.modelmapper:modelmapper:1.1.0'
     implementation 'com.annimon:stream:1.1.9'
- //   implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.6.3'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
-//    implementation 'com.fasterxml.jackson.core:jackson-datatype:2.8.6'
     implementation 'org.apache.commons:commons-lang3:3.7'
-// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
+
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'com.j256.ormlite:ormlite-core:4.48'
+
+    // T E S T I N G   N E O C O M . M O D E L
+//    implementation 'org.slf4j:slf4j-simple:1.7.25'
+//    implementation 'com.j256.ormlite:ormlite-jdbc:5.0'
+//    implementation 'mysql:mysql-connector-java:5.1.45'
 
     // P L A T F O R M    D E P E N D E N C I E S
 

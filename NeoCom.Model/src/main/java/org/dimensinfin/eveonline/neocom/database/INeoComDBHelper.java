@@ -46,5 +46,5 @@ public interface INeoComDBHelper {
 
 	public Dao<Credential, String> getCredentialDao () throws SQLException;
 
-	public Dao<Colony, String> getColonyDao () throws SQLException;
+	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException;
 }

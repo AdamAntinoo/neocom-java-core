@@ -47,6 +47,7 @@ public class Credential extends NeoComNode {
 	 */
 	@DatabaseField
 	public long expires = 0;
+	//	@DatabaseField(dataType = DataType.LONG_STRING)
 	@DatabaseField
 	private String refreshToken = "-TOKEN-";
 
@@ -73,7 +74,7 @@ public class Credential extends NeoComNode {
 		this();
 		accountId = newAccountIdentifier;
 		try {
-			final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getDBConnector().getCredentialDao();
+			final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getNewDBConnector().getCredentialDao();
 			// Try to create the key. It fails then  it was already created.
 			credentialDao.create(this);
 		} catch (final SQLException sqle) {
@@ -163,10 +164,12 @@ public class Credential extends NeoComNode {
 		this.expires = expires;
 		return this;
 	}
+
 	public Credential setRefreshToken (final String refreshToken) {
 		this.refreshToken = refreshToken;
 		return this;
 	}
+
 	public Credential setKeyCode (final int keycode) {
 		this.keycode = keycode;
 		return this;
@@ -182,15 +185,15 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-//	public Credential setCharacterCoreData (final CorePilot pilot) {
-//		this.pilot = pilot;
-//		return this;
-//	}
-//
-//	public Credential setCharacterXML (final NeoComCharacter character) {
-//		this.character = character;
-//		return this;
-//	}
+	//	public Credential setCharacterCoreData (final CorePilot pilot) {
+	//		this.pilot = pilot;
+	//		return this;
+	//	}
+	//
+	//	public Credential setCharacterXML (final NeoComCharacter character) {
+	//		this.character = character;
+	//		return this;
+	//	}
 
 	public boolean isActive () {
 		return active;
@@ -209,47 +212,47 @@ public class Credential extends NeoComNode {
 		return true;
 	}
 
-//	public void addPlanetaryData (final List<GetCharactersCharacterIdPlanets200Ok> data) {
-//		if ( null != pilot ) pilot.setPlanetaryData(data);
-//	}
-//
-//	public boolean checkPilotDownload () {
-//		if ( null == pilot ) return false;
-//		return true;
-//	}
+	//	public void addPlanetaryData (final List<GetCharactersCharacterIdPlanets200Ok> data) {
+	//		if ( null != pilot ) pilot.setPlanetaryData(data);
+	//	}
+	//
+	//	public boolean checkPilotDownload () {
+	//		if ( null == pilot ) return false;
+	//		return true;
+	//	}
 
 	// --- D E L E G A T E D   M E T H O D S
-//	public long getLocationId () {
-//		return pilot.getLocationId();
-//	}
-//
-//	public LocationTypeEnum getLocationType () {
-//		return pilot.getLocationType();
-//	}
-//
-//	public EveLocation getLocation () {
-//		return pilot.getLocation();
-//	}
-//
-//	//	public String getURLForAvatar () {
-//	//		return pilot.getURLForAvatar();
-//	//	}
-//
-//	public double getAccountBalance () {
-//		return character.getAccountBalance();
-//	}
-//
-//	public Date getApiKeyExpiration () {
-//		return character.getApiKeyExpiration();
-//	}
-//
-//	public Date getApiKeyPaidUntil () {
-//		return character.getApiKeyPaidUntil();
-//	}
-//
-//	public NeoComCharacter getMasterCharacter () {
-//		return character;
-//	}
+	//	public long getLocationId () {
+	//		return pilot.getLocationId();
+	//	}
+	//
+	//	public LocationTypeEnum getLocationType () {
+	//		return pilot.getLocationType();
+	//	}
+	//
+	//	public EveLocation getLocation () {
+	//		return pilot.getLocation();
+	//	}
+	//
+	//	//	public String getURLForAvatar () {
+	//	//		return pilot.getURLForAvatar();
+	//	//	}
+	//
+	//	public double getAccountBalance () {
+	//		return character.getAccountBalance();
+	//	}
+	//
+	//	public Date getApiKeyExpiration () {
+	//		return character.getApiKeyExpiration();
+	//	}
+	//
+	//	public Date getApiKeyPaidUntil () {
+	//		return character.getApiKeyPaidUntil();
+	//	}
+	//
+	//	public NeoComCharacter getMasterCharacter () {
+	//		return character;
+	//	}
 
 	@Override
 	public String toString () {

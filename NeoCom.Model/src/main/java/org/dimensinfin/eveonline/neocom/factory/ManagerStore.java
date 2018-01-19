@@ -18,6 +18,7 @@ package org.dimensinfin.eveonline.neocom.factory;
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,12 +77,20 @@ public class ManagerStore {
 	public static AssetsManager getAssetsManager (final long identifier, final boolean forceNew) {
 		return singleton.getAssetsManagerImpl(identifier, forceNew);
 	}
-	public static PlanetaryManager getPlanetaryManager (final long identifier) {
-		return singleton.getPlanetaryManagerImpl(identifier, false);
+
+	public static PlanetaryManager getPlanetaryManager (final Credential credential) {
+		return getPlanetaryManager(credential, false);
 	}
 
-	public static PlanetaryManager getPlanetaryManager (final long identifier, final boolean forceNew) {
-		return singleton.getPlanetaryManagerImpl(identifier, forceNew);
+	public static PlanetaryManager getPlanetaryManager (final Credential credential, final boolean forceNew) {
+		// Check if this request is already available on the cache.
+		final PlanetaryManager hit = (PlanetaryManager) managerCache.access(EManagerCodes.PLANETARY_MANAGER, credential.getAccountId());
+		if ( (null == hit) || (forceNew) ) {
+			// TODO This line depends on the architecture of the data loading when it should not.
+			final PlanetaryManager manager = new PlanetaryManager(credential);
+			managerCache.store(EManagerCodes.PLANETARY_MANAGER, manager, credential.getAccountId());
+			return manager;
+		} else return hit;
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -97,19 +106,13 @@ public class ManagerStore {
 		final AssetsManager hit = (AssetsManager) managerCache.access(EManagerCodes.ASSETS_MANAGER, identifier);
 		if ( (null == hit) || (forceNew) ) {
 			final AssetsManager manager = new AssetsManager(DataManagementModelStore.getCredential4Id(identifier));
-			managerCache.store(EManagerCodes.ASSETS_MANAGER,manager,identifier);
+			managerCache.store(EManagerCodes.ASSETS_MANAGER, manager, identifier);
 			return manager;
 		} else return hit;
 	}
-	private PlanetaryManager getPlanetaryManagerImpl (final long identifier, final boolean forceNew) {
-		// Check if this request is already available on the cache.
-		final PlanetaryManager hit = (PlanetaryManager) managerCache.access(EManagerCodes.PLANETARY_MANAGER, identifier);
-		if ( (null == hit) || (forceNew) ) {
-			final PlanetaryManager manager = new PlanetaryManager(DataManagementModelStore.getCredential4Id(identifier));
-			managerCache.store(EManagerCodes.PLANETARY_MANAGER,manager,identifier);
-			return manager;
-		} else return hit;
-	}
+
+//	private PlanetaryManager getPlanetaryManagerImpl (final Credential credential, final boolean forceNew) {
+//	}
 
 	@Override
 	public String toString () {

@@ -6,14 +6,14 @@
 //					environment limits.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-import java.util.logging.Logger;
-
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+
+import java.sql.SQLException;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Version")
@@ -23,7 +23,7 @@ public class DatabaseVersion {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true)
-	public int						versionNumber	= -1;
+	public int versionNumber = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public DatabaseVersion() {

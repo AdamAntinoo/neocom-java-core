@@ -85,7 +85,7 @@ public class PlanetaryDatabaseStorageTest {
 	//		throw new Exception("No valid credential found on the request to get the list of credentials.");
 		}
 		// Get access to the Planetary Manager to then access the list of Colonies.
-		planetaryManager = ManagerStore.getPlanetaryManager(testingCredential.getAccountId(), true);
+		planetaryManager = ManagerStore.getPlanetaryManager(testingCredential, true);
 		colonies = planetaryManager.accessAllColonies();
 		if ( null != colonies ) {
 			targetColony = colonies.get(0);
@@ -106,8 +106,8 @@ public class PlanetaryDatabaseStorageTest {
 				.setAccountId(92223647)
 				.setAccountName("Beth Ripley")
 				.setActive(true)
-				.setAccessToken("10ojGLdIPdd7oBLwDhM5qRSFy-v2B3XngNAzEwNyC5YrKjBO-l1xS33ZWUCIlxWBIIxeEaNb7VnYJkYqg12WHA2")
-				.setRefreshToken("h7EUbFP3UP8W2SithRQDFf4p5MZyqLXXU-GB29hKQzc-XgEwgEBhWmae1TcCmcol8ERVm5kAe84231CeSbZJ_XuGIi6F2wMfQna_B7OUR3ryZmKycmkQXA3DQgp-gzlk_qt220ZdK4OBwAgamH7f61RLotAUzlsbmoe1GMy_2oVdHU37ZWtE7hJgTAsFj6IfyJIuLI7QIckXLDQjmi2RdeF5R_qg2NRdKGEJGw1oLpt7lt1nDvw0Hehac0kqzFH737a5b-iB2UnMInImTdD1Ese0sG-BI47LOWb7Keoh3EMq9wbo35UBQTYAtexj-LFrYG9mfrVuW03Rrgc68oKeC4WTHwwX-WQM_8G_bnVirrBBx8b7CoHQlVG-qmYqrGzBPIGfyjtxMsXj38MUgunmoTdy7kQrbVEUxBzqLMsPQclzcxUm6FS5HuPvsmVxGjYfBqp7rsDNPmCxxdNK6sW212uDo8dZspQ5-jyGBIAhaVRu3rSE4Yo4xPdudy4ukpDJMt4ZPX8q2nn2EDXs6kKxJJsV13uXxIJnZVemyqXWTDN5JV_0-5CDV_RCxHyQyE752R2koBDHdc2NxhqXth_Q2138aTOYT7gjGC--wVisDpk1")
+				.setAccessToken("l503NeX7tjKwbwXfKeEQCibp8v8KknuIldR09FxhOjH3PaC4Tpsoa9yJV7Zi284JjNleq0JLzk4tNZmHGJ1P0w2")
+				.setRefreshToken("rILzXqFN4C8aYKr2bY6rr-tvIcRuD3m_Qk5kHeedCn3aIV2vj3JjmucYgp_7TIeoS0wKEfIKs7vAhgopGAlIRQ7R47S1cuPHEVkILck-NQWPZH10Betk972YcFjHZVGO6IjbY-WjtFwsmGKgkBxaf67LgLTt5x_zsK1uRvURyYLMMA0Eh1bWyCStpo2Wg7evW1c79uBiEYaEP9OYpmfrXOKbzGFYb8U5McM7rr0o5lyeYlr4-H4xFG8yVe31b0d4PMlOPCQInENnGcd9-epl3QahYJYvpdkZtocVSC67JV9Q60-vgoTD9D6ZVoO4Iic_Hmm7i5OueCJctqupuV5G8Jja9M0kP6y7a3dl3WKFQUiTZs49X1YgqJPePVD--KvgoUXiwHTZQlQEiqZ2mWVsUQIrlD-7JAzCBQ1Fl89sCQ-iZ8RMUU6OtyDZqrMoQfSYdbuazovF4ueo2lX_PqA71NkL6GT-H_fUiKeurr35yLAU1vfphzckltF9gf7LC7cKuEiGJ14dpE20uLQU7zkzz2jF-zQpjdo61HNk8LXMXbERBhT4imtEC9V8msbsVPn4z04AInFvvNEwdlc2GLRJsoH8xNWWXPsuBIFGGsHiMUs1")
 				.setTokenType("Bearer")
 				.setExpires(0)
 				.store();

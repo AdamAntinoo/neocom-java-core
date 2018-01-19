@@ -41,7 +41,7 @@ public class ApiKey {
 	public ApiKey(final String login) {
 		this.login = login;
 		try {
-			Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
+			Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getNewDBConnector().getApiKeysDao();
 			// Try to create the key. It fails then  it was already created.
 			apikeyDao.create(this);
 		} catch (final SQLException sqle) {

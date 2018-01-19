@@ -56,7 +56,7 @@ public class NeoComDBHelper implements INeoComDBHelper {
 	private Dao<DatabaseVersion, String> versionDao = null;
 	private Dao<ApiKey, String> apiKeysDao = null;
 	private Dao<Credential, String> credentialDao = null;
-	private Dao<Colony, String> colonyDao = null;
+	private Dao<ColonyStorage, String> colonyStorageDao = null;
 
 	private DatabaseVersion storedVersion = null;
 
@@ -161,7 +161,7 @@ public class NeoComDBHelper implements INeoComDBHelper {
 			logger.warn("SQL [NeoComDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
 		try {
-			TableUtils.createTableIfNotExists(databaseConnection, Colony.class);
+			TableUtils.createTableIfNotExists(databaseConnection, ColonyStorage.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
@@ -244,11 +244,11 @@ public class NeoComDBHelper implements INeoComDBHelper {
 	}
 
 	@Override
-	public Dao<Colony, String> getColonyDao () throws SQLException {
-		if ( null == colonyDao ) {
-			colonyDao = DaoManager.createDao(this.getConnectionSource(), Colony.class);
+	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException {
+		if ( null == colonyStorageDao ) {
+			colonyStorageDao = DaoManager.createDao(this.getConnectionSource(), ColonyStorage.class);
 		}
-		return colonyDao;
+		return colonyStorageDao;
 	}
 
 	private void createConnectionSource () throws SQLException {
