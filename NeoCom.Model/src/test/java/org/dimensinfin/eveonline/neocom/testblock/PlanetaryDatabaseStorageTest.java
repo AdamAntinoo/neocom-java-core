@@ -43,7 +43,7 @@ public class PlanetaryDatabaseStorageTest {
 	private static Logger logger = LoggerFactory.getLogger(PlanetaryDatabaseStorageTest.class);
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private NeoComDBHelper helper;
+//	private NeoComDBHelper helper;
 	private ModelAppConnector modelConnector;
 	private Credential testingCredential;
 	private PlanetaryManager planetaryManager;
@@ -63,21 +63,27 @@ public class PlanetaryDatabaseStorageTest {
 	@Before
 	public void setUp () throws Exception {
 		// Step 01. Create the connectors amd implementers required to complete the test.
-		// Create the Database helper for the NeoCom database.
-		helper = new NeoComDBHelper()
-				.setDatabaseName("jdbc:mysql://localhost:3306")
-				.setDatabaseUser("NEOCOMTEST")
-				.setDatabasePassword("01.Alpha")
-				.build();
-		NeoComDatabase.setImplementer(helper);
-
 		// The first task is to connect the Runtime instances to a functionality provider.
 		modelConnector = new ModelAppConnector(new ModelTestConnectorProvider());
+		// Create the Database helper for the NeoCom database.
+//		helper = new NeoComDBHelper()
+//				.setDatabaseHost("jdbc:mysql://localhost:3306")
+//				.setDatabaseName("neocom")
+//				.setDatabaseUser("NEOCOMTEST")
+//				.setDatabasePassword("01.Alpha")
+//				.setDatabaseVersion(1)
+//				.build();
+		NeoComDatabase.setImplementer(ModelAppConnector.getSingleton().getNewDBConnector());
+		NeoComDatabase.openDatabase();
+
 		// Read all the Credentials and keep the first one for testing.
 		final List<Credential> credentials = DataManagementModelStore.accessCredentialList();
 		if ( credentials.size() > 0 ) {
 			testingCredential = credentials.get(0);
-		} else throw new Exception("No valid credential found on the request to get the list of credentials.");
+		} else {
+			testingCredential=createTestCredential();
+	//		throw new Exception("No valid credential found on the request to get the list of credentials.");
+		}
 		// Get access to the Planetary Manager to then access the list of Colonies.
 		planetaryManager = ManagerStore.getPlanetaryManager(testingCredential.getAccountId(), true);
 		colonies = planetaryManager.accessAllColonies();
@@ -93,8 +99,19 @@ public class PlanetaryDatabaseStorageTest {
 
 	}
 
-	@Test
-	public void getApiKey () throws Exception {
+//	@Test
+	public Credential createTestCredential () throws Exception {
+		final int newAccountIdentifier = 92002067;
+		final Credential credential = new Credential(newAccountIdentifier)
+				.setAccountId(92223647)
+				.setAccountName("Beth Ripley")
+				.setActive(true)
+				.setAccessToken("10ojGLdIPdd7oBLwDhM5qRSFy-v2B3XngNAzEwNyC5YrKjBO-l1xS33ZWUCIlxWBIIxeEaNb7VnYJkYqg12WHA2")
+				.setRefreshToken("h7EUbFP3UP8W2SithRQDFf4p5MZyqLXXU-GB29hKQzc-XgEwgEBhWmae1TcCmcol8ERVm5kAe84231CeSbZJ_XuGIi6F2wMfQna_B7OUR3ryZmKycmkQXA3DQgp-gzlk_qt220ZdK4OBwAgamH7f61RLotAUzlsbmoe1GMy_2oVdHU37ZWtE7hJgTAsFj6IfyJIuLI7QIckXLDQjmi2RdeF5R_qg2NRdKGEJGw1oLpt7lt1nDvw0Hehac0kqzFH737a5b-iB2UnMInImTdD1Ese0sG-BI47LOWb7Keoh3EMq9wbo35UBQTYAtexj-LFrYG9mfrVuW03Rrgc68oKeC4WTHwwX-WQM_8G_bnVirrBBx8b7CoHQlVG-qmYqrGzBPIGfyjtxMsXj38MUgunmoTdy7kQrbVEUxBzqLMsPQclzcxUm6FS5HuPvsmVxGjYfBqp7rsDNPmCxxdNK6sW212uDo8dZspQ5-jyGBIAhaVRu3rSE4Yo4xPdudy4ukpDJMt4ZPX8q2nn2EDXs6kKxJJsV13uXxIJnZVemyqXWTDN5JV_0-5CDV_RCxHyQyE752R2koBDHdc2NxhqXth_Q2138aTOYT7gjGC--wVisDpk1")
+				.setTokenType("Bearer")
+				.setExpires(0)
+				.store();
+		return credential;
 	}
 
 	@Override

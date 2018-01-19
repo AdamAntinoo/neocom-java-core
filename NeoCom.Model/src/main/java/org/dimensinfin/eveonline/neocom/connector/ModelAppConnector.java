@@ -9,16 +9,18 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
+import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 
+import java.sql.SQLException;
 import java.util.GregorianCalendar;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelAppConnector implements IModelAppConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static ModelAppConnector	_singleton	= null;
-
+@Deprecated
 	public static ModelAppConnector getSingleton() {
 		if (null == ModelAppConnector._singleton)
 			throw new RuntimeException(
@@ -74,12 +76,18 @@ public class ModelAppConnector implements IModelAppConnector {
 					"RTEX [GymAppConnector.getCCPDBConnector]> Application connection not defined. Functionality 'getCCPDBConnector' disabled.");
 		return _connector.getCCPDBConnector();
 	}
-
+@Deprecated
 	public INeoComModelDatabase getDBConnector() {
 		if (null == _connector)
 			throw new RuntimeException(
 					"RTEX [GymAppConnector.getDBConnector]> Application connection not defined. Functionality 'getDBConnector' disabled.");
 		return _connector.getDBConnector();
+	}
+	public INeoComDBHelper getNewDBConnector() throws SQLException {
+		if (null == _connector)
+			throw new RuntimeException(
+					"RTEX [GymAppConnector.getDBConnector]> Application connection not defined. Functionality 'getNewDBConnector' disabled.");
+		return _connector.getNewDBConnector();
 	}
 
 //	public INeoComModelStore getModelStore() {

@@ -56,7 +56,11 @@ public class NeoComDatabase {
 
 	public static INeoComDBHelper getImplementer () {
 		// TODO During the time the old and new implementations share the code make the implementer the one at the Connector.
-		if ( null == implementer ) implementer = ModelAppConnector.getSingleton().getNewDBConnector();
+		if ( null == implementer ) try {
+			implementer = ModelAppConnector.getSingleton().getNewDBConnector();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		if ( null == implementer )
 			throw new RuntimeException("[NeoComDatabase]> implementer not defined. No access to platform library to get database results.");
 //		_accessCount++;
@@ -64,6 +68,23 @@ public class NeoComDatabase {
 	}
 	public static void setImplementer (final INeoComDBHelper  newImplementer) {
 		if(null!=newImplementer)implementer=newImplementer;
+	}
+
+	/**
+	 * Tryes to open and create all pending tables. Also checks database version and performs any upgrades to the
+	 * schema depending on differences at version numbers.
+	 * If there is any problem it will throw the exception.
+	 */
+	public static void openDatabase()throws SQLException{
+		// Get the current database stored version.
+		final int databaseVersion = implementer.getStoredVersion();
+		// Get the current configured version.
+		final int currentVersion = implementer.getDatabaseVersion();
+		// Do any upgrade if the versions do not match.
+		if(databaseVersion!=currentVersion)
+			implementer.onUpgrade(implementer.getConnectionSource(),databaseVersion,currentVersion);
+		// Create any missing table is the schema has changed since last update.
+		implementer.onCreate(implementer.getConnectionSource());
 	}
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S

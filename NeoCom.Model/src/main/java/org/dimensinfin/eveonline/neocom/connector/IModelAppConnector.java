@@ -9,15 +9,19 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
+import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
+
+import java.sql.SQLException;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IModelAppConnector {
-	public ICacheConnector getCacheConnector();
+	public ICacheConnector getCacheConnector ();
 
-	public ICCPDatabaseConnector getCCPDBConnector();
+	public ICCPDatabaseConnector getCCPDBConnector ();
 
-	public INeoComModelDatabase getDBConnector();
+	public INeoComModelDatabase getDBConnector ();
 
-//	public INeoComModelStore getModelStore();
+	public INeoComDBHelper getNewDBConnector () throws SQLException;
 }
 
 // - UNUSED CODE ............................................................................................

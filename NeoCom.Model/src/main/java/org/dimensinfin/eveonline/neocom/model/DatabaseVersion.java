@@ -32,7 +32,7 @@ public class DatabaseVersion {
 	public DatabaseVersion(final int newVersion) {
 		versionNumber = newVersion;
 		try {
-			Dao<DatabaseVersion, String> versionDao = ModelAppConnector.getSingleton().getDBConnector().getVersionDao();
+			Dao<DatabaseVersion, String> versionDao = ModelAppConnector.getSingleton().getNewDBConnector().getVersionDao();
 			// Try to create the key. It fails then  it was already created.
 			versionDao.create(this);
 		} catch (final SQLException sqle) {

@@ -15,6 +15,8 @@ package org.dimensinfin.eveonline.neocom.database;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -27,7 +29,9 @@ import org.dimensinfin.eveonline.neocom.planetary.Colony;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,11 +42,11 @@ import java.util.concurrent.TimeUnit;
 public class NeoComDBHelper implements INeoComDBHelper {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(NeoComDBHelper.class);
-	private static String connectionDescriptor = "jdbc:mysql://localhost:3306?user=NEOCOMTEST&password=01.Alpha";
+	private static String connectionDescriptor = "jdbc:mysql://localhost:3306/neocom?user=NEOCOMTEST&password=01.Alpha";
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String hostName = "jdbc:mysql://localhost:3306";
-	private String databaseName = "/NEOCOM";
+	private String hostName = "";
+	private String databaseName = "";
 	private String databaseUser = "";
 	private String databasePassword = "";
 	private int databaseCurrentVersion = 0;
@@ -54,12 +58,23 @@ public class NeoComDBHelper implements INeoComDBHelper {
 	private Dao<Credential, String> credentialDao = null;
 	private Dao<Colony, String> colonyDao = null;
 
+	private DatabaseVersion storedVersion = null;
+
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComDBHelper () {
 		super();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public int getDatabaseVersion () {
+		return databaseCurrentVersion;
+	}
+
+	public ConnectionSource getConnectionSource () throws SQLException {
+		if ( null == connectionSource ) createConnectionSource();
+		return connectionSource;
+	}
+
 	public NeoComDBHelper setDatabaseHost (final String hostName) {
 		this.hostName = hostName;
 		return this;
@@ -79,12 +94,15 @@ public class NeoComDBHelper implements INeoComDBHelper {
 		this.databasePassword = password;
 		return this;
 	}
+
 	public NeoComDBHelper setDatabaseVersion (final int newVersion) {
 		this.databaseCurrentVersion = newVersion;
 		return this;
 	}
 
 	public NeoComDBHelper build () throws SQLException {
+		if ( StringUtils.isEmpty(hostName) )
+			throw new SQLException("Cannot create connection: 'hostName' is empty.");
 		if ( StringUtils.isEmpty(databaseName) )
 			throw new SQLException("Cannot create connection: 'databaseName' is empty.");
 		if ( StringUtils.isEmpty(databaseUser) )
@@ -96,56 +114,30 @@ public class NeoComDBHelper implements INeoComDBHelper {
 		return this;
 	}
 
-	private void createConnectionSource () throws SQLException {
-		//		try {
-		final String localConnectionDescriptor = databaseName + "?user=" + databaseUser + "&password=" + databasePassword;
-		if ( databaseValid ) connectionSource = new JdbcPooledConnectionSource(localConnectionDescriptor);
-		else connectionSource = new JdbcPooledConnectionSource(connectionDescriptor);
-		// only keep the connections open for 5 minutes
-		connectionSource.setMaxConnectionAgeMillis(TimeUnit.MINUTES.toMillis(5));
-		// change the check-every milliseconds from 30 seconds to 60
-		connectionSource.setCheckConnectionsEveryMillis(TimeUnit.SECONDS.toMillis(60));
-		// for extra protection, enable the testing of connections
-		// right before they are handed to the user
-		connectionSource.setTestBeforeGet(true);
-		//		} catch (SQLException sqle) {
-		//			sqle.printStackTrace();
-		//		}
+	public int getStoredVersion (){
+		if ( null == storedVersion ) {
+			// Access the version object persistent on the database.
+			try {
+				//			Dao<DatabaseVersion, String> versionDao = this.getVersionDao();
+				QueryBuilder<DatabaseVersion, String> queryBuilder = getVersionDao().queryBuilder();
+				PreparedQuery<DatabaseVersion> preparedQuery = queryBuilder.prepare();
+				List<DatabaseVersion> versionList = versionDao.query(preparedQuery);
+				if ( versionList.size() > 0 ) {
+					storedVersion = versionList.get(0);
+					return storedVersion.getVersionNumber();
+				} else
+					return 0;
+			} catch (SQLException sqle) {
+				logger.warn("W- [NeocomDBHelper.getStoredVersion]> Database exception: " + sqle.getMessage());
+				return 0;
+			} catch (RuntimeException rtex) {
+				logger.warn("W- [NeocomDBHelper.getStoredVersion]> Database exception: " + rtex.getMessage());
+				return 0;
+			}
+		} else return storedVersion.getVersionNumber();
 	}
 
-	@Override
-	public Dao<DatabaseVersion, String> getVersionDao () throws SQLException {
-		if ( null == versionDao ) {
-			versionDao = DaoManager.createDao(this.getConnectionSource(), DatabaseVersion.class);
-		}
-		return versionDao;
-	}
-
-	@Override
-	public Dao<ApiKey, String> getApiKeysDao () throws SQLException {
-		if ( null == apiKeysDao ) {
-			apiKeysDao = DaoManager.createDao(this.getConnectionSource(), ApiKey.class);
-		}
-		return apiKeysDao;
-	}
-
-	@Override
-	public Dao<Credential, String> getCredentialDao () throws SQLException {
-		if ( null == credentialDao ) {
-			credentialDao = DaoManager.createDao(this.getConnectionSource(), Credential.class);
-		}
-		return credentialDao;
-	}
-
-	@Override
-	public Dao<Colony, String> getColonyDao () throws SQLException {
-		if ( null == colonyDao ) {
-			colonyDao = DaoManager.createDao(this.getConnectionSource(), Colony.class);
-		}
-		return colonyDao;
-	}
-
-	private void onCreate (final ConnectionSource databaseConnection) {
+	public void onCreate (final ConnectionSource databaseConnection) {
 		logger.info(">> [NeoComDBHelper.onCreate]");
 		// Create the tables that do not exist
 		try {
@@ -208,17 +200,81 @@ public class NeoComDBHelper implements INeoComDBHelper {
 		logger.info("<< [NeoComDBHelper.onCreate]");
 	}
 
-	private JdbcPooledConnectionSource getConnectionSource () {
-		if ( null == connectionSource ) createConnectionSource();
-		return connectionSource;
+	public void onUpgrade (final ConnectionSource databaseConnection, final int oldVersion, final int newVersion) {
+		// Execute different actions depending on the new version.
+		if ( oldVersion < 1 ) {
+			try {
+				// Create the version table and insert the initial new version code.
+				TableUtils.createTableIfNotExists(databaseConnection, DatabaseVersion.class);
+				DatabaseVersion version = new DatabaseVersion(newVersion);
+				// Persist the version object to the database
+				getVersionDao().create(version);
+			} catch (RuntimeException rtex) {
+				logger.error("E> Error dropping table on Database new version.");
+				rtex.printStackTrace();
+			} catch (SQLException sqle) {
+				logger.error("E> Error dropping table on Database new version.");
+				sqle.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public Dao<DatabaseVersion, String> getVersionDao () throws SQLException {
+		if ( null == versionDao ) {
+			versionDao = DaoManager.createDao(this.getConnectionSource(), DatabaseVersion.class);
+		}
+		return versionDao;
+	}
+
+	@Override
+	public Dao<ApiKey, String> getApiKeysDao () throws SQLException {
+		if ( null == apiKeysDao ) {
+			apiKeysDao = DaoManager.createDao(this.getConnectionSource(), ApiKey.class);
+		}
+		return apiKeysDao;
+	}
+
+	@Override
+	public Dao<Credential, String> getCredentialDao () throws SQLException {
+		if ( null == credentialDao ) {
+			credentialDao = DaoManager.createDao(this.getConnectionSource(), Credential.class);
+		}
+		return credentialDao;
+	}
+
+	@Override
+	public Dao<Colony, String> getColonyDao () throws SQLException {
+		if ( null == colonyDao ) {
+			colonyDao = DaoManager.createDao(this.getConnectionSource(), Colony.class);
+		}
+		return colonyDao;
+	}
+
+	private void createConnectionSource () throws SQLException {
+		//		try {
+		final String localConnectionDescriptor = hostName + "/" + databaseName + "?user=" + databaseUser + "&password=" + databasePassword;
+		if ( databaseValid ) connectionSource = new JdbcPooledConnectionSource(localConnectionDescriptor);
+		else connectionSource = new JdbcPooledConnectionSource(connectionDescriptor);
+		// only keep the connections open for 5 minutes
+		connectionSource.setMaxConnectionAgeMillis(TimeUnit.MINUTES.toMillis(5));
+		// change the check-every milliseconds from 30 seconds to 60
+		connectionSource.setCheckConnectionsEveryMillis(TimeUnit.SECONDS.toMillis(60));
+		// for extra protection, enable the testing of connections
+		// right before they are handed to the user
+		connectionSource.setTestBeforeGet(true);
+		//		} catch (SQLException sqle) {
+		//			sqle.printStackTrace();
+		//		}
 	}
 
 	@Override
 	public String toString () {
 		StringBuffer buffer = new StringBuffer("NeoComDBHelper [");
-		buffer.append("name: ").append(0);
+		final String localConnectionDescriptor = hostName + "/" + databaseName + "?user=" + databaseUser + "&password=" + databasePassword;
+		buffer.append("Descriptor: ").append(localConnectionDescriptor);
 		buffer.append("]");
-		buffer.append("->").append(super.toString());
+		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
 }

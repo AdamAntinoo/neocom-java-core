@@ -86,7 +86,7 @@ public class Credential extends NeoComNode {
 	public void setDirty (final boolean state) {
 		if ( state ) {
 			try {
-				final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getDBConnector().getCredentialDao();
+				final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getNewDBConnector().getCredentialDao();
 				credentialDao.update(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();

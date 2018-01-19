@@ -13,6 +13,7 @@
 package org.dimensinfin.eveonline.neocom.database;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.support.ConnectionSource;
 
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.Credential;
@@ -29,7 +30,18 @@ import java.sql.SQLException;
  * @author Adam Antinoo
  */
 public interface INeoComDBHelper {
+	public int getDatabaseVersion ();
+
+	public int getStoredVersion () throws SQLException;
+
+	public void onCreate (final ConnectionSource databaseConnection);
+
+	public void onUpgrade (final ConnectionSource databaseConnection, final int oldVersion, final int newVersion);
+
+	public ConnectionSource getConnectionSource () throws SQLException;
+
 	public Dao<DatabaseVersion, String> getVersionDao () throws SQLException;
+
 	public Dao<ApiKey, String> getApiKeysDao () throws SQLException;
 
 	public Dao<Credential, String> getCredentialDao () throws SQLException;
