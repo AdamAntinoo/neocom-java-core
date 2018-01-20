@@ -17,7 +17,7 @@ import com.j256.ormlite.stmt.Where;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
@@ -27,7 +27,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
-import org.dimensinfin.eveonline.neocom.model.TimeStamp;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.joda.time.Duration;
 
 import java.sql.SQLException;
@@ -297,7 +297,7 @@ public class AssetsManager extends AbstractManager {
 						+ getCredentialIdentifier() + "] - " + lapse);
 				assetsAtLocationCache.put(location.getID(), (ArrayList<NeoComAsset>) assetList);
 				// Update the dirty state to signal modification of store structures.
-				//				this.setDirty(true);
+				//				this.store(true);
 				AssetsManager.logger.info("<< AssetsManager.searchAsset4Location [" + assetList.size() + "]");
 			} catch (java.sql.SQLException sqle) {
 				sqle.printStackTrace();
@@ -348,7 +348,7 @@ public class AssetsManager extends AbstractManager {
 		if ( null == assetList ) {
 			try {
 				ModelAppConnector.getSingleton().startChrono();
-				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", getCredentialIdentifier());
@@ -509,7 +509,7 @@ public class AssetsManager extends AbstractManager {
 	private void accessDaos () {
 		if ( null == assetDao ) {
 			try {
-				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 				if ( null == assetDao ) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
 			} catch (SQLException sqle) {
 				// Interrupt processing and signal a runtime exception.
@@ -525,7 +525,7 @@ public class AssetsManager extends AbstractManager {
 		// Select assets for the owner.
 		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
-			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 			ModelAppConnector.getSingleton().startChrono();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
@@ -634,7 +634,7 @@ public class AssetsManager extends AbstractManager {
 
 	private void readTimeStamps () {
 		try {
-			Dao<TimeStamp, String> tsDao = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO();
+			Dao<TimeStamp, String> tsDao = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDao();
 			QueryBuilder<TimeStamp, String> queryBuilder = tsDao.queryBuilder();
 			Where<TimeStamp, String> where = queryBuilder.where();
 			where.eq("reference", this.getTSAssetsReference());
@@ -708,7 +708,7 @@ public class AssetsManager extends AbstractManager {
 	//		// Update counter
 	//		locationCount = locationsList.size();
 	//		// Update the dirty state to signal modification of store structures.
-	//		this.setDirty(true);
+	//		this.store(true);
 	//		AssetsManager.logger.info("<< AssetsManager.updateLocations. " + AppConnector.timeLapse());
 	//	}
 

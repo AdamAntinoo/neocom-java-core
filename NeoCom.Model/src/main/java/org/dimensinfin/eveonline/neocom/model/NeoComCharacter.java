@@ -25,13 +25,9 @@ import com.beimin.eveapi.response.eve.CharacterInfoResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
-import org.dimensinfin.eveonline.neocom.enums.EDataBlock;
 import org.dimensinfin.eveonline.neocom.manager.DownloadManager;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -222,55 +218,55 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		return _downloadManager;
 	}
 
-	/**
-	 * Check all the cache time stamps for existence and in case the TS exists if the time has already passed.
-	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
-	 * time reported by CCP.
-	 */
-	public EDataBlock needsUpdate () {
-		// Check for character data cache.
-		if ( null == getDownloadManager()._characterCacheTime ) {
-			try {
-				// Get access to the database record for this Character cache time stamp.
-				final String reference = this.getCharacterID() + ".CHARACTERDATA";
-				getDownloadManager()._characterCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
-				if ( null == getDownloadManager()._characterCacheTime ) return EDataBlock.CHARACTERDATA;
-			} catch (final SQLException sqle) {
-				return EDataBlock.CHARACTERDATA;
-			}
-		}
-		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._characterCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
-			return EDataBlock.CHARACTERDATA;
-		// Check for asset cached time.
-		if ( null == getDownloadManager()._assetsCacheTime ) {
-			try {
-				// Get access to the database record for this Character cache time stamp.
-				final String reference = this.getCharacterID() + ".ASSETDATA";
-				getDownloadManager()._assetsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
-				if ( null == getDownloadManager()._assetsCacheTime ) return EDataBlock.ASSETDATA;
-			} catch (final SQLException sqle) {
-				return EDataBlock.ASSETDATA;
-			}
-		}
-		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._assetsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
-			return EDataBlock.ASSETDATA;
-		// Check for blueprints cached time.
-		if ( null == getDownloadManager()._blueprintsCacheTime ) {
-			try {
-				// Get access to the database record for this Character cache time stamp.
-				final String reference = this.getCharacterID() + ".BLUEPRINTDATA";
-				getDownloadManager()._blueprintsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
-				if ( null == getDownloadManager()._blueprintsCacheTime ) return EDataBlock.BLUEPRINTDATA;
-			} catch (final SQLException sqle) {
-				return EDataBlock.BLUEPRINTDATA;
-			}
-		}
-		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._blueprintsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
-			return EDataBlock.BLUEPRINTDATA;
-
-		// If not returned before we have nothing to update
-		return EDataBlock.READY;
-	}
+//	/**
+//	 * Check all the cache time stamps for existence and in case the TS exists if the time has already passed.
+//	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
+//	 * time reported by CCP.
+//	 */
+//	public EDataUpdateJobs needsUpdate () {
+//		// Check for character data cache.
+//		if ( null == getDownloadManager()._characterCacheTime ) {
+//			try {
+//				// Get access to the database record for this Character cache time stamp.
+//				final String reference = this.getCharacterID() + ".CHARACTERDATA";
+//				getDownloadManager()._characterCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
+//				if ( null == getDownloadManager()._characterCacheTime ) return EDataUpdateJobs.CHARACTERDATA;
+//			} catch (final SQLException sqle) {
+//				return EDataUpdateJobs.CHARACTERDATA;
+//			}
+//		}
+//		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._characterCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
+//			return EDataUpdateJobs.CHARACTERDATA;
+//		// Check for asset cached time.
+//		if ( null == getDownloadManager()._assetsCacheTime ) {
+//			try {
+//				// Get access to the database record for this Character cache time stamp.
+//				final String reference = this.getCharacterID() + ".ASSETDATA";
+//				getDownloadManager()._assetsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
+//				if ( null == getDownloadManager()._assetsCacheTime ) return EDataUpdateJobs.ASSETDATA;
+//			} catch (final SQLException sqle) {
+//				return EDataUpdateJobs.ASSETDATA;
+//			}
+//		}
+//		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._assetsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
+//			return EDataUpdateJobs.ASSETDATA;
+//		// Check for blueprints cached time.
+//		if ( null == getDownloadManager()._blueprintsCacheTime ) {
+//			try {
+//				// Get access to the database record for this Character cache time stamp.
+//				final String reference = this.getCharacterID() + ".BLUEPRINTDATA";
+//				getDownloadManager()._blueprintsCacheTime = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDAO().queryForId(reference);
+//				if ( null == getDownloadManager()._blueprintsCacheTime ) return EDataUpdateJobs.BLUEPRINTDATA;
+//			} catch (final SQLException sqle) {
+//				return EDataUpdateJobs.BLUEPRINTDATA;
+//			}
+//		}
+//		if ( ModelAppConnector.getSingleton().checkExpiration(getDownloadManager()._blueprintsCacheTime.getTimeStamp(), ModelWideConstants.NOW) )
+//			return EDataUpdateJobs.BLUEPRINTDATA;
+//
+//		// If not returned before we have nothing to update
+//		return EDataUpdateJobs.READY;
+//	}
 
 	// [01]
 	public int compareTo (final NeoComCharacter target) {

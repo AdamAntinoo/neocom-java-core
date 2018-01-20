@@ -18,7 +18,7 @@ package org.dimensinfin.eveonline.neocom.factory;
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

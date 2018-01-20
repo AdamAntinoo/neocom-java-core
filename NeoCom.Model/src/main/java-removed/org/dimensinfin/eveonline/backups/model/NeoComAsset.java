@@ -375,7 +375,7 @@ public class NeoComAsset extends NeoComNode {
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();
-				//	this.setDirty(true);
+				//	this.store(true);
 			}
 		}
 	}
@@ -489,7 +489,7 @@ public class NeoComAsset extends NeoComNode {
 		//			locationDao.createOrUpdate(newundefloc);
 		//		} catch (final SQLException sqle) {
 		//			sqle.printStackTrace();
-		//			this.setDirty(true);
+		//			this.store(true);
 		//		}
 		return newundefloc;
 	}

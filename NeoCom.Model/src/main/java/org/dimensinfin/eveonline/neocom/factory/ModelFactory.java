@@ -30,7 +30,7 @@ import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
-import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.dimensinfin.eveonline.neocom.network.NetworkManager;
@@ -85,6 +85,15 @@ public class ModelFactory {
 			}
 			return null;
 		}
+		public ICollaboration delete (final EModelVariants variant, long longIdentifier) {
+			if ( variant == EModelVariants.PILOTV1 ) {
+				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
+				final ICollaboration hit = _instanceCacheStore.get(locator);
+				_instanceCacheStore.put(locator,null);
+				return hit;
+			}
+			return null;
+		}
 
 		public boolean store (final EModelVariants variant, final ICollaboration instance, final Instant expirationTime, final long longIdentifier) {
 			// Store command for PILOTV1 instances.
@@ -118,6 +127,22 @@ public class ModelFactory {
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
 	public static PilotV1 getPilotV1 (final long identifier) {
+		return singleton.getPilotV1Impl(identifier);
+	}
+	public static boolean checkPilotV1 (final long identifier) {
+		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+		if(null==hit)return false;
+		else return true;
+	}
+
+	/**
+	 * Detelted the current entry if found and forces a new download.
+	 * @param identifier the pilot identifier to load.
+	 * @return
+	 */
+	public static PilotV1 udpatePilotV1 (final long identifier) {
+		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+		if(null!=hit)modelCache.delete(EModelVariants.PILOTV1, identifier);
 		return singleton.getPilotV1Impl(identifier);
 	}
 

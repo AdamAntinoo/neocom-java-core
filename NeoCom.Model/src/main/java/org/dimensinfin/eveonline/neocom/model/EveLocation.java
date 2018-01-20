@@ -84,7 +84,7 @@ public class EveLocation extends NeoComNode {
 	public EveLocation(final long citadelid, final Citadel cit) {
 		this();
 		try {
-			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDao();
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
@@ -105,7 +105,7 @@ public class EveLocation extends NeoComNode {
 	public EveLocation(final Outpost out) {
 		this();
 		try {
-			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDao();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(out.getSolarSystem());
 			id = out.getFacilityID();
@@ -122,7 +122,7 @@ public class EveLocation extends NeoComNode {
 	public EveLocation(final Station station) {
 		this();
 		try {
-			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+			final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDao();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
@@ -267,7 +267,7 @@ public class EveLocation extends NeoComNode {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDAO();
+				final Dao<EveLocation, String> locationDao = ModelAppConnector.getSingleton().getDBConnector().getLocationDao();
 				locationDao.update(this);
 				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {

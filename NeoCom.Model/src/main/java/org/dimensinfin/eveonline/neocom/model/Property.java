@@ -5,15 +5,15 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 // - IMPORT SECTION .........................................................................................
-import java.io.Serializable;
-import java.sql.SQLException;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import java.io.Serializable;
+import java.sql.SQLException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Properties")
@@ -41,7 +41,7 @@ public class Property implements Serializable {
 
 	public Property(final EPropertyTypes propertyType) {
 		try {
-			Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDAO();
+			Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDao();
 			// Try to create the pair. It fails then  it was already created.
 			propertyDao.create(this);
 			// Be sure the owner is reset to undefined when stored at the database.
@@ -74,12 +74,12 @@ public class Property implements Serializable {
 	//			propertyDao.createOrUpdate(this);
 	//			// Be sure the owner is reset to undefined when stored at the database.
 	//			resetOwner();
-	//			setDirty(true);
+	//			store(true);
 	//			//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 	//		} catch (final SQLException sqle) {
 	//			//		logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
 	//			sqle.printStackTrace();
-	//			setDirty(true);
+	//			store(true);
 	//		}
 	//	}
 
@@ -115,7 +115,7 @@ public class Property implements Serializable {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDAO();
+				Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDao();
 				propertyDao.update(this);
 				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 			} catch (final SQLException sqle) {

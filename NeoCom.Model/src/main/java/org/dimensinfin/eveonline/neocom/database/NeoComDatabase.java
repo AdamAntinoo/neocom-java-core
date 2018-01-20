@@ -16,10 +16,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 
-import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +70,7 @@ public class NeoComDatabase {
 	}
 
 	/**
-	 * Tryes to open and create all pending tables. Also checks database version and performs any upgrades to the
+	 * Tries to open and create all pending tables. Also checks database version and performs any upgrades to the
 	 * schema depending on differences at version numbers.
 	 * If there is any problem it will throw the exception.
 	 */

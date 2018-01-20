@@ -397,7 +397,7 @@ public class NeoComBlueprint extends NeoComNode {
 
 	private void accessAssociatedAsset() {
 		try {
-			final Dao<NeoComAsset, String> dao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+			final Dao<NeoComAsset, String> dao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
 			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");

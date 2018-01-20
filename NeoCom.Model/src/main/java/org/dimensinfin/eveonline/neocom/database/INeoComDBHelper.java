@@ -15,10 +15,11 @@ package org.dimensinfin.eveonline.neocom.database;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
+import org.dimensinfin.eveonline.neocom.database.entity.Colony;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
-import org.dimensinfin.eveonline.neocom.planetary.Colony;
 
 import java.sql.SQLException;
 
@@ -42,9 +43,13 @@ public interface INeoComDBHelper {
 
 	public Dao<DatabaseVersion, String> getVersionDao () throws SQLException;
 
+	public Dao<TimeStamp, String> getTimeStampDao () throws SQLException;
+
 	public Dao<ApiKey, String> getApiKeysDao () throws SQLException;
 
 	public Dao<Credential, String> getCredentialDao () throws SQLException;
+
+	public Dao<Colony, String> getColonyDao () throws SQLException;
 
 	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException;
 }

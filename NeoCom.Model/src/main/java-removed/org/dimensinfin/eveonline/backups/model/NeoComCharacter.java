@@ -586,8 +586,8 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	public EDataBlock needsUpdate() {
 		if (ModelAppConnector.getSingleton().checkExpiration(lastCCPAccessTime, ModelWideConstants.NOW))
 			return EDataBlock.CHARACTERDATA;
-		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataBlock.MARKETORDERS;
-		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataBlock.INDUSTRYJOBS;
+		//		if (AppConnector.checkExpiration(marketCacheTime, ModelWideConstants.NOW)) return EDataUpdateJobs.MARKETORDERS;
+		//		if (AppConnector.checkExpiration(jobsCacheTime, ModelWideConstants.NOW)) return EDataUpdateJobs.INDUSTRYJOBS;
 		// Block to check the needs for update of the Character Assets.
 		// OPTIMIZATION: Remove this optimization until I found a way to get the assets downloaded for new Characters
 		if (null != assetsManager) {
@@ -599,7 +599,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 			assetsManager = new AssetsManager(this);
 			return this.needsUpdate();
 		}
-		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataBlock.BLUEPRINTDATA;
+		//		if (AppConnector.checkExpiration(blueprintsCacheTime, ModelWideConstants.NOW)) return EDataUpdateJobs.BLUEPRINTDATA;
 		return EDataBlock.READY;
 	}
 

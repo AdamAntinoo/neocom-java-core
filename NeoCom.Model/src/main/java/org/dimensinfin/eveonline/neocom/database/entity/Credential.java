@@ -11,17 +11,25 @@
 //                of the downloaded data on an external database.
 //                The code isolates from the external database implementation to the extent to keep
 //                the code compatible with Android and SpringBoot.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.database.entity;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Credential")
@@ -47,8 +55,8 @@ public class Credential extends NeoComNode {
 	 */
 	@DatabaseField
 	public long expires = 0;
-	//	@DatabaseField(dataType = DataType.LONG_STRING)
-	@DatabaseField
+	//	@DatabaseField
+	@DatabaseField(dataType = DataType.LONG_STRING)
 	private String refreshToken = "-TOKEN-";
 
 	// Additional XML api data.
@@ -59,10 +67,6 @@ public class Credential extends NeoComNode {
 
 	@DatabaseField
 	private boolean active = true;
-
-	//	private ECredentialType ctype = ECredentialType.EMPTY;
-	//	private transient CorePilot pilot = null;
-	//	private transient NeoComCharacter character = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected Credential () {
@@ -101,6 +105,28 @@ public class Credential extends NeoComNode {
 	public Credential store () {
 		setDirty(true);
 		return this;
+	}
+
+	/**
+	 * Check all the cache time stamps for existence and in case the TS exists if the time has already passed.
+	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
+	 * time reported by CCP.
+	 */
+	public List<TimeStamp> needsUpdate () {
+		// Check for character data to be updated. There will be different levels but now only V1 is implemented.
+		List<TimeStamp> timesList = new ArrayList();
+		try {
+			// Get all the timeStamps for this credential.
+			final Dao<TimeStamp, String> timeStampDao = NeoComDatabase.getImplementer().getTimeStampDao();
+			QueryBuilder<TimeStamp, String> queryBuilder = timeStampDao.queryBuilder();
+			Where<TimeStamp, String> where = queryBuilder.where();
+			where.eq("credentialId", getAccountId());
+			PreparedQuery<TimeStamp> preparedQuery = queryBuilder.prepare();
+			timesList = timeStampDao.query(preparedQuery);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return timesList;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
@@ -185,16 +211,6 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-	//	public Credential setCharacterCoreData (final CorePilot pilot) {
-	//		this.pilot = pilot;
-	//		return this;
-	//	}
-	//
-	//	public Credential setCharacterXML (final NeoComCharacter character) {
-	//		this.character = character;
-	//		return this;
-	//	}
-
 	public boolean isActive () {
 		return active;
 	}
@@ -212,48 +228,7 @@ public class Credential extends NeoComNode {
 		return true;
 	}
 
-	//	public void addPlanetaryData (final List<GetCharactersCharacterIdPlanets200Ok> data) {
-	//		if ( null != pilot ) pilot.setPlanetaryData(data);
-	//	}
-	//
-	//	public boolean checkPilotDownload () {
-	//		if ( null == pilot ) return false;
-	//		return true;
-	//	}
-
 	// --- D E L E G A T E D   M E T H O D S
-	//	public long getLocationId () {
-	//		return pilot.getLocationId();
-	//	}
-	//
-	//	public LocationTypeEnum getLocationType () {
-	//		return pilot.getLocationType();
-	//	}
-	//
-	//	public EveLocation getLocation () {
-	//		return pilot.getLocation();
-	//	}
-	//
-	//	//	public String getURLForAvatar () {
-	//	//		return pilot.getURLForAvatar();
-	//	//	}
-	//
-	//	public double getAccountBalance () {
-	//		return character.getAccountBalance();
-	//	}
-	//
-	//	public Date getApiKeyExpiration () {
-	//		return character.getApiKeyExpiration();
-	//	}
-	//
-	//	public Date getApiKeyPaidUntil () {
-	//		return character.getApiKeyPaidUntil();
-	//	}
-	//
-	//	public NeoComCharacter getMasterCharacter () {
-	//		return character;
-	//	}
-
 	@Override
 	public String toString () {
 		StringBuffer buffer = new StringBuffer("Credential [");
@@ -264,5 +239,4 @@ public class Credential extends NeoComNode {
 		return buffer.toString();
 	}
 }
-
 // - UNUSED CODE ............................................................................................

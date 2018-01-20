@@ -10,15 +10,13 @@
 package org.dimensinfin.eveonline.neocom.storage;
 
 import com.beimin.eveapi.model.account.Character;
-import com.tlabs.android.evanova.adapter.ApplicationCloudAdapter;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
-import org.dimensinfin.core.util.OneParameterTask;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.factory.ModelFactory;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.slf4j.Logger;
@@ -230,13 +228,13 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 								}
 						}
 						// Post a backend request to start the download of the Character basic information.
-						ApplicationCloudAdapter.submit2downloadExecutor(
-								new OneParameterTask<Long>(cid) {
-									@Override
-									public void run () {
-										final PilotV1 pilot = ModelFactory.getPilotV1(getTarget());
-									}
-								});
+//						ApplicationCloudAdapter.submit2downloadExecutor(
+//								new OneParameterTask<Long>(cid) {
+//									@Override
+//									public void run () {
+										final PilotV1 pilot = ModelFactory.getPilotV1(cid);
+//									}
+//								});
 					}
 				}
 			} catch (RuntimeException rtex) {

@@ -13,22 +13,30 @@
 //               designed for Spring Boot Angular 4 platform.
 //               The model management is shown using a generic Model View Controller that allows make the
 //               rendering of the model data similar on all the platforms used.
-package org.dimensinfin.eveonline.neocom.planetary;
+package org.dimensinfin.eveonline.neocom.database.entity;
+
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyCoreStructure;
 import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +49,7 @@ import java.util.List;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
+@DatabaseTable(tableName = "Colony")
 public class Colony extends NeoComExpandableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(Colony.class);
@@ -54,17 +63,24 @@ public class Colony extends NeoComExpandableNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Integer solarSystemId = null;
+	@DatabaseField(id = true)
 	private Integer planetId = null;
+	@DatabaseField(index = true)
+	private Integer solarSystemId = null;
+	@DatabaseField(dataType = DataType.ENUM_STRING)
 	private PlanetTypeEnum planetType = null;
+	@DatabaseField
 	private Integer ownerId = null;
+	@DatabaseField
 	private Integer upgradeLevel = null;
+	@DatabaseField
 	private Integer numPins = null;
+	@DatabaseField
 	private DateTime lastUpdate = null;
-	private EveLocation location = null;
-	private GetUniversePlanetsPlanetIdOk planetData = null;
-	private GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
-	private List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
+	private transient EveLocation location = null;
+	private transient GetUniversePlanetsPlanetIdOk planetData = null;
+	private transient GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
+	private transient List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Colony () {
@@ -88,6 +104,25 @@ public class Colony extends NeoComExpandableNode {
 		if ( null == pins ) return true;
 		if ( pins.size() < 1 ) return true;
 		return false;
+	}
+	public Colony create (final  int planetId) {
+		try {
+			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
+			colonyDao.create(this);
+		} catch (final SQLException sqle) {
+			logger.info("WR [Colony.create]> Colony exists. Update values.");
+			store();
+		}
+		return this;
+	}
+	public Colony store () {
+		try {
+			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
+			colonyDao.update(this);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return this;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
@@ -128,43 +163,52 @@ public class Colony extends NeoComExpandableNode {
 		return location.getSecurityValue();
 	}
 
-	public void setSolarSystemId (final Integer solarSystemId) {
+	public Colony setSolarSystemId (final Integer solarSystemId) {
 		this.solarSystemId = solarSystemId;
 		// Locate the solar system data on the Location database.
 		location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(solarSystemId);
+		return this;
 	}
 
-	public void setPlanetId (final Integer planetId) {
+	public Colony setPlanetId (final Integer planetId) {
 		this.planetId = planetId;
+		return this;
 	}
 
-	public void setPlanetData (final GetUniversePlanetsPlanetIdOk planetData) {
+	public Colony setPlanetData (final GetUniversePlanetsPlanetIdOk planetData) {
 		this.planetData = planetData;
+		return this;
 	}
 
-	public void setPlanetType (final PlanetTypeEnum planetType) {
+	public Colony setPlanetType (final PlanetTypeEnum planetType) {
 		this.planetType = planetType;
+		return this;
 	}
 
-	public void setOwnerId (final Integer ownerId) {
+	public Colony setOwnerId (final Integer ownerId) {
 		this.ownerId = ownerId;
+		return this;
 	}
 
-	public void setUpgradeLevel (final Integer upgradeLevel) {
+	public Colony setUpgradeLevel (final Integer upgradeLevel) {
 		this.upgradeLevel = upgradeLevel;
+		return this;
 	}
 
-	public void setNumPins (final Integer numPins) {
+	public Colony setNumPins (final Integer numPins) {
 		this.numPins = numPins;
+		return this;
 	}
 
-	public void setLastUpdate (final DateTime lastUpdate) {
+	public Colony setLastUpdate (final DateTime lastUpdate) {
 		this.lastUpdate = lastUpdate;
+		return this;
 	}
 
-	public void setStructuresData (final GetCharactersCharacterIdPlanetsPlanetIdOk structures) {
+	public Colony setStructuresData (final GetCharactersCharacterIdPlanetsPlanetIdOk structures) {
 		this.structureData = structures;
 		this.pins = structures.getPins();
+		return this;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
@@ -186,7 +230,7 @@ public class Colony extends NeoComExpandableNode {
 		StringBuffer buffer = new StringBuffer("Colony [");
 		buffer.append("name: ").append(getSolarSystemName());
 		buffer.append("]");
-		buffer.append("->").append(super.toString());
+//		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
 }

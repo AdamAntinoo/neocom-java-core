@@ -17,7 +17,7 @@ import com.j256.ormlite.stmt.Where;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.model.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
@@ -67,7 +67,7 @@ public class BlueprintManager extends AbstractManager {
 			// Get access to all ApiKey registers
 			blueprintAssetList.clear();
 			try {
-				if ( null == blueprintDao ) blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDAO();
+				if ( null == blueprintDao ) blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDao();
 				QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
 				Where<NeoComBlueprint, String> where = queryBuilder.where();
 				where.eq("tech", techLevel);
@@ -183,7 +183,7 @@ public class BlueprintManager extends AbstractManager {
 	 */
 	private int queryTotalBlueprintCount () {
 		try {
-			if ( null == blueprintDao ) blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDAO();
+			if ( null == blueprintDao ) blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDao();
 			QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
 			queryBuilder.setCountOf(true).where().eq("ownerID", getCredentialIdentifier());
 			long totalAssets = blueprintDao.countOf(queryBuilder.prepare());
@@ -211,7 +211,7 @@ public class BlueprintManager extends AbstractManager {
 		logger.info(">> AssetsManager.updateBlueprints");
 		try {
 			ModelAppConnector.getSingleton().startChrono();
-			Dao<NeoComBlueprint, String> blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDAO();
+			Dao<NeoComBlueprint, String> blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDao();
 			QueryBuilder<NeoComBlueprint, String> queryBuilder = blueprintDao.queryBuilder();
 			Where<NeoComBlueprint, String> where = queryBuilder.where();
 			where.eq("ownerID", getCredentialIdentifier());

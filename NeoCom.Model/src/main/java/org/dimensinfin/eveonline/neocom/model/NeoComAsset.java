@@ -9,19 +9,19 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -228,7 +228,7 @@ public class NeoComAsset extends NeoComNode {
 				locationCache = loc;
 				// Save the asset to disk.
 				try {
-					final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+					final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 					// Try to create the pair. It fails then  it was already created.
 					assetDao.createOrUpdate(this);
 				} catch (final SQLException sqle) {
@@ -368,12 +368,12 @@ public class NeoComAsset extends NeoComNode {
 	public void setDirty(final boolean flag) {
 		if (flag) {
 			try {
-				final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 				// Try to create the pair. It fails then  it was already created.
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();
-				//	this.setDirty(true);
+				//	this.store(true);
 			}
 		}
 	}
@@ -487,7 +487,7 @@ public class NeoComAsset extends NeoComNode {
 		//			locationDao.createOrUpdate(newundefloc);
 		//		} catch (final SQLException sqle) {
 		//			sqle.printStackTrace();
-		//			this.setDirty(true);
+		//			this.store(true);
 		//		}
 		return newundefloc;
 	}

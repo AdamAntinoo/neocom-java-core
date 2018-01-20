@@ -9,22 +9,22 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import com.j256.ormlite.dao.Dao;
 
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.Credential;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
-import org.dimensinfin.eveonline.neocom.model.TimeStamp;
 
-import com.j256.ormlite.dao.Dao;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */ {
@@ -36,21 +36,21 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 	public Dao<Credential, String> getCredentialDao() throws SQLException;
 	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
 
-	public Dao<NeoComAsset, String> getAssetDAO() throws SQLException;
+	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
 
-	public Dao<NeoComBlueprint, String> getBlueprintDAO() throws SQLException;
+	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
 
 	//	public Dao<Job, String> getJobDAO() throws SQLException;
 
-	public Dao<EveLocation, String> getLocationDAO() throws SQLException;
+	public Dao<EveLocation, String> getLocationDao() throws SQLException;
 
 	//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 
 	//	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
-	public Dao<Property, String> getPropertyDAO() throws SQLException;
+	public Dao<Property, String> getPropertyDao() throws SQLException;
 
-	public Dao<TimeStamp, String> getTimeStampDAO() throws SQLException;
+	public Dao<TimeStamp, String> getTimeStampDao() throws SQLException;
 
 	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 

@@ -33,7 +33,7 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-import org.dimensinfin.eveonline.neocom.model.TimeStamp;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
@@ -437,7 +437,7 @@ public class DownloadManager {
 	private void accessDaos () {
 		if ( null == assetDao ) {
 			try {
-				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
 				if ( null == assetDao ) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
 			} catch (SQLException sqle) {
 				// Interrupt processing and signal a runtime exception.
@@ -464,7 +464,7 @@ public class DownloadManager {
 		// Update the database information.
 		for (NeoComBlueprint blueprint : blueprintCache) {
 			try {
-				Dao<NeoComBlueprint, String> blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDAO();
+				Dao<NeoComBlueprint, String> blueprintDao = ModelAppConnector.getSingleton().getDBConnector().getBlueprintDao();
 				// Be sure the owner is reset to undefined when stored at the database.
 				blueprint.resetOwner();
 				// Set new calculated values to reduce the time for blueprint part rendering.

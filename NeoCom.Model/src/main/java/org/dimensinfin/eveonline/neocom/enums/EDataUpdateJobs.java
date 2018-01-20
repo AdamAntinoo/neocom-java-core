@@ -4,11 +4,9 @@
 
 package org.dimensinfin.eveonline.neocom.enums;
 
-// - IMPORT SECTION .........................................................................................
-
 // - CLASS IMPLEMENTATION ...................................................................................
-public enum EDataBlock {
-	READY, CHARACTERDATA, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS
+public enum EDataUpdateJobs {
+	READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
 }
 
 // - UNUSED CODE ............................................................................................

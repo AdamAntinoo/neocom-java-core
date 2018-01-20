@@ -9,18 +9,16 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.core;
 
-import java.util.logging.Logger;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeocomRuntimeException extends RuntimeException {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID	= 8864888568628860054L;
-	private static Logger			logger						= Logger.getLogger("NeocomRuntimeException");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeocomRuntimeException() {
+		super();
 	}
 
 	public NeocomRuntimeException(final String message) {

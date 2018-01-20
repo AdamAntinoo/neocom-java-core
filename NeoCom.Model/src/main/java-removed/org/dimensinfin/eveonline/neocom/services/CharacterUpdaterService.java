@@ -25,7 +25,7 @@ public class CharacterUpdaterService implements Runnable {
 		EDataBlock datacode = pilot.needsUpdate();
 		try {
 			CharacterUpdaterService.logger.info(
-					"-- [CharacterUpdaterService.onHandleIntent] EDataBlock to process: " + pilot.getName() + " - " + datacode);
+					"-- [CharacterUpdaterService.onHandleIntent] EDataUpdateJobs to process: " + pilot.getName() + " - " + datacode);
 			switch (datacode) {
 				case CHARACTERDATA:
 					pilot.updateCharacterInfo();
@@ -70,7 +70,7 @@ public class CharacterUpdaterService implements Runnable {
 			EDataBlock datacode = pilot.needsUpdate();
 			try {
 				CharacterUpdaterService.logger.info(
-						"-- [CharacterUpdaterService.onHandleIntent] EDataBlock to process: " + pilot.getName() + " - " + datacode);
+						"-- [CharacterUpdaterService.onHandleIntent] EDataUpdateJobs to process: " + pilot.getName() + " - " + datacode);
 				switch (datacode) {
 					case CHARACTERDATA:
 						pilot.updateCharacterInfo();
