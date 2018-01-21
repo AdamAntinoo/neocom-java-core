@@ -20,13 +20,16 @@ import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,6 +161,48 @@ public class NetworkManager {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [NetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets (final int identifier, final String refreshToken, final String server) {
+		logger.info(">> [NetworkManager.getCharactersCharacterIdAssets]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if ( null != server ) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
+					.create(AssetsApi.class)
+					.getCharactersCharacterIdAssets(identifier, datasource, 1, null, null, null).execute();
+			if ( !assetsApiResponse.isSuccessful() ) {
+				return null;
+			} else return assetsApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [NetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames (final int identifier, final List<Long> listItemIds,final String refreshToken, final String server) {
+		logger.info(">> [NetworkManager.postCharactersCharacterIdAssetsNames]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if ( null != server ) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
+					.create(AssetsApi.class)
+					.postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource,  null, null, null).execute();
+			if ( !assetsApiResponse.isSuccessful() ) {
+				return null;
+			} else return assetsApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [NetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
 		}
 		return null;
 	}

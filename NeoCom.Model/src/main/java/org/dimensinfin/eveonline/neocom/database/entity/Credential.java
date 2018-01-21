@@ -39,10 +39,8 @@ public class Credential extends NeoComNode {
 	private static Logger logger = LoggerFactory.getLogger("Credential");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(generatedId = true)
-	private final long id = -2;
-	@DatabaseField
-	private long accountId = -2;
+	@DatabaseField(id=true,index = true)
+	private int accountId = -2;
 	@DatabaseField
 	private String accountName = "-NAME-";
 	@DatabaseField
@@ -74,7 +72,7 @@ public class Credential extends NeoComNode {
 		jsonClass = "Credential";
 	}
 
-	public Credential (final long newAccountIdentifier) {
+	public Credential (final int newAccountIdentifier) {
 		this();
 		accountId = newAccountIdentifier;
 		try {
@@ -83,34 +81,29 @@ public class Credential extends NeoComNode {
 			credentialDao.create(this);
 		} catch (final SQLException sqle) {
 			Credential.logger.info("WR [Credential.<constructor>]> Credential exists. Update values.");
-			this.setDirty(true);
+			this.store();
 		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void setDirty (final boolean state) {
-		if ( state ) {
-			try {
-				final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getNewDBConnector().getCredentialDao();
-				credentialDao.update(this);
-			} catch (final SQLException sqle) {
-				sqle.printStackTrace();
-			}
-		}
-	}
-
 	/**
 	 * Update the values at the database record.
 	 */
 	public Credential store () {
-		setDirty(true);
+			try {
+				final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getNewDBConnector().getCredentialDao();
+				credentialDao.update(this);
+				Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
+			} catch (final SQLException sqle) {
+				sqle.printStackTrace();
+			}
 		return this;
 	}
-
 	/**
-	 * Check all the cache time stamps for existence and in case the TS exists if the time has already passed.
+	 * Check all the cache time stamps for existence and stored at the database.
 	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
 	 * time reported by CCP.
+	 * Just returns the list of TS leaving the calculation to the caller to take the decision to launch an update.
 	 */
 	public List<TimeStamp> needsUpdate () {
 		// Check for character data to be updated. There will be different levels but now only V1 is implemented.
@@ -130,7 +123,7 @@ public class Credential extends NeoComNode {
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
-	public long getAccountId () {
+	public int getAccountId () {
 		return accountId;
 	}
 
@@ -166,7 +159,7 @@ public class Credential extends NeoComNode {
 		return validationcode;
 	}
 
-	public Credential setAccountId (final long accountId) {
+	private Credential setAccountId (final int accountId) {
 		this.accountId = accountId;
 		return this;
 	}

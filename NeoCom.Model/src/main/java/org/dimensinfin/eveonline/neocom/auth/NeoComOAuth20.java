@@ -270,9 +270,9 @@ public class NeoComOAuth20 {
 	}
 
 	public NeoComOAuth20 (final String clientID, final String clientKey, final String callback,
-												 final String agent,
-												 final ESIStore store,
-												 final List<String> scopes) {
+												final String agent,
+												final ESIStore store,
+												final List<String> scopes) {
 
 		this.store = store;
 		ServiceBuilder builder = new ServiceBuilder(clientID)
@@ -321,10 +321,14 @@ public class NeoComOAuth20 {
 	}
 
 	public TokenTranslationResponse fromRefresh (final String refresh) {
+		logger.info(">> [NeoComOAuth20.fromRefresh]");
 		try {
 			TokenTranslationResponse existing = this.store.get(refresh);
+//			logger.info("-- [NeoComOAuth20.fromRefresh]> Token response: {}", existing.getAccessToken());
 			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
+				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
+				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
 				return save(token);
 			}
 			return existing;

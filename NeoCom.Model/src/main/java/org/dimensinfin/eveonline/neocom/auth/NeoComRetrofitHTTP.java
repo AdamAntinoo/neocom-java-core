@@ -79,11 +79,13 @@ public class NeoComRetrofitHTTP {
 							.registerTypeAdapter(LocalDate.class, new GSONLocalDateDeserializer())
 							.create());
 	private static String refreshToken = "";
-	private static String getRefreshToken(){
+
+	private static String getRefreshToken () {
 		return refreshToken;
 	}
-	public static void setRefeshToken(final String token){
-		refreshToken=token;
+
+	public static void setRefeshToken (final String token) {
+		refreshToken = token;
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -101,8 +103,9 @@ public class NeoComRetrofitHTTP {
 			, final long cacheSize
 			, final long timeout) {
 		NeoComRetrofitHTTP.setRefeshToken(refresh);
-		return build(auth,  agent,  cache,  cacheSize,  timeout);
+		return build(auth, agent, cache, cacheSize, timeout);
 	}
+
 	public static Retrofit build (final NeoComOAuth20 auth, final String agent, final File cache
 			, final long cacheSize
 			, final long timeout) {

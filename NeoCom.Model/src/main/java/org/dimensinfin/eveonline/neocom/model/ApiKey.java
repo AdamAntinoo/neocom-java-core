@@ -7,14 +7,14 @@
 //					Database and model adaptations for storage model independency.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-import java.util.logging.Logger;
-
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+
+import java.sql.SQLException;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "ApiKey")
@@ -76,7 +76,7 @@ public class ApiKey {
 	public void setDirty(final boolean state) {
 		if (state) {
 			try {
-				Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
+				Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getNewDBConnector().getApiKeysDao();
 				apikeyDao.update(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();

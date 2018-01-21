@@ -12,30 +12,39 @@ package org.dimensinfin.eveonline.neocom.manager;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
-import com.beimin.eveapi.model.shared.Location;
 import com.beimin.eveapi.parser.corporation.AssetListParser;
 import com.beimin.eveapi.parser.pilot.BlueprintsParser;
-import com.beimin.eveapi.parser.pilot.LocationsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
-import com.beimin.eveapi.response.shared.LocationsResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 
 import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
+import org.dimensinfin.eveonline.neocom.database.entity.Colony;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.CacheManager;
+import org.dimensinfin.eveonline.neocom.enums.EDataUpdateJobs;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.network.NetworkManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,18 +56,43 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class DownloadManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 3794753126425122302L;
 	private static Logger logger = LoggerFactory.getLogger("DownloadManager");
+	private static final DownloadManager singleton = new DownloadManager();
+	private static final ModelMapper modelMapper = new ModelMapper();
+
+	static {
+		modelMapper.getConfiguration()
+		           .setFieldMatchingEnabled(true)
+		           .setMethodAccessLevel(AccessLevel.PRIVATE);
+	}
+
+	private static final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
+
+	private static void submit2downloadExecutor (final Runnable task) {
+		downloadExecutor.submit(task);
+	}
+	public static String constructReference (final EDataUpdateJobs type, final long identifier) {
+		return new StringBuffer(type.name()).append("/").append(identifier).toString();
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String jsonClass = "DownloadManager";
+
+	// - F I E L D - S E C T I O N ............................................................................
+	//	private String jsonClass = "DownloadManager";
+	private transient Credential credential = null;
+	private transient final List<Long> id4Names = new ArrayList<>();
+
 	private transient NeoComCharacter _pilot = null;
 	private transient Dao<NeoComAsset, String> assetDao = null;
-	private Vector<NeoComAsset> unlocatedAssets = null;
+	private List<NeoComAsset> unlocatedAssets = null;
 	/** Time stamp for the time when character data is cached. */
 	public TimeStamp _characterCacheTime = null;
 	/** Time stamp for the time when the asset data downloaded is cached. */
@@ -69,23 +103,223 @@ public class DownloadManager {
 	private final Vector<NeoComBlueprint> blueprintCache = new Vector<NeoComBlueprint>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public DownloadManager () {
+		super();
+	}
+
+	@Deprecated
 	public DownloadManager (final NeoComCharacter pilot) {
 		_pilot = pilot;
-		jsonClass = "DownloadManager";
+		//		jsonClass = "DownloadManager";
+	}
+
+	public DownloadManager (final Credential credential) {
+		this();
+		this.credential = credential;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
+	/**
+	 * This downloades will use the new ESI api to get access to the full list of assets for this character.
+	 * Once the list is processed we should create an instance as close as possible to the olber XML
+	 * instaces generated by the XML processing.<br>
+	 * That instance will then get stored at the database and then we should make the trick of asset
+	 * replacing.<br>
+	 * The new processing will filter the assets with Unknown locations for a second pass processing so the
+	 * final list on the database will have the correct parentship hierarchy set up.<br>
+	 * <br>
+	 * The assets downloaded are being written to a special set of records in the User database with an special
+	 * <code>ownerid</code> so we can work with a new set of records for an specific Character without
+	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
+	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
+	 */
+	public void downloadPilotAssetsESI () {
+		DownloadManager.logger.info(">> [AssetsManager.downloadPilotAssetsESI]");
+		try {
+			// Clear any previous record with owner -1 from database.
+			INeoComModelDatabase dbConn = ModelAppConnector.getSingleton().getDBConnector();
+			synchronized (dbConn) {
+				dbConn.clearInvalidRecords(credential.getAccountId());
+			}
+			// Download the list of assets.
+			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = NetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
+			unlocatedAssets = new ArrayList<NeoComAsset>();
+			//				List<Asset> assets = response.getAll();
+			// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
+			for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
+				//	try {
+				// Convert the asset from the OK format to a MVC compatible structure.
+				//						final NeoComAsset myasset = modelMapper.map(assetOk, NeoComAsset.class);
+				final NeoComAsset myasset = this.convert2AssetFromESI(assetOk);
+				//					if ( null != parent ) {
+				//						//			myasset.setParent(parent);
+				//						myasset.setParentContainer(parent);
+				//						// Set the location to the parent's location is not set.
+				//						if ( myasset.getLocationID() == -1 ) {
+				//							myasset.setLocationID(parent.getLocationID());
+				//						}
+				//					}
+				// Only search names for containers and ships.
+				if ( myasset.isShip() ) {
+					downloadAssetEveName(myasset.getAssetId());
+				}
+				if ( myasset.isContainer() ) {
+					downloadAssetEveName(myasset.getAssetId());
+				}
+				try {
+					//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+					//					this.accessDaos();
+					//						final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
+					//						if ( children.size() > 0 ) {
+					//							myasset.setContainer(true);
+					//						}
+					if ( myasset.getCategory().equalsIgnoreCase("Ship") ) {
+						myasset.setShip(true);
+					}
+					if ( myasset.getCategory().equalsIgnoreCase("Blueprint") ) {
+						//			myasset.setBlueprintType();
+					}
+					myasset.setOwnerID(this.getPilot().getCharacterID() * -1);
+					myasset.store();
+					// Check the asset location. The location can be a known game station, a known user structure, another asset
+					// or an unknown player structure. Check which one is this location.
+					EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector()
+					                                         .searchLocationbyID(myasset.getLocationId());
+					if ( targetLoc.getTypeID() == ELocationType.UNKNOWN ) {
+						// Add this asset to the list of items to be reprocessed.
+						unlocatedAssets.add(myasset);
+					}
+					// Process all the children and convert them to assets.
+					//						if ( children.size() > 0 ) {
+					//							for (final Asset childAsset : children) {
+					//								this.processAsset(childAsset, myasset);
+					//							}
+					//						}
+					DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
+					//					} catch (final SQLException sqle) {
+					//						DownloadManager.logger.error("E> [AssetsManager.processAsset]Unable to create the new asset ["
+					//								+ myasset.getAssetId() + "]. " + sqle.getMessage());
+					//						sqle.printStackTrace();
+					//					}
+				} catch (final RuntimeException rtex) {
+					rtex.printStackTrace();
+				} catch (final Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+			// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
+			for (NeoComAsset asset : unlocatedAssets) {
+				this.validateLocation(asset);
+			}
+			// Assign the assets to the pilot.
+			synchronized (dbConn) {
+				dbConn.replaceAssets(this.getPilot().getCharacterID());
+			}
+			// Update the caching time to the time set by the api.
+			final String reference = DownloadManager.constructReference(EDataUpdateJobs.ASSETDATA, credential.getAccountId());
+		//	String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
+			_assetsCacheTime= NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
+			final Instant newExpirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
+			if ( null == _assetsCacheTime ) {
+				_assetsCacheTime = new TimeStamp(reference,  newExpirationTime);
+			} else {
+				_assetsCacheTime.setTimeStamp(newExpirationTime)
+			                  .store();
+			}
+			//		}
+//		} catch (final ApiException apie) {
+//			apie.printStackTrace();
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+		}
+		DownloadManager.logger.info("<< [AssetsManager.downloadPilotAssetsESI]");
+	}
+
+	private NeoComAsset convert2AssetFromESI (final GetCharactersCharacterIdAssets200Ok asset200Ok) {
+		// Create the asset from the API asset.
+		final NeoComAsset newAsset = new NeoComAsset(asset200Ok.getTypeId())
+				.setAssetId(asset200Ok.getItemId());
+		//	.setTypeId(asset200Ok.getTypeID());
+		Long locid = asset200Ok.getLocationId();
+		if ( null == locid ) {
+			locid = (long) -2;
+		}
+		newAsset.setLocationId(locid)
+		        .setLocationType(asset200Ok.getLocationType())
+		        .setQuantity(asset200Ok.getQuantity())
+		        .setFlag(asset200Ok.getLocationFlag())
+		        .setSingleton(asset200Ok.getIsSingleton());
+		// Get access to the Item and update the copied fields.
+		final EveItem item = CacheManager.searchItemById(newAsset.getTypeId());
+		if ( null != item ) {
+			try {
+				newAsset.setName(item.getName());
+				newAsset.setCategory(item.getCategory());
+				newAsset.setGroupName(item.getGroupName());
+				newAsset.setTech(item.getTech());
+				if ( item.isBlueprint() ) {
+					//			newAsset.setBlueprintType(eveAsset.getRawQuantity());
+				}
+			} catch (RuntimeException rtex) {
+			}
+		}
+		// Add the asset value to the database.
+		newAsset.setIskValue(this.calculateAssetValue(newAsset));
+		return newAsset;
+	}
+
+	public boolean downloadColonyList (final Credential credential) {
+		DownloadManager.logger.info(">> [DownloadManager.downloadColonyList]");
+		Chrono totalDownloadTime = new Chrono();
+		DownloadManager.logger.info("-- [DownloadManager.downloadColonyList]> Download colony list for identifier: {}", credential.getAccountId());
+		//		server=ModelAppConnector.getSingleton().getResourceString(R.string.esisourceserver);
+		final String server = "tranquility";
+		final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = NetworkManager.getCharactersCharacterIdPlanets(credential.getAccountId(), credential.getRefreshToken(), server);
+
+		// Transform the received OK instance into a NeoCom compatible model instance.
+		for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
+			Colony col = modelMapper.map(colonyOK, Colony.class);
+			DownloadManager.logger.info("-- [DownloadManager.downloadColonyList]> Transformed colony: {}", col.getPlanetId());
+			col.store();
+
+
+			//			// Block to add additional data not downloaded on this call.
+			//			// To set mre information about this particular planet we should call the Universe database.
+			//			//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
+			//			final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
+			//			if ( null != planetData ) col.setPlanetData(planetData);
+			//			//			});
+			//			// For each of the received planets, get their structures and do the same transformations.
+			//			//			Stream.of(colonies).forEach(c -> {
+			//			//			try {
+			//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(_credential.getAccountId(), col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
+			//			if ( null != colonyStructures ) {
+			//				// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
+			//				col.setStructuresData(colonyStructures);
+			//				// Process the Colony contents indirectly using the mapper again.
+			//				//						modelMapper.map(colonyStructures, c);
+			//			}
+			//			//		});
+			//			colonies.add(col);
+		}
+		DownloadManager.logger.info(">> [DownloadManager.downloadColonyList]> [TIMING] Total download time: {}", totalDownloadTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		return true;
+	}
+
 	@JsonIgnore
 	public NeoComCharacter getPilot () {
 		return _pilot;
 	}
+
 	public void setPilot (final NeoComCharacter newPilot) {
 		_pilot = newPilot;
 	}
 
-	public String getJsonClass () {
-		return jsonClass;
-	}
+	//	public String getJsonClass () {
+	//		return jsonClass;
+	//	}
+
 	public void updateCharacterDataTimeStamp (final Date cachedUntil) {
 		// Update the caching time to the time set by the eveapi.
 		final String reference = getPilot().getCharacterID() + ".CHARACTERDATA";
@@ -111,7 +345,7 @@ public class DownloadManager {
 	 * <br>
 	 * There are two flavour for the asset download process. One for Pilots and other for Corporation assets.
 	 */
-	public void downloadPilotAssets () {
+	public void downloadPilotAssetsXML () {
 		DownloadManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
 		try {
 			// Clear any previous record with owner -1 from database.
@@ -143,7 +377,7 @@ public class DownloadManager {
 				}
 				// Update the caching time to the time set by the eveapi.
 				String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
-				if ( null ==_assetsCacheTime ) {
+				if ( null == _assetsCacheTime ) {
 					_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
 				} else {
 					_assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
@@ -254,7 +488,7 @@ public class DownloadManager {
 
 			// Update the caching time to the time set by the eveapi.
 			String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
-			if ( null == _assetsCacheTime) {
+			if ( null == _assetsCacheTime ) {
 				_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
 			} else {
 				_assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
@@ -265,26 +499,59 @@ public class DownloadManager {
 		DownloadManager.logger.info("<< [AssetsManager.downloadCorporationAssets");
 	}
 
-	private String downloadAssetEveName (final long assetID) {
-		// Wait up to one second to avoid request rejections from CCP.
-		try {
-			Thread.sleep(500); // 500 milliseconds is half second.
-		} catch (InterruptedException ex) {
-			Thread.currentThread().interrupt();
+	/**
+	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
+	 */
+	private void downloadAssetEveName (final long assetId) {
+		id4Names.add(assetId);
+		if ( id4Names.size() > 9 ) {
+			postUserLabelNameDownload();
+			id4Names.clear();
 		}
-		final Vector<Long> ids = new Vector<Long>();
-		ids.add(assetID);
-		try {
-			final LocationsParser parser = new LocationsParser();
-			final LocationsResponse response = parser.getResponse(this.getPilot().getAuthorization(), ids);
-			if ( null != response ) {
-				Set<Location> userNames = response.getAll();
-				if ( userNames.size() > 0 ) return userNames.iterator().next().getItemName();
+		//		// Wait up to one second to avoid request rejections from CCP.
+		//		//		try {
+		//		//			Thread.sleep(500); // 500 milliseconds is half second.
+		//		//		} catch (InterruptedException ex) {
+		//		//			Thread.currentThread().interrupt();
+		//		//		}
+		//		final Vector<Long> ids = new Vector<Long>();
+		//		ids.add(assetID);
+		//		try {
+		//			final LocationsParser parser = new LocationsParser();
+		//			final LocationsResponse response = parser.getResponse(this.getPilot().getAuthorization(), ids);
+		//			if ( null != response ) {
+		//				Set<Location> userNames = response.getAll();
+		//				if ( userNames.size() > 0 ) return userNames.iterator().next().getItemName();
+		//			}
+		//		} catch (final ApiException e) {
+		//			DownloadManager.logger.info("W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
+		//		}
+		//		return null;
+	}
+
+	private void postUserLabelNameDownload () {
+		// Launch the download of the names block.
+		final List<Long> idList = new ArrayList<>();
+		idList.addAll(id4Names);
+		DownloadManager.submit2downloadExecutor(() -> {
+			// Copy yhe list of assets to local to allow parallell use.
+			final List<Long> localIdList = new ArrayList<>();
+			localIdList.addAll(idList);
+			try {
+				final List<PostCharactersCharacterIdAssetsNames200Ok> itemNames = NetworkManager.postCharactersCharacterIdAssetsNames(credential.getAccountId(), localIdList, credential.getRefreshToken(), null);
+				for (final PostCharactersCharacterIdAssetsNames200Ok name : itemNames) {
+					final List<NeoComAsset> assetsMatch = ModelAppConnector.getSingleton().getDBConnector().getAssetDao().queryForEq("assetId", name.getItemId());
+					for (NeoComAsset asset : assetsMatch) {
+						logger.info("-- [DownloadManager.downloadAssetEveName]> Setting UserLabel name {} for asset {}.", name
+								.getName(), name.getItemId());
+						asset.setUserLabel(name.getName())
+						     .store();
+					}
+				}
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
 			}
-		} catch (final ApiException e) {
-			DownloadManager.logger.info("W- EveChar.downloadAssetEveName - asset has no user name defined: " + assetID);
-		}
-		return null;
+		});
 	}
 
 	/**
@@ -299,16 +566,16 @@ public class DownloadManager {
 			//			myasset.setParent(parent);
 			myasset.setParentContainer(parent);
 			// Set the location to the parent's location is not set.
-			if ( myasset.getLocationID() == -1 ) {
-				myasset.setLocationID(parent.getLocationID());
+			if ( myasset.getLocationId() == -1 ) {
+				myasset.setLocationId(parent.getLocationId());
 			}
 		}
 		// Only search names for containers and ships.
 		if ( myasset.isShip() ) {
-			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+			downloadAssetEveName(myasset.getAssetId());
 		}
 		if ( myasset.isContainer() ) {
-			myasset.setUserLabel(this.downloadAssetEveName(myasset.getAssetID()));
+			this.downloadAssetEveName(myasset.getAssetId());
 		}
 		try {
 			//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
@@ -326,7 +593,7 @@ public class DownloadManager {
 			// Check the asset location. The location can be a known game station, a known user structure, another asset
 			// or an unknown player structure. Check which one is this location.
 			EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector()
-			                                         .searchLocationbyID(myasset.getLocationID());
+			                                         .searchLocationbyID(myasset.getLocationId());
 			if ( targetLoc.getTypeID() == ELocationType.UNKNOWN ) {
 				// Add this asset to the list of items to be reprocessed.
 				unlocatedAssets.add(myasset);
@@ -337,10 +604,10 @@ public class DownloadManager {
 					this.processAsset(childAsset, myasset);
 				}
 			}
-			DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetID() + "]");
+			DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
 		} catch (final SQLException sqle) {
 			DownloadManager.logger.error("E> [AssetsManager.processAsset]Unable to create the new asset ["
-					+ myasset.getAssetID() + "]. " + sqle.getMessage());
+					+ myasset.getAssetId() + "]. " + sqle.getMessage());
 			sqle.printStackTrace();
 		}
 	}
@@ -352,7 +619,7 @@ public class DownloadManager {
 	 * list.
 	 */
 	private ELocationType validateLocation (final NeoComAsset asset) {
-		long targetLocationid = asset.getLocationID();
+		long targetLocationid = asset.getLocationId();
 		EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(targetLocationid);
 		if ( targetLoc.getTypeID() == ELocationType.UNKNOWN ) {
 			// Need to check if asset or unreachable location.
@@ -365,7 +632,7 @@ public class DownloadManager {
 				//// search for the location of the parent.
 				//ELocationType parentLocationType = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(target.getLocationID()).getTypeID();
 				//if(parentLocationType!=ELocationType.UNKNOWN)
-				asset.setLocationID(target.getLocationID());
+				asset.setLocationId(target.getLocationId());
 				asset.setDirty(true);
 			}
 			return ELocationType.UNKNOWN;
@@ -384,20 +651,20 @@ public class DownloadManager {
 	private NeoComAsset convert2Asset (final Asset eveAsset) {
 		// Create the asset from the API asset.
 		final NeoComAsset newAsset = new NeoComAsset();
-		newAsset.setAssetID(eveAsset.getItemID());
-		newAsset.setTypeID(eveAsset.getTypeID());
+		newAsset.setAssetId(eveAsset.getItemID());
+		newAsset.setTypeId(eveAsset.getTypeID());
 		Long locid = eveAsset.getLocationID();
 		if ( null == locid ) {
 			locid = (long) -2;
 		}
-		newAsset.setLocationID(locid);
+		newAsset.setLocationId(locid);
 
 		newAsset.setQuantity(eveAsset.getQuantity());
-		newAsset.setFlag(eveAsset.getFlag());
+//		newAsset.setFlag(eveAsset.getFlag());
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeID());
+		final EveItem item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeId());
 		if ( null != item ) {
 			try {
 				newAsset.setName(item.getName());

@@ -63,7 +63,7 @@ public class Colony extends NeoComExpandableNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(id = true)
+	@DatabaseField(id = true, index = true)
 	private Integer planetId = null;
 	@DatabaseField(index = true)
 	private Integer solarSystemId = null;
@@ -105,7 +105,8 @@ public class Colony extends NeoComExpandableNode {
 		if ( pins.size() < 1 ) return true;
 		return false;
 	}
-	public Colony create (final  int planetId) {
+
+	public Colony create (final int planetId) {
 		try {
 			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
 			colonyDao.create(this);
@@ -115,10 +116,12 @@ public class Colony extends NeoComExpandableNode {
 		}
 		return this;
 	}
+
 	public Colony store () {
 		try {
 			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
 			colonyDao.update(this);
+			logger.info("-- [Colony.store]> Colony data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -230,7 +233,7 @@ public class Colony extends NeoComExpandableNode {
 		StringBuffer buffer = new StringBuffer("Colony [");
 		buffer.append("name: ").append(getSolarSystemName());
 		buffer.append("]");
-//		buffer.append("->").append(super.toString());
+		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
 }

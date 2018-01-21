@@ -32,9 +32,9 @@ public class TimeStamp {
 	private static Logger logger = Logger.getLogger("TimeStamp");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(id = true)
+	@DatabaseField(id = true, index = true)
 	private String reference = "-REF-";
-	@DatabaseField
+	@DatabaseField(index = true)
 	private long credentialId = -1;
 	@DatabaseField
 	private long timeStamp = -1;
@@ -72,8 +72,11 @@ public class TimeStamp {
 		return dateTimeUserReference;
 	}
 
+	public long getCredentialId () {
+		return credentialId;
+	}
 
-	public TimeStamp setReference (final String reference) {
+	private TimeStamp setReference (final String reference) {
 		this.reference = reference;
 		return this;
 	}
@@ -85,13 +88,24 @@ public class TimeStamp {
 
 	public TimeStamp setTimeStamp (final long timeStamp) {
 		this.timeStamp = timeStamp;
+		dateTimeUserReference = new Instant(timeStamp).toString();
+		return this;
+	}
+
+	public TimeStamp setTimeStamp (final Instant moment) {
+		this.timeStamp = moment.getMillis();
+		dateTimeUserReference = moment.toString();
 		return this;
 	}
 
 	public TimeStamp store () {
 		try {
 			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getNewDBConnector().getTimeStampDao();
-			timeStampDao.update(this);
+			if ( -1 == credentialId )
+				TimeStamp.logger.info("W [TimeStamp.store]> CredentialId has not been setup. Possible invalid TS.");
+			else
+				timeStampDao.update(this);
+			TimeStamp.logger.info("-- [TimeStamp.store]> Timestamp data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 		}
