@@ -117,13 +117,13 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	 */
 	//	@SuppressWarnings("unused")
 	protected void add2Container (final NeoComAsset asset, final NeoComAsset target) {
-		long id = asset.getLocationID();
+		long id = asset.getLocationId();
 		IAssetContainer subtarget = (IAssetContainer) containers.get(id);
 		if ( null == subtarget ) {
 			if ( target instanceof IAssetContainer ) {
 				((IAssetContainer) target).addAsset(asset);
 			}
-			containers.put(target.getAssetID(), target);
+			containers.put(target.getAssetId(), target);
 			//			this.add2Location(target);
 		} else {
 			subtarget.addAsset(asset);

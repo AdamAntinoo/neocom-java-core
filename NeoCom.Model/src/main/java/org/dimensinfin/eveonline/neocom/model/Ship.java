@@ -13,6 +13,7 @@ import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.AssetGroup.EGroupType;
 
@@ -104,9 +105,9 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 	 */
 	public Ship copyFrom (final NeoComAsset asset) {
 		// REFACTOR Get access to the unique asset identifier.
-		this.setAssetID(asset.getAssetID());
-		this.setLocationID(asset.getLocationID());
-		this.setTypeID(asset.getTypeID());
+		this.setAssetId(asset.getAssetId());
+		this.setLocationId(asset.getLocationId());
+		this.setTypeId(asset.getTypeId());
 		this.setQuantity(asset.getQuantity());
 		this.setSingleton(asset.isPackaged());
 
@@ -175,13 +176,13 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 	@Override
 	public String toString () {
 		final StringBuffer buffer = new StringBuffer("Ship [");
-		buffer.append("#").append(this.getTypeID()).append(" - ").append(this.getName()).append(" ");
+		buffer.append("#").append(this.getTypeId()).append(" - ").append(this.getName()).append(" ");
 		if ( null != this.getUserLabel() ) {
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
-		buffer.append("itemID:").append(this.getAssetID()).append(" ");
+		buffer.append("itemID:").append(this.getAssetId()).append(" ");
 		//		buffer.append("typeID:")..append(" ");
-		buffer.append("locationID:").append(this.getLocationID()).append(" ");
+		buffer.append("locationID:").append(this.getLocationId()).append(" ");
 		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
 		//	buffer.append("quantity:").append(this.getQuantity()).append(" ");
 		buffer.append("]\n");
@@ -191,7 +192,8 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 
 	private void downloadShipData () {
 		ArrayList<NeoComAsset> contents = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-		                                                                            .searchAssetContainedAt(_credentialIdentifier, this.getAssetID());
+		                                                                            .searchAssetContainedAt
+				                                                                            (_credentialIdentifier, this.getAssetId());
 		highModules.clean();
 		medModules.clean();
 		lowModules.clean();
@@ -200,24 +202,42 @@ public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable 
 		cargo.clean();
 		// Classify the contents
 		for (NeoComAsset node : contents) {
-			int flag = node.getFlag();
-			if ( (flag > 10) && (flag < 19) ) {
-				highModules.addAsset(node);
-			} else if ( (flag > 18) && (flag < 27) ) {
-				medModules.addAsset(node);
-			} else if ( (flag > 26) && (flag < 35) ) {
-				lowModules.addAsset(node);
-			} else if ( (flag > 91) && (flag < 100) ) {
-				rigs.addAsset(node);
-			} else {
-				// Check for drones
-				if ( node.getCategory().equalsIgnoreCase("Drones") ) {
-					drones.addAsset(node);
-				} else {
-					// Contents on ships go to the cargohold.
-					cargo.addAsset(node);
-				}
-			}
+			// TODO New ESI location also have a location flag that manages this information
+			final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag = node.getFlag();
+	//		int flag = node.getFlag();
+//			if ( (flag > 10)
+//					&& (flag < 19) ) {
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT0) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT1) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT2) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT3) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT4) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT5) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT6) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT7) highModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT0) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT1) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT2) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT3) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT4) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT5) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT6) medModules.addAsset(node);
+			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT7) medModules.addAsset(node);
+//			} else if ( (flag > 18) && (flag < 27) ) {
+//				medModules.addAsset(node);
+//			} else if ( (flag > 26) && (flag < 35) ) {
+//				lowModules.addAsset(node);
+//			} else if ( (flag > 91) && (flag < 100) ) {
+//				rigs.addAsset(node);
+//			} else {
+//				// Check for drones
+//				if ( node.getCategory().equalsIgnoreCase("Drones") ) {
+//					drones.addAsset(node);
+//				} else {
+//					// Contents on ships go to the cargohold.
+//					cargo.addAsset(node);
+//				}
+//			}
 		}
 		this.setDownloaded(true);
 	}

@@ -122,7 +122,7 @@ public class AssetsManager extends AbstractManager {
 				// Move the list to a processing map.
 				assetMap = new HashMap<Long, NeoComAsset>(assets.size());
 				for (NeoComAsset asset : assets) {
-					assetMap.put(asset.getAssetID(), asset);
+					assetMap.put(asset.getAssetId(), asset);
 				}
 				// Process the map until all elements are removed.
 				Long key = assetMap.keySet().iterator().next();
@@ -231,7 +231,7 @@ public class AssetsManager extends AbstractManager {
 			locations.clear();
 			// Process the locations to a new list of Regions.
 			for (NeoComAsset asset : locs) {
-				long locid = asset.getLocationID();
+				long locid = asset.getLocationId();
 				this.processLocation(locid);
 			}
 			initialized = true;
@@ -430,7 +430,7 @@ public class AssetsManager extends AbstractManager {
 	//	}
 
 	protected void add2Location (final NeoComAsset asset) {
-		long locid = asset.getLocationID();
+		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
@@ -558,7 +558,7 @@ public class AssetsManager extends AbstractManager {
 	private void processElement (final NeoComAsset asset) {
 		try {
 			// Remove the element from the map.
-			assetMap.remove(asset.getAssetID());
+			assetMap.remove(asset.getAssetId());
 			// Add the asset to the verification count.
 			//			verificationAssetCount++;
 			// Add the asset value to the owner balance.
@@ -569,7 +569,7 @@ public class AssetsManager extends AbstractManager {
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					Ship ship = new Ship(getCredentialIdentifier()).copyFrom(asset);
-					ships.put(ship.getAssetID(), ship);
+					ships.put(ship.getAssetId(), ship);
 					// The ship is a container so add it and forget about this asset.
 					if ( ship.hasParent() ) {
 						this.processElement(ship.getParentContainer());
@@ -592,7 +592,7 @@ public class AssetsManager extends AbstractManager {
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
 					SpaceContainer container = new SpaceContainer().copyFrom(asset);
-					containers.put(container.getAssetID(), container);
+					containers.put(container.getAssetId(), container);
 					// The container is a container so add it and forget about this asset.
 					if ( container.hasParent() ) {
 						this.processElement(container.getParentContainer());
@@ -657,7 +657,7 @@ public class AssetsManager extends AbstractManager {
 		if ( node instanceof NeoComNode ) {
 			// Try to remove the asset if found
 			if ( node instanceof NeoComAsset ) {
-				assetMap.remove(((NeoComAsset) node).getAssetID());
+				assetMap.remove(((NeoComAsset) node).getAssetId());
 			}
 			// Remove also the nodes collaborated by it.
 			for (ICollaboration child : node.collaborate2Model("DEFAULT")) {

@@ -81,9 +81,9 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 	 */
 	public SpaceContainer copyFrom (final NeoComAsset asset) {
 		// REFACTOR Get access to the unique asset identifier.
-		this.setAssetID(asset.getAssetID());
-		this.setLocationID(asset.getLocationID());
-		this.setTypeID(asset.getTypeID());
+		this.setAssetId(asset.getAssetId());
+		this.setLocationId(asset.getLocationId());
+		this.setTypeId(asset.getTypeId());
 		this.setQuantity(asset.getQuantity());
 		//	this.flag = reference.flag;
 		this.setSingleton(asset.isPackaged());
@@ -113,7 +113,8 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 			// Get the assets from the database.
 			_contents.clear();
 			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
-			                                                               .searchAssetContainedAt(this.getOwnerID(), this.getAssetID())));
+			                                                               .searchAssetContainedAt(this.getOwnerID(), this
+					                                                               .getAssetId())));
 			this.setDownloaded(true);
 		}
 		return _contents;

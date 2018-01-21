@@ -221,7 +221,7 @@ public class PlanetaryManager extends AbstractManager {
 			// Convert the nodes to Resources.
 			Vector<Resource> results = new Vector<Resource>(intermediate.size());
 			for (NeoComAsset node : intermediate) {
-				results.add(new Resource(node.getTypeID(), node.getQuantity()));
+				results.add(new Resource(node.getTypeId(), node.getQuantity()));
 			}
 			return results;
 		}
@@ -282,7 +282,7 @@ public class PlanetaryManager extends AbstractManager {
 	 * @param asset the resource asset to to stored at the Location.
 	 */
 	protected void add2Location (final NeoComAsset asset) {
-		long locid = asset.getLocationID();
+		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
@@ -531,26 +531,26 @@ public class PlanetaryManager extends AbstractManager {
 		} else {
 			if ( resource.isContainer() ) {
 				// Search for this container id on the list of Containers. Each assets has ita own Container instance.
-				NeoComAsset hit = containers.get(resource.getAssetID());
+				NeoComAsset hit = containers.get(resource.getAssetId());
 				if ( null == hit ) {
 					SpaceContainer cont = new SpaceContainer().copyFrom(resource);
 					// Add to the Location only if not already registered.
 					this.add2Location(cont);
 					// Add the container to the list ot avoid processing it again.
-					containers.put(cont.getAssetID(), cont);
+					containers.put(cont.getAssetId(), cont);
 					return cont;
 				} else
 					return hit;
 			}
 			if ( resource.isShip() ) {
 				// Search for this container id on the list of Containers. Each assets has ita own Container instance.
-				NeoComAsset hit = containers.get(resource.getAssetID());
+				NeoComAsset hit = containers.get(resource.getAssetId());
 				if ( null == hit ) {
 					Ship cont = new Ship().copyFrom(resource);
 					// Add to the Location only if not already registered.
 					this.add2Location(cont);
 					// Add the container to the list ot avoid processing it again.
-					containers.put(cont.getAssetID(), cont);
+					containers.put(cont.getAssetId(), cont);
 					return cont;
 				} else
 					return hit;

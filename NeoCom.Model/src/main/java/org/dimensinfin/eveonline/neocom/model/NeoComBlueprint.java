@@ -379,7 +379,7 @@ public class NeoComBlueprint extends NeoComNode {
 		if (associatedAsset == null) {
 			buffer.append("[PROTO]").append(" ");
 		} else {
-			buffer.append("[").append(this.getAssociatedAsset().getAssetID()).append("]").append(" ")
+			buffer.append("[").append(this.getAssociatedAsset().getAssetId()).append("]").append(" ")
 			.append(this.getStackIDRefences()).append(" ");
 		}
 		buffer.append(typeName).append(" ");
