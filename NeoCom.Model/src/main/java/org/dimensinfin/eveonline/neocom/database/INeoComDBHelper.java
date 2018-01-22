@@ -20,6 +20,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 import java.sql.SQLException;
 
@@ -52,4 +53,5 @@ public interface INeoComDBHelper {
 	public Dao<Colony, String> getColonyDao () throws SQLException;
 
 	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException;
+	public Dao<NeoComAsset, String> getAssetDao () throws SQLException;
 }

@@ -15,10 +15,10 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.factory;
 
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,16 +50,27 @@ public class ManagerStore {
 			return _managerCacheStore.size();
 		}
 
+		public String constructManagerIdentifier (final String type, final long identifier) {
+			return new StringBuffer(type).append("/").append(identifier).toString();
+		}
+
 		public AbstractManager access (final EManagerCodes variant, long longIdentifier) {
-			final String locator = variant.name() + "/" + Long.valueOf(longIdentifier).toString();
+			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
 			final AbstractManager hit = _managerCacheStore.get(locator);
 			return hit;
 		}
 
 		public boolean store (final EManagerCodes variant, final AbstractManager instance, final long longIdentifier) {
-			final String locator = variant.name() + "/" + Long.valueOf(longIdentifier).toString();
+			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
 			_managerCacheStore.put(locator, instance);
 			return true;
+		}
+
+		public AbstractManager delete (final EManagerCodes variant, final long longIdentifier) {
+			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+			final AbstractManager hit = _managerCacheStore.get(locator);
+			_managerCacheStore.put(locator, null);
+			return hit;
 		}
 	}
 
@@ -76,6 +87,10 @@ public class ManagerStore {
 
 	public static AssetsManager getAssetsManager (final long identifier, final boolean forceNew) {
 		return singleton.getAssetsManagerImpl(identifier, forceNew);
+	}
+
+	public static AssetsManager dropAssetsManager (final long identifier) {
+		return (AssetsManager) managerCache.delete(EManagerCodes.PLANETARY_MANAGER, identifier);
 	}
 
 	public static PlanetaryManager getPlanetaryManager (final Credential credential) {
@@ -111,8 +126,8 @@ public class ManagerStore {
 		} else return hit;
 	}
 
-//	private PlanetaryManager getPlanetaryManagerImpl (final Credential credential, final boolean forceNew) {
-//	}
+	//	private PlanetaryManager getPlanetaryManagerImpl (final Credential credential, final boolean forceNew) {
+	//	}
 
 	@Override
 	public String toString () {
