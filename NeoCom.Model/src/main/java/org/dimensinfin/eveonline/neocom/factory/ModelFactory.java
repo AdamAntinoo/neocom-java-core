@@ -29,8 +29,11 @@ import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
+import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.enums.EDataUpdateJobs;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.dimensinfin.eveonline.neocom.network.NetworkManager;
@@ -39,9 +42,11 @@ import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The responsibility of this class is to serve as a Model constructor and Model cache. Upon request of a Model
@@ -85,11 +90,12 @@ public class ModelFactory {
 			}
 			return null;
 		}
+
 		public ICollaboration delete (final EModelVariants variant, long longIdentifier) {
 			if ( variant == EModelVariants.PILOTV1 ) {
 				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
 				final ICollaboration hit = _instanceCacheStore.get(locator);
-				_instanceCacheStore.put(locator,null);
+				_instanceCacheStore.put(locator, null);
 				return hit;
 			}
 			return null;
@@ -125,24 +131,30 @@ public class ModelFactory {
 		ApiConnector.setSecureXmlProcessing(false);
 	}
 
+	public static String constructReference (final EDataUpdateJobs type, final long identifier) {
+		return new StringBuffer(type.name()).append("/").append(identifier).toString();
+	}
+
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
 	public static PilotV1 getPilotV1 (final long identifier) {
 		return singleton.getPilotV1Impl(identifier);
 	}
+
 	public static boolean checkPilotV1 (final long identifier) {
 		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
-		if(null==hit)return false;
+		if ( null == hit ) return false;
 		else return true;
 	}
 
 	/**
 	 * Detelted the current entry if found and forces a new download.
+	 *
 	 * @param identifier the pilot identifier to load.
 	 * @return
 	 */
 	public static PilotV1 udpatePilotV1 (final long identifier) {
 		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
-		if(null!=hit)modelCache.delete(EModelVariants.PILOTV1, identifier);
+		if ( null != hit ) modelCache.delete(EModelVariants.PILOTV1, identifier);
 		return singleton.getPilotV1Impl(identifier);
 	}
 
@@ -209,9 +221,19 @@ public class ModelFactory {
 						if ( null != cloneInformation ) newchar.setHomeLocation(cloneInformation.getHomeLocation());
 
 						// Store the result on the cache with the timing indicator to where this entry is valid.
-						modelCache.store(EModelVariants.PILOTV1, newchar, new Instant(inforesponse.getCachedUntil()), identifier);
+						final Instant expirationTime = new Instant(inforesponse.getCachedUntil()).plus(TimeUnit.HOURS.toMillis(2));
+						modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
+
+						// Store this same information on the database to record the TimeStammp.
+						final String reference = constructReference(EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+						TimeStamp timestamp = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
+						if ( null == timestamp ) timestamp = new TimeStamp(reference, expirationTime);
+						timestamp.setTimeStamp(expirationTime)
+						         .store();
 					} catch (ApiException apie) {
 						apie.printStackTrace();
+					} catch (SQLException sqle) {
+						sqle.printStackTrace();
 					}
 				}
 			}

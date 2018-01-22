@@ -15,9 +15,7 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.auth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.exceptions.OAuthException;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -47,122 +45,11 @@ import retrofit2.http.Header;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComOAuth20 {
-	public static class NeoComAuthApi20 extends DefaultApi20 {
-
-		private static final String AUTHORIZE_URL = "https://login.eveonline.com/oauth/authorize";
-		private static final String ACCESS_TOKEN_RESOURCE = "https://login.eveonline.com/oauth/token";
-
-		protected NeoComAuthApi20 () {
-		}
-
-		private static class InstanceHolder {
-			private static final NeoComAuthApi20 INSTANCE = new NeoComAuthApi20();
-		}
-
-		public static NeoComAuthApi20 instance () {
-			return NeoComAuthApi20.InstanceHolder.INSTANCE;
-		}
-
-		@Override
-		public String getAccessTokenEndpoint () {
-			return ACCESS_TOKEN_RESOURCE;
-		}
-
-		@Override
-		protected String getAuthorizationBaseUrl () {
-			return AUTHORIZE_URL;
-		}
-	}
-
-	public interface VerifyCharacter {
+	public interface VerifyModelCharacter {
 		@GET("/oauth/verify")
 		Call<VerifyCharacterResponse> getVerification (@Header("Authorization") String token);
 	}
-
-	public static class VerifyCharacterResponse {
-		@JsonProperty("CharacterID")
-		private long characterID;
-		@JsonProperty("CharacterName")
-		private String characterName;
-		@JsonProperty("ExpiresOn")
-		private String expiresOn;
-		private long expiresMillis;
-		@JsonProperty("Scopes")
-		private String scopes;
-		@JsonProperty("TokenType")
-		private String tokenType;
-		@JsonProperty("CharacterOwnerHash")
-		private String characterOwnerHash;
-		@JsonProperty("IntellectualProperty")
-		private String intellectualProperty;
-
-		public long getCharacterID () {
-			return characterID;
-		}
-
-		public void setCharacterID (final long characterID) {
-			this.characterID = characterID;
-		}
-
-		public String getCharacterName () {
-			return characterName;
-		}
-
-		public void setCharacterName (final String characterName) {
-			this.characterName = characterName;
-		}
-
-		public String getExpiresOn () {
-			return expiresOn;
-		}
-
-		public void setExpiresOn (final String expiresOn) {
-			this.expiresOn = expiresOn;
-			// Convert the string to a data and then to the date milliseconds.
-			//			final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-ddTHH:mm:ss");
-			//			expiresMillis = fmt.parseMillis(expiresOn);
-		}
-
-		public long getExpiresMillis () {
-			return expiresMillis;
-		}
-
-		public void setExpiresMillis (final long expiresInstant) {
-			this.expiresMillis = expiresInstant;
-		}
-
-		public String getScopes () {
-			return scopes;
-		}
-
-		public void setScopes (final String scopes) {
-			this.scopes = scopes;
-		}
-
-		public String getTokenType () {
-			return tokenType;
-		}
-
-		public void setTokenType (final String tokenType) {
-			this.tokenType = tokenType;
-		}
-
-		public String getCharacterOwnerHash () {
-			return characterOwnerHash;
-		}
-
-		public void setCharacterOwnerHash (final String characterOwnerHash) {
-			this.characterOwnerHash = characterOwnerHash;
-		}
-
-		public String getIntellectualProperty () {
-			return intellectualProperty;
-		}
-
-		public void setIntellectualProperty (final String intellectualProperty) {
-			this.intellectualProperty = intellectualProperty;
-		}
-	}
+	//[01]
 
 	public interface ESIStore {
 
@@ -194,75 +81,13 @@ public class NeoComOAuth20 {
 
 	}
 
-	public static class TokenTranslationResponse {
-		@JsonProperty("access_token")
-		public String accessToken;
-		@JsonProperty("token_type")
-		public String tokenType;
-		@JsonProperty("expires_in")
-		public long expires;
-		@JsonProperty("refresh_token")
-		public String refreshToken;
-		private final long created = System.currentTimeMillis();
-		private String scope;
-
-		public String getAccessToken () {
-			return accessToken;
-		}
-
-		public TokenTranslationResponse setAccessToken (final String accessToken) {
-			this.accessToken = accessToken;
-			return this;
-		}
-
-		public String getTokenType () {
-			return tokenType;
-		}
-
-		public TokenTranslationResponse setTokenType (final String tokenType) {
-			this.tokenType = tokenType;
-			return this;
-		}
-
-		public long getExpires () {
-			return expires;
-		}
-
-		public long getExpiresOn () {
-			return created + (expires * 1000);
-		}
-
-		public TokenTranslationResponse setExpires (final long expires) {
-			this.expires = expires;
-			return this;
-		}
-
-		public String getRefreshToken () {
-			return refreshToken;
-		}
-
-		public TokenTranslationResponse setRefreshToken (final String refreshToken) {
-			this.refreshToken = refreshToken;
-			return this;
-		}
-
-		public String getScope () {
-			return scope;
-		}
-
-		public TokenTranslationResponse setScope (final String scope) {
-			this.scope = scope;
-			return this;
-		}
-	}
-
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(NeoComOAuth20.class);
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private OAuth20Service oAuth20Service = null;
 	private ESIStore store = null;
-	private VerifyCharacter verify;
+	private VerifyModelCharacter verify;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private NeoComOAuth20 () {
@@ -302,7 +127,7 @@ public class NeoComOAuth20 {
 						.addConverterFactory(JacksonConverterFactory.create())
 						.client(verifyClient.build())
 						.build()
-						.create(VerifyCharacter.class);
+						.create(VerifyModelCharacter.class);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -328,7 +153,7 @@ public class NeoComOAuth20 {
 			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
 				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
-				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
+//				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
 				return save(token);
 			}
 			return existing;
@@ -385,3 +210,115 @@ public class NeoComOAuth20 {
 }
 // - UNUSED CODE ............................................................................................
 //[01]
+//	public static class NeoComAuthApi20 extends DefaultApi20 {
+//
+//		private static final String AUTHORIZE_URL = "https://login.eveonline.com/oauth/authorize";
+//		private static final String ACCESS_TOKEN_RESOURCE = "https://login.eveonline.com/oauth/token";
+//
+//		protected NeoComAuthApi20 () {
+//		}
+//
+//		private static class InstanceHolder {
+//			private static final NeoComAuthApi20 INSTANCE = new NeoComAuthApi20();
+//		}
+//
+//		public static NeoComAuthApi20 instance () {
+//			return NeoComAuthApi20.InstanceHolder.INSTANCE;
+//		}
+//
+//		@Override
+//		public String getAccessTokenEndpoint () {
+//			return ACCESS_TOKEN_RESOURCE;
+//		}
+//
+//		@Override
+//		protected String getAuthorizationBaseUrl () {
+//			return AUTHORIZE_URL;
+//		}
+//	}
+
+
+//	public static class VerifyCharacterResponse {
+//		@JsonProperty("CharacterID")
+//		private long characterID;
+//		@JsonProperty("CharacterName")
+//		private String characterName;
+//		@JsonProperty("ExpiresOn")
+//		private String expiresOn;
+//		private long expiresMillis;
+//		@JsonProperty("Scopes")
+//		private String scopes;
+//		@JsonProperty("TokenType")
+//		private String tokenType;
+//		@JsonProperty("CharacterOwnerHash")
+//		private String characterOwnerHash;
+//		@JsonProperty("IntellectualProperty")
+//		private String intellectualProperty;
+//
+//		public long getCharacterID () {
+//			return characterID;
+//		}
+//
+//		public void setCharacterID (final long characterID) {
+//			this.characterID = characterID;
+//		}
+//
+//		public String getCharacterName () {
+//			return characterName;
+//		}
+//
+//		public void setCharacterName (final String characterName) {
+//			this.characterName = characterName;
+//		}
+//
+//		public String getExpiresOn () {
+//			return expiresOn;
+//		}
+//
+//		public void setExpiresOn (final String expiresOn) {
+//			this.expiresOn = expiresOn;
+//			// Convert the string to a data and then to the date milliseconds.
+//			//			final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-ddTHH:mm:ss");
+//			//			expiresMillis = fmt.parseMillis(expiresOn);
+//		}
+//
+//		public long getExpiresMillis () {
+//			return expiresMillis;
+//		}
+//
+//		public void setExpiresMillis (final long expiresInstant) {
+//			this.expiresMillis = expiresInstant;
+//		}
+//
+//		public String getScopes () {
+//			return scopes;
+//		}
+//
+//		public void setScopes (final String scopes) {
+//			this.scopes = scopes;
+//		}
+//
+//		public String getTokenType () {
+//			return tokenType;
+//		}
+//
+//		public void setTokenType (final String tokenType) {
+//			this.tokenType = tokenType;
+//		}
+//
+//		public String getCharacterOwnerHash () {
+//			return characterOwnerHash;
+//		}
+//
+//		public void setCharacterOwnerHash (final String characterOwnerHash) {
+//			this.characterOwnerHash = characterOwnerHash;
+//		}
+//
+//		public String getIntellectualProperty () {
+//			return intellectualProperty;
+//		}
+//
+//		public void setIntellectualProperty (final String intellectualProperty) {
+//			this.intellectualProperty = intellectualProperty;
+//		}
+//	}
