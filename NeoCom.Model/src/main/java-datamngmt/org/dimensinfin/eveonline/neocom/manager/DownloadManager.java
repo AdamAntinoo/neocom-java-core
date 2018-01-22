@@ -12,12 +12,11 @@ package org.dimensinfin.eveonline.neocom.manager;
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.shared.Asset;
 import com.beimin.eveapi.model.shared.Blueprint;
-import com.beimin.eveapi.parser.corporation.AssetListParser;
+import com.beimin.eveapi.parser.ApiAuthorization;
 import com.beimin.eveapi.parser.pilot.BlueprintsParser;
 import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
 import com.beimin.eveapi.response.shared.AssetListResponse;
 import com.beimin.eveapi.response.shared.BlueprintsResponse;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 
 import org.dimensinfin.core.util.Chrono;
@@ -39,7 +38,6 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
 import org.dimensinfin.eveonline.neocom.network.NetworkManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
@@ -50,7 +48,6 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -90,7 +87,7 @@ public class DownloadManager {
 	private transient Credential credential = null;
 	private transient final List<Long> id4Names = new ArrayList<>();
 
-	private transient NeoComCharacter _pilot = null;
+//	private transient NeoComCharacter _pilot = null;
 	private transient Dao<NeoComAsset, String> assetDao = null;
 	private List<NeoComAsset> unlocatedAssets = null;
 	/** Time stamp for the time when character data is cached. */
@@ -107,11 +104,11 @@ public class DownloadManager {
 		super();
 	}
 
-	@Deprecated
-	public DownloadManager (final NeoComCharacter pilot) {
-		_pilot = pilot;
-		//		jsonClass = "DownloadManager";
-	}
+//	@Deprecated
+//	public DownloadManager (final NeoComCharacter pilot) {
+//		_pilot = pilot;
+//		//		jsonClass = "DownloadManager";
+//	}
 
 	public DownloadManager (final Credential credential) {
 		this();
@@ -180,7 +177,7 @@ public class DownloadManager {
 					if ( myasset.getCategory().equalsIgnoreCase("Blueprint") ) {
 						//			myasset.setBlueprintType();
 					}
-					myasset.setOwnerID(this.getPilot().getCharacterID() * -1);
+					myasset.setOwnerID(credential.getAccountId() * -1);
 					myasset.store();
 					// Check the asset location. The location can be a known game station, a known user structure, another asset
 					// or an unknown player structure. Check which one is this location.
@@ -214,11 +211,11 @@ public class DownloadManager {
 			}
 			// Assign the assets to the pilot.
 			synchronized (dbConn) {
-				dbConn.replaceAssets(this.getPilot().getCharacterID());
+				dbConn.replaceAssets(credential.getAccountId());
 			}
 			// Update the caching time to the time set by the api.
 			final String reference = DownloadManager.constructReference(EDataUpdateJobs.ASSETDATA, credential.getAccountId());
-		//	String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
+		//	String reference = credential.getAccountId() + ".ASSETDATA";
 			_assetsCacheTime= NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
 			final Instant newExpirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
 			if ( null == _assetsCacheTime ) {
@@ -307,28 +304,28 @@ public class DownloadManager {
 		return true;
 	}
 
-	@JsonIgnore
-	public NeoComCharacter getPilot () {
-		return _pilot;
-	}
-
-	public void setPilot (final NeoComCharacter newPilot) {
-		_pilot = newPilot;
-	}
+//	@JsonIgnore
+//	public NeoComCharacter getPilot () {
+//		return _pilot;
+//	}
+//
+//	public void setPilot (final NeoComCharacter newPilot) {
+//		_pilot = newPilot;
+//	}
 
 	//	public String getJsonClass () {
 	//		return jsonClass;
 	//	}
 
-	public void updateCharacterDataTimeStamp (final Date cachedUntil) {
-		// Update the caching time to the time set by the eveapi.
-		final String reference = getPilot().getCharacterID() + ".CHARACTERDATA";
-		if ( null == _characterCacheTime ) {
-			_characterCacheTime = new TimeStamp(reference, new Instant(cachedUntil));
-		} else {
-			_characterCacheTime.updateTimeStamp(new Instant(cachedUntil));
-		}
-	}
+//	public void updateCharacterDataTimeStamp (final Date cachedUntil) {
+//		// Update the caching time to the time set by the eveapi.
+//		final String reference = getPilot().getCharacterID() + ".CHARACTERDATA";
+//		if ( null == _characterCacheTime ) {
+//			_characterCacheTime = new TimeStamp(reference, new Instant(cachedUntil));
+//		} else {
+//			_characterCacheTime.updateTimeStamp(new Instant(cachedUntil));
+//		}
+//	}
 
 	/**
 	 * The new downloader uses the eveapi library to process the xml source code received. This simplifies the
@@ -351,11 +348,12 @@ public class DownloadManager {
 			// Clear any previous record with owner -1 from database.
 			INeoComModelDatabase dbConn = ModelAppConnector.getSingleton().getDBConnector();
 			synchronized (dbConn) {
-				dbConn.clearInvalidRecords(this.getPilot().getCharacterID());
+				dbConn.clearInvalidRecords(credential.getAccountId());
 			}
 			// Parse the CCP data to a list of assets
 			PilotAssetListParser parser = new PilotAssetListParser();
-			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
+			AssetListResponse response = parser.getResponse(new ApiAuthorization(credential.getKeyCode(),credential
+							.getAccountId(),credential.getValidationCode()));
 			if ( null != response ) {
 				unlocatedAssets = new Vector<NeoComAsset>();
 				List<Asset> assets = response.getAll();
@@ -373,10 +371,10 @@ public class DownloadManager {
 				}
 				// Assign the assets to the pilot.
 				synchronized (dbConn) {
-					dbConn.replaceAssets(this.getPilot().getCharacterID());
+					dbConn.replaceAssets(credential.getAccountId());
 				}
 				// Update the caching time to the time set by the eveapi.
-				String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
+				String reference = credential.getAccountId() + ".ASSETDATA";
 				if ( null == _assetsCacheTime ) {
 					_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
 				} else {
@@ -401,11 +399,12 @@ public class DownloadManager {
 		try {
 			Chrono chrono = new Chrono();
 			// Clear any previous records with owner -1 from database.
-			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
+			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(credential.getAccountId());
 			// Download and parse the blueprints using the eveapi.
 			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			BlueprintsParser parser = new BlueprintsParser();
-			BlueprintsResponse response = parser.getResponse(this.getPilot().getAuthorization());
+			BlueprintsResponse response = parser.getResponse(new ApiAuthorization(credential.getKeyCode(),credential
+					.getAccountId(),credential.getValidationCode()));
 			if ( null != response ) {
 				Set<Blueprint> blueprints = response.getAll();
 				for (Blueprint bp : blueprints) {
@@ -420,9 +419,9 @@ public class DownloadManager {
 			}
 			// Pack the blueprints and store them on the database.
 			storeBlueprints(bplist);
-			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getPilot().getCharacterID());
+			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(credential.getAccountId());
 			// Update the caching time to the time set by the eveapi.
-			String reference = this.getPilot().getCharacterID() + ".BLUEPRINTDATA";
+			String reference = credential.getAccountId() + ".BLUEPRINTDATA";
 			if ( null == _blueprintsCacheTime ) {
 				_blueprintsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
 			} else {
@@ -454,50 +453,50 @@ public class DownloadManager {
 	 * database records not associated to any owner, the add records for a generic owner and finally change the
 	 * owner to this character.
 	 */
-	public void downloadCorporationAssets () {
-		DownloadManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
-		try {
-			// Clear any previous record with owner -1 from database.
-			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getPilot().getCharacterID());
-			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
-			//			AssetListResponse response = null;
-			//			if (getName().equalsIgnoreCase("Corporation")) {
-			//				AssetListParser parser = com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance();
-			//				response = parser.getResponse(getAuthorization());
-			//				if (null != response) {
-			//					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
-			//					assetsCacheTime = new Instant(response.getCachedUntil());
-			//					// Assets may be parent of other assets so process them recursively.
-			//					for (final EveAsset eveAsset : assets) {
-			//						processAsset(eveAsset, null);
-			//					}
-			//				}
-			//			} else {
-			AssetListParser parser = new AssetListParser();
-			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
-			if ( null != response ) {
-				List<Asset> assets = response.getAll();
-				//				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
-				// Assets may be parent of other assets so process them recursively.
-				for (final Asset eveAsset : assets) {
-					this.processAsset(eveAsset, null);
-				}
-			}
-			//			}
-			ModelAppConnector.getSingleton().getDBConnector().replaceAssets(this.getPilot().getCharacterID());
-
-			// Update the caching time to the time set by the eveapi.
-			String reference = this.getPilot().getCharacterID() + ".ASSETDATA";
-			if ( null == _assetsCacheTime ) {
-				_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
-			} else {
-				_assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
-			}
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		}
-		DownloadManager.logger.info("<< [AssetsManager.downloadCorporationAssets");
-	}
+//	public void downloadCorporationAssets () {
+//		DownloadManager.logger.info(">> [AssetsManager.downloadCorporationAssets]");
+//		try {
+//			// Clear any previous record with owner -1 from database.
+//			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(credential.getAccountId());
+//			// Download and parse the assets. Check the api key to detect corporations and use the other parser.
+//			//			AssetListResponse response = null;
+//			//			if (getName().equalsIgnoreCase("Corporation")) {
+//			//				AssetListParser parser = com.beimin.eveapi.corporation.assetlist.AssetListParser.getInstance();
+//			//				response = parser.getResponse(getAuthorization());
+//			//				if (null != response) {
+//			//					final HashSet<EveAsset> assets = new HashSet<EveAsset>(response.getAll());
+//			//					assetsCacheTime = new Instant(response.getCachedUntil());
+//			//					// Assets may be parent of other assets so process them recursively.
+//			//					for (final EveAsset eveAsset : assets) {
+//			//						processAsset(eveAsset, null);
+//			//					}
+//			//				}
+//			//			} else {
+//			AssetListParser parser = new AssetListParser();
+//			AssetListResponse response = parser.getResponse(this.getPilot().getAuthorization());
+//			if ( null != response ) {
+//				List<Asset> assets = response.getAll();
+//				//				this.getPilot().updateAssetsAccesscacheTime(response.getCachedUntil());
+//				// Assets may be parent of other assets so process them recursively.
+//				for (final Asset eveAsset : assets) {
+//					this.processAsset(eveAsset, null);
+//				}
+//			}
+//			//			}
+//			ModelAppConnector.getSingleton().getDBConnector().replaceAssets(credential.getAccountId());
+//
+//			// Update the caching time to the time set by the eveapi.
+//			String reference = credential.getAccountId() + ".ASSETDATA";
+//			if ( null == _assetsCacheTime ) {
+//				_assetsCacheTime = new TimeStamp(reference, new Instant(response.getCachedUntil()));
+//			} else {
+//				_assetsCacheTime.updateTimeStamp(new Instant(response.getCachedUntil()));
+//			}
+//		} catch (final ApiException apie) {
+//			apie.printStackTrace();
+//		}
+//		DownloadManager.logger.info("<< [AssetsManager.downloadCorporationAssets");
+//	}
 
 	/**
 	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
@@ -587,7 +586,7 @@ public class DownloadManager {
 			if ( myasset.getCategory().equalsIgnoreCase("Ship") ) {
 				myasset.setShip(true);
 			}
-			myasset.setOwnerID(this.getPilot().getCharacterID() * -1);
+			myasset.setOwnerID(credential.getAccountId() * -1);
 			assetDao.create(myasset);
 
 			// Check the asset location. The location can be a known game station, a known user structure, another asset

@@ -229,6 +229,7 @@ public class ModelFactory {
 						TimeStamp timestamp = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
 						if ( null == timestamp ) timestamp = new TimeStamp(reference, expirationTime);
 						timestamp.setTimeStamp(expirationTime)
+						         .setCredentialId(credential.getAccountId())
 						         .store();
 					} catch (ApiException apie) {
 						apie.printStackTrace();

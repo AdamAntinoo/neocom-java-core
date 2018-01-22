@@ -103,8 +103,7 @@ public class TimeStamp {
 			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getNewDBConnector().getTimeStampDao();
 			if ( -1 == credentialId )
 				TimeStamp.logger.info("W [TimeStamp.store]> CredentialId has not been setup. Possible invalid TS.");
-			else
-				timeStampDao.update(this);
+			timeStampDao.update(this);
 			TimeStamp.logger.info("-- [TimeStamp.store]> Timestamp data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();

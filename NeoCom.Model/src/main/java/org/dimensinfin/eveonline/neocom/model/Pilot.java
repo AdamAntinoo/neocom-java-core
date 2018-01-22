@@ -325,7 +325,7 @@ public class Pilot extends NeoComCharacter {
 				this.setSkillInTraining(trainingresponse);
 			}
 			// Update the last updated timestamp from the CharacterInfoResponse.
-			getDownloadManager().updateCharacterDataTimeStamp(sheetresponse.getCachedUntil());
+//			getDownloadManager().updateCharacterDataTimeStamp(sheetresponse.getCachedUntil());
 		} catch (ApiException ex) {
 			ex.printStackTrace();
 		}

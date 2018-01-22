@@ -143,6 +143,7 @@ public class NetworkManager {
 		}
 		return null;
 	}
+
 	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones (final int identifier, final String refreshToken, final String server) {
 		logger.info(">> [NetworkManager.getCharactersCharacterIdClones]");
 		final Chrono accessFullTime = new Chrono();
@@ -164,28 +165,42 @@ public class NetworkManager {
 		}
 		return null;
 	}
+
 	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets (final int identifier, final String refreshToken, final String server) {
 		logger.info(">> [NetworkManager.getCharactersCharacterIdAssets]");
 		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			if ( null != server ) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
-					.create(AssetsApi.class)
-					.getCharactersCharacterIdAssets(identifier, datasource, 1, null, null, null).execute();
-			if ( !assetsApiResponse.isSuccessful() ) {
-				return null;
-			} else return assetsApiResponse.body();
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
+						.create(AssetsApi.class)
+						.getCharactersCharacterIdAssets(identifier, datasource, pageCounter, null, null, null).execute();
+				if ( !assetsApiResponse.isSuccessful() ) {
+					// Or error or we have reached the end of the list.
+					return returnAssetList;
+				} else {
+					// Copy the assets to the result list.
+					returnAssetList.addAll(assetsApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if ( assetsApiResponse.body().size() < 1 ) morePages = false;
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [NetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
 		}
-		return null;
+		return returnAssetList;
 	}
-	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames (final int identifier, final List<Long> listItemIds,final String refreshToken, final String server) {
+
+	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames (final int identifier, final List<Long> listItemIds, final String refreshToken, final String server) {
 		logger.info(">> [NetworkManager.postCharactersCharacterIdAssetsNames]");
 		final Chrono accessFullTime = new Chrono();
 		try {
@@ -195,7 +210,7 @@ public class NetworkManager {
 			// Create the request to be returned so it can be called.
 			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
 					.create(AssetsApi.class)
-					.postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource,  null, null, null).execute();
+					.postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource, null, null, null).execute();
 			if ( !assetsApiResponse.isSuccessful() ) {
 				return null;
 			} else return assetsApiResponse.body();

@@ -75,7 +75,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 			newcorp.setInfo(inforesponse);
 		}
 		// Update the last updated timestamp from the CharacterInfoResponse.
-		newcorp.getDownloadManager().updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
+//		newcorp.getDownloadManager().updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
@@ -131,7 +131,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		//	newchar.accessAllAssets();
 
 		// Update the last updated timestamp from the CharacterInfoResponse.
-		newchar.getDownloadManager().updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
+//		newchar.getDownloadManager().updateCharacterDataTimeStamp(inforesponse.getCachedUntil());
 
 		// Because renderization needs some detailed information only found on Managers we get that copied
 		// into fields before terminating the construction of the instance.
@@ -209,14 +209,14 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 		else return info.getLastKnownLocation();
 	}
 
-	public DownloadManager getDownloadManager () {
-		if ( null == _downloadManager ) {
-			_downloadManager = new DownloadManager(this);
-		}
-		// Make sure the Manager is already connected to the Pilot.
-		_downloadManager.setPilot(this);
-		return _downloadManager;
-	}
+//	public DownloadManager getDownloadManager () {
+//		if ( null == _downloadManager ) {
+//			_downloadManager = new DownloadManager(this);
+//		}
+//		// Make sure the Manager is already connected to the Pilot.
+//		_downloadManager.setPilot(this);
+//		return _downloadManager;
+//	}
 
 //	/**
 //	 * Check all the cache time stamps for existence and in case the TS exists if the time has already passed.
