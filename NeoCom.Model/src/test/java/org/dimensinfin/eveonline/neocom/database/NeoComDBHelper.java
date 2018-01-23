@@ -21,10 +21,9 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dimensinfin.eveonline.neocom.database.entity.*;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +53,7 @@ public class NeoComDBHelper implements INeoComDBHelper {
 	private Dao<DatabaseVersion, String> versionDao = null;
 	private Dao<ApiKey, String> apiKeysDao = null;
 	private Dao<Credential, String> credentialDao = null;
-	private Dao<ColonyStorage, String> colonyStorageDao = null;
+	private Dao<org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage, String> colonyStorageDao = null;
 
 	private DatabaseVersion storedVersion = null;
 
@@ -159,7 +158,7 @@ public class NeoComDBHelper implements INeoComDBHelper {
 			logger.warn("SQL [NeoComDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
 		try {
-			TableUtils.createTableIfNotExists(databaseConnection, ColonyStorage.class);
+			TableUtils.createTableIfNotExists(databaseConnection, org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
@@ -242,9 +241,9 @@ public class NeoComDBHelper implements INeoComDBHelper {
 	}
 
 	@Override
-	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException {
+	public Dao<org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage, String> getColonyStorageDao () throws SQLException {
 		if ( null == colonyStorageDao ) {
-			colonyStorageDao = DaoManager.createDao(this.getConnectionSource(), ColonyStorage.class);
+			colonyStorageDao = DaoManager.createDao(this.getConnectionSource(), org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage.class);
 		}
 		return colonyStorageDao;
 	}

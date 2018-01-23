@@ -34,7 +34,7 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - F I E L D - S E C T I O N ............................................................................
 	protected String jsonClass = "AbstractManager";
 	@JsonIgnore
-	protected transient Credential _credential;
+	protected transient Credential credential;
 	//	@JsonIgnore
 	//	private transient NeoComCharacter pilot = null;
 	protected boolean initialized = false;
@@ -47,7 +47,7 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AbstractManager (final Credential credential) {
 		super();
-		_credential = credential;
+		this.credential = credential;
 		jsonClass = "AbstractManager";
 	}
 
@@ -64,14 +64,14 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 	}
 
 	public long getCredentialIdentifier () {
-		if ( null == _credential )
+		if ( null == credential )
 			throw new RuntimeException("RT [AbstractManager]> Credential is not set on current Manager. Bad initialization.");
-		return _credential.getAccountId();
+		return credential.getAccountId();
 	}
 	public String getCredentialName () {
-		if ( null == _credential )
+		if ( null == credential )
 			throw new RuntimeException("RT [AbstractManager]> Credential is not set on current Manager. Bad initialization.");
-		return _credential.getAccountName();
+		return credential.getAccountName();
 	}
 
 	/**

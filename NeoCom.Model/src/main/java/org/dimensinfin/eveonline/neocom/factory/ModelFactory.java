@@ -3,7 +3,7 @@
 //  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
 //  ENVIRONMENT: Java 1.8 Library.
 //  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionalities than the model definitions for the Eve Online NeoCom application.
+//               functionality than the model definitions for the Eve Online NeoCom application.
 //               If now defines the pure java code for all the repositories, caches and managers that do
 //               not have an specific Android implementation serving as a code base for generic platform
 //               development. The architecture model has also changed to a better singleton/static
@@ -32,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.enums.EDataUpdateJobs;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
@@ -62,7 +62,7 @@ import java.util.concurrent.TimeUnit;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ModelFactory {
-	public enum EModelVariants {
+	private enum EModelVariants {
 		PILOTV1, APIKEY
 	}
 
@@ -125,13 +125,14 @@ public class ModelFactory {
 	private static final ModelFactory singleton = new ModelFactory();
 	private static ModelTimedCache modelCache = new ModelTimedCache();
 
+	/** Initialize the beimin Eve Api connector to remove SSL certification. From this point on we can use the beimin
+	 * XML api to access CCP data. */
 	static {
 		EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
 		// Remove the secure XML access and configure the ApiConnector.
 		ApiConnector.setSecureXmlProcessing(false);
 	}
-
-	public static String constructReference (final EDataUpdateJobs type, final long identifier) {
+	public static String constructReference (final GlobalDataManager.EDataUpdateJobs type, final long identifier) {
 		return new StringBuffer(type.name()).append("/").append(identifier).toString();
 	}
 
@@ -225,7 +226,7 @@ public class ModelFactory {
 						modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
 
 						// Store this same information on the database to record the TimeStammp.
-						final String reference = constructReference(EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+						final String reference = constructReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
 						TimeStamp timestamp = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
 						if ( null == timestamp ) timestamp = new TimeStamp(reference, expirationTime);
 						timestamp.setTimeStamp(expirationTime)

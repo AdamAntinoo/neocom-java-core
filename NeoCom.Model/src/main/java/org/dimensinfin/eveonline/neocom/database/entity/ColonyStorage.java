@@ -10,7 +10,7 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.database;
+package org.dimensinfin.eveonline.neocom.database.entity;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -19,7 +19,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

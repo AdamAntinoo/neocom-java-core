@@ -11,23 +11,17 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.database.entity.Colony;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
-import org.dimensinfin.eveonline.neocom.network.NetworkManager;
-import org.dimensinfin.eveonline.neocom.database.entity.Colony;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +42,9 @@ public class PlanetaryManager extends AbstractManager {
 	public double totalAssetsVolume = 0.0;
 	/** This field should be serialized to get the correct icon at the Angular UI. */
 	public final String iconName = "planets.png";
+	// TODO This variable is not get. Only the result of the call is stored here but no check for content is optimized.
+	// TODO Cache this data in local because the number of colonies does not change frecuently but first check for
+	// current response times
 	private final List<Colony> colonies = new ArrayList<>();
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
@@ -80,7 +77,7 @@ public class PlanetaryManager extends AbstractManager {
 		try {
 			// Read all the assets for this character if not done already.
 			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
-																																	 .accessAllPlanetaryAssets(getCredentialIdentifier());
+			                                                             .accessAllPlanetaryAssets(getCredentialIdentifier());
 			totalAssetsCount = planetaryAssetList.size();
 			// Process the Resources and search for the parent assets to classify them into the Locations.
 			for (NeoComAsset resource : planetaryAssetList) {
@@ -97,104 +94,18 @@ public class PlanetaryManager extends AbstractManager {
 
 	@Deprecated
 	private long getCharacterId () {
-		return _credential.getAccountId();
+		return credential.getAccountId();
 	}
-	/**
-	 * Get all the Planetary Colonies for a selected character. After getting the list of colonies and wrapping
-	 * all that data into MVC compatible classes it will launch background jobs to retrieve each colony detailed
-	 * data.
-	 */
-	public synchronized List<Colony> accessAllColonies () {
-		logger.info(">> [ColonyManager.accessAllColonies]");
-		// Optimize the access tot the Colony data.
-		if(colonies.size()<1) {
-			final Chrono accessFullTime = new Chrono();
-	//		List<Colony> colonies = new ArrayList<>();
-			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
-			//		NetworkManager.accessEsi(_credential.getRefreshToken(),PlanetaryInteractionApi.class)
-			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = NetworkManager.getCharactersCharacterIdPlanets(Long.valueOf(getCharacterId()).intValue(), _credential.getRefreshToken(), "tranquility");
-			//		_credential.addPlanetaryData(colonyInstances);
 
-			// Transform the received OK instance into a NeoCom compatible model instance.
-			ModelMapper modelMapper = new ModelMapper();
-			modelMapper.getConfiguration()
-								 .setFieldMatchingEnabled(true)
-								 .setMethodAccessLevel(AccessLevel.PRIVATE);
-			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
-				Colony col = modelMapper.map(colonyOK, Colony.class);
-				// Block to add additional data not downloaded on this call.
-				// To set mre information about this particular planet we should call the Universe database.
-				//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
-				final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
-				if ( null != planetData ) col.setPlanetData(planetData);
-				//			});
-				// For each of the received planets, get their structures and do the same transformations.
-				//			Stream.of(colonies).forEach(c -> {
-				//			try {
-				final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(_credential.getAccountId(), col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
-				if ( null != colonyStructures ) {
-					// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
-					col.setStructuresData(colonyStructures);
-					// Process the Colony contents indirectly using the mapper again.
-					//						modelMapper.map(colonyStructures, c);
-				}
-				//		});
-				colonies.add(col);
-			}
-	//		_colonies=colonies;
+	public synchronized List<Colony> accessAllColonies () {
+		logger.info(">< [ColonyManager.accessAllColonies]");
+		// Call the Global manager to get the list of Colonies that belong to this user.
+		synchronized (colonies) {
+			colonies.clear();
+			colonies.addAll(GlobalDataManager.accessColonies4Manager(credential));
 		}
 		return colonies;
-
-
-		//		// Converts data to MVC
-		//		List<Colony> presentColonies = new Vector();
-		//		for (PlanetaryColony col : colonies.getColonies()) {
-		//			final Colony newcol = ColonyFactory.from(col);
-		//			presentColonies.add(newcol);
-		//			logger.debug(">> [ColonyManager.accessAllColonies]> newcol: ", newcol.toString());
-		//			logger.debug(">> [ColonyManager.accessAllColonies]> Submitting another job to Executor");
-		//			newcol.setDownloading(true);
-		//			ApplicationCloudAdapter.getSingleton().getDownloadExecutor().submit(
-		//					new OneParameterTask<Colony>(newcol) {
-		//						public void run () {
-		//							logger.info(">> [ColonyManager.accessAllColonies.OneParameterTask.run]");
-		//							Chrono chrono = new Chrono();
-		//
-		//							final PlanetaryPinsRequest pinrequest = _network.PlanetaryPinsRequest(getTarget().getPlanetID());
-		//							final PlanetaryPinsResponse pins = _network.execute(pinrequest);
-		//							logger.debug(">> [ColonyManager.accessAllColonies.OneParameterTask.run]> [Elapsed Time]- PlanetaryPinsRequest "
-		//									, chrono.printElapsed(ChonoOptions.SHOWMILLIS));
-		//							for (PlanetaryPin pin : pins.getPins()) {
-		//								final ColonyStructure structure = ColonyStructureFactory.from(pin);
-		//								getTarget().addStructure(structure);
-		//							}
-		//							// Mark the download complete.
-		//							getTarget().setDownloading(false);
-		//							getTarget().setDownloaded(true);
-		//							// Wait a delay of 1 second to allow to watch the counter.
-		//							try {
-		//								Thread.sleep(TimeUnit.SECONDS.toMillis(4));
-		//							} catch (InterruptedException ex) {
-		//							}
-		//							// Send message to the model to update the rendering.
-		//							logger.debug(">> [ColonyManager.accessAllColonies]> Target: ", getTarget().toString());
-		//							logger.debug(">> [ColonyManager.accessAllColonies.OneParameterTask.run]> Going to fire the STRUCTURE message");
-		//							getTarget().fireStructureChange("EVENTSTRUCTURE_DOWNLOADDATA", getTarget(), null);
-		//
-		//							logger.info("<< [ColonyManager.accessAllColonies.OneParameterTask.run]> Time Elapsed: " + chrono.printElapsed(Chrono.ChonoOptions.SHOWMILLIS));
-		//						}
-		//					}
-		//			);
-		//		}
-		//		logger.debug("-- [ColonyManager.accessAllColonies]> [Elapsed Time]- Colony Model Generation", chrono.printElapsed(ChonoOptions.SHOWMILLIS));
-		//		logger.info("<< [ColonyManager.accessAllColonies]> Colonies on list: ", presentColonies.size());
-		//		return presentColonies;
 	}
-
-	//	private File createCacheFile (final String fileName) {
-	//		File esiCacheFile = new File(fileName);
-	//		return esiCacheFile;
-	//	}
 
 	public long getAssetTotalCount () {
 		this.initialize();
@@ -287,7 +198,7 @@ public class PlanetaryManager extends AbstractManager {
 		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
-			ExtendedLocation newloc = new ExtendedLocation(_credential.getAccountId(), intermediary);
+			ExtendedLocation newloc = new ExtendedLocation(credential.getAccountId(), intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
 			newloc.setDownloaded(true);
 			//			// Calculate the value and the volume and add them to the container aggregation fields.

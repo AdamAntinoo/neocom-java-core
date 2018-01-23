@@ -23,6 +23,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
@@ -58,8 +59,8 @@ public class Colony extends NeoComExpandableNode {
 
 	static {
 		modelMapper.getConfiguration()
-							 .setFieldMatchingEnabled(true)
-							 .setMethodAccessLevel(AccessLevel.PRIVATE);
+		           .setFieldMatchingEnabled(true)
+		           .setMethodAccessLevel(AccessLevel.PRIVATE);
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -77,8 +78,10 @@ public class Colony extends NeoComExpandableNode {
 	private Integer numPins = null;
 	@DatabaseField
 	private DateTime lastUpdate = null;
+	@DatabaseField
+	private String planetName = "Planet 0";
 	private transient EveLocation location = null;
-	private transient GetUniversePlanetsPlanetIdOk planetData = null;
+	//	private transient GetUniversePlanetsPlanetIdOk planetData = null;
 	private transient GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
 	private transient List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
 
@@ -120,7 +123,7 @@ public class Colony extends NeoComExpandableNode {
 	public Colony store () {
 		try {
 			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
-			colonyDao.update(this);
+			colonyDao.createOrUpdate(this);
 			logger.info("-- [Colony.store]> Colony data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
@@ -158,11 +161,14 @@ public class Colony extends NeoComExpandableNode {
 	}
 
 	public String getSolarSystemName () {
-		if ( null != location ) return location.getSystem();
-		else return "-System undefined-";
+		// Location is transient so we have to reload the EveLocation cache if null.
+		if ( null == location ) location = GlobalDataManager.searchLocationById(getSolarSystemId());
+		return location.getSystem();
 	}
 
 	public double getSecurityValue () {
+		// Location is transient so we have to reload the EveLocation cache if null.
+		if ( null == location ) location = GlobalDataManager.searchLocationById(getSolarSystemId());
 		return location.getSecurityValue();
 	}
 
@@ -179,7 +185,9 @@ public class Colony extends NeoComExpandableNode {
 	}
 
 	public Colony setPlanetData (final GetUniversePlanetsPlanetIdOk planetData) {
-		this.planetData = planetData;
+		//		this.planetData = planetData;
+		// Copy the planet name to the persistence fields and also check if we can store the whole data.
+		planetName = planetData.getName();
 		return this;
 	}
 
@@ -216,8 +224,7 @@ public class Colony extends NeoComExpandableNode {
 
 	// --- D E L E G A T E D   M E T H O D S
 	public String getPlanetName () {
-		if ( null != planetData ) return planetData.getName();
-		else return "Planet 0";
+		return planetName;
 	}
 
 	public List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getStructures () {

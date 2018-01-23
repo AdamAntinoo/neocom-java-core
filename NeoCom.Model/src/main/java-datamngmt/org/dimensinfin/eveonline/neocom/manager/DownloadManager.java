@@ -1,12 +1,15 @@
-//	PROJECT:      NeoCom.model (NEOC.M)
-//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:	Java 1.8 Library.
-//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
-//								available databases.
-//								This version includes the access to the latest 6.x version of eveapi libraries to
-//								download ad parse the CCP XML API data.
-//								Code integration that is not dependent on any specific platform.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.manager;
 
 import com.beimin.eveapi.exception.ApiException;
@@ -28,13 +31,11 @@ import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.CacheManager;
-import org.dimensinfin.eveonline.neocom.enums.EDataUpdateJobs;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.dimensinfin.eveonline.neocom.factory.ManagerStore;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -78,7 +79,7 @@ public class DownloadManager {
 		downloadExecutor.submit(task);
 	}
 
-	public static String constructReference (final EDataUpdateJobs type, final long identifier) {
+	public static String constructReference (final GlobalDataManager.EDataUpdateJobs type, final long identifier) {
 		return new StringBuffer(type.name()).append("/").append(identifier).toString();
 	}
 
@@ -224,12 +225,12 @@ public class DownloadManager {
 				dbConn.replaceAssets(credential.getAccountId());
 			}
 			// Update the caching time to the time set by the api.
-			final String reference = DownloadManager.constructReference(EDataUpdateJobs.ASSETDATA, credential.getAccountId());
+			final String reference = DownloadManager.constructReference(GlobalDataManager.EDataUpdateJobs.ASSETDATA, credential.getAccountId());
 			final Instant newExpirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
 			updateTargetDataTimeStamp(reference, newExpirationTime);
 
 			// Remove from memory the managers that contain now stale data.
-			ManagerStore.dropAssetsManager(credential.getAccountId());
+			GlobalDataManager.dropAssetsManager(credential.getAccountId());
 			//			//	String reference = credential.getAccountId() + ".ASSETDATA";
 			//			_assetsCacheTime = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
 			//			if ( null == _assetsCacheTime ) {
@@ -262,7 +263,7 @@ public class DownloadManager {
 		        .setFlag(asset200Ok.getLocationFlag())
 		        .setSingleton(asset200Ok.getIsSingleton());
 		// Get access to the Item and update the copied fields.
-		final EveItem item = CacheManager.searchItemById(newAsset.getTypeId());
+		final EveItem item = GlobalDataManager.searchItemById(newAsset.getTypeId());
 		if ( null != item ) {
 			try {
 				newAsset.setName(item.getName());
@@ -298,13 +299,13 @@ public class DownloadManager {
 			//			// Block to add additional data not downloaded on this call.
 			//			// To set mre information about this particular planet we should call the Universe database.
 			//			//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
-			//			final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
+			//			final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), "tranquility");
 			//			if ( null != planetData ) col.setPlanetData(planetData);
 			//			//			});
 			//			// For each of the received planets, get their structures and do the same transformations.
 			//			//			Stream.of(colonies).forEach(c -> {
 			//			//			try {
-			//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(_credential.getAccountId(), col.getPlanetId(), _credential.getRefreshToken(), "tranquility");
+			//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), "tranquility");
 			//			if ( null != colonyStructures ) {
 			//				// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
 			//				col.setStructuresData(colonyStructures);

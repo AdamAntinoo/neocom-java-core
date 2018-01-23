@@ -16,6 +16,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
+import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
@@ -53,5 +54,6 @@ public interface INeoComDBHelper {
 	public Dao<Colony, String> getColonyDao () throws SQLException;
 
 	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException;
+
 	public Dao<NeoComAsset, String> getAssetDao () throws SQLException;
 }

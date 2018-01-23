@@ -13,6 +13,7 @@ import com.beimin.eveapi.model.account.Character;
 
 import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.factory.ModelFactory;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
@@ -257,13 +258,18 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	}
 
 	/**
-	 * Search this identifier on the list of credentials and returns the findings.
+	 * Search this identifier on the list of credentials and returns the findings. We should not return null values
+	 * because this can generate exception because this method is consumed without checks.
+	 * Other possible solution is to check again for the Credential list from the database.
 	 */
 	private Credential getCredential4IdImpl (final long identifier) {
 		for (Credential cred : _credentialList) {
 			if ( cred.getAccountId() == identifier ) return cred;
 		}
-		return null;
+		// TODO Get again the credential list from the persistence database to check that this is not a new login or that
+		// the login list has been lost by reinitialization.
+		throw new NeocomRuntimeException("RTE [DataManagementModelStore.getCredential4IdImpl]> Credential not found on " +
+				"the credential list. This is not an expected exception");
 	}
 
 	private File createCacheFile (final String fileName) {

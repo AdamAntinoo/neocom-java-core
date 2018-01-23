@@ -435,7 +435,7 @@ public class AssetsManager extends AbstractManager {
 		if ( null == target ) {
 			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
-			ExtendedLocation newloc = new ExtendedLocation(_credential, intermediary);
+			ExtendedLocation newloc = new ExtendedLocation(credential, intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
 			locations.put(new Long(locid), target);
 			this.add2Region(target);
@@ -755,7 +755,7 @@ public class AssetsManager extends AbstractManager {
 		else {
 			EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(identifier);
 			// Convert the Location to a new Extended Location with the new Contents Manager.
-			ExtendedLocation newloc = new ExtendedLocation(_credential, location);
+			ExtendedLocation newloc = new ExtendedLocation(credential, location);
 			newloc.setContentManager(new AllLazyAssetsContentManager(newloc));
 			locations.put(identifier, newloc);
 			long regid = newloc.getRegionID();
