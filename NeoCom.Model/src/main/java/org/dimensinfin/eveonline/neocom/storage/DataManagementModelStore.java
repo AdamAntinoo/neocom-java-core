@@ -123,7 +123,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	/**
 	 * Search this identifier on the list of credentials and returns the findings.
 	 */
-	public static Credential getCredential4Id (final long identifier) {
+	public static Credential getCredential4Id (final int identifier) {
 		if ( null == singleton ) DataManagementModelStore.initialize();
 		return singleton.getCredential4IdImpl(identifier);
 	}
@@ -215,7 +215,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 				for (Credential currentCredential : credentials) {
 					_credentialList.add(currentCredential);
 					// Scan the keys to search for matches.
-					final long cid = currentCredential.getAccountId();
+					final int cid = currentCredential.getAccountId();
 					for (ApiKey apikey : keyList) {
 						//		for (NeoComApiKey apikey : apikey.getKeys()) {
 						// Access the XML api to get the contents for this key so we can match the characters.

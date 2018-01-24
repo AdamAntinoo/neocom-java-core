@@ -212,46 +212,18 @@ public class GlobalDataManager {
 		}
 	}
 
-	public static List<ColonyCoreStructure> accessStructures4Colony (final int characterid, final int planetid) {
-		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
-		List<ColonyCoreStructure> results = new ArrayList<>();
-		// Get the Credential that matched the received identifier.
-		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-		if ( null != credential ) {
-			// Get to the Network and download the data from the ESI api.
-			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
-			if ( null != colonyStructures ) {
-				// Process the structures converting the pin to the Colony structures compatible with MVC.
-				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-					ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
-
-					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-					results.add(newstruct);
-				}
-			}
-		} else {
-			// Possible that because the application has been previously removed from memory that data is not reloaded.
-			// Call the reloading mechanism and have a second opportunity.
-			DataManagementModelStore.accessCredentialList();
-			credential = DataManagementModelStore.getCredential4Id(characterid);
-			if ( null == credential ) return new ArrayList<>();
-			else return GlobalDataManager.accessStructures4Colony(characterid, planetid);
-		}
-		return results;
-	}
 
 	// --- M A N A G E R - S T O R E   I N T E R F A C E
-	public static AssetsManager getAssetsManager (final long identifier) {
-		return GlobalDataManager.getAssetsManager(identifier, false);
+	public static AssetsManager getAssetsManager (final Credential credential) {
+		return GlobalDataManager.getAssetsManager(credential, false);
 	}
 
-	public static AssetsManager getAssetsManager (final long identifier, final boolean forceNew) {
+	public static AssetsManager getAssetsManager (final Credential credential, final boolean forceNew) {
 		// Check if this request is already available on the cache.
-		final AssetsManager hit = (AssetsManager) managerCache.access(EManagerCodes.ASSETS_MANAGER, identifier);
+		final AssetsManager hit = (AssetsManager) managerCache.access(EManagerCodes.ASSETS_MANAGER, credential.getAccountId());
 		if ( (null == hit) || (forceNew) ) {
-			final AssetsManager manager = new AssetsManager(DataManagementModelStore.getCredential4Id(identifier));
-			managerCache.store(EManagerCodes.ASSETS_MANAGER, manager, identifier);
+			final AssetsManager manager = new AssetsManager(DataManagementModelStore.getCredential4Id(credential.getAccountId()));
+			managerCache.store(EManagerCodes.ASSETS_MANAGER, manager, credential.getAccountId());
 			return manager;
 		} else return hit;
 	}
@@ -311,6 +283,11 @@ public class GlobalDataManager {
 						return GlobalDataManager.downloadColonies4Credential(credential);
 				}
 			}
+
+			// Add pending downloaded information.
+			for (Colony col: colonyList){
+				col.setStructures(downloadStructures4Colony(credential.getAccountId(),col.getPlanetId()));
+			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManager.accessColonies4Manager]> Exception reading Colonies. " + sqle.getMessage());
@@ -337,28 +314,60 @@ public class GlobalDataManager {
 			// To set more information about this particular planet we should call the Universe database.
 			final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
 			if ( null != planetData ) col.setPlanetData(planetData);
+
+			// During this first phase download all the rest of the information.
+			// Get to the Network and download the data from the ESI api.
+			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
+			if ( null != colonyStructures ) {
+				// Add the original data to the colony if we need some more information later.
+				col.setStructuresData(colonyStructures);
+				List<ColonyCoreStructure> results = new ArrayList<>();
+
+				// Process the structures converting the pin to the Colony structures compatible with MVC.
+				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+					ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
+					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+					// missing code
+					results.add(newstruct);
+				}
+				col.setStructures(results);
+			}
 			col.store();
 			colonies.add(col);
 		}
 		return colonies;
 	}
 
-	private void getPlanetStaructures (Credential credential) {
-		//			});
-		// For each of the received planets, get their structures and do the same transformations.
-		//			Stream.of(colonies).forEach(c -> {
-		//			try {
-		Colony col = null;
-		final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), "tranquility");
-		if ( null != colonyStructures ) {
-			// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
-			col.setStructuresData(colonyStructures);
-			// Process the Colony contents indirectly using the mapper again.
-			//						modelMapper.map(colonyStructures, c);
-		}
-		//		});
+	public static List<ColonyCoreStructure> downloadStructures4Colony (final int characterid, final int planetid) {
+		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
+		List<ColonyCoreStructure> results = new ArrayList<>();
+		// Get the Credential that matched the received identifier.
+		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+		if ( null != credential ) {
+			// Get to the Network and download the data from the ESI api.
+			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
+			if ( null != colonyStructures ) {
+				// Process the structures converting the pin to the Colony structures compatible with MVC.
+				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+					ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
 
+					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+					results.add(newstruct);
+				}
+			}
+		} else {
+			// Possible that because the application has been previously removed from memory that data is not reloaded.
+			// Call the reloading mechanism and have a second opportunity.
+			DataManagementModelStore.accessCredentialList();
+			credential = DataManagementModelStore.getCredential4Id(characterid);
+			if ( null == credential ) return new ArrayList<>();
+			else return GlobalDataManager.downloadStructures4Colony(characterid, planetid);
+		}
+		return results;
 	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................

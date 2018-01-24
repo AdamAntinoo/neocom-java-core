@@ -35,7 +35,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/** Should contain a copy of this data value can can also be found at the delegatedCharacter. */
-	private long characterID = -1;
+	private int characterID = -1;
 	private String name = "-PILOT NAME-";
 	/**
 	 * Character account balance from the AccountBalanceResponse CCP api call. This can apply to Pilots and
@@ -60,7 +60,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	// --- G E T T E R S   &   S E T T E R S
-	public long getCharacterId () {
+	public int getCharacterId () {
 		return characterID;
 	}
 
@@ -76,7 +76,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 		return characterInfo;
 	}
 
-	public void setCharacterId (final long characterID) {
+	public void setCharacterId (final int characterID) {
 		this.characterID = characterID;
 	}
 

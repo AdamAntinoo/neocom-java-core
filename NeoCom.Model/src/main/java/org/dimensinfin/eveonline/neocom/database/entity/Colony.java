@@ -21,7 +21,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
@@ -52,7 +51,7 @@ import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Colony")
-public class Colony extends NeoComExpandableNode implements IDownloadable {
+public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(Colony.class);
 
@@ -87,7 +86,7 @@ public class Colony extends NeoComExpandableNode implements IDownloadable {
 	private transient List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
 	private transient List<ColonyCoreStructure> structures = null;
 
-	protected boolean downloaded = false;
+	protected boolean downloaded = true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Colony () {
@@ -113,8 +112,9 @@ public class Colony extends NeoComExpandableNode implements IDownloadable {
 
 	private List<ColonyCoreStructure> downloadStructures () {
 		setDownloaded(true);
-		return GlobalDataManager.accessStructures4Colony(ownerId, planetId);
+		return GlobalDataManager.downloadStructures4Colony(ownerId, planetId);
 	}
+
 	/**
 	 * Detect that the data is downloaded if the flag is set and the list of structures is loaded.
 	 *
@@ -125,29 +125,28 @@ public class Colony extends NeoComExpandableNode implements IDownloadable {
 		return false;
 	}
 
-	@Override
-	public boolean isDownloading () {
-		return false;
-	}
+	//	@Override
+	//	public boolean isDownloading () {
+	//		return false;
+	//	}
 
-	@Override
-	public IDownloadable setDownloaded (final boolean set) {
-		downloaded=set;
+	public Colony setDownloaded (final boolean set) {
+		downloaded = set;
 		return this;
 	}
 
-	@Override
-	public IDownloadable setDownloading (final boolean b) {
-		return this;
-	}
+	//	@Override
+	//	public IDownloadable setDownloading (final boolean b) {
+	//		return this;
+	//	}
 
-	/**
-	 * Check that the structures are available at the node or get them from the Global if they are not.
-	 */
-
-	private void downloadColonyStructures () {
-
-	}
+	//	/**
+	//	 * Check that the structures are available at the node or get them from the Global if they are not.
+	//	 */
+	//
+	//	private void downloadColonyStructures () {
+	//
+	//	}
 
 	/**
 	 * The empty concept on downloadable items
@@ -174,7 +173,7 @@ public class Colony extends NeoComExpandableNode implements IDownloadable {
 	public Colony create (final int planetId) {
 		try {
 			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
-			colonyDao.create(this);
+			colonyDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			logger.info("WR [Colony.create]> Colony exists. Update values.");
 			store();
@@ -289,7 +288,16 @@ public class Colony extends NeoComExpandableNode implements IDownloadable {
 		return planetName;
 	}
 
-	public List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getStructures () {
+	public List<ColonyCoreStructure> getStructures () {
+		if ( null == structures ) return new ArrayList<>();
+		else return structures;
+	}
+
+	public void setStructures (final List<ColonyCoreStructure> results) {
+		structures = results;
+	}
+
+	private List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getPins () {
 		if ( null == pins ) return new ArrayList<>();
 		else return pins;
 	}
@@ -306,6 +314,7 @@ public class Colony extends NeoComExpandableNode implements IDownloadable {
 		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
+
 }
 // - UNUSED CODE ............................................................................................
 //[01]

@@ -63,7 +63,7 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 		return new ArrayList<ICollaboration>();
 	}
 
-	public long getCredentialIdentifier () {
+	public int getCredentialIdentifier () {
 		if ( null == credential )
 			throw new RuntimeException("RT [AbstractManager]> Credential is not set on current Manager. Bad initialization.");
 		return credential.getAccountId();

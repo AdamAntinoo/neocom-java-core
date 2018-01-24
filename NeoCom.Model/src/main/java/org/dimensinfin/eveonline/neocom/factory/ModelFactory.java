@@ -137,11 +137,11 @@ public class ModelFactory {
 	}
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
-	public static PilotV1 getPilotV1 (final long identifier) {
+	public static PilotV1 getPilotV1 (final int identifier) {
 		return singleton.getPilotV1Impl(identifier);
 	}
 
-	public static boolean checkPilotV1 (final long identifier) {
+	public static boolean checkPilotV1 (final int identifier) {
 		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 		if ( null == hit ) return false;
 		else return true;
@@ -153,7 +153,7 @@ public class ModelFactory {
 	 * @param identifier the pilot identifier to load.
 	 * @return
 	 */
-	public static PilotV1 udpatePilotV1 (final long identifier) {
+	public static PilotV1 udpatePilotV1 (final int identifier) {
 		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 		if ( null != hit ) modelCache.delete(EModelVariants.PILOTV1, identifier);
 		return singleton.getPilotV1Impl(identifier);
@@ -179,7 +179,7 @@ public class ModelFactory {
 	 * @return an instance of a PilotV1 class that has some of the required information to be shown on the ui at this
 	 * point.
 	 */
-	private PilotV1 getPilotV1Impl (final long identifier) {
+	private PilotV1 getPilotV1Impl (final int identifier) {
 		// Check if this request is already available on the cache.
 		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 		if ( null == hit ) {
