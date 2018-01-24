@@ -21,6 +21,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
@@ -51,7 +52,7 @@ import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Colony")
-public class Colony extends NeoComExpandableNode {
+public class Colony extends NeoComExpandableNode implements IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(Colony.class);
 
@@ -84,6 +85,9 @@ public class Colony extends NeoComExpandableNode {
 	//	private transient GetUniversePlanetsPlanetIdOk planetData = null;
 	private transient GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
 	private transient List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
+	private transient List<ColonyCoreStructure> structures = null;
+
+	protected boolean downloaded = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Colony () {
@@ -95,18 +99,76 @@ public class Colony extends NeoComExpandableNode {
 	@Override
 	public List<ICollaboration> collaborate2Model (final String variant) {
 		List<ICollaboration> results = new ArrayList<>();
-		for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : getStructures()) {
-			// Map the structure into a compatible MVC node.
-			ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
-			results.add(newstruct);
+		if ( this.isDownloaded() ) {
+			if ( null != structures )
+				results.addAll(structures);
+		} else {
+			if ( isExpanded() ) {
+				// Download the data. The node is expanded and not downloaded.
+				structures = downloadStructures();
+			}
 		}
 		return results;
 	}
 
+	private List<ColonyCoreStructure> downloadStructures () {
+		setDownloaded(true);
+		return GlobalDataManager.accessStructures4Colony(ownerId, planetId);
+	}
+	/**
+	 * Detect that the data is downloaded if the flag is set and the list of structures is loaded.
+	 *
+	 * @return
+	 */
+	public boolean isDownloaded () {
+		if ( (downloaded) && (null != structures) ) return true;
+		return false;
+	}
+
+	@Override
+	public boolean isDownloading () {
+		return false;
+	}
+
+	@Override
+	public IDownloadable setDownloaded (final boolean set) {
+		downloaded=set;
+		return this;
+	}
+
+	@Override
+	public IDownloadable setDownloading (final boolean b) {
+		return this;
+	}
+
+	/**
+	 * Check that the structures are available at the node or get them from the Global if they are not.
+	 */
+
+	private void downloadColonyStructures () {
+
+	}
+
+	/**
+	 * The empty concept on downloadable items
+	 *
+	 * @return
+	 */
 	public boolean isEmpty () {
 		if ( null == pins ) return true;
 		if ( pins.size() < 1 ) return true;
 		return false;
+	}
+
+	public boolean isRenderWhenEmpty () {
+		if ( _renderIfEmpty )
+			return true;
+		else {
+			if ( this.isEmpty() )
+				return false;
+			else
+				return true;
+		}
 	}
 
 	public Colony create (final int planetId) {
@@ -228,7 +290,8 @@ public class Colony extends NeoComExpandableNode {
 	}
 
 	public List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getStructures () {
-		return pins;
+		if ( null == pins ) return new ArrayList<>();
+		else return pins;
 	}
 
 	public GetCharactersCharacterIdPlanetsPlanetIdOk getStructureData () {

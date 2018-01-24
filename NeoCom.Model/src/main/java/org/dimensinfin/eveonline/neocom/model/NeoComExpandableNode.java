@@ -22,8 +22,8 @@ public abstract class NeoComExpandableNode extends NeoComNode implements IExpand
 	private static final long	serialVersionUID	= -3742179733511283434L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private boolean						_expanded					= false;
-	private boolean						_renderIfEmpty		= true;
+	protected boolean						_expanded					= false;
+	protected boolean						_renderIfEmpty		= true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComExpandableNode() {

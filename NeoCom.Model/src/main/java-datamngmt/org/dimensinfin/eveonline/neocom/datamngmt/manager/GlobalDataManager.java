@@ -30,6 +30,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
@@ -37,6 +38,7 @@ import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.network.NetworkManager;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyCoreStructure;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.joda.time.Instant;
 import org.modelmapper.ModelMapper;
@@ -182,6 +184,7 @@ public class GlobalDataManager {
 		if ( itemCache.containsKey(typeId) ) return itemCache.get(typeId);
 		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
 	}
+
 	public static EveLocation searchLocationById (final int locationId) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 		if ( locationCache.containsKey(locationId) ) return locationCache.get(locationId);
@@ -192,7 +195,7 @@ public class GlobalDataManager {
 	//	private static ModelTimedCache modelCache = new ModelTimedCache();
 
 	// --- M O D E L - F A C T O R Y   I N T E R F A C E
-	public static List<Colony> accessColonies4Credential (final long characterid) {
+	public static List<Colony> accessColonies4Credential (final int characterid) {
 		// Get the Credential that matched the received identifier.
 		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
 		if ( null != credential ) {
@@ -207,6 +210,35 @@ public class GlobalDataManager {
 			if ( null == credential ) return new ArrayList<>();
 			else return GlobalDataManager.accessColonies4Credential(characterid);
 		}
+	}
+
+	public static List<ColonyCoreStructure> accessStructures4Colony (final int characterid, final int planetid) {
+		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
+		List<ColonyCoreStructure> results = new ArrayList<>();
+		// Get the Credential that matched the received identifier.
+		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+		if ( null != credential ) {
+			// Get to the Network and download the data from the ESI api.
+			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
+			if ( null != colonyStructures ) {
+				// Process the structures converting the pin to the Colony structures compatible with MVC.
+				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+					ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
+
+					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+					results.add(newstruct);
+				}
+			}
+		} else {
+			// Possible that because the application has been previously removed from memory that data is not reloaded.
+			// Call the reloading mechanism and have a second opportunity.
+			DataManagementModelStore.accessCredentialList();
+			credential = DataManagementModelStore.getCredential4Id(characterid);
+			if ( null == credential ) return new ArrayList<>();
+			else return GlobalDataManager.accessStructures4Colony(characterid, planetid);
+		}
+		return results;
 	}
 
 	// --- M A N A G E R - S T O R E   I N T E R F A C E
@@ -316,7 +348,7 @@ public class GlobalDataManager {
 		// For each of the received planets, get their structures and do the same transformations.
 		//			Stream.of(colonies).forEach(c -> {
 		//			try {
-		Colony col=null;
+		Colony col = null;
 		final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), "tranquility");
 		if ( null != colonyStructures ) {
 			// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
