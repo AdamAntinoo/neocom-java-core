@@ -288,6 +288,22 @@ public class ColonyCoreStructure extends NeoComNode {
 		return volumeUsed / capacity * 100.0;
 	}
 
+	public double getCapacity () {
+		if ( capacity < 0.0 )
+			switch (getStructureTypeCode()) {
+				case COMMAND_CENTER:
+					capacity = 500.0;
+					break;
+				case STORAGE:
+					capacity = 12000.0;
+					break;
+				case LAUNCHPAD:
+					capacity = 10000.0;
+					break;
+			}
+		return capacity;
+	}
+
 	public double getContentValue () {
 		return contentValue;
 	}
@@ -411,6 +427,14 @@ public class ColonyCoreStructure extends NeoComNode {
 		if ( getTypeId() == 3060 ) return EPlanetaryStructureType.EXTRACTOR;
 		if ( getTypeId() == 2492 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
 		if ( getTypeId() == 2494 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+
+		// Oceanic structures
+		if ( getTypeId() == 2525 ) return EPlanetaryStructureType.COMMAND_CENTER;
+		if ( getTypeId() == 2542 ) return EPlanetaryStructureType.LAUNCHPAD;
+		if ( getTypeId() == 2535 ) return EPlanetaryStructureType.STORAGE;
+		if ( getTypeId() == 3063 ) return EPlanetaryStructureType.EXTRACTOR;
+		if ( getTypeId() == 2490 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if ( getTypeId() == 2485 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		return EPlanetaryStructureType.DEFAULT;
 	}

@@ -111,7 +111,7 @@ public class GlobalDataManager {
 		public AbstractManager delete (final EManagerCodes variant, final long longIdentifier) {
 			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
 			final AbstractManager hit = _managerCacheStore.get(locator);
-			_managerCacheStore.put(locator, null);
+			_managerCacheStore.remove(locator);
 			return hit;
 		}
 	}
@@ -195,22 +195,22 @@ public class GlobalDataManager {
 	//	private static ModelTimedCache modelCache = new ModelTimedCache();
 
 	// --- M O D E L - F A C T O R Y   I N T E R F A C E
-	public static List<Colony> accessColonies4Credential (final int characterid) {
-		// Get the Credential that matched the received identifier.
-		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-		if ( null != credential ) {
-			final PlanetaryManager manager = GlobalDataManager.getPlanetaryManager(credential);
-			final List<Colony> colonies = manager.accessAllColonies();
-			return colonies;
-		} else {
-			// Possible that because the application has been previously removed from memory that data is not reloaded.
-			// Call the reloading mechanism and have a second opportunity.
-			DataManagementModelStore.accessCredentialList();
-			credential = DataManagementModelStore.getCredential4Id(characterid);
-			if ( null == credential ) return new ArrayList<>();
-			else return GlobalDataManager.accessColonies4Credential(characterid);
-		}
-	}
+//	public static List<Colony> accessColonies4Credential (final int characterid) {
+//		// Get the Credential that matched the received identifier.
+//		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+//		if ( null != credential ) {
+//			final PlanetaryManager manager = GlobalDataManager.getPlanetaryManager(credential);
+//			final List<Colony> colonies = manager.accessAllColonies();
+//			return colonies;
+//		} else {
+//			// Possible that because the application has been previously removed from memory that data is not reloaded.
+//			// Call the reloading mechanism and have a second opportunity.
+//			DataManagementModelStore.accessCredentialList();
+//			credential = DataManagementModelStore.getCredential4Id(characterid);
+//			if ( null == credential ) return new ArrayList<>();
+//			else return GlobalDataManager.accessColonies4Credential(characterid);
+//		}
+//	}
 
 
 	// --- M A N A G E R - S T O R E   I N T E R F A C E
@@ -257,8 +257,8 @@ public class GlobalDataManager {
 	 * @param credential
 	 * @return
 	 */
-	public static List<Colony> accessColonies4Manager (final Credential credential) {
-		logger.info(">> [GlobalDataManager.accessColonies4Manager]> Credential: {}", credential.getAccountName());
+	public static List<Colony> accessColonies4Credential (final Credential credential) {
+		logger.info(">> [GlobalDataManager.accessColonies4Credential]> Credential: {}", credential.getAccountName());
 		List<Colony> colonyList = new ArrayList<>();
 		try {
 			// SELECT * FROM COLONY WHERE OWNERID = <identifier>
@@ -290,9 +290,9 @@ public class GlobalDataManager {
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-			logger.warn("W [GlobalDataManager.accessColonies4Manager]> Exception reading Colonies. " + sqle.getMessage());
+			logger.warn("W [GlobalDataManager.accessColonies4Credential]> Exception reading Colonies. " + sqle.getMessage());
 		} finally {
-			logger.info("<< [GlobalDataManager.accessColonies4Manager]");
+			logger.info("<< [GlobalDataManager.accessColonies4Credential]");
 		}
 		return colonyList;
 	}

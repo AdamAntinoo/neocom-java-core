@@ -102,7 +102,7 @@ public class PlanetaryManager extends AbstractManager {
 		// Call the Global manager to get the list of Colonies that belong to this user.
 		synchronized (colonies) {
 			colonies.clear();
-			colonies.addAll(GlobalDataManager.accessColonies4Manager(credential));
+			colonies.addAll(GlobalDataManager.accessColonies4Credential(credential));
 		}
 		return colonies;
 	}

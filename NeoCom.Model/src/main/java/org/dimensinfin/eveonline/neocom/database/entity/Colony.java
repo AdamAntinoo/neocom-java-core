@@ -154,8 +154,8 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	 * @return
 	 */
 	public boolean isEmpty () {
-		if ( null == pins ) return true;
-		if ( pins.size() < 1 ) return true;
+		if ( null == structures ) return true;
+		if ( structures.size() < 1 ) return true;
 		return false;
 	}
 
