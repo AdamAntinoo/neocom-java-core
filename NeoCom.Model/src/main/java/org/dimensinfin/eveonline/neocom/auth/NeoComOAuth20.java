@@ -154,8 +154,10 @@ public class NeoComOAuth20 {
 				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
 //				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
+				logger.info("<< [NeoComOAuth20.fromRefresh]> Saving new token.");
 				return save(token);
 			}
+			logger.info("<< [NeoComOAuth20.fromRefresh]> Return valid token.");
 			return existing;
 		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
 			logger.error(e.getMessage(), e);

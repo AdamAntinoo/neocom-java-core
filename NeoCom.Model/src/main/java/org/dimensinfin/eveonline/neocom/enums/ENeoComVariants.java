@@ -17,6 +17,7 @@ public enum ENeoComVariants {
 	, ASSETS_BYLOCATION, ASSETS_BYCATEGORY, ASSETS_MATERIALS
 	, PLANETARY_BYLOCATION, PLANETARY_OPTIMIZATION, PLANETARY_COLONIES, PLANETARY_COLONY_LAYOUT
 	, BLUEPRINTS_TII
+	, JOB_LIST
 }
 
 // - UNUSED CODE ............................................................................................

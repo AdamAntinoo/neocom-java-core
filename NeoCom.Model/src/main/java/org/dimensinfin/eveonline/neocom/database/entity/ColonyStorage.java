@@ -18,15 +18,11 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-
-/**
- * Created by Adam on 19/01/2018.
- */
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "ColonyStorage")
@@ -35,18 +31,35 @@ public class ColonyStorage {
 	private static Logger logger = LoggerFactory.getLogger(ColonyStorage.class);
 
 	// - F I E L D - S E C T I O N ............................................................................
+	/**
+	 * Unique identifier. Different characters can have colonies on the same planet so only the Planet identifier is
+	 * not enough. The key is the character id-planet id.
+	 */
 	@DatabaseField(id = true)
-	public int planetIdentifier = -1;
+	public String planetIdentifier = "-";
 	@DatabaseField(dataType = DataType.SERIALIZABLE)
 	private String colonySerialization = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ColonyStorage () {
+	private ColonyStorage () {
 		super();
 	}
 
+	public ColonyStorage (final String identifier) {
+		this();
+		planetIdentifier = identifier;
+		try {
+			Dao<ColonyStorage, String> colonyStorageDao = GlobalDataManager.getHelper().getColonyStorageDao();
+			// Try to create the key. It fails then  it was already created.
+			colonyStorageDao.create(this);
+		} catch (final SQLException sqle) {
+			logger.info("WR [ColonyStorage.<constructor>]> ColonyStorage for planet {} exists. Update values.", planetIdentifier);
+			store();
+		}
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public int getPlanetIdentifier () {
+	public String getPlanetIdentifier () {
 		return planetIdentifier;
 	}
 
@@ -54,7 +67,7 @@ public class ColonyStorage {
 		return colonySerialization;
 	}
 
-	public ColonyStorage setPlanetIdentifier (final int planetIdentifier) {
+	public ColonyStorage setPlanetIdentifier (final String planetIdentifier) {
 		this.planetIdentifier = planetIdentifier;
 		return this;
 	}
@@ -64,17 +77,17 @@ public class ColonyStorage {
 		return this;
 	}
 
-	public void store () {
-		if ( (planetIdentifier > 0) || (StringUtils.isNotEmpty(colonySerialization)) ) {
+	public ColonyStorage store () {
+		if ( (StringUtils.isNotEmpty(planetIdentifier)) && (StringUtils.isNotEmpty(colonySerialization)) ) {
 			try {
-				Dao<ColonyStorage, String> colonyStorageDao = ModelAppConnector.getSingleton().getNewDBConnector().getColonyStorageDao();
+				Dao<ColonyStorage, String> colonyStorageDao = GlobalDataManager.getHelper().getColonyStorageDao();
 				// Try to create the key. It fails then  it was already created.
-				colonyStorageDao.create(this);
+				colonyStorageDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {
-				logger.info("WR [DatabaseVersion.<init>]>DatabaseVersion exists. Update values.");
-//				this.setDirty(true);
+				logger.info("WR [ColonyStorage.store]> {}", sqle.getMessage());
 			}
 		}
+		return this;
 	}
 
 	@Override
@@ -82,7 +95,7 @@ public class ColonyStorage {
 		StringBuffer buffer = new StringBuffer("ColonyStorage [");
 		buffer.append("identifier: ").append(planetIdentifier);
 		buffer.append("]");
-		buffer.append("->").append(super.toString());
+		//		buffer.append("->").append(super.toString());
 		return buffer.toString();
 	}
 }
