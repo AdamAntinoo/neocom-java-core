@@ -36,6 +36,8 @@ public class ColonyStorage {
 	 * not enough. The key is the character id-planet id.
 	 */
 	@DatabaseField(id = true)
+	public long pinIdentifier = -1;
+	@DatabaseField(index = true)
 	public String planetIdentifier = "-";
 	@DatabaseField(dataType = DataType.SERIALIZABLE)
 	private String colonySerialization = null;
@@ -45,20 +47,24 @@ public class ColonyStorage {
 		super();
 	}
 
-	public ColonyStorage (final String identifier) {
+	public ColonyStorage (final long identifier) {
 		this();
-		planetIdentifier = identifier;
+		pinIdentifier = identifier;
 		try {
 			Dao<ColonyStorage, String> colonyStorageDao = GlobalDataManager.getHelper().getColonyStorageDao();
 			// Try to create the key. It fails then  it was already created.
-			colonyStorageDao.create(this);
+			colonyStorageDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
-			logger.info("WR [ColonyStorage.<constructor>]> ColonyStorage for planet {} exists. Update values.", planetIdentifier);
+			logger.info("WR [ColonyStorage.<constructor>]> ColonyStorage for planet {} exists. Update values.", pinIdentifier);
 			store();
 		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public long getPinIdentifier () {
+		return pinIdentifier;
+	}
+
 	public String getPlanetIdentifier () {
 		return planetIdentifier;
 	}

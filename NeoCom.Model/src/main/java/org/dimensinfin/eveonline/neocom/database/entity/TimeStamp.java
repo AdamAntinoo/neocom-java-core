@@ -52,7 +52,7 @@ public class TimeStamp {
 		try {
 			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getNewDBConnector().getTimeStampDao();
 			// Try to create the pair. It fails then  it was already created.
-			timeStampDao.create(this);
+			timeStampDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			TimeStamp.logger.info("WR [TimeStamp.<constructor>]> Timestamp exists. Update values.");
 			this.store();
@@ -103,7 +103,7 @@ public class TimeStamp {
 			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getNewDBConnector().getTimeStampDao();
 			if ( -1 == credentialId )
 				TimeStamp.logger.info("W [TimeStamp.store]> CredentialId has not been setup. Possible invalid TS.");
-			timeStampDao.update(this);
+			timeStampDao.createOrUpdate(this);
 			TimeStamp.logger.info("-- [TimeStamp.store]> Timestamp data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();

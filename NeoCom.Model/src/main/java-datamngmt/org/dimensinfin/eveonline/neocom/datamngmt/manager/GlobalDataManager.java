@@ -18,6 +18,7 @@ import com.beimin.eveapi.connectors.CachingConnector;
 import com.beimin.eveapi.connectors.LoggingConnector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -123,6 +124,11 @@ public class GlobalDataManager {
 
 	/** Jackson mapper to use for object json serialization. */
 	private static final ObjectMapper objectMapper = new ObjectMapper();
+
+	static {
+		objectMapper.registerModule(new JodaModule());
+	}
+
 	/** Background executor to use for long downloading jobs. */
 	private static final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
 
@@ -269,8 +275,11 @@ public class GlobalDataManager {
 
 			// Add pending downloaded information.
 			for (Colony col : colonyList) {
-				col.setStructures(downloadStructures4Colony(credential.getAccountId(), col.getPlanetId()));
 				final List<ColonyCoreStructure> struc = accessColonyStructures4Planet(credential.getAccountId(), col.getPlanetId());
+				// Check that the structures have been stored at the database. If this fails go to download them.
+				if ( struc.size() < 1 )
+					col.setStructures(downloadStructures4Colony(credential.getAccountId(), col.getPlanetId()));
+				else col.setStructures(struc);
 			}
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
@@ -290,11 +299,14 @@ public class GlobalDataManager {
 				final String ref = constructPlanetStorageIdentifier(identifier, planet);
 				logger.info(">> [GlobalDataManager.accessColonyStructures4Planet]> Structure reference: {}", ref);
 				// SELECT * FROM ColonyStorage WHERE planetIdentifier = <identifier>
-				final ColonyStorage structureData = GlobalDataManager.getHelper().getColonyStorageDao().queryForId(ref);
+				final List<ColonyStorage> structureData = GlobalDataManager.getHelper()
+				                                                           .getColonyStorageDao().queryForEq("planetIdentifier", ref);
 				if ( null != structureData ) {
-					// Reconstruct the structure from the serialized data.
-					final ColonyCoreStructure structure = objectMapper.readValue(structureData.getColonySerialization(), ColonyCoreStructure.class);
-					structureList.add(structure);
+					for (ColonyStorage storage : structureData) {
+						// Reconstruct the structure from the serialized data.
+						final ColonyCoreStructure structure = objectMapper.readValue(storage.getColonySerialization(), ColonyCoreStructure.class);
+						structureList.add(structure);
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -341,7 +353,8 @@ public class GlobalDataManager {
 					try {
 						final String serialized = objectMapper.writeValueAsString(newstruct);
 						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), col.getPlanetId());
-						final ColonyStorage storage = new ColonyStorage(storageIdentifier)
+						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+								.setPlanetIdentifier(storageIdentifier)
 								.setColonySerialization(serialized)
 								.store();
 					} catch (JsonProcessingException jpe) {
@@ -375,7 +388,8 @@ public class GlobalDataManager {
 					try {
 						final String serialized = objectMapper.writeValueAsString(newstruct);
 						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
-						final ColonyStorage storage = new ColonyStorage(storageIdentifier)
+						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+								.setPlanetIdentifier(storageIdentifier)
 								.setColonySerialization(serialized)
 								.store();
 					} catch (JsonProcessingException jpe) {

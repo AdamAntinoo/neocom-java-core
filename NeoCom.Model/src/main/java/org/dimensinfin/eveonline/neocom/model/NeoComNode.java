@@ -43,6 +43,10 @@ public abstract class NeoComNode extends AbstractPropertyChanger implements ICol
 		return jsonClass;
 	}
 
+	private void setJsonClass (final String jsonClass) {
+		this.jsonClass = jsonClass;
+	}
+
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComNode [");

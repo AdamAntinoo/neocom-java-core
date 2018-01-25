@@ -15,9 +15,12 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -31,7 +34,7 @@ import java.util.List;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ColonyCoreStructure extends NeoComNode {
+public class ColonyCoreStructure extends NeoComExpandableNode {
 	public enum EPlanetaryStructureType {
 		DEFAULT, COMMAND_CENTER, EXTRACTOR, BASIC_INDUSTRY, ADVANCED_INDUSTRY, HIGH_TECH_PRODUCTION, STORAGE, LAUNCHPAD
 	}
@@ -88,6 +91,7 @@ public class ColonyCoreStructure extends NeoComNode {
 		}
 
 		// --- D E L E G A T E D   M E T H O D S
+		@JsonIgnore
 		public String getProductTypeName () {
 			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(productTypeId);
 			return item.getName();
@@ -138,7 +142,8 @@ public class ColonyCoreStructure extends NeoComNode {
 
 	public static class ColonyContent extends NeoComNode {
 		private Integer typeId = null;
-		private EveItem item = null;
+		@JsonIgnore
+		private transient EveItem item = null;
 		private Long amount = null;
 
 		// --- G E T T E R S   &   S E T T E R S
@@ -150,6 +155,7 @@ public class ColonyCoreStructure extends NeoComNode {
 			return amount;
 		}
 
+		@JsonIgnore
 		public EveItem getItem () {
 			// Check if the item is loaded. If not try to get it from the SDE.
 			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
@@ -166,27 +172,33 @@ public class ColonyCoreStructure extends NeoComNode {
 			item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
 		}
 
+		@JsonIgnore
 		public void setItem (final EveItem item) {
 			this.item = item;
 		}
 
 		// --- D E L E G A T E D   M E T H O D S
+		@JsonIgnore
 		public String getCategoryName () {
 			return getItem().getCategoryName();
 		}
 
+		@JsonIgnore
 		public String getGroupName () {
 			return getItem().getGroupName();
 		}
 
+		@JsonIgnore
 		public String getName () {
 			return getItem().getName();
 		}
 
+		@JsonIgnore
 		public double getVolume () {
 			return getItem().getVolume();
 		}
 
+		@JsonIgnore
 		public double getPrice () {
 			return getItem().getPrice();
 		}
@@ -230,6 +242,21 @@ public class ColonyCoreStructure extends NeoComNode {
 		return results;
 	}
 
+	@JsonIgnore
+	@Override
+	public boolean isEmpty () {
+		// Check this depending on the structure type.
+		final EPlanetaryStructureType type = getStructureTypeCode();
+		switch (type) {
+			case COMMAND_CENTER:
+			case STORAGE:
+			case LAUNCHPAD:
+				if ( (null != contents) && (contents.size() > 0) ) return false;
+				break;
+		}
+		return true;
+	}
+
 	// --- G E T T E R S   &   S E T T E R S
 	public Float getLatitude () {
 		return latitude;
@@ -263,6 +290,7 @@ public class ColonyCoreStructure extends NeoComNode {
 		return lastCycleStart;
 	}
 
+	@JsonIgnore
 	public EPlanetaryStructureType getStructureTypeCode () {
 		if ( structureType == EPlanetaryStructureType.DEFAULT ) structureType = calculateStructureTypeCode();
 		return structureType;
@@ -272,6 +300,7 @@ public class ColonyCoreStructure extends NeoComNode {
 		return volumeUsed;
 	}
 
+	@JsonIgnore
 	public double getVolumeUsedPct () {
 		if ( capacity < 0.0 )
 			switch (getStructureTypeCode()) {
@@ -288,6 +317,7 @@ public class ColonyCoreStructure extends NeoComNode {
 		return volumeUsed / capacity * 100.0;
 	}
 
+	@JsonIgnore
 	public double getCapacity () {
 		if ( capacity < 0.0 )
 			switch (getStructureTypeCode()) {
