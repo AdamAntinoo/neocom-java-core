@@ -36,7 +36,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.model.NeoComApiKey;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
-import org.dimensinfin.eveonline.neocom.network.NetworkManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
@@ -218,7 +218,7 @@ public class ModelFactory {
 						}
 
 						// Clone data
-						final GetCharactersCharacterIdClonesOk cloneInformation = NetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
+						final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
 						if ( null != cloneInformation ) newchar.setHomeLocation(cloneInformation.getHomeLocation());
 
 						// Store the result on the cache with the timing indicator to where this entry is valid.

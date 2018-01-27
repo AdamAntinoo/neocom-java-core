@@ -196,7 +196,7 @@ public class PlanetaryManager extends AbstractManager {
 		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if ( null == target ) {
-			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
+			EveLocation intermediary = GlobalDataManager.searchLocationById(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(credential.getAccountId(), intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
@@ -445,6 +445,8 @@ public class PlanetaryManager extends AbstractManager {
 				NeoComAsset hit = containers.get(resource.getAssetId());
 				if ( null == hit ) {
 					SpaceContainer cont = new SpaceContainer().copyFrom(resource);
+					// BUG. Mark the ships as already downloaded or we can go to the database for their contents.
+					cont.setDownloaded(true);
 					// Add to the Location only if not already registered.
 					this.add2Location(cont);
 					// Add the container to the list ot avoid processing it again.
@@ -458,6 +460,8 @@ public class PlanetaryManager extends AbstractManager {
 				NeoComAsset hit = containers.get(resource.getAssetId());
 				if ( null == hit ) {
 					Ship cont = new Ship().copyFrom(resource);
+					// BUG. Mark the ships as already downloaded or we can go to the database for their contents.
+					cont.setDownloaded(true);
 					// Add to the Location only if not already registered.
 					this.add2Location(cont);
 					// Add the container to the list ot avoid processing it again.

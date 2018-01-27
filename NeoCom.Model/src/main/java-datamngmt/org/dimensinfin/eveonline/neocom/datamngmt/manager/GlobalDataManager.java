@@ -41,7 +41,6 @@ import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.network.NetworkManager;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyCoreStructure;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.joda.time.Instant;
@@ -78,7 +77,11 @@ public class GlobalDataManager {
 		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
 	}
 
-	// - PR I V A T E - S E C T I O N .........................................................................
+	public enum ECacheTimes {
+		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS
+	}
+
+	// - P R I V A T E - S E C T I O N .........................................................................
 	private enum EModelVariants {
 		PILOTV1, APIKEY
 	}
@@ -109,7 +112,13 @@ public class GlobalDataManager {
 	// - S T A T I C - F I E L D S - S E C T I O N ............................................................
 	// --- S D E   F I E L D S
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
-	private static final Hashtable<Integer, EveLocation> locationCache = new Hashtable<Integer, EveLocation>();
+	private static final Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
+	private static final Hashtable<String, Long> ESICacheTimes = new Hashtable();
+
+	static {
+		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS.name(), TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES.name(), TimeUnit.SECONDS.toMillis(600));
+	}
 
 	// --- M A N A G E R - S T O R E   F I E L D S
 	private static ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
@@ -144,7 +153,7 @@ public class GlobalDataManager {
 		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
 	}
 
-	public static EveLocation searchLocationById (final int locationId) {
+	public static EveLocation searchLocationById (final long locationId) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 		if ( locationCache.containsKey(locationId) ) return locationCache.get(locationId);
 		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
@@ -171,14 +180,16 @@ public class GlobalDataManager {
 	public static String constructJobReference (final EDataUpdateJobs type, final long identifier) {
 		return new StringBuffer(type.name())
 				.append("/")
-				.append(identifier).toString();
+				.append(identifier)
+				.toString();
 	}
 
 	public static String constructPlanetStorageIdentifier (final int characterIdentifier, final int planetIdentifier) {
 		return new StringBuffer("CS:")
 				.append(Integer.valueOf(characterIdentifier).toString())
 				.append(":")
-				.append(Integer.valueOf(planetIdentifier).toString()).toString();
+				.append(Integer.valueOf(planetIdentifier).toString())
+				.toString();
 	}
 
 
@@ -237,6 +248,7 @@ public class GlobalDataManager {
 	public static void setHelper (final INeoComDBHelper newImplementer) {
 		if ( null != newImplementer ) helper = newImplementer;
 	}
+
 	/**
 	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
 	 * interpretation used by the application.
@@ -245,7 +257,7 @@ public class GlobalDataManager {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
 			final Dao<Credential, String> credentialDao = GlobalDataManager.getHelper().getCredentialDao();
-			final PreparedQuery<Credential> preparedQuery =credentialDao.queryBuilder().prepare();
+			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
 			credentialList = credentialDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
@@ -342,47 +354,59 @@ public class GlobalDataManager {
 		//		if(colonies.size()<1) {
 		final Chrono accessFullTime = new Chrono();
 		List<Colony> colonies = new ArrayList<>();
-		// Create a request to the ESI api downloader to get the list of Planets of the current Character.
-		final int identifier = credential.getAccountId();
-		final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = NetworkManager.getCharactersCharacterIdPlanets(identifier, credential.getRefreshToken(), SERVER_DATASOURCE);
-		// Transform the received OK instance into a NeoCom compatible model instance.
-		for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
-			Colony col = modelMapper.map(colonyOK, Colony.class);
-			// Block to add additional data not downloaded on this call.
-			// To set more information about this particular planet we should call the Universe database.
-			final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-			if ( null != planetData ) col.setPlanetData(planetData);
+		try {
+			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
+			final int identifier = credential.getAccountId();
+			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = ESINetworkManager.getCharactersCharacterIdPlanets(identifier, credential.getRefreshToken(), SERVER_DATASOURCE);
+			// Transform the received OK instance into a NeoCom compatible model instance.
+			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
+				try {
+					Colony col = modelMapper.map(colonyOK, Colony.class);
+					// Block to add additional data not downloaded on this call.
+					// To set more information about this particular planet we should call the Universe database.
+					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
+					if ( null != planetData ) col.setPlanetData(planetData);
 
-			// During this first phase download all the rest of the information.
-			// Get to the Network and download the data from the ESI api.
-			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-			if ( null != colonyStructures ) {
-				// Add the original data to the colony if we need some more information later.
-				col.setStructuresData(colonyStructures);
-				List<ColonyCoreStructure> results = new ArrayList<>();
-
-				// Process the structures converting the pin to the Colony structures compatible with MVC.
-				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-					ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
-					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 					try {
-						final String serialized = objectMapper.writeValueAsString(newstruct);
-						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), col.getPlanetId());
-						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-								.setPlanetIdentifier(storageIdentifier)
-								.setColonySerialization(serialized)
-								.store();
-					} catch (JsonProcessingException jpe) {
-						jpe.printStackTrace();
+						// During this first phase download all the rest of the information.
+						// Get to the Network and download the data from the ESI api.
+						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
+						if ( null != colonyStructures ) {
+							// Add the original data to the colony if we need some more information later.
+							col.setStructuresData(colonyStructures);
+							List<ColonyCoreStructure> results = new ArrayList<>();
+
+							// Process the structures converting the pin to the Colony structures compatible with MVC.
+							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+								ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
+								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+								try {
+									final String serialized = objectMapper.writeValueAsString(newstruct);
+									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), col.getPlanetId());
+									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+											.setPlanetIdentifier(storageIdentifier)
+											.setColonySerialization(serialized)
+											.store();
+								} catch (JsonProcessingException jpe) {
+									jpe.printStackTrace();
+								}
+								// missing code
+								results.add(newstruct);
+							}
+							col.setStructures(results);
+						}
+					} catch (RuntimeException rtex) {
+						rtex.printStackTrace();
 					}
-					// missing code
-					results.add(newstruct);
+					col.store();
+					colonies.add(col);
+				} catch (RuntimeException rtex) {
+					rtex.printStackTrace();
 				}
-				col.setStructures(results);
 			}
-			col.store();
-			colonies.add(col);
+		} catch (RuntimeException rtex) {
+			rtex.printStackTrace();
 		}
 		return colonies;
 	}
@@ -394,7 +418,7 @@ public class GlobalDataManager {
 		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
 		if ( null != credential ) {
 			// Get to the Network and download the data from the ESI api.
-			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
+			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
 			if ( null != colonyStructures ) {
 				// Process the structures converting the pin to the Colony structures compatible with MVC.
 				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();

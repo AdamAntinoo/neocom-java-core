@@ -40,7 +40,7 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.network.NetworkManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.ESINetworkManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.modelmapper.ModelMapper;
@@ -149,7 +149,7 @@ public class DownloadManager {
 				dbConn.clearInvalidRecords(credential.getAccountId());
 			}
 			// Download the list of assets.
-			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = NetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
+			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = ESINetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
 			unlocatedAssets = new ArrayList<NeoComAsset>();
 			//				List<Asset> assets = response.getAll();
 			// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
@@ -287,7 +287,7 @@ public class DownloadManager {
 		DownloadManager.logger.info("-- [DownloadManager.downloadColonyList]> Download colony list for identifier: {}", credential.getAccountId());
 		//		server=ModelAppConnector.getSingleton().getResourceString(R.string.esisourceserver);
 		final String server = "tranquility";
-		final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = NetworkManager.getCharactersCharacterIdPlanets(credential.getAccountId(), credential.getRefreshToken(), server);
+		final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = ESINetworkManager.getCharactersCharacterIdPlanets(credential.getAccountId(), credential.getRefreshToken(), server);
 
 		// Transform the received OK instance into a NeoCom compatible model instance.
 		for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
@@ -299,13 +299,13 @@ public class DownloadManager {
 			//			// Block to add additional data not downloaded on this call.
 			//			// To set mre information about this particular planet we should call the Universe database.
 			//			//			ApplicationCloudAdapter.submit2downloadExecutor(() -> {
-			//			final GetUniversePlanetsPlanetIdOk planetData = NetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), "tranquility");
+			//			final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), "tranquility");
 			//			if ( null != planetData ) col.setPlanetData(planetData);
 			//			//			});
 			//			// For each of the received planets, get their structures and do the same transformations.
 			//			//			Stream.of(colonies).forEach(c -> {
 			//			//			try {
-			//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = NetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), "tranquility");
+			//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), "tranquility");
 			//			if ( null != colonyStructures ) {
 			//				// Do not process the structures and the rest of the data directly but just generate the correct delegate methods.
 			//				col.setStructuresData(colonyStructures);
@@ -560,7 +560,7 @@ public class DownloadManager {
 			final List<Long> localIdList = new ArrayList<>();
 			localIdList.addAll(idList);
 			try {
-				final List<PostCharactersCharacterIdAssetsNames200Ok> itemNames = NetworkManager.postCharactersCharacterIdAssetsNames(credential.getAccountId(), localIdList, credential.getRefreshToken(), null);
+				final List<PostCharactersCharacterIdAssetsNames200Ok> itemNames = ESINetworkManager.postCharactersCharacterIdAssetsNames(credential.getAccountId(), localIdList, credential.getRefreshToken(), null);
 				for (final PostCharactersCharacterIdAssetsNames200Ok name : itemNames) {
 					final List<NeoComAsset> assetsMatch = ModelAppConnector.getSingleton().getDBConnector().getAssetDao().queryForEq("assetId", name.getItemId());
 					for (NeoComAsset asset : assetsMatch) {
