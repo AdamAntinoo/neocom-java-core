@@ -42,7 +42,7 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 	public static class ColonyExtractor extends NeoComNode {
 		private List<ColonyStructure.ColonyExtractorHead> heads = new ArrayList<ColonyStructure.ColonyExtractorHead>();
 		private Integer productTypeId = null;
-		private EveItem item = null;
+		private transient EveItem item = null;
 		private Integer cycleTime = null;
 		private Float headRadius = null;
 		private Integer qtyPerCycle = null;
@@ -91,7 +91,7 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		}
 
 		// --- D E L E G A T E D   M E T H O D S
-		@JsonIgnore
+//		@JsonIgnore
 		public String getProductTypeName () {
 			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(productTypeId);
 			return item.getName();
@@ -178,27 +178,27 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		}
 
 		// --- D E L E G A T E D   M E T H O D S
-		@JsonIgnore
+	//	@JsonIgnore
 		public String getCategoryName () {
 			return getItem().getCategoryName();
 		}
 
-		@JsonIgnore
+	//	@JsonIgnore
 		public String getGroupName () {
 			return getItem().getGroupName();
 		}
 
-		@JsonIgnore
+	//	@JsonIgnore
 		public String getName () {
 			return getItem().getName();
 		}
 
-		@JsonIgnore
+	//	@JsonIgnore
 		public double getVolume () {
 			return getItem().getVolume();
 		}
 
-		@JsonIgnore
+//		@JsonIgnore
 		public double getPrice () {
 			return getItem().getPrice();
 		}
@@ -242,7 +242,7 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		return results;
 	}
 
-	@JsonIgnore
+//	@JsonIgnore
 	@Override
 	public boolean isEmpty () {
 		// Check this depending on the structure type.
@@ -290,7 +290,11 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		return lastCycleStart;
 	}
 
-	@JsonIgnore
+	public List<ColonyContent> getContentList () {
+		return contents;
+	}
+
+	//	@JsonIgnore
 	public EPlanetaryStructureType getStructureTypeCode () {
 		if ( structureType == EPlanetaryStructureType.DEFAULT ) structureType = calculateStructureTypeCode();
 		return structureType;
@@ -300,7 +304,7 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		return volumeUsed;
 	}
 
-	@JsonIgnore
+//	@JsonIgnore
 	public double getVolumeUsedPct () {
 		if ( capacity < 0.0 )
 			switch (getStructureTypeCode()) {
@@ -317,7 +321,7 @@ public class ColonyCoreStructure extends NeoComExpandableNode {
 		return volumeUsed / capacity * 100.0;
 	}
 
-	@JsonIgnore
+//	@JsonIgnore
 	public double getCapacity () {
 		if ( capacity < 0.0 )
 			switch (getStructureTypeCode()) {

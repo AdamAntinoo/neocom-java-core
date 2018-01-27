@@ -17,13 +17,12 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -93,10 +92,10 @@ public class NeoComDatabase {
 		return singleton.accessAllLoginsMethod();
 	}
 
-	public static List<Credential> accessAllCredentials () {
-		_accessCount++;
-		return singleton.accessAllCredentialsMethod();
-	}
+//	public static List<Credential> accessAllCredentials () {
+//		_accessCount++;
+//		return singleton.accessAllCredentialsMethod();
+//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Dao<Credential, String> _credentialDao = null;
@@ -147,17 +146,17 @@ public class NeoComDatabase {
 	/**
 	 * Reads all the list of credentials stored at the Database and returns its list.
 	 */
-	private List<Credential> accessAllCredentialsMethod () {
-		List<Credential> credentialList = new ArrayList<>();
-		try {
-			final PreparedQuery<Credential> preparedQuery = credentialDao().queryBuilder().prepare();
-			credentialList = credentialDao().query(preparedQuery);
-		} catch (java.sql.SQLException sqle) {
-			sqle.printStackTrace();
-			logger.warn("W [NeoComDatabase.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
-		}
-		return credentialList;
-	}
+//	private List<Credential> accessAllCredentialsMethod () {
+//		List<Credential> credentialList = new ArrayList<>();
+//		try {
+//			final PreparedQuery<Credential> preparedQuery = credentialDao().queryBuilder().prepare();
+//			credentialList = credentialDao().query(preparedQuery);
+//		} catch (java.sql.SQLException sqle) {
+//			sqle.printStackTrace();
+//			logger.warn("W [NeoComDatabase.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
+//		}
+//		return credentialList;
+//	}
 
 	private Dao<Credential, String> credentialDao () throws SQLException {
 		if ( null == _credentialDao ) _credentialDao = getImplementer().getCredentialDao();

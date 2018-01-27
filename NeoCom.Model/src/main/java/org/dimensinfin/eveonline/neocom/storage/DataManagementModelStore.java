@@ -15,6 +15,7 @@ import org.dimensinfin.core.model.AbstractModelStore;
 import org.dimensinfin.core.parser.IPersistentHandler;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.factory.ModelFactory;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
@@ -176,22 +177,50 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-
-	//	public static Credential fromRefresh (final String refresh) {
-	//		try {
-	//			ESIToken existing = this.store.get(refresh);
-	//			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
-	//				final OAuth2AccessToken token = this.oAuth.refreshAccessToken(refresh);
-	//				return save(token);
-	//			}
-	//			return existing;
-	//		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
-	//			LOG.error(e.getMessage(), e);
-	//			return null;
-	//		}
-	//	}
-
-
+	private List<Credential> accessCredentialListImpl(){
+		if ( _credentialList.size() < 1 ) {
+			try {
+				// Get the list of Credentials.
+				final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
+				_credentialList.clear();
+				for (Credential currentCredential : credentials) {
+					_credentialList.add(currentCredential);
+					final PilotV1 pilot = ModelFactory.getPilotV1(currentCredential.getAccountId());
+				}
+//				// Read and process the list of ApiKeys and Credentials to get a single Character list.
+//				final List<ApiKey> keyList = NeoComDatabase.accessAllLogins();
+//				// Process the list to unify the results.
+//					// Scan the keys to search for matches.
+//					final int cid = currentCredential.getAccountId();
+//					for (ApiKey apikey : keyList) {
+//						//		for (NeoComApiKey apikey : apikey.getKeys()) {
+//						// Access the XML api to get the contents for this key so we can match the characters.
+//						final NeoComApiKey apikeyInfo = ModelFactory.getApiKey(apikey.getKeynumber(), apikey.getValidationcode());
+//						if ( null != apikeyInfo ) {
+//							for (Character character : apikeyInfo.getDelegatedApiKey().getEveCharacters())
+//								if ( character.getCharacterID() == cid ) {
+//									currentCredential.setKeyCode(apikey.getKeynumber())
+//									                 .setValidationCode(apikey.getValidationcode())
+//									                 .store();
+//								}
+//						}
+//						// Post a backend request to start the download of the Character basic information.
+//						//						ApplicationCloudAdapter.submit2downloadExecutor(
+//						//								new OneParameterTask<Long>(cid) {
+//						//									@Override
+//						//									public void run () {
+//						//									}
+//						//								});
+//					}
+//				}
+			} catch (RuntimeException rtex) {
+				// There is some kind of exception during this key initialization routine. Post to the ModelStore a
+				// exception documentation so the display can show that information (maybe on the header).
+				rtex.printStackTrace();
+			}
+		}
+		return _credentialList;
+	}
 	/**
 	 * Returns the current list of active credentials. At this stage credentials are generated from a mix of
 	 * api keys and esi tokens. After march 2018 only ESI tokens will be available.
@@ -204,12 +233,12 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * In addition to generate the list of Credentials, with each of them I will download some of the Character
 	 * data during the creation of the list and connect that data to the parent Credential.
 	 */
-	private List<Credential> accessCredentialListImpl () {
+	public List<Credential> coalesceCredentialList () {
 		if ( _credentialList.size() < 1 ) {
 			try {
 				// Read and process the list of ApiKeys and Credentials to get a single Character list.
 				final List<ApiKey> keyList = NeoComDatabase.accessAllLogins();
-				final List<Credential> credentials = NeoComDatabase.accessAllCredentials();
+				final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
 				_credentialList.clear();
 				// Process the list to unify the results.
 				for (Credential currentCredential : credentials) {

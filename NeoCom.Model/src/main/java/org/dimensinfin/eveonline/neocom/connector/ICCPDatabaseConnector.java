@@ -37,7 +37,8 @@ public interface ICCPDatabaseConnector {
 
 	public int searchRawPlanetaryOutput(int typeID);
 
-	public Vector<Schematics> searchSchematics4Output(int targetId);
+	public Vector<Schematics> searchSchematics4Output(final int targetId);
+	public Vector<Schematics> selectSchematics4Id (final int schematicId);
 
 	public int searchStationType(long systemID);
 

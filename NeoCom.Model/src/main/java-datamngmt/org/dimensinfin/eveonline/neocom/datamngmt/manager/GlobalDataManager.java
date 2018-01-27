@@ -237,6 +237,22 @@ public class GlobalDataManager {
 	public static void setHelper (final INeoComDBHelper newImplementer) {
 		if ( null != newImplementer ) helper = newImplementer;
 	}
+	/**
+	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
+	 * interpretation used by the application.
+	 */
+	public static List<Credential> accessAllCredentials () {
+		List<Credential> credentialList = new ArrayList<>();
+		try {
+			final Dao<Credential, String> credentialDao = GlobalDataManager.getHelper().getCredentialDao();
+			final PreparedQuery<Credential> preparedQuery =credentialDao.queryBuilder().prepare();
+			credentialList = credentialDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			logger.warn("W [NeoComDatabase.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
+		}
+		return credentialList;
+	}
 
 	/**
 	 * Reads the list of Colonies for the identified Credential from the persistence database. Inthe case there are no
