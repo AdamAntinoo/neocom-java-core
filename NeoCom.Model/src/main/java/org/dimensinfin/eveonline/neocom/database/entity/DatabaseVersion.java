@@ -4,7 +4,7 @@
 //	ENVIRONMENT:	Java 1.8 Library.
 //	DESCRIPTION:	SQLite database access library. Isolates Neocom database access from any
 //					environment limits.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.database.entity;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;

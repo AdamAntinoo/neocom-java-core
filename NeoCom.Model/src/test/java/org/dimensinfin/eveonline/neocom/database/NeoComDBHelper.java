@@ -23,7 +23,7 @@ import com.j256.ormlite.table.TableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dimensinfin.eveonline.neocom.database.entity.*;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

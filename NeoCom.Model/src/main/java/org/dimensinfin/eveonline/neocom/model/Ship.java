@@ -1,299 +1,339 @@
-//	PROJECT:      NeoCom.model (NEOC.M)
-//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:	Java 1.8 Library.
-//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
-//								available databases.
-//								This version includes the access to the latest 6.x version of eveapi libraries to
-//								download ad parse the CCP XML API data.
-//								Code integration that is not dependent on any specific platform.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import com.annimon.stream.Stream;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IDownloadable;
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.core.model.Container;
+import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.model.AssetGroup.EGroupType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Vector;
+
+/**
+ * This new implementation of the ship will unify the management of the contents to a single container because the
+ * new location flag we get on the ESI api will classify the right aggregation for it when required. So that
+ * information is not a must at the model level and only used to render the contents under different groups and that
+ * can be performed dynamically during render preparation.
+ *
+ * @author Adam Antinoo
+ */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Ship extends NeoComAsset implements IAssetContainer, IDownloadable {
+public class Ship extends ShipPre10 {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("Ship");
-	private static final long serialVersionUID = 1782782104428714849L;
+	private static Logger logger = LoggerFactory.getLogger(Ship.class);
 
 	// - F I E L D - S E C T I O N ............................................................................
+	//	private final HashMap<GetCharactersCharacterIdAssets200Ok.LocationFlagEnum,ICollaboration> _contents = new
+	//			HashMap<ICollaboration>();
+	private final List<ShipContent> _contents = new ArrayList<ShipContent>();
 	private boolean _expanded = false;
-	private boolean _renderIfEmpty = true;
-	private boolean _downloading = false;
-	private boolean _downloaded = false;
-	private long _credentialIdentifier = 0;
-	private final AssetGroup highModules = new AssetGroup("HIGH").setGroupType(EGroupType.SHIPSECTION_HIGH);
-	private final AssetGroup medModules = new AssetGroup("MED").setGroupType(EGroupType.SHIPSECTION_MED);
-	private final AssetGroup lowModules = new AssetGroup("LOW").setGroupType(EGroupType.SHIPSECTION_LOW);
-	private final AssetGroup rigs = new AssetGroup("RIGS").setGroupType(EGroupType.SHIPSECTION_RIGS);
-	private final AssetGroup drones = new AssetGroup("DRONES").setGroupType(EGroupType.SHIPSECTION_DRONES);
-	private final AssetGroup cargo = new AssetGroup("CARGO HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
-	private final AssetGroup orecargo = new AssetGroup("ORE HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
+	//	private boolean _renderIfEmpty = true;
+	//	private boolean _downloaded = false;
+	//	private boolean _downloading = false;
+	private double totalVolume = 0.0;
+	private double totalValue = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	@Deprecated
 	public Ship () {
 		super();
-		// Ships have contents and are not available upon creation.
-		this.setDownloaded(false);
-		jsonClass = "Ship";
-	}
-
-	/**
-	 * Get the Pilot when the ship is created to be able to search for its contents. Check if this value matches
-	 * the owner ID.
-	 */
-	public Ship (final long identifier) {
-		this();
-		_credentialIdentifier = identifier;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	/**
-	//	 * By default the contents are added to the Cargo Hold of the Ship.
-	//	 */
-	//	public int addContent(final NeoComAsset asset) {
-	//		cargo.add(asset);
-	//		return cargo.size();
-	//	}
-
-	public int addAsset (final NeoComAsset asset) {
-		cargo.addAsset(asset);
-		return cargo.getContentSize();
-	}
 
 	/**
-	 * The collaboration of the ship is different form the one of an asset. I will generate some groups to store
-	 * under them the different modules fitted and the cargo contents. <br>
-	 * The ship should access the database to get its contents. <br>
-	 * This should be done once to avoid the multiple calls to the database as an optimization. The clear of the
-	 * fields have removed the bug that caused the same ships to be processed multiple times by different DS.
-	 * Use the downloaded flag for this purpose.
+	 * During the collaboration we should convert the list of contents to the model hierarchy we should present to the
+	 * renderer. So if we are showing the Ship on the AssetsByLocation we should only show the fitting as a whole group
+	 * and the different cargo hols identified by their task.
+	 * If the ship is shown on the PlanetaryAssetsList then we only have to show is cargo hold contents and we can
+	 * ignore any other item not related to the Planetary group.
+	 * On the list by category, the ship should not be expandable.
+	 * And finally when showing the Fitting we should add as much information as required to the different sections and
+	 * holders.
+	 *
+	 * @param variant the fragment variant when this collaboration is going to be used.
+	 * @return
 	 */
-	@Override
 	public List<ICollaboration> collaborate2Model (final String variant) {
 		ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
-		if ( !this.isDownloaded() ) {
-			this.downloadShipData();
+		if ( variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYCATEGORY.name()) ) return result;
+		if ( variant.equalsIgnoreCase(ENeoComVariants.PLANETARY_BYLOCATION.name()) ) {
+			// Filter out anything that is not the planetary cargohold resources.
+			// TODO test grouping experiment.
+			//		 groups = Stream.of(_contents)
+			//		                .collect(Collectors.groupingBy(ShipContent::getGroup))
+			//		                .entrySet().
+			//		                .toList();
+			Stream.of(_contents)
+			      .filter(ShipContent::isInCargoHold)
+			      .filter((node) -> {
+				      if ( node.getCategory().equalsIgnoreCase("Planetary Commodities") )
+					      return true;
+				      if ( node.getCategory().equalsIgnoreCase("Planetary Resources") )
+					      return true;
+				      return false;
+			      })
+			      .forEach((node) -> {
+				      // Add the found item to the result.
+				      result.add(node.getContent());
+			      });
 		}
-		result.add(highModules);
-		result.add(medModules);
-		result.add(lowModules);
-		result.add(rigs);
-		result.add(drones);
-		result.add(cargo);
-		return result;
-	}
+		if ( variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYLOCATION.name()) ) {
+			// For the assets by location we should generate just two sets. The elements on the fitting and the elements on
+			// cargoholds
+			final List<ICollaboration> fittingContents = new ArrayList<>();
+			Stream.of(_contents)
+			      .filter(ShipContent::isFitted)
+			      .forEach((node) -> fittingContents.add(node.getContent()));
+			final ShipAssetGroup fittings = new ShipAssetGroup("FITTING", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HIDDENMODIFIERS);
+			fittings.addContentList(fittingContents);
+			result.add(fittings);
 
-	/**
-	 * Even this object inherits from the asset structure, it is a new instance of the object and we should copy
-	 * the data from the original reference to this instance instead using delegates that will not work when
-	 * accessing directly to fields.
-	 *
-	 * @return this same instance updated with the reference data.
-	 */
-	public Ship copyFrom (final NeoComAsset asset) {
-		// REFACTOR Get access to the unique asset identifier.
-		this.setAssetId(asset.getAssetId());
-		this.setLocationId(asset.getLocationId());
-		this.setTypeId(asset.getTypeId());
-		this.setQuantity(asset.getQuantity());
-		this.setSingleton(asset.isPackaged());
+			// Do the same with the cargoholds contents.
+			final List<ICollaboration> cargoContents = new ArrayList<>();
+			Stream.of(_contents)
+			      .filter(ShipContent::isInCargoHold)
+			      .forEach((node) -> cargoContents.add(node.getContent()));
+			final ShipAssetGroup cargo = new ShipAssetGroup("CARGO", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum
+					.HIDDENMODIFIERS);
+			cargo.addContentList(cargoContents);
+			result.add(cargo);
 
-		//- D E R I V E D   F I E L D S
-		this.setOwnerID(asset.getOwnerID());
-		this.setName(asset.getName());
-		this.setCategory(asset.getCategory());
-		this.setGroupName(asset.getGroupName());
-		this.setTech(asset.getTech());
-		this.setUserLabel(asset.getUserLabel());
-		this.setShip(asset.isShip());
-		this.setContainer(asset.isContainer());
-		return this;
-	}
+			// Put the rest into a Other container
+			final List<ICollaboration> otherContents = new ArrayList<>();
+			Stream.of(_contents)
+			      .filterNot(ShipContent::isFitted)
+			      .filterNot(ShipContent::isInCargoHold)
+			      .forEach((node) -> otherContents.add(node.getContent()));
+			final ShipAssetGroup other = new ShipAssetGroup("OTHER", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum
+					.HIDDENMODIFIERS);
+			cargo.addContentList(cargoContents);
+			result.add(cargo);
 
-	public List<NeoComAsset> getCargo () {
-		return cargo.getAssets();
-	}
-
-	public int getContentSize () {
-		return highModules.getContentSize() + medModules.getContentSize() + lowModules.getContentSize()
-				+ rigs.getContentSize() + drones.getContentSize() + cargo.getContentSize() + orecargo.getContentSize();
-	}
-
-	//	public List<NeoComAsset> getContents() {
-	//		return cargo.getAssets();
-	//	}
-
-	public ArrayList<NeoComAsset> getDrones () {
-		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (ICollaboration node : drones.getContents()) {
-			result.add((NeoComAsset) node);
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the list of modules to be copied to the fitting.
-	 */
-	public ArrayList<NeoComAsset> getModules () {
-		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (ICollaboration node : highModules.getContents()) {
-			result.add((NeoComAsset) node);
-		}
-		for (ICollaboration node : medModules.getContents()) {
-			result.add((NeoComAsset) node);
-		}
-		for (ICollaboration node : lowModules.getContents()) {
-			result.add((NeoComAsset) node);
-		}
-		return result;
-	}
-
-	public ArrayList<NeoComAsset> getRigs () {
-		ArrayList<NeoComAsset> result = new ArrayList<NeoComAsset>();
-		for (ICollaboration node : rigs.getContents()) {
-			result.add((NeoComAsset) node);
+			//			final HashMap<GetCharactersCharacterIdAssets200Ok.LocationFlagEnum, List<ICollaboration>> groups = new HashMap<GetCharactersCharacterIdAssets200Ok.LocationFlagEnum, List<ICollaboration>>();
+			//			for (ShipContent node : _contents) {
+			//				final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group = node.getGroup();
+			//				final List<ICollaboration> hit = groups.get(group);
+			//				if ( null == hit ) {
+			//					final ArrayList<ICollaboration> newhit = new ArrayList<ICollaboration>();
+			//					newhit.add(node.getContent());
+			//					groups.put(group, newhit);
+			//				} else {
+			//					hit.add(node.getContent());
+			//				}
+			//			}
+			//			// Create the group containers and then send them to the results.
+			//			final Iterator<GetCharactersCharacterIdAssets200Ok.LocationFlagEnum> keyIterator = groups.keySet().iterator();
+			//			while(keyIterator.hasNext()){
+			//				final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum key = keyIterator.next();
+			//				final List<ICollaboration> groupContents = groups.get(key);
+			//				final ShipAssetGroup aggregator = new ShipAssetGroup(key.name(), key);
+			//				aggregator.addContentList(groupContents);
+			//				result.add(aggregator);
+			//			}
 		}
 		return result;
-	}
-
-	public boolean isExpandable () {
-		return true;
 	}
 
 	@Override
 	public String toString () {
-		final StringBuffer buffer = new StringBuffer("Ship [");
-		buffer.append("#").append(this.getTypeId()).append(" - ").append(this.getName()).append(" ");
-		if ( null != this.getUserLabel() ) {
-			buffer.append("[").append(this.getUserLabel()).append("] ");
-		}
-		buffer.append("itemID:").append(this.getAssetId()).append(" ");
-		//		buffer.append("typeID:")..append(" ");
-		buffer.append("locationID:").append(this.getLocationId()).append(" ");
-		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
-		//	buffer.append("quantity:").append(this.getQuantity()).append(" ");
-		buffer.append("]\n");
+		StringBuffer buffer = new StringBuffer("Ship [");
+		buffer.append("name: ").append(0);
+		buffer.append("]");
+		buffer.append("->").append(super.toString());
 		return buffer.toString();
-		//		return super.toString();
 	}
 
-	private void downloadShipData () {
-		ArrayList<NeoComAsset> contents = (ArrayList<NeoComAsset>) ModelAppConnector.getSingleton().getDBConnector()
-		                                                                            .searchAssetContainedAt
-				                                                                            (_credentialIdentifier, this.getAssetId());
-		highModules.clean();
-		medModules.clean();
-		lowModules.clean();
-		rigs.clean();
-		drones.clean();
-		cargo.clean();
-		// Classify the contents
-		for (NeoComAsset node : contents) {
-			// TODO New ESI location also have a location flag that manages this information
-			final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag = node.getFlag();
-	//		int flag = node.getFlag();
-//			if ( (flag > 10)
-//					&& (flag < 19) ) {
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT0) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT1) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT2) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT3) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT4) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT5) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT6) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT7) highModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT0) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT1) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT2) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT3) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT4) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT5) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT6) medModules.addAsset(node);
-			if(locationFlag== GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT7) medModules.addAsset(node);
-//			} else if ( (flag > 18) && (flag < 27) ) {
-//				medModules.addAsset(node);
-//			} else if ( (flag > 26) && (flag < 35) ) {
-//				lowModules.addAsset(node);
-//			} else if ( (flag > 91) && (flag < 100) ) {
-//				rigs.addAsset(node);
-//			} else {
-//				// Check for drones
-//				if ( node.getCategory().equalsIgnoreCase("Drones") ) {
-//					drones.addAsset(node);
-//				} else {
-//					// Contents on ships go to the cargohold.
-//					cargo.addAsset(node);
-//				}
-//			}
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class ShipContent {
+		// - S T A T I C - S E C T I O N ..........................................................................
+
+		// - F I E L D - S E C T I O N ............................................................................
+		private GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group = GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.CARGO;
+		private ICollaboration content = null;
+
+		// - C O N S T R U C T O R - S E C T I O N ................................................................
+		public ShipContent (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group, final ICollaboration content) {
+			super();
+			this.group = group;
+			this.content = content;
 		}
-		this.setDownloaded(true);
-	}
 
-	public boolean collapse () {
-		_expanded = false;
-		return _expanded;
-	}
+		// - M E T H O D - S E C T I O N ..........................................................................
 
-	public boolean expand () {
-		_expanded = true;
-		return _expanded;
-	}
+		private GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getGroup () {
+			return group;
+		}
 
-	public boolean isEmpty () {
-		if ( this.getContentSize() > 0 )
-			return true;
-		else
+		private ICollaboration getContent () {
+			return content;
+		}
+
+		private void setGroup (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group) {
+			this.group = group;
+		}
+
+		private void setContent (final ICollaboration content) {
+			this.content = content;
+		}
+
+		// --- G R O U P I N G   E V A L U A T I O N S
+		public boolean isInCargoHold () {
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.ASSETSAFETY ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.CARGO ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.DELIVERIES ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.FLEETHANGAR ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGARALL ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOCKED ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SHIPHANGAR ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDAMMOHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDCOMMANDCENTERHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDFUELBAY ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDGASHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDINDUSTRIALSHIPHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDLARGESHIPHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMATERIALBAY ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMEDIUMSHIPHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMINERALHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDOREHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDPLANETARYCOMMODITIESHOLD )
+				return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSALVAGEHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSHIPHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSMALLSHIPHOLD ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.UNLOCKED ) return true;
+
 			return false;
+		}
+
+		public boolean isFitted () {
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT0 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT1 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT2 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT3 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT4 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT5 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT6 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT7 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT0 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT1 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT2 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT3 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT4 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT5 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT6 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT7 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT0 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT1 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT2 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT3 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT4 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT5 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT6 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT7 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT0 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT1 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT2 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT3 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT4 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT5 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT6 ) return true;
+			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT7 ) return true;
+
+			return false;
+		}
+
+		// --- D E L E G A T E D
+		public String getCategory () {
+			if ( content instanceof NeoComAsset ) {
+				return ((NeoComAsset) content).getCategory();
+			} else return "-NO CATEGORIZED-";
+		}
 	}
 
-	public boolean isExpanded () {
-		return _expanded;
-	}
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public class ShipAssetGroup extends Container implements IAssetContainer {
+		/** Use the type to associate it with an icon. */
+		//	public enum EGroupType {
+		//		DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
+		//	}
 
-	public boolean isRenderWhenEmpty () {
-		return _renderIfEmpty;
-	}
+		// - S T A T I C - S E C T I O N ..........................................................................
+		private static final long serialVersionUID = 8066964529677353362L;
 
-	public IExpandable setRenderWhenEmpty (final boolean renderWhenEmpty) {
-		_renderIfEmpty = renderWhenEmpty;
-		return this;
-	}
+		// - F I E L D - S E C T I O N ............................................................................
+		public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum groupType =
+				GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.CARGO;
 
-	public boolean isDownloaded () {
-		return _downloaded;
-	}
+		// - C O N S T R U C T O R - S E C T I O N ................................................................
+		public ShipAssetGroup () {
+			super();
+			this.expand();
+			jsonClass = "AssetGroup";
+		}
 
-	public IDownloadable setDownloaded (final boolean downloadedstate) {
-		_downloaded = downloadedstate;
-		return this;
-	}
-	public IDownloadable setDownloading (final boolean downloading) {
-		this._downloading = downloading;
-		return this;
-	}
+		public ShipAssetGroup (final String newtitle) {
+			super(newtitle);
+			this.expand();
+			jsonClass = "AssetGroup";
+		}
 
+		public ShipAssetGroup (final String newtitle, final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newtype) {
+			this(newtitle);
+			groupType = newtype;
+		}
 
-	public boolean isDownloading () {
-		return _downloading;
-	}
+		// - M E T H O D - S E C T I O N ..........................................................................
+		public int addAsset (final NeoComAsset asset) {
+			super.addContent(asset);
+			return this.getContentSize();
+		}
 
+		public List<NeoComAsset> getAssets () {
+			Vector<NeoComAsset> result = new Vector<NeoComAsset>();
+			for (ICollaboration node : super.getContents()) {
+				result.add((NeoComAsset) node);
+			}
+			return result;
+		}
 
-	public List<NeoComAsset> getAssets () {
-		return cargo.getAssets();
+		public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getGroupType () {
+			return groupType;
+		}
+
+		public ShipAssetGroup setGroupType (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newtype) {
+			groupType = newtype;
+			return this;
+		}
+
+		@Override
+		public String toString () {
+			StringBuffer buffer = new StringBuffer("AssetGroup [");
+			buffer.append(this.getTitle()).append(" type: ").append(groupType.name());
+			//		buffer.append(" [").append(this.getContentSize()).append("]");
+			buffer.append("]");
+			return buffer.toString();
+		}
 	}
 }
-
 // - UNUSED CODE ............................................................................................
+//[01]

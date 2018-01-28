@@ -39,7 +39,6 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
-import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
@@ -55,6 +54,7 @@ import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
@@ -326,7 +326,7 @@ public class GlobalDataManager {
 
 						// Store this same information on the database to record the TimeStammp.
 						final String reference = constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
-						TimeStamp timestamp = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
+						TimeStamp timestamp = getHelper().getTimeStampDao().queryForId(reference);
 						if ( null == timestamp ) timestamp = new TimeStamp(reference, expirationTime);
 						timestamp.setTimeStamp(expirationTime)
 						         .setCredentialId(credential.getAccountId())
@@ -515,6 +515,30 @@ public class GlobalDataManager {
 			logger.info("<< [GlobalDataManager.accessColonyStructures4Planet]");
 		}
 		return structureList;
+	}
+	public static ArrayList<NeoComAsset> accessAssetsContainedAt (final long characterID, final long containerId) {
+		return accessAssetsContainedAt(containerId);
+	}
+	public static ArrayList<NeoComAsset> accessAssetsContainedAt (final long containerId) {
+		// Select assets for the owner and with an specific type id.
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		try {
+			// TODO Another and more simple way to execute the command.
+			assetList= getHelper().getAssetDao().queryForEq("parentAssetID",Long.valueOf(containerId).toString());
+//			Dao<NeoComAsset, String> assetDao = getHelper().getAssetDao();
+//			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+//			Where<NeoComAsset, String> where = queryBuilder.where();
+//			// TODO Check if this gives the same results because a container only can belong to an owner. If we have the
+//			// identifier then we should be the owner or being using that credential.
+////			where.eq("ownerID", characterID);
+////			where.and();
+//			where.eq("parentAssetID", containerId);
+//			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+//			assetList = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return (ArrayList<NeoComAsset>) assetList;
 	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
