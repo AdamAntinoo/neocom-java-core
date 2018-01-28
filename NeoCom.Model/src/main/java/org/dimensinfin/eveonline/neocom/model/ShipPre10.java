@@ -25,9 +25,9 @@ import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipPre10 extends NeoComAsset implements IAssetContainer, IDownloadable {
-		public enum EGroupType {
-			DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
-		}
+//		public enum EGroupType {
+//			DEFAULT, SHIPSECTION_HIGH, SHIPSECTION_MED, SHIPSECTION_LOW, SHIPSECTION_DRONES, SHIPSECTION_CARGO, SHIPSECTION_RIGS, SHIPTYPE_BATTLECRUISER, SHIPTYPE_BATTLESHIP, SHIPTYPE_CAPITAL, SHIPTYPE_CRUISER, SHIPTYPE_DESTROYER, SHIPTYPE_FREIGHTER, SHIPTYPE_FRIGATE, EMPTY_FITTINGLIST
+//		}
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("Ship");
 	private static final long serialVersionUID = 1782782104428714849L;
@@ -38,13 +38,13 @@ public class ShipPre10 extends NeoComAsset implements IAssetContainer, IDownload
 	private boolean _downloading = false;
 	private boolean _downloaded = false;
 //	private long _credentialIdentifier = 0;
-	private final AssetGroup highModules = new AssetGroup("HIGH").setGroupType(EGroupType.SHIPSECTION_HIGH);
-	private final AssetGroup medModules = new AssetGroup("MED").setGroupType(EGroupType.SHIPSECTION_MED);
-	private final AssetGroup lowModules = new AssetGroup("LOW").setGroupType(EGroupType.SHIPSECTION_LOW);
-	private final AssetGroup rigs = new AssetGroup("RIGS").setGroupType(EGroupType.SHIPSECTION_RIGS);
-	private final AssetGroup drones = new AssetGroup("DRONES").setGroupType(EGroupType.SHIPSECTION_DRONES);
-	private final AssetGroup cargo = new AssetGroup("CARGO HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
-	private final AssetGroup orecargo = new AssetGroup("ORE HOLD").setGroupType(EGroupType.SHIPSECTION_CARGO);
+	private final AssetGroup highModules = new AssetGroup("HIGH").setGroupType(AssetGroup.EGroupType.SHIPSECTION_HIGH);
+	private final AssetGroup medModules = new AssetGroup("MED").setGroupType(AssetGroup.EGroupType.SHIPSECTION_MED);
+	private final AssetGroup lowModules = new AssetGroup("LOW").setGroupType(AssetGroup.EGroupType.SHIPSECTION_LOW);
+	private final AssetGroup rigs = new AssetGroup("RIGS").setGroupType(AssetGroup.EGroupType.SHIPSECTION_RIGS);
+	private final AssetGroup drones = new AssetGroup("DRONES").setGroupType(AssetGroup.EGroupType.SHIPSECTION_DRONES);
+	private final AssetGroup cargo = new AssetGroup("CARGO HOLD").setGroupType(AssetGroup.EGroupType.SHIPSECTION_CARGO);
+	private final AssetGroup orecargo = new AssetGroup("ORE HOLD").setGroupType(AssetGroup.EGroupType.SHIPSECTION_CARGO);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	@Deprecated

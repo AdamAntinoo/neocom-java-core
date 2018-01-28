@@ -27,10 +27,10 @@ import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -40,7 +40,6 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.ESINetworkManager;
 import org.joda.time.Duration;
 import org.joda.time.Instant;
 import org.modelmapper.ModelMapper;
@@ -118,7 +117,7 @@ public class DownloadManager {
 		this.credential = credential;
 		// Preload the dao.
 		try {
-			assetDao = NeoComDatabase.getImplementer().getAssetDao();
+			assetDao =GlobalDataManager.getHelper().getAssetDao();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -334,7 +333,7 @@ public class DownloadManager {
 
 	public void updateTargetDataTimeStamp (final String reference, final Instant timePoint) {
 		try {
-			_assetsCacheTime = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
+			_assetsCacheTime = GlobalDataManager.getHelper().getTimeStampDao().queryForId(reference);
 			//		final Instant newExpirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
 			if ( null == _assetsCacheTime ) {
 				_assetsCacheTime = new TimeStamp(reference, timePoint)

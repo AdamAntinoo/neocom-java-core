@@ -22,7 +22,7 @@ import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,7 +110,7 @@ public class Credential extends NeoComNode {
 		List<TimeStamp> timesList = new ArrayList();
 		try {
 			// Get all the timeStamps for this credential.
-			final Dao<TimeStamp, String> timeStampDao = NeoComDatabase.getImplementer().getTimeStampDao();
+			final Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getHelper().getTimeStampDao();
 			QueryBuilder<TimeStamp, String> queryBuilder = timeStampDao.queryBuilder();
 			Where<TimeStamp, String> where = queryBuilder.where();
 			where.eq("credentialId", getAccountId());

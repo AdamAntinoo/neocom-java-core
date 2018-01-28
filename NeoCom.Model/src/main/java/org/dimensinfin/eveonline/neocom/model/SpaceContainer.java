@@ -17,7 +17,6 @@ import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -215,7 +214,7 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
-					Ship ship = new Ship(DataManagementModelStore.getActiveCredential().getAccountId())
+					Ship ship = new Ship(/*DataManagementModelStore.getActiveCredential().getAccountId()*/)
 							.copyFrom(asset);
 					// Calculate value and volume to register on the aggregation.
 					totalValue = +asset.getPrice();

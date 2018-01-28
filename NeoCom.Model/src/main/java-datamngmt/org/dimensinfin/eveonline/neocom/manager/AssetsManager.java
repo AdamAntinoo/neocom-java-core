@@ -568,7 +568,7 @@ public class AssetsManager extends AbstractManager {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
-					Ship ship = new Ship(getCredentialIdentifier()).copyFrom(asset);
+					Ship ship = new Ship(/*getCredentialIdentifier()*/).copyFrom(asset);
 					ships.put(ship.getAssetId(), ship);
 					// The ship is a container so add it and forget about this asset.
 					if ( ship.hasParent() ) {

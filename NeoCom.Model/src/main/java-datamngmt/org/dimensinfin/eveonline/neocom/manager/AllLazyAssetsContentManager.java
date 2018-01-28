@@ -136,7 +136,7 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
 				if ( !asset.isPackaged() ) {
 					// Transform the asset to a ship.
-					Ship ship = new Ship(parent.getCredentialIdentifier())
+					Ship ship = new Ship(/*parent.getCredentialIdentifier()*/)
 							.copyFrom(asset);
 					// Calculate value and volume to register on the aggregation.
 					totalValue = +asset.getPrice();

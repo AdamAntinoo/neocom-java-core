@@ -11,10 +11,8 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
@@ -26,57 +24,59 @@ import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */ {
-	public ArrayList<NeoComAsset> accessAllPlanetaryAssets(long characterID);
+	public ArrayList<NeoComAsset> accessAllPlanetaryAssets (long characterID);
 
-	public void clearInvalidRecords(final long pilotid);
+	public void clearInvalidRecords (final long pilotid);
+
 	public void replaceBlueprints (final long characterID);
 
-	public Dao<Credential, String> getCredentialDao() throws SQLException;
-	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
+	//	public Dao<Credential, String> getCredentialDao () throws SQLException;
 
-	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
+	//	public Dao<ApiKey, String> getApiKeysDao () throws SQLException;
 
-	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
+	public Dao<NeoComAsset, String> getAssetDao () throws SQLException;
+
+	public Dao<NeoComBlueprint, String> getBlueprintDao () throws SQLException;
 
 	//	public Dao<Job, String> getJobDAO() throws SQLException;
 
-	public Dao<EveLocation, String> getLocationDao() throws SQLException;
+	public Dao<EveLocation, String> getLocationDao () throws SQLException;
 
 	//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 
 	//	public Dao<PlanetaryResource, String> getPlanetaryResourceDao() throws SQLException;
 
-	public Dao<Property, String> getPropertyDao() throws SQLException;
+	public Dao<Property, String> getPropertyDao () throws SQLException;
 
-	public Dao<TimeStamp, String> getTimeStampDao() throws SQLException;
+	public Dao<TimeStamp, String> getTimeStampDao () throws SQLException;
 
-	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
+	public Dao<DatabaseVersion, String> getVersionDao () throws SQLException;
 
-	public void loadSeedData();
+	public void loadSeedData ();
 
 	//	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
-//	public Hashtable<String, Login> queryAllLogins();
+	//	public Hashtable<String, Login> queryAllLogins();
 
 	//	public List<NeoComAsset> queryContainerContents(final long identifier);
 	//
 	//	public List<NeoComAsset> searchAssetsAtLocation(long id);
 
-	public void replaceAssets(long characterID);
+	public void replaceAssets (long characterID);
 
-	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
+	//	public List<NeoComAsset> searchAllBlueprintAssets(long characterID);
 
-	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName);
+	public ArrayList<NeoComAsset> searchAsset4Category (final long characterID, final String categoryName);
 
-	public List<NeoComAsset> searchAsset4Type(long characterID, int typeID);
+	//	public List<NeoComAsset> searchAsset4Type(long characterID, int typeID);
 
-	public NeoComAsset searchAssetByID(long parentAssetID);
+	public NeoComAsset searchAssetByID (long parentAssetID);
 
-	public List<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
+	//	public List<NeoComAsset> searchAssetContainedAt(long pilotID, long assetID);
 
-	public List<NeoComAsset> searchAssetsAtLocation(final long ownerid, final long identifier);
+	public List<NeoComAsset> searchAssetsAtLocation (final long ownerid, final long identifier);
 
-	public int totalLocationContentCount(final long identifier);
+	public int totalLocationContentCount (final long identifier);
 }
 
 // - UNUSED CODE ............................................................................................

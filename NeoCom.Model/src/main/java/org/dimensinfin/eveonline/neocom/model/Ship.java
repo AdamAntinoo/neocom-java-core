@@ -153,6 +153,11 @@ public class Ship extends ShipPre10 {
 	}
 
 	@Override
+	public Ship copyFrom (final NeoComAsset asset) {
+		return (Ship) super.copyFrom(asset);
+	}
+
+	@Override
 	public String toString () {
 		StringBuffer buffer = new StringBuffer("Ship [");
 		buffer.append("name: ").append(0);

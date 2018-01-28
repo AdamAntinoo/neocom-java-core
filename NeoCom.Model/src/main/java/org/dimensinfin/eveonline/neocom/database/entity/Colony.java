@@ -22,9 +22,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
@@ -69,7 +68,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	@DatabaseField(index = true)
 	private Integer solarSystemId = null;
 	@DatabaseField(dataType = DataType.ENUM_STRING)
-	private PlanetTypeEnum planetType = null;
+	private GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum planetType = null;
 	@DatabaseField
 	private Integer ownerId = null;
 	@DatabaseField
@@ -172,7 +171,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 
 	public Colony create (final int planetId) {
 		try {
-			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
+			Dao<Colony, String> colonyDao = GlobalDataManager.getHelper().getColonyDao();
 			colonyDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			logger.info("WR [Colony.create]> Colony exists. Update values.");
@@ -183,7 +182,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 
 	public Colony store () {
 		try {
-			Dao<Colony, String> colonyDao = NeoComDatabase.getImplementer().getColonyDao();
+			Dao<Colony, String> colonyDao = GlobalDataManager.getHelper().getColonyDao();
 			colonyDao.createOrUpdate(this);
 			logger.info("-- [Colony.store]> Colony data updated successfully.");
 		} catch (final SQLException sqle) {
@@ -252,7 +251,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		return this;
 	}
 
-	public Colony setPlanetType (final PlanetTypeEnum planetType) {
+	public Colony setPlanetType (final GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum planetType) {
 		this.planetType = planetType;
 		return this;
 	}
