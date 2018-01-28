@@ -16,6 +16,7 @@ import com.annimon.stream.Stream;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.model.Container;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
@@ -73,6 +74,9 @@ public class Ship extends ShipPre10 {
 	 */
 	public List<ICollaboration> collaborate2Model (final String variant) {
 		ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
+		if ( !this.isDownloaded() ) {
+			this.downloadShipData();
+		}
 		if ( variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYCATEGORY.name()) ) return result;
 		if ( variant.equalsIgnoreCase(ENeoComVariants.PLANETARY_BYLOCATION.name()) ) {
 			// Filter out anything that is not the planetary cargohold resources.
@@ -100,8 +104,9 @@ public class Ship extends ShipPre10 {
 			// cargoholds
 			final List<ICollaboration> fittingContents = new ArrayList<>();
 			Stream.of(_contents)
-			      .filter(ShipContent::isFitted)
-			      .forEach((node) -> fittingContents.add(node.getContent()));
+			      .forEach((node) -> {
+				      if ( node.isFitted() ) fittingContents.add(node.getContent());
+			      });
 			final ShipAssetGroup fittings = new ShipAssetGroup("FITTING", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HIDDENMODIFIERS);
 			fittings.addContentList(fittingContents);
 			result.add(fittings);
@@ -109,8 +114,9 @@ public class Ship extends ShipPre10 {
 			// Do the same with the cargoholds contents.
 			final List<ICollaboration> cargoContents = new ArrayList<>();
 			Stream.of(_contents)
-			      .filter(ShipContent::isInCargoHold)
-			      .forEach((node) -> cargoContents.add(node.getContent()));
+			      .forEach((node) -> {
+				      if ( node.isInCargoHold() ) cargoContents.add(node.getContent());
+			      });
 			final ShipAssetGroup cargo = new ShipAssetGroup("CARGO", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum
 					.HIDDENMODIFIERS);
 			cargo.addContentList(cargoContents);
@@ -124,7 +130,7 @@ public class Ship extends ShipPre10 {
 			      .forEach((node) -> otherContents.add(node.getContent()));
 			final ShipAssetGroup other = new ShipAssetGroup("OTHER", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum
 					.HIDDENMODIFIERS);
-			cargo.addContentList(cargoContents);
+			other.addContentList(cargoContents);
 			result.add(cargo);
 
 			//			final HashMap<GetCharactersCharacterIdAssets200Ok.LocationFlagEnum, List<ICollaboration>> groups = new HashMap<GetCharactersCharacterIdAssets200Ok.LocationFlagEnum, List<ICollaboration>>();
@@ -150,6 +156,14 @@ public class Ship extends ShipPre10 {
 			//			}
 		}
 		return result;
+	}
+	protected void downloadShipData () {
+		ArrayList<NeoComAsset> contents = GlobalDataManager.accessAssetsContainedAt(this.getAssetId());
+		for(NeoComAsset asset: contents){
+			final ShipContent newcontent = new ShipContent(asset.getFlag(), asset);
+			_contents.add(newcontent);
+		}
+		this.setDownloaded(true);
 	}
 
 	@Override

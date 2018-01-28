@@ -204,9 +204,10 @@ public class GlobalDataManager {
 				.append(identifier)
 				.toString();
 	}
+
 	public static String constructJobReference (final EDataUpdateJobs type, final long identifier) {
 		return new StringBuffer("JOB:")
-		.append(type.name())
+				.append(type.name())
 				.append("/")
 				.append(identifier)
 				.toString();
@@ -260,6 +261,7 @@ public class GlobalDataManager {
 	}
 
 	// --- M O D E L - S T O R E   I N T E R F A C E
+
 	/**
 	 * Construct a minimal implementation of a Pilot from the XML api. This will get deprecated soon but during
 	 * some time It will be compatible and I will have a better view of what variants are being used.
@@ -290,12 +292,12 @@ public class GlobalDataManager {
 						// Access the delegated Character using the ApiKey XML old api.
 						final List<ApiKey> apikeyList = GlobalDataManager.getHelper().getApiKeysDao().queryForEq("keynumber",
 								credential.getKeyCode());
-						if(null!=apikeyList){
+						if ( null != apikeyList ) {
 							final ApiKey apikey = extendApiKey(apikeyList.get(0));
 							Collection<Character> coreList = apikey.getEveCharacters();
 							for (Character character : coreList) {
 								if ( character.getCharacterID() == identifier )
-								newchar.setDelegatedCharacter(character);
+									newchar.setDelegatedCharacter(character);
 							}
 						}
 
@@ -341,11 +343,13 @@ public class GlobalDataManager {
 			return newchar;
 		} else return (PilotV1) hit;
 	}
+
 	public static boolean checkPilotV1 (final int identifier) {
 		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 		if ( null == hit ) return false;
 		else return true;
 	}
+
 	/**
 	 * Deletes the current entry if found and forces a new download.
 	 *
@@ -399,7 +403,7 @@ public class GlobalDataManager {
 		return keyList;
 	}
 
-	private static ApiKey extendApiKey ( ApiKey basekey) {
+	private static ApiKey extendApiKey (ApiKey basekey) {
 		// Check if this request is already available on the cache.
 		try {
 			// Get the ApiKey Information block.
@@ -516,25 +520,27 @@ public class GlobalDataManager {
 		}
 		return structureList;
 	}
+
 	public static ArrayList<NeoComAsset> accessAssetsContainedAt (final long characterID, final long containerId) {
 		return accessAssetsContainedAt(containerId);
 	}
+
 	public static ArrayList<NeoComAsset> accessAssetsContainedAt (final long containerId) {
 		// Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
 			// TODO Another and more simple way to execute the command.
-			assetList= getHelper().getAssetDao().queryForEq("parentAssetID",Long.valueOf(containerId).toString());
-//			Dao<NeoComAsset, String> assetDao = getHelper().getAssetDao();
-//			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
-//			Where<NeoComAsset, String> where = queryBuilder.where();
-//			// TODO Check if this gives the same results because a container only can belong to an owner. If we have the
-//			// identifier then we should be the owner or being using that credential.
-////			where.eq("ownerID", characterID);
-////			where.and();
-//			where.eq("parentAssetID", containerId);
-//			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
-//			assetList = assetDao.query(preparedQuery);
+			assetList = getHelper().getAssetDao().queryForEq("parentAssetID", Long.valueOf(containerId).toString());
+			//			Dao<NeoComAsset, String> assetDao = getHelper().getAssetDao();
+			//			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			//			Where<NeoComAsset, String> where = queryBuilder.where();
+			//			// TODO Check if this gives the same results because a container only can belong to an owner. If we have the
+			//			// identifier then we should be the owner or being using that credential.
+			////			where.eq("ownerID", characterID);
+			////			where.and();
+			//			where.eq("parentAssetID", containerId);
+			//			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			//			assetList = assetDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -693,6 +699,7 @@ public class GlobalDataManager {
 			return hit;
 		}
 	}
+
 	// ........................................................................................................
 	// - CLASS IMPLEMENTATION ...................................................................................
 	public static class ModelTimedCache {
