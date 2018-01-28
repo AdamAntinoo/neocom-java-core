@@ -30,7 +30,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
-import org.dimensinfin.eveonline.neocom.planetary.ColonyCoreStructure;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.joda.time.DateTime;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
@@ -84,7 +84,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	//	private transient GetUniversePlanetsPlanetIdOk planetData = null;
 	private transient GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
 	private transient List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
-	private transient List<ColonyCoreStructure> structures = null;
+	private transient List<ColonyStructure> structures = null;
 
 	protected boolean downloaded = true;
 
@@ -110,7 +110,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		return results;
 	}
 
-	private List<ColonyCoreStructure> downloadStructures () {
+	private List<ColonyStructure> downloadStructures () {
 		setDownloaded(true);
 		return GlobalDataManager.downloadStructures4Colony(ownerId, planetId);
 	}
@@ -288,12 +288,12 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		return planetName;
 	}
 
-	public List<ColonyCoreStructure> getStructures () {
+	public List<ColonyStructure> getStructures () {
 		if ( null == structures ) return new ArrayList<>();
 		else return structures;
 	}
 
-	public void setStructures (final List<ColonyCoreStructure> results) {
+	public void setStructures (final List<ColonyStructure> results) {
 		structures = results;
 	}
 

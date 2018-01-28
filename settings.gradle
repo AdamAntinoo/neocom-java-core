@@ -1,6 +1,5 @@
 include ':app'
 include ':NeoCom.Model'
-include ':NeoCom.DataMngmt'
 include ':ESI.SwaggerApi'
 //include ':CoreBaseLibrary'
 //project(':CoreBaseLibrary').projectDir = new File('D:\\Development\\Libraries Base\\Corebase 2.0.x\\CoreBase\\CoreBaseLibrary')

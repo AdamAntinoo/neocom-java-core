@@ -12,21 +12,18 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.model.Login;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+
+import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComBaseDatabase {
@@ -51,43 +48,43 @@ public class NeoComBaseDatabase {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * Reads all the keys stored at the database and classified them into a set of Login names.
-	 */
-	public Hashtable<String, Login> queryAllLogins() {
-		// Get access to all ApiKey registers
-		List<ApiKey> keyList = new Vector<ApiKey>();
-		try {
-			Dao<ApiKey, String> keysDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
-			QueryBuilder<ApiKey, String> queryBuilder = keysDao.queryBuilder();
-			PreparedQuery<ApiKey> preparedQuery = queryBuilder.prepare();
-			keyList = keysDao.query(preparedQuery);
-		} catch (java.sql.SQLException sqle) {
-			sqle.printStackTrace();
-			NeoComBaseDatabase.logger
-					.warning("W [NeoComBaseDatabase.queryAllLogins]> Exception reading all Logins. " + sqle.getMessage());
-		}
-		// Classify the keys on they matching Logins.
-		Hashtable<String, Login> loginList = new Hashtable<String, Login>();
-		for (ApiKey apiKey : keyList) {
-			String name = apiKey.getLogin();
-			// Search for this on the list before creating a new Login.
-			Login hit = loginList.get(name);
-			if (null == hit) {
-				Login login = new Login(name).addKey(apiKey);
-				loginList.put(name, login);
-			} else {
-				hit.addKey(apiKey);
-			}
-		}
-		return loginList;
-	}
+//	/**
+//	 * Reads all the keys stored at the database and classified them into a set of Login names.
+//	 */
+//	public Hashtable<String, Login> queryAllLogins() {
+//		// Get access to all ApiKey registers
+//		List<ApiKey> keyList = new Vector<ApiKey>();
+//		try {
+//			Dao<ApiKey, String> keysDao = ModelAppConnector.getSingleton().getDBConnector().getApiKeysDao();
+//			QueryBuilder<ApiKey, String> queryBuilder = keysDao.queryBuilder();
+//			PreparedQuery<ApiKey> preparedQuery = queryBuilder.prepare();
+//			keyList = keysDao.query(preparedQuery);
+//		} catch (java.sql.SQLException sqle) {
+//			sqle.printStackTrace();
+//			NeoComBaseDatabase.logger
+//					.warning("W [NeoComBaseDatabase.queryAllLogins]> Exception reading all Logins. " + sqle.getMessage());
+//		}
+//		// Classify the keys on they matching Logins.
+//		Hashtable<String, Login> loginList = new Hashtable<String, Login>();
+//		for (ApiKey apiKey : keyList) {
+//			String name = apiKey.getLogin();
+//			// Search for this on the list before creating a new Login.
+//			Login hit = loginList.get(name);
+//			if (null == hit) {
+//				Login login = new Login(name).addKey(apiKey);
+//				loginList.put(name, login);
+//			} else {
+//				hit.addKey(apiKey);
+//			}
+//		}
+//		return loginList;
+//	}
 
 	/**
 	 * Gets the list of assets of a select Category.
 	 * 
 	 * @param characterID
-	 * @param typeID
+	 * @param categoryName
 	 * @return
 	 */
 	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName) {

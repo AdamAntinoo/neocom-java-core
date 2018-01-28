@@ -19,7 +19,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.planetary.ColonyCoreStructure;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class ColonySerialized {
 	@DatabaseField(index = true)
 	public String planetIdentifier = "-";
 	@DatabaseField(dataType = DataType.SERIALIZABLE)
-	private ColonyCoreStructure colonySerialization = null;
+	private ColonyStructure colonySerialization = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private ColonySerialized () {
@@ -70,7 +70,7 @@ public class ColonySerialized {
 		return planetIdentifier;
 	}
 
-	public ColonyCoreStructure getColonySerialization () {
+	public ColonyStructure getColonySerialization () {
 		return colonySerialization;
 	}
 
@@ -79,7 +79,7 @@ public class ColonySerialized {
 		return this;
 	}
 
-	public ColonySerialized setColonySerialization (final ColonyCoreStructure colonySerialization) {
+	public ColonySerialized setColonySerialization (final ColonyStructure colonySerialization) {
 		this.colonySerialization = colonySerialization;
 		return this;
 	}

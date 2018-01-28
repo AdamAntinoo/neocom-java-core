@@ -7,18 +7,7 @@
 //									This version includes the access to the latest 6.x version of eveapi libraries to
 //									download ad parse the CCP XML API data.
 //									Code integration that is not dependent on any specific platform.
-package org.dimensinfin.android.model;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+package org.dimensinfin.eveonline.neocom.model;
 
 import com.beimin.eveapi.exception.ApiException;
 import com.beimin.eveapi.model.pilot.SkillQueueItem;
@@ -31,6 +20,13 @@ import com.beimin.eveapi.response.pilot.CharacterSheetResponse;
 import com.beimin.eveapi.response.pilot.SkillInTrainingResponse;
 import com.beimin.eveapi.response.pilot.SkillQueueResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Pilot extends NeoComCharacter {
@@ -54,45 +50,45 @@ public class Pilot extends NeoComCharacter {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	/**
-	 * Returns the number of invention jobs that can be launched simultaneously. This will depend on the skills
-	 * <code>Laboratory Operation</code> and <code>Advanced Laboratory Operation</code>.
-	 * 
-	 * @return
-	 */
-	public int calculateInventionQueues() {
-		int queues = 1;
-		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
-		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
-				queues += apiSkill.getLevel();
-			}
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
-				queues += apiSkill.getLevel();
-			}
-		}
-		return queues;
-	}
-
-	/**
-	 * Returns the number of manufacture jobs that can be launched simultaneously. This will depend on the
-	 * skills <code>Mass Production</code> and <code>Advanced Mass Production</code>.
-	 * 
-	 * @return
-	 */
-	public int calculateManufactureQueues() {
-		int queues = 1;
-		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
-		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
-				queues += apiSkill.getLevel();
-			}
-			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
-				queues += apiSkill.getLevel();
-			}
-		}
-		return queues;
-	}
+	//	/**
+	//	 * Returns the number of invention jobs that can be launched simultaneously. This will depend on the skills
+	//	 * <code>Laboratory Operation</code> and <code>Advanced Laboratory Operation</code>.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public int calculateInventionQueues() {
+	//		int queues = 1;
+	//		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
+	//		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//		}
+	//		return queues;
+	//	}
+	//
+	//	/**
+	//	 * Returns the number of manufacture jobs that can be launched simultaneously. This will depend on the
+	//	 * skills <code>Mass Production</code> and <code>Advanced Mass Production</code>.
+	//	 * 
+	//	 * @return
+	//	 */
+	//	public int calculateManufactureQueues() {
+	//		int queues = 1;
+	//		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
+	//		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
+	//				queues += apiSkill.getLevel();
+	//			}
+	//		}
+	//		return queues;
+	//	}
 
 	/**
 	 * Return the elements collaborated by this object. For a Character it depends on the implementation being a
@@ -101,13 +97,13 @@ public class Pilot extends NeoComCharacter {
 	@Override
 	public List<ICollaboration> collaborate2Model(final String variant) {
 		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
-		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
-			// Add the Managers that apply to this Pilot
-			results.add(new AssetsManager(this));
-			//			results.add(new SkillsManager(this).initialize());
-			//			results.add(new BlueprintManager(this).initialize());
-			results.add(new PlanetaryManager(this).initialize());
-		}
+//		if (variant == ENeoComVariants.PILOT_MANAGERS.name()) {
+//			// Add the Managers that apply to this Pilot
+//			results.add(new AssetsManager(this));
+//			//			results.add(new SkillsManager(this).initialize());
+//			//			results.add(new BlueprintManager(this).initialize());
+//			results.add(new PlanetaryManager(this).initialize());
+//		}
 		return results;
 	}
 
@@ -172,48 +168,6 @@ public class Pilot extends NeoComCharacter {
 	//		Pilot.logger.info("<< EveChar.updateAssets");
 	//	}
 
-	//	/**
-	//	 * Download the blueprint list for this character from CCP using the new API over the eveapi library and
-	//	 * then processes the response. It creates our model Blueprints that before being stored at the database are
-	//	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
-	//	 * Current grouping is by IF-LOCATION-CONTAINER.
-	//	 */
-	//	@Override
-	//	@SuppressWarnings("rawtypes")
-	//	public synchronized void downloadBlueprints() {
-	//		try {
-	//			ModelAppConnector.getSingleton().startChrono();
-	//			// Clear any previous records with owner -1 from database.
-	//			ModelAppConnector.getSingleton().getDBConnector().clearInvalidRecords(this.getCharacterID());
-	//			// Download and parse the blueprints using the eveapi.
-	//			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
-	//			BlueprintsParser parser = new BlueprintsParser();
-	//			BlueprintsResponse response = parser.getResponse(this.getAuthorization());
-	//			if (null != response) {
-	//				Set<Blueprint> blueprints = response.getAll();
-	//				for (Blueprint bp : blueprints) {
-	//					try {
-	//						bplist.add(this.convert2Blueprint(bp));
-	//					} catch (final RuntimeException rtex) {
-	//						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-	//						Pilot.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
-	//						Pilot.logger.info("W> " + bp.toString());
-	//					}
-	//				}
-	//			}
-	//			// Pack the blueprints and store them on the database.
-	//			this.getAssetsManager().storeBlueprints(bplist);
-	//			ModelAppConnector.getSingleton().getDBConnector().replaceBlueprints(this.getCharacterID());
-	//			// Update the caching time to the time set by the eveapi.
-	//			blueprintsCacheTime = new Instant(response.getCachedUntil());
-	//			// Update the dirty state to signal modification of store structures.
-	//			this.setDirty(true);
-	//		} catch (final ApiException apie) {
-	//			apie.printStackTrace();
-	//		}
-	//		final Duration lapse = ModelAppConnector.getSingleton().timeLapse();
-	//		Pilot.logger.info("~~ Time lapse for [UPDATEBLUEPRINTS] - " + lapse);
-	//	}
 
 	//	/**
 	//	 * The industry jobs are obsolete so an update was triggered. Go to the CCP servers and get a fresh set of
@@ -308,14 +262,14 @@ public class Pilot extends NeoComCharacter {
 	//		Pilot.logger.info("<< EveChar.updateMarketOrders");
 	//	}
 
-	public int getSkillLevel(final int skillID) {
-		// Corporation api will have all skills maxed.
-		//		if (isCorporation()) return 5;
-		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
-		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills)
-			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
-		return 0;
-	}
+	//	public int getSkillLevel(final int skillID) {
+	//		// Corporation api will have all skills maxed.
+	//		//		if (isCorporation()) return 5;
+	//		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
+	//		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills)
+	//			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
+	//		return 0;
+	//	}
 
 	//	public String getURLForAvatar() {
 	//		return "http://image.eveonline.com/character/" + this.getCharacterID() + "_256.jpg";
@@ -346,32 +300,32 @@ public class Pilot extends NeoComCharacter {
 			// Balance information
 			AccountBalanceParser balanceparser = new AccountBalanceParser();
 			AccountBalanceResponse balanceresponse = balanceparser.getResponse(this.getAuthorization());
-			if (null != balanceresponse) {
+			if ( null != balanceresponse ) {
 				Set<EveAccountBalance> balance = balanceresponse.getAll();
-				if (balance.size() > 0) {
+				if ( balance.size() > 0 ) {
 					this.setAccountBalance(balance.iterator().next().getBalance());
 				}
 			}
 			// Character sheet information
 			CharacterSheetParser sheetparser = new CharacterSheetParser();
 			CharacterSheetResponse sheetresponse = sheetparser.getResponse(this.getAuthorization());
-			if (null != sheetresponse) {
+			if ( null != sheetresponse ) {
 				this.setCharacterSheet(sheetresponse);
 			}
 			// Skill list
 			SkillQueueParser skillparser = new SkillQueueParser();
 			SkillQueueResponse skillresponse = skillparser.getResponse(this.getAuthorization());
-			if (null != skillresponse) {
+			if ( null != skillresponse ) {
 				this.setSkillQueue(skillresponse.getAll());
 			}
 			// Skill in training
 			SkillInTrainingParser trainingparser = new SkillInTrainingParser();
 			SkillInTrainingResponse trainingresponse = trainingparser.getResponse(this.getAuthorization());
-			if (null != skillresponse) {
+			if ( null != skillresponse ) {
 				this.setSkillInTraining(trainingresponse);
 			}
 			// Update the last updated timestamp from the CharacterInfoResponse.
-			//			this.updateLastAccess(sheetresponse.getCachedUntil());
+//			getDownloadManager().updateCharacterDataTimeStamp(sheetresponse.getCachedUntil());
 		} catch (ApiException ex) {
 			ex.printStackTrace();
 		}

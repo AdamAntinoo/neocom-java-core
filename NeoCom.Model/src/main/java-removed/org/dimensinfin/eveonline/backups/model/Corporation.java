@@ -7,7 +7,7 @@
 //									This version includes the access to the latest 6.x version of eveapi libraries to
 //									download ad parse the CCP XML API data.
 //									Code integration that is not dependent on any specific platform.
-package org.dimensinfin.android.model;
+package org.dimensinfin.eveonline.neocom.model;
 
 //- IMPORT SECTION .........................................................................................
 import java.util.ArrayList;

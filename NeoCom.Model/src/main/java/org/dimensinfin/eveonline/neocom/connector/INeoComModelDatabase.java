@@ -16,14 +16,12 @@ import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.Login;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -58,7 +56,7 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	//	public List<NeoComAsset> queryAllAssetLocations(long identifier);
 
-	public Hashtable<String, Login> queryAllLogins();
+//	public Hashtable<String, Login> queryAllLogins();
 
 	//	public List<NeoComAsset> queryContainerContents(final long identifier);
 	//

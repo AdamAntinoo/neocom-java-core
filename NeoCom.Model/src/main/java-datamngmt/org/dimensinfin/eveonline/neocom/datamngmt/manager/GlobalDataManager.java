@@ -16,6 +16,16 @@ import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.CachingConnector;
 import com.beimin.eveapi.connectors.LoggingConnector;
+import com.beimin.eveapi.exception.ApiException;
+import com.beimin.eveapi.model.account.Character;
+import com.beimin.eveapi.model.shared.EveAccountBalance;
+import com.beimin.eveapi.parser.ApiAuthorization;
+import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
+import com.beimin.eveapi.parser.eve.CharacterInfoParser;
+import com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser;
+import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
+import com.beimin.eveapi.response.eve.CharacterInfoResponse;
+import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -24,14 +34,17 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
+import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
@@ -39,9 +52,11 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlane
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.planetary.ColonyCoreStructure;
+import org.dimensinfin.eveonline.neocom.model.PilotV1;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.joda.time.Instant;
 import org.modelmapper.ModelMapper;
@@ -52,8 +67,11 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -122,6 +140,7 @@ public class GlobalDataManager {
 
 	// --- M A N A G E R - S T O R E   F I E L D S
 	private static ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
+	private static ModelTimedCache modelCache = new ModelTimedCache();
 	/** Instance for the mapping of OK instances to the MVC compatible classes. */
 	private static final ModelMapper modelMapper = new ModelMapper();
 
@@ -177,8 +196,17 @@ public class GlobalDataManager {
 	//			else return GlobalDataManager.accessColonies4Credential(characterid);
 	//		}
 	//	}
+	public static String constructModelStoreReference (final GlobalDataManager.EDataUpdateJobs type, final long
+			identifier) {
+		return new StringBuffer("MS")
+				.append(type.name())
+				.append("/")
+				.append(identifier)
+				.toString();
+	}
 	public static String constructJobReference (final EDataUpdateJobs type, final long identifier) {
-		return new StringBuffer(type.name())
+		return new StringBuffer("JOB:")
+		.append(type.name())
 				.append("/")
 				.append(identifier)
 				.toString();
@@ -231,6 +259,105 @@ public class GlobalDataManager {
 		return (PlanetaryManager) managerCache.delete(EManagerCodes.PLANETARY_MANAGER, identifier);
 	}
 
+	// --- M O D E L - S T O R E   I N T E R F A C E
+	/**
+	 * Construct a minimal implementation of a Pilot from the XML api. This will get deprecated soon but during
+	 * some time It will be compatible and I will have a better view of what variants are being used.
+	 *
+	 * @param identifier character identifier from the valid Credential.
+	 * @return an instance of a PilotV1 class that has some of the required information to be shown on the ui at this
+	 * point.
+	 */
+	public static PilotV1 getPilotV1 (final int identifier) {
+		// Check if this request is already available on the cache.
+		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+		if ( null == hit ) {
+			final PilotV1 newchar = new PilotV1();
+			// Get the credential from the Store and check if this identifier has access to the XML api.
+			final Credential credential = DataManagementModelStore.getCredential4Id(identifier);
+			if ( null != credential ) {
+				// Check the Credential type.
+				if ( credential.isXMLCompatible() ) {
+					try {
+						// Copy the authorization and add to it the characterID
+						final ApiAuthorization authcopy = new ApiAuthorization(credential.getKeyCode(), identifier,
+								credential.getValidationCode());
+						// TODO It seems this is not required on this version of the object.
+						//		newchar.setAuthorization(authcopy);
+						// Copy the id to a non volatile field.
+						newchar.setCharacterId(identifier);
+						newchar.setName(credential.getAccountName());
+						// Access the delegated Character using the ApiKey XML old api.
+						final List<ApiKey> apikeyList = GlobalDataManager.getHelper().getApiKeysDao().queryForEq("keynumber",
+								credential.getKeyCode());
+						if(null!=apikeyList){
+							final ApiKey apikey = extendApiKey(apikeyList.get(0));
+							Collection<Character> coreList = apikey.getEveCharacters();
+							for (Character character : coreList) {
+								if ( character.getCharacterID() == identifier )
+								newchar.setDelegatedCharacter(character);
+							}
+						}
+
+						// Balance information
+						final PilotAccountBalanceParser balanceparser = new PilotAccountBalanceParser();
+						final AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
+						if ( null != balanceresponse ) {
+							final Set<EveAccountBalance> balance = balanceresponse.getAll();
+							if ( balance.size() > 0 ) {
+								newchar.setAccountBalance(balance.iterator().next().getBalance());
+							}
+						}
+
+						// Character information
+						final CharacterInfoParser infoparser = new CharacterInfoParser();
+						final CharacterInfoResponse inforesponse = infoparser.getResponse(authcopy);
+						if ( null != inforesponse ) {
+							newchar.setCharacterInfo(inforesponse);
+						}
+
+						// Clone data
+						final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
+						if ( null != cloneInformation ) newchar.setHomeLocation(cloneInformation.getHomeLocation());
+
+						// Store the result on the cache with the timing indicator to where this entry is valid.
+						final Instant expirationTime = new Instant(inforesponse.getCachedUntil()).plus(TimeUnit.HOURS.toMillis(2));
+						modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
+
+						// Store this same information on the database to record the TimeStammp.
+						final String reference = constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+						TimeStamp timestamp = NeoComDatabase.getImplementer().getTimeStampDao().queryForId(reference);
+						if ( null == timestamp ) timestamp = new TimeStamp(reference, expirationTime);
+						timestamp.setTimeStamp(expirationTime)
+						         .setCredentialId(credential.getAccountId())
+						         .store();
+					} catch (ApiException apie) {
+						apie.printStackTrace();
+					} catch (SQLException sqle) {
+						sqle.printStackTrace();
+					}
+				}
+			}
+			return newchar;
+		} else return (PilotV1) hit;
+	}
+	public static boolean checkPilotV1 (final int identifier) {
+		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+		if ( null == hit ) return false;
+		else return true;
+	}
+	/**
+	 * Deletes the current entry if found and forces a new download.
+	 *
+	 * @param identifier the pilot identifier to load.
+	 * @return
+	 */
+	public static PilotV1 udpatePilotV1 (final int identifier) {
+		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+		if ( null != hit ) modelCache.delete(EModelVariants.PILOTV1, identifier);
+		return getPilotV1(identifier);
+	}
+
 	// --- D A T A B A S E   A C C E S S   I N T E R F A C E
 
 	public static INeoComDBHelper getHelper () {
@@ -250,6 +377,48 @@ public class GlobalDataManager {
 	}
 
 	/**
+	 * Reads all the keys stored at the database and classifies them into a set of Login names.
+	 */
+	@Deprecated
+	public static List<ApiKey> accessAllApiKeys () {
+		logger.info(">> [GlobalDataManager.accessAllLogins]");
+		// Get access to all ApiKey registers
+		List<ApiKey> keyList = new Vector<ApiKey>();
+		try {
+			keyList = getHelper().getApiKeysDao().queryForAll();
+			// Extend the keys with some of the XML api information to get access to characters and credentials.
+			for (ApiKey key : keyList) {
+				key = GlobalDataManager.extendApiKey(key);
+			}
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			logger.warn("W [GlobalDataManager.accessAllLogins]> Exception reading all Logins. " + sqle.getMessage());
+		} finally {
+			logger.info("<< [GlobalDataManager.accessAllLogins]");
+		}
+		return keyList;
+	}
+
+	private static ApiKey extendApiKey ( ApiKey basekey) {
+		// Check if this request is already available on the cache.
+		try {
+			// Get the ApiKey Information block.
+			ApiAuthorization authorization = new ApiAuthorization(basekey.getKeynumber(), basekey.getValidationcode());
+			ApiKeyInfoParser infoparser = new ApiKeyInfoParser();
+			ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
+			if ( null != inforesponse ) {
+				basekey.setAuthorization(authorization)
+				       .setDelegated(inforesponse.getApiKeyInfo());
+				//				.setCachedUntil(inforesponse.getCachedUntil());
+				return basekey;
+			}
+		} catch (ApiException apie) {
+			apie.printStackTrace();
+		}
+		return basekey;
+	}
+
+	/**
 	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
 	 * interpretation used by the application.
 	 */
@@ -261,7 +430,7 @@ public class GlobalDataManager {
 			credentialList = credentialDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
-			logger.warn("W [NeoComDatabase.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
+			logger.warn("W [GlobalDataManager.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
 		}
 		return credentialList;
 	}
@@ -303,7 +472,7 @@ public class GlobalDataManager {
 
 			// Add pending downloaded information.
 			for (Colony col : colonyList) {
-				final List<ColonyCoreStructure> struc = accessColonyStructures4Planet(credential.getAccountId(), col.getPlanetId());
+				final List<ColonyStructure> struc = accessColonyStructures4Planet(credential.getAccountId(), col.getPlanetId());
 				// Check that the structures have been stored at the database. If this fails go to download them.
 				if ( struc.size() < 1 )
 					col.setStructures(downloadStructures4Colony(credential.getAccountId(), col.getPlanetId()));
@@ -318,9 +487,9 @@ public class GlobalDataManager {
 		return colonyList;
 	}
 
-	public static List<ColonyCoreStructure> accessColonyStructures4Planet (final int identifier, final int planet) {
+	public static List<ColonyStructure> accessColonyStructures4Planet (final int identifier, final int planet) {
 		logger.info(">> [GlobalDataManager.accessColonyStructures4Planet]");
-		List<ColonyCoreStructure> structureList = new ArrayList<>();
+		List<ColonyStructure> structureList = new ArrayList<>();
 		try {
 			try {
 				// Compose the unique key reference.
@@ -332,7 +501,7 @@ public class GlobalDataManager {
 				if ( null != structureData ) {
 					for (ColonyStorage storage : structureData) {
 						// Reconstruct the structure from the serialized data.
-						final ColonyCoreStructure structure = objectMapper.readValue(storage.getColonySerialization(), ColonyCoreStructure.class);
+						final ColonyStructure structure = objectMapper.readValue(storage.getColonySerialization(), ColonyStructure.class);
 						structureList.add(structure);
 					}
 				}
@@ -374,12 +543,12 @@ public class GlobalDataManager {
 						if ( null != colonyStructures ) {
 							// Add the original data to the colony if we need some more information later.
 							col.setStructuresData(colonyStructures);
-							List<ColonyCoreStructure> results = new ArrayList<>();
+							List<ColonyStructure> results = new ArrayList<>();
 
 							// Process the structures converting the pin to the Colony structures compatible with MVC.
 							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
 							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-								ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
+								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
 								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 								try {
 									final String serialized = objectMapper.writeValueAsString(newstruct);
@@ -411,9 +580,9 @@ public class GlobalDataManager {
 		return colonies;
 	}
 
-	public static List<ColonyCoreStructure> downloadStructures4Colony (final int characterid, final int planetid) {
+	public static List<ColonyStructure> downloadStructures4Colony (final int characterid, final int planetid) {
 		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
-		List<ColonyCoreStructure> results = new ArrayList<>();
+		List<ColonyStructure> results = new ArrayList<>();
 		// Get the Credential that matched the received identifier.
 		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
 		if ( null != credential ) {
@@ -423,7 +592,7 @@ public class GlobalDataManager {
 				// Process the structures converting the pin to the Colony structures compatible with MVC.
 				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
 				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-					ColonyCoreStructure newstruct = modelMapper.map(structureOK, ColonyCoreStructure.class);
+					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
 					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 					try {
 						final String serialized = objectMapper.writeValueAsString(newstruct);
@@ -498,6 +667,60 @@ public class GlobalDataManager {
 			final AbstractManager hit = _managerCacheStore.get(locator);
 			_managerCacheStore.remove(locator);
 			return hit;
+		}
+	}
+	// ........................................................................................................
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class ModelTimedCache {
+
+		// - F I E L D - S E C T I O N ............................................................................
+		private Hashtable<String, ICollaboration> _instanceCacheStore = new Hashtable();
+		private Hashtable<String, Instant> _timeCacheStore = new Hashtable();
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		public int size () {
+			return _instanceCacheStore.size();
+		}
+
+		public ICollaboration access (final EModelVariants variant, long longIdentifier) {
+			if ( variant == EModelVariants.PILOTV1 ) {
+				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
+				final ICollaboration hit = _instanceCacheStore.get(locator);
+				if ( null != hit ) {
+					final Instant expitationTime = _timeCacheStore.get(locator);
+					if ( expitationTime.isBefore(Instant.now()) ) return null;
+					else return hit;
+				}
+			}
+			return null;
+		}
+
+		public ICollaboration delete (final EModelVariants variant, long longIdentifier) {
+			if ( variant == EModelVariants.PILOTV1 ) {
+				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
+				final ICollaboration hit = _instanceCacheStore.get(locator);
+				_instanceCacheStore.put(locator, null);
+				return hit;
+			}
+			return null;
+		}
+
+		public boolean store (final EModelVariants variant, final ICollaboration instance, final Instant expirationTime, final long longIdentifier) {
+			// Store command for PILOTV1 instances.
+			if ( variant == EModelVariants.PILOTV1 ) {
+				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
+				_instanceCacheStore.put(locator, instance);
+				_timeCacheStore.put(locator, expirationTime);
+				return true;
+			}
+			// Store command for APIKEY instances.
+			if ( variant == EModelVariants.APIKEY ) {
+				final String locator = EModelVariants.APIKEY.name() + "/" + Long.valueOf(longIdentifier).toString();
+				_instanceCacheStore.put(locator, instance);
+				_timeCacheStore.put(locator, expirationTime);
+				return true;
+			}
+			return false;
 		}
 	}
 	// ........................................................................................................
