@@ -470,6 +470,22 @@ public class ColonyStructure extends NeoComExpandableNode {
 		if ( getTypeId() == 2490 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
 		if ( getTypeId() == 2485 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
+		// Ice structures
+		if ( getTypeId() == 2533 ) return EPlanetaryStructureType.COMMAND_CENTER;
+		if ( getTypeId() == 2552 ) return EPlanetaryStructureType.LAUNCHPAD;
+		if ( getTypeId() == 2257 ) return EPlanetaryStructureType.STORAGE;
+		if ( getTypeId() == 3061 ) return EPlanetaryStructureType.EXTRACTOR;
+		if ( getTypeId() == 2493 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if ( getTypeId() == 2491 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+
+		// Storm structures
+		if ( getTypeId() == 2550 ) return EPlanetaryStructureType.COMMAND_CENTER;
+		if ( getTypeId() == 2557 ) return EPlanetaryStructureType.LAUNCHPAD;
+		if ( getTypeId() == 2561 ) return EPlanetaryStructureType.STORAGE;
+		if ( getTypeId() == 3067 ) return EPlanetaryStructureType.EXTRACTOR;
+		if ( getTypeId() == 2483 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if ( getTypeId() == 2484 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+
 		return EPlanetaryStructureType.DEFAULT;
 	}
 
