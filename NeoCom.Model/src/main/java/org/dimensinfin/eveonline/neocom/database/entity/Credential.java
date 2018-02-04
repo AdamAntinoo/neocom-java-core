@@ -24,6 +24,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class Credential extends NeoComNode {
 	private static Logger logger = LoggerFactory.getLogger("Credential");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(id=true,index = true)
+	@DatabaseField(id = true, index = true)
 	private int accountId = -2;
 	@DatabaseField
 	private String accountName = "-NAME-";
@@ -76,7 +77,7 @@ public class Credential extends NeoComNode {
 		this();
 		accountId = newAccountIdentifier;
 		try {
-			final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getNewDBConnector().getCredentialDao();
+			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
 			// Try to create the key. It fails then  it was already created.
 			credentialDao.create(this);
 		} catch (final SQLException sqle) {
@@ -86,19 +87,21 @@ public class Credential extends NeoComNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	/**
 	 * Update the values at the database record.
 	 */
 	public Credential store () {
-			try {
-				final Dao<Credential, String> credentialDao = ModelAppConnector.getSingleton().getNewDBConnector().getCredentialDao();
-				credentialDao.update(this);
-				Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
-			} catch (final SQLException sqle) {
-				sqle.printStackTrace();
-			}
+		try {
+			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
+			credentialDao.update(this);
+			Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+		}
 		return this;
 	}
+
 	/**
 	 * Check all the cache time stamps for existence and stored at the database.
 	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
@@ -110,7 +113,7 @@ public class Credential extends NeoComNode {
 		List<TimeStamp> timesList = new ArrayList();
 		try {
 			// Get all the timeStamps for this credential.
-			final Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getHelper().getTimeStampDao();
+			final Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
 			QueryBuilder<TimeStamp, String> queryBuilder = timeStampDao.queryBuilder();
 			Where<TimeStamp, String> where = queryBuilder.where();
 			where.eq("credentialId", getAccountId());

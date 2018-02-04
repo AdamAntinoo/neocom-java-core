@@ -102,7 +102,8 @@ public class PlanetaryManager extends AbstractManager {
 		// Call the Global manager to get the list of Colonies that belong to this user.
 		synchronized (colonies) {
 			colonies.clear();
-			colonies.addAll(GlobalDataManager.accessColonies4Credential(credential));
+			// TODO Remove the access to the database until I have solved duplication problems.
+			colonies.addAll(GlobalDataManager.downloadColonies4Credential(credential));
 		}
 		return colonies;
 	}

@@ -117,7 +117,7 @@ public class DownloadManager {
 		this.credential = credential;
 		// Preload the dao.
 		try {
-			assetDao =GlobalDataManager.getHelper().getAssetDao();
+			assetDao =GlobalDataManager.getNeocomDBHelper().getAssetDao();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -333,7 +333,7 @@ public class DownloadManager {
 
 	public void updateTargetDataTimeStamp (final String reference, final Instant timePoint) {
 		try {
-			_assetsCacheTime = GlobalDataManager.getHelper().getTimeStampDao().queryForId(reference);
+			_assetsCacheTime = GlobalDataManager.getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 			//		final Instant newExpirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
 			if ( null == _assetsCacheTime ) {
 				_assetsCacheTime = new TimeStamp(reference, timePoint)

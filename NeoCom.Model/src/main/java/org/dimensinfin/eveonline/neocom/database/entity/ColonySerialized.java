@@ -52,7 +52,7 @@ public class ColonySerialized {
 		this();
 		pinIdentifier = identifier;
 		try {
-			Dao<ColonySerialized, String> colonyStorageDao = GlobalDataManager.getHelper().getColonySerializedDao();
+			Dao<ColonySerialized, String> colonyStorageDao = GlobalDataManager.getNeocomDBHelper().getColonySerializedDao();
 			// Try to create the key. It fails then  it was already created.
 			colonyStorageDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
@@ -87,7 +87,7 @@ public class ColonySerialized {
 	public ColonySerialized store () {
 		if ( (StringUtils.isNotEmpty(planetIdentifier)) && (null!=colonySerialization) ) {
 			try {
-				Dao<ColonySerialized, String> colonyStorageDao = GlobalDataManager.getHelper().getColonySerializedDao();
+				Dao<ColonySerialized, String> colonyStorageDao = GlobalDataManager.getNeocomDBHelper().getColonySerializedDao();
 				// Try to create the key. It fails then  it was already created.
 				colonyStorageDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {

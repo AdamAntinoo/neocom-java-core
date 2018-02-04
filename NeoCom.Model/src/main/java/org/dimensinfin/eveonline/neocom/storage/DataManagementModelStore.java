@@ -69,7 +69,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 *
 	 * @return the single global sinleton.
 	 */
-	protected static DataManagementModelStore getSingleton () {
+	public static DataManagementModelStore getSingleton () {
 		//		NeoComModelStore.logger.info(">> [NeoComModelStore.getSingleton]");
 		if ( null == DataManagementModelStore.singleton ) {
 			// Initiate the recovery.

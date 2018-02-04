@@ -63,7 +63,7 @@ public class ApiKey {
 	public ApiKey (final String login) {
 		this.login = login;
 		try {
-			Dao<ApiKey, String> apikeyDao = ModelAppConnector.getSingleton().getNewDBConnector().getApiKeysDao();
+			Dao<ApiKey, String> apikeyDao = GlobalDataManager.getNeocomDBHelper().getApiKeysDao();
 			// Try to create the key. It fails then  it was already created.
 			apikeyDao.create(this);
 		} catch (final SQLException sqle) {
@@ -121,7 +121,7 @@ public class ApiKey {
 
 	public ApiKey store () {
 		try {
-			Dao<ApiKey, String> apikeyDao = GlobalDataManager.getHelper().getApiKeysDao();
+			Dao<ApiKey, String> apikeyDao = GlobalDataManager.getNeocomDBHelper().getApiKeysDao();
 			apikeyDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();

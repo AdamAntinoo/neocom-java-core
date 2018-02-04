@@ -26,8 +26,13 @@ import com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser;
 import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
 import com.beimin.eveapi.response.shared.AccountBalanceResponse;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -39,6 +44,7 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
+import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
@@ -48,23 +54,32 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
+import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
+
 import org.joda.time.Instant;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,6 +89,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -90,7 +106,7 @@ import java.util.concurrent.TimeUnit;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class GlobalDataManager {
-	// - P U B L I C - S E C T I O N ..........................................................................
+	// --- P U B L I C   E N U M E R A T O R S
 	public enum EDataUpdateJobs {
 		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
 	}
@@ -99,7 +115,7 @@ public class GlobalDataManager {
 		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS
 	}
 
-	// - P R I V A T E - S E C T I O N .........................................................................
+	// --- P R I V A T E   E N U M E R A T O R S
 	private enum EModelVariants {
 		PILOTV1, APIKEY
 	}
@@ -111,7 +127,7 @@ public class GlobalDataManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(GlobalDataManager.class);
 	private static final String SERVER_DATASOURCE = "tranquility";
-	private static final long CHARACTER_PLANETS_DURATION = TimeUnit.SECONDS.toMillis(600);
+//	private static final long CHARACTER_PLANETS_DURATION = TimeUnit.SECONDS.toMillis(600);
 
 	/** Initialize the beimin Eve Api connector to remove SSL certification. From this point on we can use the beimin
 	 * XML api to access CCP data. */
@@ -127,8 +143,55 @@ public class GlobalDataManager {
 	 */
 	//	public static final GlobalDataManager GDM = new GlobalDataManager();
 
-	// - S T A T I C - F I E L D S - S E C T I O N ............................................................
-	// --- S D E   F I E L D S
+	// --- C O N F I G U R A T I O N   S E C T I O N
+	private static IConfigurationProvider configurationManager = null;
+
+	public static void connectConfigurationManager (final IConfigurationProvider newconfigurationProvider) {
+		configurationManager = newconfigurationProvider;
+		configurationManager.initialize();
+	}
+
+	public static String getResourceString (final String key) {
+		return configurationManager.getResourceString(key);
+	}
+
+	public static String getResourceString (final String key, final String defaultValue) {
+		return configurationManager.getResourceString(key, defaultValue);
+	}
+
+	public static int getResourceInt (final String key) {
+		try {
+			return Integer.valueOf(configurationManager.getResourceString(key)).intValue();
+		} catch (NumberFormatException nfe) {
+			return 0;
+		}
+	}
+
+	public static int getResourceInt (final String key, final String defaultValue) {
+		try {
+			return Integer.valueOf(configurationManager.getResourceString(key, defaultValue)).intValue();
+		} catch (NumberFormatException nfe) {
+			return 0;
+		}
+	}
+
+	public static long getResourceLong (final String key) {
+		try {
+			return Long.valueOf(configurationManager.getResourceString(key)).longValue();
+		} catch (NumberFormatException nfe) {
+			return 0;
+		}
+	}
+
+	public static long getResourceLong (final String key, final String defaultValue) {
+		try {
+			return Long.valueOf(configurationManager.getResourceString(key, defaultValue)).longValue();
+		} catch (NumberFormatException nfe) {
+			return 0;
+		}
+	}
+
+	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
 	private static final Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<String, Long> ESICacheTimes = new Hashtable();
@@ -138,64 +201,107 @@ public class GlobalDataManager {
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES.name(), TimeUnit.SECONDS.toMillis(600));
 	}
 
-	// --- M A N A G E R - S T O R E   F I E L D S
-	private static ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
-	private static ModelTimedCache modelCache = new ModelTimedCache();
-	/** Instance for the mapping of OK instances to the MVC compatible classes. */
+	private static Hashtable<Integer, MarketDataSet> buyMarketDataCache = new Hashtable<Integer, MarketDataSet>(1000);
+	private static Hashtable<Integer, MarketDataSet> sellMarketDataCache = new Hashtable<Integer, MarketDataSet>(1000);
+
+	private static final ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
+	private static final ModelTimedCache modelCache = new ModelTimedCache();
+
+	// --- M A P P E R S   &   T R A N S F O R M E R S   S E C T I O N
+	/**
+	 * Instance for the mapping of OK instances to the MVC compatible classes.
+	 */
 	private static final ModelMapper modelMapper = new ModelMapper();
 
 	static {
 		modelMapper.getConfiguration()
-		           .setFieldMatchingEnabled(true)
-		           .setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
+				.setFieldMatchingEnabled(true)
+				.setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
 	}
 
-	/** Jackson mapper to use for object json serialization. */
-	private static final ObjectMapper objectMapper = new ObjectMapper();
+	/**
+	 * Jackson mapper to use for object json serialization.
+	 */
+	private static final ObjectMapper jsonMapper = new ObjectMapper();
 
 	static {
-		objectMapper.registerModule(new JodaModule());
+		jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		jsonMapper.registerModule(new JodaModule());
+		// Add our own serializers.
+		SimpleModule neocomSerializerModule = new SimpleModule();
+		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
+		neocomSerializerModule.addSerializer(Credential.class, new CredentialSerializer());
+		jsonMapper.registerModule(neocomSerializerModule);
 	}
 
-	/** Background executor to use for long downloading jobs. */
+	// --- M U L T I T H R E A D I N G   S E C T I O N
+	/**
+	 * Background executor to use for long downloading jobs.
+	 */
 	private static final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
+	private static final ExecutorService marketDataExecutor = Executors.newFixedThreadPool(2);
+	private static final ExecutorService uiDataExecutor = Executors.newSingleThreadExecutor();
+	public void shutdownExecutors () {
+		try {
+			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown downloadExecutor");
+			downloadExecutor.shutdown();
+			downloadExecutor.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (final InterruptedException iee) {
+			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+		} finally {
+			if ( !downloadExecutor.isTerminated() ) {
+				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+			}
+			downloadExecutor.shutdownNow();
+			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
+		}
+		try {
+			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown marketDataExecutor");
+			marketDataExecutor.shutdown();
+			marketDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (final InterruptedException iee) {
+			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+		} finally {
+			if ( !marketDataExecutor.isTerminated() ) {
+				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+			}
+			marketDataExecutor.shutdownNow();
+			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
+		}
+		try {
+			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown uiDataExecutor");
+			uiDataExecutor.shutdown();
+			uiDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
+		} catch (final InterruptedException iee) {
+			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+		} finally {
+			if ( !uiDataExecutor.isTerminated() ) {
+				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+			}
+			uiDataExecutor.shutdownNow();
+			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
+		}
+	}
+
+	public static Future<?> submitJob2Download(final Runnable task) {
+		return downloadExecutor.submit(task);
+	}
+	public static Future<?> submitJob2Generic(final Runnable task) {
+		return downloadExecutor.submit(task);
+	}
 
 	// --- D A T A B A S E   F I E L D S
-	/** Reference to the NeoCom persistece database Dao provider. This filed should be injected on startup. */
-	private static INeoComDBHelper helper = null;
+	/**
+	 * Reference to the NeoCom persistece database Dao provider. This filed should be injected on startup.
+	 */
+	private static INeoComDBHelper neocomDBHelper = null;
+	/**
+	 * Reference to the SDE database managers to access the Eve Online downloaded database.
+	 */
+	private static ISDEDBHelper neocomSDEHelper = null;
 
 	// - S T A T I C - M E T H O D S - S E C T I O N ..........................................................
-	// --- S D E   I N T E R F A C E
-	public static EveItem searchItemById (final int typeId) {
-		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
-		if ( itemCache.containsKey(typeId) ) return itemCache.get(typeId);
-		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
-	}
-
-	public static EveLocation searchLocationById (final long locationId) {
-		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
-		if ( locationCache.containsKey(locationId) ) return locationCache.get(locationId);
-		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
-	}
-	// --- C A C H E   I N T E R F A C E
-
-	// --- M O D E L - F A C T O R Y   I N T E R F A C E
-	//	public static List<Colony> accessColonies4Credential (final int characterid) {
-	//		// Get the Credential that matched the received identifier.
-	//		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-	//		if ( null != credential ) {
-	//			final PlanetaryManager manager = GlobalDataManager.getPlanetaryManager(credential);
-	//			final List<Colony> colonies = manager.accessAllColonies();
-	//			return colonies;
-	//		} else {
-	//			// Possible that because the application has been previously removed from memory that data is not reloaded.
-	//			// Call the reloading mechanism and have a second opportunity.
-	//			DataManagementModelStore.accessCredentialList();
-	//			credential = DataManagementModelStore.getCredential4Id(characterid);
-	//			if ( null == credential ) return new ArrayList<>();
-	//			else return GlobalDataManager.accessColonies4Credential(characterid);
-	//		}
-	//	}
+	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference (final GlobalDataManager.EDataUpdateJobs type, final long
 			identifier) {
 		return new StringBuffer("MS")
@@ -221,6 +327,48 @@ public class GlobalDataManager {
 				.toString();
 	}
 
+	// --- S D E   I N T E R F A C E
+	public static EveItem searchItemById (final int typeId) {
+		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
+		if ( itemCache.containsKey(typeId) ) return itemCache.get(typeId);
+		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
+	}
+
+	public static EveLocation searchLocationById (final long locationId) {
+		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
+		if ( locationCache.containsKey(locationId) ) return locationCache.get(locationId);
+		else return ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
+	}
+
+	// --- C A C H E   I N T E R F A C E
+	public synchronized static void readMarketDataCacheFromStorage () {
+		// Get the configured cache path.
+		final String marketDataCachePath = GlobalDataManager.getResourceString("R.cache.marketdata.cachepath", "./")
+				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename", "MarketDataService.store");
+		File modelStoreFile = new File(marketDataCachePath);
+		try {
+			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
+			final ObjectInputStream input = new ObjectInputStream(buffer);
+			try {
+				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
+				buyMarketDataCache = (Hashtable<Integer, MarketDataSet>) input.readObject();
+				logger.info("-- [MarketDataServer.readCacheFromStorage]> Restored cache BUY: {} items", buyMarketDataCache.size());
+				sellMarketDataCache = (Hashtable<Integer, MarketDataSet>) input.readObject();
+				logger.info("-- [MarketDataServer.readCacheFromStorage]> Restored cache SELL: {} items", sellMarketDataCache.size());
+			} finally {
+				input.close();
+				buffer.close();
+			}
+		} catch (final ClassNotFoundException ex) {
+			logger.warn("W> [MarketDataServer.readCacheFromStorage]> ClassNotFoundException."); //$NON-NLS-1$
+		} catch (final FileNotFoundException fnfe) {
+			logger.warn("W> [MarketDataServer.readCacheFromStorage]> FileNotFoundException."); //$NON-NLS-1$
+		} catch (final IOException ex) {
+			logger.warn("W> [MarketDataServer.readCacheFromStorage]> IOException."); //$NON-NLS-1$
+		} catch (final RuntimeException rex) {
+			rex.printStackTrace();
+		}
+	}
 
 	// --- M A N A G E R - S T O R E   I N T E R F A C E
 	public static AssetsManager getAssetsManager (final Credential credential) {
@@ -290,7 +438,7 @@ public class GlobalDataManager {
 						newchar.setCharacterId(identifier);
 						newchar.setName(credential.getAccountName());
 						// Access the delegated Character using the ApiKey XML old api.
-						final List<ApiKey> apikeyList = GlobalDataManager.getHelper().getApiKeysDao().queryForEq("keynumber",
+						final List<ApiKey> apikeyList = GlobalDataManager.getNeocomDBHelper().getApiKeysDao().queryForEq("keynumber",
 								credential.getKeyCode());
 						if ( null != apikeyList ) {
 							final ApiKey apikey = extendApiKey(apikeyList.get(0));
@@ -328,11 +476,11 @@ public class GlobalDataManager {
 
 						// Store this same information on the database to record the TimeStammp.
 						final String reference = constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
-						TimeStamp timestamp = getHelper().getTimeStampDao().queryForId(reference);
+						TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 						if ( null == timestamp ) timestamp = new TimeStamp(reference, expirationTime);
 						timestamp.setTimeStamp(expirationTime)
-						         .setCredentialId(credential.getAccountId())
-						         .store();
+								.setCredentialId(credential.getAccountId())
+								.store();
 					} catch (ApiException apie) {
 						apie.printStackTrace();
 					} catch (SQLException sqle) {
@@ -363,22 +511,33 @@ public class GlobalDataManager {
 	}
 
 	// --- D A T A B A S E   A C C E S S   I N T E R F A C E
-
-	public static INeoComDBHelper getHelper () {
-		// TODO During the time the old and new implementations share the code make the implementer the one at the Connector.
-		if ( null == helper ) try {
-			helper = ModelAppConnector.getSingleton().getNewDBConnector();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		if ( null == helper )
-			throw new RuntimeException("[NeoComDatabase]> NeoCom database helper not defined. No access to platform library to get database results.");
-		return helper;
+	public static INeoComDBHelper getNeocomDBHelper () {
+		if ( null == neocomDBHelper )
+			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
+		return neocomDBHelper;
 	}
 
-	public static void setHelper (final INeoComDBHelper newImplementer) {
-		if ( null != newImplementer ) helper = newImplementer;
+	public static ISDEDBHelper getSDEDBHelper () {
+		if ( null == neocomSDEHelper )
+			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
+		return neocomSDEHelper;
 	}
+
+	public static void connectNeoComDBConnector (final INeoComDBHelper newhelper) {
+		if ( null != newhelper ) neocomDBHelper = newhelper;
+		else
+			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
+	}
+
+	public static void connectSDEDBConnector (final ISDEDBHelper newhelper) {
+		if ( null != newhelper ) neocomSDEHelper = newhelper;
+		else
+			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
+	}
+
+//	public static void setNeocomDBHelper (final INeoComDBHelper newImplementer) {
+//		if (null != newImplementer) neocomDBHelper = newImplementer;
+//	}
 
 	/**
 	 * Reads all the keys stored at the database and classifies them into a set of Login names.
@@ -389,7 +548,7 @@ public class GlobalDataManager {
 		// Get access to all ApiKey registers
 		List<ApiKey> keyList = new Vector<ApiKey>();
 		try {
-			keyList = getHelper().getApiKeysDao().queryForAll();
+			keyList = getNeocomDBHelper().getApiKeysDao().queryForAll();
 			// Extend the keys with some of the XML api information to get access to characters and credentials.
 			for (ApiKey key : keyList) {
 				key = GlobalDataManager.extendApiKey(key);
@@ -412,7 +571,7 @@ public class GlobalDataManager {
 			ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
 			if ( null != inforesponse ) {
 				basekey.setAuthorization(authorization)
-				       .setDelegated(inforesponse.getApiKeyInfo());
+						.setDelegated(inforesponse.getApiKeyInfo());
 				//				.setCachedUntil(inforesponse.getCachedUntil());
 				return basekey;
 			}
@@ -429,7 +588,7 @@ public class GlobalDataManager {
 	public static List<Credential> accessAllCredentials () {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
-			final Dao<Credential, String> credentialDao = GlobalDataManager.getHelper().getCredentialDao();
+			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
 			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
 			credentialList = credentialDao.query(preparedQuery);
 		} catch (java.sql.SQLException sqle) {
@@ -452,7 +611,7 @@ public class GlobalDataManager {
 		List<Colony> colonyList = new ArrayList<>();
 		try {
 			// SELECT * FROM COLONY WHERE OWNERID = <identifier>
-			Dao<Colony, String> colonyDao = getHelper().getColonyDao();
+			Dao<Colony, String> colonyDao = getNeocomDBHelper().getColonyDao();
 			QueryBuilder<Colony, String> queryBuilder = colonyDao.queryBuilder();
 			Where<Colony, String> where = queryBuilder.where();
 			where.eq("ownerID", credential.getAccountId());
@@ -463,7 +622,7 @@ public class GlobalDataManager {
 			if ( colonyList.size() < 1 ) {
 				// Check if there is a valid TS.
 				final String reference = constructJobReference(EDataUpdateJobs.COLONYDATA, credential.getAccountId());
-				final TimeStamp ts = GlobalDataManager.getHelper().getTimeStampDao().queryForId(reference);
+				final TimeStamp ts = GlobalDataManager.getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 				if ( null == ts ) {
 					// No time stamp so force a request for this data now.
 					return GlobalDataManager.downloadColonies4Credential(credential);
@@ -500,12 +659,12 @@ public class GlobalDataManager {
 				final String ref = constructPlanetStorageIdentifier(identifier, planet);
 				logger.info(">> [GlobalDataManager.accessColonyStructures4Planet]> Structure reference: {}", ref);
 				// SELECT * FROM ColonyStorage WHERE planetIdentifier = <identifier>
-				final List<ColonyStorage> structureData = GlobalDataManager.getHelper()
-				                                                           .getColonyStorageDao().queryForEq("planetIdentifier", ref);
+				final List<ColonyStorage> structureData = GlobalDataManager.getNeocomDBHelper()
+						.getColonyStorageDao().queryForEq("planetIdentifier", ref);
 				if ( null != structureData ) {
 					for (ColonyStorage storage : structureData) {
 						// Reconstruct the structure from the serialized data.
-						final ColonyStructure structure = objectMapper.readValue(storage.getColonySerialization(), ColonyStructure.class);
+						final ColonyStructure structure = jsonMapper.readValue(storage.getColonySerialization(), ColonyStructure.class);
 						structureList.add(structure);
 					}
 				}
@@ -530,8 +689,8 @@ public class GlobalDataManager {
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
 			// TODO Another and more simple way to execute the command.
-			assetList = getHelper().getAssetDao().queryForEq("parentAssetID", Long.valueOf(containerId).toString());
-			//			Dao<NeoComAsset, String> assetDao = getHelper().getAssetDao();
+			assetList = getNeocomDBHelper().getAssetDao().queryForEq("parentAssetID", Long.valueOf(containerId).toString());
+			//			Dao<NeoComAsset, String> assetDao = getNeocomDBHelper().getAssetDao();
 			//			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			//			Where<NeoComAsset, String> where = queryBuilder.where();
 			//			// TODO Check if this gives the same results because a container only can belong to an owner. If we have the
@@ -581,7 +740,7 @@ public class GlobalDataManager {
 								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
 								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 								try {
-									final String serialized = objectMapper.writeValueAsString(newstruct);
+									final String serialized = jsonMapper.writeValueAsString(newstruct);
 									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), col.getPlanetId());
 									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
 											.setPlanetIdentifier(storageIdentifier)
@@ -625,7 +784,7 @@ public class GlobalDataManager {
 					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
 					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 					try {
-						final String serialized = objectMapper.writeValueAsString(newstruct);
+						final String serialized = jsonMapper.writeValueAsString(newstruct);
 						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
 						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
 								.setPlanetIdentifier(storageIdentifier)
@@ -648,6 +807,18 @@ public class GlobalDataManager {
 		return results;
 	}
 
+	// --- S E R I A L I Z A T I O N   I N T E R F A C E
+	public static String serializeCredentialList(final List<Credential> credentials){
+		// Use my own serialization control to return the data to generate exactly what I want.
+		 String contentsSerialized="[jsonClass: \"Exception\"," +
+				 "message: \"Unprocessed data. Possible JsonProcessingException exception.\"]";
+		try {
+			contentsSerialized = jsonMapper.writeValueAsString(credentials);
+		} catch (JsonProcessingException jpe) {
+			jpe.printStackTrace();
+		}
+		return contentsSerialized;
+	}
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -752,6 +923,53 @@ public class GlobalDataManager {
 				return true;
 			}
 			return false;
+		}
+	}
+	// ........................................................................................................
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class ShipSerializer extends JsonSerializer<Ship> {
+		// - F I E L D - S E C T I O N ............................................................................
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		@Override
+		public void serialize (final Ship value, final JsonGenerator jgen, final SerializerProvider provider)
+				throws IOException, JsonProcessingException {
+			jgen.writeStartObject();
+			jgen.writeStringField("jsonClass", value.getJsonClass());
+			jgen.writeNumberField("assetId", value.getAssetId());
+			jgen.writeNumberField("typeId", value.getTypeId());
+			jgen.writeNumberField("ownerId", value.getOwnerID());
+			jgen.writeStringField("name", value.getItemName());
+			jgen.writeStringField("category", value.getCategory());
+			jgen.writeStringField("groupName", value.getGroupName());
+			jgen.writeStringField("tech", value.getTech());
+			jgen.writeStringField("userLabel", value.getUserLabel());
+			jgen.writeNumberField("price", value.getItem().getPrice());
+			jgen.writeNumberField("highesBuyerPrice", value.getItem().getHighestBuyerPrice().getPrice());
+			jgen.writeNumberField("lowerSellerPrice", value.getItem().getLowestSellerPrice().getPrice());
+			jgen.writeObjectField("item", value.getItem());
+			jgen.writeEndObject();
+		}
+	}
+	// ........................................................................................................
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class CredentialSerializer extends JsonSerializer<Credential> {
+		// - F I E L D - S E C T I O N ............................................................................
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		@Override
+		public void serialize (final Credential value, final JsonGenerator jgen, final SerializerProvider provider)
+				throws IOException, JsonProcessingException {
+			jgen.writeStartObject();
+			jgen.writeStringField("jsonClass", value.getJsonClass());
+			jgen.writeNumberField("accountId", value.getAccountId());
+			jgen.writeStringField("accountName", value.getAccountName());
+			jgen.writeStringField("tokenType", value.getTokenType());
+			jgen.writeBooleanField("isActive", value.isActive());
+			jgen.writeBooleanField("isXML", value.isXMLCompatible());
+			jgen.writeBooleanField("isESI", value.isESICompatible());
+//			jgen.writeObjectField("pilot", GlobalDataManager.getPilotV1(value.getAccountId()));
+			jgen.writeEndObject();
 		}
 	}
 	// ........................................................................................................

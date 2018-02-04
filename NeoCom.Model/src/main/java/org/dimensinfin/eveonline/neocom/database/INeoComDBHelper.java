@@ -28,8 +28,9 @@ import java.sql.SQLException;
 
 /**
  * This interface defines the methods that should be implemented at the final Helper implementation so all
- * platforms share a compatible api. During development this api will include the contents of the current
- * <code>INeoComModelDatabase</code>.
+ * platforms share a compatible api. This helper is associated to the NeoCom private database only. That database
+ * is used through Dao elements and the api exports the same functionality that are found on Android database
+ * helpers.
  *
  * @author Adam Antinoo
  */
@@ -42,19 +43,37 @@ public interface INeoComDBHelper {
 
 	public void onUpgrade (final ConnectionSource databaseConnection, final int oldVersion, final int newVersion);
 
+	public void loadSeedData ();
+
+	public INeoComDBHelper setDatabaseHost (final String hostName);
+
+	public INeoComDBHelper setDatabaseName (final String instanceName);
+
+	public INeoComDBHelper setDatabaseUser (final String user);
+
+	public INeoComDBHelper setDatabasePassword (final String password);
+
+	public INeoComDBHelper setDatabaseVersion (final int newVersion);
+
+	public INeoComDBHelper build () throws SQLException;
+
 	public ConnectionSource getConnectionSource () throws SQLException;
 
 	public Dao<DatabaseVersion, String> getVersionDao () throws SQLException;
 
 	public Dao<TimeStamp, String> getTimeStampDao () throws SQLException;
 
+	@Deprecated
 	public Dao<ApiKey, String> getApiKeysDao () throws SQLException;
 
 	public Dao<Credential, String> getCredentialDao () throws SQLException;
 
 	public Dao<Colony, String> getColonyDao () throws SQLException;
 
+	@Deprecated
 	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException;
+
+	@Deprecated
 	public Dao<ColonySerialized, String> getColonySerializedDao () throws SQLException;
 
 	public Dao<NeoComAsset, String> getAssetDao () throws SQLException;

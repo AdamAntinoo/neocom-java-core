@@ -171,7 +171,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 
 	public Colony create (final int planetId) {
 		try {
-			Dao<Colony, String> colonyDao = GlobalDataManager.getHelper().getColonyDao();
+			Dao<Colony, String> colonyDao = GlobalDataManager.getNeocomDBHelper().getColonyDao();
 			colonyDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			logger.info("WR [Colony.create]> Colony exists. Update values.");
@@ -182,7 +182,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 
 	public Colony store () {
 		try {
-			Dao<Colony, String> colonyDao = GlobalDataManager.getHelper().getColonyDao();
+			Dao<Colony, String> colonyDao = GlobalDataManager.getNeocomDBHelper().getColonyDao();
 			colonyDao.createOrUpdate(this);
 			logger.info("-- [Colony.store]> Colony data updated successfully.");
 		} catch (final SQLException sqle) {

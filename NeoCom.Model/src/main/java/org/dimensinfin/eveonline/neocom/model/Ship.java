@@ -157,6 +157,11 @@ public class Ship extends ShipPre10 {
 		}
 		return result;
 	}
+	public int addAsset (final NeoComAsset asset) {
+		super.addAsset(asset);
+		_contents.add(new ShipContent(asset.getFlag(),asset));
+		return _contents.size();
+	}
 	protected void downloadShipData () {
 		ArrayList<NeoComAsset> contents = GlobalDataManager.accessAssetsContainedAt(this.getAssetId());
 		for(NeoComAsset asset: contents){
