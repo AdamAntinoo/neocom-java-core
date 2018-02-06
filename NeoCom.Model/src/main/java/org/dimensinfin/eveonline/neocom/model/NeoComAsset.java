@@ -21,6 +21,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 
 import java.sql.SQLException;
@@ -185,7 +186,7 @@ public class NeoComAsset extends NeoComNode {
 	 */
 	public EveItem getItem () {
 		if ( null == itemCache ) {
-			itemCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
+			itemCache = GlobalDataManager.searchItem4Id(typeId);
 		}
 		return itemCache;
 	}
@@ -197,7 +198,7 @@ public class NeoComAsset extends NeoComNode {
 	@JsonIgnore
 	public EveLocation getLocation () {
 		if ( null == locationCache ) {
-			locationCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locationId);
+			locationCache = GlobalDataManager.searchLocation4Id(locationId);
 		}
 		return locationCache;
 	}

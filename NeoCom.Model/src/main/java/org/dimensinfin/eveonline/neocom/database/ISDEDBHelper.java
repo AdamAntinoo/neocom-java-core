@@ -12,17 +12,11 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.support.ConnectionSource;
-
-import org.dimensinfin.eveonline.neocom.database.entity.Colony;
-import org.dimensinfin.eveonline.neocom.database.entity.ColonySerialized;
-import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ItemCategory;
+import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 
 import java.sql.SQLException;
 
@@ -35,11 +29,21 @@ import java.sql.SQLException;
  * @author Adam Antinoo
  */
 public interface ISDEDBHelper {
-	public ISDEDBHelper setDatabaseSchema (final String newschema);
+	public static AccessStatistics locationsCacheStatistics = new AccessStatistics();
 
-	public ISDEDBHelper setDatabasePath (final String newpath);
+	public ISDEDBHelper setDatabaseSchema( final String newschema );
 
-	public ISDEDBHelper setDatabaseName (final String instanceName);
+	public ISDEDBHelper setDatabasePath( final String newpath );
 
-	public ISDEDBHelper build () throws SQLException;
+	public ISDEDBHelper setDatabaseName( final String instanceName );
+
+	public ISDEDBHelper build() throws SQLException;
+
+	public EveItem searchItem4Id( final int typeid );
+
+	public EveLocation searchLocation4Id( final long locationID );
+
+	public ItemGroup searchItemGroup4Id( final int targetGroupId );
+
+	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
 }

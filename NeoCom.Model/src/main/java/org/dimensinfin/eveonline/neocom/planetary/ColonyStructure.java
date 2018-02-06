@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -83,7 +84,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 		public void setProductTypeId (final Integer productTypeId) {
 			this.productTypeId = productTypeId;
 			// Update the production type with the Item data from the SDE.
-			item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(productTypeId);
+			item = GlobalDataManager.searchItem4Id(productTypeId);
 		}
 
 		public void setQtyPerCycle (final Integer qtyPerCycle) {
@@ -93,7 +94,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 		// --- D E L E G A T E D   M E T H O D S
 //		@JsonIgnore
 		public String getProductTypeName () {
-			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(productTypeId);
+			if ( null == item ) item = GlobalDataManager.searchItem4Id(productTypeId);
 			return item.getName();
 		}
 	}
@@ -158,7 +159,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 		@JsonIgnore
 		public EveItem getItem () {
 			// Check if the item is loaded. If not try to get it from the SDE.
-			if ( null == item ) item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
+			if ( null == item ) item = GlobalDataManager.searchItem4Id(typeId);
 			return item;
 		}
 
@@ -169,7 +170,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 		public void setTypeId (final Integer typeId) {
 			this.typeId = typeId;
 			// Get the Eve item data from the SDE so we can perform calculations.
-			item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeId);
+			item = GlobalDataManager.searchItem4Id(typeId);
 		}
 
 		@JsonIgnore

@@ -27,9 +27,9 @@ public interface ICCPDatabaseConnector {
 
 	public int searchBlueprint4Module(final int moduleID);
 
-	public EveItem searchItembyID(int typeID);
-
-	public EveLocation searchLocationbyID(long locationID);
+//	public EveItem searchItembyID(int typeID);
+//
+//	public EveLocation searchLocationbyID(long locationID);
 
 	public EveLocation searchLocationBySystem(String system);
 
@@ -44,7 +44,7 @@ public interface ICCPDatabaseConnector {
 
 	public String searchTech4Blueprint(int blueprintID);
 
-	public ItemGroup searchItemGroup4Id(final int targetGroupId);
-
-	public ItemCategory searchItemCategory4Id(final int targetCategoryId);
+//	public ItemGroup searchItemGroup4Id(final int targetGroupId);
+//
+//	public ItemCategory searchItemCategory4Id(final int targetCategoryId);
 }

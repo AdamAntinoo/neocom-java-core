@@ -18,6 +18,7 @@ import com.j256.ormlite.stmt.Where;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
@@ -100,7 +101,7 @@ public class BlueprintManager extends AbstractManager {
 			for (NeoComBlueprint blue : blueprintAssetList) {
 				ExtendedLocation hit = locations.get(blue.getLocationID());
 				if ( null == hit ) {
-					final EveLocation targetLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(blue.getLocationID());
+					final EveLocation targetLocation = GlobalDataManager.searchLocation4Id(blue.getLocationID());
 					// Convert the Location to a new Extended Location with the new Contents Manager.
 					hit = new ExtendedLocation(characterId, targetLocation);
 					hit.setContentManager(new BlueprintContentManager(hit));

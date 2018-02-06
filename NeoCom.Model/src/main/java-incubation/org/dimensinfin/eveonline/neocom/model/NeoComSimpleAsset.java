@@ -15,7 +15,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import jdk.nashorn.internal.objects.Global;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +41,7 @@ public class NeoComSimpleAsset extends NeoComNode {
 		newAsset.setFlag(eveAsset.getFlag());
 		newAsset.setSingleton(eveAsset.getSingleton());
 		// Get access to the Item and update the copied fields.
-		newAsset.itemCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeID());
+		newAsset.itemCache = GlobalDataManager.searchItem4Id(newAsset.getTypeID());
 		//		if (null != item) {
 		//			try {
 		//				newAsset.setName(item.getName());
@@ -109,7 +111,7 @@ public class NeoComSimpleAsset extends NeoComNode {
 	 */
 	public EveItem getItem() {
 		if (null == itemCache) {
-			itemCache = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
+			itemCache = GlobalDataManager.searchItem4Id(typeID);
 		}
 		return itemCache;
 	}

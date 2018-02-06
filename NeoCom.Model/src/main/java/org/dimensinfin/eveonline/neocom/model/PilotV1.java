@@ -19,6 +19,7 @@ import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,7 +100,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	public void setHomeLocation(final GetCharactersCharacterIdClonesOkHomeLocation homeLocation){
 		this.homeLocation=homeLocation;
 		// Convert this location pointer to a NeoCom location.
-		lastKnownLocation= ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(homeLocation.getLocationId());
+		lastKnownLocation= GlobalDataManager.searchLocation4Id(homeLocation.getLocationId());
 	}
 	// --- D E L E G A T E D   M E T H O D S
 	public String getURLForAvatar () {

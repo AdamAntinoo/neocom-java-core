@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
@@ -27,8 +28,7 @@ public class EveItem extends NeoComNode {
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
-			EveItem.defaultItem = ModelAppConnector.getSingleton().getCCPDBConnector()
-					.searchItembyID(EveItem.DEFAULT_TYPE_ID);
+			EveItem.defaultItem = GlobalDataManager.searchItem4Id(EveItem.DEFAULT_TYPE_ID);
 			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
 			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
 		}
@@ -77,46 +77,46 @@ public class EveItem extends NeoComNode {
 
 	public int getCategoryId() {
 		if (null == category) {
-			category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+			category = GlobalDataManager.searchItemCategory4Id(categoryid);
 		}
 		return category.getCategoryId();
 	}
 
 	public int getGroupId() {
 		if (null == group) {
-			group = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemGroup4Id(groupid);
+			group = GlobalDataManager.searchItemGroup4Id(groupid);
 		}
 		return group.getGroupId();
 	}
 
 	public String getCategory() {
 		if (null == category) {
-			category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+			category = GlobalDataManager.searchItemCategory4Id(categoryid);
 		}
 		return category.getCategoryName();
 	}
 	public String getCategoryName() {
 		if (null == category) {
-			category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+			category = GlobalDataManager.searchItemCategory4Id(categoryid);
 		}
 		return category.getCategoryName();
 	}
 
 	public String getGroupName() {
 		if (null == group) {
-			group = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemGroup4Id(groupid);
+			group = GlobalDataManager.searchItemGroup4Id(groupid);
 		}
 		return group.getGroupName();
 	}
 
 	public void setGroupId(final int groupid) {
 		this.groupid = groupid;
-		group = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemGroup4Id(groupid);
+		group = GlobalDataManager.searchItemGroup4Id(groupid);
 	}
 
 	public void setCategoryId(final int categoryid) {
 		this.categoryid = categoryid;
-		category = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+		category = GlobalDataManager.searchItemCategory4Id(categoryid);
 	}
 
 	@JsonIgnore

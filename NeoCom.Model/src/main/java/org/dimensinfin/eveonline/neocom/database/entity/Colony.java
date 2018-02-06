@@ -222,20 +222,20 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 
 	public String getSolarSystemName () {
 		// Location is transient so we have to reload the EveLocation cache if null.
-		if ( null == location ) location = GlobalDataManager.searchLocationById(getSolarSystemId());
+		if ( null == location ) location = GlobalDataManager.searchLocation4Id(getSolarSystemId());
 		return location.getSystem();
 	}
 
 	public double getSecurityValue () {
 		// Location is transient so we have to reload the EveLocation cache if null.
-		if ( null == location ) location = GlobalDataManager.searchLocationById(getSolarSystemId());
+		if ( null == location ) location = GlobalDataManager.searchLocation4Id(getSolarSystemId());
 		return location.getSecurityValue();
 	}
 
 	public Colony setSolarSystemId (final Integer solarSystemId) {
 		this.solarSystemId = solarSystemId;
 		// Locate the solar system data on the Location database.
-		location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(solarSystemId);
+		location = GlobalDataManager.searchLocation4Id(solarSystemId);
 		return this;
 	}
 

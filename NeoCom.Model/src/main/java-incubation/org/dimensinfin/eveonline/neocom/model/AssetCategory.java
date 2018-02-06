@@ -12,6 +12,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 
 import java.util.List;
 import java.util.Vector;
@@ -35,7 +36,7 @@ public class AssetCategory extends NeoComExpandableNode implements IExpandable {
 
 	public AssetCategory (int categoryid) {
 		this();
-		_categoryDelegate = ModelAppConnector.getSingleton().getCCPDBConnector().searchItemCategory4Id(categoryid);
+		_categoryDelegate = GlobalDataManager.searchItemCategory4Id(categoryid);
 	}
 	//	public AssetCategory (String title) {
 	//		this();

@@ -8,3 +8,5 @@
 /captures
 .externalNativeBuild
 gradle/
+ESI.SwaggerApi/out/
+NeoCom.Model/out/

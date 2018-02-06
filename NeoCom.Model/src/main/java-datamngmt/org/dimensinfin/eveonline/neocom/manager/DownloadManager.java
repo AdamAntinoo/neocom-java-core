@@ -191,8 +191,7 @@ public class DownloadManager {
 					assetDao.create(myasset);
 					// Check the asset location. The location can be a known game station, a known user structure, another asset
 					// or an unknown player structure. Check which one is this location.
-					EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector()
-					                                         .searchLocationbyID(myasset.getLocationId());
+					EveLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
 					if ( targetLoc.getTypeID() == ELocationType.UNKNOWN ) {
 						// Add this asset to the list of items to be reprocessed.
 						unlocatedAssets.add(myasset);
@@ -262,7 +261,7 @@ public class DownloadManager {
 		        .setFlag(asset200Ok.getLocationFlag())
 		        .setSingleton(asset200Ok.getIsSingleton());
 		// Get access to the Item and update the copied fields.
-		final EveItem item = GlobalDataManager.searchItemById(newAsset.getTypeId());
+		final EveItem item = GlobalDataManager.searchItem4Id(newAsset.getTypeId());
 		if ( null != item ) {
 			try {
 				newAsset.setName(item.getName());
@@ -613,8 +612,7 @@ public class DownloadManager {
 
 			// Check the asset location. The location can be a known game station, a known user structure, another asset
 			// or an unknown player structure. Check which one is this location.
-			EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector()
-			                                         .searchLocationbyID(myasset.getLocationId());
+			EveLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
 			if ( targetLoc.getTypeID() == ELocationType.UNKNOWN ) {
 				// Add this asset to the list of items to be reprocessed.
 				unlocatedAssets.add(myasset);
@@ -641,7 +639,7 @@ public class DownloadManager {
 	 */
 	private ELocationType validateLocation (final NeoComAsset asset) {
 		long targetLocationid = asset.getLocationId();
-		EveLocation targetLoc = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(targetLocationid);
+		EveLocation targetLoc = GlobalDataManager.searchLocation4Id(targetLocationid);
 		if ( targetLoc.getTypeID() == ELocationType.UNKNOWN ) {
 			// Need to check if asset or unreachable location.
 			NeoComAsset target = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(targetLocationid);
@@ -685,7 +683,7 @@ public class DownloadManager {
 		newAsset.setSingleton(eveAsset.getSingleton());
 
 		// Get access to the Item and update the copied fields.
-		final EveItem item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeId());
+		final EveItem item = GlobalDataManager.searchItem4Id(newAsset.getTypeId());
 		if ( null != item ) {
 			try {
 				newAsset.setName(item.getName());

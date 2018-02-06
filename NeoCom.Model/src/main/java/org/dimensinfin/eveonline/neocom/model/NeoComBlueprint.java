@@ -13,6 +13,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -107,10 +108,10 @@ public class NeoComBlueprint extends NeoComNode {
 	public NeoComBlueprint(final int blueprintID) {
 		super();
 		typeID = blueprintID;
-		blueprintItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(blueprintID);
+		blueprintItem = GlobalDataManager.searchItem4Id(blueprintID);
 		typeName = blueprintItem.getName();
 		moduleTypeID = ModelAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
-		moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+		moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 		tech = this.obtainTech();
 		associatedAsset = null;
 	}
@@ -132,7 +133,7 @@ public class NeoComBlueprint extends NeoComNode {
 			typeID = blueprintItem.getItemID();
 			typeName = blueprintItem.getName();
 			moduleTypeID = ModelAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
-			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 			tech = this.obtainTech();
 		} catch (final Exception ex) {
 			//			Log.w("W> Blueprint.<init>. Asset <" + newAsseID + "> not found.");
@@ -199,28 +200,28 @@ public class NeoComBlueprint extends NeoComNode {
 
 	public String getModuleCategory() {
 		if (null == moduleItem) {
-			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 		}
 		return moduleItem.getCategory();
 	}
 
 	public String getModuleGroup() {
 		if (null == moduleItem) {
-			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 		}
 		return moduleItem.getGroupName();
 	}
 
 	public String getModuleGroupCategory() {
 		if (null == moduleItem) {
-			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 		}
 		return moduleItem.getGroupName() + "/" + moduleItem.getCategory();
 	}
 
 	public EveItem getModuleItem() {
 		if (null == moduleItem) {
-			moduleItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(moduleTypeID);
+			moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 		}
 		return moduleItem;
 	}

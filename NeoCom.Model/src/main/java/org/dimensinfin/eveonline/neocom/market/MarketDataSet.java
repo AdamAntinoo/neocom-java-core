@@ -12,6 +12,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.joda.time.Instant;
@@ -74,7 +75,7 @@ public class MarketDataSet implements Serializable {
 	public MarketDataSet(final int id, final EMarketSide side) {
 		this.id = id;
 		this.side = side;
-		double baseprice = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(id).getBaseprice();
+		double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
 		bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 		bestmarkethigh.setPrice(baseprice);
 	}
@@ -144,7 +145,7 @@ public class MarketDataSet implements Serializable {
 	public synchronized void updateBestMarket() {
 		if (side == EMarketSide.SELLER) {
 			if ((null == dataOnMarketHub) || (dataOnMarketHub.size() < 1)) {
-				double baseprice = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(id).getBaseprice();
+				double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
 				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
@@ -171,7 +172,7 @@ public class MarketDataSet implements Serializable {
 		}
 		if (side == EMarketSide.BUYER) {
 			if ((null == dataOnMarketHub) || (dataOnMarketHub.size() < 1)) {
-				double baseprice = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(id).getBaseprice();
+				double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
 				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$

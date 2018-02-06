@@ -197,7 +197,7 @@ public class PlanetaryManager extends AbstractManager {
 		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if ( null == target ) {
-			EveLocation intermediary = GlobalDataManager.searchLocationById(locid);
+			EveLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(credential.getAccountId(), intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));

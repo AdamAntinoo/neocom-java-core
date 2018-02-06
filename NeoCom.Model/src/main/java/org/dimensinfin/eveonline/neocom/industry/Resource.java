@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
@@ -60,18 +61,18 @@ public class Resource extends NeoComNode {
 	/**
 	 * Builds a new resource of quantity 1.
 	 * 
-	 * @param hullTypeId
+	 * @param typeID
 	 */
 	public Resource(final int typeID) {
 		resourceID = typeID;
-		item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
+		item = GlobalDataManager.searchItem4Id(typeID);
 		baseQty = 0;
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Resource(final int typeID, final int newQty) {
 		resourceID = typeID;
-		item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(typeID);
+		item = GlobalDataManager.searchItem4Id(typeID);
 		baseQty = newQty;
 	}
 

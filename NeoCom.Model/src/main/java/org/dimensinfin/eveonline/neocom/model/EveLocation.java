@@ -19,6 +19,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import net.nikr.eve.jeveasset.data.Citadel;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 
 import java.sql.SQLException;
@@ -348,7 +349,7 @@ public class EveLocation extends NeoComNode {
 
 	private void updateFromSystem(final long newid) {
 		// Get the system information from the CCP location tables.
-		final EveLocation systemLocation = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(newid);
+		final EveLocation systemLocation = GlobalDataManager.searchLocation4Id(newid);
 		systemID = systemLocation.getSystemID();
 		system = systemLocation.getSystem();
 		constellationID = systemLocation.getConstellationID();

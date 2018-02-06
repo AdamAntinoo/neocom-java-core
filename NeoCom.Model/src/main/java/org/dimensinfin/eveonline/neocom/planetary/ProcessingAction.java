@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -54,7 +55,7 @@ public class ProcessingAction extends NeoComNode {
 	public ProcessingAction(final int targetId) {
 		this.targetId = targetId;
 		// Get the item for the target id to be identified on the Json serialization.
-		targetItem = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(targetId);
+		targetItem = GlobalDataManager.searchItem4Id(targetId);
 		// Get the schematics information.
 		schematics = ModelAppConnector.getSingleton().getCCPDBConnector().searchSchematics4Output(targetId);
 		// Store the inputs into another list.

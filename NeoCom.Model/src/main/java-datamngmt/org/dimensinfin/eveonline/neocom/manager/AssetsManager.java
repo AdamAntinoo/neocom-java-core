@@ -18,6 +18,7 @@ import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
@@ -433,7 +434,7 @@ public class AssetsManager extends AbstractManager {
 		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if ( null == target ) {
-			EveLocation intermediary = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
+			EveLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(credential, intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
@@ -753,7 +754,7 @@ public class AssetsManager extends AbstractManager {
 		if ( locations.containsKey(identifier) )
 			return;
 		else {
-			EveLocation location = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(identifier);
+			EveLocation location = GlobalDataManager.searchLocation4Id(identifier);
 			// Convert the Location to a new Extended Location with the new Contents Manager.
 			ExtendedLocation newloc = new ExtendedLocation(credential, location);
 			newloc.setContentManager(new AllLazyAssetsContentManager(newloc));
