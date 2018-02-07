@@ -44,11 +44,12 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.database.SDEDatabaseManager;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.datamngmt.interfaces.IMarketDataManagerService;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
@@ -76,12 +77,7 @@ import org.modelmapper.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -95,7 +91,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This static class centralizes all the functionalities to access data. It will provide a consistent api to the rest
+ * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
  * of the application and will hide the internals of how that data is obtained, managed and stored.
  * All thet now are direct database access or cache access or even Model list accesses will be hidden under an api
  * that will decide at any point from where to get the information and if there are more jobs to do to keep
@@ -208,37 +204,20 @@ public class GlobalDataManager {
 	private static final ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
 	private static final ModelTimedCache modelCache = new ModelTimedCache();
 
-	private static Hashtable<Integer, MarketDataSet> buyMarketDataCache = new Hashtable<Integer, MarketDataSet>(1000);
-	private static Hashtable<Integer, MarketDataSet> sellMarketDataCache = new Hashtable<Integer, MarketDataSet>(1000);
-
-	public synchronized static void readMarketDataCacheFromStorage() {
-		// Get the configured cache path.
-		final String marketDataCachePath = GlobalDataManager.getResourceString("R.cache.marketdata.cachepath", "./")
-				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename", "MarketDataService.store");
-		File modelStoreFile = new File(marketDataCachePath);
-		try {
-			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
-			final ObjectInputStream input = new ObjectInputStream(buffer);
-			try {
-				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
-				buyMarketDataCache = (Hashtable<Integer, MarketDataSet>) input.readObject();
-				logger.info("-- [MarketDataServer.readCacheFromStorage]> Restored cache BUY: {} items", buyMarketDataCache.size());
-				sellMarketDataCache = (Hashtable<Integer, MarketDataSet>) input.readObject();
-				logger.info("-- [MarketDataServer.readCacheFromStorage]> Restored cache SELL: {} items", sellMarketDataCache.size());
-			} finally {
-				input.close();
-				buffer.close();
-			}
-		} catch (final ClassNotFoundException ex) {
-			logger.warn("W> [MarketDataServer.readCacheFromStorage]> ClassNotFoundException."); //$NON-NLS-1$
-		} catch (final FileNotFoundException fnfe) {
-			logger.warn("W> [MarketDataServer.readCacheFromStorage]> FileNotFoundException."); //$NON-NLS-1$
-		} catch (final IOException ex) {
-			logger.warn("W> [MarketDataServer.readCacheFromStorage]> IOException."); //$NON-NLS-1$
-		} catch (final RuntimeException rex) {
-			rex.printStackTrace();
-		}
+//	private static HashMap<Integer, MarketDataSet> buyMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
+//	private static HashMap<Integer, MarketDataSet> sellMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
+//
+	private static IMarketDataManagerService marketDataService= null;
+	public static void setMarketDataManager(final IMarketDataManagerService manager){
+		marketDataService=manager;
 	}
+	public static MarketDataSet searchMarketData(final int itemId, final EMarketSide side) {
+		if(null!=marketDataService)marketDataService.searchMarketData(itemId,side);
+		else throw new RuntimeException("No MarketDataManager service connected.");
+	}
+	public static void cleanEveItemCache(){
+		itemCache.clear();
+}
 
 	// --- M A P P E R S   &   T R A N S F O R M E R S   S E C T I O N
 	/**

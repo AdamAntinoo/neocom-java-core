@@ -22,9 +22,9 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveItem extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= -2548296399305221197L;
-	private static EveItem		defaultItem				= new EveItem();
-	private static final int	DEFAULT_TYPE_ID		= 34;
+	private static final long serialVersionUID = -2548296399305221197L;
+	private static EveItem defaultItem = new EveItem();
+	private static final int DEFAULT_TYPE_ID = 34;
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
@@ -36,12 +36,12 @@ public class EveItem extends NeoComNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int												id						= 34;
-	private String										name					= "<NAME>";
-	private int												groupid				= -1;
-	private int												categoryid		= -1;
-	private ItemGroup									group					= null;
-	private ItemCategory							category			= null;
+	private int id = 34;
+	private String name = "<NAME>";
+	private int groupid = -1;
+	private int categoryid = -1;
+	private ItemGroup group = null;
+	private ItemCategory category = null;
 	//	private String										getGroupName()			= "<getGroupName()>";
 	//	private String										getCategory()			= "<getCategory()>";
 	/**
@@ -49,20 +49,20 @@ public class EveItem extends NeoComNode {
 	 * information blocks. This price will be updated from market data with the Jita lowest seller price when
 	 * the market data gets updated.
 	 */
-	private double										baseprice			= -1.0;
+	private double baseprice = -1.0;
 	/**
 	 * This is the highest buyers price when the market data is available or the <code>baseprice</code> is still
 	 * not available. It is only used when the caller does not specify the particular market side for the
 	 * requested price or any other search parameter.
 	 */
-	public double											defaultprice	= -1.0;
-	private double										volume				= 0.0;
-	private String										tech					= ModelWideConstants.eveglobal.TechI;
+	public double defaultprice = -1.0;
+	private double volume = 0.0;
+	private String tech = ModelWideConstants.eveglobal.TechI;
 	//	private boolean										isBlueprint		= false;
 	// - A D D I T I O N A L   F I E L D S
-	private transient EIndustryGroup	industryGroup	= EIndustryGroup.UNDEFINED;
-	private transient MarketDataSet		buyerData			= null;
-	private transient MarketDataSet		sellerData		= null;
+	private transient EIndustryGroup industryGroup = EIndustryGroup.UNDEFINED;
+	private transient MarketDataSet buyerData = null;
+	private transient MarketDataSet sellerData = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveItem() {
@@ -95,6 +95,7 @@ public class EveItem extends NeoComNode {
 		}
 		return category.getCategoryName();
 	}
+
 	public String getCategoryName() {
 		if (null == category) {
 			category = GlobalDataManager.searchItemCategory4Id(categoryid);
@@ -109,12 +110,12 @@ public class EveItem extends NeoComNode {
 		return group.getGroupName();
 	}
 
-	public void setGroupId(final int groupid) {
+	public void setGroupId( final int groupid ) {
 		this.groupid = groupid;
 		group = GlobalDataManager.searchItemGroup4Id(groupid);
 	}
 
-	public void setCategoryId(final int categoryid) {
+	public void setCategoryId( final int categoryid ) {
 		this.categoryid = categoryid;
 		category = GlobalDataManager.searchItemCategory4Id(categoryid);
 	}
@@ -131,7 +132,12 @@ public class EveItem extends NeoComNode {
 		return industryGroup;
 	}
 
+	@Deprecated
 	public int getItemID() {
+		return id;
+	}
+
+	public int getItemId() {
 		return id;
 	}
 
@@ -191,7 +197,7 @@ public class EveItem extends NeoComNode {
 			return false;
 	}
 
-	public void setBasePrice(final double price) {
+	public void setBasePrice( final double price ) {
 		baseprice = price;
 	}
 
@@ -203,19 +209,19 @@ public class EveItem extends NeoComNode {
 	//		category = newcategory;
 	//	}
 
-	public void setName(final String name) {
+	public void setName( final String name ) {
 		this.name = name;
 	}
 
-	public void setTech(final String tech) {
+	public void setTech( final String tech ) {
 		this.tech = tech;
 	}
 
-	public void setTypeID(final int typeID) {
+	public void setTypeID( final int typeID ) {
 		id = typeID;
 	}
 
-	public void setVolume(final double volume) {
+	public void setVolume( final double volume ) {
 		this.volume = volume;
 	}
 
@@ -289,10 +295,9 @@ public class EveItem extends NeoComNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			buyerData = ModelAppConnector.getSingleton().getCacheConnector()
-					.searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			buyerData = GlobalDataManager.searchMarketData(this.getTypeID(), EMarketSide.BUYER);
 			if (null == buyerData) {
-				buyerData = new MarketDataSet(this.getItemID(), EMarketSide.BUYER);
+				buyerData = new MarketDataSet(this.getItemId(), EMarketSide.BUYER);
 			}
 		}
 		return buyerData;
@@ -308,10 +313,9 @@ public class EveItem extends NeoComNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			sellerData = ModelAppConnector.getSingleton().getCacheConnector()
-					.searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			sellerData = GlobalDataManager.searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
-				sellerData = new MarketDataSet(this.getItemID(), EMarketSide.SELLER);
+				sellerData = new MarketDataSet(this.getItemId(), EMarketSide.SELLER);
 			}
 		}
 		return sellerData;

@@ -38,6 +38,8 @@ public interface ISDEDBHelper {
 	public ISDEDBHelper setDatabaseName( final String instanceName );
 
 	public ISDEDBHelper build() throws SQLException;
+	public String getConnectionDescriptor();
+	public boolean databaseIsValid();
 
 	public EveItem searchItem4Id( final int typeid );
 
