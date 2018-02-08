@@ -50,4 +50,6 @@ public interface ISDEDBHelper {
 	public ItemGroup searchItemGroup4Id( final int targetGroupId );
 
 	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
+
+	public int searchStationType( final long stationID );
 }

@@ -562,11 +562,14 @@ public class GlobalDataManager {
 			return hit;
 		}
 	}
+	public static int searchStationType( final long typeId ) {
+		return GlobalDataManager.getSDEDBHelper().searchStationType(typeId);
+	}
 
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long
 			identifier ) {
-		return new StringBuffer("MS")
+		return new StringBuffer("TS/")
 				.append(type.name())
 				.append("/")
 				.append(identifier)

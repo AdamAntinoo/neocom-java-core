@@ -20,6 +20,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.joda.time.Instant;
 
 import java.sql.SQLException;
@@ -50,7 +51,7 @@ public class TimeStamp {
 		timeStamp = instant.getMillis();
 		dateTimeUserReference = instant.toString();
 		try {
-			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getNewDBConnector().getTimeStampDao();
+			Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
 			// Try to create the pair. It fails then  it was already created.
 			timeStampDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
@@ -100,7 +101,7 @@ public class TimeStamp {
 
 	public TimeStamp store () {
 		try {
-			Dao<TimeStamp, String> timeStampDao = ModelAppConnector.getSingleton().getNewDBConnector().getTimeStampDao();
+			Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
 			if ( -1 == credentialId )
 				TimeStamp.logger.info("W [TimeStamp.store]> CredentialId has not been setup. Possible invalid TS.");
 			timeStampDao.createOrUpdate(this);

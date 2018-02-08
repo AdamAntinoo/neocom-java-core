@@ -107,7 +107,7 @@ public abstract class SDEDatabaseManager {
 	private static final String SELECT_LOCATIONBYSYSTEM = "SELECT solarSystemID FROM mapSolarSystems"
 			+ " WHERE solarSystemName = ?";
 
-	// - S T A T I O N T Y P E
+	// - S T A T I O N 4 T Y P E
 	private static int STATIONTYPEID_COLINDEX = 1;
 	private static final String SELECT_STATIONTYPE = "SELECT stationTypeID FROM staStations WHERE stationID = ?";
 
@@ -232,108 +232,65 @@ public abstract class SDEDatabaseManager {
 	 */
 	public EveLocation searchLocation4Id( final long locationID ) {
 		logger.info(">< [SDEDatabaseManager.searchLocation4Id]> Searching ID: " + locationID);
-		// First check if the location is already on the cache table.
-//		EveLocation hit = locationsCache.get(locationID);
-//		if (null != hit) {
-//			int access = CCPDatabaseConnector.locationsCacheStatistics.accountAccess(true);
-//			int hits = CCPDatabaseConnector.locationsCacheStatistics.getHits();
-//			CCPDatabaseConnector.logger.info(">< [CCPDatabaseConnector.searchLocationbyID]> [HIT-" + hits + "/" + access
-//					+ "] Location " + locationID + " found at cache.");
-//			return hit;
-//		} else {
-		// Try to get that id from the cache tables
-//			int access = CCPDatabaseConnector.locationsCacheStatistics.accountAccess(false);
 		List<EveLocation> locationList = null;
+		// Search for the location at the application private database. Citadels and Outposts.
 		try {
-			locationList = GlobalDataManager.getNeocomDBHelper()
-					.getLocationDao().queryForEq("id", locationID);
+			locationList = GlobalDataManager.getNeocomDBHelper().getLocationDao().queryForEq("id", locationID);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			return new EveLocation(locationID);
 		}
-
-		// Check list contents. If found we have the location. Else then check if Office
+		// Check list contents. If found we have the location, else search for a SDE game location.
 		if (locationList.size() < 1) {
-			//				CCPDatabaseConnector.logger.info(
-			//						"-- [CCPDatabaseConnector.searchLocationbyID]> Location: " + locationID + " not found on local Database.");
-			// Offices
-			long fixedLocationID = locationID;
-			//				if (fixedLocationID >= 66000000) {
-			//					if (fixedLocationID < 66014933) {
-			//						fixedLocationID = fixedLocationID - 6000001;
-			//					} else {
-			//						fixedLocationID = fixedLocationID - 6000000;
-			//					}
-			//				}
-			final EveLocation hit = new EveLocation(fixedLocationID);
-//				ResultSet cursor = null;
-			try {
-				final RawStatement cursor = constructStatement(SELECT_LOCATIONBYID, new String[]{Long.valueOf(fixedLocationID).toString
-						()});
-//					PreparedStatement prepStmt = this.getCCPDatabase().prepareStatement(CCPDatabaseConnector.SELECT_LOCATIONBYID);
-//					prepStmt.setString(1, Long.valueOf(fixedLocationID).toString());
-//					cursor = prepStmt.executeQuery();
-//					if (null != cursor) {
-				boolean detected = false;
-				while (cursor.moveToNext()) {
-					detected = true;
-					//							CCPDatabaseConnector.logger.info(
-					//									"-- [CCPDatabaseConnector.searchLocationbyID]> Location: " + locationID + " Obtained from CCP data.");
-					// Check returned values when doing the assignments.
-					long fragmentID = cursor.getLong(LOCATIONBYID_SYSTEMID_COLINDEX);
-					if (fragmentID > 0) {
-						hit.setSystemID(fragmentID);
-						hit.setSystem(cursor.getString(LOCATIONBYID_SYSTEM_COLINDEX));
-					} else {
-						hit.setSystem(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
-					}
-					fragmentID = cursor.getLong(LOCATIONBYID_CONSTELLATIONID_COLINDEX);
-					if (fragmentID > 0) {
-						hit.setConstellationID(fragmentID);
-						hit.setConstellation(cursor.getString(LOCATIONBYID_CONSTELLATION_COLINDEX));
-					}
-					fragmentID = cursor.getLong(LOCATIONBYID_REGIONID_COLINDEX);
-					if (fragmentID > 0) {
-						hit.setRegionID(fragmentID);
-						hit.setRegion(cursor.getString(LOCATIONBYID_REGION_COLINDEX));
-					}
-					hit.setTypeID(ELocationType.CCPLOCATION);
-					hit.setStation(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
-					hit.setLocationID(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
-					hit.setSecurity(cursor.getString(LOCATIONBYID_SECURITY_COLINDEX));
-					// Update the final ID
-					hit.getID();
-
-					// Location found on CCP database.
-					//				int hits = CCPDatabaseConnector.locationsCacheStatistics.getHits();
-//							logger.info(">< [CCPDatabaseConnector.searchLocationbyID]> [HIT-" + hits + "/"
-//									+ access + "] Location " + locationID + " found at CCP Database.");
-					//						locationsCache.put(hit.getID(), hit);
-				}
-				cursor.close();
-				if (!detected) {
-					logger.info("-- [searchLocation4Id]> Location: " + locationID + " not found on any Database - UNKNOWN-.");
-					hit.setSystem("ID>" + Long.valueOf(locationID).toString());
-				}
-			} catch (SQLException sqle) {
-				logger.error("E> [SDEDatabaseManager.searchLocation4Id]> Exception processing search for Location {}. {}",
-						locationID, sqle.getMessage());
-				logger.warn("W- [SDEDatabaseManager.searchLocation4Id]> Location <" + fixedLocationID + "> not found.");
-			}
-//				} catch (final Exception ex) {
-///				} finally {
-//					try {
-//					}
-			// If the location is not cached nor in the CCP database. Return default location
-			return hit;
+			return searchLocation4IdAtSDE(locationID);
 		} else {
 			// Location found on the Application database.
-//				int hits = CCPDatabaseConnector.locationsCacheStatistics.getHits();
-//				CCPDatabaseConnector.logger.info(">< [CCPDatabaseConnector.searchLocationbyID]> [HIT-" + hits + "/" + access
-//						+ "] Location " + locationID + " found at Application Database.");
-			EveLocation foundLoc = locationList.get(0);
-//				locationsCache.put(foundLoc.getID(), foundLoc);
 			return locationList.get(0);
+		}
+	}
+
+	private EveLocation searchLocation4IdAtSDE( final long locationId ) {
+		logger.info(">< [SDEDatabaseManager.searchLocation4IdAtSDE]> locationId: {}", locationId);
+		EveLocation target = new EveLocation();
+		try {
+			final RawStatement cursor = constructStatement(SELECT_LOCATIONBYID, new String[]{Long.valueOf(locationId).toString()});
+			boolean detected = false;
+			while (cursor.moveToNext()) {
+				detected = true;
+				long fragmentID = cursor.getLong(LOCATIONBYID_SYSTEMID_COLINDEX);
+				if (fragmentID > 0) {
+					target.setSystemID(fragmentID);
+					target.setSystem(cursor.getString(LOCATIONBYID_SYSTEM_COLINDEX));
+				} else {
+					target.setSystem(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
+				}
+				fragmentID = cursor.getLong(LOCATIONBYID_CONSTELLATIONID_COLINDEX);
+				if (fragmentID > 0) {
+					target.setConstellationID(fragmentID);
+					target.setConstellation(cursor.getString(LOCATIONBYID_CONSTELLATION_COLINDEX));
+				}
+				fragmentID = cursor.getLong(LOCATIONBYID_REGIONID_COLINDEX);
+				if (fragmentID > 0) {
+					target.setRegionID(fragmentID);
+					target.setRegion(cursor.getString(LOCATIONBYID_REGION_COLINDEX));
+				}
+				target.setTypeID(ELocationType.CCPLOCATION);
+				target.setStation(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
+				target.setLocationID(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
+				target.setSecurity(cursor.getString(LOCATIONBYID_SECURITY_COLINDEX));
+				// Update the final ID
+				target.getID();
+			}
+			cursor.close();
+			if (!detected) {
+				logger.info("-- [SDEDatabaseManager.searchLocation4IdAtSDE]> Location: {} not found on any Database - UNKNOWN-.", locationId);
+				target.setSystem("ID>" + Long.valueOf(locationId).toString());
+			}
+		} catch (final SQLException sqle) {
+			logger.error("E [SDEDatabaseManager.searchLocation4IdAtSDE]> Exception processing statement: {}" + sqle.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchLocation4IdAtSDE]");
+			return target;
 		}
 	}
 
@@ -383,8 +340,27 @@ public abstract class SDEDatabaseManager {
 			return target;
 		}
 	}
-}
 
+	/**
+	 * Returns the resource identifier of the station class to locate icons or other type related resources.
+	 */
+	public int searchStationType( final long stationID ) {
+		logger.info(">< [SDEDatabaseManager.searchStationType]> stationID: {}", stationID);
+		int stationTypeID = 1529;
+		try {
+			final RawStatement cursor = constructStatement(SELECT_STATIONTYPE, new String[]{Long.valueOf(stationID).toString()});
+			while (cursor.moveToNext()) {
+				stationTypeID = cursor.getInt(STATIONTYPEID_COLINDEX);
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchStationType]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchStationType]");
+			return stationTypeID;
+		}
+	}
+}
 // - UNUSED CODE ............................................................................................
 //[01]
 //				final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidCCPDatabaseConnector.SELECT_ITEM_BYID,
