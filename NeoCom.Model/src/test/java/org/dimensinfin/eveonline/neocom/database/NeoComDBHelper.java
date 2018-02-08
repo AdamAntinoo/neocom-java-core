@@ -14,17 +14,20 @@ package org.dimensinfin.eveonline.neocom.database;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +57,9 @@ public class NeoComDBHelper implements INeoComDBHelper {
 	private Dao<DatabaseVersion, String> versionDao = null;
 	private Dao<ApiKey, String> apiKeysDao = null;
 	private Dao<Credential, String> credentialDao = null;
-	private Dao<org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage, String> colonyStorageDao = null;
+	private Dao<Colony, String> colonyDao = null;
+	private Dao<ColonyStorage, String> colonyStorageDao = null;
+	private Dao<NeoComAsset, String> assetDao = null;
 
 	private DatabaseVersion storedVersion = null;
 
@@ -159,7 +164,7 @@ public class NeoComDBHelper implements INeoComDBHelper {
 			logger.warn("SQL [NeoComDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
 		try {
-			TableUtils.createTableIfNotExists(databaseConnection, org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage.class);
+			TableUtils.createTableIfNotExists(databaseConnection,ColonyStorage.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
@@ -240,6 +245,12 @@ public class NeoComDBHelper implements INeoComDBHelper {
 		}
 		return credentialDao;
 	}
+	public Dao<Colony, String> getColonyDao () throws SQLException {
+		if ( null == colonyDao ) {
+			colonyDao = DaoManager.createDao(this.getConnectionSource(), Colony.class);
+		}
+		return colonyDao;
+	}
 
 	@Override
 	public Dao<ColonyStorage, String> getColonyStorageDao () throws SQLException {
@@ -247,6 +258,12 @@ public class NeoComDBHelper implements INeoComDBHelper {
 			colonyStorageDao = DaoManager.createDao(this.getConnectionSource(), ColonyStorage.class);
 		}
 		return colonyStorageDao;
+	}
+	public Dao<NeoComAsset, String> getAssetDao () throws SQLException {
+		if ( null == assetDao ) {
+			assetDao = DaoManager.createDao(this.getConnectionSource(), NeoComAsset.class);
+		}
+		return assetDao;
 	}
 
 	private void createConnectionSource () throws SQLException {

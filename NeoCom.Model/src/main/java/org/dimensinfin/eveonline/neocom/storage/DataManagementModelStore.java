@@ -70,12 +70,12 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * @return the single global sinleton.
 	 */
 	public static DataManagementModelStore getSingleton () {
-		//		NeoComModelStore.logger.info(">> [NeoComModelStore.getSingleton]");
+		//		NeoComModelStore.logger.info(">> [DataManagementModelStore.getSingleton]");
 		if ( null == DataManagementModelStore.singleton ) {
 			// Initiate the recovery.
 			DataManagementModelStore.initialize();
 		}
-		//		NeoComModelStore.logger.info("<< [NeoComModelStore.getSingleton]");
+		//		NeoComModelStore.logger.info("<< [DataManagementModelStore.getSingleton]");
 		return DataManagementModelStore.singleton;
 	}
 
@@ -86,7 +86,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * parameters recovered at the Activities. We still connect the persistence Handler but should not be used.</p>
 	 */
 	private static void initialize () {
-		logger.info(">> [AppModelStore.initialize]");
+//		logger.info(">> [DataManagementModelStore.initialize]");
 		// Create a new from scratch. Tag it with the persistence handler so we can read/write its state.
 		DataManagementModelStore.singleton = new DataManagementModelStore(new NoOpPersistenceHandler());
 		// Load any data from storage and then update the information from CCP.
@@ -99,7 +99,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		//		if ( NeoComModelStore.getSingleton()._pilotIdentifier > 0 ) {
 		//			NeoComModelStore.getSingleton().activatePilot(NeoComModelStore.getSingleton()._pilotIdentifier);
 		//		}
-		logger.info("<< [AppModelStore.initialize]");
+//		logger.info("<< [DataManagementModelStore.initialize]");
 	}
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
@@ -232,36 +232,41 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * data during the creation of the list and connect that data to the parent Credential.
 	 */
 	public List<Credential> coalesceCredentialList () {
-		if ( _credentialList.size() < 1 ) {
-			try {
-				// Read and process the list of ApiKeys and Credentials to get a single Character list.
-				final List<ApiKey> keyList = GlobalDataManager.accessAllApiKeys();
-				final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
-				_credentialList.clear();
-				// Process the list to unify the results.
-				for (Credential currentCredential : credentials) {
-					_credentialList.add(currentCredential);
-					// Scan the keys to search for matches.
-					final int cid = currentCredential.getAccountId();
-					for (ApiKey apikey : keyList) {
-						// Access the XML api to get the contents for this key so we can match the characters.
-						//			final ApiKey apikeyInfo = GlobalDataManager.extendApiKey(apikey);
-						for (Character character : apikey.getEveCharacters())
-							if ( character.getCharacterID() == cid ) {
-								currentCredential.setKeyCode(apikey.getKeynumber())
-								                 .setValidationCode(apikey.getValidationcode())
-								                 .store();
-								final PilotV1 pilot = GlobalDataManager.getPilotV1(cid);
-							}
+		logger.info(">> [DataManagementModelStore.coalesceCredentialList]");
+		try {
+			if (_credentialList.size() < 1) {
+				try {
+					// Read and process the list of ApiKeys and Credentials to get a single Character list.
+					final List<ApiKey> keyList = GlobalDataManager.accessAllApiKeys();
+					final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
+					_credentialList.clear();
+					// Process the list to unify the results.
+					for (Credential currentCredential : credentials) {
+						_credentialList.add(currentCredential);
+						// Scan the keys to search for matches.
+						final int cid = currentCredential.getAccountId();
+						for (ApiKey apikey : keyList) {
+							// Access the XML api to get the contents for this key so we can match the characters.
+							//			final ApiKey apikeyInfo = GlobalDataManager.extendApiKey(apikey);
+							for (Character character : apikey.getEveCharacters())
+								if (character.getCharacterID() == cid) {
+									currentCredential.setKeyCode(apikey.getKeynumber())
+											.setValidationCode(apikey.getValidationcode())
+											.store();
+									final PilotV1 pilot = GlobalDataManager.getPilotV1(cid);
+								}
+						}
 					}
+				} catch (RuntimeException rtex) {
+					// There is some kind of exception during this key initialization routine. Post to the ModelStore a
+					// exception documentation so the display can show that information (maybe on the header).
+					rtex.printStackTrace();
 				}
-			} catch (RuntimeException rtex) {
-				// There is some kind of exception during this key initialization routine. Post to the ModelStore a
-				// exception documentation so the display can show that information (maybe on the header).
-				rtex.printStackTrace();
 			}
+			return _credentialList;
+		}finally {
+					logger.info(">> [DataManagementModelStore.coalesceCredentialList]> Credentials found {}.",_credentialList.size());
 		}
-		return _credentialList;
 	}
 
 	/**

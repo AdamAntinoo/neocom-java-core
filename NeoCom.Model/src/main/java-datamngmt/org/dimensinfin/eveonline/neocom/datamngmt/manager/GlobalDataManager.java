@@ -204,20 +204,23 @@ public class GlobalDataManager {
 	private static final ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
 	private static final ModelTimedCache modelCache = new ModelTimedCache();
 
-//	private static HashMap<Integer, MarketDataSet> buyMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
+	//	private static HashMap<Integer, MarketDataSet> buyMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
 //	private static HashMap<Integer, MarketDataSet> sellMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
 //
-	private static IMarketDataManagerService marketDataService= null;
-	public static void setMarketDataManager(final IMarketDataManagerService manager){
-		marketDataService=manager;
+	private static IMarketDataManagerService marketDataService = null;
+
+	public static void setMarketDataManager( final IMarketDataManagerService manager ) {
+		marketDataService = manager;
 	}
-	public static MarketDataSet searchMarketData(final int itemId, final EMarketSide side) {
-		if(null!=marketDataService)marketDataService.searchMarketData(itemId,side);
+
+	public static MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
+		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
-	public static void cleanEveItemCache(){
+
+	public static void cleanEveItemCache() {
 		itemCache.clear();
-}
+	}
 
 	// --- M A P P E R S   &   T R A N S F O R M E R S   S E C T I O N
 	/**
@@ -525,7 +528,7 @@ public class GlobalDataManager {
 			// Account for a hit on the cache.
 			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
 			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();
-			logger.info(">< [GlobalDataManager.searchLocationbyID]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
+			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
 			return locationCache.get(locationId);
 		} else {
 			final EveLocation hit = GlobalDataManager.getSDEDBHelper().searchLocation4Id(locationId);
@@ -534,7 +537,7 @@ public class GlobalDataManager {
 			// Account for a miss on the cache.
 			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
 			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();
-			logger.info(">< [GlobalDataManager.searchLocationbyID]> [HIT-" + hits + "/" + access + "] Location {}" + locationId + " " +
+			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {}" + locationId + " " +
 					"found at database.");
 			return hit;
 		}
@@ -635,85 +638,98 @@ public class GlobalDataManager {
 	 * point.
 	 */
 	public static PilotV1 getPilotV1( final int identifier ) {
-		// Check if this request is already available on the cache.
-		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
-		if (null == hit) {
-			final PilotV1 newchar = new PilotV1();
-			// Get the credential from the Store and check if this identifier has access to the XML api.
-			final Credential credential = DataManagementModelStore.getCredential4Id(identifier);
-			if (null != credential) {
-				// Check the Credential type.
-				CharacterInfoResponse inforesponse = null;
-				if (credential.isXMLCompatible()) {
-					try {
-						// Copy the authorization and add to it the characterID
-						final ApiAuthorization authcopy = new ApiAuthorization(credential.getKeyCode(), identifier,
-								credential.getValidationCode());
-						// TODO It seems this is not required on this version of the object.
-						//		newchar.setAuthorization(authcopy);
-						// Copy the id to a non volatile field.
-						newchar.setCharacterId(identifier);
-						newchar.setName(credential.getAccountName());
-						// Access the delegated Character using the ApiKey XML old api.
-						final List<ApiKey> apikeyList = GlobalDataManager.getNeocomDBHelper().getApiKeysDao().queryForEq("keynumber",
-								credential.getKeyCode());
-						if (null != apikeyList) {
-							final ApiKey apikey = extendApiKey(apikeyList.get(0));
-							Collection<Character> coreList = apikey.getEveCharacters();
-							for (Character character : coreList) {
-								if (character.getCharacterID() == identifier)
-									newchar.setDelegatedCharacter(character);
+		logger.info(">> [GlobalDataManager.getPilotV1]");
+		try {
+			// Check if this request is already available on the cache.
+			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+			if (null == hit) {
+				logger.info(">> [GlobalDataManager.getPilotV1]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
+				final PilotV1 newchar = new PilotV1();
+				// Get the credential from the Store and check if this identifier has access to the XML api.
+				final Credential credential = DataManagementModelStore.getCredential4Id(identifier);
+				if (null != credential) {
+					logger.info(">> [GlobalDataManager.getPilotV1]> Processing data with Credential <{}>.", credential.getAccountName());
+					// Check the Credential type.
+					CharacterInfoResponse inforesponse = null;
+					if (credential.isXMLCompatible()) {
+						try {
+							// Copy the authorization and add to it the characterID
+							final ApiAuthorization authcopy = new ApiAuthorization(credential.getKeyCode(), identifier,
+									credential.getValidationCode());
+							// TODO It seems this is not required on this version of the object.
+							//		newchar.setAuthorization(authcopy);
+							// Copy the id to a non volatile field.
+							newchar.setCharacterId(identifier);
+							newchar.setName(credential.getAccountName());
+							// Access the delegated Character using the ApiKey XML old api.
+							final List<ApiKey> apikeyList = GlobalDataManager.getNeocomDBHelper().getApiKeysDao().queryForEq("keynumber",
+									credential.getKeyCode());
+							if (null != apikeyList) {
+								final ApiKey apikey = extendApiKey(apikeyList.get(0));
+								Collection<Character> coreList = apikey.getEveCharacters();
+								for (Character character : coreList) {
+									if (character.getCharacterID() == identifier)
+										newchar.setDelegatedCharacter(character);
+								}
 							}
-						}
 
-						// Balance information
-						final PilotAccountBalanceParser balanceparser = new PilotAccountBalanceParser();
-						final AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
-						if (null != balanceresponse) {
-							final Set<EveAccountBalance> balance = balanceresponse.getAll();
-							if (balance.size() > 0) {
-								newchar.setAccountBalance(balance.iterator().next().getBalance());
+							// Balance information
+							final PilotAccountBalanceParser balanceparser = new PilotAccountBalanceParser();
+							final AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
+							if (null != balanceresponse) {
+								final Set<EveAccountBalance> balance = balanceresponse.getAll();
+								if (balance.size() > 0) {
+									newchar.setAccountBalance(balance.iterator().next().getBalance());
+								}
 							}
-						}
+							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Get balance {}.", newchar.getAccountBalance());
 
-						// Character information
-						final CharacterInfoParser infoparser = new CharacterInfoParser();
-						inforesponse = infoparser.getResponse(authcopy);
-						if (null != inforesponse) {
-							newchar.setCharacterInfo(inforesponse);
+							// Character information
+							final CharacterInfoParser infoparser = new CharacterInfoParser();
+							inforesponse = infoparser.getResponse(authcopy);
+							if (null != inforesponse) {
+								newchar.setCharacterInfo(inforesponse);
+							}
+							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Get CharacterInfo.");
+						} catch (ApiException apie) {
+							apie.printStackTrace();
+						} catch (SQLException sqle) {
+							sqle.printStackTrace();
 						}
-					} catch (ApiException apie) {
-						apie.printStackTrace();
-					} catch (SQLException sqle) {
-						sqle.printStackTrace();
+					}
+					if (credential.isESICompatible()) {
+						// Clone data
+						final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
+						if (null != cloneInformation) newchar.setHomeLocation(cloneInformation.getHomeLocation());
+						logger.info(">> [GlobalDataManager.getPilotV1]> ESI Compatible. Download clone information.");
+					}
+					if (null != inforesponse) {
+						try {
+							// Store the result on the cache with the timing indicator to where this entry is valid.
+							final Instant expirationTime = new Instant(inforesponse.getCachedUntil()).plus(TimeUnit.HOURS.toMillis(2));
+							modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
+
+							// Store this same information on the database to record the TimeStamp.
+							final String reference = constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+							TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
+							if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
+							logger.info(">> [GlobalDataManager.getPilotV1]> Updating character TimeStamp {}.", reference);
+							timestamp.setTimeStamp(expirationTime)
+									.setCredentialId(credential.getAccountId())
+									.store();
+						} catch (SQLException sqle) {
+							sqle.printStackTrace();
+						}
 					}
 				}
-				if (credential.isESICompatible()) {
-					// Clone data
-					final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
-					if (null != cloneInformation) newchar.setHomeLocation(cloneInformation.getHomeLocation());
-				}
-				if (null != inforesponse) {
-					try {
-						// Store the result on the cache with the timing indicator to where this entry is valid.
-						final Instant expirationTime = new Instant(inforesponse.getCachedUntil()).plus(TimeUnit.HOURS.toMillis(2));
-						modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
-
-						// Store this same information on the database to record the TimeStamp.
-						final String reference = constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
-						TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
-						if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
-						timestamp.setTimeStamp(expirationTime)
-								.setCredentialId(credential.getAccountId())
-								.store();
-					} catch (SQLException sqle) {
-						sqle.printStackTrace();
-					}
-				}
-//				}
+				return newchar;
+			} else {
+				logger.info(">> [GlobalDataManager.getPilotV1]> Pilot <{}> found at cache.", identifier);
+				return (PilotV1) hit;
 			}
-			return newchar;
-		} else return (PilotV1) hit;
+		}finally {
+			logger.info("<< [GlobalDataManager.getPilotV1]");
+		}
 	}
 
 	public static boolean checkPilotV1( final int identifier ) {
@@ -729,9 +745,14 @@ public class GlobalDataManager {
 	 * @return
 	 */
 	public static PilotV1 udpatePilotV1( final int identifier ) {
-		final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
-		if (null != hit) modelCache.delete(EModelVariants.PILOTV1, identifier);
-		return getPilotV1(identifier);
+		logger.info(">> [GlobalDataManager.udpatePilotV1]");
+		try {
+			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+			if (null != hit) modelCache.delete(EModelVariants.PILOTV1, identifier);
+			return getPilotV1(identifier);
+		}finally {
+			logger.info("<< [GlobalDataManager.udpatePilotV1]");
+		}
 	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
