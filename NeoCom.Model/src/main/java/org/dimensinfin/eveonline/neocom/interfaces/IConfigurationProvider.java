@@ -18,7 +18,7 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 public interface IConfigurationProvider {
-	public void initialize ();
+	public IConfigurationProvider initialize ();
 
 	public String getResourceString (final String key);
 

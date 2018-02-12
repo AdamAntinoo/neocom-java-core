@@ -42,7 +42,9 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:1.1.0'
     implementation 'com.annimon:stream:1.1.9'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.8.6'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.6'
     implementation 'org.apache.commons:commons-lang3:3.7'
 
     implementation 'org.slf4j:slf4j-api:1.7.25'
@@ -59,4 +61,10 @@ dependencies {
 
     // T E S T I N G
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
+    testImplementation 'joda-time:joda-time:2.3'
+    testImplementation 'com.j256.ormlite:ormlite-core:4.48'
+    testImplementation 'com.j256.ormlite:ormlite-jdbc:4.48'
+    testImplementation 'org.xerial:sqlite-jdbc:3.16.1'
+    testImplementation 'mysql:mysql-connector-java:5.1.45'
 }

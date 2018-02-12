@@ -24,6 +24,7 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,6 +214,8 @@ public abstract class SDEDatabaseManager {
 			}
 		} catch (SQLException sqle) {
 			logger.error("E> [SDEDatabaseManager.searchItem4Id]> Exception while processing query. {}", sqle.getMessage());
+		} catch (RuntimeException rtex) {
+			logger.error("E> [SDEDatabaseManager.searchItem4Id]> Exception while processing query. {}", rtex.getMessage());
 		}
 		//[01]
 //			}

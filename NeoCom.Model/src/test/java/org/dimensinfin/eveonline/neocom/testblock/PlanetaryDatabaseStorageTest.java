@@ -15,8 +15,6 @@ package org.dimensinfin.eveonline.neocom.testblock;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.database.NeoComDatabase;
-import org.dimensinfin.eveonline.neocom.factory.ManagerStore;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
@@ -59,11 +57,11 @@ public class PlanetaryDatabaseStorageTest {
 	 * is the place where I should initialize all data, like OAuth elements, keys, credentials and database
 	 * tables.
 	 */
-	@Before
+//	@Before
 	public void setUp () throws Exception {
 		// Step 01. Create the connectors amd implementers required to complete the test.
 		// The first task is to connect the Runtime instances to a functionality provider.
-		modelConnector = new ModelAppConnector(new ModelTestConnectorProvider());
+//		modelConnector = new ModelAppConnector(new ModelTestConnectorProvider());
 		// Create the Database helper for the NeoCom database.
 //		helper = new NeoComDBHelper()
 //				.setDatabaseHost("jdbc:mysql://localhost:3306")
@@ -72,8 +70,8 @@ public class PlanetaryDatabaseStorageTest {
 //				.setDatabasePassword("01.Alpha")
 //				.setDatabaseVersion(1)
 //				.build();
-		NeoComDatabase.setImplementer(ModelAppConnector.getSingleton().getNewDBConnector());
-		NeoComDatabase.openDatabase();
+//		NeoComDatabase.setImplementer(ModelAppConnector.getSingleton().getNewDBConnector());
+//		NeoComDatabase.openDatabase();
 
 		// Read all the Credentials and keep the first one for testing.
 		final List<Credential> credentials = DataManagementModelStore.accessCredentialList();
@@ -84,7 +82,7 @@ public class PlanetaryDatabaseStorageTest {
 	//		throw new Exception("No valid credential found on the request to get the list of credentials.");
 		}
 		// Get access to the Planetary Manager to then access the list of Colonies.
-		planetaryManager = ManagerStore.getPlanetaryManager(testingCredential, true);
+//		planetaryManager = ManagerStore.getPlanetaryManager(testingCredential, true);
 		colonies = planetaryManager.accessAllColonies();
 		if ( null != colonies ) {
 			targetColony = colonies.get(0);
@@ -102,7 +100,7 @@ public class PlanetaryDatabaseStorageTest {
 	public Credential createTestCredential () throws Exception {
 		final int newAccountIdentifier = 92002067;
 		final Credential credential = new Credential(newAccountIdentifier)
-				.setAccountId(92223647)
+//				.setAccountId(92223647)
 				.setAccountName("Beth Ripley")
 				.setActive(true)
 				.setAccessToken("l503NeX7tjKwbwXfKeEQCibp8v8KknuIldR09FxhOjH3PaC4Tpsoa9yJV7Zi284JjNleq0JLzk4tNZmHGJ1P0w2")
