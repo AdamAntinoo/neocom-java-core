@@ -22,10 +22,12 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
@@ -43,13 +45,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by Adam on 16/01/2018.
+ * This class download the OK data classes from the ESI api using the ESI authorization. It will then simply return the results
+ * to the caller to be converted or to be used.
+ * @author Adam Antinoo
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
+	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 	//	private static final ESINetworkManager singleton = new ESINetworkManager();
 
 	private static String datasource = "tranquility";
@@ -265,6 +269,27 @@ public class ESINetworkManager {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+	public static List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings (final int identifier, final String refreshToken, final String server) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdFittings]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if ( null != server ) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<GetCharactersCharacterIdFittings200Ok>> fittingApiResponse = neocomRetrofit
+					.create(FittingsApi.class)
+					.getCharactersCharacterIdFittings(identifier, datasource, null, null, null).execute();
+			if ( !fittingApiResponse.isSuccessful() ) {
+				return null;
+			} else return fittingApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
 		}
 		return null;
 	}

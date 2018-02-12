@@ -70,6 +70,14 @@ public abstract class SDEDatabaseManager {
 	// --- S Q L   S T A T E M E N T S   S E C T I O N
 	// - I T E M B Y I D
 	private static int ITEM_BYID_TYPEID_COLINDEX = 1;
+	private static int ITEM_BYID_TYPENAME_COLINDEX = 2;
+	private static int ITEM_BYID_GROUPID_COLINDEX = 3;
+	private static int ITEM_BYID_GROUPNAME_COLINDEX = 4;
+	private static int ITEM_BYID_CATEGORYID_COLINDEX = 5;
+	private static int ITEM_BYID_CATEGORYNAME_COLINDEX = 6;
+	private static int ITEM_BYID_BASEPRICE_COLINDEX = 7;
+	private static int ITEM_BYID_VOLUME_COLINDEX = 8;
+	private static int ITEM_BYID_TECH_COLINDEX = 9;
 	private static final String SELECT_ITEM_BYID = "SELECT it.typeID AS typeID"
 			+ " , it.typeName AS typeName"
 			+ " , ig.groupID AS groupID"
@@ -184,14 +192,14 @@ public abstract class SDEDatabaseManager {
 			boolean found = false;
 			while (cursor.moveToNext()) {
 				found = true;
-				hit.setTypeID(cursor.getInt(1));
-				hit.setName(cursor.getString(2));
-//				hit.setGroupName(cursor.getString(3));
-//				hit.setCategory(cursor.getString(4));
-				hit.setBasePrice(cursor.getDouble(5));
-				hit.setVolume(cursor.getDouble(6));
+				hit.setTypeID(cursor.getInt(ITEM_BYID_TYPEID_COLINDEX));
+				hit.setName(cursor.getString(ITEM_BYID_TYPENAME_COLINDEX));
+				hit.setGroupId(cursor.getInt(ITEM_BYID_GROUPID_COLINDEX));
+				hit.setCategoryId(cursor.getInt(ITEM_BYID_CATEGORYID_COLINDEX));
+				hit.setBasePrice(cursor.getDouble(ITEM_BYID_BASEPRICE_COLINDEX));
+				hit.setVolume(cursor.getDouble(ITEM_BYID_VOLUME_COLINDEX));
 				// Process the Tech field. The query marks blueprints
-				String tech = cursor.getString(7);
+				String tech = cursor.getString(ITEM_BYID_TECH_COLINDEX);
 				if (tech.equalsIgnoreCase("NOTECH")) {
 					// Update the Tech value when item is a Blueprint.
 					hit.setTech(ModelWideConstants.eveglobal.TechI);
@@ -215,6 +223,7 @@ public abstract class SDEDatabaseManager {
 		} catch (SQLException sqle) {
 			logger.error("E> [SDEDatabaseManager.searchItem4Id]> Exception while processing query. {}", sqle.getMessage());
 		} catch (RuntimeException rtex) {
+			rtex.printStackTrace();
 			logger.error("E> [SDEDatabaseManager.searchItem4Id]> Exception while processing query. {}", rtex.getMessage());
 		}
 		//[01]

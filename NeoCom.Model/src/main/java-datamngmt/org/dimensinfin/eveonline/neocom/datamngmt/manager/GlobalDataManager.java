@@ -42,6 +42,7 @@ import com.j256.ormlite.stmt.Where;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
@@ -51,6 +52,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.interfaces.IMarketDataManagerService;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
@@ -63,6 +65,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.Fitting;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -123,7 +126,7 @@ public class GlobalDataManager {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger(GlobalDataManager.class);
+	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 	private static final String SERVER_DATASOURCE = "tranquility";
 
 	// --- E V E A P I   X M L   S E C T I O N
@@ -296,6 +299,13 @@ public class GlobalDataManager {
 			}
 			uiDataExecutor.shutdownNow();
 			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
+		}
+	}
+
+	public static void suspendThread( final long millis ) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException ie) {
 		}
 	}
 
@@ -562,6 +572,7 @@ public class GlobalDataManager {
 			return hit;
 		}
 	}
+
 	public static int searchStationType( final long typeId ) {
 		return GlobalDataManager.getSDEDBHelper().searchStationType(typeId);
 	}
@@ -730,7 +741,7 @@ public class GlobalDataManager {
 				logger.info(">> [GlobalDataManager.getPilotV1]> Pilot <{}> found at cache.", identifier);
 				return (PilotV1) hit;
 			}
-		}finally {
+		} finally {
 			logger.info("<< [GlobalDataManager.getPilotV1]");
 		}
 	}
@@ -753,7 +764,7 @@ public class GlobalDataManager {
 			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 			if (null != hit) modelCache.delete(EModelVariants.PILOTV1, identifier);
 			return getPilotV1(identifier);
-		}finally {
+		} finally {
 			logger.info("<< [GlobalDataManager.udpatePilotV1]");
 		}
 	}
@@ -849,6 +860,7 @@ public class GlobalDataManager {
 				}
 			}
 		} else {
+			// TODO. It will not return null. The miss searching for a credential will generate an exception.
 			// Possible that because the application has been previously removed from memory that data is not reloaded.
 			// Call the reloading mechanism and have a second opportunity.
 			DataManagementModelStore.accessCredentialList();
@@ -859,18 +871,60 @@ public class GlobalDataManager {
 		return results;
 	}
 
-	// --- S E R I A L I Z A T I O N   I N T E R F A C E
-	public static String serializeCredentialList( final List<Credential> credentials ) {
-		// Use my own serialization control to return the data to generate exactly what I want.
-		String contentsSerialized = "[jsonClass: \"Exception\"," +
-				"message: \"Unprocessed data. Possible JsonProcessingException exception.\"]";
+	public static List<Fitting> downloadFitting4Credential( final int characterid ) {
+		logger.info(">> [GlobalDataManager.downloadFitting4Credential]");
+		List<Fitting> results = new ArrayList<>();
 		try {
-			contentsSerialized = jsonMapper.writeValueAsString(credentials);
-		} catch (JsonProcessingException jpe) {
-			jpe.printStackTrace();
+			Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+//		if (null != credential) {
+			// Get to the Network and download the data from the ESI api.
+			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings(characterid, credential.getRefreshToken(), SERVER_DATASOURCE);
+			if (null != fittings) {
+				// Process the fittings processing them and converting the data to structures compatible with MVC.
+
+////				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
+					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
+//					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+//					try {
+//						final String serialized = jsonMapper.writeValueAsString(newstruct);
+//						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
+//						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+//								.setPlanetIdentifier(storageIdentifier)
+//								.setColonySerialization(serialized)
+//								.store();
+//					} catch (JsonProcessingException jpe) {
+//						jpe.printStackTrace();
+//					}
+					results.add(newfitting);
+//				}
+				}
+			}
+			return results;
+		} catch (NeocomRuntimeException nrex) {
+			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
+					.getMessage());
+			return new ArrayList<>();
+		} catch (RuntimeException ntex) {
+			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
+					.getMessage());
+			return new ArrayList<>();
+		} finally {
+			logger.info("<< [GlobalDataManager.downloadFitting4Credential]");
 		}
-		return contentsSerialized;
 	}
+	// --- S E R I A L I Z A T I O N   I N T E R F A C E
+//	public static String serializeCredentialList( final List<Credential> credentials ) {
+//		// Use my own serialization control to return the data to generate exactly what I want.
+//		String contentsSerialized = "[jsonClass: \"Exception\"," +
+//				"message: \"Unprocessed data. Possible JsonProcessingException exception.\"]";
+//		try {
+//			contentsSerialized = jsonMapper.writeValueAsString(credentials);
+//		} catch (JsonProcessingException jpe) {
+//			jpe.printStackTrace();
+//		}
+//		return contentsSerialized;
+//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 
