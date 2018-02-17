@@ -23,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.manager.SDEExternalDataManager
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Fitting {
+public class Fitting extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("Fitting");
 
@@ -37,6 +37,7 @@ public class Fitting {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Fitting() {
+		jsonClass = "Fitting";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -53,9 +54,9 @@ public class Fitting {
 		return description;
 	}
 
-//	protected int getShipTypeId() {
-//		return shipTypeId;
-//	}
+	public EveItem getShipHullInfo() {
+		return this.shipItem;
+	}
 
 	public List<FittingItem> getItems() {
 		return items;
@@ -79,7 +80,7 @@ public class Fitting {
 	public Fitting setShipTypeId( final int shipTypeId ) {
 		this.shipTypeId = shipTypeId;
 		// Update the transient item details from this type identifier.
-		shipItem= GlobalDataManager.searchItem4Id(shipTypeId);
+		shipItem = GlobalDataManager.searchItem4Id(shipTypeId);
 		return this;
 	}
 
@@ -87,12 +88,13 @@ public class Fitting {
 	 * During the transformation this method will be called with the original list of items that are encoded in location and in
 	 * type. During the assignment we should process that list and expand them to a full list of enumerated ship locations and
 	 * full eve items type.
+	 *
 	 * @param items origianl OK item list.
 	 */
 	protected void setItems( final List<CharacterscharacterIdfittingsItems> items ) {
 		// Process the list of items and transform them into ship locations and game items.
 		this.items.clear();
-		for(CharacterscharacterIdfittingsItems item: items){
+		for (CharacterscharacterIdfittingsItems item : items) {
 			final FittingItem newitem = new FittingItem(item.getTypeId())
 					.setFlag(item.getFlag())
 					.setQuantity(item.getQuantity());
@@ -101,7 +103,7 @@ public class Fitting {
 	}
 
 	// - CLASS IMPLEMENTATION ...................................................................................
-	public class FittingItem extends NeoComNode{
+	public class FittingItem extends NeoComNode {
 		// - S T A T I C - S E C T I O N ..........................................................................
 
 		// - F I E L D - S E C T I O N ............................................................................
@@ -109,13 +111,14 @@ public class Fitting {
 		private int flag = 0;
 		private int quantity = 0;
 		private transient EveItem itemDetails = null;
-//		private EShipSlotLocation slotLocation=EShipSlotLocation.CARGOHOLD;
+		//		private EShipSlotLocation slotLocation=EShipSlotLocation.CARGOHOLD;
 		private SDEExternalDataManager.InventoryFlag detailedFlag = null;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public FittingItem( final Integer typeId ) {
-			this.typeId=typeId;
-			itemDetails=GlobalDataManager.searchItem4Id(typeId);
+			jsonClass = "FittingItem";
+			this.typeId = typeId;
+			itemDetails = GlobalDataManager.searchItem4Id(typeId);
 		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................

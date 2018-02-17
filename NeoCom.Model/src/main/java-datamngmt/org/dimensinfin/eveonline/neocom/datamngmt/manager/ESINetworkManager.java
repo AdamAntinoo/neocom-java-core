@@ -15,6 +15,18 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.datamngmt.manager;
 
+import retrofit2.Response;
+import retrofit2.Retrofit;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChonoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
@@ -23,6 +35,7 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -30,23 +43,14 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * This class download the OK data classes from the ESI api using the ESI authorization. It will then simply return the results
  * to the caller to be converted or to be used.
+ *
  * @author Adam Antinoo
  */
 
@@ -90,15 +94,16 @@ public class ESINetworkManager {
 	private static final Hashtable<String, Response<?>> okResponseCache = new Hashtable();
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
-	public static String constructCachePointerReference (final GlobalDataManager.ECacheTimes cachecode, final int identifier) {
+	public static String constructCachePointerReference( final GlobalDataManager.ECacheTimes cachecode, final int identifier ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
 				.append(":")
 				.append(Integer.valueOf(identifier).toString())
 				.toString();
 	}
-	public static String constructCachePointerReference (final GlobalDataManager.ECacheTimes cachecode, final int
-			identifier1,final int identifier2) {
+
+	public static String constructCachePointerReference( final GlobalDataManager.ECacheTimes cachecode, final int
+			identifier1, final int identifier2 ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
 				.append(":")
@@ -108,21 +113,21 @@ public class ESINetworkManager {
 				.toString();
 	}
 
-	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets (final int identifier, final String refreshToken, final String server) {
+	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		// Check if this response already available at cache.
 		final String reference = constructCachePointerReference(GlobalDataManager.ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
-		if ( null == hit ) {
+		if (null == hit) {
 			final Chrono accessFullTime = new Chrono();
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-				if ( null != server ) datasource = server;
+				if (null != server) datasource = server;
 				// Create the request to be returned so it can be called.
 				final PlanetaryInteractionApi colonyApiRetrofit = neocomRetrofit.create(PlanetaryInteractionApi.class);
 				final Response<List<GetCharactersCharacterIdPlanets200Ok>> colonyApiResponse = colonyApiRetrofit.getCharactersCharacterIdPlanets(identifier, datasource, null, null, null).execute();
-				if ( !colonyApiResponse.isSuccessful() ) {
+				if (!colonyApiResponse.isSuccessful()) {
 					return new ArrayList<>();
 				} else {
 					// Store results on the cache.
@@ -138,19 +143,19 @@ public class ESINetworkManager {
 		return (List<GetCharactersCharacterIdPlanets200Ok>) hit.body();
 	}
 
-	public static GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId (final int identifier, final String refreshToken, final String server) {
+	public static GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofit
 					.create(UniverseApi.class)
 					.getUniversePlanetsPlanetId(identifier, datasource, null, null).execute();
-			if ( !universeApiResponse.isSuccessful() ) {
+			if (!universeApiResponse.isSuccessful()) {
 				return null;
 			} else return universeApiResponse.body();
 		} catch (IOException e) {
@@ -161,23 +166,23 @@ public class ESINetworkManager {
 		return null;
 	}
 
-	public static GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId (final int identifier, final int planetid, final String refreshToken, final String server) {
+	public static GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier, final int planetid, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
 		// Check if this response already available at cache.
 		final String reference = constructCachePointerReference(GlobalDataManager.ECacheTimes
-				.PLANETARY_INTERACTION_STRUCTURES, identifier,planetid);
+				.PLANETARY_INTERACTION_STRUCTURES, identifier, planetid);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
-		if ( null == hit ) {
+		if (null == hit) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-				if ( null != server ) datasource = server;
+				if (null != server) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> colonyApiResponse = neocomRetrofit
 						.create(PlanetaryInteractionApi.class)
 						.getCharactersCharacterIdPlanetsPlanetId(identifier, planetid, datasource, null, null, null).execute();
-				if ( colonyApiResponse.isSuccessful() ) {
+				if (colonyApiResponse.isSuccessful()) {
 					// Store results on the cache.
 //					okResponseCache.put(reference, colonyApiResponse);
 					return colonyApiResponse.body();
@@ -188,25 +193,24 @@ public class ESINetworkManager {
 				logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
 			}
 			return null;
-		}
-		else {
+		} else {
 			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
 			return (GetCharactersCharacterIdPlanetsPlanetIdOk) hit.body();
 		}
 	}
 
-	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones (final int identifier, final String refreshToken, final String server) {
+	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCharactersCharacterIdClonesOk> cloneApiResponse = neocomRetrofit
 					.create(ClonesApi.class)
 					.getCharactersCharacterIdClones(identifier, datasource, null, null, null).execute();
-			if ( !cloneApiResponse.isSuccessful() ) {
+			if (!cloneApiResponse.isSuccessful()) {
 				return null;
 			} else return cloneApiResponse.body();
 		} catch (IOException e) {
@@ -217,14 +221,14 @@ public class ESINetworkManager {
 		return null;
 	}
 
-	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets (final int identifier, final String refreshToken, final String server) {
+	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");
 		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
@@ -232,7 +236,7 @@ public class ESINetworkManager {
 				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
 						.create(AssetsApi.class)
 						.getCharactersCharacterIdAssets(identifier, datasource, pageCounter, null, null, null).execute();
-				if ( !assetsApiResponse.isSuccessful() ) {
+				if (!assetsApiResponse.isSuccessful()) {
 					// Or error or we have reached the end of the list.
 					return returnAssetList;
 				} else {
@@ -240,7 +244,7 @@ public class ESINetworkManager {
 					returnAssetList.addAll(assetsApiResponse.body());
 					pageCounter++;
 					// Check for out of page running.
-					if ( assetsApiResponse.body().size() < 1 ) morePages = false;
+					if (assetsApiResponse.body().size() < 1) morePages = false;
 				}
 			}
 		} catch (IOException e) {
@@ -251,18 +255,18 @@ public class ESINetworkManager {
 		return returnAssetList;
 	}
 
-	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames (final int identifier, final List<Long> listItemIds, final String refreshToken, final String server) {
+	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
 					.create(AssetsApi.class)
 					.postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource, null, null, null).execute();
-			if ( !assetsApiResponse.isSuccessful() ) {
+			if (!assetsApiResponse.isSuccessful()) {
 				return null;
 			} else return assetsApiResponse.body();
 		} catch (IOException e) {
@@ -272,18 +276,19 @@ public class ESINetworkManager {
 		}
 		return null;
 	}
-	public static List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings (final int identifier, final String refreshToken, final String server) {
+
+	public static List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdFittings]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdFittings200Ok>> fittingApiResponse = neocomRetrofit
 					.create(FittingsApi.class)
 					.getCharactersCharacterIdFittings(identifier, datasource, null, null, null).execute();
-			if ( !fittingApiResponse.isSuccessful() ) {
+			if (!fittingApiResponse.isSuccessful()) {
 				return null;
 			} else return fittingApiResponse.body();
 		} catch (IOException e) {
@@ -294,16 +299,38 @@ public class ESINetworkManager {
 		return null;
 	}
 
+	public static List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
+		logger.info(">> [ESINetworkManager.getMarketsPrices]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)
+					.getMarketsPrices(datasource, null, null)
+					.execute();
+			if (!marketApiResponse.isSuccessful()) {
+				return null;
+			} else return marketApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ESINetworkManager () {
+	public ESINetworkManager() {
 		super();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("ESINetworkManager [");
 		//		buffer.append("Status: ").append(0);
 		buffer.append("]");

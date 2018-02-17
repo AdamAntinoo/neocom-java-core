@@ -1,64 +1,68 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.market;
 
-// - IMPORT SECTION .........................................................................................
 import java.io.Serializable;
-import java.util.Vector;
-import java.util.logging.Logger;
-
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.joda.time.Instant;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import org.joda.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+
 // - CLASS IMPLEMENTATION ...................................................................................
+
 /**
  * This class stores the module and the market information and any other data for manufacturing calculations
  * and module classification. This is the equivalent to the Market card on the excel file and should be able
  * to calculate and generate any manufacturing information usable on the User Interface.<br>
- * 
+ * <p>
  * Because on some cases the information may not be available and on Android the update is delegated to a
  * background task the class should be able to cope with NO DATA environments and generate dummy data that
  * will indicate the UI of such state.
- * 
+ *
  * @author Adam Antinoo
  */
 public class MarketDataSet implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long				serialVersionUID	= -2976488566617309014L;
-	private static Logger						logger						= Logger.getLogger("MarketDataSet");
-	private static final int				HIGH_SECURITY			= 1;
-	private static final int				LOW_SECURITY			= 2;
-	private static final int				NULL_SECURITY			= 3;
+	private static final long serialVersionUID = -2976488566617309014L;
+	private static Logger logger = LoggerFactory.getLogger("MarketDataSet");
+	private static final int HIGH_SECURITY = 1;
+	private static final int LOW_SECURITY = 2;
+	private static final int NULL_SECURITY = 3;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	/**
 	 * The data structures of the price and orders pending on the different markets for this single module.
 	 */
-	@JsonInclude
-	public Vector<MarketDataEntry>	dataOnMarketHub		= null;
-	private MarketDataEntry					bestmarkethigh		= null;
-	private MarketDataEntry					bestmarketlow			= null;
-	private MarketDataEntry					bestmarketnull		= null;
-	@JsonInclude
-	public Instant									timestamp					= new Instant(0);
-	@JsonInclude
-	public int											id								= -2;
-	public EMarketSide							side							= EMarketSide.SELLER;
+	private List<MarketDataEntry> dataOnMarketHub = null;
+	private MarketDataEntry bestmarkethigh = null;
+	private MarketDataEntry bestmarketlow = null;
+	private MarketDataEntry bestmarketnull = null;
+	private Instant timestamp = new Instant(0);
+	private int id = -2;
+	private EMarketSide side = EMarketSide.SELLER;
 	/**
 	 * Special indicator to report invalid entries that should not be cached. Only true when filled from market
 	 * real data.
 	 */
-	public boolean									valid							= false;
+	private boolean valid = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketDataSet() {
@@ -68,11 +72,10 @@ public class MarketDataSet implements Serializable {
 	 * When creating the new data we have to access the base information that is the item and then copy the
 	 * price from the base price of the item to the price of the card. This will allow use the card without
 	 * problems while the background processes update the information from the network provider.
-	 * 
-	 * @param id
-	 *          item id to store and to get info for.
+	 *
+	 * @param id item id to store and to get info for.
 	 */
-	public MarketDataSet(final int id, final EMarketSide side) {
+	public MarketDataSet( final int id, final EMarketSide side ) {
 		this.id = id;
 		this.side = side;
 		double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
@@ -86,7 +89,7 @@ public class MarketDataSet implements Serializable {
 		return bestmarkethigh;
 	}
 
-	public Vector<MarketDataEntry> getDataOnMarketHub() {
+	public List<MarketDataEntry> getDataOnMarketHub() {
 		return dataOnMarketHub;
 	}
 
@@ -111,21 +114,26 @@ public class MarketDataSet implements Serializable {
 		timestamp = new Instant();
 	}
 
-	public void setData(final Vector<MarketDataEntry> hubData) {
+	public void setData( final List<MarketDataEntry> hubData ) {
 		dataOnMarketHub = hubData;
 		this.updateBestMarket();
 	}
 
-	public void setDataOnMarketHub(final Vector<MarketDataEntry> dataOnMarketHub) {
+	public void setDataOnMarketHub( final List<MarketDataEntry> dataOnMarketHub ) {
 		this.dataOnMarketHub = dataOnMarketHub;
 	}
 
-	public void setTimestamp(final Instant timestamp) {
+	public void setTimestamp( final Instant timestamp ) {
 		this.timestamp = timestamp;
 	}
 
-	public void setValid(final boolean valid) {
+	public void setValid( final boolean valid ) {
 		this.valid = valid;
+	}
+
+	public MarketDataSet setSide( final EMarketSide side ) {
+		this.side = side;
+		return this;
 	}
 
 	@Override
@@ -198,7 +206,7 @@ public class MarketDataSet implements Serializable {
 		}
 	}
 
-	private int getSecurityCategory(final String security) {
+	private int getSecurityCategory( final String security ) {
 		try {
 			double sec = Double.parseDouble(security);
 			if (sec >= 0.5) return MarketDataSet.HIGH_SECURITY;

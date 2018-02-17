@@ -58,14 +58,6 @@ public class EVEMarketDataParser extends AbstractXMLHandler {
 					return;
 				}
 			}
-			//			if (localName.equalsIgnoreCase("td")) {
-			//				if (awaitingStationName) {
-			//					// // This is the station name content that is not inside
-			//					// any tag.
-			//					entry.setStationName(tagContent);
-			//					awaitingStationName = false;
-			//				}
-			//			}
 			if (localName.equalsIgnoreCase("td")) {
 				if (!tagContent.isEmpty()) {
 					if (awaitingQty) {

@@ -43,13 +43,15 @@ public interface ISDEDBHelper {
 
 	public boolean databaseIsValid();
 
-	public EveItem searchItem4Id( final int typeid );
+	public EveItem searchItem4Id( final int typeId );
 
-	public EveLocation searchLocation4Id( final long locationID );
+	public EveLocation searchLocation4Id( final long locationId );
+
+	public EveLocation searchLocationBySystem( final String name );
 
 	public ItemGroup searchItemGroup4Id( final int targetGroupId );
 
 	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
 
-	public int searchStationType( final long stationID );
+	public int searchStationType( final long stationId );
 }

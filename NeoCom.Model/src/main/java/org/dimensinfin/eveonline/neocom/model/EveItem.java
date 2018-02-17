@@ -1,17 +1,19 @@
-//	PROJECT:      NeoCom.model (NEOC.M)
-//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:	Java 1.8 Library.
-//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
-//								available databases.
-//								This version includes the access to the latest 6.x version of eveapi libraries to
-//								download and parse the CCP XML API data.
-//								Code integration that is not dependent on any specific platform.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -23,14 +25,15 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 public class EveItem extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2548296399305221197L;
-	private static EveItem defaultItem = new EveItem();
+	private static  EveItem defaultItem = null;
 	private static final int DEFAULT_TYPE_ID = 34;
 
 	public static EveItem getDefaultItem() {
 		if (null == EveItem.defaultItem) {
 			EveItem.defaultItem = GlobalDataManager.searchItem4Id(EveItem.DEFAULT_TYPE_ID);
-			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
-			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
+//			EveItem.defaultItem.setDefaultPrice(GlobalDataManager.searchMarketPrice(EveItem.DEFAULT_TYPE_ID));
+//			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
+//			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
 		}
 		return EveItem.defaultItem;
 	}
@@ -42,23 +45,19 @@ public class EveItem extends NeoComNode {
 	private int categoryid = -1;
 	private ItemGroup group = null;
 	private ItemCategory category = null;
-	//	private String										getGroupName()			= "<getGroupName()>";
-	//	private String										getCategory()			= "<getCategory()>";
 	/**
-	 * This is the default price set for an item at the SDE database. I should get other prices from market
-	 * information blocks. This price will be updated from market data with the Jita lowest seller price when
-	 * the market data gets updated.
+	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
+	 * methods to get any other price set from the market data.
 	 */
 	private double baseprice = -1.0;
 	/**
-	 * This is the highest buyers price when the market data is available or the <code>baseprice</code> is still
-	 * not available. It is only used when the caller does not specify the particular market side for the
-	 * requested price or any other search parameter.
+	 * This is the ESI returned price from the global market data service. This is the price shown on the game UI for item values
+	 * and it is not tied to any specific market place.
 	 */
 	public double defaultprice = -1.0;
 	private double volume = 0.0;
 	private String tech = ModelWideConstants.eveglobal.TechI;
-	//	private boolean										isBlueprint		= false;
+
 	// - A D D I T I O N A L   F I E L D S
 	private transient EIndustryGroup industryGroup = EIndustryGroup.UNDEFINED;
 	private transient MarketDataSet buyerData = null;
@@ -110,6 +109,33 @@ public class EveItem extends NeoComNode {
 		return group.getGroupName();
 	}
 
+	public String getHullGroup() {
+		if (getIndustryGroup() == EIndustryGroup.HULL) {
+			if (getGroupName().equalsIgnoreCase("Attack Battlecruiser")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Battleship")) return "battleship";
+			if (getGroupName().equalsIgnoreCase("Blockade Runner")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Combat Battlecruiser")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Command Destroyer")) return "destroyer";
+			if (getGroupName().equalsIgnoreCase("Corvette")) return "shuttle";
+			if (getGroupName().equalsIgnoreCase("Cruiser")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Deep Space Transport")) return "industrial";
+			if (getGroupName().equalsIgnoreCase("Destroyer")) return "destroyer";
+			if (getGroupName().equalsIgnoreCase("Exhumer")) return "miningBarge";
+			if (getGroupName().equalsIgnoreCase("Frigate")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Heavy Assault Cruiser")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Industrial")) return "industrial";
+			if (getGroupName().equalsIgnoreCase("Industrial Command Ship")) return "industrial";
+			if (getGroupName().equalsIgnoreCase("Interceptor")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Interdictor")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Logistics")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Mining Barge")) return "miningBarge";
+			if (getGroupName().equalsIgnoreCase("Shuttle")) return "shuttle";
+			if (getGroupName().equalsIgnoreCase("Stealth Bomber")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Strategic Cruiser")) return "cruiser";
+		}
+		return "not/applies";
+	}
+
 	public void setGroupId( final int groupid ) {
 		this.groupid = groupid;
 		group = GlobalDataManager.searchItemGroup4Id(groupid);
@@ -141,15 +167,6 @@ public class EveItem extends NeoComNode {
 		return id;
 	}
 
-	@JsonIgnore
-	public MarketDataEntry getLowestSellerPrice() {
-		return this.getSellerMarketData().getBestMarket();
-	}
-
-	public String getName() {
-		return name;
-	}
-
 	/**
 	 * Try to get the best price for this element. There are two sets of prices, those for selling an item
 	 * (highest buyers) and those to buy the same item (lower seller). The default price that is the one from
@@ -160,10 +177,22 @@ public class EveItem extends NeoComNode {
 	 * For simple item it is not an important point since the interface allows to get the original data to any
 	 * higher level model object.
 	 */
-	@JsonIgnore
+	public MarketDataEntry getLowestSellerPrice() {
+		return this.getSellerMarketData().getBestMarket();
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Return the ESI api market set price for this item. Sometimes there is another price markes as the average price that I am
+	 * not using now.
+	 * @return
+	 */
 	public double getPrice() {
 		if (defaultprice < 0.0) {
-			defaultprice = this.getBuyerMarketData().getBestMarket().getPrice();
+			defaultprice = GlobalDataManager.searchMarketPrice(getTypeID()).getAdjustedPrice();
 		}
 		return defaultprice;
 	}

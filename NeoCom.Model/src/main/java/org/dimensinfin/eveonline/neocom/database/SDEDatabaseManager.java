@@ -12,10 +12,11 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
@@ -24,9 +25,6 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class SDEDatabaseManager {
@@ -307,6 +305,27 @@ public abstract class SDEDatabaseManager {
 	}
 
 	/**
+	 * Search for the location using only the system identifier.
+	 *
+	 * @param name
+	 * @return
+	 */
+	public EveLocation searchLocationBySystem( final String name ) {
+		final EveLocation newLocation = new EveLocation();
+		try {
+			final RawStatement cursor = constructStatement(SELECT_LOCATIONBYSYSTEM, new String[]{name});
+			while (cursor.moveToNext()) {
+				int locationID = cursor.getInt(LOCATIONBYSYSTEM_SOLARSYSTEMID_COLINDEX);
+				cursor.close();
+				return searchLocation4Id(locationID);
+			}
+		} catch (final Exception ex) {
+			logger.warn("W [SDEDatabaseManager.searchLocationBySystem]> Location <" + name + "> not found.");
+		}
+		return newLocation;
+	}
+
+	/**
 	 * Search on the sde.sqlite database for the item group information. This new select is used to get access to
 	 * the icon information that should be stored to be correlated to the resource list.
 	 */
@@ -325,7 +344,7 @@ public abstract class SDEDatabaseManager {
 		} catch (final Exception ex) {
 			logger.error("E [SDEDatabaseManager.searchItemGroup4Id]> Exception processing statement: {}" + ex.getMessage());
 		} finally {
-			logger.info("<< [SDEDatabaseManager.searchItemGroup4Id]");
+			logger.info("<< [SDEDatabaseManager.searchItemGroup4Id]> GroupName: {}", target.getGroupName());
 			return target;
 		}
 	}
@@ -348,7 +367,7 @@ public abstract class SDEDatabaseManager {
 		} catch (final Exception ex) {
 			logger.error("E [SDEDatabaseManager.searchItemCategory4Id]> Exception processing statement: {}" + ex.getMessage());
 		} finally {
-			logger.info("<< [SDEDatabaseManager.searchItemCategory4Id]");
+			logger.info("<< [SDEDatabaseManager.searchItemCategory4Id]> CategoryName: {}", target.getCategoryName());
 			return target;
 		}
 	}

@@ -12,6 +12,20 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt.manager;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.CachingConnector;
@@ -39,6 +53,12 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import org.joda.time.Instant;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
@@ -56,6 +76,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
@@ -73,25 +94,6 @@ import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
-
-import org.joda.time.Instant;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
@@ -192,6 +194,14 @@ public class GlobalDataManager {
 		}
 	}
 
+	public static boolean getResourceBoolean( final String key ) {
+		return Boolean.valueOf(configurationManager.getResourceString(key)).booleanValue();
+	}
+
+	public static boolean getResourceBoolean( final String key, final boolean defaultValue ) {
+		return Boolean.valueOf(configurationManager.getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
+	}
+
 	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
 	private static final Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
@@ -206,19 +216,36 @@ public class GlobalDataManager {
 
 	private static final ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
 	private static final ModelTimedCache modelCache = new ModelTimedCache();
-
-	//	private static HashMap<Integer, MarketDataSet> buyMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
-//	private static HashMap<Integer, MarketDataSet> sellMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
-//
 	private static IMarketDataManagerService marketDataService = null;
+	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
 	public static void setMarketDataManager( final IMarketDataManagerService manager ) {
+		logger.info(">> [GlobalDataManager.setMarketDataManager]");
 		marketDataService = manager;
+		// At this point we should have been initialized.
+		// Initialize and process the list of market process form the ESI full market data.
+		final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(SERVER_DATASOURCE);
+		logger.info(">> [GlobalDataManager.setMarketDataManager]> Process all market prices: {} items", marketPrices.size());
+		for (GetMarketsPrices200Ok price : marketPrices) {
+			marketDefaultPrices.put(price.getTypeId(), price);
+		}
+		logger.info("<< [GlobalDataManager.setMarketDataManager]");
 	}
 
 	public static MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
 		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
+	}
+
+	/**
+	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
+	 * @param typeId
+	 * @return
+	 */
+	public static GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
+		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
+		if (null == hit) return new GetMarketsPrices200Ok().typeId(typeId);
+		else return hit;
 	}
 
 	public static void cleanEveItemCache() {
@@ -551,6 +578,10 @@ public class GlobalDataManager {
 					"found at database.");
 			return hit;
 		}
+	}
+
+	public static EveLocation searchLocationBySystem( final String name ) {
+		return GlobalDataManager.getSDEDBHelper().searchLocationBySystem(name);
 	}
 
 	public static ItemGroup searchItemGroup4Id( final int targetGroupId ) {

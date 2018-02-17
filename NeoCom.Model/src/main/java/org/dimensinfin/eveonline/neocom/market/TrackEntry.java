@@ -1,10 +1,17 @@
-//	PROJECT:        EveMarket
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.market;
 
-//- IMPORT SECTION .........................................................................................
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -13,14 +20,15 @@ public class TrackEntry {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String	stationName	= "";
-	private int			qty					= 0;
-	private double	price				= 0.0;
-	private double	security		= 0.0;
+	private String stationName = "";
+	private int qty = 0;
+	private double price = 0.0;
+	private double security = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	// --- G E T E R S   &   S E T T E R S
 	public double getPrice() {
 		return price;
 	}
@@ -33,7 +41,7 @@ public class TrackEntry {
 		return stationName;
 	}
 
-	public void setPrice(final String tagContent) {
+	public TrackEntry setPrice( final String tagContent ) {
 		try {
 			Number number = NumberFormat.getNumberInstance(java.util.Locale.US)
 					.parse(tagContent.trim().replace('\n', ' ').replaceAll(" +", " "));
@@ -43,9 +51,10 @@ public class TrackEntry {
 		} catch (ParseException pe) {
 			price = 10.0;
 		}
+		return this;
 	}
 
-	public void setQty(final String tagContent) {
+	public TrackEntry setQty( final String tagContent ) {
 		try {
 			Number number = NumberFormat.getNumberInstance(java.util.Locale.US).parse(tagContent);
 			qty = number.intValue();
@@ -54,9 +63,10 @@ public class TrackEntry {
 		} catch (ParseException pe) {
 			qty = 0;
 		}
+		return this;
 	}
 
-	public void setSecurity(final String tagContent) {
+	public TrackEntry setSecurity( final String tagContent ) {
 		try {
 			Number number = NumberFormat.getNumberInstance(java.util.Locale.US).parse(tagContent);
 			security = number.doubleValue();
@@ -65,14 +75,24 @@ public class TrackEntry {
 		} catch (ParseException pe) {
 			security = 1.0;
 		}
+		return this;
 	}
 
-	public void setStationName(final String tagContent) {
+	public TrackEntry setStationName( final String tagContent ) {
 		stationName = tagContent.trim().replace('\n', ' ').replaceAll(" +", " ");
-	}
+		return this;
+}
 
 	@Override
 	public String toString() {
-		return "stationName=" + stationName + " qty=" + qty + " price=" + price;
+		return new StringBuffer("TrackEntry [")
+		.append("stationName=")
+		.append(stationName).append(" ")
+		.append("qty=")
+				.append(qty ).append(" ")
+				.append("price=")
+				.append( price).append(" ")
+				.append("}")
+				.toString();
 	}
 }
