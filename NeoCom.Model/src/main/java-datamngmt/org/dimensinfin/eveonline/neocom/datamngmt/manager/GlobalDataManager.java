@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
@@ -69,7 +70,6 @@ import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.datamngmt.interfaces.IMarketDataManagerService;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
@@ -115,7 +115,7 @@ public class GlobalDataManager {
 	}
 
 	public enum ECacheTimes {
-		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS
+		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
 	}
 
 	// --- P R I V A T E   E N U M E R A T O R S
@@ -147,7 +147,7 @@ public class GlobalDataManager {
 	 */
 
 	// --- C O N F I G U R A T I O N   S E C T I O N
-	private static IConfigurationProvider configurationManager = null;
+	private static IConfigurationProvider configurationManager = new GlobalConfigurationProvider(null);
 
 	public static void connectConfigurationManager( final IConfigurationProvider newconfigurationProvider ) {
 		configurationManager = newconfigurationProvider;
@@ -212,14 +212,15 @@ public class GlobalDataManager {
 	static {
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS.name(), TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES.name(), TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.MARKET_PRICES.name(), TimeUnit.SECONDS.toMillis(3600));
 	}
 
 	private static final ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
 	private static final ModelTimedCache modelCache = new ModelTimedCache();
-	private static IMarketDataManagerService marketDataService = null;
+	private static MarketDataServer marketDataService = null;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public static void setMarketDataManager( final IMarketDataManagerService manager ) {
+	public static void setMarketDataManager( final MarketDataServer manager ) {
 		logger.info(">> [GlobalDataManager.setMarketDataManager]");
 		marketDataService = manager;
 		// At this point we should have been initialized.
@@ -236,9 +237,14 @@ public class GlobalDataManager {
 		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
+	public static void activateMarketDataCache4Id( final int typeId ) {
+		if (null != marketDataService)  marketDataService.activateMarketDataCache4Id(typeId);
+		else throw new RuntimeException("No MarketDataManager service connected.");
+	}
 
 	/**
 	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
+	 *
 	 * @param typeId
 	 * @return
 	 */

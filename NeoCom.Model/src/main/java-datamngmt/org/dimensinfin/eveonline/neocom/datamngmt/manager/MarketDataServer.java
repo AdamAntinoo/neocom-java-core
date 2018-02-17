@@ -48,7 +48,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.interfaces.IMarketDataManagerService;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
@@ -58,7 +57,7 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class MarketDataServer implements IMarketDataManagerService {
+public class MarketDataServer {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("MarketDataServer");
 	private static final int cpuCount = Runtime.getRuntime().availableProcessors();
@@ -189,6 +188,10 @@ public class MarketDataServer implements IMarketDataManagerService {
 		} finally {
 			logger.info("<< [MarketDataServer.searchMarketData]");
 		}
+	}
+
+	public void activateMarketDataCache4Id( final int typeId ) {
+		expirationTimeMarketData.put(typeId, Instant.now().plus(TimeUnit.HOURS.toMillis(1)));
 	}
 
 	/**
@@ -323,13 +326,15 @@ public class MarketDataServer implements IMarketDataManagerService {
 					} catch (RuntimeException rtex) {
 						rtex.printStackTrace();
 					}
-
+					// If there was no exceptions now the market data is stored on the cache.
+					// But still we need to setup the cache time.
+					GlobalDataManager.activateMarketDataCache4Id(localizer);
 					// Decrement the counter.
 					marketJobCounter--;
 					logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob.submit]> Completing job {}", typeId);
 				});
 				return future;
-			}finally {
+			} finally {
 				logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob]");
 			}
 		}

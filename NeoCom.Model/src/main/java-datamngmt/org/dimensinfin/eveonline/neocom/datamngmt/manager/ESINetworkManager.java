@@ -1,29 +1,34 @@
-//  PROJECT:     NeoCom.Android (NEOC.A)
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
 //  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
 //  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Android API22.
-//  DESCRIPTION: Android Application related to the Eve Online game. The purpose is to download and organize
-//               the game data to help capsuleers organize and prioritize activities. The strong points are
-//               help at the Industry level tracking and calculating costs and benefits. Also the market
-//               information update service will help to identify best prices and locations.
-//               Planetary Interaction and Ship fittings are point under development.
-//               ESI authorization is a new addition that will give continuity and allow download game data
-//               from the new CCP data services.
-//               This is the Android application version but shares libraries and code with other application
-//               designed for Spring Boot Angular 4 platform.
-//               The model management is shown using a generic Model View Controller that allows make the
-//               rendering of the model data similar on all the platforms used.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt.manager;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,34 +63,48 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacter
 public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
-	//	private static final ESINetworkManager singleton = new ESINetworkManager();
 
 	private static String datasource = "tranquility";
-	private static final String CLIENT_ID = "396e0b6cbed2488284ed4ae426133c90";
-	private static final String SECRET_KEY = "gf8X16xbdaO6soJWCdYHPFfftczZyvfo63z6WUjO";
-	private static final String CALLBACK = "eveauth-neotest://authentication";
-	private static final String agent = "org.dimensinfin.eveonline.neocom; Dimensinfin Industries";
-	private static final ESIStore store = ESIStore.DEFAULT;
-	private static final List<String> scopes = new ArrayList<>(2);
+	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.cache.esi.authorization.clientid");
+	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.cache.esi.authorization.secretkey");
+	private static final String CALLBACK = GlobalDataManager.getResourceString("R.cache.esi.authorization.callback");
+	private static final String AGENT = GlobalDataManager.getResourceString("R.cache.esi.authorization.agent");
+	private static final ESIStore STORE = ESIStore.DEFAULT;
+	private static final List<String> SCOPES = new ArrayList<>(2);
 
 	static {
-		scopes.add("publicData");
-		scopes.add("esi-planets.manage_planets.v1");
+		// Read the scoped from a resource file
+		try {
+			final String propertyFileName = GlobalDataManager.getResourceString("R.cache.esi.authorization.scopes.filename");
+			final ClassLoader classLoader = Thread.currentThread().getClass().getClassLoader();
+			final URI propertyURI;
+			propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
+			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
+			String line = input.readLine();
+			while (StringUtils.isNotEmpty(line)) {
+				SCOPES.add(line);
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
+//	public static File retrofitApplicationParameter = new File(GlobalDataManager.getResourceString("R.cache.directorypath")
+//			+GlobalDataManager.getResourceString("R.cache.network.cachename"));
 
-	// TODO This is platforma dependant and should be changed.
-	public static File retrofitApplicationParameter = new File("./ESINetworkManager.cache.store");
+	/** This is the location where to STORE the downloaded data from network cache. */
+	private static final String filePath = GlobalDataManager.getResourceString("R.cache.directorypath")
+			+GlobalDataManager.getResourceString("R.cache.network.cachename");
+	private static final File cacheDataFile = new File(filePath);
+	private static final long cacheSize = 100*1024*1024;
+	private static final long timeout = TimeUnit.SECONDS.toMillis(60);
 
-	// TODO Cache is a feature that changes from Android to SB.
-	// We are going to implement the Android feaure to wrote to the NeoCom directory.
-	private static final String filePath = "neocomcache" + "/" + "ESINetworkManager.cache.store";
-	private static final File cacheDataFile = new File(retrofitApplicationParameter, filePath);
-	private static final long cacheSize = 1000000;
-	private static final long timeout = 10000;
-
-	private static final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, agent, store, scopes);
+	private static final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
 	// TODO The refresh can be striped from the creation because it is only used at runtime when executing the callbacks.
-	private static final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, agent, cacheDataFile, cacheSize, timeout);
+	private static final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 
 	/**
 	 * Response cache using the ESI api cache times to speed up all possible repetitive access. Setting caches at the

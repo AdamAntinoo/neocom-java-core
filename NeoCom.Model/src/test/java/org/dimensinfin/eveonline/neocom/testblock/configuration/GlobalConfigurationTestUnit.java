@@ -10,54 +10,59 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.testblock.model;
+package org.dimensinfin.eveonline.neocom.testblock.configuration;
 
-import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import java.io.IOException;
+import java.util.List;
+
+import com.sun.istack.internal.Nullable;
+
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
+import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 
 /**
- * Test unit for openning and data access to the different queries supported by the SDE Eve Online game model database. The
- * test will cover all the different queries adn will also test the cases where the parameters are not expected or the use of
- * caches.
- *
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ModelCreationTestUnit {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class GlobalConfigurationTestUnit extends GlobalConfigurationProvider {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger(ModelCreationTestUnit.class);
+	private static Logger logger = LoggerFactory.getLogger("GlobalConfigurationTestUnit");
 
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public GlobalConfigurationTestUnit( @Nullable final String resourcePath ) {
+		super(resourcePath);
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Test
-	public void testEveItem34( final EveItem itemPattern ) {
-		Assert.assertEquals(itemPattern.getJsonClass(),"EveItem");
-		Assert.assertEquals(itemPattern.getItemId(),34);
-		Assert.assertEquals(itemPattern.getName(),"Tritanium");
-		Assert.assertEquals(itemPattern.getGroupId(),22);
-		Assert.assertEquals(itemPattern.getGroupName(),"Materials");
-		Assert.assertEquals(itemPattern.getCategoryId(),22);
-		Assert.assertEquals(itemPattern.getCategoryName(),"Materials");
-		Assert.assertEquals(itemPattern.getIndustryGroup(), EIndustryGroup.OREMATERIALS);
-		Assert.assertFalse(itemPattern.isBlueprint());
+	public void test01GetResourceFiles() throws IOException {
+		logger.info(">> [GlobalConfigurationTestUnit.test01GetResourceFiles]");
+		final GlobalConfigurationProvider configuration = new GlobalConfigurationProvider(null);
+		final List<String> files = getResourceFiles("properties");
+		Assert.assertNotNull("-> Validating the list of files is not null...", files);
+		Assert.assertEquals("-> Validating the number of files to process...", 4, files.size());
+		logger.info("<< [GlobalConfigurationTestUnit.test01GetResourceFiles]");
+	}
 
-		// Calculated values.
-		Assert.assertEquals(itemPattern.getBaseprice(),1.00,0.01);
-		Assert.assertNotNull(itemPattern.getHighestBuyerPrice());
-		Assert.assertNotNull(itemPattern.getLowestSellerPrice());
-		Assert.assertEquals(itemPattern.getHighestBuyerPrice().getPrice(),itemPattern.getPrice(),0.01);
-		Assert.assertEquals(itemPattern.getVolume(),0.01,0.01);
-
+	@Test
+	public void test02ReadProperties() {
+		logger.info(">> [GlobalConfigurationTestUnit.test02ReadProperties]");
+		// Read all properties files on the classpath and consolidate into a unique list.
+		final GlobalConfigurationProvider configuration = new GlobalConfigurationProvider(null);
+		Assert.assertNotNull("-> Validating the configuration is not null...", configuration);
+		Assert.assertEquals("-> Validating read configuration matches...", 12, configuration.contentCount());
+		logger.info("<< [GlobalConfigurationTestUnit.test02ReadProperties]");
 	}
 }
+
 // - UNUSED CODE ............................................................................................
+//[01]
