@@ -72,17 +72,17 @@ public class ESINetworkManager {
 	private static final ESIStore STORE = ESIStore.DEFAULT;
 	private static final List<String> SCOPES = new ArrayList<>(2);
 
-	static {
+	public static void initialize(){
 		// Read the scoped from a resource file
 		try {
 			final String propertyFileName = GlobalDataManager.getResourceString("R.cache.esi.authorization.scopes.filename");
-			final ClassLoader classLoader = Thread.currentThread().getClass().getClassLoader();
-			final URI propertyURI;
-			propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
+			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
+			final URI propertyURI= new URI(classLoader.getResource(propertyFileName).toString());
 			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
 			String line = input.readLine();
 			while (StringUtils.isNotEmpty(line)) {
 				SCOPES.add(line);
+				line = input.readLine();
 			}
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
@@ -108,7 +108,7 @@ public class ESINetworkManager {
 
 	/**
 	 * Response cache using the ESI api cache times to speed up all possible repetitive access. Setting caches at the
-	 * lowest level but that may be cahnged to the Global configuration.
+	 * lowest level but that may be changed to the Global configuration.
 	 */
 	private static final Hashtable<String, Response<?>> okResponseCache = new Hashtable();
 
@@ -343,9 +343,9 @@ public class ESINetworkManager {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ESINetworkManager() {
-		super();
-	}
+//	public ESINetworkManager() {
+//		super();
+//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override

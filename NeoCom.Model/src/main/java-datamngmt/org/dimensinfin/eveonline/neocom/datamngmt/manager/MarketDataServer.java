@@ -200,7 +200,7 @@ public class MarketDataServer {
 	 * @return
 	 */
 	protected String getCacheStoreName() {
-		return GlobalDataManager.getResourceString("R.cache.marketdata.cachepath")
+		return GlobalDataManager.getResourceString("R.cache.directorypath")
 				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename");
 	}
 

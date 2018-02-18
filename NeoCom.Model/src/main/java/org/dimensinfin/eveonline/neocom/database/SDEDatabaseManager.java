@@ -317,7 +317,7 @@ public abstract class SDEDatabaseManager {
 			while (cursor.moveToNext()) {
 				int locationID = cursor.getInt(LOCATIONBYSYSTEM_SOLARSYSTEMID_COLINDEX);
 				cursor.close();
-				return searchLocation4Id(locationID);
+				return GlobalDataManager.searchLocation4Id(locationID);
 			}
 		} catch (final Exception ex) {
 			logger.warn("W [SDEDatabaseManager.searchLocationBySystem]> Location <" + name + "> not found.");
