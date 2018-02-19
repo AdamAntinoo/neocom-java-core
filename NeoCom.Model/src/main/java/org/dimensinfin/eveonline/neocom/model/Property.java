@@ -5,83 +5,54 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 // - IMPORT SECTION .........................................................................................
+
+import java.io.Serializable;
+import java.sql.SQLException;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
-
-import java.io.Serializable;
-import java.sql.SQLException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Properties")
 public class Property implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID				= 1209487969346789159L;
-	public static final int		LOCATION_ROLE_PROPERTY	= 10;
-	public static final int		TASK_ACTION_PROPERTY		= 20;
+	private static final long serialVersionUID = 1209487969346789159L;
+	public static final int LOCATION_ROLE_PROPERTY = 10;
+	public static final int TASK_ACTION_PROPERTY = 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(generatedId = true, index = true)
-	private final long				id											= -2;
+	private final long id = -2;
 	@DatabaseField
-	private String						propertyType						= EPropertyTypes.UNDEFINED.name();
+	private String propertyType = EPropertyTypes.UNDEFINED.name();
 	@DatabaseField
-	private String						stringValue							= "";
+	private String stringValue = "";
 	@DatabaseField
-	private double						numericValue						= 0.0;
+	private double numericValue = 0.0;
 	@DatabaseField
-	private long							ownerID									= -1;
+	private long ownerId = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Property() {
 	}
 
-	public Property(final EPropertyTypes propertyType) {
+	public Property( final EPropertyTypes propertyType ) {
+		// Be sure the owner is reset to undefined when stored at the database.
+		this.resetOwner();
+		this.setPropertyType(propertyType);
 		try {
-			Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDao();
+			Dao<Property, String> propertyDao = GlobalDataManager.getNeocomDBHelper().getPropertyDao();
 			// Try to create the pair. It fails then  it was already created.
 			propertyDao.create(this);
-			// Be sure the owner is reset to undefined when stored at the database.
-			this.resetOwner();
-			this.setPropertyType(propertyType);
 		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			this.setDirty(true);
+//			sqle.printStackTrace();
+			this.store();
 		}
 	}
-
-	//	public Property(final int identifier) {
-	//		id = identifier;
-	//		try {
-	//			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
-	//			propertyDao.create(this);
-	//			// Be sure the owner is reset to undefined when stored at the database.
-	//			resetOwner();
-	//		} catch (final SQLException sqle) {
-	//			sqle.printStackTrace();
-	//		}
-	//	}
-	//	public Property(final EPropertyTypes type, final String label) {
-	//		//		id = identifier;
-	//		propertyType = type.toString();
-	//		stringValue = label;
-	//		try {
-	//			Dao<Property, String> propertyDao = AppConnector.getDBConnector().getPropertyDAO();
-	//			// Try to create the pair. It fails then  it was already created.
-	//			propertyDao.createOrUpdate(this);
-	//			// Be sure the owner is reset to undefined when stored at the database.
-	//			resetOwner();
-	//			store(true);
-	//			//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
-	//		} catch (final SQLException sqle) {
-	//			//		logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
-	//			sqle.printStackTrace();
-	//			store(true);
-	//		}
-	//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public long getId() {
@@ -92,12 +63,12 @@ public class Property implements Serializable {
 		return numericValue;
 	}
 
-	public long getOwnerID() {
-		return ownerID;
+	public long getOwnerId() {
+		return ownerId;
 	}
 
 	public EPropertyTypes getPropertyType() {
-		return EPropertyTypes.decode(propertyType);
+		return EPropertyTypes.valueOf(propertyType);
 	}
 
 	public String getPropertyValue() {
@@ -109,40 +80,44 @@ public class Property implements Serializable {
 	}
 
 	public void resetOwner() {
-		ownerID = -1;
+		ownerId = -1;
 	}
 
-	public void setDirty(final boolean state) {
-		if (state) {
-			try {
-				Dao<Property, String> propertyDao = ModelAppConnector.getSingleton().getDBConnector().getPropertyDao();
-				propertyDao.update(this);
-				//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
-			} catch (final SQLException sqle) {
-				//		logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
-				sqle.printStackTrace();
-			}
+	public Property store() {
+//		if (state) {
+		try {
+			Dao<Property, String> propertyDao = GlobalDataManager.getNeocomDBHelper().getPropertyDao();
+			propertyDao.update(this);
+			//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
+		} catch (final SQLException sqle) {
+//						logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
+//				sqle.printStackTrace();
 		}
+		return this;
 	}
 
-	public void setNumericValue(final double numericValue) {
+	public Property setNumericValue( final double numericValue ) {
 		this.numericValue = numericValue;
-		this.setDirty(true);
+		return this;
+//		this.setDirty(true);
 	}
 
-	public void setOwnerID(final long ownerID) {
-		this.ownerID = ownerID;
-		this.setDirty(true);
+	public Property setOwnerId( final long ownerId ) {
+		this.ownerId = ownerId;
+		return this;
+//		this.setDirty(true);
 	}
 
-	public void setPropertyType(final EPropertyTypes propertyType) {
+	public Property setPropertyType( final EPropertyTypes propertyType ) {
 		this.propertyType = propertyType.toString();
-		this.setDirty(true);
+		return this;
+//		this.setDirty(true);
 	}
 
-	public void setStringValue(final String stringValue) {
+	public Property setStringValue( final String stringValue ) {
 		this.stringValue = stringValue;
-		this.setDirty(true);
+		return this;
+//		this.setDirty(true);
 	}
 
 	@Override
@@ -153,7 +128,6 @@ public class Property implements Serializable {
 		buffer.append("]");
 		return buffer.toString();
 	}
-
 }
 
 // - UNUSED CODE ............................................................................................

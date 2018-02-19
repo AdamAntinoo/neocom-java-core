@@ -26,6 +26,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.Property;
 
 /**
  * This interface defines the methods that should be implemented at the final Helper implementation so all
@@ -84,4 +85,6 @@ public interface INeoComDBHelper {
 	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
 
 	public Dao<EveLocation, String> getLocationDao() throws SQLException;
+
+	public Dao<Property, String> getPropertyDao() throws SQLException;
 }

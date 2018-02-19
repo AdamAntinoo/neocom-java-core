@@ -271,7 +271,7 @@ public class NeoComAsset extends NeoComNode {
 				//				container.setSingleton(false);
 				//
 				//				//- D E R I V E D   F I E L D S
-				//				container.setOwnerID(this.getOwnerID());
+				//				container.setOwnerId(this.getOwnerId());
 				//				container.setName("Undefined #" + newlocationId);
 				//				container.setCategory("Celestial");
 				//				container.setGroupName("Undefined Location");
