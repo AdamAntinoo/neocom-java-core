@@ -131,6 +131,12 @@ public class GlobalDataManager {
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 	private static final String SERVER_DATASOURCE = "tranquility";
 
+	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
+	private static final List<ExceptionRecord> exceptionsIntercepted=new ArrayList();
+	public static void interceptException(final Exception exceptionIntercepted){
+		exceptionsIntercepted.add(new ExceptionRecord(exceptionIntercepted));
+	}
+
 	// --- E V E A P I   X M L   S E C T I O N
 
 	/** Initialize the beimin Eve Api connector to remove SSL certification. From this point on we can use the beimin
@@ -689,21 +695,22 @@ public class GlobalDataManager {
 	 * point.
 	 */
 	public static PilotV1 getPilotV1( final int identifier ) {
-		logger.info(">> [GlobalDataManager.getPilotV1]");
+		logger.info(">> [GlobalDataManager.getPilotV1]> Identifier: {}",identifier);
 		try {
 			// Check if this request is already available on the cache.
 			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 			if (null == hit) {
-				logger.info(">> [GlobalDataManager.getPilotV1]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
+				logger.info("-- [GlobalDataManager.getPilotV1]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
 				final PilotV1 newchar = new PilotV1();
 				// Get the credential from the Store and check if this identifier has access to the XML api.
 				final Credential credential = DataManagementModelStore.getCredential4Id(identifier);
 				if (null != credential) {
-					logger.info(">> [GlobalDataManager.getPilotV1]> Processing data with Credential <{}>.", credential.getAccountName());
+					logger.info("-- [GlobalDataManager.getPilotV1]> Processing data with Credential <{}>.", credential.getAccountName());
 					// Check the Credential type.
 					CharacterInfoResponse inforesponse = null;
 					if (credential.isXMLCompatible()) {
 						try {
+							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Complete data with ApiKey information.");
 							// Copy the authorization and add to it the characterID
 							final ApiAuthorization authcopy = new ApiAuthorization(credential.getKeyCode(), identifier,
 									credential.getValidationCode());
@@ -723,7 +730,7 @@ public class GlobalDataManager {
 										newchar.setDelegatedCharacter(character);
 								}
 							}
-
+//							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Get balance information.");
 							// Balance information
 							final PilotAccountBalanceParser balanceparser = new PilotAccountBalanceParser();
 							final AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
@@ -733,7 +740,7 @@ public class GlobalDataManager {
 									newchar.setAccountBalance(balance.iterator().next().getBalance());
 								}
 							}
-							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Get balance {}.", newchar.getAccountBalance());
+							logger.info("-- [GlobalDataManager.getPilotV1]> XML Compatible. Get balance {}.", newchar.getAccountBalance());
 
 							// Character information
 							final CharacterInfoParser infoparser = new CharacterInfoParser();
@@ -741,7 +748,7 @@ public class GlobalDataManager {
 							if (null != inforesponse) {
 								newchar.setCharacterInfo(inforesponse);
 							}
-							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Get CharacterInfo.");
+							logger.info("-- [GlobalDataManager.getPilotV1]> XML Compatible. Get CharacterInfo.");
 						} catch (ApiException apie) {
 							apie.printStackTrace();
 						} catch (SQLException sqle) {
@@ -749,10 +756,10 @@ public class GlobalDataManager {
 						}
 					}
 					if (credential.isESICompatible()) {
+						logger.info("-- [GlobalDataManager.getPilotV1]> ESI Compatible. Download clone information.");
 						// Clone data
 						final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
 						if (null != cloneInformation) newchar.setHomeLocation(cloneInformation.getHomeLocation());
-						logger.info(">> [GlobalDataManager.getPilotV1]> ESI Compatible. Download clone information.");
 					}
 					if (null != inforesponse) {
 						try {
@@ -761,10 +768,10 @@ public class GlobalDataManager {
 							modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
 
 							// Store this same information on the database to record the TimeStamp.
-							final String reference = constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+							final String reference = GlobalDataManager.constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
 							TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 							if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
-							logger.info(">> [GlobalDataManager.getPilotV1]> Updating character TimeStamp {}.", reference);
+							logger.info("-- [GlobalDataManager.getPilotV1]> Updating character TimeStamp {}.", reference);
 							timestamp.setTimeStamp(expirationTime)
 									.setCredentialId(credential.getAccountId())
 									.store();
@@ -775,7 +782,7 @@ public class GlobalDataManager {
 				}
 				return newchar;
 			} else {
-				logger.info(">> [GlobalDataManager.getPilotV1]> Pilot <{}> found at cache.", identifier);
+				logger.info("-- [GlobalDataManager.getPilotV1]> Pilot <{}> found at cache.", identifier);
 				return (PilotV1) hit;
 			}
 		} finally {
@@ -1116,6 +1123,26 @@ public class GlobalDataManager {
 			jgen.writeBooleanField("isESI", value.isESICompatible());
 //			jgen.writeObjectField("pilot", GlobalDataManager.getPilotV1(value.getAccountId()));
 			jgen.writeEndObject();
+		}
+	}
+	// ........................................................................................................
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class ExceptionRecord {
+		// - F I E L D - S E C T I O N ............................................................................
+private long timeStamp =0;
+private Exception exceptionRegistered=null;
+		// - C O N S T R U C T O R - S E C T I O N ................................................................
+public ExceptionRecord(final Exception newexception){
+	this.exceptionRegistered=newexception;
+	this.timeStamp= Instant.now().getMillis();
+}
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		public void setTimeStamp( final long timeStamp ) {
+			this.timeStamp = timeStamp;
+		}
+		public void setTimeStamp( final Instant timeStamp ) {
+			this.timeStamp = timeStamp.getMillis();
 		}
 	}
 	// ........................................................................................................

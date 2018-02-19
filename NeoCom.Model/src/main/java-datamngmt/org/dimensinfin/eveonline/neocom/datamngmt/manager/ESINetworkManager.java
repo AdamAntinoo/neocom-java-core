@@ -72,12 +72,12 @@ public class ESINetworkManager {
 	private static final ESIStore STORE = ESIStore.DEFAULT;
 	private static final List<String> SCOPES = new ArrayList<>(2);
 
-	public static void initialize(){
+	public static void initialize() {
 		// Read the scoped from a resource file
 		try {
 			final String propertyFileName = GlobalDataManager.getResourceString("R.cache.esi.authorization.scopes.filename");
 			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
-			final URI propertyURI= new URI(classLoader.getResource(propertyFileName).toString());
+			final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
 			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
 			String line = input.readLine();
 			while (StringUtils.isNotEmpty(line)) {
@@ -95,11 +95,13 @@ public class ESINetworkManager {
 //	public static File retrofitApplicationParameter = new File(GlobalDataManager.getResourceString("R.cache.directorypath")
 //			+GlobalDataManager.getResourceString("R.cache.network.cachename"));
 
-	/** This is the location where to STORE the downloaded data from network cache. */
+	/**
+	 * This is the location where to STORE the downloaded data from network cache.
+	 */
 	private static final String filePath = GlobalDataManager.getResourceString("R.cache.directorypath")
-			+GlobalDataManager.getResourceString("R.cache.network.cachename");
+			+ GlobalDataManager.getResourceString("R.cache.network.cachename");
 	private static final File cacheDataFile = new File(filePath);
-	private static final long cacheSize = 100*1024*1024;
+	private static final long cacheSize = 100 * 1024 * 1024;
 	private static final long timeout = TimeUnit.SECONDS.toMillis(60);
 
 	private static final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
