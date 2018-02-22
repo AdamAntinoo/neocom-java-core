@@ -12,6 +12,11 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.logging.Logger;
+
 import com.beimin.eveapi.model.account.ApiKeyInfo;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.parser.ApiAuthorization;
@@ -19,13 +24,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.logging.Logger;
 
 /**
  * This class will wrap the XML api Key definition. Instead using the old ApiKey and the new NeoComApiKey I will
@@ -43,7 +42,7 @@ public class ApiKey {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(generatedId = true)
-	private final long id = -2;
+	private long id = -2;
 	@DatabaseField
 	private String login = "Default";
 	@DatabaseField
@@ -57,10 +56,10 @@ public class ApiKey {
 	private transient ApiKeyInfo delegatedApiKey = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ApiKey () {
+	public ApiKey() {
 	}
 
-	public ApiKey (final String login) {
+	public ApiKey( final String login ) {
 		this.login = login;
 		try {
 			Dao<ApiKey, String> apikeyDao = GlobalDataManager.getNeocomDBHelper().getApiKeysDao();
@@ -73,53 +72,54 @@ public class ApiKey {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public int getKeynumber () {
+	public int getKeynumber() {
 		return keynumber;
 	}
 
-	public String getLogin () {
+	public String getLogin() {
 		return login;
 	}
 
-	public String getValidationcode () {
+	public String getValidationcode() {
 		return validationcode;
 	}
 
-	public boolean isActive () {
+	public boolean isActive() {
 		return active;
 	}
 
-	public ApiKey setActive (final boolean activeState) {
+	public ApiKey setActive( final boolean activeState ) {
 		active = activeState;
 		return this;
 	}
-	public ApiKey setKeynumber (final int keynumber) {
+
+	public ApiKey setKeynumber( final int keynumber ) {
 		this.keynumber = keynumber;
 		return this;
 	}
 
-	public ApiKey setValidationcode (final String validationcode) {
+	public ApiKey setValidationcode( final String validationcode ) {
 		this.validationcode = validationcode;
 		return this;
 	}
 
-	public ApiKey setAuthorization (final ApiAuthorization authorization) {
+	public ApiKey setAuthorization( final ApiAuthorization authorization ) {
 		this.authorization = authorization;
 		return this;
 	}
 
-	public ApiKey setDelegated (final ApiKeyInfo delegatedApiKey) {
+	public ApiKey setDelegated( final ApiKeyInfo delegatedApiKey ) {
 		this.delegatedApiKey = delegatedApiKey;
 		return this;
 	}
 
-	public Collection<Character> getEveCharacters () {
+	public Collection<Character> getEveCharacters() {
 		final Collection<Character> charList = delegatedApiKey.getEveCharacters();
-		if(null==charList)return new ArrayList<>();
+		if (null == charList) return new ArrayList<>();
 		else return charList;
 	}
 
-	public ApiKey store () {
+	public ApiKey store() {
 		try {
 			Dao<ApiKey, String> apikeyDao = GlobalDataManager.getNeocomDBHelper().getApiKeysDao();
 			apikeyDao.createOrUpdate(this);
@@ -128,8 +128,9 @@ public class ApiKey {
 		}
 		return this;
 	}
+
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("ApiKey [");
 		buffer.append(login).append("/");
 		buffer.append(keynumber).append("-").append(validationcode);

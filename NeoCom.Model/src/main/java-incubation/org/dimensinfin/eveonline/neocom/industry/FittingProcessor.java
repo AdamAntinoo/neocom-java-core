@@ -108,7 +108,7 @@ public class FittingProcessor {
 
 //if(	Assert.isNull(credential))throw new NeocomRuntimeException("[FittingProcessor.searchManufactureLocation]> Credential " +
 //		""+credentialIdentifier+" not found.");
-
+return null;
 	}
 
 	/**
@@ -128,70 +128,73 @@ public class FittingProcessor {
 		// Initialize global structures.
 		manufactureLocation = blueprint.getLocation();
 		region = manufactureLocation.getRegion();
-		actions4Item = pilot.getActions();
+//		actions4Item = pilot.getActions();
 		// Clear structures to be sure we have the right data.
 		requirements.clear();
 		actionsRegistered.clear();
 		// Get the resources needed for the completion of this job.
 		runs = blueprint.getRuns();
 		threads = blueprint.getQuantity();
-		// Copy the LOM received to not modify the original data during the job
-		// processing.
-		for (Resource r : this.getLOM()) {
-			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
-		}
-		// Update the resource count depending on the sizing requirements for the job.
-		for (Resource resource : requirements) {
-			// Skills are treated differently.
-			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-				resource.setStackSize(1);
-			} else {
-				resource.setAdaptiveStackSize(runs * threads);
-			}
-			// If the resource being processed is the job blueprint reduce the
-			// number of runs and set the counter.
-			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-				resource.setStackSize(threads);
-			}
-		}
-		// Resource list completed. Dump report to the log and start action processing.
-		Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.List of requirements" + requirements);
-		pointer = -1;
-		try {
-			do {
-				pointer++;
-				Resource resource = requirements.get(pointer);
-				Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.Processing resource " + resource);
-				// Check resources that are Skills. Give them an special
-				// treatment.
-				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-					currentAction = new Skill(resource);
-					this.registerAction(currentAction);
-					continue;
-				}
-				currentAction = new Action(resource);
-				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
-				newTask.setQty(resource.getQuantity());
-				// We register the action before to get erased on restarts.
-				// This has no impact on data since we use pointers to the
-				// global structures.
-				this.registerAction(currentAction);
-				this.processRequest(newTask);
-			} while (pointer < (requirements.size() - 1));
-		} catch (RuntimeException rtex) {
-			Log.e("RTEXCEPTION.CODE",
-					"RT> T2ManufactureProcess.generateActions4Blueprint - Unexpected code behaviour. See stacktrace.");
-			rtex.printStackTrace();
-		}
-		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
-		return this.getActions();
+
+
+//		// Copy the LOM received to not modify the original data during the job
+//		// processing.
+//		for (Resource r : this.getLOM()) {
+//			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
+//		}
+//		// Update the resource count depending on the sizing requirements for the job.
+//		for (Resource resource : requirements) {
+//			// Skills are treated differently.
+//			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+//				resource.setStackSize(1);
+//			} else {
+//				resource.setAdaptiveStackSize(runs * threads);
+//			}
+//			// If the resource being processed is the job blueprint reduce the
+//			// number of runs and set the counter.
+//			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+//				resource.setStackSize(threads);
+//			}
+//		}
+//		// Resource list completed. Dump report to the log and start action processing.
+//		Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.List of requirements" + requirements);
+//		pointer = -1;
+//		try {
+//			do {
+//				pointer++;
+//				Resource resource = requirements.get(pointer);
+//				Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.Processing resource " + resource);
+//				// Check resources that are Skills. Give them an special
+//				// treatment.
+//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+//					currentAction = new Skill(resource);
+//					this.registerAction(currentAction);
+//					continue;
+//				}
+//				currentAction = new Action(resource);
+//				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
+//				newTask.setQty(resource.getQuantity());
+//				// We register the action before to get erased on restarts.
+//				// This has no impact on data since we use pointers to the
+//				// global structures.
+//				this.registerAction(currentAction);
+//				this.processRequest(newTask);
+//			} while (pointer < (requirements.size() - 1));
+//		} catch (RuntimeException rtex) {
+//			Log.e("RTEXCEPTION.CODE",
+//					"RT> T2ManufactureProcess.generateActions4Blueprint - Unexpected code behaviour. See stacktrace.");
+//			rtex.printStackTrace();
+//		}
+//		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
+	//	return this.getActions();
+		return null;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
 	@Override
 	public String toString() {
 		return new StringBuffer("FittingProcessor[")
-				.append("field:").append().append(" ")
+				.append("field:").append(0).append(" ")
 				.append("]")
 				.append("->").append(super.toString())
 				.toString();
