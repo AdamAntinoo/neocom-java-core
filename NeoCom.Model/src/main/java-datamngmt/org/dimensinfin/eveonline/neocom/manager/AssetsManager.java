@@ -1,23 +1,40 @@
-//	PROJECT:        NeoCom.model (NEOC.M)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
-//									available databases.
-//									This version includes the access to the latest 6.x version of eveapi libraries to
-//									download ad parse the CCP XML API data.
-//									Code integration that is not dependent on any specific platform.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.manager;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Vector;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -28,18 +45,6 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.model.Region;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.joda.time.Duration;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Vector;
-import java.util.logging.Logger;
 
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to
@@ -62,19 +67,25 @@ import java.util.logging.Logger;
 public class AssetsManager extends AbstractManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -8502099148768297876L;
-	private static Logger logger = Logger.getLogger("AssetsManager");
-
-	private transient Dao<NeoComAsset, String> assetDao = null;
+	private static Logger logger = LoggerFactory.getLogger("AssetsManager");
+	private static transient Dao<NeoComAsset, String> assetDao = null;
 
 	// - L O C A T I O N   M A N A G E M E N T
 	// - A S S E T   M A N A G E M E N T
-	public long totalAssets = -1;
-	public double totalAssetsValue = 0.0;
+	private long totalAssets = -1;
+	private double totalAssetsValue = 0.0;
+	private final HashMap<Integer, List<NeoComAsset>> asset4TypeCache = new HashMap<Integer, List<NeoComAsset>>();
+
+
 	private TimeStamp assetsCacheTime = null;
 
-	/** Probably redundant with containers. */
+	/**
+	 * Probably redundant with containers.
+	 */
 	private final HashMap<Long, NeoComAsset> assetsAtContainer = new HashMap<Long, NeoComAsset>();
-	/** The new list of ships with their state and their contents. An extension of containers. */
+	/**
+	 * The new list of ships with their state and their contents. An extension of containers.
+	 */
 	private final HashMap<Long, NeoComAsset> ships = new HashMap<Long, NeoComAsset>();
 	private final HashMap<Long, ArrayList<NeoComAsset>> assetsAtLocationCache = new HashMap<Long, ArrayList<NeoComAsset>>();
 	private final HashMap<String, ArrayList<NeoComAsset>> assetsAtCategoryCache = new HashMap<String, ArrayList<NeoComAsset>>();
@@ -84,17 +95,18 @@ public class AssetsManager extends AbstractManager {
 	private final ArrayList<NeoComBlueprint> bpoCache = new ArrayList<NeoComBlueprint>();
 
 	// USED BY OTHER CALSSES TO BE REVIEWED
-	public final HashMap<Long, ArrayList<NeoComAsset>> assetCache = new HashMap<Long, ArrayList<NeoComAsset>>();
 	public final HashMap<Long, ArrayList<NeoComAsset>> asteroidCache = new HashMap<Long, ArrayList<NeoComAsset>>();
 	public final String iconName = "assets.png";
 
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
-	/** Used during the processing of the assets into the different structures. */
+	/**
+	 * Used during the processing of the assets into the different structures.
+	 */
 	private transient HashMap<Long, NeoComAsset> assetMap = new HashMap<Long, NeoComAsset>();
 	private Vector<NeoComAsset> unlocatedAssets = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public AssetsManager (final Credential credential) {
+	public AssetsManager( final Credential credential ) {
 		super(credential);
 		// Load the timestamp from the database to control the refresh status of all the assets.
 		this.readTimeStamps();
@@ -102,13 +114,53 @@ public class AssetsManager extends AbstractManager {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	private Dao<NeoComAsset, String> getAssetDao() {
+		try {
+			if (null == assetDao) {
+				assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+			}
+		} catch (SQLException sqle) {
+			logger.error("E> [AssetsManager.getAssetDao]> Exception getting the global Dao. {}", sqle.getMessage());
+			sqle.printStackTrace();
+			throw new RuntimeException("[AssetsManager.getAssetDao]> Exception getting the global Dao");
+		}
+		return assetDao;
+	}
+
+	/**
+	 * This is the initialization code that we should always use when we need to operate with a loaded
+	 * AssetsManager.<br>
+	 * The initialization will load all the Locations and some of the counters. The method processed the result
+	 * to generate the root list of Regions, then the space Locations and then their contents in the case the
+	 * Location has been downloaded. There is an optimization that if the manager is already initialized then it
+	 * is not initialized again. This also simplifies the code because now there is no more need to check for
+	 * the initialization state.
+	 */
+	@Override
+	public AssetsManager initialize() {
+		if (!initialized) {
+			// INITIALIZE - Initialize the number of assets.
+			this.getTotalAssetsNumber();
+			// INITIALIZE - Initialize the Locations and the Regions
+			List<NeoComAsset> locs = queryAllAssetLocations(getCredentialIdentifier());
+			regions.clear();
+			locations.clear();
+			// Process the locations to a new list of Regions.
+			for (NeoComAsset asset : locs) {
+				long locid = asset.getLocationId();
+				this.processLocation(locid);
+			}
+			initialized = true;
+		}
+		return this;
+	}
 
 	/**
 	 * Updates the list of assets, regions and locations from the database. Go to the database to download all
 	 * the assets for this pilot or corporation and then process them one by one to ge the complete parenship
 	 * and store the result on the assets caches for later use.
 	 */
-	public void accessAllAssets () {
+	public void accessAllAssets() {
 		try {
 			// Initialize the model
 			regions.clear();
@@ -143,30 +195,64 @@ public class AssetsManager extends AbstractManager {
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 			AssetsManager.logger
-					.severe("RTEX> AssetsByLocationDataSource.collaborate2Model-There is a problem with the access to the Assets database when getting the Manager.");
+					.error("RT [AssetsManager.accessAllAssets]> There is a problem with the access to the Assets database when getting " +
+							"the Manager.");
 		}
 	}
 
-	public Collection<NeoComAsset> accessShips () {
-		if ( null == ships )
+	/**
+	 * Return the set of assets for a character that have an specific item type id. We have to make a local copy
+	 * of the assets because they are going to be modified during the task creation process. So we can implement
+	 * a cache of those assets so we only read them from the database the first time and later we only use the
+	 * local copy.
+	 *
+	 * @param typeId
+	 * @return
+	 */
+	public List<NeoComAsset> getAssets4Type( final int typeId ) {
+		logger.info(">> [AssetsManager.getAssets4Type]");
+		List<NeoComAsset> hit = new ArrayList<>();
+		try {
+			// Search for the asset pack first at the instance cache.
+			hit = asset4TypeCache.get(Integer.valueOf(typeId));
+			if (null == hit) {
+				final HashMap<String, Object> filterParameters = new HashMap();
+				filterParameters.put("ownerID", getCredentialIdentifier());
+				filterParameters.put("typeID", typeId);
+				hit = getAssetDao().queryForFieldValues(filterParameters);
+				// Cache the new list of assets for the specified type.
+				asset4TypeCache.put(Integer.valueOf(typeId), hit);
+			}
+			return hit;
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return hit;
+		} finally {
+			logger.info("<< [AssetsManager.getAssets4Type]> List size: {}", hit.size());
+		}
+	}
+
+
+	public Collection<NeoComAsset> accessShips() {
+		if (null == ships)
 			return new ArrayList<NeoComAsset>();
 		else
 			return ships.values();
 	}
 
-	public TimeStamp getAssetsCacheTime () {
+	public TimeStamp getAssetsCacheTime() {
 		return assetsCacheTime;
 	}
 
 	@Override
-	public String getJsonClass () {
+	public String getJsonClass() {
 		return jsonClass;
 	}
 
-	public ExtendedLocation getLocationById (final long id) {
+	public ExtendedLocation getLocationById( final long id ) {
 		// Search for the location on the Location list.
 		for (Long key : locations.keySet()) {
-			if ( key == id ) return locations.get(key);
+			if (key == id) return locations.get(key);
 		}
 		return null;
 	}
@@ -176,19 +262,19 @@ public class AssetsManager extends AbstractManager {
 	 * location ids that can be on the same or different systems. If a system has assets in more that one
 	 * station or in space the number of ids that have the same system in common may be greater that 1.
 	 */
-	public Hashtable<Long, ExtendedLocation> getLocations () {
+	public Hashtable<Long, ExtendedLocation> getLocations() {
 		// If the list is empty the go to the database and get the assets
-		if ( null == locations ) {
+		if (null == locations) {
 			this.initialize();
 		}
 		return locations;
 	}
 
-	public String getOrderingName () {
+	public String getOrderingName() {
 		return "Assets Manager";
 	}
 
-	public List<NeoComAsset> getShips () {
+	public List<NeoComAsset> getShips() {
 		return this.searchAsset4Category("Ship");
 	}
 
@@ -198,8 +284,8 @@ public class AssetsManager extends AbstractManager {
 	 *
 	 * @return the number of assets
 	 */
-	public long getTotalAssetsNumber () {
-		if ( totalAssets == -1 ) {
+	public long getTotalAssetsNumber() {
+		if (totalAssets == -1) {
 			try {
 				this.accessDaos();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
@@ -212,45 +298,18 @@ public class AssetsManager extends AbstractManager {
 		return totalAssets;
 	}
 
-	/**
-	 * This is the initialization code that we should always use when we need to operate with a loaded
-	 * AssetsManager.<br>
-	 * The initialization will load all the Locations and some of the counters. The method processed the result
-	 * to generate the root list of Regions, then the space Locations and then their contents in the case the
-	 * Location has been downloaded. There is an optimization that if the manager is already initialized then it
-	 * is not initialized again. This also simplifies the code because now there is no more need to check for
-	 * the initialization state.
-	 */
-	@Override
-	public AssetsManager initialize () {
-		if ( !initialized ) {
-			// INITIALIZE - Initialize the number of assets.
-			this.getTotalAssetsNumber();
-			// INITIALIZE - Initialize the Locations and the Regions
-			List<NeoComAsset> locs = queryAllAssetLocations(getCredentialIdentifier());
-			regions.clear();
-			locations.clear();
-			// Process the locations to a new list of Regions.
-			for (NeoComAsset asset : locs) {
-				long locid = asset.getLocationId();
-				this.processLocation(locid);
-			}
-			initialized = true;
-		}
-		return this;
-	}
 
 	/**
 	 * Checks if that category was requested before and it is on the cache. If found returns that list.
 	 * Otherwise go to the database for the list.
 	 */
-	public List<NeoComAsset> searchAsset4Category (final String category) {
+	public List<NeoComAsset> searchAsset4Category( final String category ) {
 		//	Select assets for the owner and with an specific category.
 		List<NeoComAsset> assetsCategoryList = new ArrayList<NeoComAsset>();
 		assetsCategoryList = assetsAtCategoryCache.get(category);
-		if ( null == assetsCategoryList ) {
+		if (null == assetsCategoryList) {
 			assetsCategoryList = ModelAppConnector.getSingleton().getDBConnector()
-			                                      .searchAsset4Category(getCredentialIdentifier(), category);
+					.searchAsset4Category(getCredentialIdentifier(), category);
 			assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
 		} else {
 			AssetsManager.logger.info("~~ [AssetsManager.searchAsset4Category]> Cache hit [SELECT CATEGORY=" + category
@@ -259,7 +318,7 @@ public class AssetsManager extends AbstractManager {
 		return assetsCategoryList;
 	}
 
-	public ArrayList<NeoComAsset> searchAsset4Group (final String group) {
+	public ArrayList<NeoComAsset> searchAsset4Group( final String group ) {
 		//	Select assets for the owner and with an specific category.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
@@ -277,12 +336,12 @@ public class AssetsManager extends AbstractManager {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	public ArrayList<NeoComAsset> searchAsset4Location (final EveLocation location) {
+	public ArrayList<NeoComAsset> searchAsset4Location( final EveLocation location ) {
 		AssetsManager.logger.info(">> AssetsManager.searchAsset4Location");
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		// Check if we have already that list on the cache.
 		assetList = assetsAtLocationCache.get(location.getID());
-		if ( null == assetList ) {
+		if (null == assetList) {
 			try {
 				ModelAppConnector.getSingleton().startChrono();
 				this.accessDaos();
@@ -341,12 +400,12 @@ public class AssetsManager extends AbstractManager {
 	//		return t2blueprints;
 	//	}
 
-	public ArrayList<NeoComAsset> searchT2Modules () {
+	public ArrayList<NeoComAsset> searchT2Modules() {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		assetList = assetsAtCategoryCache.get("T2Modules");
-		if ( null == assetList ) {
+		if (null == assetList) {
 			try {
 				ModelAppConnector.getSingleton().startChrono();
 				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
@@ -377,10 +436,10 @@ public class AssetsManager extends AbstractManager {
 	 *
 	 * @return the list of stacks for this type id that belong to this pilot.
 	 */
-	public ArrayList<NeoComAsset> stacks4Item (final EveItem item) {
+	public ArrayList<NeoComAsset> stacks4Item( final EveItem item ) {
 		// Check if results already on cache.
 		ArrayList<NeoComAsset> hit = stacksByItemCache.get(item.getItemID());
-		if ( null != hit ) return hit;
+		if (null != hit) return hit;
 		//	Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
@@ -398,25 +457,26 @@ public class AssetsManager extends AbstractManager {
 		stacksByItemCache.put(item.getItemID(), (ArrayList<NeoComAsset>) assetList);
 		return (ArrayList<NeoComAsset>) assetList;
 	}
+
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetsManager [");
 		buffer.append("owner:").append(getCredentialName()).append(" ");
 		//		if (null != t1blueprints) buffer.append("noT1BlueprintsStacks: ").append(t1blueprints.size()).append(" ");
 		//		if (null != t2blueprints) buffer.append("noT2BlueprintsStacks: ").append(t2blueprints.size()).append(" ");
-		if ( assetsAtCategoryCache.size() > 0 ) {
+		if (assetsAtCategoryCache.size() > 0) {
 			buffer.append("assetsAtCategoryCache:").append(assetsAtCategoryCache.size()).append(" ");
 		}
-		if ( assetsAtLocationCache.size() > 0 ) {
+		if (assetsAtLocationCache.size() > 0) {
 			buffer.append("assetsAtLocationcache:").append(assetsAtLocationCache.size()).append(" ");
 		}
 		//		if (blueprintCache.size() > 0) {
 		//			buffer.append("blueprintCache:").append(blueprintCache.size()).append(" ");
 		//		}
-		if ( null != locations ) {
+		if (null != locations) {
 			buffer.append("locationsList: ").append(locations).append(" ");
 		}
-		if ( null != regions ) {
+		if (null != regions) {
 			buffer.append("regionNames: ").append(regions).append(" ");
 		}
 		buffer.append("]");
@@ -430,10 +490,10 @@ public class AssetsManager extends AbstractManager {
 	//	public void reinstantiate() {
 	//	}
 
-	protected void add2Location (final NeoComAsset asset) {
+	protected void add2Location( final NeoComAsset asset ) {
 		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
-		if ( null == target ) {
+		if (null == target) {
 			EveLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(credential, intermediary);
@@ -507,11 +567,11 @@ public class AssetsManager extends AbstractManager {
 	//		region.addLocation(target);
 	//	}
 
-	private void accessDaos () {
-		if ( null == assetDao ) {
+	private void accessDaos() {
+		if (null == assetDao) {
 			try {
 				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
-				if ( null == assetDao ) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
+				if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
 			} catch (SQLException sqle) {
 				// Interrupt processing and signal a runtime exception.
 				throw new RuntimeException(sqle.getMessage());
@@ -522,7 +582,7 @@ public class AssetsManager extends AbstractManager {
 	/**
 	 * Get the complete list of the assets that belong to this owner.
 	 */
-	private ArrayList<NeoComAsset> getAllAssets () {
+	private ArrayList<NeoComAsset> getAllAssets() {
 		// Select assets for the owner.
 		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		try {
@@ -543,7 +603,7 @@ public class AssetsManager extends AbstractManager {
 		return assetList;
 	}
 
-	private String getTSAssetsReference () {
+	private String getTSAssetsReference() {
 		return getCredentialIdentifier() + ".ASSETS";
 	}
 
@@ -556,7 +616,7 @@ public class AssetsManager extends AbstractManager {
 	 * because the auto model generation will already include those items. Only Locations or Regions behave
 	 * differently.
 	 */
-	private void processElement (final NeoComAsset asset) {
+	private void processElement( final NeoComAsset asset ) {
 		try {
 			// Remove the element from the map.
 			assetMap.remove(asset.getAssetId());
@@ -565,14 +625,14 @@ public class AssetsManager extends AbstractManager {
 			// Add the asset value to the owner balance.
 			totalAssetsValue += asset.getIskValue();
 			// Transform the asset if on specific categories like Ship or Container
-			if ( asset.isShip() ) {
+			if (asset.isShip()) {
 				// Check if the ship is packaged. If packaged leave it as a simple asset.
-				if ( !asset.isPackaged() ) {
+				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
 					Ship ship = new Ship(/*getCredentialIdentifier()*/).copyFrom(asset);
 					ships.put(ship.getAssetId(), ship);
 					// The ship is a container so add it and forget about this asset.
-					if ( ship.hasParent() ) {
+					if (ship.hasParent()) {
 						this.processElement(ship.getParentContainer());
 					} //else {
 					this.add2Location(ship);
@@ -588,14 +648,14 @@ public class AssetsManager extends AbstractManager {
 				}
 				return;
 			}
-			if ( asset.isContainer() ) {
+			if (asset.isContainer()) {
 				// Check if the asset is packaged. If so leave as asset
-				if ( !asset.isPackaged() ) {
+				if (!asset.isPackaged()) {
 					// Transform the asset to a ship.
 					SpaceContainer container = new SpaceContainer().copyFrom(asset);
 					containers.put(container.getAssetId(), container);
 					// The container is a container so add it and forget about this asset.
-					if ( container.hasParent() ) {
+					if (container.hasParent()) {
 						this.processElement(container.getParentContainer());
 					} // else {
 					this.add2Location(container);
@@ -618,9 +678,9 @@ public class AssetsManager extends AbstractManager {
 				return;
 			}
 			// Process the asset parent if this is the case because we should add first parent to the hierarchy
-			if ( asset.hasParent() ) {
+			if (asset.hasParent()) {
 				NeoComAsset parent = asset.getParentContainer();
-				if ( null == parent ) {
+				if (null == parent) {
 					this.add2Location(asset);
 				} else {
 					this.processElement(parent);
@@ -633,7 +693,7 @@ public class AssetsManager extends AbstractManager {
 		}
 	}
 
-	private void readTimeStamps () {
+	private void readTimeStamps() {
 		try {
 			Dao<TimeStamp, String> tsDao = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDao();
 			QueryBuilder<TimeStamp, String> queryBuilder = tsDao.queryBuilder();
@@ -641,7 +701,7 @@ public class AssetsManager extends AbstractManager {
 			where.eq("reference", this.getTSAssetsReference());
 			PreparedQuery<TimeStamp> preparedQuery = queryBuilder.prepare();
 			List<TimeStamp> ts = tsDao.query(preparedQuery);
-			if ( ts.size() > 0 ) {
+			if (ts.size() > 0) {
 				assetsCacheTime = ts.get(0);
 			}
 		} catch (java.sql.SQLException sqle) {
@@ -653,11 +713,11 @@ public class AssetsManager extends AbstractManager {
 	 * Remove the nodes collaborated and their own collaborations recursively from the list of assets to
 	 * process.
 	 */
-	private void removeNode (final ICollaboration node) {
+	private void removeNode( final ICollaboration node ) {
 		// Check that the class of the item is an Asset. Anyway check for its collaboration.
-		if ( node instanceof NeoComNode ) {
+		if (node instanceof NeoComNode) {
 			// Try to remove the asset if found
-			if ( node instanceof NeoComAsset ) {
+			if (node instanceof NeoComAsset) {
 				assetMap.remove(((NeoComAsset) node).getAssetId());
 			}
 			// Remove also the nodes collaborated by it.
@@ -666,7 +726,6 @@ public class AssetsManager extends AbstractManager {
 			}
 		}
 	}
-
 
 
 	//	/**
@@ -724,7 +783,7 @@ public class AssetsManager extends AbstractManager {
 	 * The returning result is not a list of locations but a simplified list of NeoComAssets with the location
 	 * identifier loaded.
 	 */
-	private List<NeoComAsset> queryAllAssetLocations (final long identifier) {
+	private List<NeoComAsset> queryAllAssetLocations( final long identifier ) {
 		// Get access to one assets with a distinct location. Discard the rest of the data and only process the Location id
 		List<NeoComAsset> uniqueLocations = new Vector<NeoComAsset>();
 		try {
@@ -737,7 +796,7 @@ public class AssetsManager extends AbstractManager {
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger
-					.warning("W [AssetsManager.queryAllAssetLocations]> Exception reading asets locations: " + sqle.getMessage());
+					.warn("W [AssetsManager.queryAllAssetLocations]> Exception reading asets locations: " + sqle.getMessage());
 		}
 		return uniqueLocations;
 	}
@@ -749,9 +808,9 @@ public class AssetsManager extends AbstractManager {
 	 *
 	 * @param identifier target location identifier number.
 	 */
-	private void processLocation (final long identifier) {
-		if ( identifier < 0 ) return;
-		if ( locations.containsKey(identifier) )
+	private void processLocation( final long identifier ) {
+		if (identifier < 0) return;
+		if (locations.containsKey(identifier))
 			return;
 		else {
 			EveLocation location = GlobalDataManager.searchLocation4Id(identifier);
@@ -761,7 +820,7 @@ public class AssetsManager extends AbstractManager {
 			locations.put(identifier, newloc);
 			long regid = newloc.getRegionID();
 			Region reg = regions.get(regid);
-			if ( null == reg ) {
+			if (null == reg) {
 				reg = new Region(newloc.getRegion());
 				reg.addLocation(newloc);
 				regions.put(regid, reg);

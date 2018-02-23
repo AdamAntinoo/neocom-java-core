@@ -14,16 +14,18 @@ package org.dimensinfin.eveonline.neocom.industry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.modelmapper.internal.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Fitting;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
@@ -42,8 +44,9 @@ public class FittingProcessor {
 	 * this place properly will change the result of the fitting processing.
 	 */
 	protected EveLocation manufactureLocation = null;
+	protected String region = null;
 	private Credential credential = null;
-
+	private AssetsManager assetsManager = null;
 
 	/**
 	 * The main element used for the manufacture job.
@@ -65,7 +68,6 @@ public class FittingProcessor {
 
 	// - A C T I O N   P R O C E S S I N G
 	protected HashMap<Long, Property> actions4Item = null;
-	protected String region = null;
 	protected ArrayList<Resource> requirements = new ArrayList<Resource>();
 	protected transient final HashMap<Integer, Action> actionsRegistered = new HashMap<Integer, Action>();
 	protected transient Action currentAction = null;
@@ -93,100 +95,278 @@ public class FittingProcessor {
 	 * Location and if there is no default the current character location. If there is not a valid location the process fails and
 	 * we do not perform the processing.
 	 */
-	public void processFitting( final int credentialIdentifier, final Fitting target, final int copyCount ) {
+	public List<Action> processFitting( final int credentialIdentifier, final Fitting target, final int copyCount ) {
 		logger.info(">> [FittingProcessor.processFitting]");
-		// Do the mandatory initialization such as getting a current list of assets or the current Industry location.
-// Get the work place location.
+		// STEP0 01. Do the mandatory initialization such as getting a current list of assets or the current Manufacture location.
+		// Get the work place location.
 		manufactureLocation = searchManufactureLocation(credentialIdentifier);
-		logger.info("<< [FittingProcessor.processFitting]");
-	}
-
-	private EveLocation searchManufactureLocation( final int credentialIdentifier ) {
-		logger.info(">> [FittingProcessor.searchManufactureLocation]");
-		credential = DataManagementModelStore.activateCredential(credentialIdentifier);
-		Assert.isNull(credential, "[FittingProcessor.searchManufactureLocation]> Credential " + credentialIdentifier + " not found.");
-
-//if(	Assert.isNull(credential))throw new NeocomRuntimeException("[FittingProcessor.searchManufactureLocation]> Credential " +
-//		""+credentialIdentifier+" not found.");
-return null;
-	}
-
-	/**
-	 * This method starts with a blueprint and generates the corresponding list of actions to be executed to
-	 * have all the resources to launch and complete the job. This depends on the global generation settings
-	 * because the resources get exhausted by each of the jobs and that should be reflected on the new action
-	 * for next jobs.<br>
-	 * It uses a new <code>AssetsManager</code> because the resource processing changes some of the resources
-	 * used during the process. With a new manager we avoid clearing the currently cached information on the
-	 * Pilot assets. <br>
-	 * It also copies the LOM because the references Resources have to be modified to reflect the run counts.
-	 *
-	 * @return
-	 */
-	public ArrayList<Action> generateActions4Blueprint() {
-		logger.info(">> [FittingProcessor.generateActions4Blueprint]");
-		// Initialize global structures.
-		manufactureLocation = blueprint.getLocation();
+		// TODO Using a mock up of the location identifier until I have a better implementation of the Properties.
+		manufactureLocation = GlobalDataManager.searchLocation4Id(60006526);
 		region = manufactureLocation.getRegion();
-//		actions4Item = pilot.getActions();
-		// Clear structures to be sure we have the right data.
+		// Get the list of character assets.
+		final AssetsManager assetsManager = GlobalDataManager.getAssetsManager(DataManagementModelStore.getCredential4Id(credentialIdentifier), true);
+		// Clear processing variables.
 		requirements.clear();
 		actionsRegistered.clear();
-		// Get the resources needed for the completion of this job.
-		runs = blueprint.getRuns();
-		threads = blueprint.getQuantity();
 
+		// STEP 02. Decompose the list of items and the hull for this Fitting.
+		// Add the hull to the list of requirements.
+		requirements.add(new Resource(target.getShipHullInfo().getItemId(), copyCount));
+		// Add the list of items to the list of requirements.
+		for (Fitting.FittingItem item : target.getItems()) {
+			requirements.add(new Resource(item.getTypeId(), item.getQuantity() * copyCount));
+		}
 
-//		// Copy the LOM received to not modify the original data during the job
-//		// processing.
-//		for (Resource r : this.getLOM()) {
-//			requirements.add(new Resource(r.getTypeID(), r.getQuantity()));
-//		}
-//		// Update the resource count depending on the sizing requirements for the job.
-//		for (Resource resource : requirements) {
-//			// Skills are treated differently.
-//			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-//				resource.setStackSize(1);
-//			} else {
-//				resource.setAdaptiveStackSize(runs * threads);
-//			}
-//			// If the resource being processed is the job blueprint reduce the
-//			// number of runs and set the counter.
-//			if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-//				resource.setStackSize(threads);
-//			}
-//		}
-//		// Resource list completed. Dump report to the log and start action processing.
-//		Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.List of requirements" + requirements);
-//		pointer = -1;
-//		try {
-//			do {
-//				pointer++;
-//				Resource resource = requirements.get(pointer);
-//				Log.i("EVEI", "-- T2ManufactureProcess.generateActions4Blueprint.Processing resource " + resource);
-//				// Check resources that are Skills. Give them an special
-//				// treatment.
+		// Resource list completed. Dump report to the log and start action processing.
+		logger.info("-- [FittingProcessor.processFitting]> List of requirements: ", requirements);
+		pointer = -1;
+		try {
+			try {
+				do {
+					pointer++;
+					Resource resource = requirements.get(pointer);
+					logger.info("-- [FittingProcessor.processFitting]> Processing resource: {}", resource);
+//				// Check resources that are Skills. Give them an special treatment.
 //				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 //					currentAction = new Skill(resource);
 //					this.registerAction(currentAction);
 //					continue;
 //				}
-//				currentAction = new Action(resource);
-//				EveTask newTask = new EveTask(ETaskType.REQUEST, resource);
-//				newTask.setQty(resource.getQuantity());
-//				// We register the action before to get erased on restarts.
-//				// This has no impact on data since we use pointers to the
-//				// global structures.
-//				this.registerAction(currentAction);
-//				this.processRequest(newTask);
-//			} while (pointer < (requirements.size() - 1));
-//		} catch (RuntimeException rtex) {
-//			Log.e("RTEXCEPTION.CODE",
-//					"RT> T2ManufactureProcess.generateActions4Blueprint - Unexpected code behaviour. See stacktrace.");
-//			rtex.printStackTrace();
+					currentAction = new Action(resource);
+					EveTask newTask = new EveTask(Action.ETaskType.REQUEST, resource);
+					newTask.setQty(resource.getQuantity());
+					// We register the action before to get erased on restarts. This has no impact on data since we use pointers to the
+					// global structures.
+					this.registerAction(currentAction);
+					this.processRequest(newTask);
+				} while (pointer < (requirements.size() - 1));
+			} catch (RuntimeException rtex) {
+				logger.info("RT> [FittingProcessor.processFitting]> Unexpected code behaviour. See stacktrace.");
+				rtex.printStackTrace();
+			}
+			return this.getActions();
+		} finally {
+			logger.info("<< [FittingProcessor.processFitting]");
+		}
+	}
+	protected List<Action> getActions() {
+		final List<Action> result = new ArrayList<Action>();
+		for (final Action action : actionsRegistered.values()) {
+			result.add(action);
+		}
+		return result;
+	}
+
+	/**
+	 * This is the main processing entry point. When a task is created it is entered to the manager to check of
+	 * the action can be performed with other tasks that are less costly and that have a lower priority. If
+	 * those changes generate a new set of resources then the progress structures are cleared and the process
+	 * restarts again.
+	 *
+	 * @param newTask
+	 */
+	protected void processRequest( final EveTask newTask ) {
+		// The task is a request. Check in order.
+		final long requestQty = newTask.getQty();
+		if (requestQty < 1) return;
+
+//		// Check the special case for Asteroids
+//		if (newTask.getTaskType() == Action.ETaskType.REQUEST) {
+//			logger.info("RT> [FittingProcessor.processFitting]> Processing state> {} [x{}]", Action.ETaskType.REQUEST , requestQty );
+//			final String category = newTask.getItem().getCategory();
+//			logger.info("-- [FittingProcessor.processFitting]> Checking special case of Asteroids > {}", category);
+//			// If the resource is an asteroid then we can Refine it.
+//			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Asteroid)) {
+//				//				Log.i("EVEI", "-- [AbstractManufactureProcess.processRequest]-Asteroid - request COMPLETED");
+//				// Complete the action and add the minerals obtained as tasks.
+//				currentAction.setCompleted(ETaskCompletion.COMPLETED, newTask.getQty());
+//				// Add the refine of the mineral to the tasks.
+//				final ArrayList<Resource> refineParameters = NeoComAppConnector.getSingleton().getCCPDBConnector()
+//						.refineOre(newTask.getTypeID());
+//				for (final Resource rc : refineParameters) {
+//					final double mineral = Math.floor(Math.floor(newTask.getResource().getQuantity() / rc.getStackSize())
+//							* (rc.getBaseQuantity() * AbstractManufactureProcess.REFINING_EFFICIENCY));
+//					final EveTask refineTask = new EveTask(ETaskType.PRODUCE,
+//							new Resource(rc.item.getItemID(), Double.valueOf(mineral).intValue()));
+//					refineTask.setQty(Double.valueOf(mineral).intValue());
+//					refineTask.setLocation(newTask.getLocation());
+//					this.registerTask(90, refineTask);
+//				}
+//				return;
+//			}
 //		}
-//		Log.i("EVEI", "<< T2ManufactureProcess.generateActions4Blueprint.");
-	//	return this.getActions();
+//		if (newTask.getTaskType() == Action.ETaskType.INVENTION) {
+//			// TODO Implement the process invention
+//			this.processInvent(newTask);
+//			return;
+//		}
+		// Get the Assets that match the current type id.
+		final List<NeoComAsset> available = assetsManager.getAssets4Type(newTask.resource.item.getItemId());
+		logger.info("-- [AbstractManufactureProcess.processRequest]> Total available assets 4 type: {}", available);
+		// OPTIMIZATION. Do all Move tests only if there are arrest of this type available.
+		if (available.size() > 0) {
+			// See if there are assets of this type on the manufacture location before moving assets.
+			// MOVE - manufacture location
+			for (final NeoComAsset asset : available) {
+				// Removed assets with no quantity. This can be possible after some job launching.
+				if (asset.getQuantity() < 1) {
+					continue;
+				}
+				// Check if the asset location matches the Manufacture location. If so USE it by reducing the availability count.
+				if (asset.getLocation().equals(manufactureLocation)) {
+					processMove(asset, newTask);
+					return;
+				}
+//			final EveLocation loc = asset.getLocation();
+//			if (loc.toString().equalsIgnoreCase(manufactureLocation.toString())) {
+//				this.processMove(asset, newTask);
+//				return;
+//			}
+//			}
+				// Check the MOVE flag to control if the user allows to search for assets at other locations
+				logger.info("-- [AbstractManufactureProcess.processRequest]> Checking Move Allowed flag > {}" + this.moveAllowed());
+				if (this.moveAllowed()) {
+					// See if we have that resource elsewhere ready for transportation.
+					// MOVE - manufacture region
+					if (asset.getLocation().getRegionID() == manufactureLocation.getRegionID()) {
+						this.processMove(asset, newTask);
+						return;
+					}
+					// Assets not in same region or not found. Try without region limits.
+					// MOVE - rest of universe
+					this.processMove(asset, newTask);
+					return;
+				}
+			}
+		}
+
+		// If we reach this point we are sure that all other intents have been processed.
+		// Continue processing a BUY request or its decomposition.
+		logger.info("-- [AbstractManufactureProcess.processRequest]> Delegating processing to [processAction]");
+//		this.processAction(newTask);
+	}
+
+	/**
+	 * Creates a MOVE task that reduces the asset count on some place to cover a requirement.
+	 *
+	 * @param asset
+	 * @param newTask
+	 */
+	protected void processMove( final NeoComAsset asset, final EveTask newTask ) {
+		// Load data to do all the checks.
+//		final EveLocation loc = asset.getLocation();
+		final int requestQty = newTask.getQty();
+		final int qty = asset.getQuantity();
+
+		// Do the MOVE for som assets.
+		final EveTask moveTask = new EveTask(Action.ETaskType.MOVE, newTask.getResource());
+		// Stack quantity may not be enough to cover the requirements.
+		moveTask.setQty(Math.min(requestQty, qty));
+		moveTask.setLocation(asset.getLocation());
+		moveTask.setDestination(manufactureLocation);
+		// Treat the special case of assets already present on the Manufacture location.
+		if (asset.getLocation().equals(manufactureLocation)) {
+			// Convert the move to AVAILABLE because the locations match.
+			// If the owner is -1 then this resource comes from a reprocessing.
+			if (asset.getOwnerID() == -1) {
+				moveTask.setTaskType(Action.ETaskType.EXTRACT);
+			} else {
+				moveTask.setTaskType(Action.ETaskType.AVAILABLE);
+			}
+			this.registerTask(90, moveTask, asset);
+		} else {
+			this.registerTask(400, moveTask, asset);
+		}
+		if (qty >= requestQty) {
+			// This stack is able to complete the request.
+			return;
+		} else {
+			// We need more locations to complete the request.
+			final EveTask newRequest = new EveTask(Action.ETaskType.REQUEST, newTask.getResource())
+					.setQty(requestQty - qty);
+			this.processRequest(newRequest);
+			return;
+		}
+	}
+
+	/**
+	 * Aggregates the new task to the list of tasks. Before adding the task to the list it checks if there is a
+	 * task of the same item and type to accumulate the quantities instead of generating different tasks.<br>
+	 * After it modifies the list it fires a change so any listeners will trigger update processes.
+	 *
+	 * @param pri
+	 * @param task
+	 */
+	private synchronized void registerTask( final int pri, final EveTask task ) {
+		// Check for completed tasks.
+		if (task.getTaskType() == Action.ETaskType.AVAILABLE) {
+			currentAction.setCompleted(Action.ETaskCompletion.COMPLETED, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.EXTRACT) {
+			currentAction.setCompleted(Action.ETaskCompletion.PENDING, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.SELL) {
+			currentAction.setCompleted(Action.ETaskCompletion.PENDING, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.REFINE) {
+			currentAction.setCompleted(Action.ETaskCompletion.PENDING, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.MOVE) {
+			currentAction.setCompleted(Action.ETaskCompletion.PENDING, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.BUILD) {
+			currentAction.setCompleted(Action.ETaskCompletion.PENDING, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.BUY) {
+			currentAction.setCompleted(Action.ETaskCompletion.MARKET, task.getQty());
+		}
+		if (task.getTaskType() == Action.ETaskType.BUYCOVERED) {
+			currentAction.setCompleted(Action.ETaskCompletion.PENDING, task.getQty());
+		}
+		currentAction.registerTask(pri, task);
+	}
+
+	/**
+	 * Register the task on the <code>Action</code>. This method is the one responsible to modify the assets
+	 * used to complete the task.
+	 *
+	 * @param pri         priority of the task being registered.
+	 * @param task        the task that completes the request or part of the request.
+	 * @param targetAsset the asset used to complete the task when this action requires movement or transformation of
+	 *                    other resources. This is used to change the memory copy of the asset so next actions will found
+	 *                    an scenery similar to the one in real life and not an infinite number of resources.
+	 */
+	private void registerTask( final int pri, final EveTask task, final NeoComAsset targetAsset ) {
+		logger.info("-- [FittingProcessor.registerTask]> Registering task request [" + pri + "] " + task);
+//		this.performTask(task, targetAsset);
+		//Also add the asset as a reference to the task. Useful when activating links.
+		task.registerAsset(targetAsset);
+		this.registerTask(pri, task);
+	}
+
+	protected boolean moveAllowed() {
+		// Read the flag values from the preferences.
+		// TODO This access from the Data Management to the Preferences is pending implementation
+//		boolean moveAllowed = NeoComAppConnector.getSingleton()
+//				.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
+		boolean moveAllowed = true;
+		return moveAllowed;
+	}
+
+	protected void registerAction( final Action action ) {
+		// Test if already an action of the same item.
+		final Action hit = actionsRegistered.get(action.getTypeID());
+		if (null != hit) {
+			currentAction = action;
+		} else {
+			actionsRegistered.put(action.getTypeID(), action);
+		}
+	}
+
+	protected EveLocation searchManufactureLocation( final int credentialIdentifier ) {
+		logger.info(">> [FittingProcessor.searchManufactureLocation]");
+		credential = DataManagementModelStore.activateCredential(credentialIdentifier);
+		Assert.isNull(credential, "[FittingProcessor.searchManufactureLocation]> Credential " + credentialIdentifier + " not found.");
 		return null;
 	}
 

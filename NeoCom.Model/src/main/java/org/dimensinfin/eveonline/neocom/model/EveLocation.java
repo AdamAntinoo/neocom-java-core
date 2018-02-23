@@ -34,7 +34,7 @@ import java.sql.SQLException;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
-public class EveLocation extends NeoComNode {
+public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1522765618286937377L;
 
@@ -349,6 +349,25 @@ public class EveLocation extends NeoComNode {
 		regionID = systemLocation.getRegionID();
 		region = systemLocation.getRegion();
 		security = systemLocation.getSecurity();
+	}
+
+	/**
+	 * Two Locations are equal if they have the same locations codes.
+	 * @param obj the target EveLocation to compare.
+	 * @return
+	 */
+	@Override
+	public boolean equals( final Object obj ) {
+		if(stationID!=((EveLocation)obj).getStationID())return false;
+		if(systemID!=((EveLocation)obj).getSystemID())return false;
+		if(constellationID!=((EveLocation)obj).getConstellationID())return false;
+		if(regionID!=((EveLocation)obj).getRegionID())return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 }
 

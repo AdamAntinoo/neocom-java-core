@@ -100,24 +100,29 @@ public class EveTask extends NeoComNode /*implements IViewableNode */ {
 		assetRef = targetAsset;
 	}
 
-	public void setDestination( final EveLocation newLocation ) {
+	public EveTask setDestination( final EveLocation newLocation ) {
 		destination = newLocation;
+		return this;
 	}
 
-	public void setLocation( final EveLocation newLocation ) {
+	public EveTask setLocation( final EveLocation newLocation ) {
 		location = newLocation;
+		return this;
 	}
 
-	public void setQty( final int plusqty ) {
+	public EveTask setQty( final int plusqty ) {
 		qty = plusqty;
+		return this;
 	}
 
-	public void setResource( final Resource newresource ) {
+	public EveTask setResource( final Resource newresource ) {
 		resource = newresource;
+		return this;
 	}
 
-	public void setTaskType( final Action.ETaskType newType ) {
+	public EveTask setTaskType( final Action.ETaskType newType ) {
 		type = newType;
+		return this;
 	}
 
 	@Override
