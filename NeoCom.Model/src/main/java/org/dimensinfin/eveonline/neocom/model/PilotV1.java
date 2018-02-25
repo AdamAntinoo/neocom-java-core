@@ -18,7 +18,6 @@ package org.dimensinfin.eveonline.neocom.model;
 import com.beimin.eveapi.model.account.Character;
 import com.beimin.eveapi.response.eve.CharacterInfoResponse;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.slf4j.Logger;

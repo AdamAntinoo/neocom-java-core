@@ -11,7 +11,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 
@@ -110,7 +109,7 @@ public class NeoComBlueprint extends NeoComNode {
 		typeID = blueprintID;
 		blueprintItem = GlobalDataManager.searchItem4Id(blueprintID);
 		typeName = blueprintItem.getName();
-		moduleTypeID = ModelAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
+		moduleTypeID = GlobalDataManager.searchModule4Blueprint(typeID);
 		moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 		tech = this.obtainTech();
 		associatedAsset = null;
@@ -132,7 +131,7 @@ public class NeoComBlueprint extends NeoComNode {
 			blueprintItem = associatedAsset.getItem();
 			typeID = blueprintItem.getItemID();
 			typeName = blueprintItem.getName();
-			moduleTypeID = ModelAppConnector.getSingleton().getCCPDBConnector().searchModule4Blueprint(typeID);
+			moduleTypeID = GlobalDataManager.searchModule4Blueprint(typeID);
 			moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);
 			tech = this.obtainTech();
 		} catch (final Exception ex) {
@@ -398,11 +397,9 @@ public class NeoComBlueprint extends NeoComNode {
 
 	private void accessAssociatedAsset() {
 		try {
-			final Dao<NeoComAsset, String> dao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
+			final Dao<NeoComAsset, String> dao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 			associatedAsset = dao.queryForEq("assetID", new Long(assetID).toString()).get(0);
 		} catch (final Exception ex) {
-			//						logger.warning("W> Blueprint.<init>. Asset <" + assetID + "> not found.");
-			//	throw new RuntimeException("W> Blueprint.<init> - Asset <" + assetID + "> not found.");
 		}
 	}
 
@@ -419,7 +416,7 @@ public class NeoComBlueprint extends NeoComNode {
 	 * @return
 	 */
 	private String obtainTech() {
-		return ModelAppConnector.getSingleton().getCCPDBConnector().searchTech4Blueprint(typeID);
+		return GlobalDataManager.searchTech4Blueprint(typeID);
 	}
 }
 

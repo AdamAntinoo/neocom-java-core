@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
@@ -76,8 +75,7 @@ public class PlanetaryManager extends AbstractManager {
 		containers.clear();
 		try {
 			// Read all the assets for this character if not done already.
-			ArrayList<NeoComAsset> planetaryAssetList = ModelAppConnector.getSingleton().getDBConnector()
-			                                                             .accessAllPlanetaryAssets(getCredentialIdentifier());
+			ArrayList<NeoComAsset> planetaryAssetList = GlobalDataManager.accessAllPlanetaryAssets(getCredentialIdentifier());
 			totalAssetsCount = planetaryAssetList.size();
 			// Process the Resources and search for the parent assets to classify them into the Locations.
 			for (NeoComAsset resource : planetaryAssetList) {

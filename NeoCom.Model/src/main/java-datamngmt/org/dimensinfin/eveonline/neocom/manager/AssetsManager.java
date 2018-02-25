@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
@@ -308,8 +308,7 @@ public class AssetsManager extends AbstractManager {
 		List<NeoComAsset> assetsCategoryList = new ArrayList<NeoComAsset>();
 		assetsCategoryList = assetsAtCategoryCache.get(category);
 		if (null == assetsCategoryList) {
-			assetsCategoryList = ModelAppConnector.getSingleton().getDBConnector()
-					.searchAsset4Category(getCredentialIdentifier(), category);
+			assetsCategoryList = GlobalDataManager.searchAsset4Category(getCredentialIdentifier(), category);
 			assetsAtCategoryCache.put(category, (ArrayList<NeoComAsset>) assetsCategoryList);
 		} else {
 			AssetsManager.logger.info("~~ [AssetsManager.searchAsset4Category]> Cache hit [SELECT CATEGORY=" + category
@@ -317,7 +316,6 @@ public class AssetsManager extends AbstractManager {
 		}
 		return assetsCategoryList;
 	}
-
 	public ArrayList<NeoComAsset> searchAsset4Group( final String group ) {
 		//	Select assets for the owner and with an specific category.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
@@ -341,9 +339,9 @@ public class AssetsManager extends AbstractManager {
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		// Check if we have already that list on the cache.
 		assetList = assetsAtLocationCache.get(location.getID());
+		Chrono timeLapse=	new Chrono();
 		if (null == assetList) {
 			try {
-				ModelAppConnector.getSingleton().startChrono();
 				this.accessDaos();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
@@ -352,9 +350,8 @@ public class AssetsManager extends AbstractManager {
 				where.eq("locationID", location.getID());
 				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
-				Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT LOCATIONID=" + location.getID() + " OWNERID = "
-						+ getCredentialIdentifier() + "] - " + lapse);
+						+ getCredentialIdentifier() + "] - " + timeLapse.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 				assetsAtLocationCache.put(location.getID(), (ArrayList<NeoComAsset>) assetList);
 				// Update the dirty state to signal modification of store structures.
 				//				this.store(true);
@@ -404,11 +401,11 @@ public class AssetsManager extends AbstractManager {
 		AssetsManager.logger.info(">> EveChar.queryT2Modules");
 		//	Select assets of type blueprint and that are of T2.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		Chrono timeLapse=	new Chrono();
 		assetList = assetsAtCategoryCache.get("T2Modules");
 		if (null == assetList) {
 			try {
-				ModelAppConnector.getSingleton().startChrono();
-				Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
+				Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 				QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 				Where<NeoComAsset, String> where = queryBuilder.where();
 				where.eq("ownerID", getCredentialIdentifier());
@@ -418,9 +415,8 @@ public class AssetsManager extends AbstractManager {
 				where.eq("tech", ModelWideConstants.eveglobal.TechII);
 				PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 				assetList = assetDao.query(preparedQuery);
-				Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 				AssetsManager.logger.info("~~ Time lapse for [SELECT CATEGORY=MODULE TECH=TECH II OWNERID = "
-						+ getCredentialIdentifier() + "] - " + lapse);
+						+ getCredentialIdentifier() + "] - " + timeLapse.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 				assetsAtCategoryCache.put("T2Modules", (ArrayList<NeoComAsset>) assetList);
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
@@ -570,7 +566,7 @@ public class AssetsManager extends AbstractManager {
 	private void accessDaos() {
 		if (null == assetDao) {
 			try {
-				assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
+				assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 				if (null == assetDao) throw new RuntimeException("AssetsManager - Required dao object is not valid.");
 			} catch (SQLException sqle) {
 				// Interrupt processing and signal a runtime exception.
@@ -585,17 +581,16 @@ public class AssetsManager extends AbstractManager {
 	private ArrayList<NeoComAsset> getAllAssets() {
 		// Select assets for the owner.
 		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		Chrono timeLapse=	new Chrono();
 		try {
-			Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
-			ModelAppConnector.getSingleton().startChrono();
+			Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
 			Where<NeoComAsset, String> where = queryBuilder.where();
 			where.eq("ownerID", getCredentialIdentifier());
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = (ArrayList<NeoComAsset>) assetDao.query(preparedQuery);
-			Duration lapse = ModelAppConnector.getSingleton().timeLapse();
 			AssetsManager.logger.info("~~ Time lapse for [SELECT * FROM ASSETS OWNER = " + getCredentialIdentifier()
-					+ "] - " + lapse);
+					+ "] - " + timeLapse.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 			AssetsManager.logger.info("-- Assets processed: " + assetList.size());
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
@@ -695,7 +690,7 @@ public class AssetsManager extends AbstractManager {
 
 	private void readTimeStamps() {
 		try {
-			Dao<TimeStamp, String> tsDao = ModelAppConnector.getSingleton().getDBConnector().getTimeStampDao();
+			Dao<TimeStamp, String> tsDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
 			QueryBuilder<TimeStamp, String> queryBuilder = tsDao.queryBuilder();
 			Where<TimeStamp, String> where = queryBuilder.where();
 			where.eq("reference", this.getTSAssetsReference());

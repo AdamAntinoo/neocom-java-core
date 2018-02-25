@@ -19,7 +19,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -141,7 +140,7 @@ public class NeoComAsset extends NeoComNode {
 	 */
 	public NeoComAsset store () {
 		try {
-			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
+			final Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 			assetDao.update(this);
 			logger.info("-- [NeoComAsset.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
@@ -246,7 +245,11 @@ public class NeoComAsset extends NeoComNode {
 	public NeoComAsset getParentContainer () {
 		if ( parentAssetID > 0 ) if ( null == parentAssetCache ) {
 			// Search for the parent asset. If not found then go to the transformation method.
-			parentAssetCache = ModelAppConnector.getSingleton().getDBConnector().searchAssetByID(parentAssetID);
+	try{
+		parentAssetCache = GlobalDataManager.getNeocomDBHelper().getAssetDao()
+				.queryForId(Long.valueOf(parentAssetID).toString());
+	}catch (SQLException sqle){
+	}
 			if ( null == parentAssetCache ) {
 				final long newlocationId = parentAssetID;
 				final EveLocation loc = this.moveAssetToUnknown(newlocationId);
@@ -255,7 +258,7 @@ public class NeoComAsset extends NeoComNode {
 				locationCache = loc;
 				// Save the asset to disk.
 				try {
-					final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
+					final Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 					// Try to create the pair. It fails then  it was already created.
 					assetDao.createOrUpdate(this);
 				} catch (final SQLException sqle) {
@@ -396,7 +399,7 @@ public class NeoComAsset extends NeoComNode {
 	public void setDirty (final boolean flag) {
 		if ( flag ) {
 			try {
-				final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDao();
+				final Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 				// Try to create the pair. It fails then  it was already created.
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {

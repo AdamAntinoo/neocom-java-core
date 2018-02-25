@@ -13,7 +13,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -90,8 +90,7 @@ public class PlanetaryScenery {
 	private void stock(final Resource resource) {
 		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
 		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
-			int outputType = ModelAppConnector.getSingleton().getCCPDBConnector()
-					.searchRawPlanetaryOutput(resource.getTypeID());
+			int outputType = GlobalDataManager.searchRawPlanetaryOutput(resource.getTypeID());
 			ProcessingAction action = new ProcessingAction(outputType);
 			action.addResource(resource);
 			Vector<Resource> results = action.getActionResults();

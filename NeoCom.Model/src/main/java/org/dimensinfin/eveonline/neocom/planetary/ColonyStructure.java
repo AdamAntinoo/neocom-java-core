@@ -18,7 +18,6 @@ package org.dimensinfin.eveonline.neocom.planetary;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;

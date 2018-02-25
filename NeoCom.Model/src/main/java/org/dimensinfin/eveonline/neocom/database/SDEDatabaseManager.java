@@ -156,8 +156,6 @@ public abstract class SDEDatabaseManager {
 
 
 	// - F I E L D   I N D E X   D E F I N I T I O N S
-	private static int MODULE4BLUEPRINT_PRODUCTTYPEID_COLINDEX = 1;
-	private static int TECH4BLUEPRINT_METAGROUPID_COLINDEX = 3;
 	private static int REFINEORE_MATERIALTYPEID_COLINDEX = 1;
 	private static int REFINEORE_QUANTITY_COLINDEX = 2;
 	private static int REFINEORE_PORTIONSIZE_COLINDEX = 4;
@@ -391,6 +389,82 @@ public abstract class SDEDatabaseManager {
 			return stationTypeID;
 		}
 	}
+
+	// --- M O D U L E 4 B L U E P R I N T
+	private static int MODULE4BLUEPRINT_PRODUCTTYPEID_COLINDEX = 1;
+	private static final String SELECT_MODULE4BLUEPRINT = "SELECT productTypeID FROM industryActivityProducts BT"
+			+ " WHERE typeID = ? AND activityID = 1";
+	public int searchModule4Blueprint (final int bpitemID) {
+		logger.info(">< [SDEDatabaseManager.searchModule4Blueprint]> bpitemID: {}", bpitemID);
+		int productTypeID = -1;
+		try {
+			final RawStatement cursor = constructStatement(SELECT_MODULE4BLUEPRINT, new String[]{Integer.valueOf(bpitemID).toString()});
+			while (cursor.moveToNext()) {
+				productTypeID = cursor.getInt(MODULE4BLUEPRINT_PRODUCTTYPEID_COLINDEX);
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchModule4Blueprint]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
+			return productTypeID;
+		}
+	}
+
+
+	// --- T E C H 4 B L U E P R I N T
+	private static int TECH4BLUEPRINT_TYPEID_COLINDEX = 1;
+	private static int TECH4BLUEPRINT_TYPENAME_COLINDEX = 2;
+	private static int TECH4BLUEPRINT_METAGROUPID_COLINDEX = 3;
+	private static int TECH4BLUEPRINT_METAGROUPNAME_COLINDEX = 4;
+	private static final String SELECT_TECH4BLUEPRINT = "SELECT iap.typeID, it.typeName, imt.metaGroupID, img.metaGroupName"
+			+ " FROM industryActivityProducts iap, invTypes it, invMetaTypes imt, invMetaGroups img" + " WHERE it.typeID =?"
+			+ " AND iap.typeID = it.typeID" + " AND imt.typeID = productTypeID" + " AND img.metaGroupID = imt.metaGroupID"
+			+ " AND iap.activityID = 1";
+	public String searchTech4Blueprint (final int blueprintID) {
+		logger.info(">< [SDEDatabaseManager.searchTech4Blueprint]> blueprintID: {}", blueprintID);
+		String productTypeID = ModelWideConstants.eveglobal.TechI;
+		try {
+			final RawStatement cursor = constructStatement(SELECT_TECH4BLUEPRINT, new String[]{Integer.valueOf(blueprintID).toString()});
+			while (cursor.moveToNext()) {
+				productTypeID = cursor.getString(TECH4BLUEPRINT_METAGROUPNAME_COLINDEX);
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchModule4Blueprint]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
+			return productTypeID;
+		}
+	}
+
+
+	// --- R A W P L A N E T A R Y O U P U T
+	private static int RAW_PRODUCTRESULT_TYPEID_COLINDEX = 1;
+	private static int RAW_PRODUCTRESULT_QUANTITY_COLINDEX = 2;
+	private static int RAW_PRODUCTRESULT_SCHEMATICID_COLINDEX = 3;
+	private static final String SELECT_RAW_PRODUCTRESULT = "SELECT pstmo.typeID, pstmo.quantity, pstmo.schematicID"
+			+ " FROM   planetSchematicsTypeMap pstmi, planetSchematicsTypeMap pstmo" + " WHERE  pstmi.typeID = ?"
+			+ " AND    pstmo.schematicID = pstmi.schematicID" + " AND    pstmo.isInput = 0";
+
+
+	public int searchRawPlanetaryOutput (final int typeID) {
+		logger.info(">< [SDEDatabaseManager.searchRawPlanetaryOutput]> typeID: {}", typeID);
+		int outputResourceId = typeID;
+		try {
+			final RawStatement cursor = constructStatement(SELECT_RAW_PRODUCTRESULT, new String[]{Integer.valueOf(typeID).toString()});
+			while (cursor.moveToNext()) {
+				outputResourceId = cursor.getInt(RAW_PRODUCTRESULT_TYPEID_COLINDEX);
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchModule4Blueprint]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
+			return outputResourceId;
+		}
+	}
+
 }
 // - UNUSED CODE ............................................................................................
 //[01]

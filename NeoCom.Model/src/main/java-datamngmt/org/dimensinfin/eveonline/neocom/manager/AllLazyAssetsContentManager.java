@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Ship;
@@ -77,8 +77,8 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 		if ( !this.isDownloaded() ) {
 			// Get the assets from the database.
 			_contents.clear();
-			_contents.addAll(this.processDownloadedAssets(ModelAppConnector.getSingleton().getDBConnector()
-			                                                               .searchAssetsAtLocation(parent.getCredentialIdentifier(), this.getID())));
+			_contents.addAll(this.processDownloadedAssets(GlobalDataManager.searchAssetsAtLocation(parent.getCredentialIdentifier(), this.getID()
+			)));
 			this.setDownloaded(true);
 		}
 		return _contents;
@@ -90,7 +90,7 @@ public class AllLazyAssetsContentManager extends AbstractContentManager implemen
 			return _contents.size();
 		else
 			// Go to the database and get an approximate count of the assets that are at this Location.
-			return ModelAppConnector.getSingleton().getDBConnector().totalLocationContentCount(this.getID());
+			return GlobalDataManager.totalLocationContentCount(this.getID());
 	}
 
 	public double getTotalValue () {

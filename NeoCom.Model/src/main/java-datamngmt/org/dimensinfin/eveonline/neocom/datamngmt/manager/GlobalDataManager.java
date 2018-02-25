@@ -572,6 +572,93 @@ public class GlobalDataManager {
 		}
 		return (ArrayList<NeoComAsset>) assetList;
 	}
+	/**
+	 * Get the complete list of assets that are Planetary Materials.
+	 *
+	 * @return
+	 */
+	public static ArrayList<NeoComAsset> accessAllPlanetaryAssets (final long characterID) {
+		// Select assets for each one of the Planetary categories.
+		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		assetList.addAll(GlobalDataManager.searchAsset4Category(characterID, "Planetary Commodities"));
+		assetList.addAll(GlobalDataManager.searchAsset4Category(characterID, "Planetary Resources"));
+		return assetList;
+	}
+	/**
+	 * Gets the list of assets of a select Category for the identified owner.
+	 *
+	 * @param characterID  - owner of the assets.
+	 * @param categoryName - the category name to search for.
+	 * @return
+	 */
+	public static List<NeoComAsset> searchAsset4Category (final long characterID, final String categoryName) {
+		// Select assets for the owner and with an specific type id.
+		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
+		Chrono timeLapse=	new Chrono();
+		try {
+			Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("ownerID", characterID);
+			where.and();
+			where.eq("category", categoryName);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			assetList = assetDao.query(preparedQuery);
+			logger.info("~~ [AndroidDatabaseConnector.searchAsset4Category]> Time lapse for [SELECT CATEGORY=" + categoryName
+							+ " OWNERID = " + characterID + "] - " + timeLapse.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return assetList;
+	}
+	/**
+	 * Gets the assets located at an specific position by checking the pilot identifier and the asset reference
+	 * to a location stored at the <code>locationID</code> column value. We also filter out the assets that even
+	 * are located at the searched place they are inside another asset, like ships or containers.
+	 *
+	 * @param ownerid
+	 * @param identifier
+	 * @return
+	 */
+	public static List<NeoComAsset> searchAssetsAtLocation(final long ownerid, final long identifier) {
+		// Get access to one assets with a distinct location. Discard the rest of the data and only process the Location id
+		List<NeoComAsset> contents = new Vector<NeoComAsset>();
+		try {
+			Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			Where<NeoComAsset, String> where = queryBuilder.where();
+			where.eq("ownerID", ownerid);
+			where.and().eq("locationID", identifier);
+			where.and().eq("parentAssetId", -1);
+			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
+			contents = assetDao.query(preparedQuery);
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			logger.warn("W [NeoComBaseDatabase.queryLocationContents]> Exception reading Location contents" + sqle.getMessage());
+		}
+		return contents;
+	}
+	/**
+	 * Returns the number of items that are located at the specified location. There is another filter for the
+	 * character owner of the assets.
+	 *
+	 * @param identifier
+	 * @return
+	 */
+	public static int totalLocationContentCount(final long identifier) {
+		try {
+			Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
+			queryBuilder.setCountOf(true).where().eq("locationID", identifier);
+			long totalAssets = assetDao.countOf(queryBuilder.prepare());
+			return Long.valueOf(totalAssets).intValue();
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			logger.warn("W [NeoComBaseDatabase.getLocationContentCount]> Exception reading Location contents count."
+							+ sqle.getMessage());
+			return 0;
+		}
+	}
 
 	// --- S D E   D A T A B A S E   S E C T I O N
 	/**
@@ -650,7 +737,15 @@ public class GlobalDataManager {
 	public static int searchStationType( final long typeId ) {
 		return GlobalDataManager.getSDEDBHelper().searchStationType(typeId);
 	}
-
+	public static  int searchModule4Blueprint (final int bpitemID) {
+		return GlobalDataManager.getSDEDBHelper().searchModule4Blueprint(bpitemID);
+	}
+	public static String searchTech4Blueprint (final int blueprintID){
+		return GlobalDataManager.getSDEDBHelper().searchTech4Blueprint(blueprintID);
+	}
+	public static int searchRawPlanetaryOutput (final int typeID){
+		return GlobalDataManager.getSDEDBHelper().searchRawPlanetaryOutput(typeID);
+	}
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long
 			identifier ) {

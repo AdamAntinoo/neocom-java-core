@@ -26,6 +26,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
 
 /**
@@ -83,8 +84,13 @@ public interface INeoComDBHelper {
 	public Dao<ColonySerialized, String> getColonySerializedDao() throws SQLException;
 
 	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
+	@Deprecated
+	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
 
 	public Dao<EveLocation, String> getLocationDao() throws SQLException;
 
 	public Dao<Property, String> getPropertyDao() throws SQLException;
+	public  void clearInvalidRecords( final long pilotid );
+	public  void replaceAssets (final long pilotid);
+	public  void replaceBlueprints (final long pilotid);
 }

@@ -54,4 +54,7 @@ public interface ISDEDBHelper {
 	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
 
 	public int searchStationType( final long stationId );
+	public int searchModule4Blueprint (final int bpitemID);
+	public String searchTech4Blueprint (final int blueprintID);
+	public int searchRawPlanetaryOutput (final int typeID);
 }

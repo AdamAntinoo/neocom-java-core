@@ -15,11 +15,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import jdk.nashorn.internal.objects.Global;
-import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Assets")
