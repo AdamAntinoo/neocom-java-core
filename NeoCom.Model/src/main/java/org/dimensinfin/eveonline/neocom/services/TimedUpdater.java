@@ -45,7 +45,6 @@ public class TimedUpdater {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 //	public TimedUpdater() {
 //	}
-
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void timeTick() {
 		logger.info(">> [TimedUpdater.timeTick]");
@@ -88,6 +87,8 @@ public class TimedUpdater {
 		logger.info("-- [TimedUpdater.timeTick]> Accessing credentials. Credentials found: {}"
 				, credentialList.size());
 		for (Credential cred : credentialList) {
+			logger.info("-- [TimedUpdater.timeTick]> Processing Credential: {}-{}"
+					,cred.getAccountId(),cred.getAccountName());
 			// Set up the complete list depending on the Preferences selected.
 			boolean blockDownloads = GlobalDataManager.getDefaultSharedPreferences()
 					.getBoolean(PreferenceKeys.prefkey_BlockDownloads.name(), false);
@@ -118,7 +119,8 @@ public class TimedUpdater {
 				joblist.add(GlobalDataManager.EDataUpdateJobs.MARKETORDERS);
 			}
 
-			// Now process all job classes contained on hte list . If the TS is found check it. If not fire an update.
+			// Now process all job classes contained on the list . If the TS is found check it. If not fire an update.
+			logger.info("-- [TimedUpdater.timeTick]> Jobs to process: {}",joblist);
 			for (GlobalDataManager.EDataUpdateJobs jobName : joblist) {
 				try {
 					final String reference = Job.constructReference(jobName, cred.getAccountId());
@@ -175,6 +177,7 @@ public class TimedUpdater {
 						GlobalDataManager.udpatePilotV1(credential.getAccountId());
 					});
 			UpdateJobManager.submit(newJob);
+			return;
 		}
 
 		// Search for COLONYDATA job request.
@@ -204,6 +207,7 @@ public class TimedUpdater {
 						}
 					});
 			UpdateJobManager.submit(newJob);
+			return;
 		}
 
 		// Search for ASSETDATA job request.
@@ -229,6 +233,7 @@ public class TimedUpdater {
 								.store();
 					});
 			UpdateJobManager.submit(newJob);
+			return;
 		}
 	}
 

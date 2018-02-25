@@ -845,9 +845,9 @@ public class GlobalDataManager {
 	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
-	static {
-		ESINetworkManager.initialize();
-	}
+//	static {
+//		ESINetworkManager.initialize();
+//	}
 
 	public static List<Colony> downloadColonies4Credential( final Credential credential ) {
 		// Optimize the access to the Colony data.

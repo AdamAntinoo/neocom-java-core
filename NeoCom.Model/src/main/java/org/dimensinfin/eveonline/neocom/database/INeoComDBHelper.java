@@ -63,7 +63,7 @@ public interface INeoComDBHelper {
 //
 //	public INeoComDBHelper build() throws SQLException;
 
-	public ConnectionSource getConnectionSource() throws SQLException;
+//	public ConnectionSource getConnectionSource() throws SQLException;
 
 	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 

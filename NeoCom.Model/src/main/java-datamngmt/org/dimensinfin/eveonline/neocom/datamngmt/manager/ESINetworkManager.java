@@ -73,6 +73,8 @@ public class ESINetworkManager {
 	private static final List<String> SCOPES = new ArrayList<>(2);
 
 	public static void initialize() {
+		// Setup authentication credentials from configuration file.
+
 		// Read the scoped from a resource file
 		try {
 			final String propertyFileName = GlobalDataManager.getResourceString("R.cache.esi.authorization.scopes.filename");
