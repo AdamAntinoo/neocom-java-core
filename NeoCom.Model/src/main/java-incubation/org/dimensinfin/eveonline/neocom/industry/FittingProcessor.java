@@ -366,8 +366,8 @@ public class FittingProcessor {
 	protected EveLocation searchManufactureLocation( final int credentialIdentifier ) {
 		logger.info(">> [FittingProcessor.searchManufactureLocation]");
 		credential = DataManagementModelStore.activateCredential(credentialIdentifier);
-		Assert.isNull(credential, "[FittingProcessor.searchManufactureLocation]> Credential " + credentialIdentifier + " not found.");
-		return null;
+//		Assert.isNull(credential, "[FittingProcessor.searchManufactureLocation]> Credential " + credentialIdentifier + " not found.");
+		return GlobalDataManager.searchLocation4Id(60006526);
 	}
 
 	// --- D E L E G A T E D   M E T H O D S

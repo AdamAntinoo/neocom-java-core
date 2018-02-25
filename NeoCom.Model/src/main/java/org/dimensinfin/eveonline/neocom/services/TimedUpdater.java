@@ -169,12 +169,20 @@ public class TimedUpdater {
 		// Check that the request is a COLONY_DATA update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			// Submit the job to the manager
+			final String transferredCurrentrequestReference = currentrequestReference;
 			final Job newJob = new Job(dataIdentifier)
 					.setCredentialIdentifier(credential.getAccountId())
 					.setJobClass(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE)
 					.setTask(() -> {
 						logger.info("-- [Job.CHARACTER_CORE]> Downloading Pilot v1 information for: [{}]", credential.getAccountName());
 						GlobalDataManager.udpatePilotV1(credential.getAccountId());
+
+						// Update the timer for this download at the database.
+						final Instant validUntil = Instant.now()
+								.plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.CHARACTER_PUBLIC));
+						final TimeStamp ts = new TimeStamp(transferredCurrentrequestReference, validUntil)
+								.setCredentialId(credential.getAccountId())
+								.store();
 					});
 			UpdateJobManager.submit(newJob);
 			return;

@@ -65,7 +65,7 @@ public abstract class SDEDatabaseManager {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger(SDEDatabaseManager.class);
+	private static Logger logger = LoggerFactory.getLogger("SDEDatabaseManager");
 
 	// --- S Q L   S T A T E M E N T S   S E C T I O N
 	// - I T E M B Y I D
@@ -299,7 +299,7 @@ public abstract class SDEDatabaseManager {
 		} catch (final SQLException sqle) {
 			logger.error("E [SDEDatabaseManager.searchLocation4IdAtSDE]> Exception processing statement: {}" + sqle.getMessage());
 		} finally {
-			logger.info("<< [SDEDatabaseManager.searchLocation4IdAtSDE]");
+//			logger.info("<< [SDEDatabaseManager.searchLocation4IdAtSDE]");
 			return target;
 		}
 	}

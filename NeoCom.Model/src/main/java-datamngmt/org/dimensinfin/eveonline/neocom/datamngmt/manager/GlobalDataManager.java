@@ -230,20 +230,23 @@ public class GlobalDataManager {
 	private static final Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
-	private static final Hashtable<String, Long> ESICacheTimes = new Hashtable();
-	private static final long DEFAULT_CACHE_TIME = 600;
+	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
+	private static final long DEFAULT_CACHE_TIME = 600*1000;
 
 	public enum ECacheTimes {
-		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
+		  CHARACTER_PUBLIC, CHARACTER_CLONES
+		, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
 		, ASSETS_ASSETS
 		, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
 	}
 
 	static {
-		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS.name(), TimeUnit.SECONDS.toMillis(600));
-		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES.name(), TimeUnit.SECONDS.toMillis(600));
-		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS.name(), TimeUnit.SECONDS.toMillis(3600));
-		ESICacheTimes.put(ECacheTimes.MARKET_PRICES.name(), TimeUnit.SECONDS.toMillis(3600));
+		ESICacheTimes.put(ECacheTimes.CHARACTER_PUBLIC, TimeUnit.SECONDS.toMillis(3600));
+		ESICacheTimes.put(ECacheTimes.CHARACTER_CLONES, TimeUnit.SECONDS.toMillis(200));
+		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
+		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
 	}
 
 	public static long getCacheTime4Type( final ECacheTimes selector ) {
@@ -785,7 +788,7 @@ public class GlobalDataManager {
 		// Check if this request is already available on the cache.
 		final AssetsManager hit = (AssetsManager) managerCache.access(EManagerCodes.ASSETS_MANAGER, credential.getAccountId());
 		if ((null == hit) || (forceNew)) {
-			final AssetsManager manager = new AssetsManager(DataManagementModelStore.getCredential4Id(credential.getAccountId()));
+			final AssetsManager manager = new AssetsManager(credential);
 			managerCache.store(EManagerCodes.ASSETS_MANAGER, manager, credential.getAccountId());
 			return manager;
 		} else return hit;

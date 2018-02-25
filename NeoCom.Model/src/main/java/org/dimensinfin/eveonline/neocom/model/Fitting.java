@@ -102,6 +102,16 @@ public class Fitting extends NeoComNode {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return new StringBuffer("Fitting [")
+				.append("id: ").append(fittingId).append(" ")
+				.append("name: ").append(name).append(" ")
+				.append("]")
+				.append("->").append(super.toString())
+				.toString();
+	}
+
 	// - CLASS IMPLEMENTATION ...................................................................................
 	public class FittingItem extends NeoComNode {
 		// - S T A T I C - S E C T I O N ..........................................................................
