@@ -51,17 +51,17 @@ public interface INeoComDBHelper {
 
 	public void loadSeedData();
 
-	public INeoComDBHelper setDatabaseHost( final String hostName );
-
-	public INeoComDBHelper setDatabaseName( final String instanceName );
-
-	public INeoComDBHelper setDatabaseUser( final String user );
-
-	public INeoComDBHelper setDatabasePassword( final String password );
-
-	public INeoComDBHelper setDatabaseVersion( final int newVersion );
-
-	public INeoComDBHelper build() throws SQLException;
+//	public INeoComDBHelper setDatabaseHost( final String hostName );
+//
+//	public INeoComDBHelper setDatabaseName( final String instanceName );
+//
+//	public INeoComDBHelper setDatabaseUser( final String user );
+//
+//	public INeoComDBHelper setDatabasePassword( final String password );
+//
+//	public INeoComDBHelper setDatabaseVersion( final int newVersion );
+//
+//	public INeoComDBHelper build() throws SQLException;
 
 	public ConnectionSource getConnectionSource() throws SQLException;
 

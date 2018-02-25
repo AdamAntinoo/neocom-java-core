@@ -23,7 +23,7 @@ import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.j256.ormlite.dao.Dao;
 
 import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.core.util.Chrono.ChonoOptions;
+import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.connector.INeoComModelDatabase;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
@@ -313,7 +313,7 @@ public class DownloadManager {
 			//			//		});
 			//			colonies.add(col);
 		}
-		DownloadManager.logger.info(">> [DownloadManager.downloadColonyList]> [TIMING] Total download time: {}", totalDownloadTime.printElapsed(ChonoOptions.SHOWMILLIS));
+		DownloadManager.logger.info(">> [DownloadManager.downloadColonyList]> [TIMING] Total download time: {}", totalDownloadTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		return true;
 	}
 

@@ -25,7 +25,6 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 
 import com.annimon.stream.Stream;
-import com.sun.istack.internal.Nullable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +45,7 @@ public class GlobalConfigurationProvider implements IConfigurationProvider {
 	private String configuredPropertiesFolder = DEFAULT_PROPERTIES_FOLDER;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public GlobalConfigurationProvider( @Nullable final String propertiesFolder ) {
+	public GlobalConfigurationProvider( final String propertiesFolder ) {
 		if (null != propertiesFolder) configuredPropertiesFolder = propertiesFolder;
 		initialize();
 	}

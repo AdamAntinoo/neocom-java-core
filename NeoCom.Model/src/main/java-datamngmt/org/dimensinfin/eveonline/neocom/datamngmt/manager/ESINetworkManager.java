@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.core.util.Chrono.ChonoOptions;
+import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
@@ -158,7 +158,7 @@ public class ESINetworkManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 			}
 		}
 		return (List<GetCharactersCharacterIdPlanets200Ok>) hit.body();
@@ -182,7 +182,7 @@ public class ESINetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}
@@ -211,7 +211,7 @@ public class ESINetworkManager {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 			}
 			return null;
 		} else {
@@ -237,7 +237,7 @@ public class ESINetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}
@@ -271,7 +271,7 @@ public class ESINetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return returnAssetList;
 	}
@@ -293,7 +293,7 @@ public class ESINetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}
@@ -315,7 +315,7 @@ public class ESINetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}
@@ -337,7 +337,7 @@ public class ESINetworkManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChonoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}
