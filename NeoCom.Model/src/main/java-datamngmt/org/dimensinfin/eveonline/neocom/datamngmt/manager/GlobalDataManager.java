@@ -95,6 +95,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.PilotV1;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 
 /**
@@ -745,6 +746,9 @@ public class GlobalDataManager {
 	}
 	public static int searchRawPlanetaryOutput (final int typeID){
 		return GlobalDataManager.getSDEDBHelper().searchRawPlanetaryOutput(typeID);
+	}
+	public static List<Schematics> searchSchematics4Output ( final int targetId){
+		return GlobalDataManager.getSDEDBHelper().searchSchematics4Output(targetId);
 	}
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long

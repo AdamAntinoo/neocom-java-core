@@ -14,6 +14,7 @@ package org.dimensinfin.eveonline.neocom.database;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class SDEDatabaseManager {
@@ -439,7 +441,7 @@ public abstract class SDEDatabaseManager {
 	}
 
 
-	// --- R A W P L A N E T A R Y O U P U T
+	// --- R A W P L A N E T A R Y O U T P U T
 	private static int RAW_PRODUCTRESULT_TYPEID_COLINDEX = 1;
 	private static int RAW_PRODUCTRESULT_QUANTITY_COLINDEX = 2;
 	private static int RAW_PRODUCTRESULT_SCHEMATICID_COLINDEX = 3;
@@ -462,6 +464,35 @@ public abstract class SDEDatabaseManager {
 		} finally {
 			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
 			return outputResourceId;
+		}
+	}
+
+	// --- S C H E M A T I C S 4 O U T P U T
+	private static int SCHEMATICS4OUTPUT_TYPEID_COLINDEX = 1;
+	private static int SCHEMATICS4OUTPUT_QUANTITY_COLINDEX = 2;
+	private static int SCHEMATICS4OUTPUT_ISINPUT_COLINDEX = 3;
+	private static final String SELECT_SCHEMATICS4OUTPUT = "SELECT pstms.typeID, pstms.quantity, pstms.isInput"
+			+ " FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms" + " WHERE  pstmt.typeID = ?"
+			+ " AND    pstmt.isInput = 0" + " AND    pstms.schematicID = pstmt.schematicID";
+
+
+
+	public List<Schematics> searchSchematics4Output ( final int targetId) {
+		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeID: {}", targetId);
+		List<Schematics> scheList = new Vector<Schematics>();
+		try {
+			final RawStatement cursor = constructStatement(SELECT_SCHEMATICS4OUTPUT, new String[]{Integer.valueOf(targetId).toString()});
+			while (cursor.moveToNext()) {
+				scheList.add(new Schematics().addData(cursor.getInt(SCHEMATICS4OUTPUT_TYPEID_COLINDEX),
+						cursor.getInt(SCHEMATICS4OUTPUT_QUANTITY_COLINDEX),
+						(cursor.getInt(SCHEMATICS4OUTPUT_ISINPUT_COLINDEX) == 1) ? true : false));
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchSchematics4Output]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchSchematics4Output]");
+			return scheList;
 		}
 	}
 

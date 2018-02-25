@@ -9,6 +9,11 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -16,47 +21,44 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
 // - CLASS IMPLEMENTATION ...................................................................................
+
 /**
  * Stores the data to transform a set of resources into a new set where some of them are processed from a Tier
  * to a higher Tier. It uses the CCP database information to generate the quantity conversions from the input
  * data to the result data. <br>
  * Also stores the number of cycles required for the complete transformation of the resources and then the
  * total time to perfrom the transformation.
- * 
+ *
  * @author Adam Antinoo
  */
 public class ProcessingAction extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long									serialVersionUID	= 3885877535917258089L;
+	private static final long serialVersionUID = 3885877535917258089L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int																targetId					= 0;
-	public EveItem														targetItem				= null;
-	private Vector<Schematics>								schematics				= new Vector<Schematics>();
-	private final Vector<Schematics>					inputList					= new Vector<Schematics>();
-	private Schematics												output						= null;
-	private final HashMap<Integer, Resource>	actionResources		= new HashMap<Integer, Resource>();
+	private int targetId = 0;
+	public EveItem targetItem = null;
+	private List<Schematics> schematics = new Vector<Schematics>();
+	private final List<Schematics> inputList = new Vector<Schematics>();
+	private Schematics output = null;
+	private final HashMap<Integer, Resource> actionResources = new HashMap<Integer, Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
 	/**
 	 * Instance a new <code>ProcessingAction</code> and set the target product id to be produced by this action.
 	 * This should get the schematics information so the action can process the quantities and the length of the
 	 * cycles.
-	 * 
+	 *
 	 * @param targetId
 	 */
-	public ProcessingAction(final int targetId) {
+	public ProcessingAction( final int targetId ) {
 		this.targetId = targetId;
 		// Get the item for the target id to be identified on the Json serialization.
 		targetItem = GlobalDataManager.searchItem4Id(targetId);
 		// Get the schematics information.
-		schematics = ModelAppConnector.getSingleton().getCCPDBConnector().searchSchematics4Output(targetId);
+		schematics = GlobalDataManager.searchSchematics4Output(targetId);
 		// Store the inputs into another list.
 		for (final Schematics sche : schematics) {
 			if (sche.getDirection() == ESchematicDirection.INPUT) {
@@ -73,12 +75,12 @@ public class ProcessingAction extends NeoComNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void addResource(final Resource resource) {
+	public void addResource( final Resource resource ) {
 		this.stockResource(resource);
 	}
 
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant ) {
 		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		results.add(new PlanetaryTarget(targetItem));
 		return results;
@@ -88,7 +90,7 @@ public class ProcessingAction extends NeoComNode {
 	 * Return the list of resources left and new from the action processing following the current schematics.
 	 * This is the result of subtracting from the input resources the input quantity multiplied by the cycles
 	 * and adding to the result the output resource quantity multiplied by the same cycles.
-	 * 
+	 *
 	 * @return
 	 */
 	public Vector<Resource> getActionResults() {
@@ -105,7 +107,7 @@ public class ProcessingAction extends NeoComNode {
 	}
 	//[01]
 
-	public Vector<Schematics> getInputs() {
+	public List<Schematics> getInputs() {
 		return inputList;
 	}
 
@@ -115,7 +117,7 @@ public class ProcessingAction extends NeoComNode {
 
 	/**
 	 * Return the number of cycles that can be run with the current quantities of input resources.
-	 * 
+	 *
 	 * @return
 	 */
 	public int getPossibleCycles() {
@@ -134,7 +136,7 @@ public class ProcessingAction extends NeoComNode {
 
 	/**
 	 * Returns the list of resources at the end of the transformations.
-	 * 
+	 *
 	 * @return
 	 */
 	public HashMap<Integer, Resource> getResources() {
@@ -166,11 +168,11 @@ public class ProcessingAction extends NeoComNode {
 
 	/**
 	 * Processes one resource from the number of cycles indicated for the schematic received.
-	 * 
+	 *
 	 * @param sche
 	 * @return
 	 */
-	private Resource processResource(final Schematics sche, final int cycles) {
+	private Resource processResource( final Schematics sche, final int cycles ) {
 		// Get the resource from the list of available resources.
 		final Resource res = actionResources.get(sche.getTypeId());
 		if (null != res)
@@ -182,11 +184,10 @@ public class ProcessingAction extends NeoComNode {
 	/**
 	 * Adds a new PlanetaryResource to the list of current resources stacking it to an already existing
 	 * resource. If the resource is not already in the list then we put it on the aaction resource list.
-	 * 
-	 * @param newResource
-	 *          the resource to stack.
+	 *
+	 * @param newResource the resource to stack.
 	 */
-	private void stockResource(final Resource newResource) {
+	private void stockResource( final Resource newResource ) {
 		//		logger.info(">> [ProcessingAction.stockResource]");
 		final Resource hit = actionResources.get(newResource.getTypeID());
 		if (null == hit) {
