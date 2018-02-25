@@ -60,10 +60,10 @@ public class Pilot extends NeoComCharacter {
 	//		int queues = 1;
 	//		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 	//		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
+	//			if (apiSkill.getTypeId() == ModelWideConstants.eveglobal.skillcodes.LaboratoryOperation) {
 	//				queues += apiSkill.getLevel();
 	//			}
-	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
+	//			if (apiSkill.getTypeId() == ModelWideConstants.eveglobal.skillcodes.AdvancedLaboratoryOperation) {
 	//				queues += apiSkill.getLevel();
 	//			}
 	//		}
@@ -80,10 +80,10 @@ public class Pilot extends NeoComCharacter {
 	//		int queues = 1;
 	//		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 	//		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills) {
-	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
+	//			if (apiSkill.getTypeId() == ModelWideConstants.eveglobal.skillcodes.MassProduction) {
 	//				queues += apiSkill.getLevel();
 	//			}
-	//			if (apiSkill.getTypeID() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
+	//			if (apiSkill.getTypeId() == ModelWideConstants.eveglobal.skillcodes.AdvancedMassProduction) {
 	//				queues += apiSkill.getLevel();
 	//			}
 	//		}
@@ -267,7 +267,7 @@ public class Pilot extends NeoComCharacter {
 	//		//		if (isCorporation()) return 5;
 	//		final Set<com.beimin.eveapi.model.pilot.Skill> currentskills = characterSheet.getSkills();
 	//		for (final com.beimin.eveapi.model.pilot.Skill apiSkill : currentskills)
-	//			if (apiSkill.getTypeID() == skillID) return apiSkill.getLevel();
+	//			if (apiSkill.getTypeId() == skillID) return apiSkill.getLevel();
 	//		return 0;
 	//	}
 

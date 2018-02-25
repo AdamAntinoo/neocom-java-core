@@ -243,7 +243,7 @@ public class DownloadManager {
 		// Create the asset from the API asset.
 		final NeoComAsset newAsset = new NeoComAsset(asset200Ok.getTypeId())
 				.setAssetId(asset200Ok.getItemId());
-		//	.setTypeId(asset200Ok.getTypeID());
+		//	.setTypeId(asset200Ok.getTypeId());
 		Long locid = asset200Ok.getLocationId();
 		if (null == locid) {
 			locid = (long) -2;
@@ -645,7 +645,7 @@ public class DownloadManager {
 					// Change the asset parentship and update the asset location with the location of the parent.
 					asset.setParentId(targetLocationid);
 					//// search for the location of the parent.
-					//ELocationType parentLocationType = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(target.getLocationID()).getTypeID();
+					//ELocationType parentLocationType = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(target.getLocationID()).getTypeId();
 					//if(parentLocationType!=ELocationType.UNKNOWN)
 					asset.setLocationId(target.getLocationId());
 					asset.setDirty(true);

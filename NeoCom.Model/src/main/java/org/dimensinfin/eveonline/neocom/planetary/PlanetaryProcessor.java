@@ -223,13 +223,13 @@ public class PlanetaryProcessor {
 		// Calculate the value removing from the loop the resources used and adding to it the new outputs.
 		double value = 0.0;
 		for (Resource r : resourceList2Evaluate) {
-			//			if (null == consumed.get(r.getTypeID())) {
+			//			if (null == consumed.get(r.getTypeId())) {
 			value += r.getItem().getHighestBuyerPrice().getPrice() * r.getQuantity();
 			//			}
 		}
 		//		// Add outputs resources value.
 		//		for (Resource r : outputs) {
-		//			if (null == consumed.get(r.getTypeID())) {
+		//			if (null == consumed.get(r.getTypeId())) {
 		//				value += r.getItem().getHighestBuyerPrice().getPrice();
 		//			}
 		//		}

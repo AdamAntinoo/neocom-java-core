@@ -112,7 +112,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		if ( null == singleton ) DataManagementModelStore.initialize();
 		return singleton.activateCredentialImpl(identifier);
 	}
-
+	@Deprecated
 	public static Credential getActiveCredential () {
 		if ( null == singleton ) DataManagementModelStore.initialize();
 		return singleton.getActiveCredentialImpl();
@@ -121,6 +121,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	/**
 	 * Search this identifier on the list of credentials and returns the findings.
 	 */
+	@Deprecated
 	public static Credential getCredential4Id (final int identifier) {
 		if ( null == singleton ) DataManagementModelStore.initialize();
 		return singleton.getCredential4IdImpl(identifier);
@@ -231,6 +232,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * In addition to generate the list of Credentials, with each of them I will download some of the Character
 	 * data during the creation of the list and connect that data to the parent Credential.
 	 */
+	@Deprecated
 	public List<Credential> coalesceCredentialList () {
 		logger.info(">> [DataManagementModelStore.coalesceCredentialList]");
 		try {
@@ -273,6 +275,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * Returns the current active Credential that matched the active character. Raises a runtime exception if the
 	 * character is null.
 	 */
+	@Deprecated
 	private Credential getActiveCredentialImpl () {
 		if ( null == _activeCredential )
 			throw new RuntimeException("RT> Accessing an invalid Credential. Select a new character from the list of Credentials.");
@@ -284,6 +287,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * because this can generate exception because this method is consumed without checks.
 	 * Other possible solution is to check again for the Credential list from the database.
 	 */
+	@Deprecated
 	private Credential getCredential4IdImpl (final long identifier) {
 		for (Credential cred : _credentialList) {
 			if ( cred.getAccountId() == identifier ) return cred;

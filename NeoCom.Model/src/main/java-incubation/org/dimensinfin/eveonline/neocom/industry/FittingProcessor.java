@@ -16,12 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.modelmapper.internal.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Fitting;
@@ -104,7 +104,8 @@ public class FittingProcessor {
 		manufactureLocation = GlobalDataManager.searchLocation4Id(60006526);
 		region = manufactureLocation.getRegion();
 		// Get the list of character assets.
-		final AssetsManager assetsManager = GlobalDataManager.getAssetsManager(DataManagementModelStore.getCredential4Id(credentialIdentifier), true);
+		assetsManager = GlobalDataManager.getAssetsManager(DataManagementModelStore.activateCredential(credentialIdentifier),
+				true);
 		// Clear processing variables.
 		requirements.clear();
 		actionsRegistered.clear();
@@ -182,7 +183,7 @@ public class FittingProcessor {
 //				currentAction.setCompleted(ETaskCompletion.COMPLETED, newTask.getQty());
 //				// Add the refine of the mineral to the tasks.
 //				final ArrayList<Resource> refineParameters = NeoComAppConnector.getSingleton().getCCPDBConnector()
-//						.refineOre(newTask.getTypeID());
+//						.refineOre(newTask.getTypeId());
 //				for (final Resource rc : refineParameters) {
 //					final double mineral = Math.floor(Math.floor(newTask.getResource().getQuantity() / rc.getStackSize())
 //							* (rc.getBaseQuantity() * AbstractManufactureProcess.REFINING_EFFICIENCY));
@@ -201,7 +202,7 @@ public class FittingProcessor {
 //			return;
 //		}
 		// Get the Assets that match the current type id.
-		final List<NeoComAsset> available = assetsManager.getAssets4Type(newTask.resource.item.getItemId());
+		final List<NeoComAsset> available = assetsManager.getAssets4Type(newTask.getResource().getItem().getItemId());
 		logger.info("-- [AbstractManufactureProcess.processRequest]> Total available assets 4 type: {}", available);
 		// OPTIMIZATION. Do all Move tests only if there are arrest of this type available.
 		if (available.size() > 0) {
@@ -346,20 +347,18 @@ public class FittingProcessor {
 
 	protected boolean moveAllowed() {
 		// Read the flag values from the preferences.
-		// TODO This access from the Data Management to the Preferences is pending implementation
-//		boolean moveAllowed = NeoComAppConnector.getSingleton()
-//				.getBooleanPreference(AppWideConstants.preference.PREF_ALLOWMOVEREQUESTS, false);
-		boolean moveAllowed = true;
+		boolean moveAllowed = GlobalDataManager.getDefaultSharedPreferences()
+				.getBoolean(PreferenceKeys.prefkey_AllowMoveRequests.name(), true);
 		return moveAllowed;
 	}
 
 	protected void registerAction( final Action action ) {
 		// Test if already an action of the same item.
-		final Action hit = actionsRegistered.get(action.getTypeID());
+		final Action hit = actionsRegistered.get(action.getTypeId());
 		if (null != hit) {
 			currentAction = action;
 		} else {
-			actionsRegistered.put(action.getTypeID(), action);
+			actionsRegistered.put(action.getTypeId(), action);
 		}
 	}
 

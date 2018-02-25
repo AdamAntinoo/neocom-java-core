@@ -60,6 +60,8 @@ public class Action extends NeoComExpandableNode {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Action( final Resource res ) {
+		super();
+		jsonClass="Action";
 		resource = res;
 		requestQty = resource.getQuantity();
 		// Default expand state on initialization is collapsed.
@@ -143,7 +145,7 @@ public class Action extends NeoComExpandableNode {
 		return result;
 	}
 
-	public int getTypeID() {
+	public int getTypeId() {
 		return resource.getTypeID();
 	}
 
@@ -173,7 +175,7 @@ public class Action extends NeoComExpandableNode {
 			//			// Check for aggregation.
 			//			for (TaskBundle current : tasksRegistered) {
 			//				EveTask currentTask = current.task;
-			//				if ((task.getTypeID() == currentTask.getTypeID()) && (task.getTaskType() == currentTask.getTaskType()))
+			//				if ((task.getTypeId() == currentTask.getTypeId()) && (task.getTaskType() == currentTask.getTaskType()))
 			//					if (task.getLocation().getLocationId() == currentTask.getLocation().getLocationId()) {
 			//						//						currentTask.setQty(currentTask.getQty() + task.getQty());
 			//						return;

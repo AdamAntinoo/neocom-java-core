@@ -118,7 +118,7 @@ public class BitSequencer {
 		//		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
 		//		buffer.append("stack: ").append(stackSize).append(" ");
 		//		buffer.append("total: ").append(this.getQuantity()).append(" ");
-		//buffer.append("#").append(this.getTypeID()).append(" ");
+		//buffer.append("#").append(this.getTypeId()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}

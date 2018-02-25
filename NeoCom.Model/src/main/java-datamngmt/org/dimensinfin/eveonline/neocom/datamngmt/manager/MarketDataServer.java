@@ -49,6 +49,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
 import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
@@ -243,23 +244,26 @@ public class MarketDataServer {
 		 * @param typeId the job to update some information.
 		 */
 		public synchronized void addMarketDataRequest( final int typeId ) {
-			final String identifier = generateMarketDataJobReference(typeId);
-			logger.info(">> [MarketDataJobDownloadManager.addMarketDataRequest]");
-			try {
-				// Search for the job to detect duplications
-				final Future<?> hit = runningJobs.get(identifier);
-				if (null == hit) {
-					// New job. Launch it and store the reference.
-					runningJobs.put(identifier, launchDownloadJob(typeId));
-				} else {
-					// Check for job completed.
-					if (hit.isDone()) {
-						// The job with this same reference has completed. We can launch a new one.
+			// Launch the updater job only if the market data updater process is allowed.
+			if (!GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name())) {
+				final String identifier = generateMarketDataJobReference(typeId);
+				logger.info(">> [MarketDataJobDownloadManager.addMarketDataRequest]");
+				try {
+					// Search for the job to detect duplications
+					final Future<?> hit = runningJobs.get(identifier);
+					if (null == hit) {
+						// New job. Launch it and store the reference.
 						runningJobs.put(identifier, launchDownloadJob(typeId));
+					} else {
+						// Check for job completed.
+						if (hit.isDone()) {
+							// The job with this same reference has completed. We can launch a new one.
+							runningJobs.put(identifier, launchDownloadJob(typeId));
+						}
 					}
+				} catch (RuntimeException neoe) {
+					neoe.printStackTrace();
 				}
-			} catch (RuntimeException neoe) {
-				neoe.printStackTrace();
 			}
 		}
 

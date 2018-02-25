@@ -80,7 +80,7 @@ public class Refinery {
 				//				registerAssetChange(-changeRefineQty, oreSelected.getItemID(), oreSelected.getLocationID());
 				//				for (Resource rc : refineParameters) {
 				//					double mineral = (changeRefineQty / portionsize) * (0.8 * refineQuantity);
-				//					if (rc.getTypeID() == mineralCode) mineralObtained = mineral;
+				//					if (rc.getTypeId() == mineralCode) mineralObtained = mineral;
 				//					registerAssetChange(mineral, rc.item.getItemID(), oreSelected.getLocationID());
 				//				}
 				//		}

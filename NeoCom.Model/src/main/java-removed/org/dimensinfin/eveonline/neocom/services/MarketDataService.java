@@ -52,7 +52,7 @@ public class MarketDataService implements Runnable {
 		//			if(market==EVEMARKETDATA)
 		Vector<TrackEntry> marketEntries = MarketDataService.parseMarketDataEMD(item.getName(), EMarketSide.SELLER);
 		//		if (marketEntries.size() < 1) {
-		//			marketEntries = AppConnector.getStorageConnector().parseMarketDataEC(item.getTypeID(), EMarketSide.SELLER);
+		//			marketEntries = AppConnector.getStorageConnector().parseMarketDataEC(item.getTypeId(), EMarketSide.SELLER);
 		//		}
 		Vector<MarketDataEntry> hubData = MarketDataService.extractMarketData(marketEntries);
 		// Update the structures related to the newly downloaded data.
@@ -65,7 +65,7 @@ public class MarketDataService implements Runnable {
 		// Do the same for the other side.
 		marketEntries = MarketDataService.parseMarketDataEMD(item.getName(), EMarketSide.BUYER);
 		//		if (marketEntries.size() < 1) {
-		//			marketEntries = AppConnector.getStorageConnector().parseMarketDataEC(item.getTypeID(), EMarketSide.BUYER);
+		//			marketEntries = AppConnector.getStorageConnector().parseMarketDataEC(item.getTypeId(), EMarketSide.BUYER);
 		//		}
 		hubData = MarketDataService.extractMarketData(marketEntries);
 		reference = new MarketDataSet(localizer, EMarketSide.BUYER);

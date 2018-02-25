@@ -18,13 +18,13 @@ import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveTask extends NeoComNode /*implements IViewableNode */ {
+public class EveTask extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 7187291497544861372L;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private Action.ETaskType type = Action.ETaskType.BUY;
-	public Resource resource = null;
+	private Resource resource = null;
 	private int qty = 0;
 	private EveLocation location = null;
 	private EveLocation destination = null;
@@ -33,6 +33,8 @@ public class EveTask extends NeoComNode /*implements IViewableNode */ {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveTask( final Action.ETaskType newType, final Resource newresource ) {
+		super();
+		jsonClass = "EveTask";
 		type = newType;
 		this.setResource(newresource);
 	}

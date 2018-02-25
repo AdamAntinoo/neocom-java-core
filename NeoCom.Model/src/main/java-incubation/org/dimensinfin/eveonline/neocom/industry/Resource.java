@@ -9,21 +9,24 @@
 package org.dimensinfin.eveonline.neocom.industry;
 
 // - IMPORT SECTION .........................................................................................
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
+
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
  * type items and differentiated from the asset in that it has no specified Location not owner. Includes the
@@ -34,49 +37,52 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * We also consider that T2 BPC have 10 runs while T1 BPC have 300.<br>
  * In short the blueprints will have the correct ME/TE/RUNS available so this values will be set from the
  * blueprint from where the resource was extracted.
- * 
+ *
  * @author Adam Antinoo
  */
 public class Resource extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID					= 921961484632479376L;
-	private static Logger			logger										= Logger.getLogger("Resource");
-	private static final int	INDUSTRY_SKILL						= 5;
-	private static final int	PRODUCTIONEFFICENCY_SKILL	= 5;
-	private static final int	DEFAULT_T1ME							= 10;
-	private static final int	DEFAULT_T2ME							= 7;
-	private static final int	DEFAULT_T1TE							= 20;
-	private static final int	DEFAULT_T2TE							= 14;
+	private static final long serialVersionUID = 921961484632479376L;
+	private static Logger logger = Logger.getLogger("Resource");
+	private static final int INDUSTRY_SKILL = 5;
+	private static final int PRODUCTIONEFFICENCY_SKILL = 5;
+	private static final int DEFAULT_T1ME = 10;
+	private static final int DEFAULT_T2ME = 7;
+	private static final int DEFAULT_T1TE = 20;
+	private static final int DEFAULT_T2TE = 14;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public EveItem						item											= EveItem.getDefaultItem();
-	private int								resourceID								= -1;
-	public int								baseQty										= 0;
-	public int								stackSize									= 1;
-	private double						damage										= 1.0;
+	public EveItem item = EveItem.getDefaultItem();
+	private int resourceID = -1;
+	public int baseQty = 0;
+	public int stackSize = 1;
+	private double damage = 1.0;
 	@JsonIgnore
-	private DateTime					registrationDate					= new DateTime(DateTimeZone.UTC);
+	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
 
 	/**
 	 * Builds a new resource of quantity 1.
-	 * 
+	 *
 	 * @param typeID
 	 */
-	public Resource(final int typeID) {
+	public Resource( final int typeID ) {
+		super();
 		resourceID = typeID;
 		item = GlobalDataManager.searchItem4Id(typeID);
 		baseQty = 0;
+		jsonClass = "Resource";
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Resource(final int typeID, final int newQty) {
-		resourceID = typeID;
-		item = GlobalDataManager.searchItem4Id(typeID);
+	public Resource( final int typeID, final int newQty ) {
+		this(typeID);
+//		resourceID = typeID;
+//		item = GlobalDataManager.searchItem4Id(typeID);
 		baseQty = newQty;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void add(final int count) {
+	public void add( final int count ) {
 		baseQty += count;
 	}
 
@@ -84,10 +90,10 @@ public class Resource extends NeoComNode {
 	 * Adds the quantities of two resources of the same type. On this moment the original resource losses the
 	 * stack values and the equivalent quantity is calculated before adding the new quantity calculated exactly
 	 * on the same way. The final result is the total quantity but with a stack size of one.
-	 * 
+	 *
 	 * @param newResource
 	 */
-	public void addition(final Resource newResource) {
+	public void addition( final Resource newResource ) {
 		int newqty = this.getBaseQuantity() * this.getStackSize();
 		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
 		baseQty = newqty;
@@ -97,7 +103,7 @@ public class Resource extends NeoComNode {
 
 	/**
 	 * Generate the model elements that want to be represented at the UI.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<ICollaboration> collaborate2Model() {
@@ -132,7 +138,7 @@ public class Resource extends NeoComNode {
 
 	/**
 	 * Apply the manufacture formulas to get the correct value of the quantity for this user.
-	 * 
+	 *
 	 * @return my manufacture quantity
 	 */
 	public int getQuantity() {
@@ -154,7 +160,7 @@ public class Resource extends NeoComNode {
 		return item.getItemID();
 	}
 
-	public void setAdaptiveStackSize(final int size) {
+	public void setAdaptiveStackSize( final int size ) {
 		this.setStackSize(size);
 		if (item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
@@ -171,19 +177,19 @@ public class Resource extends NeoComNode {
 		}
 	}
 
-	public void setDamage(final double damage) {
+	public void setDamage( final double damage ) {
 		this.damage = damage;
 	}
 
-	public void setQuantity(final int newQuantity) {
+	public void setQuantity( final int newQuantity ) {
 		baseQty = newQuantity;
 	}
 
-	public void setRegistrationDate(final DateTime registrationDate) {
+	public void setRegistrationDate( final DateTime registrationDate ) {
 		this.registrationDate = registrationDate;
 	}
 
-	public void setStackSize(final int stackSize) {
+	public void setStackSize( final int stackSize ) {
 		this.stackSize = stackSize;
 	}
 

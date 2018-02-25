@@ -836,7 +836,7 @@ public class GlobalDataManager {
 				logger.info("-- [GlobalDataManager.getPilotV1]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
 				final PilotV1 newchar = new PilotV1();
 				// Get the credential from the Store and check if this identifier has access to the XML api.
-				final Credential credential = DataManagementModelStore.getCredential4Id(identifier);
+				final Credential credential = DataManagementModelStore.activateCredential(identifier);
 				if (null != credential) {
 					logger.info("-- [GlobalDataManager.getPilotV1]> Processing data with Credential <{}>.", credential.getAccountName());
 					// Check the Credential type.

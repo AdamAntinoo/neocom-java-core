@@ -504,7 +504,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		// Create the asset from the API asset.
 	//		final NeoComAsset newAsset = new NeoComAsset();
 	//		newAsset.setAssetID(eveAsset.getItemID());
-	//		newAsset.setTypeID(eveAsset.getTypeID());
+	//		newAsset.setTypeID(eveAsset.getTypeId());
 	//		//		// Children locations have a null on this field. Set it to their parents
 	//		//		final Long assetloc = eveAsset.getLocationID();
 	//		//		if (null != assetloc) {
@@ -528,7 +528,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		newAsset.setSingleton(eveAsset.getSingleton());
 	//
 	//		// Get access to the Item and update the copied fields.
-	//		final EveItem item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeID());
+	//		final EveItem item = ModelAppConnector.getSingleton().getCCPDBConnector().searchItembyID(newAsset.getTypeId());
 	//		if (null != item) {
 	//			try {
 	//				newAsset.setName(item.getName());
@@ -549,7 +549,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//	protected NeoComBlueprint convert2Blueprint(final Blueprint eveBlue) {
 	//		// Create the asset from the API asset.
 	//		final NeoComBlueprint newBlueprint = new NeoComBlueprint(eveBlue.getItemID());
-	//		newBlueprint.setTypeID(eveBlue.getTypeID());
+	//		newBlueprint.setTypeID(eveBlue.getTypeId());
 	//		newBlueprint.setTypeName(eveBlue.getTypeName());
 	//		newBlueprint.setLocationID(eveBlue.getLocationID());
 	//		newBlueprint.setFlag(eveBlue.getFlagID());
@@ -653,7 +653,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
 	//			newMarketOrder.setMinVolume(eveorder.getMinVolume());
 	//			newMarketOrder.setOrderState(eveorder.getOrderState());
-	//			newMarketOrder.setTypeID(eveorder.getTypeID());
+	//			newMarketOrder.setTypeID(eveorder.getTypeId());
 	//			newMarketOrder.setRange(eveorder.getRange());
 	//			newMarketOrder.setAccountKey(eveorder.getAccountKey());
 	//			newMarketOrder.setDuration(eveorder.getDuration());

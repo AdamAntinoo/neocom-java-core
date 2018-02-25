@@ -216,7 +216,7 @@ public class EveItem extends NeoComNode {
 	public boolean hasInvention() {
 		// REFACTOR This has to be reimplemented
 		return false;
-		//		return ModelAppConnector.getSingleton().getDBConnector().checkInvention(this.getTypeID());
+		//		return ModelAppConnector.getSingleton().getDBConnector().checkInvention(this.getTypeId());
 	}
 
 	public boolean isBlueprint() {
