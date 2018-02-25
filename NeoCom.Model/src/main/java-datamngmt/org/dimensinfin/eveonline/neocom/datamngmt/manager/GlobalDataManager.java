@@ -62,6 +62,8 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
+import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
@@ -114,10 +116,6 @@ public class GlobalDataManager {
 		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
 	}
 
-	public enum ECacheTimes {
-		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
-	}
-
 	// --- P R I V A T E   E N U M E R A T O R S
 	private enum EModelVariants {
 		PILOTV1, APIKEY
@@ -132,8 +130,9 @@ public class GlobalDataManager {
 	private static final String SERVER_DATASOURCE = "tranquility";
 
 	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
-	private static final List<ExceptionRecord> exceptionsIntercepted=new ArrayList();
-	public static void interceptException(final Exception exceptionIntercepted){
+	private static final List<ExceptionRecord> exceptionsIntercepted = new ArrayList();
+
+	public static void interceptException( final Exception exceptionIntercepted ) {
 		exceptionsIntercepted.add(new ExceptionRecord(exceptionIntercepted));
 	}
 
@@ -208,17 +207,48 @@ public class GlobalDataManager {
 		return Boolean.valueOf(configurationManager.getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
 	}
 
+	// --- P R E F E R E N C E S   S E C T I O N
+	private static final IGlobalPreferencesManager preferencesManager = new GlobalPreferencesManager();
+
+	public static IGlobalPreferencesManager getDefaultSharedPreferences() {
+		return preferencesManager;
+	}
+//	/**
+//	 * Export the api methods found on the Preferences management at Android. Return a boolena formatted result.
+//	 */
+//	public static boolean getBooleanPreference( final String preferenceName ) {
+//		return preferencesManager.getBooleanPreference(preferenceName);
+//	}
+//
+//	public static boolean getBooleanPreference( final String preferenceName, final boolean defaultValue ) {
+//		return preferencesManager.getBooleanPreference(preferenceName, defaultValue);
+//	}
+
 	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
 	private static final Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
 	private static final Hashtable<String, Long> ESICacheTimes = new Hashtable();
+	private static final long DEFAULT_CACHE_TIME = 600;
+
+	public enum ECacheTimes {
+		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
+		, ASSETS_ASSETS
+		, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
+	}
 
 	static {
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS.name(), TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES.name(), TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS.name(), TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES.name(), TimeUnit.SECONDS.toMillis(3600));
+	}
+
+	public static long getCacheTime4Type( final ECacheTimes selector ) {
+		final Long hit = ESICacheTimes.get(selector);
+		if (null == hit) return DEFAULT_CACHE_TIME;
+		else return hit.longValue();
 	}
 
 	private static final ManagerOptimizedCache managerCache = new ManagerOptimizedCache();
@@ -243,8 +273,9 @@ public class GlobalDataManager {
 		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
+
 	public static void activateMarketDataCache4Id( final int typeId ) {
-		if (null != marketDataService)  marketDataService.activateMarketDataCache4Id(typeId);
+		if (null != marketDataService) marketDataService.activateMarketDataCache4Id(typeId);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
 
@@ -695,7 +726,7 @@ public class GlobalDataManager {
 	 * point.
 	 */
 	public static PilotV1 getPilotV1( final int identifier ) {
-		logger.info(">> [GlobalDataManager.getPilotV1]> Identifier: {}",identifier);
+		logger.info(">> [GlobalDataManager.getPilotV1]> Identifier: {}", identifier);
 		try {
 			// Check if this request is already available on the cache.
 			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
@@ -814,9 +845,10 @@ public class GlobalDataManager {
 	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
-	static{
+	static {
 		ESINetworkManager.initialize();
 	}
+
 	public static List<Colony> downloadColonies4Credential( final Credential credential ) {
 		// Optimize the access to the Colony data.
 		//		if(colonies.size()<1) {
@@ -1125,22 +1157,25 @@ public class GlobalDataManager {
 			jgen.writeEndObject();
 		}
 	}
+
 	// ........................................................................................................
 	// - CLASS IMPLEMENTATION ...................................................................................
 	public static class ExceptionRecord {
 		// - F I E L D - S E C T I O N ............................................................................
-private long timeStamp =0;
-private Exception exceptionRegistered=null;
+		private long timeStamp = 0;
+		private Exception exceptionRegistered = null;
+
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
-public ExceptionRecord(final Exception newexception){
-	this.exceptionRegistered=newexception;
-	this.timeStamp= Instant.now().getMillis();
-}
+		public ExceptionRecord( final Exception newexception ) {
+			this.exceptionRegistered = newexception;
+			this.timeStamp = Instant.now().getMillis();
+		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................
 		public void setTimeStamp( final long timeStamp ) {
 			this.timeStamp = timeStamp;
 		}
+
 		public void setTimeStamp( final Instant timeStamp ) {
 			this.timeStamp = timeStamp.getMillis();
 		}
