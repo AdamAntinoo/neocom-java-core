@@ -64,11 +64,11 @@ public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 
-	private static String datasource = "tranquility";
-	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.cache.esi.authorization.clientid");
-	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.cache.esi.authorization.secretkey");
-	private static final String CALLBACK = GlobalDataManager.getResourceString("R.cache.esi.authorization.callback");
-	private static final String AGENT = GlobalDataManager.getResourceString("R.cache.esi.authorization.agent");
+//	private static String datasource = GlobalDataManager.SERVER_DATASOURCE;
+	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
+	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
+	private static final String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
+	private static final String AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
 	private static final ESIStore STORE = ESIStore.DEFAULT;
 	private static final List<String> SCOPES = new ArrayList<>(2);
 
@@ -77,7 +77,7 @@ public class ESINetworkManager {
 
 		// Read the scoped from a resource file
 		try {
-			final String propertyFileName = GlobalDataManager.getResourceString("R.cache.esi.authorization.scopes.filename");
+			final String propertyFileName = GlobalDataManager.getResourceString("R.esi.authorization.scopes.filename");
 			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
 			final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
 			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
@@ -101,7 +101,7 @@ public class ESINetworkManager {
 	 * This is the location where to STORE the downloaded data from network cache.
 	 */
 	private static final String filePath = GlobalDataManager.getResourceString("R.cache.directorypath")
-			+ GlobalDataManager.getResourceString("R.cache.network.cachename");
+			+ GlobalDataManager.getResourceString("R.esi.network.cachename");
 	private static final File cacheDataFile = new File(filePath);
 	private static final long cacheSize = 100 * 1024 * 1024;
 	private static final long timeout = TimeUnit.SECONDS.toMillis(60);
@@ -146,6 +146,7 @@ public class ESINetworkManager {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+				String datasource = GlobalDataManager.SERVER_DATASOURCE;
 				if (null != server) datasource = server;
 				// Create the request to be returned so it can be called.
 				final PlanetaryInteractionApi colonyApiRetrofit = neocomRetrofit.create(PlanetaryInteractionApi.class);
@@ -172,6 +173,7 @@ public class ESINetworkManager {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
@@ -200,6 +202,7 @@ public class ESINetworkManager {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+				String datasource = GlobalDataManager.SERVER_DATASOURCE;
 				if (null != server) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> colonyApiResponse = neocomRetrofit
@@ -228,6 +231,7 @@ public class ESINetworkManager {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCharactersCharacterIdClonesOk> cloneApiResponse = neocomRetrofit
@@ -251,6 +255,7 @@ public class ESINetworkManager {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
@@ -284,6 +289,7 @@ public class ESINetworkManager {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
@@ -306,6 +312,7 @@ public class ESINetworkManager {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdFittings200Ok>> fittingApiResponse = neocomRetrofit
@@ -328,6 +335,7 @@ public class ESINetworkManager {
 		try {
 //			// Set the refresh to be used during the request.
 //			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)

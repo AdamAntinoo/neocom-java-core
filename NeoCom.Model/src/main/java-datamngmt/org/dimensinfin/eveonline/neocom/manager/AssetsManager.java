@@ -171,7 +171,7 @@ public class AssetsManager extends AbstractManager {
 			int assetCounter = 0;
 			try {
 				// Read all the assets for this character if not done already.
-				ArrayList<NeoComAsset> assets = this.getAllAssets();
+				List<NeoComAsset> assets = this.getAllAssets();
 				// Move the list to a processing map.
 				assetMap = new HashMap<Long, NeoComAsset>(assets.size());
 				for (NeoComAsset asset : assets) {
@@ -578,7 +578,7 @@ public class AssetsManager extends AbstractManager {
 	/**
 	 * Get the complete list of the assets that belong to this owner.
 	 */
-	private ArrayList<NeoComAsset> getAllAssets() {
+	public List<NeoComAsset> getAllAssets() {
 		// Select assets for the owner.
 		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		Chrono timeLapse=	new Chrono();

@@ -82,7 +82,7 @@ public class NeoComOAuth20 {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger(NeoComOAuth20.class);
+	private static Logger logger = LoggerFactory.getLogger("NeoComOAuth20");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private OAuth20Service oAuth20Service = null;

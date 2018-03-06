@@ -26,6 +26,9 @@ public class NeoComAuthApi20 extends DefaultApi20{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final String AUTHORIZE_URL = "https://login.eveonline.com/oauth/authorize";
 	private static final String ACCESS_TOKEN_RESOURCE = "https://login.eveonline.com/oauth/token";
+//	public static final String PECK =
+//			"ZWY2ODI5OGQ1ODJjNGRmZWJiNjc4ODZlMzBkMDg4YTg6emdQZnhPNjNRUFIyZUgxMXJOcGdQQUwwSjJtQjZmWko3SFFDcmkwcQ==";
+//	public static final String CONTENT_TYPE = "application/json";
 	private static class InstanceHolder {
 		private static final NeoComAuthApi20 INSTANCE = new NeoComAuthApi20();
 	}

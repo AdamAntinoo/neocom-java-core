@@ -25,7 +25,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 public class EveItem extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2548296399305221197L;
-	private static  EveItem defaultItem = null;
+	private static EveItem defaultItem = null;
 	private static final int DEFAULT_TYPE_ID = 34;
 
 	public static EveItem getDefaultItem() {
@@ -111,10 +111,12 @@ public class EveItem extends NeoComNode {
 
 	public String getHullGroup() {
 		if (getIndustryGroup() == EIndustryGroup.HULL) {
+			if (getGroupName().equalsIgnoreCase("Assault Frigate")) return "frigate";
 			if (getGroupName().equalsIgnoreCase("Attack Battlecruiser")) return "battlecruiser";
 			if (getGroupName().equalsIgnoreCase("Battleship")) return "battleship";
 			if (getGroupName().equalsIgnoreCase("Blockade Runner")) return "battlecruiser";
 			if (getGroupName().equalsIgnoreCase("Combat Battlecruiser")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Combat Recon Ship")) return "battleship";
 			if (getGroupName().equalsIgnoreCase("Command Destroyer")) return "destroyer";
 			if (getGroupName().equalsIgnoreCase("Corvette")) return "shuttle";
 			if (getGroupName().equalsIgnoreCase("Cruiser")) return "cruiser";
@@ -132,8 +134,9 @@ public class EveItem extends NeoComNode {
 			if (getGroupName().equalsIgnoreCase("Shuttle")) return "shuttle";
 			if (getGroupName().equalsIgnoreCase("Stealth Bomber")) return "cruiser";
 			if (getGroupName().equalsIgnoreCase("Strategic Cruiser")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Tactical Destroyer")) return "destroyer";
 		}
-		return "not/applies";
+		return "not-applies";
 	}
 
 	public void setGroupId( final int groupid ) {
@@ -188,11 +191,13 @@ public class EveItem extends NeoComNode {
 	/**
 	 * Return the ESI api market set price for this item. Sometimes there is another price markes as the average price that I am
 	 * not using now.
+	 *
 	 * @return
 	 */
 	public double getPrice() {
 		if (defaultprice < 0.0) {
 			defaultprice = GlobalDataManager.searchMarketPrice(getTypeID()).getAdjustedPrice();
+			if (defaultprice < 1.0) defaultprice = baseprice;
 		}
 		return defaultprice;
 	}

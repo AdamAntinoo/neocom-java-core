@@ -12,7 +12,16 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt.manager;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,7 +137,7 @@ public class GlobalDataManager {
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
-	private static final String SERVER_DATASOURCE = "tranquility";
+	public static String SERVER_DATASOURCE = "tranquility";
 
 	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
 	private static final List<ExceptionRecord> exceptionsIntercepted = new ArrayList();
@@ -157,6 +166,9 @@ public class GlobalDataManager {
 
 	public static void connectConfigurationManager( final IConfigurationProvider newconfigurationProvider ) {
 		configurationManager = newconfigurationProvider;
+		// Load configuration properties into default values.
+		// ESI Server selection
+		SERVER_DATASOURCE = GlobalDataManager.getResourceString("R.esi.authorization.datasource", "tranquility");
 //		configurationManager.initialize();
 	}
 
@@ -227,17 +239,14 @@ public class GlobalDataManager {
 
 	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
-	private static final Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
+	private static Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
 	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
-	private static final long DEFAULT_CACHE_TIME = 600*1000;
+	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
 
 	public enum ECacheTimes {
-		  CHARACTER_PUBLIC, CHARACTER_CLONES
-		, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
-		, ASSETS_ASSETS
-		, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
+		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
 	}
 
 	static {
@@ -291,7 +300,12 @@ public class GlobalDataManager {
 	 */
 	public static GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
 		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
-		if (null == hit) return new GetMarketsPrices200Ok().typeId(typeId);
+		if (null == hit) {
+			final GetMarketsPrices200Ok newprice = new GetMarketsPrices200Ok().typeId(typeId);
+			newprice.setAdjustedPrice(-1.0);
+			newprice.setAveragePrice(-1.0);
+			return newprice;
+		}
 		else return hit;
 	}
 
@@ -299,6 +313,67 @@ public class GlobalDataManager {
 		itemCache.clear();
 	}
 
+	public static void cleanLocationsCache() {
+		locationCache.clear();
+	}
+
+	public static void readLocationsDataCache() {
+		logger.info(">> [GlobalDataManager.readLocationsDataCache]");
+		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
+				+ GlobalDataManager.getResourceString("R.cache.locationscache.filename");
+		logger.info("-- [GlobalDataManager.readLocationsDataCache]> Openning cache file: {}", cacheFileName);
+		File modelStoreFile = new File(cacheFileName);
+		try {
+			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
+			final ObjectInputStream input = new ObjectInputStream(buffer);
+			try {
+				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
+				locationCache = (Hashtable<Long, EveLocation>) input.readObject();
+				logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
+						+ " entries.");
+			} finally {
+				input.close();
+				buffer.close();
+			}
+		} catch (final ClassNotFoundException ex) {
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> ClassNotFoundException."); //$NON-NLS-1$
+		} catch (final FileNotFoundException fnfe) {
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> FileNotFoundException."); //$NON-NLS-1$
+		} catch (final IOException ex) {
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IOException."); //$NON-NLS-1$
+		} catch (final RuntimeException rex) {
+			rex.printStackTrace();
+		} finally {
+			logger.info("<< [GlobalDataManager.readLocationsDataCache]");
+		}
+	}
+
+	public static void writeLocationsDatacache() {
+		logger.info(">> [GlobalDataManager.writeLocationsDatacache]");
+		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
+				+ GlobalDataManager.getResourceString("R.cache.locationscache.filename");
+		logger.info("-- [GlobalDataManager.writeLocationsDatacache]> Openning cache file: {}", cacheFileName);
+		File modelStoreFile = new File(cacheFileName);
+		try {
+			final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(modelStoreFile));
+			final ObjectOutput output = new ObjectOutputStream(buffer);
+			try {
+				output.writeObject(locationCache);
+				logger.info(
+						"-- [GlobalDataManager.writeLocationsDatacache]> Wrote Locations cache: " + locationCache.size() + " entries.");
+			} finally {
+				output.flush();
+				output.close();
+				buffer.close();
+			}
+		} catch (final FileNotFoundException fnfe) {
+			logger.warn("W> [GlobalDataManager.writeLocationsDatacache]> FileNotFoundException."); //$NON-NLS-1$
+		} catch (final IOException ex) {
+			logger.warn("W> [GlobalDataManager.writeLocationsDatacache]> IOException."); //$NON-NLS-1$
+		} finally {
+			logger.info("<< [GlobalDataManager.writeLocationsDatacache]");
+		}
+	}
 	// --- M A P P E R S   &   T R A N S F O R M E R S   S E C T I O N
 	/**
 	 * Instance for the mapping of OK instances to the MVC compatible classes.
@@ -576,18 +651,20 @@ public class GlobalDataManager {
 		}
 		return (ArrayList<NeoComAsset>) assetList;
 	}
+
 	/**
 	 * Get the complete list of assets that are Planetary Materials.
 	 *
 	 * @return
 	 */
-	public static ArrayList<NeoComAsset> accessAllPlanetaryAssets (final long characterID) {
+	public static ArrayList<NeoComAsset> accessAllPlanetaryAssets( final long characterID ) {
 		// Select assets for each one of the Planetary categories.
 		ArrayList<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		assetList.addAll(GlobalDataManager.searchAsset4Category(characterID, "Planetary Commodities"));
 		assetList.addAll(GlobalDataManager.searchAsset4Category(characterID, "Planetary Resources"));
 		return assetList;
 	}
+
 	/**
 	 * Gets the list of assets of a select Category for the identified owner.
 	 *
@@ -595,10 +672,10 @@ public class GlobalDataManager {
 	 * @param categoryName - the category name to search for.
 	 * @return
 	 */
-	public static List<NeoComAsset> searchAsset4Category (final long characterID, final String categoryName) {
+	public static List<NeoComAsset> searchAsset4Category( final long characterID, final String categoryName ) {
 		// Select assets for the owner and with an specific type id.
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
-		Chrono timeLapse=	new Chrono();
+		Chrono timeLapse = new Chrono();
 		try {
 			Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
@@ -609,12 +686,13 @@ public class GlobalDataManager {
 			PreparedQuery<NeoComAsset> preparedQuery = queryBuilder.prepare();
 			assetList = assetDao.query(preparedQuery);
 			logger.info("~~ [AndroidDatabaseConnector.searchAsset4Category]> Time lapse for [SELECT CATEGORY=" + categoryName
-							+ " OWNERID = " + characterID + "] - " + timeLapse.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+					+ " OWNERID = " + characterID + "] - " + timeLapse.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		return assetList;
 	}
+
 	/**
 	 * Gets the assets located at an specific position by checking the pilot identifier and the asset reference
 	 * to a location stored at the <code>locationID</code> column value. We also filter out the assets that even
@@ -624,7 +702,7 @@ public class GlobalDataManager {
 	 * @param identifier
 	 * @return
 	 */
-	public static List<NeoComAsset> searchAssetsAtLocation(final long ownerid, final long identifier) {
+	public static List<NeoComAsset> searchAssetsAtLocation( final long ownerid, final long identifier ) {
 		// Get access to one assets with a distinct location. Discard the rest of the data and only process the Location id
 		List<NeoComAsset> contents = new Vector<NeoComAsset>();
 		try {
@@ -642,6 +720,7 @@ public class GlobalDataManager {
 		}
 		return contents;
 	}
+
 	/**
 	 * Returns the number of items that are located at the specified location. There is another filter for the
 	 * character owner of the assets.
@@ -649,7 +728,7 @@ public class GlobalDataManager {
 	 * @param identifier
 	 * @return
 	 */
-	public static int totalLocationContentCount(final long identifier) {
+	public static int totalLocationContentCount( final long identifier ) {
 		try {
 			Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
 			QueryBuilder<NeoComAsset, String> queryBuilder = assetDao.queryBuilder();
@@ -659,7 +738,7 @@ public class GlobalDataManager {
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [NeoComBaseDatabase.getLocationContentCount]> Exception reading Location contents count."
-							+ sqle.getMessage());
+					+ sqle.getMessage());
 			return 0;
 		}
 	}
@@ -708,8 +787,8 @@ public class GlobalDataManager {
 			// Account for a miss on the cache.
 			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
 			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();
-			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {}" + locationId + " " +
-					"found at database.");
+			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {} found at database.",
+					locationId);
 			return hit;
 		}
 	}
@@ -741,18 +820,23 @@ public class GlobalDataManager {
 	public static int searchStationType( final long typeId ) {
 		return GlobalDataManager.getSDEDBHelper().searchStationType(typeId);
 	}
-	public static  int searchModule4Blueprint (final int bpitemID) {
+
+	public static int searchModule4Blueprint( final int bpitemID ) {
 		return GlobalDataManager.getSDEDBHelper().searchModule4Blueprint(bpitemID);
 	}
-	public static String searchTech4Blueprint (final int blueprintID){
+
+	public static String searchTech4Blueprint( final int blueprintID ) {
 		return GlobalDataManager.getSDEDBHelper().searchTech4Blueprint(blueprintID);
 	}
-	public static int searchRawPlanetaryOutput (final int typeID){
+
+	public static int searchRawPlanetaryOutput( final int typeID ) {
 		return GlobalDataManager.getSDEDBHelper().searchRawPlanetaryOutput(typeID);
 	}
-	public static List<Schematics> searchSchematics4Output ( final int targetId){
+
+	public static List<Schematics> searchSchematics4Output( final int targetId ) {
 		return GlobalDataManager.getSDEDBHelper().searchSchematics4Output(targetId);
 	}
+
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long
 			identifier ) {

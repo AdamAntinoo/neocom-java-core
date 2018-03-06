@@ -170,7 +170,9 @@ public class NeoComAsset extends NeoComNode {
 	public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getFlag () {
 		return locationFlag;
 	}
-
+public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
+		return this.locationType;
+}
 	public String getGroupName () {
 		return groupName;
 	}

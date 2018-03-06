@@ -13,33 +13,40 @@
 //               designed for Spring Boot Angular 4 platform.
 //               The model management is shown using a generic Model View Controller that allows make the
 //               rendering of the model data similar on all the platforms used.
-package org.dimensinfin.eveonline.neocom.core;
+package org.dimensinfin.eveonline.neocom.auth;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Adam Antinoo
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class NeoComException extends Exception {
+public class TokenRequestBody {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = 5849163290874460121L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String jsonClass = "Exception";
+	@JsonProperty("grant_type")
+	public String grant_type = "authorization_code";
+	@JsonProperty("code")
+	public String code;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComException() {
+	public TokenRequestBody () {
 		super();
 	}
 
-	public NeoComException( final String message ) {
-		super(message);
+	// - M E T H O D - S E C T I O N ..........................................................................
+	public String getGrant_type () {
+		return "authorization_code";
+	}
+	public String getCode () {
+		return code;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-
-	public String getJsonClass() {
-		return jsonClass;
+	public TokenRequestBody setCode (final String code) {
+		this.code = code;
+		return this;
 	}
 }
 // - UNUSED CODE ............................................................................................
