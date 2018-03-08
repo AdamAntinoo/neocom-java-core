@@ -81,6 +81,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
@@ -782,8 +783,8 @@ public class GlobalDataManager {
 			return locationCache.get(locationId);
 		} else {
 			final EveLocation hit = GlobalDataManager.getSDEDBHelper().searchLocation4Id(locationId);
-			// Add the hit to the cache.
-			locationCache.put(locationId, hit);
+			// Add the hit to the cache but only when it is not UNKNOWN.
+		if(hit.getTypeID()!= ELocationType.UNKNOWN)	locationCache.put(locationId, hit);
 			// Account for a miss on the cache.
 			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
 			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();

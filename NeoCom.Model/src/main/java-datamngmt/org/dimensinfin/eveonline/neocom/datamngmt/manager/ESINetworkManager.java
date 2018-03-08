@@ -64,7 +64,7 @@ public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 
-//	private static String datasource = GlobalDataManager.SERVER_DATASOURCE;
+	//	private static String datasource = GlobalDataManager.SERVER_DATASOURCE;
 	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
 	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
 	private static final String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
@@ -134,6 +134,27 @@ public class ESINetworkManager {
 				.append(":")
 				.append(Integer.valueOf(identifier2).toString())
 				.toString();
+	}
+
+	public static List<String> constructScopes() {
+		try {
+			final String propertyFileName = GlobalDataManager.getResourceString("R.esi.authorization.scopes.filename");
+			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
+			final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
+			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
+			String line = input.readLine();
+			while (StringUtils.isNotEmpty(line)) {
+				SCOPES.add(line);
+				line = input.readLine();
+			}
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return SCOPES;
 	}
 
 	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier, final String refreshToken, final String server ) {

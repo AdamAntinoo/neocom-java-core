@@ -156,7 +156,6 @@ public abstract class SDEDatabaseManager {
 					+ " AND    pstmt.isInput = 0"
 					+ " AND    pstms.schematicID = pstmt.schematicID";
 
-
 	// - F I E L D   I N D E X   D E F I N I T I O N S
 	private static int REFINEORE_MATERIALTYPEID_COLINDEX = 1;
 	private static int REFINEORE_QUANTITY_COLINDEX = 2;
@@ -393,26 +392,27 @@ public abstract class SDEDatabaseManager {
 	}
 
 	// --- M O D U L E 4 B L U E P R I N T
-	private static int MODULE4BLUEPRINT_PRODUCTTYPEID_COLINDEX = 1;
+	private static int PRODUCTTYPEID_MODULE4BLUEPRINT_COLINDEX = 1;
 	private static final String SELECT_MODULE4BLUEPRINT = "SELECT productTypeID FROM industryActivityProducts BT"
 			+ " WHERE typeID = ? AND activityID = 1";
-	public int searchModule4Blueprint (final int bpitemID) {
-		logger.info(">< [SDEDatabaseManager.searchModule4Blueprint]> bpitemID: {}", bpitemID);
-		int productTypeID = -1;
+
+
+	public int searchModule4Blueprint( final int blueprintTypeId ) {
+		logger.info(">< [SDEDatabaseManager.searchModule4Blueprint]> bpitemID: {}", blueprintTypeId);
+		int productTypeId = -1;
 		try {
-			final RawStatement cursor = constructStatement(SELECT_MODULE4BLUEPRINT, new String[]{Integer.valueOf(bpitemID).toString()});
+			final RawStatement cursor = constructStatement(SELECT_MODULE4BLUEPRINT, new String[]{Integer.valueOf(blueprintTypeId).toString()});
 			while (cursor.moveToNext()) {
-				productTypeID = cursor.getInt(MODULE4BLUEPRINT_PRODUCTTYPEID_COLINDEX);
+				productTypeId = cursor.getInt(PRODUCTTYPEID_MODULE4BLUEPRINT_COLINDEX);
 			}
 			cursor.close();
 		} catch (final Exception ex) {
 			logger.error("E [SDEDatabaseManager.searchModule4Blueprint]> Exception processing statement: {}" + ex.getMessage());
 		} finally {
 			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
-			return productTypeID;
+			return productTypeId;
 		}
 	}
-
 
 	// --- T E C H 4 B L U E P R I N T
 	private static int TECH4BLUEPRINT_TYPEID_COLINDEX = 1;
@@ -423,7 +423,8 @@ public abstract class SDEDatabaseManager {
 			+ " FROM industryActivityProducts iap, invTypes it, invMetaTypes imt, invMetaGroups img" + " WHERE it.typeID =?"
 			+ " AND iap.typeID = it.typeID" + " AND imt.typeID = productTypeID" + " AND img.metaGroupID = imt.metaGroupID"
 			+ " AND iap.activityID = 1";
-	public String searchTech4Blueprint (final int blueprintID) {
+
+	public String searchTech4Blueprint( final int blueprintID ) {
 		logger.info(">< [SDEDatabaseManager.searchTech4Blueprint]> blueprintID: {}", blueprintID);
 		String productTypeID = ModelWideConstants.eveglobal.TechI;
 		try {
@@ -450,7 +451,7 @@ public abstract class SDEDatabaseManager {
 			+ " AND    pstmo.schematicID = pstmi.schematicID" + " AND    pstmo.isInput = 0";
 
 
-	public int searchRawPlanetaryOutput (final int typeID) {
+	public int searchRawPlanetaryOutput( final int typeID ) {
 		logger.info(">< [SDEDatabaseManager.searchRawPlanetaryOutput]> typeID: {}", typeID);
 		int outputResourceId = typeID;
 		try {
@@ -475,9 +476,7 @@ public abstract class SDEDatabaseManager {
 			+ " FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms" + " WHERE  pstmt.typeID = ?"
 			+ " AND    pstmt.isInput = 0" + " AND    pstms.schematicID = pstmt.schematicID";
 
-
-
-	public List<Schematics> searchSchematics4Output ( final int targetId) {
+	public List<Schematics> searchSchematics4Output( final int targetId ) {
 		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeID: {}", targetId);
 		List<Schematics> scheList = new Vector<Schematics>();
 		try {
@@ -495,7 +494,6 @@ public abstract class SDEDatabaseManager {
 			return scheList;
 		}
 	}
-
 }
 // - UNUSED CODE ............................................................................................
 //[01]
