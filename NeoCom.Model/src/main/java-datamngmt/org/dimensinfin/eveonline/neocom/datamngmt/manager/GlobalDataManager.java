@@ -535,9 +535,10 @@ public class GlobalDataManager {
 	public static List<Credential> accessAllCredentials() {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
-			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
-			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
-			credentialList = credentialDao.query(preparedQuery);
+//			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
+//			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
+//			credentialList = credentialDao.query(preparedQuery);
+			credentialList= GlobalDataManager.getNeocomDBHelper().getCredentialDao().queryForAll();
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManager.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
