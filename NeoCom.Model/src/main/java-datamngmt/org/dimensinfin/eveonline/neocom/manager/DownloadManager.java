@@ -341,113 +341,113 @@ public class DownloadManager {
 		}
 	}
 
-	/**
-	 * The new downloader uses the eveapi library to process the xml source code received. This simplifies the
-	 * code but adds the need to control the download format. There are two sets of records, one with the
-	 * hierarchical dependencies between the assets and the other a flat list of all the assets with no
-	 * dependencies but with a mix of Location and Asset codes on the locationId field.<br>
-	 * The new processing will filter the assets with Unknown locations for a second pass processing so the
-	 * final list on the database will have the correct parentship hierarchy set up.<br>
-	 * <br>
-	 * The assets downloaded are being written to a special set of records in the User database with an special
-	 * <code>ownerid</code> so we can work with a new set of records for an specific Character without
-	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
-	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
-	 * <br>
-	 * There are two flavour for the asset download process. One for Pilots and other for Corporation assets.
-	 */
-	public void downloadPilotAssetsXML() {
-		DownloadManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
-		try {
-			// Clear any previous record with owner -1 from database.
-			GlobalDataManager.getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
-			// Parse the CCP data to a list of assets
-			PilotAssetListParser parser = new PilotAssetListParser();
-			AssetListResponse response = parser.getResponse(new ApiAuthorization(credential.getKeyCode(), credential
-					.getAccountId(), credential.getValidationCode()));
-			if (null != response) {
-				unlocatedAssets = new Vector<NeoComAsset>();
-				List<Asset> assets = response.getAll();
-				// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
-				for (final Asset eveAsset : assets) {
-					try {
-						this.processAsset(eveAsset, null);
-					} catch (final Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-				// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
-				for (NeoComAsset asset : unlocatedAssets) {
-					this.validateLocation(asset);
-				}
-				// Assign the assets to the pilot.
-				GlobalDataManager.getNeocomDBHelper().replaceAssets(credential.getAccountId());
+//	/**
+//	 * The new downloader uses the eveapi library to process the xml source code received. This simplifies the
+//	 * code but adds the need to control the download format. There are two sets of records, one with the
+//	 * hierarchical dependencies between the assets and the other a flat list of all the assets with no
+//	 * dependencies but with a mix of Location and Asset codes on the locationId field.<br>
+//	 * The new processing will filter the assets with Unknown locations for a second pass processing so the
+//	 * final list on the database will have the correct parentship hierarchy set up.<br>
+//	 * <br>
+//	 * The assets downloaded are being written to a special set of records in the User database with an special
+//	 * <code>ownerid</code> so we can work with a new set of records for an specific Character without
+//	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
+//	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
+//	 * <br>
+//	 * There are two flavour for the asset download process. One for Pilots and other for Corporation assets.
+//	 */
+//	public void downloadPilotAssetsXML() {
+//		DownloadManager.logger.info(">> [AssetsManager.downloadPilotAssets]");
+//		try {
+//			// Clear any previous record with owner -1 from database.
+//			GlobalDataManager.getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
+//			// Parse the CCP data to a list of assets
+//			PilotAssetListParser parser = new PilotAssetListParser();
+//			AssetListResponse response = parser.getResponse(new ApiAuthorization(credential.getKeyCode(), credential
+//					.getAccountId(), credential.getValidationCode()));
+//			if (null != response) {
+//				unlocatedAssets = new Vector<NeoComAsset>();
+//				List<Asset> assets = response.getAll();
+//				// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
+//				for (final Asset eveAsset : assets) {
+//					try {
+//						this.processAsset(eveAsset, null);
+//					} catch (final Exception ex) {
+//						ex.printStackTrace();
+//					}
+//				}
+//				// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
+//				for (NeoComAsset asset : unlocatedAssets) {
+//					this.validateLocation(asset);
+//				}
+//				// Assign the assets to the pilot.
+//				GlobalDataManager.getNeocomDBHelper().replaceAssets(credential.getAccountId());
+//
+//				// Update the timer for this download at the database.
+//				final String currentrequestReference = TimedUpdater.Job.constructReference(GlobalDataManager.EDataUpdateJobs.ASSETDATA
+//						, credential.getAccountId());
+//				final Instant validUntil = Instant.now()
+//						.plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.ASSETS_ASSETS));
+//				final TimeStamp ts = new TimeStamp(currentrequestReference, validUntil)
+//						.setCredentialId(credential.getAccountId())
+//						.store();
+//			}
+//		} catch (final ApiException apie) {
+//			apie.printStackTrace();
+//		} catch (final Exception ex) {
+//			ex.printStackTrace();
+//		}
+//		DownloadManager.logger.info("<< [AssetsManager.downloadPilotAssets]");
+//	}
 
-				// Update the timer for this download at the database.
-				final String currentrequestReference = TimedUpdater.Job.constructReference(GlobalDataManager.EDataUpdateJobs.ASSETDATA
-						, credential.getAccountId());
-				final Instant validUntil = Instant.now()
-						.plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.ASSETS_ASSETS));
-				final TimeStamp ts = new TimeStamp(currentrequestReference, validUntil)
-						.setCredentialId(credential.getAccountId())
-						.store();
-			}
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		} catch (final Exception ex) {
-			ex.printStackTrace();
-		}
-		DownloadManager.logger.info("<< [AssetsManager.downloadPilotAssets]");
-	}
-
-	/**
-	 * Download the blueprint list for this character from CCP using the new API over the eveapi library and
-	 * then processes the response. It creates our model Blueprints that before being stored at the database are
-	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
-	 * Current grouping is by IF-LOCATION-CONTAINER.
-	 */
-	public synchronized void downloadPilotBlueprints() {
-		DownloadManager.logger.info(">> [AssetsManager.downloadPilotBlueprints]");
-		Chrono chrono = new Chrono();
-		try {
-			// Clear any previous records with owner -1 from database.
-			GlobalDataManager.getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
-			// Download and parse the blueprints using the eveapi.
-			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
-			BlueprintsParser parser = new BlueprintsParser();
-			BlueprintsResponse response = parser.getResponse(new ApiAuthorization(credential.getKeyCode(), credential
-					.getAccountId(), credential.getValidationCode()));
-			if (null != response) {
-				Set<Blueprint> blueprints = response.getAll();
-				for (Blueprint bp : blueprints) {
-					try {
-						bplist.add(this.convert2Blueprint(bp));
-					} catch (final RuntimeException rtex) {
-						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-						DownloadManager.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
-						DownloadManager.logger.info("W> " + bp.toString());
-					}
-				}
-			}
-			// Pack the blueprints and store them on the database.
-			storeBlueprints(bplist);
-			GlobalDataManager.getNeocomDBHelper().replaceBlueprints(credential.getAccountId());
-
-			// Update the timer for this download at the database.
-			final String currentrequestReference = TimedUpdater.Job.constructReference(GlobalDataManager.EDataUpdateJobs.BLUEPRINTDATA
-					, credential.getAccountId());
-			final Instant validUntil = Instant.now()
-					.plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.ASSETS_ASSETS));
-			final TimeStamp ts = new TimeStamp(currentrequestReference, validUntil)
-					.setCredentialId(credential.getAccountId())
-					.store();
-		} catch (final ApiException apie) {
-			apie.printStackTrace();
-		} finally {
-			DownloadManager.logger.info("<< [AssetsManager.downloadPilotBlueprints]> [TIMING] - {}"
-					, chrono.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-	}
+//	/**
+//	 * Download the blueprint list for this character from CCP using the new API over the eveapi library and
+//	 * then processes the response. It creates our model Blueprints that before being stored at the database are
+//	 * grouped into stacks to reduce the number of registers to manage on other Industry operations.<br>
+//	 * Current grouping is by IF-LOCATION-CONTAINER.
+//	 */
+//	public synchronized void downloadPilotBlueprints() {
+//		DownloadManager.logger.info(">> [AssetsManager.downloadPilotBlueprints]");
+//		Chrono chrono = new Chrono();
+//		try {
+//			// Clear any previous records with owner -1 from database.
+//			GlobalDataManager.getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
+//			// Download and parse the blueprints using the eveapi.
+//			ArrayList<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
+//			BlueprintsParser parser = new BlueprintsParser();
+//			BlueprintsResponse response = parser.getResponse(new ApiAuthorization(credential.getKeyCode(), credential
+//					.getAccountId(), credential.getValidationCode()));
+//			if (null != response) {
+//				Set<Blueprint> blueprints = response.getAll();
+//				for (Blueprint bp : blueprints) {
+//					try {
+//						bplist.add(this.convert2Blueprint(bp));
+//					} catch (final RuntimeException rtex) {
+//						// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
+//						DownloadManager.logger.info("W> The Blueprint " + bp.getItemID() + " has no matching asset.");
+//						DownloadManager.logger.info("W> " + bp.toString());
+//					}
+//				}
+//			}
+//			// Pack the blueprints and store them on the database.
+//			storeBlueprints(bplist);
+//			GlobalDataManager.getNeocomDBHelper().replaceBlueprints(credential.getAccountId());
+//
+//			// Update the timer for this download at the database.
+//			final String currentrequestReference = TimedUpdater.Job.constructReference(GlobalDataManager.EDataUpdateJobs.BLUEPRINTDATA
+//					, credential.getAccountId());
+//			final Instant validUntil = Instant.now()
+//					.plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.ASSETS_ASSETS));
+//			final TimeStamp ts = new TimeStamp(currentrequestReference, validUntil)
+//					.setCredentialId(credential.getAccountId())
+//					.store();
+//		} catch (final ApiException apie) {
+//			apie.printStackTrace();
+//		} finally {
+//			DownloadManager.logger.info("<< [AssetsManager.downloadPilotBlueprints]> [TIMING] - {}"
+//					, chrono.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//	}
 
 	/**
 	 * The processing of the assets will be performed with a SAX parser instead of the general use of a DOM
@@ -682,47 +682,47 @@ public class DownloadManager {
 		return hit;
 	}
 
-	/**
-	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information. <br>
-	 * This method checks the location to detect if under the new flat model the location is an asset and then
-	 * we should convert it into a parent or the location is a real location. Initially this is done checking
-	 * the location id value if under 1000000000000.
-	 *
-	 * @param eveAsset the original assest as downloaded from CCP api
-	 */
-	private NeoComAsset convert2Asset( final Asset eveAsset ) {
-		// Create the asset from the API asset.
-		final NeoComAsset newAsset = new NeoComAsset();
-		newAsset.setAssetId(eveAsset.getItemID());
-		newAsset.setTypeId(eveAsset.getTypeID());
-		Long locid = eveAsset.getLocationID();
-		if (null == locid) {
-			locid = (long) -2;
-		}
-		newAsset.setLocationId(locid);
-
-		newAsset.setQuantity(eveAsset.getQuantity());
-		//		newAsset.setFlag(eveAsset.getFlag());
-		newAsset.setSingleton(eveAsset.getSingleton());
-
-		// Get access to the Item and update the copied fields.
-		final EveItem item = GlobalDataManager.searchItem4Id(newAsset.getTypeId());
-		if (null != item) {
-			try {
-				newAsset.setName(item.getName());
-				newAsset.setCategory(item.getCategory());
-				newAsset.setGroupName(item.getGroupName());
-				newAsset.setTech(item.getTech());
-				if (item.isBlueprint()) {
-					newAsset.setBlueprintType(eveAsset.getRawQuantity());
-				}
-			} catch (RuntimeException rtex) {
-			}
-		}
-		// Add the asset value to the database.
-		newAsset.setIskValue(this.calculateAssetValue(newAsset));
-		return newAsset;
-	}
+//	/**
+//	 * Creates an extended app asset from the asset created by the eveapi on the download of CCP information. <br>
+//	 * This method checks the location to detect if under the new flat model the location is an asset and then
+//	 * we should convert it into a parent or the location is a real location. Initially this is done checking
+//	 * the location id value if under 1000000000000.
+//	 *
+//	 * @param eveAsset the original assest as downloaded from CCP api
+//	 */
+//	private NeoComAsset convert2Asset( final Asset eveAsset ) {
+//		// Create the asset from the API asset.
+//		final NeoComAsset newAsset = new NeoComAsset();
+//		newAsset.setAssetId(eveAsset.getItemID());
+//		newAsset.setTypeId(eveAsset.getTypeID());
+//		Long locid = eveAsset.getLocationID();
+//		if (null == locid) {
+//			locid = (long) -2;
+//		}
+//		newAsset.setLocationId(locid);
+//
+//		newAsset.setQuantity(eveAsset.getQuantity());
+//		//		newAsset.setFlag(eveAsset.getFlag());
+//		newAsset.setSingleton(eveAsset.getSingleton());
+//
+//		// Get access to the Item and update the copied fields.
+//		final EveItem item = GlobalDataManager.searchItem4Id(newAsset.getTypeId());
+//		if (null != item) {
+//			try {
+//				newAsset.setName(item.getName());
+//				newAsset.setCategory(item.getCategory());
+//				newAsset.setGroupName(item.getGroupName());
+//				newAsset.setTech(item.getTech());
+//				if (item.isBlueprint()) {
+//					newAsset.setBlueprintType(eveAsset.getRawQuantity());
+//				}
+//			} catch (RuntimeException rtex) {
+//			}
+//		}
+//		// Add the asset value to the database.
+//		newAsset.setIskValue(this.calculateAssetValue(newAsset));
+//		return newAsset;
+//	}
 
 	private synchronized double calculateAssetValue( final NeoComAsset asset ) {
 		// Skip blueprints from the value calculations
@@ -796,25 +796,25 @@ public class DownloadManager {
 		}
 	}
 
-	protected NeoComBlueprint convert2Blueprint( final Blueprint eveBlue ) {
-		// Create the asset from the API asset.
-		final NeoComBlueprint newBlueprint = new NeoComBlueprint(eveBlue.getItemID());
-		newBlueprint.setTypeID(eveBlue.getTypeID());
-		newBlueprint.setTypeName(eveBlue.getTypeName());
-		newBlueprint.setLocationID(eveBlue.getLocationID());
-		newBlueprint.setFlag(eveBlue.getFlagID());
-		newBlueprint.setQuantity(eveBlue.getQuantity());
-		newBlueprint.setTimeEfficiency(eveBlue.getTimeEfficiency());
-		newBlueprint.setMaterialEfficiency(eveBlue.getMaterialEfficiency());
-		newBlueprint.setRuns(eveBlue.getRuns());
-		newBlueprint.setPackaged((eveBlue.getQuantity() == -1) ? true : false);
-
-		// Detect if BPO or BPC and set the flag.
-		if (eveBlue.getRuns() == -1) {
-			newBlueprint.setBpo(true);
-		}
-		return newBlueprint;
-	}
+//	protected NeoComBlueprint convert2Blueprint( final Blueprint eveBlue ) {
+//		// Create the asset from the API asset.
+//		final NeoComBlueprint newBlueprint = new NeoComBlueprint(eveBlue.getItemID());
+//		newBlueprint.setTypeID(eveBlue.getTypeID());
+//		newBlueprint.setTypeName(eveBlue.getTypeName());
+//		newBlueprint.setLocationID(eveBlue.getLocationID());
+//		newBlueprint.setFlag(eveBlue.getFlagID());
+//		newBlueprint.setQuantity(eveBlue.getQuantity());
+//		newBlueprint.setTimeEfficiency(eveBlue.getTimeEfficiency());
+//		newBlueprint.setMaterialEfficiency(eveBlue.getMaterialEfficiency());
+//		newBlueprint.setRuns(eveBlue.getRuns());
+//		newBlueprint.setPackaged((eveBlue.getQuantity() == -1) ? true : false);
+//
+//		// Detect if BPO or BPC and set the flag.
+//		if (eveBlue.getRuns() == -1) {
+//			newBlueprint.setBpo(true);
+//		}
+//		return newBlueprint;
+//	}
 
 	/**
 	 * Stacks blueprints that are equal and that are located on the same location. The also should be inside the

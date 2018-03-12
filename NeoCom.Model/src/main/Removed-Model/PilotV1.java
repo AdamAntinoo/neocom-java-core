@@ -55,7 +55,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV1 () {
 		super();
-		jsonClass = "NeoComCharacter";
+		jsonClass = "NeoComPilot";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

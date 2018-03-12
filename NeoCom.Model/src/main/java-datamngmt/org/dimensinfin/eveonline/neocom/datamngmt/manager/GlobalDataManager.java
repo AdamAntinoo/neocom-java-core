@@ -28,27 +28,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import com.beimin.eveapi.EveApi;
-import com.beimin.eveapi.connectors.ApiConnector;
-import com.beimin.eveapi.connectors.CachingConnector;
-import com.beimin.eveapi.connectors.LoggingConnector;
-import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.account.Character;
-import com.beimin.eveapi.model.shared.EveAccountBalance;
-import com.beimin.eveapi.parser.ApiAuthorization;
-import com.beimin.eveapi.parser.account.ApiKeyInfoParser;
-import com.beimin.eveapi.parser.eve.CharacterInfoParser;
-import com.beimin.eveapi.parser.pilot.PilotAccountBalanceParser;
-import com.beimin.eveapi.response.account.ApiKeyInfoResponse;
-import com.beimin.eveapi.response.eve.CharacterInfoResponse;
-import com.beimin.eveapi.response.shared.AccountBalanceResponse;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -73,7 +58,6 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
-import org.dimensinfin.eveonline.neocom.core.NeoComConnector;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
@@ -95,7 +79,6 @@ import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Fitting;
@@ -149,18 +132,18 @@ public class GlobalDataManager {
 
 	// --- E V E A P I   X M L   S E C T I O N
 
-	/** Initialize the beimin Eve Api connector to remove SSL certification. From this point on we can use the beimin
-	 * XML api to access CCP data. */
-	static {
-		EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
-		// Remove the secure XML access and configure the ApiConnector.
-		ApiConnector.setSecureXmlProcessing(false);
-	}
-
-	/**
-	 * GDM singleton to store all data, caches and references. The use of a singleton will allow to drop all data
-	 * on a single operation and restart all data caches.
-	 */
+//	/** Initialize the beimin Eve Api connector to remove SSL certification. From this point on we can use the beimin
+//	 * XML api to access CCP data. */
+//	static {
+//		EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
+//		// Remove the secure XML access and configure the ApiConnector.
+//		ApiConnector.setSecureXmlProcessing(false);
+//	}
+//
+//	/**
+//	 * GDM singleton to store all data, caches and references. The use of a singleton will allow to drop all data
+//	 * on a single operation and restart all data caches.
+//	 */
 
 	// --- C O N F I G U R A T I O N   S E C T I O N
 	private static IConfigurationProvider configurationManager = new GlobalConfigurationProvider(null);
@@ -486,47 +469,46 @@ public class GlobalDataManager {
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
 	}
 
-	/**
-	 * Reads all the keys stored at the database and classifies them into a set of Login names.
-	 */
-	@Deprecated
-	public static List<ApiKey> accessAllApiKeys() {
-		logger.info(">> [GlobalDataManager.accessAllLogins]");
-		// Get access to all ApiKey registers
-		List<ApiKey> keyList = new Vector<ApiKey>();
-		try {
-			keyList = getNeocomDBHelper().getApiKeysDao().queryForAll();
-			// Extend the keys with some of the XML api information to get access to characters and credentials.
-			for (ApiKey key : keyList) {
-				key = GlobalDataManager.extendApiKey(key);
-			}
-		} catch (java.sql.SQLException sqle) {
-			sqle.printStackTrace();
-			logger.warn("W [GlobalDataManager.accessAllLogins]> Exception reading all Logins. " + sqle.getMessage());
-		} finally {
-			logger.info("<< [GlobalDataManager.accessAllLogins]");
-		}
-		return keyList;
-	}
-
-	private static ApiKey extendApiKey( ApiKey basekey ) {
-		// Check if this request is already available on the cache.
-		try {
-			// Get the ApiKey Information block.
-			ApiAuthorization authorization = new ApiAuthorization(basekey.getKeynumber(), basekey.getValidationcode());
-			ApiKeyInfoParser infoparser = new ApiKeyInfoParser();
-			ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
-			if (null != inforesponse) {
-				basekey.setAuthorization(authorization)
-						.setDelegated(inforesponse.getApiKeyInfo());
-				//				.setCachedUntil(inforesponse.getCachedUntil());
-				return basekey;
-			}
-		} catch (ApiException apie) {
-			apie.printStackTrace();
-		}
-		return basekey;
-	}
+//	/**
+//	 * Reads all the keys stored at the database and classifies them into a set of Login names.
+//	 */
+//	@Deprecated
+//	public static List<ApiKey> accessAllApiKeys() {
+//		logger.info(">> [GlobalDataManager.accessAllLogins]");
+//		// Get access to all ApiKey registers
+//		List<ApiKey> keyList = new Vector<ApiKey>();
+//		try {
+//			keyList = getNeocomDBHelper().getApiKeysDao().queryForAll();
+//			// Extend the keys with some of the XML api information to get access to characters and credentials.
+//			for (ApiKey key : keyList) {
+//				key = GlobalDataManager.extendApiKey(key);
+//			}
+//		} catch (java.sql.SQLException sqle) {
+//			sqle.printStackTrace();
+//			logger.warn("W [GlobalDataManager.accessAllLogins]> Exception reading all Logins. " + sqle.getMessage());
+//		} finally {
+//			logger.info("<< [GlobalDataManager.accessAllLogins]");
+//		}
+//		return keyList;
+//	}
+//	private static ApiKey extendApiKey( ApiKey basekey ) {
+//		// Check if this request is already available on the cache.
+//		try {
+//			// Get the ApiKey Information block.
+//			ApiAuthorization authorization = new ApiAuthorization(basekey.getKeynumber(), basekey.getValidationcode());
+//			ApiKeyInfoParser infoparser = new ApiKeyInfoParser();
+//			ApiKeyInfoResponse inforesponse = infoparser.getResponse(authorization);
+//			if (null != inforesponse) {
+//				basekey.setAuthorization(authorization)
+//						.setDelegated(inforesponse.getApiKeyInfo());
+//				//				.setCachedUntil(inforesponse.getCachedUntil());
+//				return basekey;
+//			}
+//		} catch (ApiException apie) {
+//			apie.printStackTrace();
+//		}
+//		return basekey;
+//	}
 
 	/**
 	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the

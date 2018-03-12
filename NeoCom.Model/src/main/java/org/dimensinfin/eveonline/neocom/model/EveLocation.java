@@ -8,15 +8,15 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.beimin.eveapi.model.eve.Station;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import net.nikr.eve.jeveasset.data.Citadel;
+
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 
 import java.sql.SQLException;
+import net.nikr.eve.jeveasset.data.Citadel;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -114,22 +114,22 @@ public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>
 		}
 	}
 
-	public EveLocation( final Station station ) {
-		this();
-		try {
-			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
-			// Calculate the locationID from the source item and update the rest of the fields.
-			this.updateFromSystem(station.getSolarSystemID());
-			id = station.getStationID();
-			typeID = ELocationType.DEEP_SPACE.name();
-			this.setStation(station.getStationName());
-			// Try to create the pair. It fails then  it was already created.
-			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			this.store();
-		}
-	}
+//	public EveLocation( final Station station ) {
+//		this();
+//		try {
+//			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
+//			// Calculate the locationID from the source item and update the rest of the fields.
+//			this.updateFromSystem(station.getSolarSystemID());
+//			id = station.getStationID();
+//			typeID = ELocationType.DEEP_SPACE.name();
+//			this.setStation(station.getStationName());
+//			// Try to create the pair. It fails then  it was already created.
+//			locationDao.createOrUpdate(this);
+//		} catch (final SQLException sqle) {
+//			sqle.printStackTrace();
+//			this.store();
+//		}
+//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	//	/**

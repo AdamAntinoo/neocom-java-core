@@ -1,8 +1,11 @@
 apply plugin: 'java-library'
 
-archivesBaseName = 'NeoCom.Model'
-version = '2.0.0'
+archivesBaseName = 'NeoCom.DataManagement'
+version = '2.1.0'
 group = 'org.dimensinfin.eveonline.neocom'
+description='Version with XML api stripped out because deprecation. New rework where production files should be moved to ' +
+        'Infinity. Swagger version 0.7.5'
+//swaggerVersion='0.7.5'
 
 sourceCompatibility = "1.8"
 targetCompatibility = "1.8"
@@ -17,6 +20,7 @@ repositories {
 sourceSets {
     main {
         java {
+            srcDirs += 'src/main/java-infinity'
             srcDirs += 'src/main/java-datamngmt'
             srcDirs += 'src/main/java-incubation'
         }
@@ -25,9 +29,7 @@ sourceSets {
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
-//    implementation project(path: ':CoreBaseLibrary')
     implementation project(path: ':ESI.SwaggerApi')
-//    implementation project(path: ':ApplicationCloudAdapter')
 
     // L O C A L    L I B R A R I E S
     api files('libs/jeveassets.3.1.2.jar')
@@ -46,7 +48,7 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:1.1.0'
 
     // N E O C O M . M O D E L
-    implementation 'com.beimin:eveapi:6.0.6'
+//    implementation 'com.beimin:eveapi:6.0.6'
     implementation 'com.github.scribejava:scribejava-core:4.2.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'

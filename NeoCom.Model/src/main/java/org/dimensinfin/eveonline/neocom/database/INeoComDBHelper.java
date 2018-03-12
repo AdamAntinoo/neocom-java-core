@@ -23,7 +23,6 @@ import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.model.ApiKey;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
@@ -70,8 +69,8 @@ public interface INeoComDBHelper {
 
 	public Dao<TimeStamp, String> getTimeStampDao() throws SQLException;
 
-	@Deprecated
-	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
+//	@Deprecated
+//	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
 
 	public Dao<Credential, String> getCredentialDao() throws SQLException;
 

@@ -26,7 +26,7 @@ public class AssetCategory extends NeoComExpandableNode implements IExpandable {
 	private boolean _renderIfEmpty = true;
 	private ItemCategory _categoryDelegate = null;
 	//	private String _title = "-TITLE-";
-	private final Vector<NeoComSimpleAsset> _contents = new Vector();
+	private final Vector<NeoComAsset> _contents = new Vector();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AssetCategory () {
@@ -83,7 +83,7 @@ public class AssetCategory extends NeoComExpandableNode implements IExpandable {
 		return buffer.toString();
 	}
 
-	public void addAsset (final NeoComSimpleAsset newasset) {
+	public void addAsset (final NeoComAsset newasset) {
 		_contents.add(newasset);
 	}
 }
