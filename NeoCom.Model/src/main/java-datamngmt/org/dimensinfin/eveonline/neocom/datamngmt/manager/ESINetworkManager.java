@@ -38,6 +38,7 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
@@ -46,6 +47,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
@@ -64,7 +66,6 @@ public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 
-	//	private static String datasource = GlobalDataManager.SERVER_DATASOURCE;
 	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
 	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
 	private static final String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
@@ -116,7 +117,7 @@ public class ESINetworkManager {
 	 */
 	private static final Hashtable<String, Response<?>> okResponseCache = new Hashtable();
 
-	// - S T A T I C   R E P L I C A T E D   M E T H O D S
+	// - S T A T I C   U T I L I T Y   M E T H O D S
 	public static String constructCachePointerReference( final GlobalDataManager.ECacheTimes cachecode, final int identifier ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
@@ -157,6 +158,65 @@ public class ESINetworkManager {
 		return SCOPES;
 	}
 
+	// - S T A T I C   S W A G G E R   I N T E R F A C E
+	// - C H A R A C T E R
+	//--- CHARACTER PUBLIC INFORMATION
+	public static GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			// Use server parameter to override configuration server to use.
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCharactersCharacterIdOk> characterResponse = neocomRetrofit
+					.create(CharacterApi.class)
+					.getCharactersCharacterId(identifier, datasource, null, null).execute();
+			if (characterResponse.isSuccessful())
+				 return characterResponse.body();
+		} catch (IOException ioe) {
+			logger.error("EX [ESINetworkManager.getCharactersCharacterIdClones]> [EXCEPTION]: {}", ioe.getMessage());
+			ioe.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
+
+
+
+
+	// - C L O N E S
+	//--- CLONES
+	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCharactersCharacterIdClonesOk> cloneApiResponse = neocomRetrofit
+					.create(ClonesApi.class)
+					.getCharactersCharacterIdClones(identifier, datasource, null, null, null).execute();
+			if (!cloneApiResponse.isSuccessful()) {
+				return null;
+			} else return cloneApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+	//--- IMPLANTS
+
+
+	// - P L A N E T A R Y   I N T E R A C T I O N
 	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		// Check if this response already available at cache.
@@ -246,28 +306,6 @@ public class ESINetworkManager {
 		}
 	}
 
-	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
-		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetCharactersCharacterIdClonesOk> cloneApiResponse = neocomRetrofit
-					.create(ClonesApi.class)
-					.getCharactersCharacterIdClones(identifier, datasource, null, null, null).execute();
-			if (!cloneApiResponse.isSuccessful()) {
-				return null;
-			} else return cloneApiResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
 
 	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");

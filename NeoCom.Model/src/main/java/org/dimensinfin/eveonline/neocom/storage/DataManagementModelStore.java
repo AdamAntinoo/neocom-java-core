@@ -107,8 +107,10 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 		if (null == singleton) DataManagementModelStore.initialize();
 		return singleton.activateCredentialImpl(identifier);
 	}
-
-	@Deprecated
+	public static Credential searchCredential4Id( final int identifier ) {
+		if (null == singleton) DataManagementModelStore.initialize();
+		return singleton.activateCredentialImpl(identifier);
+	}
 	public static Credential getActiveCredential() {
 		if (null == singleton) DataManagementModelStore.initialize();
 		return singleton.getActiveCredentialImpl();
@@ -163,7 +165,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 			_credentialList.clear();
 			for (Credential currentCredential : credentials) {
 				_credentialList.add(currentCredential);
-//					final PilotV1 pilot = GlobalDataManager.getPilotV1(currentCredential.getAccountId());
+//					final PilotV1 pilot = GlobalDataManager.getPilotV2(currentCredential.getAccountId());
 			}
 		} catch (RuntimeException rtex) {
 			// There is some kind of exception during this key initialization routine. Post to the ModelStore a
@@ -177,7 +179,6 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 	 * Returns the current active Credential that matched the active character. Raises a runtime exception if the
 	 * character is null.
 	 */
-	@Deprecated
 	private Credential getActiveCredentialImpl() {
 		if (null == _activeCredential)
 			throw new RuntimeException("RT> Accessing an invalid Credential. Select a new character from the list of Credentials.");
@@ -313,7 +314,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 //									currentCredential.setKeyCode(apikey.getKeynumber())
 //											.setValidationCode(apikey.getValidationcode())
 //											.store();
-//									final PilotV1 pilot = GlobalDataManager.getPilotV1(cid);
+//									final PilotV1 pilot = GlobalDataManager.getPilotV2(cid);
 //								}
 //						}
 //					}

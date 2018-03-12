@@ -24,7 +24,6 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -85,7 +84,7 @@ import org.dimensinfin.eveonline.neocom.model.Fitting;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.PilotV1;
+import org.dimensinfin.eveonline.neocom.model.PilotV2;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
@@ -112,7 +111,7 @@ public class GlobalDataManager {
 
 	// --- P R I V A T E   E N U M E R A T O R S
 	private enum EModelVariants {
-		PILOTV1, APIKEY
+		PILOTV1, PILOTV2, CORPORATIONV1
 	}
 
 	private enum EManagerCodes {
@@ -289,8 +288,7 @@ public class GlobalDataManager {
 			newprice.setAdjustedPrice(-1.0);
 			newprice.setAveragePrice(-1.0);
 			return newprice;
-		}
-		else return hit;
+		} else return hit;
 	}
 
 	public static void cleanEveItemCache() {
@@ -520,7 +518,7 @@ public class GlobalDataManager {
 //			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
 //			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
 //			credentialList = credentialDao.query(preparedQuery);
-			credentialList= GlobalDataManager.getNeocomDBHelper().getCredentialDao().queryForAll();
+			credentialList = GlobalDataManager.getNeocomDBHelper().getCredentialDao().queryForAll();
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManager.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
@@ -767,7 +765,7 @@ public class GlobalDataManager {
 		} else {
 			final EveLocation hit = GlobalDataManager.getSDEDBHelper().searchLocation4Id(locationId);
 			// Add the hit to the cache but only when it is not UNKNOWN.
-		if(hit.getTypeID()!= ELocationType.UNKNOWN)	locationCache.put(locationId, hit);
+			if (hit.getTypeID() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
 			// Account for a miss on the cache.
 			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
 			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();
@@ -890,78 +888,39 @@ public class GlobalDataManager {
 	/**
 	 * Construct a minimal implementation of a Pilot from the XML api. This will get deprecated soon but during
 	 * some time It will be compatible and I will have a better view of what variants are being used.
+	 * <p>
+	 * Once the XML api is deprecated we implement the Pilot version 2. This will replace old data structures by its equivalents
+	 * and also add new data and dependencies. This is the most up to date evolver version and comes from the Infinity requirements.
 	 *
 	 * @param identifier character identifier from the valid Credential.
 	 * @return an instance of a PilotV1 class that has some of the required information to be shown on the ui at this
 	 * point.
 	 */
-	public static PilotV1 getPilotV1( final int identifier ) {
-		logger.info(">> [GlobalDataManager.getPilotV1]> Identifier: {}", identifier);
+	public static PilotV2 getPilotV2( final int identifier ) {
+		logger.info(">> [GlobalDataManager.getPilotV2]> Identifier: {}", identifier);
 		try {
 			// Check if this request is already available on the cache.
-			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
+			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV2, identifier);
 			if (null == hit) {
-				logger.info("-- [GlobalDataManager.getPilotV1]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
-				final PilotV1 newchar = new PilotV1();
+				logger.info("-- [GlobalDataManager.getPilotV2]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
+				final PilotV2 newchar = new PilotV2();
 				// Get the credential from the Store and check if this identifier has access to the XML api.
-				final Credential credential = DataManagementModelStore.activateCredential(identifier);
+				final Credential credential = DataManagementModelStore.searchCredential4Id(identifier);
 				if (null != credential) {
-					logger.info("-- [GlobalDataManager.getPilotV1]> Processing data with Credential <{}>.", credential.getAccountName());
-					// Check the Credential type.
-					CharacterInfoResponse inforesponse = null;
-					if (credential.isXMLCompatible()) {
-						try {
-							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Complete data with ApiKey information.");
-							// Copy the authorization and add to it the characterID
-							final ApiAuthorization authcopy = new ApiAuthorization(credential.getKeyCode(), identifier,
-									credential.getValidationCode());
-							// TODO It seems this is not required on this version of the object.
-							//		newchar.setAuthorization(authcopy);
-							// Copy the id to a non volatile field.
-							newchar.setCharacterId(identifier);
-							newchar.setName(credential.getAccountName());
-							// Access the delegated Character using the ApiKey XML old api.
-							final List<ApiKey> apikeyList = GlobalDataManager.getNeocomDBHelper().getApiKeysDao().queryForEq("keynumber",
-									credential.getKeyCode());
-							if (null != apikeyList) {
-								final ApiKey apikey = extendApiKey(apikeyList.get(0));
-								Collection<Character> coreList = apikey.getEveCharacters();
-								for (Character character : coreList) {
-									if (character.getCharacterID() == identifier)
-										newchar.setDelegatedCharacter(character);
-								}
-							}
-//							logger.info(">> [GlobalDataManager.getPilotV1]> XML Compatible. Get balance information.");
-							// Balance information
-							final PilotAccountBalanceParser balanceparser = new PilotAccountBalanceParser();
-							final AccountBalanceResponse balanceresponse = balanceparser.getResponse(authcopy);
-							if (null != balanceresponse) {
-								final Set<EveAccountBalance> balance = balanceresponse.getAll();
-								if (balance.size() > 0) {
-									newchar.setAccountBalance(balance.iterator().next().getBalance());
-								}
-							}
-							logger.info("-- [GlobalDataManager.getPilotV1]> XML Compatible. Get balance {}.", newchar.getAccountBalance());
+					logger.info("-- [GlobalDataManager.getPilotV2]> Processing data with Credential <{}>.", credential.getAccountName());
+					logger.info("-- [GlobalDataManager.getPilotV2]> ESI Compatible. Download clone information.");
 
-							// Character information
-							final CharacterInfoParser infoparser = new CharacterInfoParser();
-							inforesponse = infoparser.getResponse(authcopy);
-							if (null != inforesponse) {
-								newchar.setCharacterInfo(inforesponse);
-							}
-							logger.info("-- [GlobalDataManager.getPilotV1]> XML Compatible. Get CharacterInfo.");
-						} catch (ApiException apie) {
-							apie.printStackTrace();
-						} catch (SQLException sqle) {
-							sqle.printStackTrace();
-						}
+					// Clone data
+					final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
+					if (null != cloneInformation) {
+						newchar.setCloneInformation(cloneInformation);
+						newchar.setHomeLocation(cloneInformation.getHomeLocation());
 					}
-					if (credential.isESICompatible()) {
-						logger.info("-- [GlobalDataManager.getPilotV1]> ESI Compatible. Download clone information.");
-						// Clone data
-						final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
-						if (null != cloneInformation) newchar.setHomeLocation(cloneInformation.getHomeLocation());
-					}
+
+					// Corporation information.
+					newchar.setCorporation()
+
+//					}
 					if (null != inforesponse) {
 						try {
 							// Store the result on the cache with the timing indicator to where this entry is valid.
@@ -972,7 +931,7 @@ public class GlobalDataManager {
 							final String reference = GlobalDataManager.constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
 							TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 							if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
-							logger.info("-- [GlobalDataManager.getPilotV1]> Updating character TimeStamp {}.", reference);
+							logger.info("-- [GlobalDataManager.getPilotV2]> Updating character TimeStamp {}.", reference);
 							timestamp.setTimeStamp(expirationTime)
 									.setCredentialId(credential.getAccountId())
 									.store();
@@ -983,11 +942,11 @@ public class GlobalDataManager {
 				}
 				return newchar;
 			} else {
-				logger.info("-- [GlobalDataManager.getPilotV1]> Pilot <{}> found at cache.", identifier);
+				logger.info("-- [GlobalDataManager.getPilotV2]> Pilot <{}> found at cache.", identifier);
 				return (PilotV1) hit;
 			}
 		} finally {
-			logger.info("<< [GlobalDataManager.getPilotV1]");
+			logger.info("<< [GlobalDataManager.getPilotV2]");
 		}
 	}
 
@@ -1008,7 +967,7 @@ public class GlobalDataManager {
 		try {
 			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
 			if (null != hit) modelCache.delete(EModelVariants.PILOTV1, identifier);
-			return getPilotV1(identifier);
+			return getPilotV2(identifier);
 		} finally {
 			logger.info("<< [GlobalDataManager.udpatePilotV1]");
 		}
@@ -1323,7 +1282,7 @@ public class GlobalDataManager {
 			jgen.writeBooleanField("isActive", value.isActive());
 			jgen.writeBooleanField("isXML", value.isXMLCompatible());
 			jgen.writeBooleanField("isESI", value.isESICompatible());
-//			jgen.writeObjectField("pilot", GlobalDataManager.getPilotV1(value.getAccountId()));
+//			jgen.writeObjectField("pilot", GlobalDataManager.getPilotV2(value.getAccountId()));
 			jgen.writeEndObject();
 		}
 	}
