@@ -83,22 +83,26 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return corporation;
 	}
 
-	public void setCharacterId( final int characterIdentifier ) {
+	public PilotV2 setCharacterId( final int characterIdentifier ) {
 		this.characterId = characterIdentifier;
+		return this;
 	}
 
-	public void setName( final String name ) {
+	public PilotV2 setName( final String name ) {
 		this.name = name;
+		return this;
 	}
 
-	public void setAccountBalance( final double accountBalance ) {
+	public PilotV2 setAccountBalance( final double accountBalance ) {
 		this.accountBalance = accountBalance;
+		return this;
 	}
 
-	public void setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
+	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
 		this.homeLocation = homeLocation;
 		// Convert this location pointer to a NeoCom location.
 		lastKnownLocation = GlobalDataManager.searchLocation4Id(homeLocation.getLocationId());
+		return this;
 	}
 
 	/**
@@ -107,18 +111,39 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	 *
 	 * @param publicData ESI data model with all public identifiers.
 	 */
-	public void setPublicData( final GetCharactersCharacterIdOk publicData ) {
+	public PilotV2 setPublicData( final GetCharactersCharacterIdOk publicData ) {
 		this.publicData = publicData;
-		// Process the public data and get the referenced instances for the Corporation, race, etc.
-		corporation = GlobalDataManager.useCorporationV1(publicData.getCorporationId());
-		alliance = GlobalDataManager.useAllianceV1(publicData.getAllianceId());
-		race = GlobalDataManager.searchSDERace(publicData.getRaceId());
-		bloodline = GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId());
-		ancestry = GlobalDataManager.searchSDEAncestry(publicData.getAncestryId());
+		return this;
 	}
 
-	public void setCloneInformation( final GetCharactersCharacterIdClonesOk cloneInformation ) {
+	public PilotV2 setCorporation( final CorporationV1 corporation ) {
+		this.corporation = corporation;
+		return this;
+	}
+
+	public PilotV2 setAlliance( final AllianceV1 alliance ) {
+		this.alliance = alliance;
+		return this;
+	}
+
+	public PilotV2 setRace( final GetUniverseRaces200Ok race ) {
+		this.race = race;
+		return this;
+	}
+
+	public PilotV2 setBloodline( final GetUniverseBloodlines200Ok bloodline ) {
+		this.bloodline = bloodline;
+		return this;
+	}
+
+	public PilotV2 setAncestry( final GetUniverseAncestries ancestry ) {
+		this.ancestry = ancestry;
+		return this;
+	}
+
+	public PilotV2 setCloneInformation( final GetCharactersCharacterIdClonesOk cloneInformation ) {
 		this.cloneInformation = cloneInformation;
+		return this;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S

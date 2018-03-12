@@ -58,7 +58,6 @@ import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
@@ -69,7 +68,6 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
@@ -86,7 +84,6 @@ import org.dimensinfin.eveonline.neocom.model.AllianceV1;
 import org.dimensinfin.eveonline.neocom.model.CorporationV1;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.Fitting;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -938,6 +935,12 @@ public class GlobalDataManager {
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
 					newchar.setPublicData(publicData);
+					// Process the public data and get the referenced instances for the Corporation, race, etc.
+					newchar.setCorporation ( GlobalDataManager.useCorporationV1(publicData.getCorporationId(),context))
+					.setAlliance (GlobalDataManager.useAllianceV1(publicData.getAllianceId(),context))
+					.setRace (GlobalDataManager.searchSDERace(publicData.getRaceId(),context))
+					.setBloodline (GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId(),context))
+					.setAncestry (GlobalDataManager.searchSDEAncestry(publicData.getAncestryId(),context));
 
 					// Clone data
 					logger.info("-- [GlobalDataManager.getPilotV2]> ESI Compatible. Download clone information.");
@@ -1017,6 +1020,9 @@ public class GlobalDataManager {
 						, credential.getRefreshToken()
 						, SERVER_DATASOURCE);
 				newcorp.setPublicData(publicData);
+				// Process the public data and get the referenced instances for the Corporation, race, etc.
+				newcorp.setAlliance(GlobalDataManager.useAllianceV1(publicData.getAllianceId(), context));
+
 				return newcorp;
 			} else {
 				logger.info("-- [GlobalDataManager.useCorporationV1]> Corporation <{}> found at cache.", identifier);
@@ -1122,7 +1128,8 @@ public class GlobalDataManager {
 		}
 		return colonies;
 	}
-// TODO Review with the use of session
+
+	// TODO Review with the use of session
 	public static List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
 		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
 		List<ColonyStructure> results = new ArrayList<>();

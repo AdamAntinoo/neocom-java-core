@@ -15,21 +15,11 @@ package org.dimensinfin.eveonline.neocom.manager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.beimin.eveapi.exception.ApiException;
-import com.beimin.eveapi.model.shared.Asset;
-import com.beimin.eveapi.model.shared.Blueprint;
-import com.beimin.eveapi.parser.ApiAuthorization;
-import com.beimin.eveapi.parser.pilot.BlueprintsParser;
-import com.beimin.eveapi.parser.pilot.PilotAssetListParser;
-import com.beimin.eveapi.response.shared.AssetListResponse;
-import com.beimin.eveapi.response.shared.BlueprintsResponse;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -568,62 +558,62 @@ public class DownloadManager {
 		});
 	}
 
-	/**
-	 * Processes an asset and all their children. This method converts from a API record to a database asset
-	 * record.<br>
-	 * For flat assets it will detect the Location and if matched to an unknown location store the asset for
-	 * second pass processing.
-	 */
-	private void processAsset( final Asset eveAsset, final NeoComAsset parent ) {
-		final NeoComAsset myasset = this.convert2Asset(eveAsset);
-		if (null != parent) {
-			//			myasset.setParent(parent);
-			myasset.setParentContainer(parent);
-			// Set the location to the parent's location is not set.
-			if (myasset.getLocationId() == -1) {
-				myasset.setLocationId(parent.getLocationId());
-			}
-		}
-		// Only search names for containers and ships.
-		if (myasset.isShip()) {
-			downloadAssetEveName(myasset.getAssetId());
-		}
-		if (myasset.isContainer()) {
-			this.downloadAssetEveName(myasset.getAssetId());
-		}
-		try {
-			//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
-			this.accessDaos();
-			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
-			if (children.size() > 0) {
-				myasset.setContainer(true);
-			}
-			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
-				myasset.setShip(true);
-			}
-			myasset.setOwnerID(credential.getAccountId() * -1);
-			assetDao.create(myasset);
-
-			// Check the asset location. The location can be a known game station, a known user structure, another asset
-			// or an unknown player structure. Check which one is this location.
-			EveLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
-			if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
-				// Add this asset to the list of items to be reprocessed.
-				unlocatedAssets.add(myasset);
-			}
-			// Process all the children and convert them to assets.
-			if (children.size() > 0) {
-				for (final Asset childAsset : children) {
-					this.processAsset(childAsset, myasset);
-				}
-			}
-			DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
-		} catch (final SQLException sqle) {
-			DownloadManager.logger.error("E> [AssetsManager.processAsset]Unable to create the new asset ["
-					+ myasset.getAssetId() + "]. " + sqle.getMessage());
-			sqle.printStackTrace();
-		}
-	}
+//	/**
+//	 * Processes an asset and all their children. This method converts from a API record to a database asset
+//	 * record.<br>
+//	 * For flat assets it will detect the Location and if matched to an unknown location store the asset for
+//	 * second pass processing.
+//	 */
+//	private void processAsset( final Asset eveAsset, final NeoComAsset parent ) {
+//		final NeoComAsset myasset = this.convert2Asset(eveAsset);
+//		if (null != parent) {
+//			//			myasset.setParent(parent);
+//			myasset.setParentContainer(parent);
+//			// Set the location to the parent's location is not set.
+//			if (myasset.getLocationId() == -1) {
+//				myasset.setLocationId(parent.getLocationId());
+//			}
+//		}
+//		// Only search names for containers and ships.
+//		if (myasset.isShip()) {
+//			downloadAssetEveName(myasset.getAssetId());
+//		}
+//		if (myasset.isContainer()) {
+//			this.downloadAssetEveName(myasset.getAssetId());
+//		}
+//		try {
+//			//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
+//			this.accessDaos();
+//			final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
+//			if (children.size() > 0) {
+//				myasset.setContainer(true);
+//			}
+//			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
+//				myasset.setShip(true);
+//			}
+//			myasset.setOwnerID(credential.getAccountId() * -1);
+//			assetDao.create(myasset);
+//
+//			// Check the asset location. The location can be a known game station, a known user structure, another asset
+//			// or an unknown player structure. Check which one is this location.
+//			EveLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
+//			if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
+//				// Add this asset to the list of items to be reprocessed.
+//				unlocatedAssets.add(myasset);
+//			}
+//			// Process all the children and convert them to assets.
+//			if (children.size() > 0) {
+//				for (final Asset childAsset : children) {
+//					this.processAsset(childAsset, myasset);
+//				}
+//			}
+//			DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
+//		} catch (final SQLException sqle) {
+//			DownloadManager.logger.error("E> [AssetsManager.processAsset]Unable to create the new asset ["
+//					+ myasset.getAssetId() + "]. " + sqle.getMessage());
+//			sqle.printStackTrace();
+//		}
+//	}
 
 	/**
 	 * Checks if the Location can be found on the two lists of Locations, the CCP game list or the player

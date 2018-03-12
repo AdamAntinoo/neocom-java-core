@@ -45,9 +45,10 @@ public class CorporationV1 extends NeoComNode{
 	// --- G E T T E R S   &   S E T T E R S
 	public void setPublicData( final GetCorporationsCorporationIdOk publicData ) {
 		this.publicData = publicData;
+	}
 
-		// Process the public data and get the referenced instances for the Corporation, race, etc.
-		alliance = GlobalDataManager.useAllianceV1(publicData.getAllianceId());
+	public void setAlliance( final AllianceV1 alliance ) {
+		this.alliance = alliance;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
