@@ -49,7 +49,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV2() {
 		super();
-		jsonClass = "NeoComCharacter";
+		jsonClass = "Pilot";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -110,8 +110,8 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public void setPublicData( final GetCharactersCharacterIdOk publicData ) {
 		this.publicData = publicData;
 		// Process the public data and get the referenced instances for the Corporation, race, etc.
-		corporation = GlobalDataManager.getCorporationV1(publicData.getCorporationId());
-		alliance = GlobalDataManager.getAllianceV1(publicData.getAllianceId());
+		corporation = GlobalDataManager.useCorporationV1(publicData.getCorporationId());
+		alliance = GlobalDataManager.useAllianceV1(publicData.getAllianceId());
 		race = GlobalDataManager.searchSDERace(publicData.getRaceId());
 		bloodline = GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId());
 		ancestry = GlobalDataManager.searchSDEAncestry(publicData.getAncestryId());

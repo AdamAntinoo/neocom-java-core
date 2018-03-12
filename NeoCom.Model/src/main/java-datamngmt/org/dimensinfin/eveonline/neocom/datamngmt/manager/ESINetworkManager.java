@@ -37,19 +37,23 @@ import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
@@ -175,7 +179,7 @@ public class ESINetworkManager {
 					.create(CharacterApi.class)
 					.getCharactersCharacterId(identifier, datasource, null, null).execute();
 			if (characterResponse.isSuccessful())
-				 return characterResponse.body();
+				return characterResponse.body();
 		} catch (IOException ioe) {
 			logger.error("EX [ESINetworkManager.getCharactersCharacterIdClones]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
@@ -184,9 +188,6 @@ public class ESINetworkManager {
 		}
 		return null;
 	}
-
-
-
 
 
 	// - C L O N E S
@@ -214,6 +215,58 @@ public class ESINetworkManager {
 		return null;
 	}
 	//--- IMPLANTS
+
+	// - C O R P O R A T I O N S
+//--- CORPORATION INFORMATION
+	public static GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			// Use server parameter to override configuration server to use.
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCorporationsCorporationIdOk> corporationResponse = neocomRetrofit
+					.create(CorporationApi.class)
+					.getCorporationsCorporationId(identifier, datasource, null, null).execute();
+			if (corporationResponse.isSuccessful())
+				return corporationResponse.body();
+		} catch (IOException ioe) {
+			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
+			ioe.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
+	// - A L L I A N C E S
+	//--- ALLIANCE INFORMATION
+	public static GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			// Use server parameter to override configuration server to use.
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetAlliancesAllianceIdOk> allianceResponse = neocomRetrofit
+					.create(AllianceApi.class)
+					.getAlliancesAllianceId(identifier, datasource, null, null).execute();
+			if (allianceResponse.isSuccessful())
+				return allianceResponse.body();
+		} catch (IOException ioe) {
+			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
+			ioe.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
 
 
 	// - P L A N E T A R Y   I N T E R A C T I O N

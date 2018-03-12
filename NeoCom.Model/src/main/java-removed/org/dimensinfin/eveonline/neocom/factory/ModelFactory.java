@@ -118,7 +118,7 @@ public class ModelFactory {
 	}
 
 	// - S T A T I C   R E P L I C A T E D   M E T H O D S
-//	public static PilotV1 getPilotV1 (final int identifier) {
+//	public static PilotV1 getPilotV2 (final int identifier) {
 //		return singleton.getPilotV1Impl(identifier);
 //	}
 

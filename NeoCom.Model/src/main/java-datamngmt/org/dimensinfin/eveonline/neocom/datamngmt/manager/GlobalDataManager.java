@@ -57,6 +57,7 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
@@ -66,11 +67,14 @@ import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -78,6 +82,8 @@ import org.dimensinfin.eveonline.neocom.manager.AbstractManager;
 import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.model.AllianceV1;
+import org.dimensinfin.eveonline.neocom.model.CorporationV1;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.Fitting;
@@ -88,7 +94,6 @@ import org.dimensinfin.eveonline.neocom.model.PilotV2;
 import org.dimensinfin.eveonline.neocom.model.Ship;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 
 /**
  * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
@@ -111,7 +116,7 @@ public class GlobalDataManager {
 
 	// --- P R I V A T E   E N U M E R A T O R S
 	private enum EModelVariants {
-		PILOTV1, PILOTV2, CORPORATIONV1
+		PILOTV1, PILOTV2, CORPORATIONV1, ALLIANCEV1
 	}
 
 	private enum EManagerCodes {
@@ -886,6 +891,24 @@ public class GlobalDataManager {
 	// --- M O D E L - S T O R E   I N T E R F A C E
 
 	/**
+	 * Activated the selected credential as the active Credential. This will also point to the current Character but
+	 * allows for lazy evaluation of most of the Character data to be obtained when the character is later used on the
+	 * interfaces.
+	 *
+	 * @param identifier unique account number of character identifier.
+	 * @return the new credential made active. Raises a RuntimeException if the Credential is not found.
+	 */
+	public static Credential searchCredential4Id( final long identifier ) throws NeoComException {
+		// Get the list of current registered creentials.
+		final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
+		// Search for the credential on the list.
+		for (Credential target : credentials)
+			if (target.getAccountId() == identifier) return target;
+		// If we reach this point this means that we have not found the credential. This is an exception.
+		throw new NeoComException("RT [GlobalDataManager]> Credential with id " + identifier + " not found.");
+	}
+
+	/**
 	 * Construct a minimal implementation of a Pilot from the XML api. This will get deprecated soon but during
 	 * some time It will be compatible and I will have a better view of what variants are being used.
 	 * <p>
@@ -896,7 +919,7 @@ public class GlobalDataManager {
 	 * @return an instance of a PilotV1 class that has some of the required information to be shown on the ui at this
 	 * point.
 	 */
-	public static PilotV2 getPilotV2( final int identifier ) {
+	public static PilotV2 getPilotV2( final int identifier, final SessionContext context ) {
 		logger.info(">> [GlobalDataManager.getPilotV2]> Identifier: {}", identifier);
 		try {
 			// Check if this request is already available on the cache.
@@ -905,45 +928,47 @@ public class GlobalDataManager {
 				logger.info("-- [GlobalDataManager.getPilotV2]> Instance not found at cache. Downloading pilot <{}> info.", identifier);
 				final PilotV2 newchar = new PilotV2();
 				// Get the credential from the Store and check if this identifier has access to the XML api.
-				final Credential credential = DataManagementModelStore.searchCredential4Id(identifier);
+				final Credential credential = context.getCredential();
 				if (null != credential) {
 					logger.info("-- [GlobalDataManager.getPilotV2]> Processing data with Credential <{}>.", credential.getAccountName());
-					logger.info("-- [GlobalDataManager.getPilotV2]> ESI Compatible. Download clone information.");
+
+					// Public information.
+					logger.info("-- [GlobalDataManager.getPilotV2]> ESI Compatible. Download public data information.");
+					final GetCharactersCharacterIdOk publicData = ESINetworkManager.getCharactersCharacterId(Long.valueOf(identifier).intValue()
+							, credential.getRefreshToken()
+							, SERVER_DATASOURCE);
+					newchar.setPublicData(publicData);
 
 					// Clone data
+					logger.info("-- [GlobalDataManager.getPilotV2]> ESI Compatible. Download clone information.");
 					final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(Long.valueOf(identifier).intValue(), credential.getRefreshToken(), "tranquility");
 					if (null != cloneInformation) {
 						newchar.setCloneInformation(cloneInformation);
 						newchar.setHomeLocation(cloneInformation.getHomeLocation());
 					}
 
-					// Corporation information.
-					newchar.setCorporation()
-
-//					}
-					if (null != inforesponse) {
-						try {
-							// Store the result on the cache with the timing indicator to where this entry is valid.
-							final Instant expirationTime = new Instant(inforesponse.getCachedUntil()).plus(TimeUnit.HOURS.toMillis(2));
-							modelCache.store(EModelVariants.PILOTV1, newchar, expirationTime, identifier);
-
-							// Store this same information on the database to record the TimeStamp.
-							final String reference = GlobalDataManager.constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
-							TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
-							if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
-							logger.info("-- [GlobalDataManager.getPilotV2]> Updating character TimeStamp {}.", reference);
-							timestamp.setTimeStamp(expirationTime)
-									.setCredentialId(credential.getAccountId())
-									.store();
-						} catch (SQLException sqle) {
-							sqle.printStackTrace();
-						}
+					// Roles
+					// TODO To be implemented
+					// Register instance into the cache. Expiration time is about 3600 seconds.
+					try {
+						final Instant expirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
+						modelCache.store(EModelVariants.PILOTV2, newchar, expirationTime, identifier);
+						// Store this same information on the database to record the TimeStamp.
+						final String reference = GlobalDataManager.constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+						TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
+						if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
+						logger.info("-- [GlobalDataManager.getPilotV2]> Updating character TimeStamp {}.", reference);
+						timestamp.setTimeStamp(expirationTime)
+								.setCredentialId(credential.getAccountId())
+								.store();
+					} catch (SQLException sqle) {
+						sqle.printStackTrace();
 					}
 				}
 				return newchar;
 			} else {
 				logger.info("-- [GlobalDataManager.getPilotV2]> Pilot <{}> found at cache.", identifier);
-				return (PilotV1) hit;
+				return (PilotV2) hit;
 			}
 		} finally {
 			logger.info("<< [GlobalDataManager.getPilotV2]");
@@ -956,20 +981,78 @@ public class GlobalDataManager {
 		else return true;
 	}
 
-	/**
-	 * Deletes the current entry if found and forces a new download.
-	 *
-	 * @param identifier the pilot identifier to load.
-	 * @return
-	 */
-	public static PilotV1 udpatePilotV1( final int identifier ) {
-		logger.info(">> [GlobalDataManager.udpatePilotV1]");
+//	/**
+//	 * Deletes the current entry if found and forces a new download.
+//	 *
+//	 * @param identifier the pilot identifier to load.
+//	 * @return
+//	 */
+//	public static PilotV2 udpatePilotV2( final int identifier ) {
+//		logger.info(">> [GlobalDataManager.udpatePilotV2]");
+//		try {
+//			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV2, identifier);
+//			if (null != hit) modelCache.delete(EModelVariants.PILOTV1, identifier);
+//			return getPilotV2(identifier);
+//		} finally {
+//			logger.info("<< [GlobalDataManager.udpatePilotV2]");
+//		}
+//	}
+
+	//--- CORPORATION
+	public static CorporationV1 useCorporationV1( final int identifier, final SessionContext context ) {
+		logger.info(">> [GlobalDataManager.useCorporationV1]> Identifier: {}", identifier);
 		try {
-			final ICollaboration hit = modelCache.access(EModelVariants.PILOTV1, identifier);
-			if (null != hit) modelCache.delete(EModelVariants.PILOTV1, identifier);
-			return getPilotV2(identifier);
+			// Check if this request is already available on the cache.
+			final ICollaboration hit = modelCache.access(EModelVariants.CORPORATIONV1, identifier);
+			if (null == hit) {
+				logger.info("-- [GlobalDataManager.useCorporationV1]> Instance not found at cache. Downloading Corporation <{}> info.",
+						identifier);
+				final CorporationV1 newcorp = new CorporationV1();
+				// Get the credential from the Store.
+				final Credential credential = context.getCredential();
+
+				// Corporation information.
+				logger.info("-- [GlobalDataManager.useCorporationV1]> ESI Compatible. Download corporation information.");
+				final GetCorporationsCorporationIdOk publicData = ESINetworkManager.getCorporationsCorporationId(Long.valueOf(identifier).intValue()
+						, credential.getRefreshToken()
+						, SERVER_DATASOURCE);
+				newcorp.setPublicData(publicData);
+				return newcorp;
+			} else {
+				logger.info("-- [GlobalDataManager.useCorporationV1]> Corporation <{}> found at cache.", identifier);
+				return (CorporationV1) hit;
+			}
 		} finally {
-			logger.info("<< [GlobalDataManager.udpatePilotV1]");
+			logger.info("<< [GlobalDataManager.useCorporationV1]");
+		}
+	}
+
+	//--- ALLIANCE
+	public static AllianceV1 useAllianceV1( final int identifier, final SessionContext context ) {
+		logger.info(">> [GlobalDataManager.useAllianceV1]> Identifier: {}", identifier);
+		try {
+			// Check if this request is already available on the cache.
+			final ICollaboration hit = modelCache.access(EModelVariants.ALLIANCEV1, identifier);
+			if (null == hit) {
+				logger.info("-- [GlobalDataManager.useAllianceV1]> Instance not found at cache. Downloading Alliance <{}> info.",
+						identifier);
+				final AllianceV1 newalliance = new AllianceV1();
+				// Get the credential from the Store.
+				final Credential credential = context.getCredential();
+
+				// Corporation information.
+				logger.info("-- [GlobalDataManager.useAllianceV1]> ESI Compatible. Download corporation information.");
+				final GetAlliancesAllianceIdOk publicData = ESINetworkManager.getAlliancesAllianceId(Long.valueOf(identifier).intValue()
+						, credential.getRefreshToken()
+						, SERVER_DATASOURCE);
+				newalliance.setPublicData(publicData);
+				return newalliance;
+			} else {
+				logger.info("-- [GlobalDataManager.useAllianceV1]> Alliance <{}> found at cache.", identifier);
+				return (AllianceV1) hit;
+			}
+		} finally {
+			logger.info("<< [GlobalDataManager.useAllianceV1]");
 		}
 	}
 
@@ -1039,60 +1122,20 @@ public class GlobalDataManager {
 		}
 		return colonies;
 	}
-
+// TODO Review with the use of session
 	public static List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
 		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
 		List<ColonyStructure> results = new ArrayList<>();
-		// Get the Credential that matched the received identifier.
-		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-		if (null != credential) {
-			// Get to the Network and download the data from the ESI api.
-			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
-			if (null != colonyStructures) {
-				// Process the structures converting the pin to the Colony structures compatible with MVC.
-				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
-					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-					try {
-						final String serialized = jsonMapper.writeValueAsString(newstruct);
-						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
-						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-								.setPlanetIdentifier(storageIdentifier)
-								.setColonySerialization(serialized)
-								.store();
-					} catch (JsonProcessingException jpe) {
-						jpe.printStackTrace();
-					}
-					results.add(newstruct);
-				}
-			}
-		} else {
-			// TODO. It will not return null. The miss searching for a credential will generate an exception.
-			// Possible that because the application has been previously removed from memory that data is not reloaded.
-			// Call the reloading mechanism and have a second opportunity.
-			DataManagementModelStore.accessCredentialList();
-			credential = DataManagementModelStore.getCredential4Id(characterid);
-			if (null == credential) return new ArrayList<>();
-			else return GlobalDataManager.downloadStructures4Colony(characterid, planetid);
-		}
-		return results;
-	}
-
-	public static List<Fitting> downloadFitting4Credential( final int characterid ) {
-		logger.info(">> [GlobalDataManager.downloadFitting4Credential]");
-		List<Fitting> results = new ArrayList<>();
-		try {
-			Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+//		// Get the Credential that matched the received identifier.
+//		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
 //		if (null != credential) {
-			// Get to the Network and download the data from the ESI api.
-			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings(characterid, credential.getRefreshToken(), SERVER_DATASOURCE);
-			if (null != fittings) {
-				// Process the fittings processing them and converting the data to structures compatible with MVC.
-
-////				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
-					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
+//			// Get to the Network and download the data from the ESI api.
+//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
+//			if (null != colonyStructures) {
+//				// Process the structures converting the pin to the Colony structures compatible with MVC.
+//				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+//				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+//					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
 //					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 //					try {
 //						final String serialized = jsonMapper.writeValueAsString(newstruct);
@@ -1104,23 +1147,63 @@ public class GlobalDataManager {
 //					} catch (JsonProcessingException jpe) {
 //						jpe.printStackTrace();
 //					}
-					results.add(newfitting);
+//					results.add(newstruct);
 //				}
-				}
-			}
-			return results;
-		} catch (NeocomRuntimeException nrex) {
-			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
-					.getMessage());
-			return new ArrayList<>();
-		} catch (RuntimeException ntex) {
-			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
-					.getMessage());
-			return new ArrayList<>();
-		} finally {
-			logger.info("<< [GlobalDataManager.downloadFitting4Credential]");
-		}
+//			}
+//		} else {
+//			// TODO. It will not return null. The miss searching for a credential will generate an exception.
+//			// Possible that because the application has been previously removed from memory that data is not reloaded.
+//			// Call the reloading mechanism and have a second opportunity.
+//			DataManagementModelStore.accessCredentialList();
+//			credential = DataManagementModelStore.getCredential4Id(characterid);
+//			if (null == credential) return new ArrayList<>();
+//			else return GlobalDataManager.downloadStructures4Colony(characterid, planetid);
+//		}
+		return results;
 	}
+//
+//	public static List<Fitting> downloadFitting4Credential( final int characterid ) {
+//		logger.info(">> [GlobalDataManager.downloadFitting4Credential]");
+//		List<Fitting> results = new ArrayList<>();
+//		try {
+//			Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+////		if (null != credential) {
+//			// Get to the Network and download the data from the ESI api.
+//			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings(characterid, credential.getRefreshToken(), SERVER_DATASOURCE);
+//			if (null != fittings) {
+//				// Process the fittings processing them and converting the data to structures compatible with MVC.
+//
+//////				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+//				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
+//					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
+////					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+////					try {
+////						final String serialized = jsonMapper.writeValueAsString(newstruct);
+////						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
+////						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+////								.setPlanetIdentifier(storageIdentifier)
+////								.setColonySerialization(serialized)
+////								.store();
+////					} catch (JsonProcessingException jpe) {
+////						jpe.printStackTrace();
+////					}
+//					results.add(newfitting);
+////				}
+//				}
+//			}
+//			return results;
+//		} catch (NeocomRuntimeException nrex) {
+//			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
+//					.getMessage());
+//			return new ArrayList<>();
+//		} catch (RuntimeException ntex) {
+//			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
+//					.getMessage());
+//			return new ArrayList<>();
+//		} finally {
+//			logger.info("<< [GlobalDataManager.downloadFitting4Credential]");
+//		}
+//	}
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E
 //	public static String serializeCredentialList( final List<Credential> credentials ) {
 //		// Use my own serialization control to return the data to generate exactly what I want.
@@ -1227,13 +1310,13 @@ public class GlobalDataManager {
 				_timeCacheStore.put(locator, expirationTime);
 				return true;
 			}
-			// Store command for APIKEY instances.
-			if (variant == EModelVariants.APIKEY) {
-				final String locator = EModelVariants.APIKEY.name() + "/" + Long.valueOf(longIdentifier).toString();
-				_instanceCacheStore.put(locator, instance);
-				_timeCacheStore.put(locator, expirationTime);
-				return true;
-			}
+//			// Store command for APIKEY instances.
+//			if (variant == EModelVariants.APIKEY) {
+//				final String locator = EModelVariants.APIKEY.name() + "/" + Long.valueOf(longIdentifier).toString();
+//				_instanceCacheStore.put(locator, instance);
+//				_timeCacheStore.put(locator, expirationTime);
+//				return true;
+//			}
 			return false;
 		}
 	}
@@ -1307,6 +1390,39 @@ public class GlobalDataManager {
 
 		public void setTimeStamp( final Instant timeStamp ) {
 			this.timeStamp = timeStamp.getMillis();
+		}
+	}
+
+	// ........................................................................................................
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class SessionContext {
+		// - S T A T I C - S E C T I O N ..........................................................................
+
+		// - F I E L D - S E C T I O N ............................................................................
+		private Credential credential = null;
+
+		// - C O N S T R U C T O R - S E C T I O N ................................................................
+		public SessionContext() {
+		}
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+
+		public Credential getCredential() {
+			return credential;
+		}
+
+		public void setCredential( final Credential credential ) {
+			this.credential = credential;
+		}
+
+		// --- D E L E G A T E D   M E T H O D S
+		@Override
+		public String toString() {
+			return new StringBuffer("SessionContext [")
+					.append("Credential:").append(credential.getAccountName()).append(" ")
+					.append("]")
+//				.append("->").append(super.toString())
+					.toString();
 		}
 	}
 	// ........................................................................................................

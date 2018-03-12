@@ -15,46 +15,38 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 
 /**
- * Implements the MVC adaptation for the Corporation data. Its contents depend on multiple ESI calls even most of them are
- * related to Universe data that is loaded on demand.
- *
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class CorporationV1 extends NeoComNode{
+public class AllianceV1 extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("CorporationV1");
+	private static Logger logger = LoggerFactory.getLogger("AllianceV1");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public int corporationId = -1;
-	public AllianceV1 alliance = null;
+	public int allianceId = -1;
 
-	private GetCorporationsCorporationIdOk publicData = null;
+	private GetAlliancesAllianceIdOk publicData = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public CorporationV1() {
+	public AllianceV1() {
 		super();
-		jsonClass="Corporation";
+		jsonClass = "Alliance";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	// --- G E T T E R S   &   S E T T E R S
-	public void setPublicData( final GetCorporationsCorporationIdOk publicData ) {
+	public void setPublicData( final GetAlliancesAllianceIdOk publicData ) {
 		this.publicData = publicData;
-
-		// Process the public data and get the referenced instances for the Corporation, race, etc.
-		alliance = GlobalDataManager.useAllianceV1(publicData.getAllianceId());
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
 	@Override
 	public String toString() {
-		return new StringBuffer("CorporationV1 [")
-				.append("[#").append(corporationId).append("] ")
+		return new StringBuffer("AllianceV1 [")
+				.append("[#").append(allianceId).append("] ")
 				.append("]")
 //				.append("->").append(super.toString())
 				.toString();
