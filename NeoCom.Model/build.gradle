@@ -20,9 +20,10 @@ repositories {
 sourceSets {
     main {
         java {
-            srcDirs += 'src/main/java-infinity'
-            srcDirs += 'src/main/java-datamngmt'
-            srcDirs += 'src/main/java-model'
+            srcDirs += 'src/main/java-sec01'
+//            srcDirs += 'src/main/java-infinity'
+//            srcDirs += 'src/main/java-datamngmt'
+//            srcDirs += 'src/main/java-model'
 //            srcDirs += 'src/main/java-incubation'
         }
     }

@@ -15,7 +15,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.datahub.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
@@ -39,7 +39,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public AllianceV1 alliance = null;
 	public GetUniverseRaces200Ok race = null;
 	public GetUniverseBloodlines200Ok bloodline = null;
-	public GetUniverseAncestries ancestry = null;
+//	public GetUniverseAncestries ancestry = null;
 
 	public EveLocation lastKnownLocation = null;
 	private GetCharactersCharacterIdOk publicData = null;
@@ -136,10 +136,10 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return this;
 	}
 
-	public PilotV2 setAncestry( final GetUniverseAncestries ancestry ) {
-		this.ancestry = ancestry;
-		return this;
-	}
+//	public PilotV2 setAncestry( final GetUniverseAncestries ancestry ) {
+//		this.ancestry = ancestry;
+//		return this;
+//	}
 
 	public PilotV2 setCloneInformation( final GetCharactersCharacterIdClonesOk cloneInformation ) {
 		this.cloneInformation = cloneInformation;
