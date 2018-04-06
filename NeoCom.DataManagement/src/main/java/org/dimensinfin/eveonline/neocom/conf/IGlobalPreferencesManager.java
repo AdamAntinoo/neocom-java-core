@@ -10,29 +10,13 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.interfaces;
+package org.dimensinfin.eveonline.neocom.conf;
 
-import java.util.List;
+public interface IGlobalPreferencesManager {
+	public boolean getBoolean( final String preferenceName );
 
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+	public boolean getBoolean( final String preferenceName, final boolean defaultValue );
+	public boolean getBooleanPreference( final String preferenceName );
 
-// - CLASS IMPLEMENTATION ...................................................................................
-
-/**
- * This interface controls the methods that should be common to all Eve Online assets that can also contain
- * other assets like Locations, Containers, Holds or Ships and Citadels.
- * 
- * @author Adam Antinoo
- */
-public interface IAssetContainer extends IExpandable {
-	//	public int addContent(NeoComAsset asset);
-
-	//	public List<ICollaboration> getContents();
-
-	public int addAsset(NeoComAsset asset);
-
-	public List<NeoComAsset> getAssets();
+	public boolean getBooleanPreference( final String preferenceName, final boolean defaultValue );
 }
-
-// - UNUSED CODE ............................................................................................

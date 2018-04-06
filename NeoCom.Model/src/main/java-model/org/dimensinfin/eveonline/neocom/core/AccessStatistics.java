@@ -10,50 +10,41 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.model;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IJsonAngular;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.dimensinfin.eveonline.neocom.core;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-
-/**
- * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
- * common methods and implement the default behavior for nodes.
- */
-public abstract class NeoComNode extends AbstractPropertyChanger implements ICollaboration, IJsonAngular {
+public class AccessStatistics {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 6506043294337948561L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected String					jsonClass					= "NeoComNode";
+	private int	accesses	= 0;
+	private int	hits			= 0;
+	private int	misses		= 0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComNode() {
-		jsonClass = "NeoComNode";
-	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public List<ICollaboration> collaborate2Model(final String variant) {
-		return new ArrayList<>();
+	public int accountAccess(final boolean isHit) {
+		if (isHit) {
+			hits++;
+		} else {
+			misses++;
+		}
+		accesses++;
+		return accesses;
 	}
 
-	public String getJsonClass() {
-		return jsonClass;
+	public int getAccesses() {
+		return accesses;
 	}
 
-	private void setJsonClass (final String jsonClass) {
-		this.jsonClass = jsonClass;
+	public int getHits() {
+		return hits;
 	}
 
-	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("NeoComNode [");
-		buffer.append(" ]");
-		return buffer.toString();
+	public int getMisses() {
+		return misses;
 	}
 }
+
+// - UNUSED CODE ............................................................................................

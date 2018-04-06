@@ -11,6 +11,8 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.dimensinfin.core.interfaces.IExpandable;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 
 /**

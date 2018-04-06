@@ -1,27 +1,22 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
+//	PROJECT:        NeoCom.Android (NEOC.A)
+//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
+//	COPYRIGHT:      (c) 2013-2015 by Dimensinfin Industries, all rights reserved.
+//	ENVIRONMENT:		Android API11.
+//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
+//									for characters and corporations at Eve Online. The set is composed of some projects
+//									with implementation for Android and for an AngularJS web interface based on REST
+//									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.model;
-
-import net.nikr.eve.jeveasset.data.Citadel;
-
-import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+
+import java.sql.SQLException;
+import net.nikr.eve.jeveasset.data.Citadel;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -39,7 +34,7 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
-public class EveLocation extends ANeoComEntity {
+public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1522765618286937377L;
 
@@ -84,7 +79,7 @@ public class EveLocation extends ANeoComEntity {
 	public EveLocation( final long citadelid, final Citadel cit ) {
 		this();
 		try {
-			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
@@ -94,32 +89,30 @@ public class EveLocation extends ANeoComEntity {
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			this.store();
-		} catch (NeoComException neoe) {
 		}
 	}
 
-//	/**
-//	 * Create a location from an Outpost read on the current list of player outposts.
-//	 *
-//	 * @param out
-//	 */
-//	public EveLocation( final Outpost out ) {
-//		this();
-//		try {
-//			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
-//			// Calculate the locationID from the source item and update the rest of the fields.
-//			this.updateFromSystem(out.getSolarSystem());
-//			id = out.getFacilityID();
-//			typeID = ELocationType.OUTPOST.name();
-//			this.setStation(out.getName());
-//			// Try to create the pair. It fails then  it was already created.
-//			locationDao.createOrUpdate(this);
-//		} catch (final SQLException sqle) {
-//			sqle.printStackTrace();
-//			this.store();
-//		} catch (NeoComException neoe) {
-//		}
-//	}
+	/**
+	 * Create a location from an Outpost read on the current list of player outposts.
+	 *
+	 * @param out
+	 */
+	public EveLocation( final Outpost out ) {
+		this();
+		try {
+			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
+			// Calculate the locationID from the source item and update the rest of the fields.
+			this.updateFromSystem(out.getSolarSystem());
+			id = out.getFacilityID();
+			typeID = ELocationType.OUTPOST.name();
+			this.setStation(out.getName());
+			// Try to create the pair. It fails then  it was already created.
+			locationDao.createOrUpdate(this);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+			this.store();
+		}
+	}
 
 //	public EveLocation( final Station station ) {
 //		this();
@@ -229,19 +222,11 @@ public class EveLocation extends ANeoComEntity {
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
-			try {
-				urlLocationIcon = new StringBuffer()
-						.append("http://image.eveonline.com/Render/")
-						.append(accessGlobal().searchStationType(id))
-						.append("_64.png")
-						.toString();
-			} catch (NeoComException neoe) {
-				urlLocationIcon = new StringBuffer()
-						.append("http://image.eveonline.com/Render/")
-						.append(id)
-						.append("_64.png")
-						.toString();
-			}
+			urlLocationIcon = new StringBuffer()
+					.append("http://image.eveonline.com/Render/")
+					.append(GlobalDataManager.searchStationType(id))
+					.append("_64.png")
+					.toString();
 		}
 		return urlLocationIcon;
 	}
@@ -277,11 +262,10 @@ public class EveLocation extends ANeoComEntity {
 
 	public EveLocation store() {
 		try {
-			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (NeoComException neoe) {
 		}
 		return this;
 	}
@@ -357,32 +341,27 @@ public class EveLocation extends ANeoComEntity {
 
 	private void updateFromSystem( final long newid ) {
 		// Get the system information from the CCP location tables.
-		try {
-			final EveLocation systemLocation;
-			systemLocation = accessGlobal().searchLocation4Id(newid);
-			systemID = systemLocation.getSystemID();
-			system = systemLocation.getSystem();
-			constellationID = systemLocation.getConstellationID();
-			constellation = systemLocation.getConstellation();
-			regionID = systemLocation.getRegionID();
-			region = systemLocation.getRegion();
-			security = systemLocation.getSecurity();
-		} catch (NeoComException newe) {
-		}
+		final EveLocation systemLocation = GlobalDataManager.searchLocation4Id(newid);
+		systemID = systemLocation.getSystemID();
+		system = systemLocation.getSystem();
+		constellationID = systemLocation.getConstellationID();
+		constellation = systemLocation.getConstellation();
+		regionID = systemLocation.getRegionID();
+		region = systemLocation.getRegion();
+		security = systemLocation.getSecurity();
 	}
 
 	/**
 	 * Two Locations are equal if they have the same locations codes.
-	 *
 	 * @param obj the target EveLocation to compare.
 	 * @return
 	 */
 	@Override
 	public boolean equals( final Object obj ) {
-		if (stationID != ((EveLocation) obj).getStationID()) return false;
-		if (systemID != ((EveLocation) obj).getSystemID()) return false;
-		if (constellationID != ((EveLocation) obj).getConstellationID()) return false;
-		if (regionID != ((EveLocation) obj).getRegionID()) return false;
+		if(stationID!=((EveLocation)obj).getStationID())return false;
+		if(systemID!=((EveLocation)obj).getSystemID())return false;
+		if(constellationID!=((EveLocation)obj).getConstellationID())return false;
+		if(regionID!=((EveLocation)obj).getRegionID())return false;
 		return true;
 	}
 

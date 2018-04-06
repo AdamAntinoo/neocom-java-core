@@ -15,28 +15,28 @@ package org.dimensinfin.eveonline.neocom.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveItem extends ANeoComEntity {
+public class EveItem extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2548296399305221197L;
 	private static EveItem defaultItem = null;
 	private static final int DEFAULT_TYPE_ID = 34;
 
-//	public static EveItem getDefaultItem() {
-//		if (null == EveItem.defaultItem) {
-//			EveItem.defaultItem = accessSDEDBHelper().searchItem4Id(EveItem.DEFAULT_TYPE_ID);
-////			EveItem.defaultItem.setDefaultPrice(GlobalDataManager.searchMarketPrice(EveItem.DEFAULT_TYPE_ID));
-////			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
-////			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
-//		}
-//		return EveItem.defaultItem;
-//	}
+	public static EveItem getDefaultItem() {
+		if (null == EveItem.defaultItem) {
+			EveItem.defaultItem = GlobalDataManager.searchItem4Id(EveItem.DEFAULT_TYPE_ID);
+//			EveItem.defaultItem.setDefaultPrice(GlobalDataManager.searchMarketPrice(EveItem.DEFAULT_TYPE_ID));
+//			EveItem.defaultItem.buyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
+//			EveItem.defaultItem.sellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
+		}
+		return EveItem.defaultItem;
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int id = 34;
@@ -76,55 +76,35 @@ public class EveItem extends ANeoComEntity {
 
 	public int getCategoryId() {
 		if (null == category) {
-			try {
-				category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-			} catch (NeoComException neoe) {
-				category = new ItemCategory();
-			}
+			category = GlobalDataManager.searchItemCategory4Id(categoryid);
 		}
 		return category.getCategoryId();
 	}
 
 	public int getGroupId() {
 		if (null == group) {
-			try {
-				group = accessSDEDBHelper().searchItemGroup4Id(groupid);
-			} catch (NeoComException neoe) {
-				group = new ItemGroup();
-			}
+			group = GlobalDataManager.searchItemGroup4Id(groupid);
 		}
 		return group.getGroupId();
 	}
 
 	public String getCategory() {
 		if (null == category) {
-			try {
-				category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-			} catch (NeoComException neoe) {
-				category = new ItemCategory();
-			}
+			category = GlobalDataManager.searchItemCategory4Id(categoryid);
 		}
 		return category.getCategoryName();
 	}
 
 	public String getCategoryName() {
 		if (null == category) {
-			try {
-				category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-			} catch (NeoComException neoe) {
-				category = new ItemCategory();
-			}
+			category = GlobalDataManager.searchItemCategory4Id(categoryid);
 		}
 		return category.getCategoryName();
 	}
 
 	public String getGroupName() {
 		if (null == group) {
-			try {
-				group = accessSDEDBHelper().searchItemGroup4Id(groupid);
-			} catch (NeoComException neoe) {
-				group = new ItemGroup();
-			}
+			group = GlobalDataManager.searchItemGroup4Id(groupid);
 		}
 		return group.getGroupName();
 	}
@@ -161,20 +141,12 @@ public class EveItem extends ANeoComEntity {
 
 	public void setGroupId( final int groupid ) {
 		this.groupid = groupid;
-		try {
-			group = accessSDEDBHelper().searchItemGroup4Id(groupid);
-		} catch (NeoComException neoe) {
-			group = new ItemGroup();
-		}
+		group = GlobalDataManager.searchItemGroup4Id(groupid);
 	}
 
 	public void setCategoryId( final int categoryid ) {
 		this.categoryid = categoryid;
-		try {
-			category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-		} catch (NeoComException neoe) {
-			category = new ItemCategory();
-		}
+		category = GlobalDataManager.searchItemCategory4Id(categoryid);
 	}
 
 	@JsonIgnore
@@ -224,11 +196,7 @@ public class EveItem extends ANeoComEntity {
 	 */
 	public double getPrice() {
 		if (defaultprice < 0.0) {
-			try {
-				defaultprice = accessGlobal().searchMarketPrice(getTypeID()).getAdjustedPrice();
-			} catch (NeoComException neoe) {
-				defaultprice = -1.0;
-			}
+			defaultprice = GlobalDataManager.searchMarketPrice(getTypeID()).getAdjustedPrice();
 			if (defaultprice < 1.0) defaultprice = baseprice;
 		}
 		return defaultprice;
@@ -361,10 +329,7 @@ public class EveItem extends ANeoComEntity {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			try {
-				buyerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
-			} catch (NeoComException neoe) {
-			}
+			buyerData = GlobalDataManager.searchMarketData(this.getTypeID(), EMarketSide.BUYER);
 			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemId(), EMarketSide.BUYER);
 			}
@@ -382,10 +347,7 @@ public class EveItem extends ANeoComEntity {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			try {
-				sellerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
-			} catch (NeoComException neoe) {
-			}
+			sellerData = GlobalDataManager.searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemId(), EMarketSide.SELLER);
 			}

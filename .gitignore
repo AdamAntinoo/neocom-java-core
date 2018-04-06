@@ -12,3 +12,5 @@ ESI.SwaggerApi/out/
 NeoCom.Model/out/
 *.db
 NeoCom.Model/src/main/resources/properties/esiauthorization.properties
+gradlew
+gradlew.bat

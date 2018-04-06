@@ -10,50 +10,29 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.model;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IJsonAngular;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.dimensinfin.eveonline.neocom.core;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-
-/**
- * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
- * common methods and implement the default behavior for nodes.
- */
-public abstract class NeoComNode extends AbstractPropertyChanger implements ICollaboration, IJsonAngular {
+public class NeocomRuntimeException extends RuntimeException {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 6506043294337948561L;
+	private static final long serialVersionUID = 8864888568628860054L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected String					jsonClass					= "NeoComNode";
+	private String jsonClass = "Exception";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComNode() {
-		jsonClass = "NeoComNode";
+	public NeocomRuntimeException() {
+		super();
+	}
+
+	public NeocomRuntimeException( final String message ) {
+		super(message);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public List<ICollaboration> collaborate2Model(final String variant) {
-		return new ArrayList<>();
-	}
-
 	public String getJsonClass() {
 		return jsonClass;
 	}
-
-	private void setJsonClass (final String jsonClass) {
-		this.jsonClass = jsonClass;
-	}
-
-	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("NeoComNode [");
-		buffer.append(" ]");
-		return buffer.toString();
-	}
 }
+
+// - UNUSED CODE ............................................................................................

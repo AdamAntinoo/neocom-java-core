@@ -9,7 +9,8 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.dimensinfin.core.interfaces.IDownloadable;
+import org.dimensinfin.core.interfaces.IExpandable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -17,46 +18,38 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComExpandableNode extends NeoComNode implements IExpandable {
+public abstract class NeoComDownloadableNode extends NeoComExpandableNode implements IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = -3742179733511283434L;
+	private static final long serialVersionUID = -3742179733663283434L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected boolean _expanded = false;
-	protected boolean _renderIfEmpty = true;
+	private boolean _downloading = false;
+	private boolean _downloaded = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComExpandableNode () {
+	public NeoComDownloadableNode () {
 		super();
-		jsonClass = "NeoComExpandableNode";
+		jsonClass = "NeoComDownloadableNode";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@JsonIgnore
-	public boolean collapse () {
-		_expanded = false;
-		return _expanded;
-	}
 
-	@JsonIgnore
-	public boolean expand () {
-		_expanded = true;
-		return _expanded;
-	}
-
-	public abstract boolean isEmpty ();
-
-	public boolean isExpanded () {
-		return _expanded;
-	}
-
-	public boolean isRenderWhenEmpty () {
-		return _renderIfEmpty;
-	}
-
-	public IExpandable setRenderWhenEmpty (final boolean renderWhenEmpty) {
-		_renderIfEmpty = renderWhenEmpty;
+	public IDownloadable setDownloading (final boolean downloading) {
+		this._downloading = downloading;
 		return this;
+	}
+
+	public IDownloadable setDownloaded (final boolean downloaded) {
+		this._downloaded = downloaded;
+		return this;
+	}
+
+	public boolean isDownloading () {
+		return _downloading;
+	}
+
+	public boolean isDownloaded () {
+		return _downloaded;
 	}
 
 	@Override

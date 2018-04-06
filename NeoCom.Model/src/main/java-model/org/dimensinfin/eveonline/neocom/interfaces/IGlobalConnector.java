@@ -12,27 +12,27 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.util.List;
-
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-
-// - CLASS IMPLEMENTATION ...................................................................................
+import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
+import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 /**
- * This interface controls the methods that should be common to all Eve Online assets that can also contain
- * other assets like Locations, Containers, Holds or Ships and Citadels.
- * 
  * @author Adam Antinoo
  */
-public interface IAssetContainer extends IExpandable {
-	//	public int addContent(NeoComAsset asset);
+public interface IGlobalConnector {
+	public INeoComDBHelper getNeocomDBHelper();
 
-	//	public List<ICollaboration> getContents();
+	public ISDEDBHelper getSDEDBHelper();
 
-	public int addAsset(NeoComAsset asset);
+	public MarketDataSet searchMarketData( final int itemId, final EMarketSide side );
 
-	public List<NeoComAsset> getAssets();
+	public GetMarketsPrices200Ok searchMarketPrice( final int typeId );
+
+	public int searchStationType( final long typeId );
+
+	public EveLocation searchLocation4Id( final long locationId );
 }
-
 // - UNUSED CODE ............................................................................................
