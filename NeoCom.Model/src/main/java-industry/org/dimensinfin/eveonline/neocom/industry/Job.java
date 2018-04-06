@@ -17,7 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.joda.time.DateTime;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -120,8 +120,12 @@ public class Job extends NeoComNode {
 	}
 
 	public String getBlueprintName() {
-		if (null == blueprintItem) {
-			blueprintItem = GlobalDataManager.searchItem4Id(blueprintTypeId);
+		try {
+			if (null == blueprintItem) {
+				blueprintItem = accessGlobal().searchItem4Id(blueprintTypeId);
+			}
+		} catch (NeoComException neoe) {
+			blueprintItem = new EveItem();
 		}
 		return blueprintItem.getName();
 	}
@@ -159,8 +163,12 @@ public class Job extends NeoComNode {
 	}
 
 	public EveLocation getJobLocation() {
-		if (null == jobLocation) {
-			jobLocation = GlobalDataManager.searchLocation4Id(facilityId);
+		try {
+			if (null == jobLocation) {
+				jobLocation = accessGlobal().searchLocation4Id(facilityId);
+			}
+		} catch (NeoComException neoe) {
+			jobLocation = new EveLocation();
 		}
 		return jobLocation;
 	}
@@ -228,19 +236,29 @@ public class Job extends NeoComNode {
 	}
 
 	public Job setBlueprintLocationId( final long blueprintLocationId ) {
-		this.blueprintLocationId = blueprintLocationId;
-		// Cache the location pointed bu this identifier.
-		blueprintLocation = GlobalDataManager.searchLocation4Id(blueprintLocationId);
+		try {
+			this.blueprintLocationId = blueprintLocationId;
+			// Cache the location pointed bu this identifier.
+			blueprintLocation = accessGlobal().searchLocation4Id(blueprintLocationId);
+		} catch (NeoComException neoe) {
+			blueprintLocation = new EveLocation();
+		}
 		return this;
 	}
 
 	public Job setBlueprintTypeId( final int blueprintTypeId ) {
-		this.blueprintTypeId = blueprintTypeId;
-		// Load the blueprint item reference.
-		blueprintItem = GlobalDataManager.searchItem4Id(blueprintTypeId);
-		// Calculate the resulting item type.
-		productTypeId = GlobalDataManager.searchModule4Blueprint(blueprintTypeId);
-		productItem = GlobalDataManager.searchItem4Id(productTypeId);
+		try {
+			this.blueprintTypeId = blueprintTypeId;
+			// Load the blueprint item reference.
+			blueprintItem = accessGlobal().searchItem4Id(blueprintTypeId);
+			// Calculate the resulting item type.
+			productTypeId = accessGlobal().searchModule4Blueprint(blueprintTypeId);
+			productItem = accessGlobal().searchItem4Id(productTypeId);
+		} catch (NeoComException neoe) {
+			blueprintItem = new EveItem();
+			productTypeId = 34;
+			productItem = new EveItem();
+		}
 		return this;
 	}
 
@@ -248,14 +266,16 @@ public class Job extends NeoComNode {
 		this.outputLocationId = outputLocationId;
 		try {
 			// Load the output location item reference.
-			final EveLocation ouputLocation = GlobalDataManager.searchLocation4Id(outputLocationId);
+			final EveLocation ouputLocation = accessGlobal().searchLocation4Id(outputLocationId);
 			if (ouputLocation.getTypeID() == ELocationType.UNKNOWN) {
 				// If the output location is UNKNOWN then this should be a reachable item. Search for it.
-				jobOutputLocation = GlobalDataManager.getNeocomDBHelper()
+				jobOutputLocation = accessGlobal().getNeocomDBHelper()
 						.getAssetDao().queryForEq("assetId", outputLocationId).get(0);
 			} else jobOutputLocation = ouputLocation;
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (NeoComException neoe) {
+			jobOutputLocation = new EveLocation();
 		}
 		return this;
 	}

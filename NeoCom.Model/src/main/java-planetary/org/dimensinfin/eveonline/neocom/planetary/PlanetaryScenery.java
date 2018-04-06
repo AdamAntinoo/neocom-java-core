@@ -10,42 +10,44 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
 //- IMPORT SECTION .........................................................................................
+
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
+
 /**
  * This class performs the Plantary transformations and the value calculation in a recursive way. Starting
  * from an specific configuration the methods scan the different combinations possible for Tier 3, 4 and 5 in
  * seque4nce and return the better profit Scenario depending on the current market data buyers prices.
- * 
+ *
  * @author Adam Antinoo
  */
 public class PlanetaryScenery {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger										logger									= Logger.getLogger("PlanetaryScenery");
-	private static int											RAW2TIER1_TRANSFORMQTY	= 3000;
+	private static Logger logger = Logger.getLogger("PlanetaryScenery");
+	private static int RAW2TIER1_TRANSFORMQTY = 3000;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Vector<Resource>					sceneryResources				= new Vector<Resource>();
-	private final Vector<ProcessingAction>	actions									= new Vector<ProcessingAction>();
-	private final double										inTax										= 5.0;
-	private final double										outTax									= 5.0;
+	private final Vector<Resource> sceneryResources = new Vector<Resource>();
+	private final Vector<ProcessingAction> actions = new Vector<ProcessingAction>();
+	private final double inTax = 5.0;
+	private final double outTax = 5.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	/**
 	 * Return the stocked Planetary Resource that matches the parameter id. If not found return a Resource of
 	 * quantity ZERO.
-	 * 
+	 *
 	 * @param inputResourceId
 	 * @return
 	 */
-	public Resource getResource(final int inputResourceId) {
+	public Resource getResource( final int inputResourceId ) {
 		for (Resource res : sceneryResources) {
 			if (res.getTypeID() == inputResourceId) return res;
 		}
@@ -54,8 +56,7 @@ public class PlanetaryScenery {
 
 	/**
 	 * Retur the list of resources stocked on this scenery.
-	 * 
-	 * @return
+	 *
 	 * @return
 	 */
 	public Vector<Resource> getResources() {
@@ -68,11 +69,10 @@ public class PlanetaryScenery {
 	 * <code>PlanetaryResource</code> and also remove from the list any non planetary resource. <br>
 	 * It will also transform RAW Planetary Resources to Tier 1 to simplify the transformations algorithms since
 	 * RAW are never more profitable that their Tier 1 transformations.
-	 * 
-	 * @param planetaryAssets
-	 *          The list of Resources to be used as the start and input.
+	 *
+	 * @param planetaryAssets The list of Resources to be used as the start and input.
 	 */
-	public void stock(final Vector<Resource> planetaryAssets) {
+	public void stock( final Vector<Resource> planetaryAssets ) {
 		// Convert Resources to Planetary and reject non Planetary.
 		for (Resource resource : planetaryAssets) {
 			this.stock(resource);
@@ -83,14 +83,15 @@ public class PlanetaryScenery {
 	/**
 	 * Convert RAW Planetary Resources to Tier 1 and store the results into the list of resources for this
 	 * scenery. Other resources are stored with no processing.
-	 * 
-	 * @param resource
-	 *          resource to check and store.
+	 *
+	 * @param resource resource to check and store.
 	 */
-	private void stock(final Resource resource) {
+	private void stock( final Resource resource ) {
 		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
 		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
-			int outputType = GlobalDataManager.searchRawPlanetaryOutput(resource.getTypeID());
+			// TODO Removed until the new implementation is ready and the new functionas are on place.
+//			int outputType = GlobalDataManager.searchRawPlanetaryOutput(resource.getTypeID());
+			int outputType = 89;
 			ProcessingAction action = new ProcessingAction(outputType);
 			action.addResource(resource);
 			Vector<Resource> results = action.getActionResults();

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -56,9 +56,14 @@ public class ProcessingAction extends NeoComNode {
 	public ProcessingAction( final int targetId ) {
 		this.targetId = targetId;
 		// Get the item for the target id to be identified on the Json serialization.
-		targetItem = GlobalDataManager.searchItem4Id(targetId);
+		try {
+			targetItem = accessGlobal().searchItem4Id(targetId);
+		} catch (NeoComException neoe) {
+			targetItem = new EveItem();
+		}
 		// Get the schematics information.
-		schematics = GlobalDataManager.searchSchematics4Output(targetId);
+		// TODO Removed until the new routes are in place.
+//		schematics = GlobalDataManager.searchSchematics4Output(targetId);
 		// Store the inputs into another list.
 		for (final Schematics sche : schematics) {
 			if (sche.getDirection() == ESchematicDirection.INPUT) {

@@ -15,19 +15,20 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 /**
  * @author Adam Antinoo
@@ -48,52 +49,60 @@ public class ColonyStructure extends NeoComExpandableNode {
 		private Integer qtyPerCycle = null;
 
 		// --- G E T T E R S   &   S E T T E R S
-		public List<ColonyStructure.ColonyExtractorHead> getHeads () {
+		public List<ColonyStructure.ColonyExtractorHead> getHeads() {
 			return heads;
 		}
 
-		public Integer getProductTypeId () {
+		public Integer getProductTypeId() {
 			return productTypeId;
 		}
 
-		public Integer getCycleTime () {
+		public Integer getCycleTime() {
 			return cycleTime;
 		}
 
-		public Float getHeadRadius () {
+		public Float getHeadRadius() {
 			return headRadius;
 		}
 
-		public Integer getQtyPerCycle () {
+		public Integer getQtyPerCycle() {
 			return qtyPerCycle;
 		}
 
-		public void setHeads (final List<ColonyStructure.ColonyExtractorHead> heads) {
+		public void setHeads( final List<ColonyStructure.ColonyExtractorHead> heads ) {
 			this.heads = heads;
 		}
 
-		public void setCycleTime (final Integer cycleTime) {
+		public void setCycleTime( final Integer cycleTime ) {
 			this.cycleTime = cycleTime;
 		}
 
-		public void setHeadRadius (final Float headRadius) {
+		public void setHeadRadius( final Float headRadius ) {
 			this.headRadius = headRadius;
 		}
 
-		public void setProductTypeId (final Integer productTypeId) {
+		public void setProductTypeId( final Integer productTypeId ) {
 			this.productTypeId = productTypeId;
 			// Update the production type with the Item data from the SDE.
-			item = GlobalDataManager.searchItem4Id(productTypeId);
+			try {
+				item = accessGlobal().searchItem4Id(productTypeId);
+			} catch (NeoComException neoe) {
+				item = new EveItem();
+			}
 		}
 
-		public void setQtyPerCycle (final Integer qtyPerCycle) {
+		public void setQtyPerCycle( final Integer qtyPerCycle ) {
 			this.qtyPerCycle = qtyPerCycle;
 		}
 
 		// --- D E L E G A T E D   M E T H O D S
 //		@JsonIgnore
-		public String getProductTypeName () {
-			if ( null == item ) item = GlobalDataManager.searchItem4Id(productTypeId);
+		public String getProductTypeName() {
+			try {
+				if (null == item) item = accessGlobal().searchItem4Id(productTypeId);
+			} catch (NeoComException neoe) {
+				item = new EveItem();
+			}
 			return item.getName();
 		}
 	}
@@ -103,27 +112,27 @@ public class ColonyStructure extends NeoComExpandableNode {
 		private Float latitude = null;
 		private Float longitude = null;
 
-		public Integer getHeadId () {
+		public Integer getHeadId() {
 			return headId;
 		}
 
-		public void setHeadId (final Integer headId) {
+		public void setHeadId( final Integer headId ) {
 			this.headId = headId;
 		}
 
-		public Float getLatitude () {
+		public Float getLatitude() {
 			return latitude;
 		}
 
-		public void setLatitude (final Float latitude) {
+		public void setLatitude( final Float latitude ) {
 			this.latitude = latitude;
 		}
 
-		public Float getLongitude () {
+		public Float getLongitude() {
 			return longitude;
 		}
 
-		public void setLongitude (final Float longitude) {
+		public void setLongitude( final Float longitude ) {
 			this.longitude = longitude;
 		}
 	}
@@ -131,11 +140,11 @@ public class ColonyStructure extends NeoComExpandableNode {
 	public static class ColonyFactoryDetail {
 		private Integer schematicId = null;
 
-		public Integer getSchematicId () {
+		public Integer getSchematicId() {
 			return schematicId;
 		}
 
-		public void setSchematicId (final Integer schematicId) {
+		public void setSchematicId( final Integer schematicId ) {
 			this.schematicId = schematicId;
 		}
 	}
@@ -147,59 +156,67 @@ public class ColonyStructure extends NeoComExpandableNode {
 		private Long amount = null;
 
 		// --- G E T T E R S   &   S E T T E R S
-		public Integer getTypeId () {
+		public Integer getTypeId() {
 			return typeId;
 		}
 
-		public Long getAmount () {
+		public Long getAmount() {
 			return amount;
 		}
 
 		@JsonIgnore
-		public EveItem getItem () {
+		public EveItem getItem() {
 			// Check if the item is loaded. If not try to get it from the SDE.
-			if ( null == item ) item = GlobalDataManager.searchItem4Id(typeId);
+			try {
+				if (null == item) item = accessGlobal().searchItem4Id(typeId);
+			} catch (NeoComException neoe) {
+				item = new EveItem();
+			}
 			return item;
 		}
 
-		public void setAmount (final Long amount) {
+		public void setAmount( final Long amount ) {
 			this.amount = amount;
 		}
 
-		public void setTypeId (final Integer typeId) {
+		public void setTypeId( final Integer typeId ) {
 			this.typeId = typeId;
 			// Get the Eve item data from the SDE so we can perform calculations.
-			item = GlobalDataManager.searchItem4Id(typeId);
+			try {
+				item = accessGlobal().searchItem4Id(typeId);
+			} catch (NeoComException neoe) {
+				item = new EveItem();
+			}
 		}
 
 		@JsonIgnore
-		public void setItem (final EveItem item) {
+		public void setItem( final EveItem item ) {
 			this.item = item;
 		}
 
 		// --- D E L E G A T E D   M E T H O D S
-	//	@JsonIgnore
-		public String getCategoryName () {
+		//	@JsonIgnore
+		public String getCategoryName() {
 			return getItem().getCategoryName();
 		}
 
-	//	@JsonIgnore
-		public String getGroupName () {
+		//	@JsonIgnore
+		public String getGroupName() {
 			return getItem().getGroupName();
 		}
 
-	//	@JsonIgnore
-		public String getName () {
+		//	@JsonIgnore
+		public String getName() {
 			return getItem().getName();
 		}
 
-	//	@JsonIgnore
-		public double getVolume () {
+		//	@JsonIgnore
+		public double getVolume() {
 			return getItem().getVolume();
 		}
 
-//		@JsonIgnore
-		public double getPrice () {
+		//		@JsonIgnore
+		public double getPrice() {
 			return getItem().getPrice();
 		}
 	}
@@ -227,86 +244,86 @@ public class ColonyStructure extends NeoComExpandableNode {
 	private double capacity = -1.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ColonyStructure () {
+	public ColonyStructure() {
 		super();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public List<ICollaboration> collaborate2Model (final String s) {
+	public List<ICollaboration> collaborate2Model( final String s ) {
 		List<ICollaboration> results = new ArrayList<>();
-		if ( null != contents ) {
-			if ( contents.size() > 0 ) {
+		if (null != contents) {
+			if (contents.size() > 0) {
 				results.addAll(contents);
 			}
 		}
 		return results;
 	}
 
-//	@JsonIgnore
+	//	@JsonIgnore
 	@Override
-	public boolean isEmpty () {
+	public boolean isEmpty() {
 		// Check this depending on the structure type.
 		final EPlanetaryStructureType type = getStructureTypeCode();
 		switch (type) {
 			case COMMAND_CENTER:
 			case STORAGE:
 			case LAUNCHPAD:
-				if ( (null != contents) && (contents.size() > 0) ) return false;
+				if ((null != contents) && (contents.size() > 0)) return false;
 				break;
 		}
 		return true;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
-	public Float getLatitude () {
+	public Float getLatitude() {
 		return latitude;
 	}
 
-	public Float getLongitude () {
+	public Float getLongitude() {
 		return longitude;
 	}
 
-	public Long getPinId () {
+	public Long getPinId() {
 		return pinId;
 	}
 
-	public Integer getTypeId () {
+	public Integer getTypeId() {
 		return typeId;
 	}
 
-	public Integer getSchematicId () {
+	public Integer getSchematicId() {
 		return schematicId;
 	}
 
-	public DateTime getInstallTime () {
+	public DateTime getInstallTime() {
 		return installTime;
 	}
 
-	public DateTime getExpiryTime () {
+	public DateTime getExpiryTime() {
 		return expiryTime;
 	}
 
-	public DateTime getLastCycleStart () {
+	public DateTime getLastCycleStart() {
 		return lastCycleStart;
 	}
 
-	public List<ColonyContent> getContentList () {
+	public List<ColonyContent> getContentList() {
 		return contents;
 	}
 
 	//	@JsonIgnore
-	public EPlanetaryStructureType getStructureTypeCode () {
-		if ( structureType == EPlanetaryStructureType.DEFAULT ) structureType = calculateStructureTypeCode();
+	public EPlanetaryStructureType getStructureTypeCode() {
+		if (structureType == EPlanetaryStructureType.DEFAULT) structureType = calculateStructureTypeCode();
 		return structureType;
 	}
 
-	public double getVolumeUsed () {
+	public double getVolumeUsed() {
 		return volumeUsed;
 	}
 
-//	@JsonIgnore
-	public double getVolumeUsedPct () {
-		if ( capacity < 0.0 )
+	//	@JsonIgnore
+	public double getVolumeUsedPct() {
+		if (capacity < 0.0)
 			switch (getStructureTypeCode()) {
 				case COMMAND_CENTER:
 					capacity = 500.0;
@@ -321,9 +338,9 @@ public class ColonyStructure extends NeoComExpandableNode {
 		return volumeUsed / capacity * 100.0;
 	}
 
-//	@JsonIgnore
-	public double getCapacity () {
-		if ( capacity < 0.0 )
+	//	@JsonIgnore
+	public double getCapacity() {
+		if (capacity < 0.0)
 			switch (getStructureTypeCode()) {
 				case COMMAND_CENTER:
 					capacity = 500.0;
@@ -338,43 +355,43 @@ public class ColonyStructure extends NeoComExpandableNode {
 		return capacity;
 	}
 
-	public double getContentValue () {
+	public double getContentValue() {
 		return contentValue;
 	}
 
-	public ColonyExtractor getExtractorDetails () {
+	public ColonyExtractor getExtractorDetails() {
 		return extractorDetails;
 	}
 
-	public void setLatitude (final Float latitude) {
+	public void setLatitude( final Float latitude ) {
 		this.latitude = latitude;
 	}
 
-	public void setLongitude (final Float longitude) {
+	public void setLongitude( final Float longitude ) {
 		this.longitude = longitude;
 	}
 
-	public void setPinId (final Long pinId) {
+	public void setPinId( final Long pinId ) {
 		this.pinId = pinId;
 	}
 
-	public void setTypeId (final Integer typeId) {
+	public void setTypeId( final Integer typeId ) {
 		this.typeId = typeId;
 	}
 
-	public void setSchematicId (final Integer schematicId) {
+	public void setSchematicId( final Integer schematicId ) {
 		this.schematicId = schematicId;
 	}
 
-	public void setExtractorDetails (final ColonyExtractor extractorDetails) {
+	public void setExtractorDetails( final ColonyExtractor extractorDetails ) {
 		this.extractorDetails = extractorDetails;
 	}
 
-	public void setFactoryDetails (final ColonyFactoryDetail factoryDetails) {
+	public void setFactoryDetails( final ColonyFactoryDetail factoryDetails ) {
 		this.factoryDetails = factoryDetails;
 	}
 
-	public void setContents (final List<ColonyContent> contents) {
+	public void setContents( final List<ColonyContent> contents ) {
 		this.contents = contents;
 		// Calculate the value and volume of the contents of the structure.
 		volumeUsed = 0.0;
@@ -398,99 +415,99 @@ public class ColonyStructure extends NeoComExpandableNode {
 		//			}
 	}
 
-	public void setInstallTime (final DateTime installTime) {
+	public void setInstallTime( final DateTime installTime ) {
 		this.installTime = installTime;
 	}
 
-	public void setExpiryTime (final DateTime expiryTime) {
+	public void setExpiryTime( final DateTime expiryTime ) {
 		this.expiryTime = expiryTime;
 	}
 
-	public void setLastCycleStart (final DateTime lastCycleStart) {
+	public void setLastCycleStart( final DateTime lastCycleStart ) {
 		this.lastCycleStart = lastCycleStart;
 	}
 
-	public void setVolumeUsed (final double volumeUsed) {
+	public void setVolumeUsed( final double volumeUsed ) {
 		this.volumeUsed = volumeUsed;
 	}
 
-	public void setContentValue (final double contentValue) {
+	public void setContentValue( final double contentValue ) {
 		this.contentValue = contentValue;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
-	private EPlanetaryStructureType calculateStructureTypeCode () {
+	private EPlanetaryStructureType calculateStructureTypeCode() {
 		// Barren structures
-		if ( getTypeId() == 2524 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2544 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2541 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 2848 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2473 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2474 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
-		if ( getTypeId() == 2475 ) return EPlanetaryStructureType.HIGH_TECH_PRODUCTION;
+		if (getTypeId() == 2524) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2544) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2541) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 2848) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2473) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2474) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2475) return EPlanetaryStructureType.HIGH_TECH_PRODUCTION;
 
 		// Temperate structures
-		if ( getTypeId() == 2254 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2256 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2562 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3068 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2481 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2480 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
-		if ( getTypeId() == 2482 ) return EPlanetaryStructureType.HIGH_TECH_PRODUCTION;
+		if (getTypeId() == 2254) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2256) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2562) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3068) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2481) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2480) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2482) return EPlanetaryStructureType.HIGH_TECH_PRODUCTION;
 
 		// Lava structures
-		if ( getTypeId() == 2549 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2555 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2558 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3062 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2469 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2470 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2549) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2555) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2558) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3062) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2469) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2470) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		// Plasma structures
-		if ( getTypeId() == 2472 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2556 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2560 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3064 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2471 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2472 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2472) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2556) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2560) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3064) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2471) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2472) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		// Gas structures
-		if ( getTypeId() == 2534 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2543 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2536 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3060 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2492 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2494 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2534) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2543) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2536) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3060) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2492) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2494) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		// Oceanic structures
-		if ( getTypeId() == 2525 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2542 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2535 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3063 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2490 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2485 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2525) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2542) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2535) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3063) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2490) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2485) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		// Ice structures
-		if ( getTypeId() == 2533 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2552 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2257 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3061 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2493 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2491 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2533) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2552) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2257) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3061) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2493) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2491) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		// Storm structures
-		if ( getTypeId() == 2550 ) return EPlanetaryStructureType.COMMAND_CENTER;
-		if ( getTypeId() == 2557 ) return EPlanetaryStructureType.LAUNCHPAD;
-		if ( getTypeId() == 2561 ) return EPlanetaryStructureType.STORAGE;
-		if ( getTypeId() == 3067 ) return EPlanetaryStructureType.EXTRACTOR;
-		if ( getTypeId() == 2483 ) return EPlanetaryStructureType.BASIC_INDUSTRY;
-		if ( getTypeId() == 2484 ) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
+		if (getTypeId() == 2550) return EPlanetaryStructureType.COMMAND_CENTER;
+		if (getTypeId() == 2557) return EPlanetaryStructureType.LAUNCHPAD;
+		if (getTypeId() == 2561) return EPlanetaryStructureType.STORAGE;
+		if (getTypeId() == 3067) return EPlanetaryStructureType.EXTRACTOR;
+		if (getTypeId() == 2483) return EPlanetaryStructureType.BASIC_INDUSTRY;
+		if (getTypeId() == 2484) return EPlanetaryStructureType.ADVANCED_INDUSTRY;
 
 		return EPlanetaryStructureType.DEFAULT;
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("ColonyStructure [");
 		buffer.append("name: ").append(0);
 		buffer.append("]");

@@ -19,7 +19,9 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
+
 import org.joda.time.Instant;
 
 import java.sql.SQLException;
@@ -27,7 +29,7 @@ import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "TimeStamp")
-public class TimeStamp {
+public class TimeStamp extends ANeoComEntity{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("TimeStamp");
 
@@ -50,12 +52,13 @@ public class TimeStamp {
 		timeStamp = instant.getMillis();
 		dateTimeUserReference = instant.toString();
 		try {
-			Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
+			Dao<TimeStamp, String> timeStampDao = accessGlobal().getNeocomDBHelper().getTimeStampDao();
 			// Try to create the pair. It fails then  it was already created.
 			timeStampDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			TimeStamp.logger.info("WR [TimeStamp.<constructor>]> Timestamp exists. Update values.");
 			this.store();
+		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -100,13 +103,14 @@ public class TimeStamp {
 
 	public TimeStamp store () {
 		try {
-			Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
+			Dao<TimeStamp, String> timeStampDao = accessGlobal().getNeocomDBHelper().getTimeStampDao();
 			if ( -1 == credentialId )
 				TimeStamp.logger.info("W [TimeStamp.store]> CredentialId has not been setup. Possible invalid TS.");
 			timeStampDao.createOrUpdate(this);
 			TimeStamp.logger.info("-- [TimeStamp.store]> Timestamp data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}

@@ -15,7 +15,8 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 
 /**
  * This is a singleton row table. The unique ID is fixed to a predefined value because the database can only can
@@ -23,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
  */
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Version")
-public class DatabaseVersion {
+public class DatabaseVersion extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("DatabaseVersion");
 
@@ -41,12 +42,13 @@ public class DatabaseVersion {
 		this();
 		versionNumber = newVersion;
 		try {
-			Dao<DatabaseVersion, String> versionDao = GlobalDataManager.getNeocomDBHelper().getVersionDao();
+			Dao<DatabaseVersion, String> versionDao = accessGlobal().getNeocomDBHelper().getVersionDao();
 			// Try to create the key. It fails then  it was already created.
 			versionDao.create(this);
 		} catch (final SQLException sqle) {
 			DatabaseVersion.logger.info("WR [DatabaseVersion.<constructor>]> DatabaseVersion exists. Update valueto {}.", versionNumber);
 			this.store();
+		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -65,10 +67,11 @@ public class DatabaseVersion {
 
 	public DatabaseVersion store () {
 		try {
-			Dao<DatabaseVersion, String> versionDao = GlobalDataManager.getNeocomDBHelper().getVersionDao();
+			Dao<DatabaseVersion, String> versionDao = accessGlobal().getNeocomDBHelper().getVersionDao();
 			versionDao.update(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}

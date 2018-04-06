@@ -18,15 +18,11 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
-import org.dimensinfin.eveonline.neocom.database.entity.ColonySerialized;
-import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.Property;
 
 /**
  * This interface defines the methods that should be implemented at the final Helper implementation so all
@@ -76,19 +72,19 @@ public interface INeoComDBHelper {
 
 	public Dao<Colony, String> getColonyDao() throws SQLException;
 
-	@Deprecated
-	public Dao<ColonyStorage, String> getColonyStorageDao() throws SQLException;
-
-	@Deprecated
-	public Dao<ColonySerialized, String> getColonySerializedDao() throws SQLException;
+//	@Deprecated
+//	public Dao<ColonyStorage, String> getColonyStorageDao() throws SQLException;
+//
+//	@Deprecated
+//	public Dao<ColonySerialized, String> getColonySerializedDao() throws SQLException;
 
 	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
-	@Deprecated
-	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
+//	@Deprecated
+//	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
 
 	public Dao<EveLocation, String> getLocationDao() throws SQLException;
 
-	public Dao<Property, String> getPropertyDao() throws SQLException;
+//	public Dao<Property, String> getPropertyDao() throws SQLException;
 	public  void clearInvalidRecords( final long pilotid );
 	public  void replaceAssets (final long pilotid);
 	public  void replaceBlueprints (final long pilotid);

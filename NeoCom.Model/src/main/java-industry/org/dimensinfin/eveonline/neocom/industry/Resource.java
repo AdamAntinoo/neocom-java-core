@@ -39,7 +39,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  *
  * @author Adam Antinoo
  */
-public class Resource extends ANeoComEntity {
+public class Resource extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 921961484632479376L;
 	private static Logger logger = Logger.getLogger("Resource");

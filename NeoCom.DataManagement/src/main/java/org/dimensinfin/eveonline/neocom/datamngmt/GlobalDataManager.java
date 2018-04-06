@@ -55,9 +55,9 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
+import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
-import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datahub.manager.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
@@ -510,6 +510,24 @@ public class GlobalDataManager {
 		return GlobalDataManager.getSDEDBHelper().searchSchematics4Output(targetId);
 	}
 
+	// --- N E O C O M   P R I V A T E   D A T A B A S E   S E C T I O N
+	/**
+	 * Reference to the NeoCom persistece database Dao provider. This filed should be injected on startup.
+	 */
+	private static INeoComDBHelper neocomDBHelper = null;
+
+	public static INeoComDBHelper getNeocomDBHelper() {
+		if (null == neocomDBHelper)
+			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
+		return neocomDBHelper;
+	}
+
+	public static void connectNeoComDBConnector( final INeoComDBHelper newhelper ) {
+		if (null != newhelper) neocomDBHelper = newhelper;
+		else
+			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
+	}
+
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long
 			identifier ) {
@@ -571,11 +589,14 @@ public class GlobalDataManager {
 								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
 								try {
 									final String serialized = jsonMapper.writeValueAsString(newstruct);
-									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), col.getPlanetId());
-									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-											.setPlanetIdentifier(storageIdentifier)
-											.setColonySerialization(serialized)
-											.store();
+									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId()
+											, col.getPlanetId());
+									// TODO Removed until the compilation is complete. This is something we should review before adding
+									// it back.
+//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+//											.setPlanetIdentifier(storageIdentifier)
+//											.setColonySerialization(serialized)
+//											.store();
 								} catch (JsonProcessingException jpe) {
 									jpe.printStackTrace();
 								}

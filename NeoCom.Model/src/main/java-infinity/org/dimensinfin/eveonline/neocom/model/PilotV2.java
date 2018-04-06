@@ -15,7 +15,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.datahub.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
@@ -70,7 +70,11 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		if (null != lastKnownLocation) return lastKnownLocation;
 		else if (null == homeLocation) return new EveLocation();
 		else {
-			lastKnownLocation = GlobalDataManager.searchLocation4Id(homeLocation.getLocationId());
+			try {
+				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
+			} catch (NeoComException neoe) {
+				lastKnownLocation = new EveLocation();
+			}
 			return lastKnownLocation;
 		}
 	}
@@ -101,7 +105,11 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
 		this.homeLocation = homeLocation;
 		// Convert this location pointer to a NeoCom location.
-		lastKnownLocation = GlobalDataManager.searchLocation4Id(homeLocation.getLocationId());
+		try {
+			lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
+		} catch (NeoComException neoe) {
+			lastKnownLocation = new EveLocation();
+		}
 		return this;
 	}
 

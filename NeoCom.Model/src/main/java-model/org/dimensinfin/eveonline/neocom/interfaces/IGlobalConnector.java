@@ -42,5 +42,7 @@ public interface IGlobalConnector {
 	public EveLocation searchLocation4Id( final long locationId );
 
 	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid );
+
+	public int searchModule4Blueprint( final int bpitemID );
 }
 // - UNUSED CODE ............................................................................................

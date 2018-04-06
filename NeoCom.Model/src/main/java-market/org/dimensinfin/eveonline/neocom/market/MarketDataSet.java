@@ -21,8 +21,9 @@ import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.datahub.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -38,7 +39,7 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
  *
  * @author Adam Antinoo
  */
-public class MarketDataSet implements Serializable {
+public class MarketDataSet extends ANeoComEntity implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2976488566617309014L;
 	private static Logger logger = LoggerFactory.getLogger("MarketDataSet");
@@ -77,7 +78,12 @@ public class MarketDataSet implements Serializable {
 	public MarketDataSet( final int id, final EMarketSide side ) {
 		this.id = id;
 		this.side = side;
-		double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
+		double baseprice = 0.0;
+		try {
+			baseprice = accessGlobal().searchItem4Id(id).getBaseprice();
+		} catch (NeoComException neoe) {
+			baseprice = 0.0;
+		}
 		bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 		bestmarkethigh.setPrice(baseprice);
 	}
@@ -152,7 +158,12 @@ public class MarketDataSet implements Serializable {
 	public synchronized void updateBestMarket() {
 		if (side == EMarketSide.SELLER) {
 			if ((null == dataOnMarketHub) || (dataOnMarketHub.size() < 1)) {
-				double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
+				double baseprice = 0.0;
+				try {
+					baseprice = accessGlobal().searchItem4Id(id).getBaseprice();
+				} catch (NeoComException neoe) {
+					baseprice = 0.0;
+				}
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
 				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
@@ -179,7 +190,12 @@ public class MarketDataSet implements Serializable {
 		}
 		if (side == EMarketSide.BUYER) {
 			if ((null == dataOnMarketHub) || (dataOnMarketHub.size() < 1)) {
-				double baseprice = GlobalDataManager.searchItem4Id(id).getBaseprice();
+				double baseprice = 0.0;
+				try {
+					baseprice = accessGlobal().searchItem4Id(id).getBaseprice();
+				} catch (NeoComException neoe) {
+					baseprice = 0.0;
+				}
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
 				bestmarkethigh.setPrice(baseprice);
 				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$

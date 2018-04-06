@@ -21,7 +21,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.slf4j.Logger;
@@ -76,12 +76,13 @@ public class Credential extends NeoComNode {
 		this();
 		accountId = newAccountIdentifier;
 		try {
-			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
+			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
 			// Try to create the key. It fails then  it was already created.
 			credentialDao.create(this);
 		} catch (final SQLException sqle) {
 			Credential.logger.info("WR [Credential.<constructor>]> Credential exists. Update values.");
 			this.store();
+		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -92,11 +93,12 @@ public class Credential extends NeoComNode {
 	 */
 	public Credential store () {
 		try {
-			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
+			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
 			credentialDao.update(this);
 			Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
@@ -112,7 +114,7 @@ public class Credential extends NeoComNode {
 		List<TimeStamp> timesList = new ArrayList();
 		try {
 			// Get all the timeStamps for this credential.
-			final Dao<TimeStamp, String> timeStampDao = GlobalDataManager.getNeocomDBHelper().getTimeStampDao();
+			final Dao<TimeStamp, String> timeStampDao = accessGlobal().getNeocomDBHelper().getTimeStampDao();
 			QueryBuilder<TimeStamp, String> queryBuilder = timeStampDao.queryBuilder();
 			Where<TimeStamp, String> where = queryBuilder.where();
 			where.eq("credentialId", getAccountId());
@@ -120,6 +122,7 @@ public class Credential extends NeoComNode {
 			timesList = timeStampDao.query(preparedQuery);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (final NeoComException neoe) {
 		}
 		return timesList;
 	}
