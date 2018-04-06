@@ -39,7 +39,7 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
-public class EveLocation extends ANeoComEntity {
+public class EveLocation extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1522765618286937377L;
 

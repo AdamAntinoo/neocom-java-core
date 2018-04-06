@@ -12,6 +12,11 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
@@ -20,13 +25,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 
@@ -78,7 +78,9 @@ public class NeoComAsset extends NeoComNode {
 	private long parentAssetID = -1;
 
 	//- D E R I V E D   F I E L D S
-	/** Here starts the fields that come form item data but useful for search operations. */
+	/**
+	 * Here starts the fields that come form item data but useful for search operations.
+	 */
 	@DatabaseField
 	private long ownerID = -1;
 	@DatabaseField
@@ -108,7 +110,7 @@ public class NeoComAsset extends NeoComNode {
 	private transient EveItem itemCache = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComAsset () {
+	public NeoComAsset() {
 		super();
 		jsonClass = "NeoComAsset";
 		id = -2;
@@ -116,7 +118,7 @@ public class NeoComAsset extends NeoComNode {
 		locationType = null;
 	}
 
-	public NeoComAsset (final int typeIdentifier) {
+	public NeoComAsset( final int typeIdentifier ) {
 		this();
 		typeId = typeIdentifier;
 		//		itemCache = CacheManager.searchItemById(typeId);
@@ -129,7 +131,7 @@ public class NeoComAsset extends NeoComNode {
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
 	 */
 	@Override
-	public List<ICollaboration> collaborate2Model (final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant ) {
 		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		//		results = this.concatenateChildren(results, this.getChildren());
 		return results;
@@ -138,46 +140,49 @@ public class NeoComAsset extends NeoComNode {
 	/**
 	 * Update the values at the database record.
 	 */
-	public NeoComAsset store () {
+	public NeoComAsset store() {
 		try {
-			final Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+			final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
 			assetDao.update(this);
 			logger.info("-- [NeoComAsset.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
 
-	public long getAssetId () {
+	public long getAssetId() {
 		return assetId;
 	}
 
-	public String getCategory () {
-		if ( null == category ) return "NOCAT";
+	public String getCategory() {
+		if (null == category) return "NOCAT";
 		return category;
 	}
 
 	@Deprecated
-	public int getContentCount () {
+	public int getContentCount() {
 		return 0;
 	}
 
-	public long getDAOID () {
+	public long getDAOID() {
 		return id;
 	}
 
-	public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getFlag () {
+	public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getFlag() {
 		return locationFlag;
 	}
-public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
+
+	public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType() {
 		return this.locationType;
-}
-	public String getGroupName () {
+	}
+
+	public String getGroupName() {
 		return groupName;
 	}
 
-	public double getIskValue () {
+	public double getIskValue() {
 		return iskValue;
 	}
 
@@ -185,21 +190,29 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 	 * New optimization will leave this filed for lazy evaluation. So check if this is empty before getting any
 	 * access and if so download from the Item Cache.
 	 */
-	public EveItem getItem () {
-		if ( null == itemCache ) {
-			itemCache = GlobalDataManager.searchItem4Id(typeId);
+	public EveItem getItem() {
+		try {
+			if (null == itemCache) {
+				itemCache = accessGlobal().searchItem4Id(typeId);
+			}
+		} catch (NeoComException neoe) {
+			itemCache = new EveItem();
 		}
 		return itemCache;
 	}
 
-	public String getItemName () {
+	public String getItemName() {
 		return this.getItem().getName();
 	}
 
 	@JsonIgnore
-	public EveLocation getLocation () {
-		if ( null == locationCache ) {
-			locationCache = GlobalDataManager.searchLocation4Id(locationId);
+	public EveLocation getLocation() {
+		try {
+			if (null == locationCache) {
+				locationCache = accessGlobal().searchLocation4Id(locationId);
+			}
+		} catch (NeoComException neoe) {
+			locationCache = new EveLocation();
 		}
 		return locationCache;
 	}
@@ -208,14 +221,14 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 	 * Return the location id of the asset. If the asset is in a container then the location is lost and the
 	 * value is -1. In that cases we should search for the location on the parent asset if that exists.
 	 */
-	public long getLocationId () {
-		if ( locationId == -1 ) {
-			if ( this.getParentContainerId() == -1 )
+	public long getLocationId() {
+		if (locationId == -1) {
+			if (this.getParentContainerId() == -1)
 				return -1L;
 			else {
 				// Get the location from the parent.
 				final NeoComAsset par = this.getParentContainer();
-				if ( null == par )
+				if (null == par)
 					return -1L;
 				else
 					return par.getLocationId();
@@ -224,15 +237,15 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 			return locationId;
 	}
 
-	public String getName () {
+	public String getName() {
 		return name;
 	}
 
-	public String getOrderingName () {
+	public String getOrderingName() {
 		return name;
 	}
 
-	public long getOwnerID () {
+	public long getOwnerID() {
 		return ownerID;
 	}
 
@@ -244,15 +257,16 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 	 * Locations table. With that change assets will be reallocated to a valid place and all code will
 	 * understand the changes and behave correctly.
 	 */
-	public NeoComAsset getParentContainer () {
-		if ( parentAssetID > 0 ) if ( null == parentAssetCache ) {
+	public NeoComAsset getParentContainer() {
+		if (parentAssetID > 0) if (null == parentAssetCache) {
 			// Search for the parent asset. If not found then go to the transformation method.
-	try{
-		parentAssetCache = GlobalDataManager.getNeocomDBHelper().getAssetDao()
-				.queryForId(Long.valueOf(parentAssetID).toString());
-	}catch (SQLException sqle){
-	}
-			if ( null == parentAssetCache ) {
+			try {
+				parentAssetCache = accessGlobal().getNeocomDBHelper().getAssetDao()
+						.queryForId(Long.valueOf(parentAssetID).toString());
+			} catch (SQLException sqle) {
+			} catch (NeoComException neoe) {
+			}
+			if (null == parentAssetCache) {
 				final long newlocationId = parentAssetID;
 				final EveLocation loc = this.moveAssetToUnknown(newlocationId);
 				this.setLocationId(newlocationId);
@@ -260,12 +274,13 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 				locationCache = loc;
 				// Save the asset to disk.
 				try {
-					final Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+					final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
 					// Try to create the pair. It fails then  it was already created.
 					assetDao.createOrUpdate(this);
 				} catch (final SQLException sqle) {
 					sqle.printStackTrace();
 					this.setDirty(true);
+				} catch (NeoComException neoe) {
 				}
 				//				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
 				//				Container container = new Container();
@@ -287,99 +302,99 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 		return parentAssetCache;
 	}
 
-	public long getParentContainerId () {
+	public long getParentContainerId() {
 		return parentAssetID;
 	}
 
-	public double getPrice () {
+	public double getPrice() {
 		return this.getItem().getPrice();
 	}
 
-	public int getQuantity () {
+	public int getQuantity() {
 		return quantity;
 	}
 
-	public String getRegion () {
+	public String getRegion() {
 		return this.getLocation().getRegion();
 	}
 
-	public String getTech () {
+	public String getTech() {
 		return this.getItem().getTech();
 	}
 
-	public int getTypeId () {
+	public int getTypeId() {
 		return typeId;
 	}
 
-	public String getUserLabel () {
+	public String getUserLabel() {
 		return userLabel;
 	}
 
-	public boolean hasParent () {
-		if ( parentAssetID > 0 )
+	public boolean hasParent() {
+		if (parentAssetID > 0)
 			return true;
 		else
 			return false;
 	}
 
-	public boolean isBlueprint () {
+	public boolean isBlueprint() {
 		return blueprintFlag;
 	}
 
-	public boolean isContainer () {
-		if ( this.isBlueprint() ) return false;
+	public boolean isContainer() {
+		if (this.isBlueprint()) return false;
 		// Use a list of types to set what is a container
-		if ( this.getTypeId() == 11488 ) return true;
-		if ( this.getTypeId() == 11489 ) return true;
-		if ( this.getTypeId() == 11490 ) return true;
-		if ( this.getTypeId() == 17363 ) return true;
-		if ( this.getTypeId() == 17364 ) return true;
-		if ( this.getTypeId() == 17365 ) return true;
-		if ( this.getTypeId() == 17366 ) return true;
-		if ( this.getTypeId() == 17367 ) return true;
-		if ( this.getTypeId() == 17368 ) return true;
-		if ( this.getTypeId() == 2263 ) return true;
-		if ( this.getTypeId() == 23 ) return true;
-		if ( this.getTypeId() == 24445 ) return true;
-		if ( this.getTypeId() == 28570 ) return true;
-		if ( this.getTypeId() == 3293 ) return true;
-		if ( this.getTypeId() == 3296 ) return true;
-		if ( this.getTypeId() == 3297 ) return true;
-		if ( this.getTypeId() == 33003 ) return true;
-		if ( this.getTypeId() == 33005 ) return true;
-		if ( this.getTypeId() == 33007 ) return true;
-		if ( this.getTypeId() == 33009 ) return true;
-		if ( this.getTypeId() == 33011 ) return true;
-		if ( this.getTypeId() == 3465 ) return true;
-		if ( this.getTypeId() == 3466 ) return true;
-		if ( this.getTypeId() == 3467 ) return true;
-		if ( this.getTypeId() == 3468 ) return true;
-		if ( this.getTypeId() == 41567 ) return true;
-		if ( this.getName().contains("Container") )
+		if (this.getTypeId() == 11488) return true;
+		if (this.getTypeId() == 11489) return true;
+		if (this.getTypeId() == 11490) return true;
+		if (this.getTypeId() == 17363) return true;
+		if (this.getTypeId() == 17364) return true;
+		if (this.getTypeId() == 17365) return true;
+		if (this.getTypeId() == 17366) return true;
+		if (this.getTypeId() == 17367) return true;
+		if (this.getTypeId() == 17368) return true;
+		if (this.getTypeId() == 2263) return true;
+		if (this.getTypeId() == 23) return true;
+		if (this.getTypeId() == 24445) return true;
+		if (this.getTypeId() == 28570) return true;
+		if (this.getTypeId() == 3293) return true;
+		if (this.getTypeId() == 3296) return true;
+		if (this.getTypeId() == 3297) return true;
+		if (this.getTypeId() == 33003) return true;
+		if (this.getTypeId() == 33005) return true;
+		if (this.getTypeId() == 33007) return true;
+		if (this.getTypeId() == 33009) return true;
+		if (this.getTypeId() == 33011) return true;
+		if (this.getTypeId() == 3465) return true;
+		if (this.getTypeId() == 3466) return true;
+		if (this.getTypeId() == 3467) return true;
+		if (this.getTypeId() == 3468) return true;
+		if (this.getTypeId() == 41567) return true;
+		if (this.getName().contains("Container"))
 			return true;
 		else
 			return false;
 	}
 
-	public boolean isPackaged () {
+	public boolean isPackaged() {
 		return !isSingleton;
 	}
 
-	public boolean isShip () {
+	public boolean isShip() {
 		return shipFlag;
 	}
 
-	public boolean isShipFlag () {
+	public boolean isShipFlag() {
 		return shipFlag;
 	}
 
-	public NeoComAsset setAssetId (final long assetIdentifier) {
+	public NeoComAsset setAssetId( final long assetIdentifier ) {
 		assetId = assetIdentifier;
 		return this;
 	}
 
-	public void setBlueprintType (final int rawQuantity) {
-		if ( -1 == rawQuantity ) {
+	public void setBlueprintType( final int rawQuantity ) {
+		if (-1 == rawQuantity) {
 			this.setName(name + " (BPO)");
 		} else {
 			this.setName(name + " (BPC)");
@@ -387,67 +402,67 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 		blueprintFlag = true;
 	}
 
-	public void setCategory (final String category) {
+	public void setCategory( final String category ) {
 		this.category = category;
-		if ( category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship) ) {
+		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship)) {
 			shipFlag = true;
 		}
 	}
 
-	public void setContainer (final boolean value) {
+	public void setContainer( final boolean value ) {
 		containerFlag = value;
 	}
 
-	public void setDirty (final boolean flag) {
-		if ( flag ) {
+	public void setDirty( final boolean flag ) {
+		if (flag) {
 			try {
-				final Dao<NeoComAsset, String> assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+				final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
 				// Try to create the pair. It fails then  it was already created.
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();
-				//	this.store(true);
+			} catch (final NeoComException neoe) {
 			}
 		}
 	}
 
-	public NeoComAsset setFlag (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newFlag) {
+	public NeoComAsset setFlag( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newFlag ) {
 		locationFlag = newFlag;
 		return this;
 	}
 
-	public void setGroupName (final String name) {
+	public void setGroupName( final String name ) {
 		groupName = name;
 	}
 
-	public void setId (final long id) {
+	public void setId( final long id ) {
 		this.id = id;
 	}
 
-	public void setIskValue (final double iskvalue) {
+	public void setIskValue( final double iskvalue ) {
 		iskValue = iskvalue;
 	}
 
-	public NeoComAsset setLocationId (final long location) {
+	public NeoComAsset setLocationId( final long location ) {
 		locationId = location;
 		return this;
 	}
 
-	public NeoComAsset setLocationType (final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType) {
+	public NeoComAsset setLocationType( final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
 		this.locationType = locationType;
 		return this;
 	}
 
-	public void setName (final String name) {
+	public void setName( final String name ) {
 		this.name = name;
 	}
 
-	public void setOwnerID (final long ownerID) {
+	public void setOwnerID( final long ownerID ) {
 		this.ownerID = ownerID;
 	}
 
-	public void setParentContainer (final NeoComAsset newParent) {
-		if ( null != newParent ) {
+	public void setParentContainer( final NeoComAsset newParent ) {
+		if (null != newParent) {
 			parentAssetCache = newParent;
 			parentAssetID = newParent.getAssetId();
 			// Trigger an update of the record at the database.
@@ -455,38 +470,38 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 		}
 	}
 
-	public void setParentId (final long pid) {
+	public void setParentId( final long pid ) {
 		parentAssetID = pid;
 	}
 
-	public NeoComAsset setQuantity (final int count) {
+	public NeoComAsset setQuantity( final int count ) {
 		quantity = count;
 		return this;
 	}
 
-	public void setShip (final boolean value) {
+	public void setShip( final boolean value ) {
 		shipFlag = value;
 	}
 
-	public void setShipFlag (final boolean shipFlag) {
+	public void setShipFlag( final boolean shipFlag ) {
 		this.shipFlag = shipFlag;
 	}
 
-	public NeoComAsset setSingleton (final boolean newSingleton) {
+	public NeoComAsset setSingleton( final boolean newSingleton ) {
 		isSingleton = newSingleton;
 		return this;
 	}
 
-	public void setTech (final String newTech) {
+	public void setTech( final String newTech ) {
 		tech = newTech;
 	}
 
-	public void setTypeId (final int newTypeId) {
+	public void setTypeId( final int newTypeId ) {
 		typeId = newTypeId;
 	}
 
-	public NeoComAsset setUserLabel (final String label) {
-		if ( null != label ) {
+	public NeoComAsset setUserLabel( final String label ) {
+		if (null != label) {
 			userLabel = label;
 		}
 		return this;
@@ -496,10 +511,10 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 	 * Try to reduce the calls to methods to compose this information since that affects the code to be run.
 	 */
 	@Override
-	public String toString () {
+	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComAsset [");
 		buffer.append("#").append(typeId).append(" - ").append(this.getName()).append(" ");
-		if ( null != this.getUserLabel() ) {
+		if (null != this.getUserLabel()) {
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
 		buffer.append("itemID:").append(assetId).append(" ");
@@ -514,7 +529,7 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 	/**
 	 * Replaces a non reachable parent asset into an Unknown Location.
 	 */
-	private EveLocation moveAssetToUnknown (final long newlocationid) {
+	private EveLocation moveAssetToUnknown( final long newlocationid ) {
 		final EveLocation newundefloc = new EveLocation();
 		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");

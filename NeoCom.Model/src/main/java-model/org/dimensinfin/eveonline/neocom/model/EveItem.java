@@ -22,7 +22,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveItem extends ANeoComEntity {
+public class EveItem extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2548296399305221197L;
 	private static EveItem defaultItem = null;

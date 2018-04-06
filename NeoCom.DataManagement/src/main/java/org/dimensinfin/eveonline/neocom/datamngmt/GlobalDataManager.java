@@ -215,10 +215,10 @@ public class GlobalDataManager {
 	private static Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
-	private static MarketDataServer marketDataService = null;
+	private static org.dimensinfin.eveonline.neocom.datamngmt.manager.MarketDataServer marketDataService = null;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public static void setMarketDataManager( final MarketDataServer manager ) {
+	public static void setMarketDataManager( final org.dimensinfin.eveonline.neocom.datamngmt.manager.MarketDataServer manager ) {
 		logger.info(">> [GlobalDataManager.setMarketDataManager]");
 		marketDataService = manager;
 		// At this point we should have been initialized.
@@ -345,7 +345,7 @@ public class GlobalDataManager {
 		jsonMapper.registerModule(new JodaModule());
 		// Add our own serializers.
 		SimpleModule neocomSerializerModule = new SimpleModule();
-		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
+//		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
 		neocomSerializerModule.addSerializer(Credential.class, new CredentialSerializer());
 		jsonMapper.registerModule(neocomSerializerModule);
 	}
@@ -709,39 +709,39 @@ public class GlobalDataManager {
 	}
 
 	// - CLASS IMPLEMENTATION .................................................................................
-	public static class ManagerOptimizedCache {
-
-		// - F I E L D - S E C T I O N ............................................................................
-		private Hashtable<String, AbstractManager> _managerCacheStore = new Hashtable();
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-		public int size() {
-			return _managerCacheStore.size();
-		}
-
-		public String constructManagerIdentifier( final String type, final long identifier ) {
-			return new StringBuffer(type).append("/").append(identifier).toString();
-		}
-
-		public AbstractManager access( final EManagerCodes variant, long longIdentifier ) {
-			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
-			final AbstractManager hit = _managerCacheStore.get(locator);
-			return hit;
-		}
-
-		public boolean store( final EManagerCodes variant, final AbstractManager instance, final long longIdentifier ) {
-			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
-			_managerCacheStore.put(locator, instance);
-			return true;
-		}
-
-		public AbstractManager delete( final EManagerCodes variant, final long longIdentifier ) {
-			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
-			final AbstractManager hit = _managerCacheStore.get(locator);
-			_managerCacheStore.remove(locator);
-			return hit;
-		}
-	}
+//	public static class ManagerOptimizedCache {
+//
+//		// - F I E L D - S E C T I O N ............................................................................
+//		private Hashtable<String, AbstractManager> _managerCacheStore = new Hashtable();
+//
+//		// - M E T H O D - S E C T I O N ..........................................................................
+//		public int size() {
+//			return _managerCacheStore.size();
+//		}
+//
+//		public String constructManagerIdentifier( final String type, final long identifier ) {
+//			return new StringBuffer(type).append("/").append(identifier).toString();
+//		}
+//
+//		public AbstractManager access( final EManagerCodes variant, long longIdentifier ) {
+//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+//			final AbstractManager hit = _managerCacheStore.get(locator);
+//			return hit;
+//		}
+//
+//		public boolean store( final EManagerCodes variant, final AbstractManager instance, final long longIdentifier ) {
+//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+//			_managerCacheStore.put(locator, instance);
+//			return true;
+//		}
+//
+//		public AbstractManager delete( final EManagerCodes variant, final long longIdentifier ) {
+//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+//			final AbstractManager hit = _managerCacheStore.get(locator);
+//			_managerCacheStore.remove(locator);
+//			return hit;
+//		}
+//	}
 	// ........................................................................................................
 
 	// - CLASS IMPLEMENTATION ...................................................................................
@@ -800,30 +800,30 @@ public class GlobalDataManager {
 	// ........................................................................................................
 
 	// - CLASS IMPLEMENTATION ...................................................................................
-	public static class ShipSerializer extends JsonSerializer<Ship> {
-		// - F I E L D - S E C T I O N ............................................................................
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-		@Override
-		public void serialize( final Ship value, final JsonGenerator jgen, final SerializerProvider provider )
-				throws IOException, JsonProcessingException {
-			jgen.writeStartObject();
-			jgen.writeStringField("jsonClass", value.getJsonClass());
-			jgen.writeNumberField("assetId", value.getAssetId());
-			jgen.writeNumberField("typeId", value.getTypeId());
-			jgen.writeNumberField("ownerId", value.getOwnerID());
-			jgen.writeStringField("name", value.getItemName());
-			jgen.writeStringField("category", value.getCategory());
-			jgen.writeStringField("groupName", value.getGroupName());
-			jgen.writeStringField("tech", value.getTech());
-			jgen.writeStringField("userLabel", value.getUserLabel());
-			jgen.writeNumberField("price", value.getItem().getPrice());
-			jgen.writeNumberField("highesBuyerPrice", value.getItem().getHighestBuyerPrice().getPrice());
-			jgen.writeNumberField("lowerSellerPrice", value.getItem().getLowestSellerPrice().getPrice());
-			jgen.writeObjectField("item", value.getItem());
-			jgen.writeEndObject();
-		}
-	}
+//	public static class ShipSerializer extends JsonSerializer<Ship> {
+//		// - F I E L D - S E C T I O N ............................................................................
+//
+//		// - M E T H O D - S E C T I O N ..........................................................................
+//		@Override
+//		public void serialize( final Ship value, final JsonGenerator jgen, final SerializerProvider provider )
+//				throws IOException, JsonProcessingException {
+//			jgen.writeStartObject();
+//			jgen.writeStringField("jsonClass", value.getJsonClass());
+//			jgen.writeNumberField("assetId", value.getAssetId());
+//			jgen.writeNumberField("typeId", value.getTypeId());
+//			jgen.writeNumberField("ownerId", value.getOwnerID());
+//			jgen.writeStringField("name", value.getItemName());
+//			jgen.writeStringField("category", value.getCategory());
+//			jgen.writeStringField("groupName", value.getGroupName());
+//			jgen.writeStringField("tech", value.getTech());
+//			jgen.writeStringField("userLabel", value.getUserLabel());
+//			jgen.writeNumberField("price", value.getItem().getPrice());
+//			jgen.writeNumberField("highesBuyerPrice", value.getItem().getHighestBuyerPrice().getPrice());
+//			jgen.writeNumberField("lowerSellerPrice", value.getItem().getLowestSellerPrice().getPrice());
+//			jgen.writeObjectField("item", value.getItem());
+//			jgen.writeEndObject();
+//		}
+//	}
 	// ........................................................................................................
 
 	// - CLASS IMPLEMENTATION ...................................................................................
