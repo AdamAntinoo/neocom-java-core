@@ -18,7 +18,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

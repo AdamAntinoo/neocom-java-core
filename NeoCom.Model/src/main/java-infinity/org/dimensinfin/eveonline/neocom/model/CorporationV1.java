@@ -24,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporat
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class CorporationV1 extends NeoComNode{
+public class CorporationV1 extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("CorporationV1");
 
@@ -37,7 +37,7 @@ public class CorporationV1 extends NeoComNode{
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CorporationV1() {
 		super();
-		jsonClass="Corporation";
+		jsonClass = "Corporation";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

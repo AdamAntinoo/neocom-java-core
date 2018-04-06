@@ -12,12 +12,16 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
+import java.util.List;
+
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
 /**
  * @author Adam Antinoo
@@ -33,6 +37,10 @@ public interface IGlobalConnector {
 
 	public int searchStationType( final long typeId );
 
+	public EveItem searchItem4Id( final int typeId );
+
 	public EveLocation searchLocation4Id( final long locationId );
+
+	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid );
 }
 // - UNUSED CODE ............................................................................................

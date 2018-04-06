@@ -12,19 +12,9 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.util.List;
-
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-
 /**
   * @author Adam Antinoo
  */
 public interface IDatabaseEntity {
-//	private static ISDEDBHelper neocomSDEHelper
-//	public static ISDEDBHelper accessSDEDBHelper(){
-//
-//	}
 }
-
 // - UNUSED CODE ............................................................................................

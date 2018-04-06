@@ -23,6 +23,8 @@ sourceSets {
             srcDirs += 'src/main/java-model'
             srcDirs += 'src/main/java-market'
             srcDirs += 'src/main/java-infinity'
+            srcDirs += 'src/main/java-planetary'
+            srcDirs += 'src/main/java-industry'
 //            srcDirs += 'src/main/java-secglobal'
 //            srcDirs += 'src/main/java-datamngmt'
 //            srcDirs += 'src/main/java-model'

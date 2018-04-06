@@ -12,6 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
@@ -30,7 +31,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
  *
  * @author Adam Antinoo
  */
-public abstract class ANeoComEntity extends NeoComNode implements IDatabaseEntity {
+public abstract class ANeoComEntity extends AbstractPropertyChanger implements IDatabaseEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static ISDEDBHelper SDEHelper = null;
 	private static INeoComDBHelper neocomDBHelper = null;

@@ -1,18 +1,22 @@
-//	PROJECT:        EveIndustrialistModel (EVEI-M)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		JRE 1.7.
-//	DESCRIPTION:		Data model to use on EVE related applications. Neutral code to be used in all enwironments.
-
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-//- IMPORT SECTION .........................................................................................
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -25,7 +29,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
  */
 
 @DatabaseTable(tableName = "Blueprints")
-public class NeoComBlueprint extends NeoComNode {
+public class NeoComBlueprint extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long	serialVersionUID		= -1284879453130050089L;
 
@@ -107,7 +111,7 @@ public class NeoComBlueprint extends NeoComNode {
 	public NeoComBlueprint(final int blueprintID) {
 		super();
 		typeID = blueprintID;
-		blueprintItem = GlobalDataManager.searchItem4Id(blueprintID);
+		blueprintItem = access.searchItem4Id(blueprintID);
 		typeName = blueprintItem.getName();
 		moduleTypeID = GlobalDataManager.searchModule4Blueprint(typeID);
 		moduleItem = GlobalDataManager.searchItem4Id(moduleTypeID);

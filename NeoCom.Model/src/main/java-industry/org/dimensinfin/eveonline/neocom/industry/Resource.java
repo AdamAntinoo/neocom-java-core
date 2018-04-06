@@ -8,8 +8,6 @@
 //									services on Sprint Boot Cloud.
 package org.dimensinfin.eveonline.neocom.industry;
 
-// - IMPORT SECTION .........................................................................................
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -21,7 +19,8 @@ import org.joda.time.DateTimeZone;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
@@ -40,7 +39,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  *
  * @author Adam Antinoo
  */
-public class Resource extends NeoComNode {
+public class Resource extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 921961484632479376L;
 	private static Logger logger = Logger.getLogger("Resource");
@@ -52,7 +51,7 @@ public class Resource extends NeoComNode {
 	private static final int DEFAULT_T2TE = 14;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public EveItem item = EveItem.getDefaultItem();
+	public EveItem item = new EveItem();
 	private int resourceID = -1;
 	public int baseQty = 0;
 	public int stackSize = 1;
@@ -68,7 +67,10 @@ public class Resource extends NeoComNode {
 	public Resource( final int typeID ) {
 		super();
 		resourceID = typeID;
-		item = GlobalDataManager.searchItem4Id(typeID);
+		try {
+			item = accessGlobal().searchItem4Id(typeID);
+		} catch (NeoComException neoe) {
+		}
 		baseQty = 0;
 		jsonClass = "Resource";
 	}

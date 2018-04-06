@@ -15,13 +15,23 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.database.entity;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.joda.time.DateTime;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
@@ -29,15 +39,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlane
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
-import org.joda.time.DateTime;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the equivalent model on the NeoCom MVC for the Colony list that are the planets that have the current
@@ -57,8 +58,8 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 
 	static {
 		modelMapper.getConfiguration()
-		           .setFieldMatchingEnabled(true)
-		           .setMethodAccessLevel(AccessLevel.PRIVATE);
+				.setFieldMatchingEnabled(true)
+				.setMethodAccessLevel(AccessLevel.PRIVATE);
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -87,20 +88,20 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	protected boolean downloaded = true;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Colony () {
+	public Colony() {
 		super();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
 	@Override
-	public List<ICollaboration> collaborate2Model (final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant ) {
 		List<ICollaboration> results = new ArrayList<>();
-		if ( this.isDownloaded() ) {
-			if ( null != structures )
+		if (this.isDownloaded()) {
+			if (null != structures)
 				results.addAll(structures);
 		} else {
-			if ( isExpanded() ) {
+			if (isExpanded()) {
 				// Download the data. The node is expanded and not downloaded.
 				structures = downloadStructures();
 			}
@@ -108,9 +109,14 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		return results;
 	}
 
-	private List<ColonyStructure> downloadStructures () {
+	private List<ColonyStructure> downloadStructures() {
 		setDownloaded(true);
-		return GlobalDataManager.downloadStructures4Colony(ownerId, planetId);
+		try {
+			final List<ColonyStructure> data = accessGlobal().downloadStructures4Colony(ownerId, planetId);
+			return data;
+		} catch (NeoComException e) {
+			return new ArrayList<>();
+		}
 	}
 
 	/**
@@ -118,8 +124,8 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	 *
 	 * @return
 	 */
-	public boolean isDownloaded () {
-		if ( (downloaded) && (null != structures) ) return true;
+	public boolean isDownloaded() {
+		if ((downloaded) && (null != structures)) return true;
 		return false;
 	}
 
@@ -128,7 +134,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	//		return false;
 	//	}
 
-	public Colony setDownloaded (final boolean set) {
+	public Colony setDownloaded( final boolean set ) {
 		downloaded = set;
 		return this;
 	}
@@ -151,161 +157,177 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	 *
 	 * @return
 	 */
-	public boolean isEmpty () {
-		if ( null == structures ) return true;
-		if ( structures.size() < 1 ) return true;
+	public boolean isEmpty() {
+		if (null == structures) return true;
+		if (structures.size() < 1) return true;
 		return false;
 	}
 
-	public boolean isRenderWhenEmpty () {
-		if ( _renderIfEmpty )
+	public boolean isRenderWhenEmpty() {
+		if (_renderIfEmpty)
 			return true;
 		else {
-			if ( this.isEmpty() )
+			if (this.isEmpty())
 				return false;
 			else
 				return true;
 		}
 	}
 
-	public Colony create (final int planetId) {
+	public Colony create( final int planetId ) {
 		try {
-			Dao<Colony, String> colonyDao = GlobalDataManager.getNeocomDBHelper().getColonyDao();
+			Dao<Colony, String> colonyDao = accessGlobal().getNeocomDBHelper().getColonyDao();
 			colonyDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			logger.info("WR [Colony.create]> Colony exists. Update values.");
 			store();
+		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
 
-	public Colony store () {
+	public Colony store() {
 		try {
-			Dao<Colony, String> colonyDao = GlobalDataManager.getNeocomDBHelper().getColonyDao();
+			Dao<Colony, String> colonyDao = accessGlobal().getNeocomDBHelper().getColonyDao();
 			colonyDao.createOrUpdate(this);
 			logger.info("-- [Colony.store]> Colony data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
+		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
-	public Integer getSolarSystemId () {
+	public Integer getSolarSystemId() {
 		return solarSystemId;
 	}
 
-	public Integer getPlanetId () {
+	public Integer getPlanetId() {
 		return planetId;
 	}
 
-	public String getPlanetType () {
+	public String getPlanetType() {
 		return planetType.name();
 	}
 
-	public Integer getOwnerId () {
+	public Integer getOwnerId() {
 		return ownerId;
 	}
 
-	public Integer getUpgradeLevel () {
+	public Integer getUpgradeLevel() {
 		return upgradeLevel;
 	}
 
-	public Integer getNumPins () {
+	public Integer getNumPins() {
 		return numPins;
 	}
 
-	public DateTime getLastUpdate () {
+	public DateTime getLastUpdate() {
 		return lastUpdate;
 	}
 
-	public String getSolarSystemName () {
-		// Location is transient so we have to reload the EveLocation cache if null.
-		if ( null == location ) location = GlobalDataManager.searchLocation4Id(getSolarSystemId());
+	public String getSolarSystemName() {
+		try {
+			// Location is transient so we have to reload the EveLocation cache if null.
+			if (null == location) {
+				location = accessGlobal().searchLocation4Id(getSolarSystemId());
+			}
+		} catch (NeoComException neoe) {
+			location = new EveLocation();
+		}
 		return location.getSystem();
 	}
 
-	public double getSecurityValue () {
-		// Location is transient so we have to reload the EveLocation cache if null.
-		if ( null == location ) location = GlobalDataManager.searchLocation4Id(getSolarSystemId());
-		return location.getSecurityValue();
+	public double getSecurityValue() {
+		try {
+			// Location is transient so we have to reload the EveLocation cache if null.
+			if (null == location) location = accessGlobal().searchLocation4Id(getSolarSystemId());
+			return location.getSecurityValue();
+		} catch (NeoComException neoe) {
+			location = new EveLocation();
+			return location.getSecurityValue();
+		}
 	}
 
-	public Colony setSolarSystemId (final Integer solarSystemId) {
-		this.solarSystemId = solarSystemId;
-		// Locate the solar system data on the Location database.
-		location = GlobalDataManager.searchLocation4Id(solarSystemId);
+	public Colony setSolarSystemId( final Integer solarSystemId ) {
+		try {
+			this.solarSystemId = solarSystemId;
+			// Locate the solar system data on the Location database.
+			location = accessGlobal().searchLocation4Id(solarSystemId);
+		} catch (NeoComException neoe) {
+			location = new EveLocation();
+		}
 		return this;
 	}
 
-	public Colony setPlanetId (final Integer planetId) {
+	public Colony setPlanetId( final Integer planetId ) {
 		this.planetId = planetId;
 		return this;
 	}
 
-	public Colony setPlanetData (final GetUniversePlanetsPlanetIdOk planetData) {
-		//		this.planetData = planetData;
+	public Colony setPlanetData( final GetUniversePlanetsPlanetIdOk planetData ) {
 		// Copy the planet name to the persistence fields and also check if we can store the whole data.
 		planetName = planetData.getName();
 		return this;
 	}
 
-	public Colony setPlanetType (final GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum planetType) {
+	public Colony setPlanetType( final GetCharactersCharacterIdPlanets200Ok.PlanetTypeEnum planetType ) {
 		this.planetType = planetType;
 		return this;
 	}
 
-	public Colony setOwnerId (final Integer ownerId) {
+	public Colony setOwnerId( final Integer ownerId ) {
 		this.ownerId = ownerId;
 		return this;
 	}
 
-	public Colony setUpgradeLevel (final Integer upgradeLevel) {
+	public Colony setUpgradeLevel( final Integer upgradeLevel ) {
 		this.upgradeLevel = upgradeLevel;
 		return this;
 	}
 
-	public Colony setNumPins (final Integer numPins) {
+	public Colony setNumPins( final Integer numPins ) {
 		this.numPins = numPins;
 		return this;
 	}
 
-	public Colony setLastUpdate (final DateTime lastUpdate) {
+	public Colony setLastUpdate( final DateTime lastUpdate ) {
 		this.lastUpdate = lastUpdate;
 		return this;
 	}
 
-	public Colony setStructuresData (final GetCharactersCharacterIdPlanetsPlanetIdOk structures) {
+	public Colony setStructuresData( final GetCharactersCharacterIdPlanetsPlanetIdOk structures ) {
 		this.structureData = structures;
 		this.pins = structures.getPins();
 		return this;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
-	public String getPlanetName () {
+	public String getPlanetName() {
 		return planetName;
 	}
 
-	public List<ColonyStructure> getStructures () {
-		if ( null == structures ) return new ArrayList<>();
+	public List<ColonyStructure> getStructures() {
+		if (null == structures) return new ArrayList<>();
 		else return structures;
 	}
 
-	public void setStructures (final List<ColonyStructure> results) {
+	public void setStructures( final List<ColonyStructure> results ) {
 		structures = results;
 	}
 
-	private List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getPins () {
-		if ( null == pins ) return new ArrayList<>();
+	private List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> getPins() {
+		if (null == pins) return new ArrayList<>();
 		else return pins;
 	}
 
-	public GetCharactersCharacterIdPlanetsPlanetIdOk getStructureData () {
+	public GetCharactersCharacterIdPlanetsPlanetIdOk getStructureData() {
 		return structureData;
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("Colony [");
 		buffer.append("name: ").append(getSolarSystemName());
 		buffer.append("]");
