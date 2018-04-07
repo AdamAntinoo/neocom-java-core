@@ -38,8 +38,8 @@ dependencies {
     implementation project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
-    implementation files('libs/jeveassets.3.1.2.jar')
-    implementation files('libs/CoreBase.core-2.0.2.jar')
+    api files('libs/jeveassets.3.1.2.jar')
+    api files('libs/CoreBase.core-2.0.2.jar')
 //    api files('libs/ESISwaggerApi-1.0.0.jar')
 
     // M O D U L E    D E P E N D E N C I E S
