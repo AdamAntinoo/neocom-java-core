@@ -75,6 +75,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.8.6'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.8.6'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-json-org:2.8.6'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.8.6'
     implementation 'org.apache.commons:commons-lang3:3.7'
 
     implementation 'org.slf4j:slf4j-api:1.7.25'

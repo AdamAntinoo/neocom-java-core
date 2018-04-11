@@ -12,10 +12,12 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.datamngmt.GetUniverseAncestries;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
@@ -33,15 +35,19 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	// - F I E L D - S E C T I O N ............................................................................
 	public int characterId = -1;
 	public String name = "-NAME-";
-	public double accountBalance = -1.0;
-	public String urlforAvatar = "http://image.eveonline.com/character/92223647_256.jpg";
+	public long birthday= 0;
+	public String gender=null;
+	public double securityStatus=0.0;
 	public CorporationV1 corporation = null;
 	public AllianceV1 alliance = null;
 	public GetUniverseRaces200Ok race = null;
 	public GetUniverseBloodlines200Ok bloodline = null;
-//	public GetUniverseAncestries ancestry = null;
+	public GetUniverseAncestries ancestry = null;
 
+
+//	public double accountBalance = -1.0;
 	public EveLocation lastKnownLocation = null;
+
 	private GetCharactersCharacterIdOk publicData = null;
 	private GetCharactersCharacterIdClonesOk cloneInformation = null;
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
@@ -62,6 +68,39 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return name;
 	}
 
+	public long getBirthday() {
+		return birthday;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public double getSecurityStatus() {
+		return securityStatus;
+	}
+
+	public CorporationV1 getCorporation() {
+		return corporation;
+	}
+
+	public AllianceV1 getAlliance() {
+		return alliance;
+	}
+
+	public GetUniverseRaces200Ok getRace() {
+		return race;
+	}
+
+	public GetUniverseBloodlines200Ok getBloodline() {
+		return bloodline;
+	}
+
+	public GetUniverseAncestries getAncestry() {
+		return ancestry;
+	}
+
+	//--- D E R I V E D   G E T T E R S
 	public double getAccountBalance() {
 		return accountBalance;
 	}
@@ -79,51 +118,23 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		}
 	}
 
-	public String getUrlforAvatar() {
-		return urlforAvatar;
-	}
-
-	public CorporationV1 getCorporation() {
-		return corporation;
-	}
-
-	public PilotV2 setCharacterId( final int characterIdentifier ) {
-		this.characterId = characterIdentifier;
-		return this;
-	}
-
-	public PilotV2 setName( final String name ) {
-		this.name = name;
-		return this;
-	}
-
-	public PilotV2 setAccountBalance( final double accountBalance ) {
-		this.accountBalance = accountBalance;
-		return this;
-	}
-
-	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
-		this.homeLocation = homeLocation;
-		// Convert this location pointer to a NeoCom location.
-		try {
-			lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
-		} catch (NeoComException neoe) {
-			lastKnownLocation = new EveLocation();
-		}
-		return this;
-	}
-
+	//--- D A T A   T R A N S F O R M A T I O N
 	/**
-	 * Append to this pilot instance the block of public data. Instead copying the fields set the data as an delegate and then
-	 * fill the other data gaps by requesting more data from the Global provider.
+	 * Use the public data to get access to more other Pilot information and to copy relevant data to the public fields. Public
+	 * data is not used on the normal instance use but the accessed data blocks from the public identifiers.
 	 *
 	 * @param publicData ESI data model with all public identifiers.
 	 */
 	public PilotV2 setPublicData( final GetCharactersCharacterIdOk publicData ) {
+		// Keep a local copy of the data.
 		this.publicData = publicData;
+		// Copy the relative public fields.
+		name=publicData.getName();
+		birthday=publicData.getBirthday().getMillis();
+		gender=publicData.getGender().name().toLowerCase();
+		securityStatus=publicData.getSecurityStatus();
 		return this;
 	}
-
 	public PilotV2 setCorporation( final CorporationV1 corporation ) {
 		this.corporation = corporation;
 		return this;
@@ -144,10 +155,43 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return this;
 	}
 
-//	public PilotV2 setAncestry( final GetUniverseAncestries ancestry ) {
-//		this.ancestry = ancestry;
+	public PilotV2 setAncestry( final GetUniverseAncestries ancestry ) {
+		this.ancestry = ancestry;
+		return this;
+	}
+//-----------------------------------------------------------------------------------------------------
+	//	public String getUrlforAvatar() {
+//		return urlforAvatar;
+//	}
+
+
+	public PilotV2 setCharacterId( final int characterIdentifier ) {
+		this.characterId = characterIdentifier;
+		return this;
+	}
+
+//	public PilotV2 setName( final String name ) {
+//		this.name = name;
 //		return this;
 //	}
+
+	public PilotV2 setAccountBalance( final double accountBalance ) {
+		this.accountBalance = accountBalance;
+		return this;
+	}
+
+	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
+		this.homeLocation = homeLocation;
+		// Convert this location pointer to a NeoCom location.
+		try {
+			lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
+		} catch (NeoComException neoe) {
+			lastKnownLocation = new EveLocation();
+		}
+		return this;
+	}
+
+
 
 	public PilotV2 setCloneInformation( final GetCharactersCharacterIdClonesOk cloneInformation ) {
 		this.cloneInformation = cloneInformation;
@@ -155,7 +199,8 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
-	public String getURLForAvatar() {
+	public String getUrlforAvatar() {
+//		urlforAvatar="http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
 		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
 	}
 

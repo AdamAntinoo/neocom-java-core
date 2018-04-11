@@ -275,7 +275,7 @@ public class MarketDataServer {
 					final int localizer = typeId;
 					logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing type {}", localizer);
 					// Download the market data and store the new data into the cache.
-					final EveItem item = GlobalDataManager.searchItem4Id(localizer);
+					final EveItem item = new GlobalDataManager().searchItem4Id(localizer);
 					try {
 						logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing SELLER");
 						List<TrackEntry> marketEntries = new ArrayList();
@@ -297,7 +297,7 @@ public class MarketDataServer {
 						List<MarketDataEntry> hubData = extractMarketData(marketEntries);
 						// Update the structures related to the newly downloaded data.
 //					MarketDataSet reference = new MarketDataSet(localizer, EMarketSide.SELLER);
-						MarketDataSet reference = GlobalDataManager.searchMarketData(localizer, EMarketSide.SELLER);
+						MarketDataSet reference = new GlobalDataManager().searchMarketData(localizer, EMarketSide.SELLER);
 						reference.setData(hubData);
 						logger.info("-- [MarketDataJobDownloadManager.launchDownloadJob.submit]> Storing data entries {}", hubData.size());
 					} catch (RuntimeException rtex) {

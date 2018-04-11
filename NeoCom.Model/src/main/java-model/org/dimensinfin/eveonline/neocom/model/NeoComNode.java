@@ -28,6 +28,12 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 public abstract class NeoComNode extends ANeoComEntity implements ICollaboration, IJsonAngular {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 6506043294337948561L;
+	public static String capitalizeFirstLetter(String original) {
+		if (original == null || original.length() == 0) {
+			return original;
+		}
+		return original.substring(0, 1).toUpperCase() + original.substring(1);
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	protected String jsonClass = "NeoComNode";

@@ -70,6 +70,22 @@ public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 
+	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
+	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
+
+	public enum ECacheTimes {
+		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
+	}
+
+	static {
+		ESICacheTimes.put(ECacheTimes.CHARACTER_PUBLIC, TimeUnit.SECONDS.toMillis(3600));
+		ESICacheTimes.put(ECacheTimes.CHARACTER_CLONES, TimeUnit.SECONDS.toMillis(200));
+		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
+		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
+	}
+
 	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
 	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
 	private static final String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
@@ -122,7 +138,7 @@ public class ESINetworkManager {
 	private static final Hashtable<String, Response<?>> okResponseCache = new Hashtable();
 
 	// - S T A T I C   U T I L I T Y   M E T H O D S
-	public static String constructCachePointerReference( final GlobalDataManager.ECacheTimes cachecode, final int identifier ) {
+	public static String constructCachePointerReference( final ECacheTimes cachecode, final int identifier ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
 				.append(":")
@@ -130,7 +146,7 @@ public class ESINetworkManager {
 				.toString();
 	}
 
-	public static String constructCachePointerReference( final GlobalDataManager.ECacheTimes cachecode, final int
+	public static String constructCachePointerReference( final ECacheTimes cachecode, final int
 			identifier1, final int identifier2 ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
@@ -183,6 +199,9 @@ public class ESINetworkManager {
 		} catch (IOException ioe) {
 			logger.error("EX [ESINetworkManager.getCharactersCharacterIdClones]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
+		} catch (RuntimeException rte) {
+			logger.error("EX [ESINetworkManager.getCharactersCharacterIdClones]> [EXCEPTION]: {}", rte.getMessage());
+			rte.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
@@ -273,7 +292,7 @@ public class ESINetworkManager {
 	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(GlobalDataManager.ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
+		final String reference = constructCachePointerReference(ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		if (null == hit) {
 			final Chrono accessFullTime = new Chrono();
@@ -328,8 +347,7 @@ public class ESINetworkManager {
 	public static GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier, final int planetid, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(GlobalDataManager.ECacheTimes
-				.PLANETARY_INTERACTION_STRUCTURES, identifier, planetid);
+		final String reference = constructCachePointerReference(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier, planetid);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
 		if (null == hit) {

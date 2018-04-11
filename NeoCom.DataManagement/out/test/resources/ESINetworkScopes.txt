@@ -1,2 +1,0 @@
-publicData
-esi-planets.manage_planets.v1

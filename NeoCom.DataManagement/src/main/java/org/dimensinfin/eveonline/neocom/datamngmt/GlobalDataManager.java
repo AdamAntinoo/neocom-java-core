@@ -59,7 +59,6 @@ import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.datahub.manager.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
@@ -72,6 +71,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -93,10 +93,12 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManager {
+public class GlobalDataManager extends SDEExternalDataManager implements IGlobalConnector{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
-
+//public getSingleton(){
+//	return new GlobalDataManager();
+//}
 	// --- P U B L I C   E N U M E R A T O R S
 	public enum EDataUpdateJobs {
 		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
@@ -215,10 +217,10 @@ public class GlobalDataManager {
 	private static Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
-	private static org.dimensinfin.eveonline.neocom.datamngmt.manager.MarketDataServer marketDataService = null;
+	private static MarketDataServer marketDataService = null;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public static void setMarketDataManager( final org.dimensinfin.eveonline.neocom.datamngmt.manager.MarketDataServer manager ) {
+	public static void setMarketDataManager( final MarketDataServer manager ) {
 		logger.info(">> [GlobalDataManager.setMarketDataManager]");
 		marketDataService = manager;
 		// At this point we should have been initialized.
@@ -231,7 +233,7 @@ public class GlobalDataManager {
 		logger.info("<< [GlobalDataManager.setMarketDataManager]");
 	}
 
-	public static MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
+	public  MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
 		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
@@ -247,7 +249,7 @@ public class GlobalDataManager {
 	 * @param typeId
 	 * @return
 	 */
-	public static GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
+	public  GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
 		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
 		if (null == hit) {
 			final GetMarketsPrices200Ok newprice = new GetMarketsPrices200Ok().typeId(typeId);
@@ -422,7 +424,7 @@ public class GlobalDataManager {
 	 */
 	private static ISDEDBHelper neocomSDEHelper = null;
 
-	private static ISDEDBHelper getSDEDBHelper() {
+	public  ISDEDBHelper getSDEDBHelper() {
 		if (null == neocomSDEHelper)
 			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
 		return neocomSDEHelper;
@@ -434,32 +436,32 @@ public class GlobalDataManager {
 			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
 	}
 
-	public static EveItem searchItem4Id( final int typeId ) {
+	public  EveItem searchItem4Id( final int typeId ) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 		if (itemCache.containsKey(typeId)) return itemCache.get(typeId);
 		else {
-			final EveItem hit = GlobalDataManager.getSDEDBHelper().searchItem4Id(typeId);
+			final EveItem hit = new GlobalDataManager().getSDEDBHelper().searchItem4Id(typeId);
 			// Add the hit to the cache.
 			itemCache.put(typeId, hit);
 			return hit;
 		}
 	}
 
-	public static EveLocation searchLocation4Id( final long locationId ) {
+	public  EveLocation searchLocation4Id( final long locationId ) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 		if (locationCache.containsKey(locationId)) {
 			// Account for a hit on the cache.
-			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
-			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();
+			int access = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
+			int hits = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.getHits();
 			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
 			return locationCache.get(locationId);
 		} else {
-			final EveLocation hit = GlobalDataManager.getSDEDBHelper().searchLocation4Id(locationId);
+			final EveLocation hit = new GlobalDataManager().getSDEDBHelper().searchLocation4Id(locationId);
 			// Add the hit to the cache but only when it is not UNKNOWN.
 			if (hit.getTypeID() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
 			// Account for a miss on the cache.
-			int access = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
-			int hits = GlobalDataManager.getSDEDBHelper().locationsCacheStatistics.getHits();
+			int access = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
+			int hits = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.getHits();
 			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {} found at database.",
 					locationId);
 			return hit;
@@ -467,13 +469,13 @@ public class GlobalDataManager {
 	}
 
 	public static EveLocation searchLocationBySystem( final String name ) {
-		return GlobalDataManager.getSDEDBHelper().searchLocationBySystem(name);
+		return new GlobalDataManager().getSDEDBHelper().searchLocationBySystem(name);
 	}
 
 	public static ItemGroup searchItemGroup4Id( final int targetGroupId ) {
 		if (itemGroupCache.containsKey(targetGroupId)) return itemGroupCache.get(targetGroupId);
 		else {
-			final ItemGroup hit = GlobalDataManager.getSDEDBHelper().searchItemGroup4Id(targetGroupId);
+			final ItemGroup hit = new GlobalDataManager().getSDEDBHelper().searchItemGroup4Id(targetGroupId);
 			// Add the hit to the cache.
 			itemGroupCache.put(targetGroupId, hit);
 			return hit;
@@ -483,31 +485,31 @@ public class GlobalDataManager {
 	public static ItemCategory searchItemCategory4Id( final int targetCategoryId ) {
 		if (itemCategoryCache.containsKey(targetCategoryId)) return itemCategoryCache.get(targetCategoryId);
 		else {
-			final ItemCategory hit = GlobalDataManager.getSDEDBHelper().searchItemCategory4Id(targetCategoryId);
+			final ItemCategory hit = new GlobalDataManager().getSDEDBHelper().searchItemCategory4Id(targetCategoryId);
 			// Add the hit to the cache.
 			itemCategoryCache.put(targetCategoryId, hit);
 			return hit;
 		}
 	}
 
-	public static int searchStationType( final long typeId ) {
-		return GlobalDataManager.getSDEDBHelper().searchStationType(typeId);
+	public  int searchStationType( final long typeId ) {
+		return new GlobalDataManager().getSDEDBHelper().searchStationType(typeId);
 	}
 
-	public static int searchModule4Blueprint( final int bpitemID ) {
-		return GlobalDataManager.getSDEDBHelper().searchModule4Blueprint(bpitemID);
+	public  int searchModule4Blueprint( final int bpitemID ) {
+		return new GlobalDataManager().getSDEDBHelper().searchModule4Blueprint(bpitemID);
 	}
 
 	public static String searchTech4Blueprint( final int blueprintID ) {
-		return GlobalDataManager.getSDEDBHelper().searchTech4Blueprint(blueprintID);
+		return new GlobalDataManager().getSDEDBHelper().searchTech4Blueprint(blueprintID);
 	}
 
 	public static int searchRawPlanetaryOutput( final int typeID ) {
-		return GlobalDataManager.getSDEDBHelper().searchRawPlanetaryOutput(typeID);
+		return new GlobalDataManager().getSDEDBHelper().searchRawPlanetaryOutput(typeID);
 	}
 
 	public static List<Schematics> searchSchematics4Output( final int targetId ) {
-		return GlobalDataManager.getSDEDBHelper().searchSchematics4Output(targetId);
+		return new GlobalDataManager().getSDEDBHelper().searchSchematics4Output(targetId);
 	}
 
 	// --- N E O C O M   P R I V A T E   D A T A B A S E   S E C T I O N
@@ -516,7 +518,7 @@ public class GlobalDataManager {
 	 */
 	private static INeoComDBHelper neocomDBHelper = null;
 
-	public static INeoComDBHelper getNeocomDBHelper() {
+	public  INeoComDBHelper getNeocomDBHelper() {
 		if (null == neocomDBHelper)
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
 		return neocomDBHelper;
@@ -526,6 +528,23 @@ public class GlobalDataManager {
 		if (null != newhelper) neocomDBHelper = newhelper;
 		else
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
+	}
+	/**
+	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
+	 * interpretation used by the application.
+	 */
+	public static List<Credential> accessAllCredentials() {
+		List<Credential> credentialList = new ArrayList<>();
+		try {
+//			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
+//			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
+//			credentialList = credentialDao.query(preparedQuery);
+			credentialList = new GlobalDataManager().getNeocomDBHelper().getCredentialDao().queryForAll();
+		} catch (java.sql.SQLException sqle) {
+			sqle.printStackTrace();
+			logger.warn("W [GlobalDataManager.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
+		}
+		return credentialList;
 	}
 
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
@@ -621,7 +640,7 @@ public class GlobalDataManager {
 	}
 
 	// TODO Review with the use of session
-	public static List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
+	public  List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
 		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
 		List<ColonyStructure> results = new ArrayList<>();
 //		// Get the Credential that matched the received identifier.
@@ -860,10 +879,7 @@ public class GlobalDataManager {
 			jgen.writeNumberField("accountId", value.getAccountId());
 			jgen.writeStringField("accountName", value.getAccountName());
 			jgen.writeStringField("tokenType", value.getTokenType());
-			jgen.writeBooleanField("isActive", value.isActive());
-			jgen.writeBooleanField("isXML", value.isXMLCompatible());
 			jgen.writeBooleanField("isESI", value.isESICompatible());
-//			jgen.writeObjectField("pilot", GlobalDataManager.getPilotV2(value.getAccountId()));
 			jgen.writeEndObject();
 		}
 	}
@@ -892,38 +908,38 @@ public class GlobalDataManager {
 	}
 	// ........................................................................................................
 
-	// - CLASS IMPLEMENTATION ...................................................................................
-	public static class SessionContext {
-		// - S T A T I C - S E C T I O N ..........................................................................
-
-		// - F I E L D - S E C T I O N ............................................................................
-		private Credential credential = null;
-
-		// - C O N S T R U C T O R - S E C T I O N ................................................................
-		public SessionContext() {
-		}
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-
-		public Credential getCredential() {
-			return credential;
-		}
-
-		public void setCredential( final Credential credential ) {
-			this.credential = credential;
-		}
-
-		// --- D E L E G A T E D   M E T H O D S
-		@Override
-		public String toString() {
-			return new StringBuffer("SessionContext [")
-					.append("Credential:").append(credential.getAccountName()).append(" ")
-					.append("]")
-//				.append("->").append(super.toString())
-					.toString();
-		}
-	}
-	// ........................................................................................................
+//	// - CLASS IMPLEMENTATION ...................................................................................
+//	public static class SessionContext {
+//		// - S T A T I C - S E C T I O N ..........................................................................
+//
+//		// - F I E L D - S E C T I O N ............................................................................
+//		private Credential credential = null;
+//
+//		// - C O N S T R U C T O R - S E C T I O N ................................................................
+//		public SessionContext() {
+//		}
+//
+//		// - M E T H O D - S E C T I O N ..........................................................................
+//
+//		public Credential getCredential() {
+//			return credential;
+//		}
+//
+//		public void setCredential( final Credential credential ) {
+//			this.credential = credential;
+//		}
+//
+//		// --- D E L E G A T E D   M E T H O D S
+//		@Override
+//		public String toString() {
+//			return new StringBuffer("SessionContext [ ")
+//					.append("Credential:").append(credential.getAccountName()).append(" ")
+//					.append("]")
+////				.append("->").append(super.toString())
+//					.toString();
+//		}
+//	}
+//	// ........................................................................................................
 }
 // - UNUSED CODE ............................................................................................
 //[01]
