@@ -53,24 +53,11 @@ public class SDEExternalDataManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("SDEExternalDataManager");
 
-	//--- Y A M L - L O C A T I O N   F L A G S
-	private static ObjectMapper yamlMapper = null;
-
-	static {
-		final YAMLFactory yamlFactory = new YAMLFactory();
-		yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-
-		yamlMapper = new ObjectMapper(yamlFactory);
-		yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-		yamlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
-
-	private static final String inventoryFlagFileLocation = GlobalDataManager.getResourceString("R.sde.external.yaml.locationpath")
-			+ GlobalDataManager.getResourceString("R.sde.external.yaml.inventoryFlag");
-	private static final HashMap<Integer, InventoryFlag> flagStore = new HashMap();
-
-	static {
-		// Loading YAML data during initialization.
+	public static void initialize() {
+		// Load SDE data files and create the caches.
+		// YAML Location Flags.
+		final String inventoryFlagFileLocation = GlobalDataManager.getResourceString("R.sde.external.yaml.locationpath")
+				+ GlobalDataManager.getResourceString("R.sde.external.yaml.inventoryFlag");
 		try {
 			final File sourceFile = new File(inventoryFlagFileLocation);
 			final List<InventoryFlag> flagList = yamlMapper.readValue(sourceFile, new TypeReference<List<InventoryFlag>>() {
@@ -87,7 +74,51 @@ public class SDEExternalDataManager {
 			rtex.printStackTrace();
 		}
 
+		// JSON Ancestries
+		readAncestries();
+		// JSON Bloodlines
+		readBloodLines();
+		// JSON Races
+		readRaces();
 	}
+
+	//--- Y A M L - L O C A T I O N   F L A G S
+	private static ObjectMapper yamlMapper = null;
+
+	static {
+		final YAMLFactory yamlFactory = new YAMLFactory();
+		yamlFactory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
+
+		yamlMapper = new ObjectMapper(yamlFactory);
+		yamlMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		yamlMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
+
+	private static final HashMap<Integer, InventoryFlag> flagStore = new HashMap();
+
+//	private static final String inventoryFlagFileLocation = GlobalDataManager.getResourceString("R.sde.external.yaml.locationpath")
+//			+ GlobalDataManager.getResourceString("R.sde.external.yaml.inventoryFlag");
+//	private static final HashMap<Integer, InventoryFlag> flagStore = new HashMap();
+
+//	static {
+//		// Loading YAML data during initialization.
+//		try {
+//			final File sourceFile = new File(inventoryFlagFileLocation);
+//			final List<InventoryFlag> flagList = yamlMapper.readValue(sourceFile, new TypeReference<List<InventoryFlag>>() {
+//			});
+//			flagStore.clear();
+//			// Transform the list into map to simply the search for the elements.
+//			Stream.of(flagList)
+//					.forEach(( flag ) -> {
+//						flagStore.put(flag.getFlagID(), flag);
+//					});
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		} catch (RuntimeException rtex) {
+//			rtex.printStackTrace();
+//		}
+//
+//	}
 
 	public static InventoryFlag searchFlag4Id( final int identifier ) {
 		return flagStore.get(identifier);
@@ -111,17 +142,19 @@ public class SDEExternalDataManager {
 //		neocomSerializerModule.addSerializer(Credential.class, new CredentialSerializer());
 //		jsonMapper.registerModule(neocomSerializerModule);
 	}
+
 	public static void readAncestries() {
 		logger.info(">> [SDEExternalDataManager.readAncestries");
 		try {
 			// Get the file location to process.
 			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
 					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.ancestries");
-			final List<GetUniverseBloodlines200Ok> bloodLines = jsonMapper.readValue(new File(source), new TypeReference<List<GetUniverseBloodlines200Ok>>() {
+			final List<GetUniverseAncestries> ancestries = jsonMapper.readValue(new File(source), new
+					TypeReference<List<GetUniverseAncestries>>() {
 			});
-			bloodLinesCache.clear();
-			for (GetUniverseBloodlines200Ok line : bloodLines) {
-				bloodLinesCache.put(line.getBloodlineId(), line);
+			ancestriesCache.clear();
+			for (GetUniverseAncestries line : ancestries) {
+				ancestriesCache.put(line.getId(), line);
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -160,24 +193,24 @@ public class SDEExternalDataManager {
 		return hit;
 	}
 	//--- J S O N - R A C E S
-public static void readRaces() {
-	logger.info(">> [SDEExternalDataManager.readRaces");
-	try {
-		// Get the file location to process.
-		final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
-				+ GlobalDataManager.getResourceString("R.sde.external.json.universe.races");
-		final List<GetUniverseRaces200Ok> races = jsonMapper.readValue(new File(source), new
-				TypeReference<List<GetUniverseRaces200Ok>>() {
-		});
-		racesCache.clear();
-		for (GetUniverseRaces200Ok line : races) {
-			racesCache.put(line.getRaceId(), line);
+	public static void readRaces() {
+		logger.info(">> [SDEExternalDataManager.readRaces");
+		try {
+			// Get the file location to process.
+			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
+					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.races");
+			final List<GetUniverseRaces200Ok> races = jsonMapper.readValue(new File(source), new
+					TypeReference<List<GetUniverseRaces200Ok>>() {
+					});
+			racesCache.clear();
+			for (GetUniverseRaces200Ok line : races) {
+				racesCache.put(line.getRaceId(), line);
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		}
-	} catch (IOException ioe) {
-		ioe.printStackTrace();
+		logger.info(">> [SDEExternalDataManager.readRaces");
 	}
-	logger.info(">> [SDEExternalDataManager.readRaces");
-}
 
 	public static GetUniverseRaces200Ok searchSDERace( final int identifier ) {
 		GetUniverseRaces200Ok hit = racesCache.get(identifier);

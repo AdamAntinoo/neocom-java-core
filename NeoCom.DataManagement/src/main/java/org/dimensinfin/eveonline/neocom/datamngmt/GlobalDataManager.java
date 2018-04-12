@@ -39,10 +39,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 
 import org.joda.time.Instant;
 import org.modelmapper.ModelMapper;
@@ -61,13 +57,9 @@ import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -93,10 +85,11 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManager extends SDEExternalDataManager implements IGlobalConnector{
+public class GlobalDataManager extends SDEExternalDataManager implements IGlobalConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
-//public getSingleton(){
+
+	//public getSingleton(){
 //	return new GlobalDataManager();
 //}
 	// --- P U B L I C   E N U M E R A T O R S
@@ -137,27 +130,34 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 //	 */
 
 	// --- C O N F I G U R A T I O N   S E C T I O N
-	private static IConfigurationProvider configurationManager = new GlobalConfigurationProvider(null);
+	private static IConfigurationProvider configurationManager = null/*new GlobalConfigurationProvider(null)*/;
+
+	private static IConfigurationProvider accessconfigurationManager() {
+		// If the Configuration is not already loaded then connect a default configuration provider.
+		if (null == configurationManager) configurationManager = new GlobalConfigurationProvider(null);
+		return configurationManager;
+	}
 
 	public static void connectConfigurationManager( final IConfigurationProvider newconfigurationProvider ) {
 		configurationManager = newconfigurationProvider;
 		// Load configuration properties into default values.
 		// ESI Server selection
 		SERVER_DATASOURCE = GlobalDataManager.getResourceString("R.esi.authorization.datasource", "tranquility");
-//		configurationManager.initialize();
+		// ESI Data load.
+		SDEExternalDataManager.initialize();
 	}
 
 	public static String getResourceString( final String key ) {
-		return configurationManager.getResourceString(key);
+		return accessconfigurationManager().getResourceString(key);
 	}
 
 	public static String getResourceString( final String key, final String defaultValue ) {
-		return configurationManager.getResourceString(key, defaultValue);
+		return accessconfigurationManager().getResourceString(key, defaultValue);
 	}
 
 	public static int getResourceInt( final String key ) {
 		try {
-			return Integer.valueOf(configurationManager.getResourceString(key)).intValue();
+			return Integer.valueOf(accessconfigurationManager().getResourceString(key)).intValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -165,7 +165,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 
 	public static int getResourceInt( final String key, final String defaultValue ) {
 		try {
-			return Integer.valueOf(configurationManager.getResourceString(key, defaultValue)).intValue();
+			return Integer.valueOf(accessconfigurationManager().getResourceString(key, defaultValue)).intValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -173,7 +173,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 
 	public static long getResourceLong( final String key ) {
 		try {
-			return Long.valueOf(configurationManager.getResourceString(key)).longValue();
+			return Long.valueOf(accessconfigurationManager().getResourceString(key)).longValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -181,18 +181,18 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 
 	public static long getResourceLong( final String key, final String defaultValue ) {
 		try {
-			return Long.valueOf(configurationManager.getResourceString(key, defaultValue)).longValue();
+			return Long.valueOf(accessconfigurationManager().getResourceString(key, defaultValue)).longValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
 	}
 
 	public static boolean getResourceBoolean( final String key ) {
-		return Boolean.valueOf(configurationManager.getResourceString(key)).booleanValue();
+		return Boolean.valueOf(accessconfigurationManager().getResourceString(key)).booleanValue();
 	}
 
 	public static boolean getResourceBoolean( final String key, final boolean defaultValue ) {
-		return Boolean.valueOf(configurationManager.getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
+		return Boolean.valueOf(accessconfigurationManager().getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
 	}
 
 	// --- P R E F E R E N C E S   S E C T I O N
@@ -233,7 +233,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 		logger.info("<< [GlobalDataManager.setMarketDataManager]");
 	}
 
-	public  MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
+	public MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
 		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
@@ -249,7 +249,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 	 * @param typeId
 	 * @return
 	 */
-	public  GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
+	public GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
 		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
 		if (null == hit) {
 			final GetMarketsPrices200Ok newprice = new GetMarketsPrices200Ok().typeId(typeId);
@@ -424,7 +424,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 	 */
 	private static ISDEDBHelper neocomSDEHelper = null;
 
-	public  ISDEDBHelper getSDEDBHelper() {
+	public ISDEDBHelper getSDEDBHelper() {
 		if (null == neocomSDEHelper)
 			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
 		return neocomSDEHelper;
@@ -436,7 +436,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
 	}
 
-	public  EveItem searchItem4Id( final int typeId ) {
+	public EveItem searchItem4Id( final int typeId ) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 		if (itemCache.containsKey(typeId)) return itemCache.get(typeId);
 		else {
@@ -447,7 +447,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 		}
 	}
 
-	public  EveLocation searchLocation4Id( final long locationId ) {
+	public EveLocation searchLocation4Id( final long locationId ) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 		if (locationCache.containsKey(locationId)) {
 			// Account for a hit on the cache.
@@ -492,11 +492,11 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 		}
 	}
 
-	public  int searchStationType( final long typeId ) {
+	public int searchStationType( final long typeId ) {
 		return new GlobalDataManager().getSDEDBHelper().searchStationType(typeId);
 	}
 
-	public  int searchModule4Blueprint( final int bpitemID ) {
+	public int searchModule4Blueprint( final int bpitemID ) {
 		return new GlobalDataManager().getSDEDBHelper().searchModule4Blueprint(bpitemID);
 	}
 
@@ -518,7 +518,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 	 */
 	private static INeoComDBHelper neocomDBHelper = null;
 
-	public  INeoComDBHelper getNeocomDBHelper() {
+	public INeoComDBHelper getNeocomDBHelper() {
 		if (null == neocomDBHelper)
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
 		return neocomDBHelper;
@@ -529,6 +529,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 		else
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
 	}
+
 	/**
 	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
 	 * interpretation used by the application.
@@ -640,7 +641,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 	}
 
 	// TODO Review with the use of session
-	public  List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
+	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
 		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
 		List<ColonyStructure> results = new ArrayList<>();
 //		// Get the Credential that matched the received identifier.

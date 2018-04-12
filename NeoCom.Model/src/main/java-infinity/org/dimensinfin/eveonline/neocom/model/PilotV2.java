@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
-import org.dimensinfin.eveonline.neocom.datamngmt.GetUniverseAncestries;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
@@ -34,9 +33,9 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	public int characterId = -1;
-	public String name = "-NAME-";
+	public String name = "-NOT-KNOWN-";
 	public long birthday= 0;
-	public String gender=null;
+	public String gender="-undefined-";
 	public double securityStatus=0.0;
 	public CorporationV1 corporation = null;
 	public AllianceV1 alliance = null;
@@ -45,7 +44,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public GetUniverseAncestries ancestry = null;
 
 
-//	public double accountBalance = -1.0;
+	public double accountBalance = -1.0;
 	public EveLocation lastKnownLocation = null;
 
 	private GetCharactersCharacterIdOk publicData = null;
