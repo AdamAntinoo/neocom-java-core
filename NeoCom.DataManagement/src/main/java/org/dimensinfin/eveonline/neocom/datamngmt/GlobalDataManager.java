@@ -85,28 +85,13 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManager extends SDEExternalDataManager implements IGlobalConnector {
+public class GlobalDataManager extends GlobalDataManagerNetwork implements IGlobalConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 
 	//public getSingleton(){
 //	return new GlobalDataManager();
 //}
-	// --- P U B L I C   E N U M E R A T O R S
-	public enum EDataUpdateJobs {
-		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
-	}
-
-	// --- P R I V A T E   E N U M E R A T O R S
-	protected enum EModelVariants {
-		PILOTV1, PILOTV2, CORPORATIONV1, ALLIANCEV1
-	}
-
-	private enum EManagerCodes {
-		PLANETARY_MANAGER, ASSETS_MANAGER
-	}
-
-	public static String SERVER_DATASOURCE = "tranquility";
 
 	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
 	private static final List<ExceptionRecord> exceptionsIntercepted = new ArrayList();
@@ -128,89 +113,6 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 //	 * GDM singleton to store all data, caches and references. The use of a singleton will allow to drop all data
 //	 * on a single operation and restart all data caches.
 //	 */
-
-	// --- C O N F I G U R A T I O N   S E C T I O N
-	private static IConfigurationProvider configurationManager = null/*new GlobalConfigurationProvider(null)*/;
-
-	private static IConfigurationProvider accessconfigurationManager() {
-		// If the Configuration is not already loaded then connect a default configuration provider.
-		if (null == configurationManager) configurationManager = new GlobalConfigurationProvider(null);
-		return configurationManager;
-	}
-
-	public static void connectConfigurationManager( final IConfigurationProvider newconfigurationProvider ) {
-		configurationManager = newconfigurationProvider;
-		// Load configuration properties into default values.
-		// ESI Server selection
-		SERVER_DATASOURCE = GlobalDataManager.getResourceString("R.esi.authorization.datasource", "tranquility");
-		// ESI Data load.
-		SDEExternalDataManager.initialize();
-	}
-
-	public static String getResourceString( final String key ) {
-		return accessconfigurationManager().getResourceString(key);
-	}
-
-	public static String getResourceString( final String key, final String defaultValue ) {
-		return accessconfigurationManager().getResourceString(key, defaultValue);
-	}
-
-	public static int getResourceInt( final String key ) {
-		try {
-			return Integer.valueOf(accessconfigurationManager().getResourceString(key)).intValue();
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
-	}
-
-	public static int getResourceInt( final String key, final String defaultValue ) {
-		try {
-			return Integer.valueOf(accessconfigurationManager().getResourceString(key, defaultValue)).intValue();
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
-	}
-
-	public static long getResourceLong( final String key ) {
-		try {
-			return Long.valueOf(accessconfigurationManager().getResourceString(key)).longValue();
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
-	}
-
-	public static long getResourceLong( final String key, final String defaultValue ) {
-		try {
-			return Long.valueOf(accessconfigurationManager().getResourceString(key, defaultValue)).longValue();
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
-	}
-
-	public static boolean getResourceBoolean( final String key ) {
-		return Boolean.valueOf(accessconfigurationManager().getResourceString(key)).booleanValue();
-	}
-
-	public static boolean getResourceBoolean( final String key, final boolean defaultValue ) {
-		return Boolean.valueOf(accessconfigurationManager().getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
-	}
-
-	// --- P R E F E R E N C E S   S E C T I O N
-	private static final IGlobalPreferencesManager preferencesManager = new GlobalPreferencesManager();
-
-	public static IGlobalPreferencesManager getDefaultSharedPreferences() {
-		return preferencesManager;
-	}
-//	/**
-//	 * Export the api methods found on the Preferences management at Android. Return a boolena formatted result.
-//	 */
-//	public static boolean getBooleanPreference( final String preferenceName ) {
-//		return preferencesManager.getBooleanPreference(preferenceName);
-//	}
-//
-//	public static boolean getBooleanPreference( final String preferenceName, final boolean defaultValue ) {
-//		return preferencesManager.getBooleanPreference(preferenceName, defaultValue);
-//	}
 
 	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
@@ -323,33 +225,6 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 		} finally {
 			logger.info("<< [GlobalDataManager.writeLocationsDatacache]");
 		}
-	}
-
-	// --- M A P P E R S   &   T R A N S F O R M E R S   S E C T I O N
-	/**
-	 * Instance for the mapping of OK instances to the MVC compatible classes.
-	 */
-	private static final ModelMapper modelMapper = new ModelMapper();
-
-	static {
-		modelMapper.getConfiguration()
-				.setFieldMatchingEnabled(true)
-				.setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
-	}
-
-	/**
-	 * Jackson mapper to use for object json serialization.
-	 */
-	private static final ObjectMapper jsonMapper = new ObjectMapper();
-
-	static {
-		jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		jsonMapper.registerModule(new JodaModule());
-		// Add our own serializers.
-		SimpleModule neocomSerializerModule = new SimpleModule();
-//		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
-		neocomSerializerModule.addSerializer(Credential.class, new CredentialSerializer());
-		jsonMapper.registerModule(neocomSerializerModule);
 	}
 
 	// --- M U L T I T H R E A D I N G   S E C T I O N
@@ -548,180 +423,7 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 		return credentialList;
 	}
 
-	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
-	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long
-			identifier ) {
-		return new StringBuffer("TS/")
-				.append(type.name())
-				.append("/")
-				.append(identifier)
-				.toString();
-	}
 
-	public static String constructJobReference( final EDataUpdateJobs type, final long identifier ) {
-		return new StringBuffer("JOB:")
-				.append(type.name())
-				.append("/")
-				.append(identifier)
-				.toString();
-	}
-
-	public static String constructPlanetStorageIdentifier( final int characterIdentifier, final int planetIdentifier ) {
-		return new StringBuffer("CS:")
-				.append(Integer.valueOf(characterIdentifier).toString())
-				.append(":")
-				.append(Integer.valueOf(planetIdentifier).toString())
-				.toString();
-	}
-
-	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
-	public static List<Colony> downloadColonies4Credential( final Credential credential ) {
-		// Optimize the access to the Colony data.
-		//		if(colonies.size()<1) {
-		final Chrono accessFullTime = new Chrono();
-		List<Colony> colonies = new ArrayList<>();
-		try {
-			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
-			final int identifier = credential.getAccountId();
-			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = ESINetworkManager.getCharactersCharacterIdPlanets(identifier, credential.getRefreshToken(), SERVER_DATASOURCE);
-			// Transform the received OK instance into a NeoCom compatible model instance.
-			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
-				try {
-					Colony col = modelMapper.map(colonyOK, Colony.class);
-					// Block to add additional data not downloaded on this call.
-					// To set more information about this particular planet we should call the Universe database.
-					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-					if (null != planetData) col.setPlanetData(planetData);
-
-					try {
-						// During this first phase download all the rest of the information.
-						// Get to the Network and download the data from the ESI api.
-						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-						if (null != colonyStructures) {
-							// Add the original data to the colony if we need some more information later.
-							col.setStructuresData(colonyStructures);
-							List<ColonyStructure> results = new ArrayList<>();
-
-							// Process the structures converting the pin to the Colony structures compatible with MVC.
-							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
-								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-								try {
-									final String serialized = jsonMapper.writeValueAsString(newstruct);
-									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId()
-											, col.getPlanetId());
-									// TODO Removed until the compilation is complete. This is something we should review before adding
-									// it back.
-//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-//											.setPlanetIdentifier(storageIdentifier)
-//											.setColonySerialization(serialized)
-//											.store();
-								} catch (JsonProcessingException jpe) {
-									jpe.printStackTrace();
-								}
-								// missing code
-								results.add(newstruct);
-							}
-							col.setStructures(results);
-						}
-					} catch (RuntimeException rtex) {
-						rtex.printStackTrace();
-					}
-					col.store();
-					colonies.add(col);
-				} catch (RuntimeException rtex) {
-					rtex.printStackTrace();
-				}
-			}
-		} catch (RuntimeException rtex) {
-			rtex.printStackTrace();
-		}
-		return colonies;
-	}
-
-	// TODO Review with the use of session
-	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
-		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
-		List<ColonyStructure> results = new ArrayList<>();
-//		// Get the Credential that matched the received identifier.
-//		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-//		if (null != credential) {
-//			// Get to the Network and download the data from the ESI api.
-//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
-//			if (null != colonyStructures) {
-//				// Process the structures converting the pin to the Colony structures compatible with MVC.
-//				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-//				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-//					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
-//					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-//					try {
-//						final String serialized = jsonMapper.writeValueAsString(newstruct);
-//						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
-//						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-//								.setPlanetIdentifier(storageIdentifier)
-//								.setColonySerialization(serialized)
-//								.store();
-//					} catch (JsonProcessingException jpe) {
-//						jpe.printStackTrace();
-//					}
-//					results.add(newstruct);
-//				}
-//			}
-//		} else {
-//			// TODO. It will not return null. The miss searching for a credential will generate an exception.
-//			// Possible that because the application has been previously removed from memory that data is not reloaded.
-//			// Call the reloading mechanism and have a second opportunity.
-//			DataManagementModelStore.accessCredentialList();
-//			credential = DataManagementModelStore.getCredential4Id(characterid);
-//			if (null == credential) return new ArrayList<>();
-//			else return GlobalDataManager.downloadStructures4Colony(characterid, planetid);
-//		}
-		return results;
-	}
-//
-//	public static List<Fitting> downloadFitting4Credential( final int characterid ) {
-//		logger.info(">> [GlobalDataManager.downloadFitting4Credential]");
-//		List<Fitting> results = new ArrayList<>();
-//		try {
-//			Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-////		if (null != credential) {
-//			// Get to the Network and download the data from the ESI api.
-//			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings(characterid, credential.getRefreshToken(), SERVER_DATASOURCE);
-//			if (null != fittings) {
-//				// Process the fittings processing them and converting the data to structures compatible with MVC.
-//
-//////				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-//				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
-//					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
-////					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-////					try {
-////						final String serialized = jsonMapper.writeValueAsString(newstruct);
-////						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
-////						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-////								.setPlanetIdentifier(storageIdentifier)
-////								.setColonySerialization(serialized)
-////								.store();
-////					} catch (JsonProcessingException jpe) {
-////						jpe.printStackTrace();
-////					}
-//					results.add(newfitting);
-////				}
-//				}
-//			}
-//			return results;
-//		} catch (NeocomRuntimeException nrex) {
-//			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
-//					.getMessage());
-//			return new ArrayList<>();
-//		} catch (RuntimeException ntex) {
-//			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
-//					.getMessage());
-//			return new ArrayList<>();
-//		} finally {
-//			logger.info("<< [GlobalDataManager.downloadFitting4Credential]");
-//		}
-//	}
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E
 //	public static String serializeCredentialList( final List<Credential> credentials ) {
 //		// Use my own serialization control to return the data to generate exactly what I want.
@@ -865,25 +567,6 @@ public class GlobalDataManager extends SDEExternalDataManager implements IGlobal
 //			jgen.writeEndObject();
 //		}
 //	}
-	// ........................................................................................................
-
-	// - CLASS IMPLEMENTATION ...................................................................................
-	public static class CredentialSerializer extends JsonSerializer<Credential> {
-		// - F I E L D - S E C T I O N ............................................................................
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-		@Override
-		public void serialize( final Credential value, final JsonGenerator jgen, final SerializerProvider provider )
-				throws IOException, JsonProcessingException {
-			jgen.writeStartObject();
-			jgen.writeStringField("jsonClass", value.getJsonClass());
-			jgen.writeNumberField("accountId", value.getAccountId());
-			jgen.writeStringField("accountName", value.getAccountName());
-			jgen.writeStringField("tokenType", value.getTokenType());
-			jgen.writeBooleanField("isESI", value.isESICompatible());
-			jgen.writeEndObject();
-		}
-	}
 	// ........................................................................................................
 
 	// - CLASS IMPLEMENTATION ...................................................................................
