@@ -6,18 +6,20 @@
 
 package org.dimensinfin.eveonline.neocom.industry;
 
-// - IMPORT SECTION .........................................................................................
-
 import java.sql.SQLException;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -28,11 +30,12 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 @DatabaseTable(tableName = "Jobs")
 public class Job extends NeoComNode {
 	public enum EJobType {
-		CCP
+		CCP,NEOCOM
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -6841505320348309318L;
+	private static Logger logger = LoggerFactory.getLogger("Job");
 	private static final int maxRuns = 10;
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -44,9 +47,8 @@ public class Job extends NeoComNode {
 	private int jobId = -1;
 	@DatabaseField
 	private String jobType = EJobType.CCP.name();
-	private int installerId = -1;
 	@DatabaseField
-	private long ownerId = -1;
+	private int installerId = -1;
 	@DatabaseField
 	private long facilityId = -3;
 	@DatabaseField(index = true)
@@ -67,14 +69,14 @@ public class Job extends NeoComNode {
 	private double cost = 0.0;
 	@DatabaseField
 	private int licensedRuns = 1;
+	@DatabaseField
+	private float probability = 0f;
+	@DatabaseField
+	private int productTypeId;
 	@DatabaseField(dataType = DataType.ENUM_STRING)
 	private GetCharactersCharacterIdIndustryJobs200Ok.StatusEnum status = null;
 	@DatabaseField
-	private int productTypeId;
-	@DatabaseField
 	private int duration = 1;
-	@DatabaseField
-	private int timeInSeconds;
 	@DatabaseField(dataType = DataType.SERIALIZABLE)
 	private DateTime startDate = null;
 	@DatabaseField(dataType = DataType.SERIALIZABLE)
@@ -94,7 +96,6 @@ public class Job extends NeoComNode {
 	private transient EveLocation jobLocation = null;
 	private transient NeoComNode jobOutputLocation = null;
 	private transient EveItem productItem = null;
-//	private final String moduleName = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Job() {
@@ -104,6 +105,15 @@ public class Job extends NeoComNode {
 	public Job( final int newJobId ) {
 		this();
 		jobId = newJobId;
+		try {
+			Dao<Job, String> jobDao = accessGlobal().getNeocomDBHelper().getJobDao();
+			// Try to create the pair. It fails then  it was already created.
+			jobDao.createOrUpdate(this);
+		} catch (final SQLException sqle) {
+			logger.info("WR [TimeStamp.<constructor>]> Industry Job exists. Update values.");
+			this.store();
+		} catch (final NeoComException neoe) {
+		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -221,9 +231,9 @@ public class Job extends NeoComNode {
 		return successfulRuns;
 	}
 
-	public int getTimeInSeconds() {
-		return timeInSeconds;
-	}
+//	public int getTimeInSeconds() {
+//		return timeInSeconds;
+//	}
 
 	public Job setActivityId( final int activityId ) {
 		this.activityId = activityId;
@@ -305,7 +315,7 @@ public class Job extends NeoComNode {
 
 	public Job setInstallerID( final int installerID ) {
 		installerId = installerID;
-		ownerId = installerID;
+//		ownerId = installerID;
 		return this;
 	}
 
@@ -323,9 +333,9 @@ public class Job extends NeoComNode {
 		return this;
 	}
 
-	public void setOwnerId( final long ownerId ) {
-		this.ownerId = ownerId;
-	}
+//	public void setOwnerId( final long ownerId ) {
+//		this.ownerId = ownerId;
+//	}
 
 //	public void setProductTypeId( final int productTypeId ) {
 //		this.productTypeId = productTypeId;
@@ -355,11 +365,20 @@ public class Job extends NeoComNode {
 		this.successfulRuns = successfulRuns;
 	}
 
-	public void setTimeInSeconds( final int timeInSeconds ) {
-		this.timeInSeconds = timeInSeconds;
-	}
+//	public void setTimeInSeconds( final int timeInSeconds ) {
+//		this.timeInSeconds = timeInSeconds;
+//	}
 
 	public Job store() {
+		try {
+			Dao<Job, String> jobDao = accessGlobal().getNeocomDBHelper().getJobDao();
+			// Try to create the pair. It fails then  it was already created.
+			jobDao.createOrUpdate(this);
+		} catch (final SQLException sqle) {
+			logger.info("WR [TimeStamp.<constructor>]> Industry Job exists. Update values.");
+			this.store();
+		} catch (final NeoComException neoe) {
+		}
 		return this;
 	}
 

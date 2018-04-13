@@ -19,7 +19,9 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -158,6 +160,15 @@ public class DownloadManager {
 			ex.printStackTrace();
 		}
 		DownloadManager.logger.info("<< [AssetsManager.downloadPilotAssetsESI]");
+	}
+
+	public void downloadPilotJobsESI() {
+		DownloadManager.logger.info(">> [DownloadManager.downloadPilotJobsESI]");
+		try {
+			List<Job> jobsList = GlobalDataManager.downloadIndustryJobs4Credential(credential);
+		} finally {
+			DownloadManager.logger.info("<< [DownloadManager.downloadPilotJobsESI]");
+		}
 	}
 
 	//--- P R I V A T E   M E T H O D S

@@ -21,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
@@ -65,9 +66,6 @@ public interface INeoComDBHelper {
 
 	public Dao<TimeStamp, String> getTimeStampDao() throws SQLException;
 
-//	@Deprecated
-//	public Dao<ApiKey, String> getApiKeysDao() throws SQLException;
-
 	public Dao<Credential, String> getCredentialDao() throws SQLException;
 
 	public Dao<Colony, String> getColonyDao() throws SQLException;
@@ -84,8 +82,12 @@ public interface INeoComDBHelper {
 
 	public Dao<EveLocation, String> getLocationDao() throws SQLException;
 
-//	public Dao<Property, String> getPropertyDao() throws SQLException;
-	public  void clearInvalidRecords( final long pilotid );
-	public  void replaceAssets (final long pilotid);
-	public  void replaceBlueprints (final long pilotid);
+	//	public Dao<Property, String> getPropertyDao() throws SQLException;
+	public Dao<Job, String> getJobDao() throws SQLException;
+
+	public void clearInvalidRecords( final long pilotid );
+
+	public void replaceAssets( final long pilotid );
+
+	public void replaceBlueprints( final long pilotid );
 }

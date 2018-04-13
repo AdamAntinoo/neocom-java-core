@@ -43,6 +43,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
@@ -50,6 +51,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdO
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
@@ -75,6 +77,7 @@ public class ESINetworkManager {
 
 	public enum ECacheTimes {
 		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
+		,INDUSTRY_JOBS
 	}
 
 	static {
@@ -84,6 +87,7 @@ public class ESINetworkManager {
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
+		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
 	}
 
 	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
@@ -236,7 +240,7 @@ public class ESINetworkManager {
 	//--- IMPLANTS
 
 	// - C O R P O R A T I O N S
-//--- CORPORATION INFORMATION
+	//--- CORPORATION INFORMATION
 	public static GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
 		final Chrono accessFullTime = new Chrono();
@@ -377,7 +381,45 @@ public class ESINetworkManager {
 		}
 	}
 
+	// - I N D U S T R Y
+	public static List<GetCharactersCharacterIdIndustryJobs200Ok> getCharactersCharacterIdIndustryJobs( final int identifier
+			, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdIndustryJobs]");
+		// Check if this response already available at cache.
+		final String reference = constructCachePointerReference(ECacheTimes.INDUSTRY_JOBS, identifier);
+		final Response<?> hit = okResponseCache.get(reference);
+		final Chrono accessFullTime = new Chrono();
+		if (null == hit) {
+			try {
+				// Set the refresh to be used during the request.
+				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+				String datasource = GlobalDataManager.SERVER_DATASOURCE;
+				if (null != server) datasource = server;
+				// Create the request to be returned so it can be called.
+				final Response<List<GetCharactersCharacterIdIndustryJobs200Ok>> industryApiResponse = neocomRetrofit
+						.create(IndustryApi.class)
+						.getCharactersCharacterIdIndustryJobs(identifier, datasource, true
+								,null, null, null).execute();
+				if (industryApiResponse.isSuccessful()) {
+					// Store results on the cache.
+					okResponseCache.put(reference, industryApiResponse);
+					return industryApiResponse.body();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdIndustryJobs]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			}
+			return null;
+		} else {
+			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
+			return (List<GetCharactersCharacterIdIndustryJobs200Ok>) hit.body();
+		}
+	}
 
+
+
+	//---------------------------------------------------------------------------------------
 	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");
 		final Chrono accessFullTime = new Chrono();

@@ -31,12 +31,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
 /**
@@ -75,6 +79,36 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
+	public static List<Job> downloadIndustryJobs4Credential( final Credential credential ) {
+		logger.info(">> [GlobalDataManagerNetwork.downloadFitting4Credential]");
+		List<Job> results = new ArrayList<>();
+		try {
+			// Get to the Network and download the data from the ESI api.
+			final List<GetCharactersCharacterIdIndustryJobs200Ok> industryJobs = ESINetworkManager.getCharactersCharacterIdIndustryJobs(credential.getAccountId()
+					, credential.getRefreshToken()
+					, SERVER_DATASOURCE);
+			if (null != industryJobs) {
+								// Process the data and convert it to structures compatible with MVC.
+				for (GetCharactersCharacterIdIndustryJobs200Ok job : industryJobs) {
+					final Job newjob = modelMapper.map(job, Job.class);
+					newjob.store();
+					results.add(newjob);
+				}
+			}
+			return results;
+		} catch (NeocomRuntimeException nrex) {
+			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
+					.getMessage());
+			return new ArrayList<>();
+		} catch (RuntimeException ntex) {
+			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
+					.getMessage());
+			return new ArrayList<>();
+		} finally {
+			logger.info("<< [GlobalDataManagerNetwork.downloadFitting4Credential]");
+		}
+	}
+
 	public static List<Colony> downloadColonies4Credential( final Credential credential ) {
 		// Optimize the access to the Colony data.
 		//		if(colonies.size()<1) {
