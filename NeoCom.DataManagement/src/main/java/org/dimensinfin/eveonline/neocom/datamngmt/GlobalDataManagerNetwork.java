@@ -80,7 +80,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
 	public static List<Job> downloadIndustryJobs4Credential( final Credential credential ) {
-		logger.info(">> [GlobalDataManagerNetwork.downloadFitting4Credential]");
+		logger.info(">> [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
 		List<Job> results = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
@@ -97,15 +97,15 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 			}
 			return results;
 		} catch (NeocomRuntimeException nrex) {
-			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
+			logger.info("EX [GlobalDataManager.downloadIndustryJobs4Credential]> Credential not found in the list. Exception: {}", nrex
 					.getMessage());
 			return new ArrayList<>();
 		} catch (RuntimeException ntex) {
-			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
+			logger.info("EX [GlobalDataManager.downloadIndustryJobs4Credential]> Mapping error - {}", ntex
 					.getMessage());
 			return new ArrayList<>();
 		} finally {
-			logger.info("<< [GlobalDataManagerNetwork.downloadFitting4Credential]");
+			logger.info("<< [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
 		}
 	}
 

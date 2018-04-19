@@ -501,7 +501,7 @@ public class ESINetworkManager {
 		return null;
 	}
 
-	public static List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
+	public static List<GetMarketsPrices200Ok> getMarketsPrices(  String server ) {
 		logger.info(">> [ESINetworkManager.getMarketsPrices]");
 		final Chrono accessFullTime = new Chrono();
 		try {
@@ -511,10 +511,10 @@ public class ESINetworkManager {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)
-					.getMarketsPrices(datasource, null, null)
+					.getMarketsPrices("tranquility", null, null)
 					.execute();
 			if (!marketApiResponse.isSuccessful()) {
-				return null;
+				return new ArrayList<>();
 			} else return marketApiResponse.body();
 		} catch (IOException e) {
 			e.printStackTrace();
