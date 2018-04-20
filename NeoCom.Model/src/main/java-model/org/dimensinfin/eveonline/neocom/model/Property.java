@@ -4,21 +4,18 @@
 
 package org.dimensinfin.eveonline.neocom.model;
 
-// - IMPORT SECTION .........................................................................................
-
-import java.io.Serializable;
 import java.sql.SQLException;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Properties")
-public class Property implements Serializable {
+public class Property extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1209487969346789159L;
 	public static final int LOCATION_ROLE_PROPERTY = 10;
@@ -45,12 +42,12 @@ public class Property implements Serializable {
 		this.resetOwner();
 		this.setPropertyType(propertyType);
 		try {
-			Dao<Property, String> propertyDao = GlobalDataManager.getNeocomDBHelper().getPropertyDao();
+			Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
 			// Try to create the pair. It fails then  it was already created.
 			propertyDao.create(this);
 		} catch (final SQLException sqle) {
-//			sqle.printStackTrace();
 			this.store();
+		} catch (NeoComException neoe) {
 		}
 	}
 
@@ -84,14 +81,11 @@ public class Property implements Serializable {
 	}
 
 	public Property store() {
-//		if (state) {
 		try {
-			Dao<Property, String> propertyDao = GlobalDataManager.getNeocomDBHelper().getPropertyDao();
+			Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
 			propertyDao.update(this);
-			//		logger.finest("-- Wrote blueprint to database id [" + blueprint.getAssetID() + "]");
 		} catch (final SQLException sqle) {
-//						logger.severe("E> Unable to create the new blueprint [" + blueprint.getAssetID() + "]. " + sqle.getMessage());
-//				sqle.printStackTrace();
+		} catch (NeoComException neoe) {
 		}
 		return this;
 	}

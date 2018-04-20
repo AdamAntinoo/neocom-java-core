@@ -18,6 +18,7 @@ import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -43,6 +44,8 @@ public interface IGlobalConnector {
 
 	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid );
 
-	public int searchModule4Blueprint( final int bpitemID );
+	public int searchModule4Blueprint( final int bpitemId );
+
+	public InventoryFlag searchFlag4Id( final int identifier );
 }
 // - UNUSED CODE ............................................................................................

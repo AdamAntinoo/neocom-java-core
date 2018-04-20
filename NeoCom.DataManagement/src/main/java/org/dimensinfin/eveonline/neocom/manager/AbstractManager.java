@@ -1,13 +1,16 @@
-//	PROJECT:      NeoCom.model (NEOC.M)
-//	AUTHORS:      Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:    (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:	Java 1.8 Library.
-//	DESCRIPTION:	Isolated model structures to access and manage Eve Online character data and their
-//								available databases.
-//								This version includes the access to the latest 6.x version of eveapi libraries to
-//								download ad parse the CCP XML API data.
-//								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.manager;
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
+package org.dimensinfin.eveonline.neocom.processor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,7 +19,6 @@ import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
@@ -41,7 +43,7 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 
 	// - L O C A T I O N   M A N A G E M E N T
 	protected final Hashtable<Long, Region> regions = new Hashtable<Long, Region>();
-	protected final Hashtable<Long, ExtendedLocation> locations = new Hashtable<Long, ExtendedLocation>();
+//	protected final Hashtable<Long, ExtendedLocation> locations = new Hashtable<Long, ExtendedLocation>();
 	protected final Hashtable<Long, NeoComAsset> containers = new Hashtable<Long, NeoComAsset>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................

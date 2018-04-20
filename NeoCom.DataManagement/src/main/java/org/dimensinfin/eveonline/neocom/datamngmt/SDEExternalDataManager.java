@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
+import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
 import org.dimensinfin.eveonline.neocom.model.GetUniverseAncestries;
 
 /**
@@ -120,7 +121,7 @@ public class SDEExternalDataManager {
 //
 //	}
 
-	public static InventoryFlag searchFlag4Id( final int identifier ) {
+	public  InventoryFlag searchFlag4Id( final int identifier ) {
 		return flagStore.get(identifier);
 	}
 
@@ -216,52 +217,5 @@ public class SDEExternalDataManager {
 		GetUniverseRaces200Ok hit = racesCache.get(identifier);
 		if (null == hit) hit = new GetUniverseRaces200Ok();
 		return hit;
-	}
-
-	// - CLASS IMPLEMENTATION ...................................................................................
-	public static class InventoryFlag {
-		// - S T A T I C - S E C T I O N ..........................................................................
-
-		// - F I E L D - S E C T I O N ............................................................................
-		private int flagID = -1;
-		private String flagName = null;
-		private String flagText = null;
-		private int orderID = 0;
-
-		// - C O N S T R U C T O R - S E C T I O N ................................................................
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-		// --- G E T T E R S   &   S E T T E R S
-		public int getFlagID() {
-			return flagID;
-		}
-
-		public String getFlagName() {
-			return flagName;
-		}
-
-		public String getFlagText() {
-			return flagText;
-		}
-
-		public int getOrderID() {
-			return orderID;
-		}
-
-		public void setFlagID( final int flagID ) {
-			this.flagID = flagID;
-		}
-
-		public void setFlagName( final String flagName ) {
-			this.flagName = flagName;
-		}
-
-		public void setFlagText( final String flagText ) {
-			this.flagText = flagText;
-		}
-
-		public void setOrderID( final int orderID ) {
-			this.orderID = orderID;
-		}
 	}
 }

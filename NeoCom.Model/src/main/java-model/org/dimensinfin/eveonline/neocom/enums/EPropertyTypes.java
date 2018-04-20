@@ -13,5 +13,5 @@
 package org.dimensinfin.eveonline.neocom.enums;
 
 public enum EPropertyTypes {
-	UNDEFINED, USERLABEL, MANUFACTUREACTION, LOCATIONROLE;
+	UNDEFINED, USERLABEL, MANUFACTUREACTION, LOCATIONROLE
 }

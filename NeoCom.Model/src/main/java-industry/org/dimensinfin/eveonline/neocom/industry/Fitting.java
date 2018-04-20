@@ -18,6 +18,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -80,7 +81,11 @@ public class Fitting extends NeoComNode {
 	public Fitting setShipTypeId( final int shipTypeId ) {
 		this.shipTypeId = shipTypeId;
 		// Update the transient item details from this type identifier.
-		shipItem = accessGlobal().searchItem4Id(shipTypeId);
+		try {
+			shipItem = accessGlobal().searchItem4Id(shipTypeId);
+		} catch (NeoComException neoe) {
+			shipItem = new EveItem();
+		}
 		return this;
 	}
 
@@ -122,13 +127,17 @@ public class Fitting extends NeoComNode {
 		private int quantity = 0;
 		private transient EveItem itemDetails = null;
 		//		private EShipSlotLocation slotLocation=EShipSlotLocation.CARGOHOLD;
-		private SDEExternalDataManager.InventoryFlag detailedFlag = null;
+		private InventoryFlag detailedFlag = null;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public FittingItem( final Integer typeId ) {
 			jsonClass = "FittingItem";
 			this.typeId = typeId;
-			itemDetails = GlobalDataManager.searchItem4Id(typeId);
+			try {
+				itemDetails = accessGlobal().searchItem4Id(typeId);
+			} catch (NeoComException neoe) {
+				itemDetails = new EveItem();
+			}
 		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................
@@ -145,7 +154,7 @@ public class Fitting extends NeoComNode {
 			return itemDetails;
 		}
 
-		public SDEExternalDataManager.InventoryFlag getDetailedFlag() {
+		public InventoryFlag getDetailedFlag() {
 			return detailedFlag;
 		}
 
@@ -157,7 +166,15 @@ public class Fitting extends NeoComNode {
 		public FittingItem setFlag( final int flag ) {
 			this.flag = flag;
 			// Transform the numeric flag to a categorized value.
-			detailedFlag = SDEExternalDataManager.searchFlag4Id(flag);
+			try {
+				detailedFlag = accessGlobal().searchFlag4Id(flag);
+			} catch (NeoComException neoe) {
+				detailedFlag = new InventoryFlag()
+						.setFlagID(4)
+						.setFlagName("Hangar")
+						.setFlagText("Hangar")
+						.setOrderID(30);
+			}
 			return this;
 		}
 
@@ -166,8 +183,5 @@ public class Fitting extends NeoComNode {
 			return this;
 		}
 	}
-//	public enum EShipSlotLocation{
-//		CARGOHOLD, HIGHSLOT, MEDIUMSLOT, LOWSLOT, RIGSLOT, SYSTEMSLOT
-//	}
 }
 // - UNUSED CODE ............................................................................................

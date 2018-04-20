@@ -10,13 +10,12 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.manager;
+package org.dimensinfin.eveonline.neocom.processor;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Vector;
@@ -26,7 +25,6 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,16 +33,12 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.model.Region;
-import org.dimensinfin.eveonline.neocom.model.Ship;
-import org.dimensinfin.eveonline.neocom.model.SpaceContainer;
 
 /**
  * This class interfaces all access to the assets database in name of a particular character. It tries to
@@ -90,9 +84,9 @@ public class AssetsManager extends AbstractManager {
 	private final HashMap<Long, ArrayList<NeoComAsset>> assetsAtLocationCache = new HashMap<Long, ArrayList<NeoComAsset>>();
 	private final HashMap<String, ArrayList<NeoComAsset>> assetsAtCategoryCache = new HashMap<String, ArrayList<NeoComAsset>>();
 	private final HashMap<Integer, ArrayList<NeoComAsset>> stacksByItemCache = new HashMap<Integer, ArrayList<NeoComAsset>>();
-	private final ArrayList<NeoComBlueprint> t1BlueprintCache = new ArrayList<NeoComBlueprint>();
-	private final ArrayList<NeoComBlueprint> t2BlueprintCache = new ArrayList<NeoComBlueprint>();
-	private final ArrayList<NeoComBlueprint> bpoCache = new ArrayList<NeoComBlueprint>();
+//	private final ArrayList<NeoComBlueprint> t1BlueprintCache = new ArrayList<NeoComBlueprint>();
+//	private final ArrayList<NeoComBlueprint> t2BlueprintCache = new ArrayList<NeoComBlueprint>();
+//	private final ArrayList<NeoComBlueprint> bpoCache = new ArrayList<NeoComBlueprint>();
 
 	// USED BY OTHER CALSSES TO BE REVIEWED
 	public final HashMap<Long, ArrayList<NeoComAsset>> asteroidCache = new HashMap<Long, ArrayList<NeoComAsset>>();
@@ -117,7 +111,7 @@ public class AssetsManager extends AbstractManager {
 	private Dao<NeoComAsset, String> getAssetDao() {
 		try {
 			if (null == assetDao) {
-				assetDao = GlobalDataManager.getNeocomDBHelper().getAssetDao();
+				assetDao = new GlobalDataManager().getNeocomDBHelper().getAssetDao();
 			}
 		} catch (SQLException sqle) {
 			logger.error("E> [AssetsManager.getAssetDao]> Exception getting the global Dao. {}", sqle.getMessage());

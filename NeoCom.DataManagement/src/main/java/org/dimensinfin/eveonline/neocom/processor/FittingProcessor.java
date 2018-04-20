@@ -10,8 +10,9 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.industry;
+package org.dimensinfin.eveonline.neocom.processor;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,15 +21,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.industry.Action;
+import org.dimensinfin.eveonline.neocom.industry.EveTask;
+import org.dimensinfin.eveonline.neocom.industry.Fitting;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.Fitting;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
-import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 
 /**
  * @author Adam Antinoo
@@ -39,6 +41,11 @@ public class FittingProcessor {
 	private static Logger logger = LoggerFactory.getLogger("FittingProcessor");
 
 	// - F I E L D - S E C T I O N ............................................................................
+	/**
+	 * List of Properties that define the different roles that can be applied to locations. Required to discriminate industrial
+	 * actions against the complete set of locations with assets.
+	 */
+	final List<Property> roles = new ArrayList<>();
 	/**
 	 * This is the selected location to be used when searching for resources for the Fitting processing. Setting/configuring
 	 * this place properly will change the result of the fitting processing.
@@ -51,7 +58,7 @@ public class FittingProcessor {
 	/**
 	 * The main element used for the manufacture job.
 	 */
-	protected NeoComBlueprint blueprint = null;
+//	protected NeoComBlueprint blueprint = null;
 	/** The Pilot owner of the job and blueprint. Required to get the characterID. */
 //	protected transient NeoComCharacter									pilot										= null;
 	/**
@@ -76,8 +83,6 @@ public class FittingProcessor {
 	protected int threads = 1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-//	public FittingProcessor() {
-//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
@@ -95,17 +100,23 @@ public class FittingProcessor {
 	 * Location and if there is no default the current character location. If there is not a valid location the process fails and
 	 * we do not perform the processing.
 	 */
-	public List<Action> processFitting( final int credentialIdentifier, final Fitting target, final int copyCount ) {
+	public List<Action> processFitting( final Credential credential, final Fitting target, final int copyCount ) {
 		logger.info(">> [FittingProcessor.processFitting]");
 		// STEP0 01. Do the mandatory initialization such as getting a current list of assets or the current Manufacture location.
-		// Get the work place location.
-		manufactureLocation = searchManufactureLocation(credentialIdentifier);
-		// TODO Using a mock up of the location identifier until I have a better implementation of the Properties.
-		manufactureLocation = GlobalDataManager.searchLocation4Id(60006526);
+		// Get all Location roles for this pilot.
+		try {
+			final HashMap<String, Object> queryParams = new HashMap<>();
+			queryParams.put("ownerId", credential.getAccountId());
+			queryParams.put("propertyType", EPropertyTypes.LOCATIONROLE.name());
+			final List<Property> roles = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		// Get the work place location. This should be a Manufacture targeted role location if defined. Home if not.
+		manufactureLocation = searchManufactureLocation(credential);
 		region = manufactureLocation.getRegion();
 		// Get the list of character assets.
-		assetsManager = GlobalDataManager.getAssetsManager(DataManagementModelStore.activateCredential(credentialIdentifier),
-				true);
+		assetsManager = new AssetsManager(credential);
 		// Clear processing variables.
 		requirements.clear();
 		actionsRegistered.clear();
@@ -150,6 +161,7 @@ public class FittingProcessor {
 			logger.info("<< [FittingProcessor.processFitting]");
 		}
 	}
+
 	protected List<Action> getActions() {
 		final List<Action> result = new ArrayList<Action>();
 		for (final Action action : actionsRegistered.values()) {
@@ -362,11 +374,26 @@ public class FittingProcessor {
 		}
 	}
 
-	protected EveLocation searchManufactureLocation( final int credentialIdentifier ) {
+	/**
+	 * The correct search algorithm should get the most interesting Manufacture location in the case there is more than one
+	 * identified as a Manufacture place. I should force it to be a single place but this specification is not clear to be useful
+	 * . Anyway if there is a Manufacture Role Location we can choose it and if not then we should consider the Pilot home
+	 * location as the designated place.
+	 *
+	 * @param credential the Pilot credential to be used to download or access any relevant information.
+	 * @return a location to be used as the MANUFACTURE point. Research and other industry activities can be performed at other
+	 * places.
+	 */
+	protected EveLocation searchManufactureLocation( final Credential credential ) {
 		logger.info(">> [FittingProcessor.searchManufactureLocation]");
-		credential = DataManagementModelStore.activateCredential(credentialIdentifier);
-//		Assert.isNull(credential, "[FittingProcessor.searchManufactureLocation]> Credential " + credentialIdentifier + " not found.");
-		return GlobalDataManager.searchLocation4Id(60006526);
+		for (Property prop : roles) {
+			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)
+				if (prop.getStringValue().equalsIgnoreCase("MANUFACTURE"))
+					return new GlobalDataManager().searchLocation4Id(Double.valueOf(prop.getNumericValue()).intValue());
+		}
+		// Reaching this point means we have not a location selected.
+		// TODO Use a mock place. This is the Singularity selected place to test.
+		return new GlobalDataManager().searchLocation4Id(60006526);
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
@@ -380,5 +407,53 @@ public class FittingProcessor {
 	}
 }
 
+final class AssetsManager {
+	private static Logger logger = LoggerFactory.getLogger("AssetsManager");
+
+	public String jsonClass = "AssetsManager";
+	private Credential currentPilotCredential=null;
+	private final HashMap<Integer, List<NeoComAsset>> asset4TypeCache = new HashMap<Integer, List<NeoComAsset>>();
+
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public AssetsManager( final Credential credential ) {
+//		super(credential);
+		// Load the timestamp from the database to control the refresh status of all the assets.
+//		this.readTimeStamps();
+		currentPilotCredential=credential;
+		jsonClass = "AssetsManager";
+	}
+
+	/**
+	 * Return the set of assets for a character that have an specific item type id. We have to make a local copy
+	 * of the assets because they are going to be modified during the task creation process. So we can implement
+	 * a cache of those assets so we only read them from the database the first time and later we only use the
+	 * local copy.
+	 *
+	 * @param typeId
+	 * @return
+	 */
+	public List<NeoComAsset> getAssets4Type( final int typeId ) {
+		logger.info(">> [AssetsManager.getAssets4Type]");
+		List<NeoComAsset> hit = new ArrayList<>();
+		try {
+			// Search for the asset pack first at the instance cache.
+			hit = asset4TypeCache.get(Integer.valueOf(typeId));
+			if (null == hit) {
+				final HashMap<String, Object> filterParameters = new HashMap();
+				filterParameters.put("ownerID", currentPilotCredential.getAccountId());
+				filterParameters.put("typeID", typeId);
+				hit = new GlobalDataManager().getNeocomDBHelper().getAssetDao().queryForFieldValues(filterParameters);
+				// Cache the new list of assets for the specified type.
+				asset4TypeCache.put(Integer.valueOf(typeId), hit);
+			}
+			return hit;
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			return hit;
+		} finally {
+			logger.info("<< [AssetsManager.getAssets4Type]> List size: {}", hit.size());
+		}
+	}
+}
 // - UNUSED CODE ............................................................................................
 //[01]

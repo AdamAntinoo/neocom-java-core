@@ -40,6 +40,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.industry.Fitting;
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
@@ -213,50 +214,35 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 //		}
 		return results;
 	}
-
-	//
-//	public static List<Fitting> downloadFitting4Credential( final int characterid ) {
-//		logger.info(">> [GlobalDataManager.downloadFitting4Credential]");
-//		List<Fitting> results = new ArrayList<>();
-//		try {
-//			Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-////		if (null != credential) {
-//			// Get to the Network and download the data from the ESI api.
-//			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings(characterid, credential.getRefreshToken(), SERVER_DATASOURCE);
-//			if (null != fittings) {
-//				// Process the fittings processing them and converting the data to structures compatible with MVC.
-//
-//////				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-//				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
-//					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
-////					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-////					try {
-////						final String serialized = jsonMapper.writeValueAsString(newstruct);
-////						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
-////						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-////								.setPlanetIdentifier(storageIdentifier)
-////								.setColonySerialization(serialized)
-////								.store();
-////					} catch (JsonProcessingException jpe) {
-////						jpe.printStackTrace();
-////					}
-//					results.add(newfitting);
-////				}
-//				}
-//			}
-//			return results;
-//		} catch (NeocomRuntimeException nrex) {
-//			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Credential not found in the list. Exception: {}", nrex
-//					.getMessage());
-//			return new ArrayList<>();
-//		} catch (RuntimeException ntex) {
-//			logger.info("EX [GlobalDataManager.downloadFitting4Credential]> Mapping error - {}", ntex
-//					.getMessage());
-//			return new ArrayList<>();
-//		} finally {
-//			logger.info("<< [GlobalDataManager.downloadFitting4Credential]");
-//		}
-//	}
+	public static List<Fitting> downloadFittings4Credential( final Credential credential ) {
+		logger.info(">> [GlobalDataManager.downloadFittings4Credential]");
+		List<Fitting> results = new ArrayList<>();
+		try {
+			// Get to the Network and download the data from the ESI api.
+			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings
+					(credential.getAccountId()
+					, credential.getRefreshToken()
+							, SERVER_DATASOURCE);
+			if (null != fittings) {
+				// Process the fittings processing them and converting the data to structures compatible with MVC.
+				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
+					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
+					results.add(newfitting);
+				}
+			}
+			return results;
+		} catch (NeocomRuntimeException nrex) {
+			logger.info("EX [GlobalDataManager.downloadFittings4Credential]> Credential not found in the list. Exception: {}", nrex
+					.getMessage());
+			return new ArrayList<>();
+		} catch (RuntimeException ntex) {
+			logger.info("EX [GlobalDataManager.downloadFittings4Credential]> Mapping error - {}", ntex
+					.getMessage());
+			return new ArrayList<>();
+		} finally {
+			logger.info("<< [GlobalDataManager.downloadFittings4Credential]");
+		}
+	}
 // - CLASS IMPLEMENTATION ...................................................................................
 	public static class CredentialSerializer extends JsonSerializer<Credential> {
 		// - F I E L D - S E C T I O N ............................................................................
