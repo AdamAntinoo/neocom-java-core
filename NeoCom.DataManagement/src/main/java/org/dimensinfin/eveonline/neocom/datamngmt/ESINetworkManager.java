@@ -99,38 +99,16 @@ public class ESINetworkManager {
 
 	public static void initialize() {
 		logger.info(">> [ESINetworkManager.initialize]");
-		// Setup authentication credentials from configuration file.
-
 		// Read the scoped from a resource file
-		try {
-			final String propertyFileName = GlobalDataManager.getResourceString("R.esi.authorization.scopes.filename");
-			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
-			final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
-			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
-			String line = input.readLine();
-			while (StringUtils.isNotEmpty(line)) {
-				SCOPES.add(line);
-				line = input.readLine();
-			}
-
-			// Convert the scopes to a single string.
-			SCOPESTRING = transformScopes(SCOPES);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally {
-			logger.info("<< [ESINetworkManager.initialize]");
-		}
+		constructScopes();
+		logger.info("<< [ESINetworkManager.initialize]");
 	}
 
 	/**
 	 * This is the location where to STORE the downloaded data from network cache.
 	 */
 	private static final String filePath = GlobalDataManager.getResourceString("R.cache.directorypath")
-			+ GlobalDataManager.getResourceString("R.esi.network.cachename");
+			+ GlobalDataManager.getResourceString("R.cache.esinetwork.filename");
 	private static final File cacheDataFile = new File(filePath);
 	private static final long cacheSize = 100 * 1024 * 1024;
 	private static final long timeout = TimeUnit.SECONDS.toMillis(60);
@@ -165,7 +143,11 @@ public class ESINetworkManager {
 				.toString();
 	}
 
-	public static List<String> constructScopes() {
+	public static String getStringScopes() {
+		return SCOPESTRING;
+	}
+
+	private static List<String> constructScopes() {
 		try {
 			final String propertyFileName = GlobalDataManager.getResourceString("R.esi.authorization.scopes.filename");
 			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
@@ -196,10 +178,6 @@ public class ESINetworkManager {
 			scope.append(" ");
 		}
 		return StringUtils.removeEnd(scope.toString(), " ");
-	}
-
-	public static String getStringScopes() {
-		return SCOPESTRING;
 	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E
