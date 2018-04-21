@@ -158,7 +158,6 @@ public class NeoComRetrofitHTTP {
 								.add("login.eveonline.com", "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=")
 								.add("login.eveonline.com", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=")
 								.add("login.eveonline.com", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=")
-								// .add("esi.tech.ccp.is", "sha256/AAAAAAAAAAAAAAAAAAAAA=")
 								.build())
 				.build();
 		return

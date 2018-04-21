@@ -76,8 +76,7 @@ public class ESINetworkManager {
 	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
 
 	public enum ECacheTimes {
-		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
-		,INDUSTRY_JOBS
+		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS
 	}
 
 	static {
@@ -96,8 +95,10 @@ public class ESINetworkManager {
 	private static final String AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
 	private static final ESIStore STORE = ESIStore.DEFAULT;
 	private static final List<String> SCOPES = new ArrayList<>(2);
+	private static String SCOPESTRING = "publicData";
 
 	public static void initialize() {
+		logger.info(">> [ESINetworkManager.initialize]");
 		// Setup authentication credentials from configuration file.
 
 		// Read the scoped from a resource file
@@ -111,16 +112,19 @@ public class ESINetworkManager {
 				SCOPES.add(line);
 				line = input.readLine();
 			}
+
+			// Convert the scopes to a single string.
+			SCOPESTRING = transformScopes(SCOPES);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally {
+			logger.info("<< [ESINetworkManager.initialize]");
 		}
 	}
-//	public static File retrofitApplicationParameter = new File(GlobalDataManager.getResourceString("R.cache.directorypath")
-//			+GlobalDataManager.getResourceString("R.cache.network.cachename"));
 
 	/**
 	 * This is the location where to STORE the downloaded data from network cache.
@@ -172,6 +176,9 @@ public class ESINetworkManager {
 				SCOPES.add(line);
 				line = input.readLine();
 			}
+
+			// Convert the scopes to a single string.
+			SCOPESTRING = transformScopes(SCOPES);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -180,6 +187,19 @@ public class ESINetworkManager {
 			e.printStackTrace();
 		}
 		return SCOPES;
+	}
+
+	private static String transformScopes( final List<String> scopeList ) {
+		StringBuilder scope = new StringBuilder();
+		for (String s : scopeList) {
+			scope.append(s);
+			scope.append(" ");
+		}
+		return StringUtils.removeEnd(scope.toString(), " ");
+	}
+
+	public static String getStringScopes() {
+		return SCOPESTRING;
 	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E
@@ -399,7 +419,7 @@ public class ESINetworkManager {
 				final Response<List<GetCharactersCharacterIdIndustryJobs200Ok>> industryApiResponse = neocomRetrofit
 						.create(IndustryApi.class)
 						.getCharactersCharacterIdIndustryJobs(identifier, datasource, true
-								,null, null, null).execute();
+								, null, null, null).execute();
 				if (industryApiResponse.isSuccessful()) {
 					// Store results on the cache.
 					okResponseCache.put(reference, industryApiResponse);
@@ -416,7 +436,6 @@ public class ESINetworkManager {
 			return (List<GetCharactersCharacterIdIndustryJobs200Ok>) hit.body();
 		}
 	}
-
 
 
 	//---------------------------------------------------------------------------------------
@@ -493,6 +512,8 @@ public class ESINetworkManager {
 			if (!fittingApiResponse.isSuccessful()) {
 				return null;
 			} else return fittingApiResponse.body();
+		} catch (RuntimeException rte) {
+			rte.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -501,7 +522,7 @@ public class ESINetworkManager {
 		return null;
 	}
 
-	public static List<GetMarketsPrices200Ok> getMarketsPrices(  String server ) {
+	public static List<GetMarketsPrices200Ok> getMarketsPrices( String server ) {
 		logger.info(">> [ESINetworkManager.getMarketsPrices]");
 		final Chrono accessFullTime = new Chrono();
 		try {

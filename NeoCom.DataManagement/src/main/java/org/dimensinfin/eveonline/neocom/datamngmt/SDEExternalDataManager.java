@@ -121,7 +121,7 @@ public class SDEExternalDataManager {
 //
 //	}
 
-	public  InventoryFlag searchFlag4Id( final int identifier ) {
+	public InventoryFlag searchFlag4Id( final int identifier ) {
 		return flagStore.get(identifier);
 	}
 
@@ -152,7 +152,7 @@ public class SDEExternalDataManager {
 					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.ancestries");
 			final List<GetUniverseAncestries> ancestries = jsonMapper.readValue(new File(source), new
 					TypeReference<List<GetUniverseAncestries>>() {
-			});
+					});
 			ancestriesCache.clear();
 			for (GetUniverseAncestries line : ancestries) {
 				ancestriesCache.put(line.getId(), line);
@@ -193,6 +193,7 @@ public class SDEExternalDataManager {
 		if (null == hit) hit = new GetUniverseBloodlines200Ok();
 		return hit;
 	}
+
 	//--- J S O N - R A C E S
 	public static void readRaces() {
 		logger.info(">> [SDEExternalDataManager.readRaces");

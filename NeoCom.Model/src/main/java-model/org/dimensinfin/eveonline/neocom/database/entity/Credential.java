@@ -67,9 +67,11 @@ public class Credential extends NeoComNode {
 	@DatabaseField
 	public String tokenType = "";
 	@DatabaseField
-	public String dataSource = "Tranquility";
+	public String dataSource = "tranquility";
+	@DatabaseField (dataType =DataType.LONG_STRING)
+	public String scope = "publicData";
 	/**
-	 * Future expiration Instant time in millisecons. This field is not required to be stored because the library
+	 * Future expiration Instant time in milliseconds. This field is not required to be stored because the library
 	 * will take care of the refresh token expiration times.
 	 */
 	@DatabaseField
@@ -203,6 +205,11 @@ public class Credential extends NeoComNode {
 
 	public Credential setRefreshToken( final String refreshToken ) {
 		this.refreshToken = refreshToken;
+		return this;
+	}
+
+	public Credential setScope( final String scope ) {
+		this.scope = scope;
 		return this;
 	}
 

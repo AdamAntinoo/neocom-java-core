@@ -89,7 +89,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
 			if (null != industryJobs) {
-								// Process the data and convert it to structures compatible with MVC.
+				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdIndustryJobs200Ok job : industryJobs) {
 					final Job newjob = modelMapper.map(job, Job.class);
 					newjob.store();
@@ -214,6 +214,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 //		}
 		return results;
 	}
+
 	public static List<Fitting> downloadFittings4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManager.downloadFittings4Credential]");
 		List<Fitting> results = new ArrayList<>();
@@ -221,7 +222,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 			// Get to the Network and download the data from the ESI api.
 			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings
 					(credential.getAccountId()
-					, credential.getRefreshToken()
+							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
 			if (null != fittings) {
 				// Process the fittings processing them and converting the data to structures compatible with MVC.
@@ -243,7 +244,8 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 			logger.info("<< [GlobalDataManager.downloadFittings4Credential]");
 		}
 	}
-// - CLASS IMPLEMENTATION ...................................................................................
+
+	// - CLASS IMPLEMENTATION ...................................................................................
 	public static class CredentialSerializer extends JsonSerializer<Credential> {
 		// - F I E L D - S E C T I O N ............................................................................
 
