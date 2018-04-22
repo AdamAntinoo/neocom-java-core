@@ -113,10 +113,7 @@ public class CorporationV1 extends NeoComNode {
 	}
 
 	public CorporationV1 setHomeStation( final long stationIdentifier ) {
-		try {
 			this.homeStation = accessGlobal().searchLocation4Id(stationIdentifier);
-		} catch (NeoComException e) {
-		}
 		return this;
 	}
 

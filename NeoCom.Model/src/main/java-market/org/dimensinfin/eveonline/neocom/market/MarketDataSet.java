@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -81,7 +82,7 @@ public class MarketDataSet extends ANeoComEntity implements Serializable {
 		double baseprice = 0.0;
 		try {
 			baseprice = accessGlobal().searchItem4Id(id).getBaseprice();
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			baseprice = 0.0;
 		}
 		bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
@@ -161,7 +162,7 @@ public class MarketDataSet extends ANeoComEntity implements Serializable {
 				double baseprice = 0.0;
 				try {
 					baseprice = accessGlobal().searchItem4Id(id).getBaseprice();
-				} catch (NeoComException neoe) {
+				} catch (NeocomRuntimeException neoe) {
 					baseprice = 0.0;
 				}
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());
@@ -193,7 +194,7 @@ public class MarketDataSet extends ANeoComEntity implements Serializable {
 				double baseprice = 0.0;
 				try {
 					baseprice = accessGlobal().searchItem4Id(id).getBaseprice();
-				} catch (NeoComException neoe) {
+				} catch (NeocomRuntimeException neoe) {
 					baseprice = 0.0;
 				}
 				bestmarkethigh = bestmarketlow = bestmarketnull = new MarketDataEntry(new EveLocation());

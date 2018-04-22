@@ -26,6 +26,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 
 //- CLASS IMPLEMENTATION ...................................................................................
@@ -147,7 +148,6 @@ public class NeoComAsset extends NeoComNode {
 			logger.info("-- [NeoComAsset.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
@@ -195,7 +195,7 @@ public class NeoComAsset extends NeoComNode {
 			if (null == itemCache) {
 				itemCache = accessGlobal().searchItem4Id(typeId);
 			}
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			itemCache = new EveItem();
 		}
 		return itemCache;
@@ -211,7 +211,7 @@ public class NeoComAsset extends NeoComNode {
 			if (null == locationCache) {
 				locationCache = accessGlobal().searchLocation4Id(locationId);
 			}
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			locationCache = new EveLocation();
 		}
 		return locationCache;
@@ -264,7 +264,6 @@ public class NeoComAsset extends NeoComNode {
 				parentAssetCache = accessGlobal().getNeocomDBHelper().getAssetDao()
 						.queryForId(Long.valueOf(parentAssetID).toString());
 			} catch (SQLException sqle) {
-			} catch (NeoComException neoe) {
 			}
 			if (null == parentAssetCache) {
 				final long newlocationId = parentAssetID;
@@ -280,7 +279,6 @@ public class NeoComAsset extends NeoComNode {
 				} catch (final SQLException sqle) {
 					sqle.printStackTrace();
 					this.setDirty(true);
-				} catch (NeoComException neoe) {
 				}
 				//				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
 				//				Container container = new Container();
@@ -421,7 +419,6 @@ public class NeoComAsset extends NeoComNode {
 				assetDao.createOrUpdate(this);
 			} catch (final SQLException sqle) {
 				sqle.printStackTrace();
-			} catch (final NeoComException neoe) {
 			}
 		}
 	}

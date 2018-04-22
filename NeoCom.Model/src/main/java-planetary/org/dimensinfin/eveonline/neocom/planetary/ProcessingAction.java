@@ -16,6 +16,7 @@ import java.util.Vector;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -58,7 +59,7 @@ public class ProcessingAction extends NeoComNode {
 		// Get the item for the target id to be identified on the Json serialization.
 		try {
 			targetItem = accessGlobal().searchItem4Id(targetId);
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			targetItem = new EveItem();
 		}
 		// Get the schematics information.
@@ -194,9 +195,9 @@ public class ProcessingAction extends NeoComNode {
 	 */
 	private void stockResource( final Resource newResource ) {
 		//		logger.info(">> [ProcessingAction.stockResource]");
-		final Resource hit = actionResources.get(newResource.getTypeID());
+		final Resource hit = actionResources.get(newResource.getTypeId());
 		if (null == hit) {
-			actionResources.put(newResource.getTypeID(), newResource);
+			actionResources.put(newResource.getTypeId(), newResource);
 		} else {
 			hit.setQuantity(hit.getQuantity() + newResource.getQuantity());
 		}

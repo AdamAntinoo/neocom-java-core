@@ -12,15 +12,15 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import net.nikr.eve.jeveasset.data.Citadel;
-
 import java.sql.SQLException;
+
+import net.nikr.eve.jeveasset.data.Citadel;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -94,7 +94,6 @@ public class EveLocation extends NeoComNode {
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			this.store();
-		} catch (NeoComException neoe) {
 		}
 	}
 
@@ -235,7 +234,7 @@ public class EveLocation extends NeoComNode {
 						.append(accessGlobal().searchStationType(id))
 						.append("_64.png")
 						.toString();
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				urlLocationIcon = new StringBuffer()
 						.append("http://image.eveonline.com/Render/")
 						.append(id)
@@ -281,7 +280,6 @@ public class EveLocation extends NeoComNode {
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (NeoComException neoe) {
 		}
 		return this;
 	}
@@ -357,18 +355,19 @@ public class EveLocation extends NeoComNode {
 
 	private void updateFromSystem( final long newid ) {
 		// Get the system information from the CCP location tables.
+		EveLocation systemLocation;
 		try {
-			final EveLocation systemLocation;
 			systemLocation = accessGlobal().searchLocation4Id(newid);
-			systemID = systemLocation.getSystemID();
-			system = systemLocation.getSystem();
-			constellationID = systemLocation.getConstellationID();
-			constellation = systemLocation.getConstellation();
-			regionID = systemLocation.getRegionID();
-			region = systemLocation.getRegion();
-			security = systemLocation.getSecurity();
-		} catch (NeoComException newe) {
+		} catch (NeocomRuntimeException newe) {
+			systemLocation = new EveLocation();
 		}
+		systemID = systemLocation.getSystemID();
+		system = systemLocation.getSystem();
+		constellationID = systemLocation.getConstellationID();
+		constellation = systemLocation.getConstellation();
+		regionID = systemLocation.getRegionID();
+		region = systemLocation.getRegion();
+		security = systemLocation.getSecurity();
 	}
 
 	/**

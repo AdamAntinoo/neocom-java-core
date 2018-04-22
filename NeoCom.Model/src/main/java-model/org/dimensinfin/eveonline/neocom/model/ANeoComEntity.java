@@ -14,6 +14,7 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.interfaces.IDatabaseEntity;
@@ -45,12 +46,14 @@ public abstract class ANeoComEntity extends AbstractPropertyChanger implements I
 	 */
 	public static void connectGlobal( final IGlobalConnector global ) {
 		globalConnector = global;
+//			connectSDEHelper(accessGlobal().getSDEDBHelper());
+//			connectNeoComHelper(accessGlobal().getNeocomDBHelper());
 	}
-	public static IGlobalConnector accessGlobal( ) throws NeoComException {
+	public static IGlobalConnector accessGlobal( ) throws NeocomRuntimeException {
 		if (null != globalConnector) return globalConnector;
 		else
-			throw new NeoComException("[ANeoComEntity.accessGlobal]> Global connector not connected to Model. Database " +
-					                          "disabled and other application functionality.");
+			throw new NeocomRuntimeException("[ANeoComEntity.accessGlobal]> Global connector not connected to Model. Database " +
+					                          "disabled as other application functionality.");
 	}
 	/**
 	 * Required initialization step to connect the Model classes to the SDE database helper.

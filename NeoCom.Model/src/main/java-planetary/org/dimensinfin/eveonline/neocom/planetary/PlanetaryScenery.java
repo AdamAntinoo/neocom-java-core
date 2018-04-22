@@ -49,7 +49,7 @@ public class PlanetaryScenery {
 	 */
 	public Resource getResource( final int inputResourceId ) {
 		for (Resource res : sceneryResources) {
-			if (res.getTypeID() == inputResourceId) return res;
+			if (res.getTypeId() == inputResourceId) return res;
 		}
 		return new Resource(inputResourceId);
 	}

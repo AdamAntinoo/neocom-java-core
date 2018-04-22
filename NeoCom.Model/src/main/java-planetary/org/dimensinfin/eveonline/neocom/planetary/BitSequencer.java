@@ -132,7 +132,7 @@ public class BitSequencer {
 	 */
 	private Resource getResource(final int inputResourceId) {
 		for (Resource res : sourceResources) {
-			if (res.getTypeID() == inputResourceId) return res;
+			if (res.getTypeId() == inputResourceId) return res;
 		}
 		return new Resource(inputResourceId);
 	}

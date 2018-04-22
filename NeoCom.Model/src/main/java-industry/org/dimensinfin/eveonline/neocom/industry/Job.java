@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
@@ -112,7 +113,6 @@ public class Job extends NeoComNode {
 		} catch (final SQLException sqle) {
 			logger.info("WR [TimeStamp.<constructor>]> Industry Job exists. Update values.");
 			this.store();
-		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -134,7 +134,7 @@ public class Job extends NeoComNode {
 			if (null == blueprintItem) {
 				blueprintItem = accessGlobal().searchItem4Id(blueprintTypeId);
 			}
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			blueprintItem = new EveItem();
 		}
 		return blueprintItem.getName();
@@ -177,7 +177,7 @@ public class Job extends NeoComNode {
 			if (null == jobLocation) {
 				jobLocation = accessGlobal().searchLocation4Id(facilityId);
 			}
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			jobLocation = new EveLocation();
 		}
 		return jobLocation;
@@ -250,7 +250,7 @@ public class Job extends NeoComNode {
 			this.blueprintLocationId = blueprintLocationId;
 			// Cache the location pointed bu this identifier.
 			blueprintLocation = accessGlobal().searchLocation4Id(blueprintLocationId);
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			blueprintLocation = new EveLocation();
 		}
 		return this;
@@ -264,7 +264,7 @@ public class Job extends NeoComNode {
 			// Calculate the resulting item type.
 			productTypeId = accessGlobal().searchModule4Blueprint(blueprintTypeId);
 			productItem = accessGlobal().searchItem4Id(productTypeId);
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			blueprintItem = new EveItem();
 			productTypeId = 34;
 			productItem = new EveItem();
@@ -284,7 +284,7 @@ public class Job extends NeoComNode {
 			} else jobOutputLocation = ouputLocation;
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			jobOutputLocation = new EveLocation();
 		}
 		return this;
@@ -377,7 +377,6 @@ public class Job extends NeoComNode {
 		} catch (final SQLException sqle) {
 			logger.info("WR [TimeStamp.<constructor>]> Industry Job exists. Update values.");
 			this.store();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}

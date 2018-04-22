@@ -87,7 +87,6 @@ public class FittingRequest extends NeoComNode {
 			logger.info("-- [FittingRequest.store]> FittingRequest data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}

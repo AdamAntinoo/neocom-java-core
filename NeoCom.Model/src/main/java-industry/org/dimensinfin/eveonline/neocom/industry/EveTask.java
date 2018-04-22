@@ -43,14 +43,6 @@ public class EveTask extends NeoComNode {
 	public void addAction( final String action ) {
 		this.action = action;
 	}
-
-//	@Override
-//	public ArrayList<AbstractComplexNode> collaborate2Model(final String variant) {
-//		final ArrayList<AbstractComplexNode> results = new ArrayList<AbstractComplexNode>();
-//		//		results.addAll(getTasks());
-//		return results;
-//	}
-
 	public EveLocation getDestination() {
 		return destination;
 	}
@@ -94,8 +86,8 @@ public class EveTask extends NeoComNode {
 		return type;
 	}
 
-	public int getTypeID() {
-		return resource.getTypeID();
+	public int getTypeId() {
+		return resource.getTypeId();
 	}
 
 	public void registerAsset( final NeoComAsset targetAsset ) {
@@ -130,7 +122,7 @@ public class EveTask extends NeoComNode {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveTask [");
-		buffer.append(type).append(" [#").append(resource.getTypeID()).append(" ").append(resource.getName()).append("] ");
+		buffer.append(type).append(" [#").append(resource.getTypeId()).append(" ").append(resource.getName()).append("] ");
 		buffer.append("quantity: ").append(qty);
 		if (null != location) {
 			buffer.append(" location").append(location);

@@ -58,7 +58,6 @@ public class TimeStamp extends ANeoComEntity{
 		} catch (final SQLException sqle) {
 			TimeStamp.logger.info("WR [TimeStamp.<constructor>]> Timestamp exists. Update values.");
 			this.store();
-		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -110,7 +109,6 @@ public class TimeStamp extends ANeoComEntity{
 			TimeStamp.logger.info("-- [TimeStamp.store]> Timestamp data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}

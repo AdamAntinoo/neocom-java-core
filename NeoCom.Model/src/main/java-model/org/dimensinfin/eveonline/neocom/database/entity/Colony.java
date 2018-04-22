@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
@@ -114,7 +115,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		try {
 			final List<ColonyStructure> data = accessGlobal().downloadStructures4Colony(ownerId, planetId);
 			return data;
-		} catch (NeoComException e) {
+		} catch (NeocomRuntimeException neoe) {
 			return new ArrayList<>();
 		}
 	}
@@ -181,7 +182,6 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		} catch (final SQLException sqle) {
 			logger.info("WR [Colony.create]> Colony exists. Update values.");
 			store();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
@@ -193,7 +193,6 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 			logger.info("-- [Colony.store]> Colony data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}
@@ -233,7 +232,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 			if (null == location) {
 				location = accessGlobal().searchLocation4Id(getSolarSystemId());
 			}
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			location = new EveLocation();
 		}
 		return location.getSystem();
@@ -244,7 +243,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 			// Location is transient so we have to reload the EveLocation cache if null.
 			if (null == location) location = accessGlobal().searchLocation4Id(getSolarSystemId());
 			return location.getSecurityValue();
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			location = new EveLocation();
 			return location.getSecurityValue();
 		}
@@ -255,7 +254,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 			this.solarSystemId = solarSystemId;
 			// Locate the solar system data on the Location database.
 			location = accessGlobal().searchLocation4Id(solarSystemId);
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			location = new EveLocation();
 		}
 		return this;

@@ -40,7 +40,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
  */
 public class Action extends NeoComExpandableNode {
 	public enum ETaskCompletion {
-		COMPLETED, PENDING, MARKET
+		NOTPROCESSED, COMPLETED, PARTIAL,PENDING, MARKET
 	}
 	public enum ETaskType {
 		REACTION, REQUEST, MOVE, PRODUCE, REFINE, COPY, GET, AVAILABLE, BUILD, BUY, BUYCOVERED, SELL, RESEARCH_ME, RESEARCH_PE, INVENTION, EXTRACT
@@ -55,7 +55,7 @@ public class Action extends NeoComExpandableNode {
 	private int completedQty = 0;
 	private int lowerPriority = 9999;
 	private final ArrayList<TaskBundle> tasksRegistered = new ArrayList<TaskBundle>();
-	private ETaskCompletion completed = ETaskCompletion.COMPLETED;
+	private ETaskCompletion completed = ETaskCompletion.NOTPROCESSED;
 	private String userPreferredAction = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -146,7 +146,7 @@ public class Action extends NeoComExpandableNode {
 	}
 
 	public int getTypeId() {
-		return resource.getTypeID();
+		return resource.getTypeId();
 	}
 
 	public String getUserAction() {

@@ -116,13 +116,13 @@ public class PlanetaryProcessor {
 		// Calculate the value removing from the loop the resources used and adding to it the new outputs.
 		//			double value = 0.0;
 		for (Resource r : scenery.getResources()) {
-			if (null == consumed.get(r.getTypeID())) {
+			if (null == consumed.get(r.getTypeId())) {
 				finalResources.add(r);
 			}
 		}
 		// Add outputs resources value.
 		for (Resource r : outputs) {
-			if (null == consumed.get(r.getTypeID())) {
+			if (null == consumed.get(r.getTypeId())) {
 				finalResources.add(r);
 			}
 		}
@@ -251,7 +251,7 @@ public class PlanetaryProcessor {
 		Vector<Resource> resources = new Vector<Resource>();
 		for (Resource r : inputResources) {
 			// Do not add consumed and include outputs.
-			if (null == consumed.get(r.getTypeID())) {
+			if (null == consumed.get(r.getTypeId())) {
 				resources.add(r);
 			}
 		}

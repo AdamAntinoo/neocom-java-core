@@ -47,7 +47,6 @@ public class Property extends ANeoComEntity {
 			propertyDao.create(this);
 		} catch (final SQLException sqle) {
 			this.store();
-		} catch (NeoComException neoe) {
 		}
 	}
 
@@ -85,7 +84,6 @@ public class Property extends ANeoComEntity {
 			Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
 			propertyDao.update(this);
 		} catch (final SQLException sqle) {
-		} catch (NeoComException neoe) {
 		}
 		return this;
 	}

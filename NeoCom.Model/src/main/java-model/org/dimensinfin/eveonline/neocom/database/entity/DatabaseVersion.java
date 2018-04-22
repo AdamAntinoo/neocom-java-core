@@ -48,7 +48,6 @@ public class DatabaseVersion extends ANeoComEntity {
 		} catch (final SQLException sqle) {
 			DatabaseVersion.logger.info("WR [DatabaseVersion.<constructor>]> DatabaseVersion exists. Update valueto {}.", versionNumber);
 			this.store();
-		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -71,7 +70,6 @@ public class DatabaseVersion extends ANeoComEntity {
 			versionDao.update(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
 		}
 		return this;
 	}

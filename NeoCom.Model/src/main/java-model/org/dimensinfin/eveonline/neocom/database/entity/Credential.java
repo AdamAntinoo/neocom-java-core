@@ -95,7 +95,6 @@ public class Credential extends NeoComNode {
 		} catch (final SQLException sqle) {
 			Credential.logger.warn("WR [Credential.<constructor>]> Credential exists. Update values.");
 			this.store();
-		} catch (final NeoComException neoe) {
 		}
 	}
 
@@ -111,8 +110,7 @@ public class Credential extends NeoComNode {
 			Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
-		}
+			}
 		return this;
 	}
 
@@ -135,7 +133,6 @@ public class Credential extends NeoComNode {
 			timesList = timeStampDao.query(preparedQuery);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (final NeoComException neoe) {
 		}
 		return timesList;
 	}

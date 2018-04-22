@@ -20,6 +20,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
@@ -126,7 +127,16 @@ public class FittingProcessor {
 		requirements.add(new Resource(target.getShipHullInfo().getItemId(), copyCount));
 		// Add the list of items to the list of requirements.
 		for (Fitting.FittingItem item : target.getItems()) {
-			requirements.add(new Resource(item.getTypeId(), item.getQuantity() * copyCount));
+			//During the addition of requirements join all the same type requests.
+			boolean found = false;
+			for (Resource res : requirements) {
+				if (res.getTypeId() == item.getTypeId()) {
+					found = true;
+					res.setQuantity(res.getQuantity() + item.getQuantity() * copyCount);
+					break;
+				}
+			}
+			if (!found) requirements.add(new Resource(item.getTypeId(), item.getQuantity() * copyCount));
 		}
 
 		// Resource list completed. Dump report to the log and start action processing.
@@ -179,11 +189,13 @@ public class FittingProcessor {
 	 * @param newTask
 	 */
 	protected void processRequest( final EveTask newTask ) {
+		logger.info(">> [FittingProcessor.processRequest]");
 		// The task is a request. Check in order.
 		final long requestQty = newTask.getQty();
+		// If quantity completed we have completed the processing.
 		if (requestQty < 1) return;
 
-//		// Check the special case for Asteroids
+		// Check the special case for Asteroids
 //		if (newTask.getTaskType() == Action.ETaskType.REQUEST) {
 //			logger.info("RT> [FittingProcessor.processFitting]> Processing state> {} [x{}]", Action.ETaskType.REQUEST , requestQty );
 //			final String category = newTask.getItem().getCategory();
@@ -208,15 +220,15 @@ public class FittingProcessor {
 //				return;
 //			}
 //		}
-//		if (newTask.getTaskType() == Action.ETaskType.INVENTION) {
-//			// TODO Implement the process invention
+		if (newTask.getTaskType() == Action.ETaskType.INVENTION) {
+			// TODO Implement the process invention
 //			this.processInvent(newTask);
-//			return;
-//		}
+			return;
+		}
 		// Get the Assets that match the current type id.
 		final List<NeoComAsset> available = assetsManager.getAssets4Type(newTask.getResource().getItem().getItemId());
-		logger.info("-- [AbstractManufactureProcess.processRequest]> Total available assets 4 type: {}", available);
-		// OPTIMIZATION. Do all Move tests only if there are arrest of this type available.
+		logger.info("-- [FittingProcessor.processRequest]> Total available assets 4 type: {}", available);
+		// OPTIMIZATION. Do all Move tests only if there are items of this type available.
 		if (available.size() > 0) {
 			// See if there are assets of this type on the manufacture location before moving assets.
 			// MOVE - manufacture location
@@ -237,7 +249,7 @@ public class FittingProcessor {
 //			}
 //			}
 				// Check the MOVE flag to control if the user allows to search for assets at other locations
-				logger.info("-- [AbstractManufactureProcess.processRequest]> Checking Move Allowed flag > {}" + this.moveAllowed());
+				logger.info("-- [FittingProcessor.processRequest]> Checking Move Allowed flag > {}" + this.moveAllowed());
 				if (this.moveAllowed()) {
 					// See if we have that resource elsewhere ready for transportation.
 					// MOVE - manufacture region
@@ -255,8 +267,8 @@ public class FittingProcessor {
 
 		// If we reach this point we are sure that all other intents have been processed.
 		// Continue processing a BUY request or its decomposition.
-		logger.info("-- [AbstractManufactureProcess.processRequest]> Delegating processing to [processAction]");
-//		this.processAction(newTask);
+		logger.info("-- [FittingProcessor.processRequest]> Delegating processing to [processAction]");
+		this.processAction(newTask);
 	}
 
 	/**
@@ -301,6 +313,150 @@ public class FittingProcessor {
 			return;
 		}
 	}
+
+	protected void processAction( final EveTask newTask ) {
+		logger.info(">> [FittingProcessor.processAction]> Task:{}", newTask);
+		final String category = newTask.getItem().getCategory();
+		// Check the special case for T2 BPC to transform them to default INVENTION.
+		if (newTask.getTaskType() == Action.ETaskType.REQUEST)
+			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+				final String tech = newTask.getItem().getTech();
+				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+					logger.info("-- [FittingProcessor.processAction]> T2 Blueprint - request INVENTION");
+					newTask.setTaskType(Action.ETaskType.INVENTION);
+					this.processRequest(newTask);
+					return;
+				}
+				// If we request a T1 blueprint then we have to check if we can create copies. This is a default
+				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+					//					ArrayList<Asset> bpcs = getAsset4Type(newTask.getItem().getTypeID());
+					//					// Search each blueprint to locate the BPO and then create the copies.
+					//					for (Asset asset : bpcs) {
+					//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetID());
+					//						if (bp.isBpo()) {
+					newTask.setTaskType(Action.ETaskType.COPY);
+//					this.processRequest(newTask);
+					return;
+					//						}
+					//					}
+					//					processBuy(newTask);
+					//					return;
+				}
+			}
+
+		// Check if the user has an action for this type of item. This can be tested for only some categories.
+		// USER ACTIONS
+		final Property action = actions4Item.get(new Long(newTask.getTypeId()));
+		if (null != action) {
+			// TODO This block of code is still pending review
+//			// Store the action on the Task for later presentation.
+//			currentAction.setUserAction(action.getStringValue());
+//			// New code to handle reactions.
+//			if (newTask.getItem().getIndustryGroup() == EIndustryGroup.REACTIONMATERIALS) {
+//				this.processReaction(newTask);
+//			}
+//			if (category.equalsIgnoreCase("Planetary Commodities")) // Action is limited to PRODUCE or BUY
+//				if (action.getStringValue().equalsIgnoreCase("PRODUCE")) {
+//					final EveLocation planetaryLocation = pilot.getLocation4Role("PLANETARY PROCESSING", region);
+//					newTask.setTaskType(ETaskType.PRODUCE);
+//					if (null != planetaryLocation) {
+//						newTask.setLocation(planetaryLocation);
+//					}
+//					newTask.setDestination(manufactureLocation);
+//					this.registerTask(500, newTask);
+//					return;
+//				}
+//			if (category.equalsIgnoreCase("Material")) // Action is limited to EXTRACT or BUY
+//				if (action.getStringValue().equalsIgnoreCase("MATERIAL REFINE")) {
+//					this.processRefine(newTask);
+//					return;
+//				}
+//			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+//				// There can be two types. Check the corresponding action.
+//				final String tech = newTask.getItem().getTech();
+//				if (tech.equalsIgnoreCase("Tech I")) {
+//					final EveLocation copyLocation = pilot.getLocation4Role("COPY", region);
+//					AbstractManufactureProcess.logger.info("-- COPY location searched at " + copyLocation);
+//					newTask.setTaskType(ETaskType.COPY);
+//					if (null != copyLocation) {
+//						newTask.setLocation(copyLocation);
+//					}
+//					final EveLocation inventLocation = pilot.getLocation4Role("INVENT", region);
+//					AbstractManufactureProcess.logger.info("-- INVENT location searched at " + inventLocation);
+//					if (null != inventLocation) {
+//						newTask.setDestination(manufactureLocation);
+//					}
+//					this.registerTask(400, newTask);
+//					return;
+//				}
+		}
+		if ((category.equalsIgnoreCase(ModelWideConstants.eveglobal.Module)) || (category.equalsIgnoreCase("Commodity"))
+				|| (category.equalsIgnoreCase("Charge"))) // Action is limited to BUILD.
+			if (action.getStringValue().equalsIgnoreCase("BUILD")) {
+				// Schedule a manufacture request.
+//					this.processBuild(newTask);
+				return;
+			}
+		if (category.equalsIgnoreCase("Ship")) // Action is limited to BUILD.
+			if (action.getStringValue().equalsIgnoreCase("BUILD")) {
+				// Schedule a manufacture request.
+//					this.processBuild(newTask);
+				return;
+			}
+//		}
+		this.processBuy(newTask);
+	}
+
+	/**
+	 * When a required resource is not found elsewhere we have to generate a BUY action. This is the final
+	 * action but still there are two different BUY actions. If there is no Scheduled Buy request on list then
+	 * the BUY is a real BUY request that should be differentiated from a BUY when the user has already
+	 * requested a buy to the market. This is a visual aid to the user to remember that the buy has already been
+	 * requested to the market.
+	 *
+	 * @param newTask
+	 */
+	protected void processBuy( final EveTask newTask ) {
+		final List<NeoComMarketOrder> scheduledOrders = this.accessScheduledOrders();
+		// Search for an order for this type.
+		for (final NeoComMarketOrder marketOrder : scheduledOrders)
+			if (marketOrder.getItemTypeID() == newTask.getTypeId()) { //if (marketOrder.getQuantity() < newTask.getQty()) {
+				final int taskQty = newTask.getQty();
+				final int orderQty = marketOrder.getQuantity();
+				// Update the tasks depending on those two quantities.
+				// Generate two orders, one with the covered buy and maybe other with the rest.
+				newTask.setTaskType(Action.ETaskType.BUYCOVERED);
+				newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+				newTask.setQty(Math.min(taskQty, orderQty));
+				this.registerTask(300, newTask);
+				final int diff = taskQty - orderQty;
+				if (diff > 0) {
+					final EveTask partialTask = new EveTask(Action.ETaskType.BUY, newTask.getResource());
+					partialTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+					partialTask.setQty(diff);
+					this.registerTask(300, partialTask);
+				}
+				return;
+			}
+		newTask.setTaskType(Action.ETaskType.BUY);
+		newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+		this.registerTask(300, newTask);
+	}
+
+	private List<NeoComMarketOrder> accessScheduledOrders() {
+		return new ArrayList();
+	}
+
+	public static class NeoComMarketOrder {
+		public int getItemTypeID() {
+			return 0;
+		}
+
+		public int getQuantity() {
+			return 0;
+		}
+	}
+	//-------------------------------------------------------------------------------------------------------
 
 	/**
 	 * Aggregates the new task to the list of tasks. Before adding the task to the list it checks if there is a
@@ -411,7 +567,7 @@ final class AssetsManager {
 	private static Logger logger = LoggerFactory.getLogger("AssetsManager");
 
 	public String jsonClass = "AssetsManager";
-	private Credential currentPilotCredential=null;
+	private Credential currentPilotCredential = null;
 	private final HashMap<Integer, List<NeoComAsset>> asset4TypeCache = new HashMap<Integer, List<NeoComAsset>>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -419,7 +575,7 @@ final class AssetsManager {
 //		super(credential);
 		// Load the timestamp from the database to control the refresh status of all the assets.
 //		this.readTimeStamps();
-		currentPilotCredential=credential;
+		currentPilotCredential = credential;
 		jsonClass = "AssetsManager";
 	}
 

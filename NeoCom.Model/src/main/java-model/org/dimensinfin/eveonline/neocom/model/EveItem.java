@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
@@ -226,7 +227,7 @@ public class EveItem extends NeoComNode {
 		if (defaultprice < 0.0) {
 			try {
 				defaultprice = accessGlobal().searchMarketPrice(getTypeID()).getAdjustedPrice();
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				defaultprice = -1.0;
 			}
 			if (defaultprice < 1.0) defaultprice = baseprice;
@@ -267,14 +268,6 @@ public class EveItem extends NeoComNode {
 		baseprice = price;
 	}
 
-	//	public void setBlueprint(final boolean state) {
-	//		isBlueprint = state;
-	//	}
-
-	//	public void setCategory()(final String newcategory) {
-	//		category = newcategory;
-	//	}
-
 	public void setName( final String name ) {
 		this.name = name;
 	}
@@ -294,10 +287,8 @@ public class EveItem extends NeoComNode {
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveItem [");
-		buffer.append("#").append(this.getItemID()).append(" - ").append(this.getName()).append(" ");
-		//		buffer.append(getgetGroupName()()).append("/").append(getgetCategory()()).append(" [").append(getPrice()).append(" ISK]")
-		//		.append(" ");
-		buffer.append(this.getGroupName()).append("/").append(this.getCategory()).append(" [").append(" ");
+		buffer.append("#").append(this.getItemId()).append(" - ").append(this.getName()).append(" ");
+//		buffer.append(this.getGroupName()).append("/").append(this.getCategory()).append(" [").append(" ");
 		buffer.append("IC:").append(industryGroup).append(" ");
 		buffer.append("]");
 		return buffer.toString();
@@ -361,11 +352,8 @@ public class EveItem extends NeoComNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-			try {
-				buyerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
-			} catch (NeoComException neoe) {
-			}
-			if (null == buyerData) {
+					buyerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+				if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemId(), EMarketSide.BUYER);
 			}
 		}
@@ -382,10 +370,7 @@ public class EveItem extends NeoComNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-			try {
 				sellerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
-			} catch (NeoComException neoe) {
-			}
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemId(), EMarketSide.SELLER);
 			}

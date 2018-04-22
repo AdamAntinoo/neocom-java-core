@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -83,7 +84,7 @@ public class Fitting extends NeoComNode {
 		// Update the transient item details from this type identifier.
 		try {
 			shipItem = accessGlobal().searchItem4Id(shipTypeId);
-		} catch (NeoComException neoe) {
+		} catch (NeocomRuntimeException neoe) {
 			shipItem = new EveItem();
 		}
 		return this;
@@ -135,7 +136,7 @@ public class Fitting extends NeoComNode {
 			this.typeId = typeId;
 			try {
 				itemDetails = accessGlobal().searchItem4Id(typeId);
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				itemDetails = new EveItem();
 			}
 		}
@@ -168,7 +169,7 @@ public class Fitting extends NeoComNode {
 			// Transform the numeric flag to a categorized value.
 			try {
 				detailedFlag = accessGlobal().searchFlag4Id(flag);
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				detailedFlag = new InventoryFlag()
 						.setFlagID(4)
 						.setFlagName("Hangar")

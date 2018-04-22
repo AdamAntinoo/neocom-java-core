@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -86,7 +87,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 			// Update the production type with the Item data from the SDE.
 			try {
 				item = accessGlobal().searchItem4Id(productTypeId);
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				item = new EveItem();
 			}
 		}
@@ -100,7 +101,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 		public String getProductTypeName() {
 			try {
 				if (null == item) item = accessGlobal().searchItem4Id(productTypeId);
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				item = new EveItem();
 			}
 			return item.getName();
@@ -169,7 +170,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 			// Check if the item is loaded. If not try to get it from the SDE.
 			try {
 				if (null == item) item = accessGlobal().searchItem4Id(typeId);
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				item = new EveItem();
 			}
 			return item;
@@ -184,7 +185,7 @@ public class ColonyStructure extends NeoComExpandableNode {
 			// Get the Eve item data from the SDE so we can perform calculations.
 			try {
 				item = accessGlobal().searchItem4Id(typeId);
-			} catch (NeoComException neoe) {
+			} catch (NeocomRuntimeException neoe) {
 				item = new EveItem();
 			}
 		}

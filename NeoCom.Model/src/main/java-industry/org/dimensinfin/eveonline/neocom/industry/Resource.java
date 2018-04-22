@@ -20,7 +20,6 @@ import org.joda.time.DateTimeZone;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
@@ -52,7 +51,7 @@ public class Resource extends NeoComNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	public EveItem item = new EveItem();
-	private int resourceID = -1;
+	private int resourceId = -1;
 	public int baseQty = 0;
 	public int stackSize = 1;
 	private double damage = 1.0;
@@ -62,23 +61,20 @@ public class Resource extends NeoComNode {
 	/**
 	 * Builds a new resource of quantity 1.
 	 *
-	 * @param typeID
+	 * @param typeId
 	 */
-	public Resource( final int typeID ) {
+	public Resource( final int typeId ) {
 		super();
-		resourceID = typeID;
-		try {
-			item = accessGlobal().searchItem4Id(typeID);
-		} catch (NeoComException neoe) {
-		}
+		resourceId = typeId;
+			item = accessGlobal().searchItem4Id(typeId);
 		baseQty = 0;
 		jsonClass = "Resource";
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Resource( final int typeID, final int newQty ) {
-		this(typeID);
-//		resourceID = typeID;
+	public Resource( final int typeId, final int newQty ) {
+		this(typeId);
+//		resourceId = typeId;
 //		item = GlobalDataManager.searchItem4Id(typeID);
 		baseQty = newQty;
 	}
@@ -158,8 +154,8 @@ public class Resource extends NeoComNode {
 		return stackSize;
 	}
 
-	public int getTypeID() {
-		return item.getItemID();
+	public int getTypeId() {
+		return item.getItemId();
 	}
 
 	public void setAdaptiveStackSize( final int size ) {
@@ -202,7 +198,7 @@ public class Resource extends NeoComNode {
 		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
 		buffer.append("stack: ").append(stackSize).append(" ");
 		buffer.append("total: ").append(this.getQuantity()).append(" ");
-		buffer.append("#").append(this.getTypeID()).append(" ");
+		buffer.append("#").append(this.getTypeId()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
