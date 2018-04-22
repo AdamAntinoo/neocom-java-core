@@ -87,6 +87,11 @@ public class FittingProcessor {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
+	public FittingProcessor setCredential( final Credential credential ) {
+		this.credential = credential;
+		return this;
+	}
+
 	/**
 	 * The Fitting processor should get a Fitting (T1, T2, T3 ship) and running a set of rules generate a list of actions that
 	 * will show all the activities to run to complete its construction. The actions have some default states that can be
@@ -116,6 +121,8 @@ public class FittingProcessor {
 		// Get the work place location. This should be a Manufacture targeted role location if defined. Home if not.
 		manufactureLocation = searchManufactureLocation(credential);
 		region = manufactureLocation.getRegion();
+		// Get the list of actions declared for this Pilot.
+		actions4Item = getPilotActions(credential);
 		// Get the list of character assets.
 		assetsManager = new AssetsManager(credential);
 		// Clear processing variables.
@@ -180,6 +187,24 @@ public class FittingProcessor {
 		return result;
 	}
 
+	protected HashMap<Long, Property> getPilotActions( final Credential credential ) {
+		final HashMap<Long, Property> actions4Character = new HashMap<Long, Property>();
+		try {
+			final HashMap<String, Object> queryParams = new HashMap<>();
+			queryParams.put("ownerId", credential.getAccountId());
+			queryParams.put("propertyType", EPropertyTypes.MANUFACTUREACTION.name());
+			final List<Property> actionList = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
+			// Process the returned list and store in the character.
+			for (Property property : actionList) {
+				// The type selected for the action is stored as the property key.
+				actions4Character.put(Double.valueOf(property.getNumericValue()).longValue(), property);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return actions4Character;
+	}
+
 	/**
 	 * This is the main processing entry point. When a task is created it is entered to the manager to check of
 	 * the action can be performed with other tasks that are less costly and that have a lower priority. If
@@ -226,7 +251,7 @@ public class FittingProcessor {
 			return;
 		}
 		// Get the Assets that match the current type id.
-		final List<NeoComAsset> available = assetsManager.getAssets4Type(newTask.getResource().getItem().getItemId());
+		final List<NeoComAsset> available = getAssetsManager().getAssets4Type(newTask.getResource().getItem().getItemId());
 		logger.info("-- [FittingProcessor.processRequest]> Total available assets 4 type: {}", available);
 		// OPTIMIZATION. Do all Move tests only if there are items of this type available.
 		if (available.size() > 0) {
@@ -550,6 +575,11 @@ public class FittingProcessor {
 		// Reaching this point means we have not a location selected.
 		// TODO Use a mock place. This is the Singularity selected place to test.
 		return new GlobalDataManager().searchLocation4Id(60006526);
+	}
+
+	private AssetsManager getAssetsManager() {
+		if (null == assetsManager) assetsManager = new AssetsManager(credential);
+		return assetsManager;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
