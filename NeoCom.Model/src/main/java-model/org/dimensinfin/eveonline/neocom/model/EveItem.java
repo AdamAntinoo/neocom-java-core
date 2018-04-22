@@ -243,7 +243,12 @@ public class EveItem extends NeoComNode {
 		return tech;
 	}
 
+	@Deprecated
 	public int getTypeID() {
+		return id;
+	}
+
+	public int getTypeId() {
 		return id;
 	}
 
@@ -276,8 +281,13 @@ public class EveItem extends NeoComNode {
 		this.tech = tech;
 	}
 
+	@Deprecated
 	public void setTypeID( final int typeID ) {
 		id = typeID;
+	}
+
+	public void setTypeId( final int typeId ) {
+		id = typeId;
 	}
 
 	public void setVolume( final double volume ) {
@@ -352,8 +362,8 @@ public class EveItem extends NeoComNode {
 	 */
 	private MarketDataSet getBuyerMarketData() {
 		if (null == buyerData) {
-					buyerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
-				if (null == buyerData) {
+			buyerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.BUYER);
+			if (null == buyerData) {
 				buyerData = new MarketDataSet(this.getItemId(), EMarketSide.BUYER);
 			}
 		}
@@ -370,7 +380,7 @@ public class EveItem extends NeoComNode {
 	 */
 	private MarketDataSet getSellerMarketData() {
 		if (null == sellerData) {
-				sellerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
+			sellerData = accessGlobal().searchMarketData(this.getTypeID(), EMarketSide.SELLER);
 			if (null == sellerData) {
 				sellerData = new MarketDataSet(this.getItemId(), EMarketSide.SELLER);
 			}

@@ -61,7 +61,7 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 public class MarketDataServer {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("MarketDataServer");
-	private static final int cpuCount = Runtime.getRuntime().availableProcessors();
+	public static final int cpuCount = Runtime.getRuntime().availableProcessors();
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private HashMap<Integer, MarketDataSet> buyMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
@@ -222,7 +222,7 @@ public class MarketDataServer {
 		// - S T A T I C - S E C T I O N ..........................................................................
 		public int marketJobCounter = 0;
 		private static ExecutorService marketDataDownloadExecutor = null;
-		public static final Hashtable<String, Future<?>> runningJobs = new Hashtable();
+		public static final Hashtable<String, Future<MarketDataSet>> runningJobs = new Hashtable();
 
 		// - F I E L D - S E C T I O N ............................................................................
 		private final int threadSize;
@@ -243,14 +243,14 @@ public class MarketDataServer {
 		 *
 		 * @param typeId the job to update some information.
 		 */
-		public synchronized void addMarketDataRequest( final int typeId ) {
+		public synchronized Future<MarketDataSet> addMarketDataRequest( final int typeId ) {
 			// Launch the updater job only if the market data updater process is allowed.
 			if (!GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name())) {
 				final String identifier = generateMarketDataJobReference(typeId);
 				logger.info(">> [MarketDataJobDownloadManager.addMarketDataRequest]");
 				try {
 					// Search for the job to detect duplications
-					final Future<?> hit = runningJobs.get(identifier);
+					final Future<MarketDataSet> hit = runningJobs.get(identifier);
 					if (null == hit) {
 						// New job. Launch it and store the reference.
 						runningJobs.put(identifier, launchDownloadJob(typeId));
@@ -261,13 +261,15 @@ public class MarketDataServer {
 							runningJobs.put(identifier, launchDownloadJob(typeId));
 						}
 					}
+					return hit;
 				} catch (RuntimeException neoe) {
 					neoe.printStackTrace();
 				}
 			}
+			return null;
 		}
 
-		protected Future<?> launchDownloadJob( final int typeId ) {
+		protected Future<MarketDataSet> launchDownloadJob( final int typeId ) {
 			try {
 				logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob]> Launching job {}", typeId);
 				marketJobCounter++;
@@ -337,7 +339,7 @@ public class MarketDataServer {
 					marketJobCounter--;
 					logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob.submit]> Completing job {}", typeId);
 				});
-				return future;
+				return (Future<MarketDataSet>) future;
 			} finally {
 				logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob]");
 			}

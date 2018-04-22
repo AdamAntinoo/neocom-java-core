@@ -414,21 +414,20 @@ public class FittingProcessor {
 //					this.registerTask(400, newTask);
 //					return;
 //				}
+//		if ((category.equalsIgnoreCase(ModelWideConstants.eveglobal.Module)) || (category.equalsIgnoreCase("Commodity"))
+//				|| (category.equalsIgnoreCase("Charge"))) // Action is limited to BUILD.
+//			if (action.getStringValue().equalsIgnoreCase("BUILD")) {
+//				// Schedule a manufacture request.
+//				 					this.processBuild(newTask);
+//				return;
+//			}
+//		if (category.equalsIgnoreCase("Ship")) // Action is limited to BUILD.
+//			if (action.getStringValue().equalsIgnoreCase("BUILD")) {
+//				// Schedule a manufacture request.
+//					this.processBuild(newTask);
+//				return;
+//			}
 		}
-		if ((category.equalsIgnoreCase(ModelWideConstants.eveglobal.Module)) || (category.equalsIgnoreCase("Commodity"))
-				|| (category.equalsIgnoreCase("Charge"))) // Action is limited to BUILD.
-			if (action.getStringValue().equalsIgnoreCase("BUILD")) {
-				// Schedule a manufacture request.
-//					this.processBuild(newTask);
-				return;
-			}
-		if (category.equalsIgnoreCase("Ship")) // Action is limited to BUILD.
-			if (action.getStringValue().equalsIgnoreCase("BUILD")) {
-				// Schedule a manufacture request.
-//					this.processBuild(newTask);
-				return;
-			}
-//		}
 		this.processBuy(newTask);
 	}
 

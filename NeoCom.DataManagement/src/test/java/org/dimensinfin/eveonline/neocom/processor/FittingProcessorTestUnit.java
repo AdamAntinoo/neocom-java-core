@@ -30,6 +30,7 @@ import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.MarketDataServer;
 import org.dimensinfin.eveonline.neocom.industry.Action;
 import org.dimensinfin.eveonline.neocom.industry.EveTask;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -44,6 +45,7 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("FittingProcessorTestUnit");
 	private static Credential testCredential;
+	public static MarketDataServer mdServer = null;
 
 	@BeforeClass
 	public static void before01OpenAndConnectDatabase() throws SQLException {
@@ -89,6 +91,11 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 			sqle.printStackTrace();
 		}
 		ANeoComEntity.connectNeoComHelper(new GlobalDataManager().getNeocomDBHelper());
+
+		// Connect the MarketData service.
+		logger.info("-- [NeoComMicroServiceApplication.main]> Starting Market Data service...");
+		mdServer = new MarketDataServer().start();
+		GlobalDataManager.setMarketDataManager(mdServer);
 
 		// Load the Locations cache to speed up the Citadel and Outpost search.
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Read Locations data cache...");
