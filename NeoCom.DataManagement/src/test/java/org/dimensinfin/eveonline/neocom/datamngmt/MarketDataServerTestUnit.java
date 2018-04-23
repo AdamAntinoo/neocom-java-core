@@ -12,6 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +22,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
+import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
+import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.TrackEntry;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 
 import static org.dimensinfin.eveonline.neocom.datamngmt.MarketDataServer.cpuCount;
@@ -45,6 +53,72 @@ public class MarketDataServerTestUnit {
 	 */
 	private FutureEveItem item = null;
 
+	@BeforeClass
+	public static void before01OpenAndConnectDatabase() throws SQLException {
+		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
+		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
+		GlobalDataManager.connectConfigurationManager(new GlobalConfigurationProvider("testproperties"));
+
+		// Initialize the Model with the current global instance.
+		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting Global to Model...");
+		ANeoComEntity.connectGlobal(new GlobalDataManager());
+
+		// Initializing the ESI api network controller.
+		ESINetworkManager.initialize();
+
+		// Connect the SDE database.
+		logger.info("-- [NeoComMicroServiceApplication.main]> Connecting SDE database...");
+		try {
+			GlobalDataManager.connectSDEDBConnector(new SDESBDBHelper()
+					.setDatabaseSchema(GlobalDataManager.getResourceString("R.database.sdedatabase.databaseschema"))
+					.setDatabasePath(GlobalDataManager.getResourceString("R.database.sdedatabase.databasepath"))
+					.setDatabaseName(GlobalDataManager.getResourceString("R.database.sdedatabase.databasename"))
+					.build()
+			);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		ANeoComEntity.connectSDEHelper(new GlobalDataManager().getSDEDBHelper());
+
+		// Connect the NeoCom database.
+		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting NeoCom private database...");
+		try {
+			GlobalDataManager.connectNeoComDBConnector(new NeoComSBDBHelper()
+					.setDatabaseHost(GlobalDataManager.getResourceString("R.database.neocom.databasehost"
+							, "jdbc:mysql://localhost:3306"))
+					.setDatabaseName("neocom")
+					.setDatabaseUser(GlobalDataManager.getResourceString("R.database.neocom.databaseuser"
+							, "NEOCOM"))
+					.setDatabasePassword(GlobalDataManager.getResourceString("R.database.neocom.databasepassword"))
+					.setDatabaseVersion(GlobalDataManager.getResourceInt("R.database.neocom.databaseversion"))
+					.build()
+			);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		ANeoComEntity.connectNeoComHelper(new GlobalDataManager().getNeocomDBHelper());
+
+		// Load the Locations cache to speed up the Citadel and Outpost search.
+		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Read Locations data cache...");
+		GlobalDataManager.readLocationsDataCache();
+
+		// Check the connection descriptor.
+		Assert.assertEquals("-> Validating the database is valid..."
+				, new GlobalDataManager().getNeocomDBHelper().isDatabaseValid()
+				, true);
+		// Check the database is open and has a valid connection.
+		Assert.assertEquals("-> Validating the database is open..."
+				, new GlobalDataManager().getNeocomDBHelper().isOpen()
+				, true);
+
+//		// Get a testing credential.
+//		final List<Credential> credentials = new GlobalDataManager().getNeocomDBHelper().getCredentialDao().queryForAll();
+//		for (Credential c : credentials) {
+//			if (c.getAccountId() == 92002067) testCredential = c;
+//		}
+		logger.info("<< [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 	private static FutureMarketDataDownloader marketDataService = null;
 
@@ -60,10 +134,10 @@ public class MarketDataServerTestUnit {
 		logger.info("-- [MarketDataServerTestUnit.test01InitiateFutureEveItem]> Created a new Item that is accessing the market " +
 				"data.");
 		logger.info("<< [MarketDataServerTestUnit.test01InitiateFutureEveItem]");
-	}
-
-	@Test
-	public void test02AccessMarketData() {
+//	}
+//
+//	@Test
+//	public void test02AccessMarketData() {
 		logger.info(">> [MarketDataServerTestUnit.test02AccessMarketData]");
 		// Get access to the market data to get a fresh value for the market data.
 		final double price = item.getBuyerPrice();

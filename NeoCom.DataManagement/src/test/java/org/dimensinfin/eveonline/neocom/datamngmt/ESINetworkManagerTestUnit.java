@@ -91,11 +91,6 @@ public class ESINetworkManagerTestUnit {
 		logger.info("<< [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 	}
 
-	@BeforeClass
-	public static void before02ObtainCredential() throws SQLException {
-		logger.info(">> [ESINetworkManagerTestUnit.before02ObtainCredential]");
-		logger.info("<< [ESINetworkManagerTestUnit.before02ObtainCredential]");
-	}
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
