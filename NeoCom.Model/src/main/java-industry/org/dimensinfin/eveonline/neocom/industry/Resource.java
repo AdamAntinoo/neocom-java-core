@@ -19,7 +19,6 @@ import org.joda.time.DateTimeZone;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
@@ -66,7 +65,7 @@ public class Resource extends NeoComNode {
 	public Resource( final int typeId ) {
 		super();
 		resourceId = typeId;
-			item = accessGlobal().searchItem4Id(typeId);
+		item = accessGlobal().searchItem4Id(typeId);
 		baseQty = 0;
 		jsonClass = "Resource";
 	}

@@ -90,7 +90,7 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		ANeoComEntity.connectNeoComHelper(new GlobalDataManager().getNeocomDBHelper());
+//		ANeoComEntity.connectNeoComHelper(new GlobalDataManager().getNeocomDBHelper());
 
 		// Connect the MarketData service.
 		logger.info("-- [NeoComMicroServiceApplication.main]> Starting Market Data service...");
@@ -119,8 +119,8 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected transient final HashMap<Integer, Action> actionsRegistered = new HashMap<Integer, Action>();
-	protected transient Action currentAction = null;
+//	protected transient final HashMap<Integer, Action> actionsRegistered = new HashMap<Integer, Action>();
+//	protected transient Action currentAction = null;
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Test

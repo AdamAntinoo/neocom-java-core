@@ -83,7 +83,7 @@ public class IndustryTestUnit {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
-		ANeoComEntity.connectNeoComHelper(new GlobalDataManager().getNeocomDBHelper());
+//		ANeoComEntity.connectNeoComHelper(new GlobalDataManager().getNeocomDBHelper());
 
 		// Load the Locations cache to speed up the Citadel and Outpost search.
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Read Locations data cache...");

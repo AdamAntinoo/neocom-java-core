@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
@@ -224,7 +225,13 @@ public class PlanetaryProcessor {
 		double value = 0.0;
 		for (Resource r : resourceList2Evaluate) {
 			//			if (null == consumed.get(r.getTypeId())) {
-			value += r.getItem().getHighestBuyerPrice().getPrice() * r.getQuantity();
+			try {
+				value += r.getItem().getHighestBuyerPrice().getPrice() * r.getQuantity();
+			} catch (ExecutionException ee) {
+				value+=r.getItem().getPrice()* r.getQuantity();
+			} catch (InterruptedException ie) {
+				value+=r.getItem().getPrice()* r.getQuantity();
+			}
 			//			}
 		}
 		//		// Add outputs resources value.

@@ -12,6 +12,8 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
+import java.util.concurrent.ExecutionException;
+
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -43,6 +45,7 @@ public class EveTask extends NeoComNode {
 	public void addAction( final String action ) {
 		this.action = action;
 	}
+
 	public EveLocation getDestination() {
 		return destination;
 	}
@@ -61,7 +64,13 @@ public class EveTask extends NeoComNode {
 	}
 
 	public double getPrice() {
-		return resource.item.getLowestSellerPrice().getPrice();
+		try {
+			return resource.item.getLowestSellerPrice().getPrice();
+		} catch (ExecutionException ee) {
+			return resource.item.getPrice();
+		} catch (InterruptedException ie) {
+			return resource.item.getPrice();
+		}
 	}
 
 	public int getQty() {

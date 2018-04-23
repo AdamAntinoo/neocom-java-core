@@ -12,36 +12,33 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ItemCategory;
-import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
 /**
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManagerCache extends SDEExternalDataManager{
+public class GlobalDataManagerCache extends SDEExternalDataManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
 
-	// --- C A C H E   S T O R A G E   S E C T I O N
+	//--- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
 	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
 
 	public enum ECacheTimes {
-		CHARACTER_PUBLIC, CHARACTER_CLONES
-		, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
-		, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES
-		, INDUSTRY_JOBS
+		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS
 	}
 
 	static {
@@ -59,6 +56,49 @@ public class GlobalDataManagerCache extends SDEExternalDataManager{
 		if (null == hit) return DEFAULT_CACHE_TIME;
 		else return hit.longValue();
 	}
+
+	//--- M A R K E T   D A T A   S E R V I C E   S E C T I O N
+	private static MarketDataServer marketDataService = null;
+	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
+
+	public static void setMarketDataManager( final MarketDataServer manager ) {
+		logger.info(">> [GlobalDataManagerCache.setMarketDataManager]");
+		marketDataService = manager;
+		// At this point we should have been initialized.
+		// Initialize and process the list of market process form the ESI full market data.
+		final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(GlobalDataManager.SERVER_DATASOURCE);
+		logger.info(">> [GlobalDataManagerCache.setMarketDataManager]> Process all market prices: {} items", marketPrices.size());
+		for (GetMarketsPrices200Ok price : marketPrices) {
+			marketDefaultPrices.put(price.getTypeId(), price);
+		}
+		logger.info("<< [GlobalDataManagerCache.setMarketDataManager]");
+	}
+
+	/**
+	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
+	 * @param typeId
+	 * @return
+	 */
+	public GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
+		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
+		// TODO - If there is no data for the item on the ESI data source we should go to the best buyer price at Jita. We can do
+		// it with another future that evaluates when the price is consumed.
+		if (null == hit) {
+			final GetMarketsPrices200Ok newprice = new GetMarketsPrices200Ok().typeId(typeId);
+			newprice.setAdjustedPrice(-1.0);
+			newprice.setAveragePrice(-1.0);
+			return newprice;
+		} else return hit;
+	}
+
+	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
+		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
+		else throw new RuntimeException("No MarketDataManager service connected.");
+	}
+//	public static void activateMarketDataCache4Id( final int typeId ) {
+//		if (null != marketDataService) marketDataService.activateMarketDataCache4Id(typeId);
+//		else throw new RuntimeException("No MarketDataManager service connected.");
+//	}
 }
 // - UNUSED CODE ............................................................................................
 //[01]

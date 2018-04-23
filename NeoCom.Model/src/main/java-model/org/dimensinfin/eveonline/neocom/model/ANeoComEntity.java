@@ -15,7 +15,6 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
-import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.interfaces.IDatabaseEntity;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
@@ -35,7 +34,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
 public abstract class ANeoComEntity extends AbstractPropertyChanger implements IDatabaseEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static ISDEDBHelper SDEHelper = null;
-	private static INeoComDBHelper neocomDBHelper = null;
+//	private static INeoComDBHelper neocomDBHelper = null;
 	private static IGlobalConnector globalConnector=null;
 
 	/**
@@ -46,8 +45,6 @@ public abstract class ANeoComEntity extends AbstractPropertyChanger implements I
 	 */
 	public static void connectGlobal( final IGlobalConnector global ) {
 		globalConnector = global;
-//			connectSDEHelper(accessGlobal().getSDEDBHelper());
-//			connectNeoComHelper(accessGlobal().getNeocomDBHelper());
 	}
 	public static IGlobalConnector accessGlobal( ) throws NeocomRuntimeException {
 		if (null != globalConnector) return globalConnector;
@@ -64,19 +61,19 @@ public abstract class ANeoComEntity extends AbstractPropertyChanger implements I
 		SDEHelper = helper;
 	}
 
-	/**
-	 * Required initialization step to connect the Model classes to the NeoCom database helper.
-	 *
-	 * @param helper connection to the NeoCom database.
-	 */
-	public static void connectNeoComHelper( final INeoComDBHelper helper ) {
-		neocomDBHelper = helper;
-	}
+//	/**
+//	 * Required initialization step to connect the Model classes to the NeoCom database helper.
+//	 *
+//	 * @param helper connection to the NeoCom database.
+//	 */
+//	public static void connectNeoComHelper( final INeoComDBHelper helper ) {
+//		neocomDBHelper = helper;
+//	}
 
-	public static ISDEDBHelper accessSDEDBHelper() throws NeoComException {
+	public static ISDEDBHelper accessSDEDBHelper() throws NeocomRuntimeException {
 		if (null != SDEHelper) return SDEHelper;
 		else
-			throw new NeoComException("[ANeoComEntity.accessSDEDBHelper]> Database Helper not connected to Model. Database " +
+			throw new NeocomRuntimeException("[ANeoComEntity.accessSDEDBHelper]> Database Helper not connected to Model. Database " +
 					                          "disabled.");
 	}
 
@@ -85,20 +82,4 @@ public abstract class ANeoComEntity extends AbstractPropertyChanger implements I
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-//	public static ItemCategory searchItemCategory4Id( final int targetCategoryId ) {
-//		if (itemCategoryCache.containsKey(targetCategoryId)) return itemCategoryCache.get(targetCategoryId);
-//		else {
-//			final ItemCategory hit = GlobalDataManager.getSDEDBHelper().searchItemCategory4Id(targetCategoryId);
-//			// Add the hit to the cache.
-//			itemCategoryCache.put(targetCategoryId, hit);
-//			return hit;
-//		}
-//	}
-
-//	@Override
-//	public String toString() {
-//		final StringBuffer buffer = new StringBuffer("ANeoComEntity [");
-//		buffer.append(" ]");
-//		return buffer.toString();
-//	}
 }

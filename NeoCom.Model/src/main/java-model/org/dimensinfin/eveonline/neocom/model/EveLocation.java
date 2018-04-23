@@ -138,13 +138,6 @@ public class EveLocation extends NeoComNode {
 //	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	//	/**
-	//	 * Locations do not collaborate to models because have no contents.
-	//	 */
-	//	public List<ICo> collaborate2Model(final String variant) {
-	//		return new ArrayList<AbstractComplexNode>();
-	//	}
-
 	public boolean equals( final EveLocation obj ) {
 		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
 		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;

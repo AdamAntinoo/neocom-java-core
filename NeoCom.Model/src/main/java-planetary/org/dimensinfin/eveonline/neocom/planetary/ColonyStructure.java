@@ -17,6 +17,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -399,7 +400,13 @@ public class ColonyStructure extends NeoComExpandableNode {
 		contentValue = 0.0;
 		for (ColonyContent content : contents) {
 			volumeUsed += content.getAmount() * content.getItem().getVolume();
-			contentValue += content.getAmount() * content.getItem().getHighestBuyerPrice().getPrice();
+			try {
+				contentValue += content.getAmount() * content.getItem().getHighestBuyerPrice().getPrice();
+			} catch (ExecutionException ee) {
+				contentValue+=content.getAmount() * content.getItem().getPrice();
+			} catch (InterruptedException ie) {
+				contentValue+=content.getAmount() * content.getItem().getPrice();
+			}
 		}
 		// Cross use of other properties is desallowed because load order is not guaranteed.
 		//		if ( capacity < 0 )

@@ -13,6 +13,7 @@
 package org.dimensinfin.eveonline.neocom.interfaces;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
@@ -32,7 +33,7 @@ public interface IGlobalConnector {
 
 	public ISDEDBHelper getSDEDBHelper();
 
-	public MarketDataSet searchMarketData( final int itemId, final EMarketSide side );
+	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side );
 
 	public GetMarketsPrices200Ok searchMarketPrice( final int typeId );
 

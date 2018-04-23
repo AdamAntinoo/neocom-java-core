@@ -11,6 +11,7 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,6 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -216,7 +216,14 @@ public class DownloadManager {
 				if (null != category) if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 					// Add the value and volume of the stack to the global result.
 					long quantity = asset.getQuantity();
-					double price = asset.getItem().getHighestBuyerPrice().getPrice();
+					double price = 0;
+					try {
+						price = asset.getItem().getHighestBuyerPrice().getPrice();
+					} catch (ExecutionException ee) {
+						price = asset.getItem().getPrice();
+					} catch (InterruptedException ee) {
+						price = asset.getItem().getPrice();
+					}
 					assetValueISK = price * quantity;
 				}
 			}

@@ -97,47 +97,7 @@ public class GlobalDataManager extends GlobalDataManagerNetwork implements IGlob
 	private static Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
-	private static MarketDataServer marketDataService = null;
-	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public static void setMarketDataManager( final MarketDataServer manager ) {
-		logger.info(">> [GlobalDataManager.setMarketDataManager]");
-		marketDataService = manager;
-		// At this point we should have been initialized.
-		// Initialize and process the list of market process form the ESI full market data.
-		final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(SERVER_DATASOURCE);
-		logger.info(">> [GlobalDataManager.setMarketDataManager]> Process all market prices: {} items", marketPrices.size());
-		for (GetMarketsPrices200Ok price : marketPrices) {
-			marketDefaultPrices.put(price.getTypeId(), price);
-		}
-		logger.info("<< [GlobalDataManager.setMarketDataManager]");
-	}
-
-	public MarketDataSet searchMarketData( final int itemId, final EMarketSide side ) {
-		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
-		else throw new RuntimeException("No MarketDataManager service connected.");
-	}
-
-	public static void activateMarketDataCache4Id( final int typeId ) {
-		if (null != marketDataService) marketDataService.activateMarketDataCache4Id(typeId);
-		else throw new RuntimeException("No MarketDataManager service connected.");
-	}
-
-	/**
-	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
-	 *
-	 * @param typeId
-	 * @return
-	 */
-	public GetMarketsPrices200Ok searchMarketPrice( final int typeId ) {
-		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
-		if (null == hit) {
-			final GetMarketsPrices200Ok newprice = new GetMarketsPrices200Ok().typeId(typeId);
-			newprice.setAdjustedPrice(-1.0);
-			newprice.setAveragePrice(-1.0);
-			return newprice;
-		} else return hit;
-	}
 
 	public static void cleanEveItemCache() {
 		itemCache.clear();

@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -450,20 +451,38 @@ public class FittingProcessor {
 				// Update the tasks depending on those two quantities.
 				// Generate two orders, one with the covered buy and maybe other with the rest.
 				newTask.setTaskType(Action.ETaskType.BUYCOVERED);
-				newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+				try {
+					newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+				} catch (ExecutionException ee) {
+					newTask.setLocation(new EveLocation(60003466));
+				} catch (InterruptedException ie) {
+					newTask.setLocation(new EveLocation(60003466));
+				}
 				newTask.setQty(Math.min(taskQty, orderQty));
 				this.registerTask(300, newTask);
 				final int diff = taskQty - orderQty;
 				if (diff > 0) {
 					final EveTask partialTask = new EveTask(Action.ETaskType.BUY, newTask.getResource());
-					partialTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+					try {
+						partialTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+					} catch (ExecutionException ee) {
+						partialTask.setLocation(new EveLocation(60003466));
+					} catch (InterruptedException ie) {
+						partialTask.setLocation(new EveLocation(60003466));
+					}
 					partialTask.setQty(diff);
 					this.registerTask(300, partialTask);
 				}
 				return;
 			}
 		newTask.setTaskType(Action.ETaskType.BUY);
-		newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+		try {
+			newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
+		} catch (ExecutionException ee) {
+			newTask.setLocation(new EveLocation(60003466));
+		} catch (InterruptedException ie) {
+			newTask.setLocation(new EveLocation(60003466));
+		}
 		this.registerTask(300, newTask);
 	}
 
