@@ -12,9 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManagerConfiguration extends GlobalDataManagerCache{
+public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerConfiguration");
 

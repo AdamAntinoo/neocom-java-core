@@ -29,7 +29,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManagerCache extends SDEExternalDataManager {
+public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
 
@@ -38,7 +38,7 @@ public class GlobalDataManagerCache extends SDEExternalDataManager {
 	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
 
 	public enum ECacheTimes {
-		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS
+		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS, MARKET_ORDERS
 	}
 
 	static {
@@ -49,6 +49,7 @@ public class GlobalDataManagerCache extends SDEExternalDataManager {
 		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
+		ESICacheTimes.put(ECacheTimes.MARKET_ORDERS, TimeUnit.SECONDS.toMillis(1200));
 	}
 
 	public static long getCacheTime4Type( final ECacheTimes selector ) {
@@ -76,6 +77,7 @@ public class GlobalDataManagerCache extends SDEExternalDataManager {
 
 	/**
 	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
+	 *
 	 * @param typeId
 	 * @return
 	 */

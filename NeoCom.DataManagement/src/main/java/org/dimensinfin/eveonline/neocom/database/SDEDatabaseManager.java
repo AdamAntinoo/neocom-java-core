@@ -177,19 +177,15 @@ public abstract class SDEDatabaseManager {
 	 * different treatment and also we check for the availability of the item at the current cache if
 	 * implemented.
 	 */
-	public synchronized EveItem searchItem4Id( final int typeID ) {
-		logger.info(">> [SDEDatabaseManager.searchItem4Id]");
-//		// Search the item on the cache.
-//		EveItem hit = itemCache.get(typeID);
-//		if (null == hit) {
-//			logger.info("-- [SDEDatabaseManager.searchItembyID]> Item not found at cache.");
+	public synchronized EveItem searchItem4Id( final int typeId ) {
+		logger.info(">< [SDEDatabaseManager.searchItem4Id]> Identifier: {}", typeId);
 		final EveItem hit = new EveItem();
 		try {
-			final RawStatement cursor = constructStatement(SELECT_ITEM_BYID, new String[]{Integer.valueOf(typeID).toString()});
+			final RawStatement cursor = constructStatement(SELECT_ITEM_BYID, new String[]{Integer.valueOf(typeId).toString()});
 			boolean found = false;
 			while (cursor.moveToNext()) {
 				found = true;
-				hit.setTypeID(cursor.getInt(ITEM_BYID_TYPEID_COLINDEX));
+				hit.setTypeId(cursor.getInt(ITEM_BYID_TYPEID_COLINDEX));
 				hit.setName(cursor.getString(ITEM_BYID_TYPENAME_COLINDEX));
 				hit.setGroupId(cursor.getInt(ITEM_BYID_GROUPID_COLINDEX));
 				hit.setCategoryId(cursor.getInt(ITEM_BYID_CATEGORYID_COLINDEX));
@@ -201,7 +197,6 @@ public abstract class SDEDatabaseManager {
 					// Update the Tech value when item is a Blueprint.
 					hit.setTech(ModelWideConstants.eveglobal.TechI);
 					if (hit.getName().contains(" II Blueprint")) {
-//						hit.setBlueprint(true);
 						if (hit.getName().contains(" II Blueprint")) {
 							hit.setTech(ModelWideConstants.eveglobal.TechII);
 						}
@@ -215,18 +210,16 @@ public abstract class SDEDatabaseManager {
 			}
 			cursor.close();
 			if (!found) {
-				logger.warn("W> [SDEDatabaseManager.searchItem4Id]> Item <{}> not found.", typeID);
+				logger.warn("W> [SDEDatabaseManager.searchItem4Id]> Item <{}> not found.", typeId);
 			}
 		} catch (SQLException sqle) {
 			logger.error("E> [SDEDatabaseManager.searchItem4Id]> Exception while processing query. {}", sqle.getMessage());
 		} catch (RuntimeException rtex) {
 			rtex.printStackTrace();
 			logger.error("E> [SDEDatabaseManager.searchItem4Id]> Exception while processing query. {}", rtex.getMessage());
+		} finally {
+			return hit;
 		}
-		//[01]
-//			}
-		return hit;
-//		}
 	}
 
 	/**
@@ -272,6 +265,7 @@ public abstract class SDEDatabaseManager {
 					target.setSystem(cursor.getString(LOCATIONBYID_SYSTEM_COLINDEX));
 				} else {
 					target.setSystem(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
+					target.setSystemID(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
 				}
 				fragmentID = cursor.getLong(LOCATIONBYID_CONSTELLATIONID_COLINDEX);
 				if (fragmentID > 0) {

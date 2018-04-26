@@ -12,15 +12,15 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-
-import java.sql.SQLException;
-import java.util.List;
 
 /**
  * This interface defines the methods that should be implemented at the database adapter for the Eve Online
@@ -56,8 +56,12 @@ public interface ISDEDBHelper {
 	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
 
 	public int searchStationType( final long stationId );
-	public int searchModule4Blueprint (final int bpitemID);
-	public String searchTech4Blueprint (final int blueprintID);
-	public int searchRawPlanetaryOutput (final int typeID);
-	public List<Schematics> searchSchematics4Output ( final int targetId);
+
+	public int searchModule4Blueprint( final int bpitemID );
+
+	public String searchTech4Blueprint( final int blueprintID );
+
+	public int searchRawPlanetaryOutput( final int typeID );
+
+	public List<Schematics> searchSchematics4Output( final int targetId );
 }

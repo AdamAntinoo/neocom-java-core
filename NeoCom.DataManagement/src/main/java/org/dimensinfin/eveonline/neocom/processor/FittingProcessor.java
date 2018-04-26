@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
@@ -47,7 +48,7 @@ public class FittingProcessor {
 	 * List of Properties that define the different roles that can be applied to locations. Required to discriminate industrial
 	 * actions against the complete set of locations with assets.
 	 */
-	final List<Property> roles = new ArrayList<>();
+	private List<Property> roles = new ArrayList<>();
 	/**
 	 * This is the selected location to be used when searching for resources for the Fitting processing. Setting/configuring
 	 * this place properly will change the result of the fitting processing.
@@ -115,7 +116,7 @@ public class FittingProcessor {
 			final HashMap<String, Object> queryParams = new HashMap<>();
 			queryParams.put("ownerId", credential.getAccountId());
 			queryParams.put("propertyType", EPropertyTypes.LOCATIONROLE.name());
-			final List<Property> roles = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
+			roles = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -252,7 +253,9 @@ public class FittingProcessor {
 			return;
 		}
 		// Get the Assets that match the current type id.
-		final List<NeoComAsset> available = getAssetsManager().getAssets4Type(newTask.getResource().getItem().getItemId());
+		List<NeoComAsset> available = getAssetsManager().getAssets4Type(newTask.getResource().getItem().getItemId());
+		//TODO - Shortcircuit the assets manager.
+		available = new ArrayList<>();
 		logger.info("-- [FittingProcessor.processRequest]> Total available assets 4 type: {}", available);
 		// OPTIMIZATION. Do all Move tests only if there are items of this type available.
 		if (available.size() > 0) {
@@ -342,7 +345,7 @@ public class FittingProcessor {
 
 	protected void processAction( final EveTask newTask ) {
 		logger.info(">> [FittingProcessor.processAction]> Task:{}", newTask);
-		final String category = newTask.getItem().getCategory();
+		final String category = newTask.getItem().getCategoryName();
 		// Check the special case for T2 BPC to transform them to default INVENTION.
 		if (newTask.getTaskType() == Action.ETaskType.REQUEST)
 			if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
@@ -442,12 +445,12 @@ public class FittingProcessor {
 	 * @param newTask
 	 */
 	protected void processBuy( final EveTask newTask ) {
-		final List<NeoComMarketOrder> scheduledOrders = this.accessScheduledOrders();
+		final List<MarketOrder> scheduledOrders = this.accessScheduledOrders();
 		// Search for an order for this type.
-		for (final NeoComMarketOrder marketOrder : scheduledOrders)
-			if (marketOrder.getItemTypeID() == newTask.getTypeId()) { //if (marketOrder.getQuantity() < newTask.getQty()) {
+		for (final MarketOrder marketOrder : scheduledOrders)
+			if (marketOrder.getTypeId()== newTask.getTypeId()) { //if (marketOrder.getQuantity() < newTask.getQty()) {
 				final int taskQty = newTask.getQty();
-				final int orderQty = marketOrder.getQuantity();
+				final int orderQty = marketOrder.getVolumeRemain();
 				// Update the tasks depending on those two quantities.
 				// Generate two orders, one with the covered buy and maybe other with the rest.
 				newTask.setTaskType(Action.ETaskType.BUYCOVERED);
@@ -458,6 +461,7 @@ public class FittingProcessor {
 				} catch (InterruptedException ie) {
 					newTask.setLocation(new EveLocation(60003466));
 				}
+				newTask.setDestination(manufactureLocation);
 				newTask.setQty(Math.min(taskQty, orderQty));
 				this.registerTask(300, newTask);
 				final int diff = taskQty - orderQty;
@@ -470,9 +474,11 @@ public class FittingProcessor {
 					} catch (InterruptedException ie) {
 						partialTask.setLocation(new EveLocation(60003466));
 					}
+					partialTask.setDestination(manufactureLocation);
 					partialTask.setQty(diff);
 					this.registerTask(300, partialTask);
 				}
+				// Complete the request and stop more processing for this task.
 				return;
 			}
 		newTask.setTaskType(Action.ETaskType.BUY);
@@ -483,22 +489,30 @@ public class FittingProcessor {
 		} catch (InterruptedException ie) {
 			newTask.setLocation(new EveLocation(60003466));
 		}
+		newTask.setDestination(manufactureLocation);
 		this.registerTask(300, newTask);
 	}
 
-	private List<NeoComMarketOrder> accessScheduledOrders() {
-		return new ArrayList();
+	private List<MarketOrder> accessScheduledOrders() {
+		// Search for an scheduled buy and get its quantity.
+		try {
+			final List<MarketOrder> orders = new ArrayList<MarketOrder>();
+			final List<MarketOrder> allorders = GlobalDataManager.accessMarketOrders4Credential(this.credential);
+			// Process the orders and filter just the ones we need.
+			for (MarketOrder order : allorders) {
+				if (order.getOrderState() == MarketOrder.EOrderStates.SCHEDULED) {
+					orders.add(order);
+				}
+				if (order.getOrderState() == MarketOrder.EOrderStates.OPEN) {
+					orders.add(order);
+				}
+			}
+			return orders;
+		} catch (SQLException sqle) {
+			return new ArrayList();
+		}
 	}
 
-	public static class NeoComMarketOrder {
-		public int getItemTypeID() {
-			return 0;
-		}
-
-		public int getQuantity() {
-			return 0;
-		}
-	}
 	//-------------------------------------------------------------------------------------------------------
 
 	/**

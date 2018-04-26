@@ -51,7 +51,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  *
  * @author Adam Antinoo
  */
-@DatabaseTable(tableName = "Credential")
+@DatabaseTable(tableName = "Credentials")
 public class Credential extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -4248173464157148843L;

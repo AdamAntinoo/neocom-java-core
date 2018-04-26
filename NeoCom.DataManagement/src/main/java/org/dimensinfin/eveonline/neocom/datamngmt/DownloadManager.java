@@ -21,7 +21,8 @@ import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.dimensinfin.eveonline.neocom.industry.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -169,6 +170,44 @@ public class DownloadManager {
 		} finally {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotJobsESI]");
 		}
+	}
+
+	public void downloadPilotMarketOrdersESI() {
+		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMarketOrdersESI]");
+		try {
+			List<MarketOrder> ordersList = GlobalDataManager.downloadMarketOrders4Credential(credential);
+			 ordersList = GlobalDataManager.downloadMarketOrdersHistory4Credential(credential);
+		} finally {
+			DownloadManager.logger.info("<< [DownloadManager.downloadPilotMarketOrdersESI]");
+		}
+
+
+//			try {
+//				// Download and parse the market orders.
+//				MarketOrdersParser parser = new MarketOrdersParser();
+//				final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
+//				if (null != response) {
+//					Set<MarketOrder> orders = response.getAll();
+//					for (final MarketOrder eveorder : orders) {
+//						final NeoComMarketOrder myorder = this.convert2Order(eveorder);
+//						try {
+//							final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
+//									.getMarketOrderDAO();
+//							marketOrderDao.createOrUpdate(myorder);
+//							Pilot.logger.finest(
+//									"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
+//						} catch (final SQLException sqle) {
+//							Pilot.logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
+//							sqle.printStackTrace();
+//						}
+//					}
+//					marketCacheTime = new Instant(response.getCachedUntil());
+//				}
+//			} catch (final ApiException apie) {
+//				apie.printStackTrace();
+//			}
+//			this.setDirty(true);
+//			Pilot.logger.info("<< EveChar.updateMarketOrders");
 	}
 
 	//--- P R I V A T E   M E T H O D S

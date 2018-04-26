@@ -63,7 +63,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManager extends GlobalDataManagerNetwork implements IGlobalConnector {
+public class GlobalDataManager extends GlobalDataManagerDataAccess implements IGlobalConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 
@@ -324,43 +324,6 @@ public class GlobalDataManager extends GlobalDataManagerNetwork implements IGlob
 	public static List<Schematics> searchSchematics4Output( final int targetId ) {
 		return new GlobalDataManager().getSDEDBHelper().searchSchematics4Output(targetId);
 	}
-
-	// --- N E O C O M   P R I V A T E   D A T A B A S E   S E C T I O N
-	/**
-	 * Reference to the NeoCom persistece database Dao provider. This filed should be injected on startup.
-	 */
-	private static INeoComDBHelper neocomDBHelper = null;
-
-	public INeoComDBHelper getNeocomDBHelper() {
-		if (null == neocomDBHelper)
-			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
-		return neocomDBHelper;
-	}
-
-	public static void connectNeoComDBConnector( final INeoComDBHelper newhelper ) {
-		if (null != newhelper) neocomDBHelper = newhelper;
-		else
-			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
-	}
-
-	/**
-	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
-	 * interpretation used by the application.
-	 */
-	public static List<Credential> accessAllCredentials() {
-		List<Credential> credentialList = new ArrayList<>();
-		try {
-//			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
-//			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
-//			credentialList = credentialDao.query(preparedQuery);
-			credentialList = new GlobalDataManager().getNeocomDBHelper().getCredentialDao().queryForAll();
-		} catch (java.sql.SQLException sqle) {
-			sqle.printStackTrace();
-			logger.warn("W [GlobalDataManager.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
-		}
-		return credentialList;
-	}
-
 
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E
 //	public static String serializeCredentialList( final List<Credential> credentials ) {

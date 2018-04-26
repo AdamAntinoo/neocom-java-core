@@ -22,7 +22,8 @@ import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.FittingRequest;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.industry.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Property;
@@ -87,6 +88,8 @@ public interface INeoComDBHelper {
 	public Dao<Property, String> getPropertyDao() throws SQLException;
 
 	public Dao<Job, String> getJobDao() throws SQLException;
+
+	public Dao<MarketOrder, String> getMarketOrderDao() throws SQLException;
 
 	public Dao<FittingRequest, String> getFittingRequestDao() throws SQLException;
 

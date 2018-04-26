@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "TimeStamp")
+@DatabaseTable(tableName = "TimeStamps")
 public class TimeStamp extends ANeoComEntity{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = Logger.getLogger("TimeStamp");

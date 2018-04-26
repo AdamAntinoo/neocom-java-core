@@ -53,6 +53,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
@@ -72,22 +74,22 @@ public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 
-	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
-	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
-
-	public enum ECacheTimes {
-		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS
-	}
-
-	static {
-		ESICacheTimes.put(ECacheTimes.CHARACTER_PUBLIC, TimeUnit.SECONDS.toMillis(3600));
-		ESICacheTimes.put(ECacheTimes.CHARACTER_CLONES, TimeUnit.SECONDS.toMillis(200));
-		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
-		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
-		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
-		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
-		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
-	}
+//	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
+//	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
+//
+//	public enum ECacheTimes {
+//		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS
+//	}
+//
+//	static {
+//		ESICacheTimes.put(ECacheTimes.CHARACTER_PUBLIC, TimeUnit.SECONDS.toMillis(3600));
+//		ESICacheTimes.put(ECacheTimes.CHARACTER_CLONES, TimeUnit.SECONDS.toMillis(200));
+//		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
+//		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
+//		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
+//		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
+//		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
+//	}
 
 	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
 	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
@@ -124,7 +126,7 @@ public class ESINetworkManager {
 	private static final Hashtable<String, Response<?>> okResponseCache = new Hashtable();
 
 	// - S T A T I C   U T I L I T Y   M E T H O D S
-	public static String constructCachePointerReference( final ECacheTimes cachecode, final int identifier ) {
+	public static String constructCachePointerReference( final GlobalDataManagerCache.ECacheTimes cachecode, final int identifier ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
 				.append(":")
@@ -132,7 +134,7 @@ public class ESINetworkManager {
 				.toString();
 	}
 
-	public static String constructCachePointerReference( final ECacheTimes cachecode, final int
+	public static String constructCachePointerReference( final GlobalDataManagerCache.ECacheTimes cachecode, final int
 			identifier1, final int identifier2 ) {
 		return new StringBuffer("CC:")
 				.append(cachecode.name())
@@ -294,7 +296,7 @@ public class ESINetworkManager {
 	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		if (null == hit) {
 			final Chrono accessFullTime = new Chrono();
@@ -349,7 +351,7 @@ public class ESINetworkManager {
 	public static GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier, final int planetid, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier, planetid);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier, planetid);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
 		if (null == hit) {
@@ -384,7 +386,7 @@ public class ESINetworkManager {
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdIndustryJobs]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(ECacheTimes.INDUSTRY_JOBS, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.INDUSTRY_JOBS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
 		if (null == hit) {
@@ -413,6 +415,75 @@ public class ESINetworkManager {
 			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
 			return (List<GetCharactersCharacterIdIndustryJobs200Ok>) hit.body();
 		}
+	}
+
+	public static List<GetCharactersCharacterIdOrders200Ok> getCharactersCharacterIdOrders( final int identifier
+			, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdOrders]");
+		// Check if this response already available at cache.
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.MARKET_ORDERS, identifier);
+		final Response<?> hit = okResponseCache.get(reference);
+		final Chrono accessFullTime = new Chrono();
+		if (null == hit) {
+			try {
+				// Set the refresh to be used during the request.
+				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+				String datasource = GlobalDataManager.SERVER_DATASOURCE;
+				if (null != server) datasource = server;
+				// Create the request to be returned so it can be called.
+				final Response<List<GetCharactersCharacterIdOrders200Ok>> marketApiResponse = neocomRetrofit
+						.create(MarketApi.class)
+						.getCharactersCharacterIdOrders(identifier, datasource, null, null, null).execute();
+				if (marketApiResponse.isSuccessful()) {
+					// Store results on the cache.
+					okResponseCache.put(reference, marketApiResponse);
+					return marketApiResponse.body();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrders]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			}
+			return null;
+		} else {
+			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
+			return (List<GetCharactersCharacterIdOrders200Ok>) hit.body();
+		}
+	}
+	public static List<GetCharactersCharacterIdOrdersHistory200Ok> getCharactersCharacterIdOrdersHistory( final int identifier
+			, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdOrdersHistory]");
+		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdOrdersHistory200Ok> returnOrderList = new ArrayList<>(1000);
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			if (null != server) datasource = server;
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdOrdersHistory200Ok>> marketApiResponse = neocomRetrofit
+						.create(MarketApi.class)
+						.getCharactersCharacterIdOrdersHistory(identifier, datasource, pageCounter, null, null, null).execute();
+				if (!marketApiResponse.isSuccessful()) {
+					// Or error or we have reached the end of the list.
+					return returnOrderList;
+				} else {
+					// Copy the assets to the result list.
+					returnOrderList.addAll(marketApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if (marketApiResponse.body().size() < 1) morePages = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrdersHistory]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return returnOrderList;
 	}
 
 

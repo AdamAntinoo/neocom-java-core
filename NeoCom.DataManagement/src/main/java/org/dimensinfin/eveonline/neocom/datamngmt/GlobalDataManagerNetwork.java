@@ -34,21 +34,24 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.industry.Fitting;
-import org.dimensinfin.eveonline.neocom.industry.Job;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
 /**
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
+public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerNetwork");
 
@@ -92,6 +95,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdIndustryJobs200Ok job : industryJobs) {
 					final Job newjob = modelMapper.map(job, Job.class);
+//								.setOwnerId(credential.getAccountId())
 					newjob.store();
 					results.add(newjob);
 				}
@@ -107,6 +111,79 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 			return new ArrayList<>();
 		} finally {
 			logger.info("<< [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
+		}
+	}
+
+	public static List<MarketOrder> downloadMarketOrders4Credential( final Credential credential ) {
+		logger.info(">> [GlobalDataManagerNetwork.downloadMarketOrders4Credential]");
+		List<MarketOrder> results = new ArrayList<>();
+		try {
+			// Get to the Network and download the data from the ESI api.
+			final List<GetCharactersCharacterIdOrders200Ok> marketOrders = ESINetworkManager.getCharactersCharacterIdOrders
+					(credential.getAccountId()
+							, credential.getRefreshToken()
+							, SERVER_DATASOURCE);
+			if (null != marketOrders) {
+				// Process the data and convert it to structures compatible with MVC.
+				for (GetCharactersCharacterIdOrders200Ok order : marketOrders) {
+					final MarketOrder neworder = modelMapper.map(order, MarketOrder.class);
+					neworder
+							.setOwnerId(credential.getAccountId())
+							.setOrderState(MarketOrder.EOrderStates.OPEN) // All character orders are considered OPEN
+							.store();
+					results.add(neworder);
+				}
+			}
+			return results;
+		} catch (NeocomRuntimeException nrex) {
+			logger.info("EX [GlobalDataManager.downloadMarketOrders4Credential]> Credential not found in the list. Exception: {}", nrex
+					.getMessage());
+			return new ArrayList<>();
+		} catch (RuntimeException ntex) {
+			logger.info("EX [GlobalDataManager.downloadMarketOrders4Credential]> Mapping error - {}", ntex
+					.getMessage());
+			return new ArrayList<>();
+		} finally {
+			logger.info("<< [GlobalDataManagerNetwork.downloadMarketOrders4Credential]");
+		}
+	}
+	public static List<MarketOrder> downloadMarketOrdersHistory4Credential( final Credential credential ) {
+		logger.info(">> [GlobalDataManagerNetwork.downloadMarketOrdersHistory4Credential]");
+		List<MarketOrder> results = new ArrayList<>();
+		try {
+			// Get to the Network and download the data from the ESI api.
+			final List<GetCharactersCharacterIdOrdersHistory200Ok> marketOrders = ESINetworkManager.getCharactersCharacterIdOrdersHistory
+					(credential.getAccountId()
+							, credential.getRefreshToken()
+							, SERVER_DATASOURCE);
+			if (null != marketOrders) {
+				// Process the data and convert it to structures compatible with MVC.
+				for (GetCharactersCharacterIdOrdersHistory200Ok order : marketOrders) {
+					final MarketOrder neworder = modelMapper.map(order, MarketOrder.class);
+					final GetCharactersCharacterIdOrdersHistory200Ok.StateEnum state = order.getState();
+					MarketOrder.EOrderStates newState = MarketOrder.EOrderStates.CLOSED;
+					if(state==GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.CANCELLED)
+						newState = MarketOrder.EOrderStates.CANCELLED;
+					if(state==GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.EXPIRED)
+						newState = MarketOrder.EOrderStates.EXPIRED;
+					neworder
+							.setOwnerId(credential.getAccountId())
+							.setOrderState(newState) // History orders can have different states. The default is CLOSED.
+							.store();
+					results.add(neworder);
+				}
+			}
+			return results;
+		} catch (NeocomRuntimeException nrex) {
+			logger.info("EX [GlobalDataManager.downloadMarketOrdersHistory4Credential]> Credential not found in the list. Exception: {}", nrex
+					.getMessage());
+			return new ArrayList<>();
+		} catch (RuntimeException ntex) {
+			logger.info("EX [GlobalDataManager.downloadMarketOrdersHistory4Credential]> Mapping error - {}", ntex
+					.getMessage());
+			return new ArrayList<>();
+		} finally {
+			logger.info("<< [GlobalDataManagerNetwork.downloadMarketOrdersHistory4Credential]");
 		}
 	}
 
@@ -216,7 +293,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerConfiguration {
 	}
 
 	public static List<Fitting> downloadFittings4Credential( final Credential credential ) {
-		logger.info(">> [GlobalDataManager.downloadFittings4Credential]");
+		logger.info(">> [GlobalDataManager.downloadFittings4Credential]> Credential: {}", credential.getAccountId());
 		List<Fitting> results = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
