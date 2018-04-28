@@ -120,8 +120,8 @@ public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>
 //			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
 //			// Calculate the locationID from the source item and update the rest of the fields.
 //			this.updateFromSystem(station.getSolarSystemID());
-//			id = station.getStationID();
-//			typeID = ELocationType.DEEP_SPACE.name();
+//			id = station.getStationId();
+//			typeId = ELocationType.DEEP_SPACE.name();
 //			this.setStation(station.getStationName());
 //			// Try to create the pair. It fails then  it was already created.
 //			locationDao.createOrUpdate(this);
@@ -232,20 +232,20 @@ public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>
 	}
 
 	public final boolean isCitadel() {
-		if (this.getTypeID() == ELocationType.CITADEL) return true;
+		if (this.getTypeId() == ELocationType.CITADEL) return true;
 		return false;
 	}
 
 	public final boolean isRegion() {
-		return ((this.getStationID() == 0) && (this.getSystemID() == 0) && (this.getRegionID() != 0));
+		return ((this.getStationId() == 0) && (this.getSystemId() == 0) && (this.getRegionId() != 0));
 	}
 
 	public final boolean isStation() {
-		return ((this.getStationID() != 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
+		return ((this.getStationId() != 0) && (this.getSystemId() != 0) && (this.getRegionId() != 0));
 	}
 
 	public final boolean isSystem() {
-		return ((this.getStationID() == 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
+		return ((this.getStationId() == 0) && (this.getSystemId() != 0) && (this.getRegionId() != 0));
 	}
 
 	public final boolean isUnknown() {
@@ -342,11 +342,11 @@ public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>
 	private void updateFromSystem( final long newid ) {
 		// Get the system information from the CCP location tables.
 		final EveLocation systemLocation = GlobalDataManager.searchLocation4Id(newid);
-		systemID = systemLocation.getSystemID();
+		systemID = systemLocation.getSystemId();
 		system = systemLocation.getSystem();
-		constellationID = systemLocation.getConstellationID();
+		constellationID = systemLocation.getConstellationId();
 		constellation = systemLocation.getConstellation();
-		regionID = systemLocation.getRegionID();
+		regionID = systemLocation.getRegionId();
 		region = systemLocation.getRegion();
 		security = systemLocation.getSecurity();
 	}
@@ -358,10 +358,10 @@ public class EveLocation extends NeoComNode /*implements Comparable<EveLocation>
 	 */
 	@Override
 	public boolean equals( final Object obj ) {
-		if(stationID!=((EveLocation)obj).getStationID())return false;
-		if(systemID!=((EveLocation)obj).getSystemID())return false;
-		if(constellationID!=((EveLocation)obj).getConstellationID())return false;
-		if(regionID!=((EveLocation)obj).getRegionID())return false;
+		if(stationID!=((EveLocation)obj).getStationId())return false;
+		if(systemID!=((EveLocation)obj).getSystemId())return false;
+		if(constellationID!=((EveLocation)obj).getConstellationId())return false;
+		if(regionID!=((EveLocation)obj).getRegionId())return false;
 		return true;
 	}
 

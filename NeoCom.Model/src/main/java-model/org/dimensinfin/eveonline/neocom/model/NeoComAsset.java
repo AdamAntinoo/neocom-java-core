@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -25,7 +24,6 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 
@@ -69,21 +67,19 @@ public class NeoComAsset extends NeoComNode {
 	private long locationId = -1;
 	@DatabaseField(dataType = DataType.ENUM_STRING)
 	private GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType = null;
-	//	@DatabaseField
-	//	private Long itemId = null;
 	@DatabaseField(dataType = DataType.ENUM_STRING)
 	private GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag = null;
 	@DatabaseField
 	private boolean isSingleton = false;
 	@DatabaseField
-	private long parentAssetID = -1;
+	private long parentAssetId = -1;
 
 	//- D E R I V E D   F I E L D S
 	/**
 	 * Here starts the fields that come form item data but useful for search operations.
 	 */
 	@DatabaseField
-	private long ownerID = -1;
+	private long ownerId = -1;
 	@DatabaseField
 	private String name = null;
 	@DatabaseField(index = true)
@@ -105,9 +101,7 @@ public class NeoComAsset extends NeoComNode {
 
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset parentAssetCache = null;
-	@JsonIgnore
 	private transient EveLocation locationCache = null;
-	@JsonIgnore
 	private transient EveItem itemCache = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -122,7 +116,6 @@ public class NeoComAsset extends NeoComNode {
 	public NeoComAsset( final int typeIdentifier ) {
 		this();
 		typeId = typeIdentifier;
-		//		itemCache = CacheManager.searchItemById(typeId);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -156,7 +149,13 @@ public class NeoComAsset extends NeoComNode {
 		return assetId;
 	}
 
+	@Deprecated
 	public String getCategory() {
+		if (null == category) return "NOCAT";
+		return category;
+	}
+
+	public String getCategoryName() {
 		if (null == category) return "NOCAT";
 		return category;
 	}
@@ -205,7 +204,6 @@ public class NeoComAsset extends NeoComNode {
 		return this.getItem().getName();
 	}
 
-	@JsonIgnore
 	public EveLocation getLocation() {
 		try {
 			if (null == locationCache) {
@@ -222,18 +220,18 @@ public class NeoComAsset extends NeoComNode {
 	 * value is -1. In that cases we should search for the location on the parent asset if that exists.
 	 */
 	public long getLocationId() {
-		if (locationId == -1) {
-			if (this.getParentContainerId() == -1)
-				return -1L;
-			else {
-				// Get the location from the parent.
-				final NeoComAsset par = this.getParentContainer();
-				if (null == par)
-					return -1L;
-				else
-					return par.getLocationId();
-			}
-		} else
+//		if (locationId == -1) {
+//			if (this.getParentContainerId() == -1)
+//				return -1L;
+//			else {
+//				// Get the location from the parent.
+//				final NeoComAsset par = this.getParentContainer();
+//				if (null == par)
+//					return -1L;
+//				else
+//					return par.getLocationId();
+//			}
+//		} else
 			return locationId;
 	}
 
@@ -241,12 +239,12 @@ public class NeoComAsset extends NeoComNode {
 		return name;
 	}
 
-	public String getOrderingName() {
-		return name;
-	}
+//	public String getOrderingName() {
+//		return name;
+//	}
 
-	public long getOwnerID() {
-		return ownerID;
+	public long getOwnerId() {
+		return ownerId;
 	}
 
 	/**
@@ -258,50 +256,51 @@ public class NeoComAsset extends NeoComNode {
 	 * understand the changes and behave correctly.
 	 */
 	public NeoComAsset getParentContainer() {
-		if (parentAssetID > 0) if (null == parentAssetCache) {
+		if (parentAssetId > 0) if (null == parentAssetCache) {
 			// Search for the parent asset. If not found then go to the transformation method.
 			try {
 				parentAssetCache = accessGlobal().getNeocomDBHelper().getAssetDao()
-						.queryForId(Long.valueOf(parentAssetID).toString());
+						.queryForId(Long.valueOf(parentAssetId).toString());
 			} catch (SQLException sqle) {
-			}
-			if (null == parentAssetCache) {
-				final long newlocationId = parentAssetID;
-				final EveLocation loc = this.moveAssetToUnknown(newlocationId);
-				this.setLocationId(newlocationId);
-				parentAssetID = -1;
-				locationCache = loc;
-				// Save the asset to disk.
-				try {
-					final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
-					// Try to create the pair. It fails then  it was already created.
-					assetDao.createOrUpdate(this);
-				} catch (final SQLException sqle) {
-					sqle.printStackTrace();
-					this.setDirty(true);
-				}
-				//				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
-				//				Container container = new Container();
-				//				container.setAssetID(newlocationId);
-				//				container.setLocationID(newlocationId);
-				//				container.setTypeID(17366);
-				//				container.setQuantity(1);
-				//				container.setSingleton(false);
-				//
-				//				//- D E R I V E D   F I E L D S
-				//				container.setOwnerId(this.getOwnerId());
-				//				container.setName("Undefined #" + newlocationId);
-				//				container.setCategory("Celestial");
-				//				container.setGroupName("Undefined Location");
-				//				container.setContainer(true);
 				return null;
 			}
+//			if (null == parentAssetCache) {
+//				final long newlocationId = parentAssetId;
+//				final EveLocation loc = this.moveAssetToUnknown(newlocationId);
+//				this.setLocationId(newlocationId);
+//				parentAssetId = -1;
+//				locationCache = loc;
+//				// Save the asset to disk.
+//				try {
+//					final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
+//					// Try to create the pair. It fails then  it was already created.
+//					assetDao.createOrUpdate(this);
+//				} catch (final SQLException sqle) {
+//					sqle.printStackTrace();
+//					this.setDirty(true);
+//				}
+//				//				// Create a dummy container to be replaced by the missing parent and that will get stored into the right location
+//				//				Container container = new Container();
+//				//				container.setAssetID(newlocationId);
+//				//				container.setLocationID(newlocationId);
+//				//				container.setTypeId(17366);
+//				//				container.setQuantity(1);
+//				//				container.setSingleton(false);
+//				//
+//				//				//- D E R I V E D   F I E L D S
+//				//				container.setOwnerId(this.getOwnerId());
+//				//				container.setName("Undefined #" + newlocationId);
+//				//				container.setCategory("Celestial");
+//				//				container.setGroupName("Undefined Location");
+//				//				container.setContainer(true);
+//				return null;
+//			}
 		}
 		return parentAssetCache;
 	}
 
 	public long getParentContainerId() {
-		return parentAssetID;
+		return parentAssetId;
 	}
 
 	public double getPrice() {
@@ -329,7 +328,7 @@ public class NeoComAsset extends NeoComNode {
 	}
 
 	public boolean hasParent() {
-		if (parentAssetID > 0)
+		if (parentAssetId > 0)
 			return true;
 		else
 			return false;
@@ -411,17 +410,17 @@ public class NeoComAsset extends NeoComNode {
 		containerFlag = value;
 	}
 
-	public void setDirty( final boolean flag ) {
-		if (flag) {
-			try {
-				final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
-				// Try to create the pair. It fails then  it was already created.
-				assetDao.createOrUpdate(this);
-			} catch (final SQLException sqle) {
-				sqle.printStackTrace();
-			}
-		}
-	}
+//	public void setDirty( final boolean flag ) {
+//		if (flag) {
+//			try {
+//				final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
+//				// Try to create the pair. It fails then  it was already created.
+//				assetDao.createOrUpdate(this);
+//			} catch (final SQLException sqle) {
+//				sqle.printStackTrace();
+//			}
+//		}
+//	}
 
 	public NeoComAsset setFlag( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newFlag ) {
 		locationFlag = newFlag;
@@ -442,6 +441,7 @@ public class NeoComAsset extends NeoComNode {
 
 	public NeoComAsset setLocationId( final long location ) {
 		locationId = location;
+		locationCache=null;
 		return this;
 	}
 
@@ -454,21 +454,21 @@ public class NeoComAsset extends NeoComNode {
 		this.name = name;
 	}
 
-	public void setOwnerID( final long ownerID ) {
-		this.ownerID = ownerID;
+	public void setOwnerId( final long ownerId ) {
+		this.ownerId = ownerId;
 	}
 
 	public void setParentContainer( final NeoComAsset newParent ) {
 		if (null != newParent) {
 			parentAssetCache = newParent;
-			parentAssetID = newParent.getAssetId();
+			parentAssetId = newParent.getAssetId();
 			// Trigger an update of the record at the database.
-			this.setDirty(true);
+			this.store();
 		}
 	}
 
 	public void setParentId( final long pid ) {
-		parentAssetID = pid;
+		parentAssetId = pid;
 	}
 
 	public NeoComAsset setQuantity( final int count ) {
@@ -516,8 +516,8 @@ public class NeoComAsset extends NeoComNode {
 		}
 		buffer.append("itemID:").append(assetId).append(" ");
 		buffer.append("locationID:").append(locationId).append(" ");
-		buffer.append("containerID:").append(parentAssetID).append(" ");
-		buffer.append("ownerID:").append(ownerID).append(" ");
+		buffer.append("containerID:").append(parentAssetId).append(" ");
+		buffer.append("ownerId:").append(ownerId).append(" ");
 		buffer.append("quantity:").append(quantity).append(" ");
 		buffer.append("]\n");
 		return buffer.toString();

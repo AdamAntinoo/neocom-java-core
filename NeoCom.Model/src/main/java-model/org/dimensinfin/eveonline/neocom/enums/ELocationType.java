@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.enums;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public enum ELocationType {
-	CCPLOCATION, CITADEL, OUTPOST, DEEP_SPACE, UNKNOWN
+	CCPLOCATION, CITADEL, OUTPOST, DEEP_SPACE, POCO, PARENTSHIP, UNKNOWN
 }
 
 // - UNUSED CODE ............................................................................................

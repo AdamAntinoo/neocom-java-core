@@ -14,6 +14,7 @@ package org.dimensinfin.eveonline.neocom.industry;
 
 import java.util.concurrent.ExecutionException;
 
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -31,7 +32,9 @@ public class EveTask extends NeoComNode {
 	private EveLocation location = null;
 	private EveLocation destination = null;
 	private String action = null;
+
 	private NeoComAsset assetRef = null;
+	private MarketOrder marketCounterPart =null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveTask( final Action.ETaskType newType, final Resource newresource ) {
@@ -125,6 +128,11 @@ public class EveTask extends NeoComNode {
 
 	public EveTask setTaskType( final Action.ETaskType newType ) {
 		type = newType;
+		return this;
+	}
+
+	public EveTask setMarketCounterPart( final MarketOrder marketCounterPart ) {
+		this.marketCounterPart = marketCounterPart;
 		return this;
 	}
 

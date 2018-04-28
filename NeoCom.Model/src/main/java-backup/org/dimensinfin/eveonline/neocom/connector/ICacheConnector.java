@@ -37,9 +37,9 @@ public interface ICacheConnector {
 
 	public PriorityBlockingQueue<PendingRequestEntry> getPendingRequests();
 
-	//	public String getURLForItem(final int typeID);
+	//	public String getURLForItem(final int typeId);
 	//
-	//	public String getURLForStation(final int typeID);
+	//	public String getURLForStation(final int typeId);
 
 	public int incrementMarketCounter();
 

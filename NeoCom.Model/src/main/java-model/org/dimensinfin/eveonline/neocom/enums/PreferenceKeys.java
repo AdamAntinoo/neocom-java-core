@@ -13,5 +13,5 @@
 package org.dimensinfin.eveonline.neocom.enums;
 
 public enum PreferenceKeys {
-	category_Development, prefkey_BlockBackgroundTimer, prefkey_BlockMarket, prefkey_BlockDownloads, prefkey_BlockCharacterUpdate, prefkey_BlockAssetsUpdate, prefkey_BlockColonyUpdate, prefkey_BlockSkillsUpdate, category_Industry, prefkey_AllowMoveRequests, category_Assets, prefkey_locationsLimit, prefkey_RegionCollapsed
+	category_Development, prefkey_BlockBackgroundTimer, prefkey_BlockMarket, prefkey_BlockDownloads, prefkey_BlockCharacterUpdate, prefkey_BlockAssetsUpdate, prefkey_BlockColonyUpdate, prefkey_BlockSkillsUpdate, prefkey_BlockIndustryUpdate, category_Industry, prefkey_AllowMoveRequests, category_Assets, prefkey_locationsLimit, prefkey_RegionCollapsed
 }

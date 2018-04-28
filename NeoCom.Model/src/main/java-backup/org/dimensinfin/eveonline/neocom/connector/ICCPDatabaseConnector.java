@@ -27,7 +27,7 @@ public interface ICCPDatabaseConnector {
 
 	public int searchBlueprint4Module(final int moduleID);
 
-//	public EveItem searchItembyID(int typeID);
+//	public EveItem searchItembyID(int typeId);
 //
 //	public EveLocation searchLocationbyID(long locationID);
 

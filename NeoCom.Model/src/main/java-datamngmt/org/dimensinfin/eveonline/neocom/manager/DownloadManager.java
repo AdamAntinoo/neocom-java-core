@@ -414,13 +414,13 @@ public class DownloadManager {
 //			if (myasset.getCategory().equalsIgnoreCase("Ship")) {
 //				myasset.setShip(true);
 //			}
-//			myasset.setOwnerID(credential.getAccountId() * -1);
+//			myasset.setOwnerId(credential.getAccountId() * -1);
 //			assetDao.create(myasset);
 //
 //			// Check the asset location. The location can be a known game station, a known user structure, another asset
 //			// or an unknown player structure. Check which one is this location.
 //			EveLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
-//			if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
+//			if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 //				// Add this asset to the list of items to be reprocessed.
 //				unlocatedAssets.add(myasset);
 //			}
@@ -475,7 +475,7 @@ public class DownloadManager {
 //		// Create the asset from the API asset.
 //		final NeoComAsset newAsset = new NeoComAsset();
 //		newAsset.setAssetId(eveAsset.getItemID());
-//		newAsset.setTypeId(eveAsset.getTypeID());
+//		newAsset.setTypeId(eveAsset.getTypeId());
 //		Long locid = eveAsset.getLocationID();
 //		if (null == locid) {
 //			locid = (long) -2;
@@ -562,7 +562,7 @@ public class DownloadManager {
 //	protected NeoComBlueprint convert2Blueprint( final Blueprint eveBlue ) {
 //		// Create the asset from the API asset.
 //		final NeoComBlueprint newBlueprint = new NeoComBlueprint(eveBlue.getItemID());
-//		newBlueprint.setTypeID(eveBlue.getTypeID());
+//		newBlueprint.setTypeId(eveBlue.getTypeId());
 //		newBlueprint.setTypeName(eveBlue.getTypeName());
 //		newBlueprint.setLocationID(eveBlue.getLocationID());
 //		newBlueprint.setFlag(eveBlue.getFlagID());
@@ -581,7 +581,7 @@ public class DownloadManager {
 
 	/**
 	 * Stacks blueprints that are equal and that are located on the same location. The also should be inside the
-	 * same container so the locationID, the parentContainer and the typeID should match to perform the
+	 * same container so the locationID, the parentContainer and the typeId should match to perform the
 	 * aggregation.<br>
 	 * Aggregation key: ID-LOCATION-CONTAINER
 	 *

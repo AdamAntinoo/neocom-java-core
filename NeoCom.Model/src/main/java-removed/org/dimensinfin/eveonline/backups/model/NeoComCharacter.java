@@ -504,7 +504,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		// Create the asset from the API asset.
 	//		final NeoComAsset newAsset = new NeoComAsset();
 	//		newAsset.setAssetID(eveAsset.getItemID());
-	//		newAsset.setTypeID(eveAsset.getTypeId());
+	//		newAsset.setTypeId(eveAsset.getTypeId());
 	//		//		// Children locations have a null on this field. Set it to their parents
 	//		//		final Long assetloc = eveAsset.getLocationID();
 	//		//		if (null != assetloc) {
@@ -549,7 +549,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//	protected NeoComBlueprint convert2Blueprint(final Blueprint eveBlue) {
 	//		// Create the asset from the API asset.
 	//		final NeoComBlueprint newBlueprint = new NeoComBlueprint(eveBlue.getItemID());
-	//		newBlueprint.setTypeID(eveBlue.getTypeId());
+	//		newBlueprint.setTypeId(eveBlue.getTypeId());
 	//		newBlueprint.setTypeName(eveBlue.getTypeName());
 	//		newBlueprint.setLocationID(eveBlue.getLocationID());
 	//		newBlueprint.setFlag(eveBlue.getFlagID());
@@ -619,9 +619,9 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		// Create the asset from the API asset.
 	//		final Job newJob = new Job(evejob.getJobID());
 	//		try {
-	//			newJob.setOwnerID(evejob.getInstallerID());
+	//			newJob.setOwnerId(evejob.getInstallerID());
 	//			newJob.setFacilityID(evejob.getFacilityID());
-	//			newJob.setStationID(evejob.getStationID());
+	//			newJob.setStationId(evejob.getStationId());
 	//			newJob.setActivityID(evejob.getActivityID());
 	//			newJob.setBlueprintID(evejob.getBlueprintID());
 	//			newJob.setBlueprintTypeID(evejob.getBlueprintTypeID());
@@ -647,13 +647,13 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		// Create the asset from the API asset.
 	//		final NeoComMarketOrder newMarketOrder = new NeoComMarketOrder(eveorder.getOrderID());
 	//		try {
-	//			newMarketOrder.setOwnerID(eveorder.getCharID());
-	//			newMarketOrder.setStationID(eveorder.getStationID());
+	//			newMarketOrder.setOwnerId(eveorder.getCharID());
+	//			newMarketOrder.setStationId(eveorder.getStationId());
 	//			newMarketOrder.setVolEntered(eveorder.getVolEntered());
 	//			newMarketOrder.setVolRemaining(eveorder.getVolRemaining());
 	//			newMarketOrder.setMinVolume(eveorder.getMinVolume());
 	//			newMarketOrder.setOrderState(eveorder.getOrderState());
-	//			newMarketOrder.setTypeID(eveorder.getTypeId());
+	//			newMarketOrder.setTypeId(eveorder.getTypeId());
 	//			newMarketOrder.setRange(eveorder.getRange());
 	//			newMarketOrder.setAccountKey(eveorder.getAccountKey());
 	//			newMarketOrder.setDuration(eveorder.getDuration());
@@ -803,7 +803,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 //			this.accessLocationRoles();
 //		}
 //		Property hit = new Property(EPropertyTypes.LOCATIONROLE);
-//		hit.setOwnerID(delegatedCharacter.getCharacterID());
+//		hit.setOwnerId(delegatedCharacter.getCharacterID());
 //		hit.setNumericValue(theSelectedLocation.getID());
 //		hit.setStringValue(locationrole);
 //		locationRoles.add(hit);
@@ -912,19 +912,19 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 //	 * manufacturing. First get the current action defined for this item on the database and update it or create
 //	 * a new one of not found.
 //	 *
-//	 * @param typeID
+//	 * @param typeId
 //	 * @param taskName
 //	 */
-//	public void putAction4Item(final int typeID, final String taskName) {
+//	public void putAction4Item(final int typeId, final String taskName) {
 //		if (null == actions4Character) {
 //			this.accessActionList();
 //		}
-//		Property hit = actions4Character.get(typeID);
+//		Property hit = actions4Character.get(typeId);
 //		if (null == hit) {
 //			hit = new Property(EPropertyTypes.MANUFACTUREACTION);
-//			hit.setOwnerID(delegatedCharacter.getCharacterID());
+//			hit.setOwnerId(delegatedCharacter.getCharacterID());
 //			//			hit.setPropertyType();
-//			hit.setNumericValue(typeID);
+//			hit.setNumericValue(typeId);
 //			hit.setStringValue(taskName);
 //			actions4Character = null;
 //		}

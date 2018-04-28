@@ -68,7 +68,7 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	public ArrayList<NeoComAsset> searchAsset4Category (final long characterID, final String categoryName);
 
-	//	public List<NeoComAsset> searchAsset4Type(long characterID, int typeID);
+	//	public List<NeoComAsset> searchAsset4Type(long characterID, int typeId);
 
 	public NeoComAsset searchAssetByID (long parentAssetID);
 

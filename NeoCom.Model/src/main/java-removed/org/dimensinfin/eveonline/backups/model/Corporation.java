@@ -188,7 +188,7 @@ public class Corporation extends NeoComCharacter {
 	//				for (final IndustryJob evejob : jobs) {
 	//					final Job myjob = this.convert2Job(evejob);
 	//					// Set the owner my there is not job cleanup.
-	//					//					myjob.setOwnerID(getCharacterID());
+	//					//					myjob.setOwnerId(getCharacterID());
 	//					try {
 	//						final Dao<Job, String> jobDao = ModelAppConnector.getSingleton().getDBConnector().getJobDAO();
 	//						jobDao.createOrUpdate(myjob);
@@ -210,7 +210,7 @@ public class Corporation extends NeoComCharacter {
 	//			//				for (final ApiNewIndustryJob evejob : jobs) {
 	//			//					final Job myjob = convert2Job(evejob);
 	//			//					// Set the owner my there is not job cleanup.
-	//			//					//					myjob.setOwnerID(getCharacterID());
+	//			//					//					myjob.setOwnerId(getCharacterID());
 	//			//					try {
 	//			//						final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
 	//			//						jobDao.createOrUpdate(myjob);

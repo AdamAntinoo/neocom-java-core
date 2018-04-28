@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 
 /**
@@ -66,17 +67,15 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		}
 		return credentialList;
 	}
-	public static List<MarketOrder> accessMarketOrders4Credential(final Credential credential) throws SQLException {
-		List<MarketOrder> credentialList = new ArrayList<>();
-//		try {
-			credentialList = new GlobalDataManager().getNeocomDBHelper().getMarketOrderDao()
-					.queryForEq("ownerId",credential.getAccountId());
-//		} catch (java.sql.SQLException sqle) {
-//			sqle.printStackTrace();
-//			logger.warn("W [GlobalDataManagerDataAccess.accessMarketOrders4Credential]> Exception reading Market Orders. " + sqle
-//					.getMessage());
-//		}
-		return credentialList;
+
+	public static List<Job> accessIndustryJobs4Credential( final Credential credential ) throws SQLException {
+		return new GlobalDataManager().getNeocomDBHelper().getJobDao()
+				.queryForEq("ownerId", credential.getAccountId());
+	}
+
+	public static List<MarketOrder> accessMarketOrders4Credential( final Credential credential ) throws SQLException {
+		return new GlobalDataManager().getNeocomDBHelper().getMarketOrderDao()
+				.queryForEq("ownerId", credential.getAccountId());
 	}
 
 }

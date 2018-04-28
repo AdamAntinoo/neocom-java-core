@@ -23,7 +23,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -36,14 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
@@ -117,7 +111,6 @@ public class GlobalDataManager extends GlobalDataManagerDataAccess implements IG
 			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
-				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
 				locationCache = (Hashtable<Long, EveLocation>) input.readObject();
 				logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
 						+ " entries.");
@@ -271,7 +264,7 @@ public class GlobalDataManager extends GlobalDataManagerDataAccess implements IG
 		} else {
 			final EveLocation hit = new GlobalDataManager().getSDEDBHelper().searchLocation4Id(locationId);
 			// Add the hit to the cache but only when it is not UNKNOWN.
-			if (hit.getTypeID() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
+			if (hit.getTypeId() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
 			// Account for a miss on the cache.
 			int access = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
 			int hits = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.getHits();
@@ -455,7 +448,7 @@ public class GlobalDataManager extends GlobalDataManagerDataAccess implements IG
 //			jgen.writeStringField("jsonClass", value.getJsonClass());
 //			jgen.writeNumberField("assetId", value.getAssetId());
 //			jgen.writeNumberField("typeId", value.getTypeId());
-//			jgen.writeNumberField("ownerId", value.getOwnerID());
+//			jgen.writeNumberField("ownerId", value.getOwnerId());
 //			jgen.writeStringField("name", value.getItemName());
 //			jgen.writeStringField("category", value.getCategory());
 //			jgen.writeStringField("groupName", value.getGroupName());

@@ -21,7 +21,6 @@ sourceSets {
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
     implementation project(path: ':NeoCom.Model')
-//    implementation project(path: ':NeoCom.Model')
     implementation project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
@@ -34,7 +33,7 @@ dependencies {
 
     // N E O C O M . M O D E L
     implementation 'joda-time:joda-time:2.3'
-//    implementation 'com.beimin:eveapi:6.0.6'
+    implementation 'com.beimin:eveapi:6.0.6'
     implementation 'org.htmlparser:htmlparser:2.1'
     implementation 'com.github.scribejava:scribejava-core:5.4.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.4.0'

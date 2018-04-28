@@ -16,6 +16,7 @@ import java.sql.SQLException;
 
 import net.nikr.eve.jeveasset.data.Citadel;
 
+import com.beimin.eveapi.model.eve.Station;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -47,38 +48,37 @@ public class EveLocation extends NeoComNode {
 	@DatabaseField(id = true, index = true)
 	protected long id = -2;
 	@DatabaseField
-	protected long stationID = -1;
+	protected long stationId = -1;
 	@DatabaseField
 	private String station = "SPACE";
 	@DatabaseField
-	protected long systemID = -1;
+	protected long systemId = -1;
 	@DatabaseField
 	private String system = "UNKNOWN";
 	@DatabaseField
-	protected long constellationID = -1;
+	protected long constellationId = -1;
 	@DatabaseField
 	private String constellation = "Echo Cluster";
 	@DatabaseField
-	protected long regionID = -1;
+	protected long regionId = -1;
 	@DatabaseField
 	private String region = "-DEEP SPACE-";
 	@DatabaseField
 	private String security = "0.0";
 	@DatabaseField
-	protected String typeID = ELocationType.UNKNOWN.name();
+	protected String typeId = ELocationType.UNKNOWN.name();
 	public String urlLocationIcon = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
 		super();
-		//		this.setDownloaded(false);
 		jsonClass = "EveLocation";
 	}
 
 	public EveLocation( final long locationID ) {
 		this();
 		id = locationID;
-		stationID = locationID;
+		stationId = locationID;
 	}
 
 	public EveLocation( final long citadelid, final Citadel cit ) {
@@ -88,7 +88,7 @@ public class EveLocation extends NeoComNode {
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
-			typeID = ELocationType.CITADEL.name();
+			typeId = ELocationType.CITADEL.name();
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
@@ -109,7 +109,7 @@ public class EveLocation extends NeoComNode {
 //			// Calculate the locationID from the source item and update the rest of the fields.
 //			this.updateFromSystem(out.getSolarSystem());
 //			id = out.getFacilityID();
-//			typeID = ELocationType.OUTPOST.name();
+//			typeId = ELocationType.OUTPOST.name();
 //			this.setStation(out.getName());
 //			// Try to create the pair. It fails then  it was already created.
 //			locationDao.createOrUpdate(this);
@@ -120,22 +120,22 @@ public class EveLocation extends NeoComNode {
 //		}
 //	}
 
-//	public EveLocation( final Station station ) {
-//		this();
-//		try {
-//			final Dao<EveLocation, String> locationDao = GlobalDataManager.getNeocomDBHelper().getLocationDao();
-//			// Calculate the locationID from the source item and update the rest of the fields.
-//			this.updateFromSystem(station.getSolarSystemID());
-//			id = station.getStationID();
-//			typeID = ELocationType.DEEP_SPACE.name();
-//			this.setStation(station.getStationName());
-//			// Try to create the pair. It fails then  it was already created.
-//			locationDao.createOrUpdate(this);
-//		} catch (final SQLException sqle) {
-//			sqle.printStackTrace();
-//			this.store();
-//		}
-//	}
+	public EveLocation( final Station station ) {
+		this();
+		try {
+			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+			// Calculate the locationID from the source item and update the rest of the fields.
+			this.updateFromSystem(station.getSolarSystemID());
+			id = station.getStationID();
+			typeId = ELocationType.OUTPOST.name();
+			this.setStation(station.getStationName());
+			// Try to create the pair. It fails then  it was already created.
+			locationDao.createOrUpdate(this);
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+			this.store();
+		}
+	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean equals( final EveLocation obj ) {
@@ -149,8 +149,8 @@ public class EveLocation extends NeoComNode {
 		return constellation;
 	}
 
-	public long getConstellationID() {
-		return constellationID;
+	public long getConstellationId() {
+		return constellationId;
 	}
 
 	public String getFullLocation() {
@@ -158,7 +158,7 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public long getID() {
-		return Math.max(Math.max(Math.max(stationID, systemID), constellationID), regionID);
+		return Math.max(Math.max(Math.max(stationId, systemId), constellationId), regionId);
 	}
 
 	/**
@@ -179,8 +179,8 @@ public class EveLocation extends NeoComNode {
 		return region;
 	}
 
-	public long getRegionID() {
-		return regionID;
+	public long getRegionId() {
+		return regionId;
 	}
 
 	public String getSecurity() {
@@ -199,20 +199,20 @@ public class EveLocation extends NeoComNode {
 		return station;
 	}
 
-	public long getStationID() {
-		return stationID;
+	public long getStationId() {
+		return stationId;
 	}
 
 	public String getSystem() {
 		return system;
 	}
 
-	public long getSystemID() {
-		return systemID;
+	public long getSystemId() {
+		return systemId;
 	}
 
-	public ELocationType getTypeID() {
-		return ELocationType.valueOf(typeID);
+	public ELocationType getTypeId() {
+		return ELocationType.valueOf(typeId);
 	}
 
 	/**
@@ -221,38 +221,45 @@ public class EveLocation extends NeoComNode {
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
-			try {
-				urlLocationIcon = new StringBuffer()
-						.append("http://image.eveonline.com/Render/")
-						.append(accessGlobal().searchStationType(id))
-						.append("_64.png")
-						.toString();
-			} catch (NeocomRuntimeException neoe) {
+			if (id == -2) {
 				urlLocationIcon = new StringBuffer()
 						.append("http://image.eveonline.com/Render/")
 						.append(id)
 						.append("_64.png")
 						.toString();
-			}
+			} else
+				try {
+					urlLocationIcon = new StringBuffer()
+							.append("http://image.eveonline.com/Render/")
+							.append(accessGlobal().searchStationType(id))
+							.append("_64.png")
+							.toString();
+				} catch (NeocomRuntimeException neoe) {
+					urlLocationIcon = new StringBuffer()
+							.append("http://image.eveonline.com/Render/")
+							.append(id)
+							.append("_64.png")
+							.toString();
+				}
 		}
 		return urlLocationIcon;
 	}
 
 	public final boolean isCitadel() {
-		if (this.getTypeID() == ELocationType.CITADEL) return true;
+		if (this.getTypeId() == ELocationType.CITADEL) return true;
 		return false;
 	}
 
 	public final boolean isRegion() {
-		return ((this.getStationID() == 0) && (this.getSystemID() == 0) && (this.getRegionID() != 0));
+		return ((this.getStationId() == 0) && (this.getSystemId() == 0) && (this.getRegionId() != 0));
 	}
 
 	public final boolean isStation() {
-		return ((this.getStationID() != 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
+		return ((this.getStationId() != 0) && (this.getSystemId() != 0) && (this.getRegionId() != 0));
 	}
 
 	public final boolean isSystem() {
-		return ((this.getStationID() == 0) && (this.getSystemID() != 0) && (this.getRegionID() != 0));
+		return ((this.getStationId() == 0) && (this.getSystemId() != 0) && (this.getRegionId() != 0));
 	}
 
 	public final boolean isUnknown() {
@@ -263,8 +270,8 @@ public class EveLocation extends NeoComNode {
 		this.constellation = constellation;
 	}
 
-	public void setConstellationID( final long constellationID ) {
-		this.constellationID = constellationID;
+	public void setConstellationId( final long constellationId ) {
+		this.constellationId = constellationId;
 	}
 
 	public EveLocation store() {
@@ -282,15 +289,15 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public void setLocationID( final long stationID ) {
-		this.stationID = stationID;
+		this.stationId = stationID;
 	}
 
 	public void setRegion( final String region ) {
 		this.region = region;
 	}
 
-	public void setRegionID( final long regionID ) {
-		this.regionID = regionID;
+	public void setRegionId( final long regionId ) {
+		this.regionId = regionId;
 	}
 
 	public void setSecurity( final String security ) {
@@ -301,20 +308,20 @@ public class EveLocation extends NeoComNode {
 		this.station = station;
 	}
 
-	public void setStationID( final long stationID ) {
-		this.stationID = stationID;
+	public void setStationId( final long stationId ) {
+		this.stationId = stationId;
 	}
 
 	public void setSystem( final String system ) {
 		this.system = system;
 	}
 
-	public void setSystemID( final long systemID ) {
-		this.systemID = systemID;
+	public void setSystemId( final long systemId ) {
+		this.systemId = systemId;
 	}
 
-	public void setTypeID( final ELocationType typeID ) {
-		this.typeID = typeID.name();
+	public void setTypeId( final ELocationType typeId ) {
+		this.typeId = typeId.name();
 	}
 
 	public void setUrlLocationIcon( final String urlLocationIcon ) {
@@ -340,9 +347,9 @@ public class EveLocation extends NeoComNode {
 	private void updateFromCitadel( final long newid, final Citadel cit ) {
 		this.updateFromSystem(cit.systemId);
 		// Copy the data from the citadel location.
-		stationID = newid;
+		stationId = newid;
 		station = cit.name;
-		systemID = cit.systemId;
+		systemId = cit.systemId;
 		//		citadel = true;
 	}
 
@@ -354,11 +361,11 @@ public class EveLocation extends NeoComNode {
 		} catch (NeocomRuntimeException newe) {
 			systemLocation = new EveLocation();
 		}
-		systemID = systemLocation.getSystemID();
+		systemId = systemLocation.getSystemId();
 		system = systemLocation.getSystem();
-		constellationID = systemLocation.getConstellationID();
+		constellationId = systemLocation.getConstellationId();
 		constellation = systemLocation.getConstellation();
-		regionID = systemLocation.getRegionID();
+		regionId = systemLocation.getRegionId();
 		region = systemLocation.getRegion();
 		security = systemLocation.getSecurity();
 	}
@@ -371,10 +378,10 @@ public class EveLocation extends NeoComNode {
 	 */
 	@Override
 	public boolean equals( final Object obj ) {
-		if (stationID != ((EveLocation) obj).getStationID()) return false;
-		if (systemID != ((EveLocation) obj).getSystemID()) return false;
-		if (constellationID != ((EveLocation) obj).getConstellationID()) return false;
-		if (regionID != ((EveLocation) obj).getRegionID()) return false;
+		if (stationId != ((EveLocation) obj).getStationId()) return false;
+		if (systemId != ((EveLocation) obj).getSystemId()) return false;
+		if (constellationId != ((EveLocation) obj).getConstellationId()) return false;
+		if (regionId != ((EveLocation) obj).getRegionId()) return false;
 		return true;
 	}
 

@@ -49,6 +49,7 @@ public class FittingProcessor {
 	 * actions against the complete set of locations with assets.
 	 */
 	private List<Property> roles = new ArrayList<>();
+	private List<MarketOrder> scheduledOrders = new ArrayList<>();
 	/**
 	 * This is the selected location to be used when searching for resources for the Fitting processing. Setting/configuring
 	 * this place properly will change the result of the fitting processing.
@@ -110,6 +111,8 @@ public class FittingProcessor {
 	 */
 	public List<Action> processFitting( final Credential credential, final Fitting target, final int copyCount ) {
 		logger.info(">> [FittingProcessor.processFitting]");
+		this.credential = credential;
+
 		// STEP0 01. Do the mandatory initialization such as getting a current list of assets or the current Manufacture location.
 		// Get all Location roles for this pilot.
 		try {
@@ -120,6 +123,8 @@ public class FittingProcessor {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
+		scheduledOrders = this.accessScheduledOrders();
+
 		// Get the work place location. This should be a Manufacture targeted role location if defined. Home if not.
 		manufactureLocation = searchManufactureLocation(credential);
 		region = manufactureLocation.getRegion();
@@ -152,29 +157,29 @@ public class FittingProcessor {
 		logger.info("-- [FittingProcessor.processFitting]> List of requirements: ", requirements);
 		pointer = -1;
 		try {
-			try {
-				do {
-					pointer++;
-					Resource resource = requirements.get(pointer);
-					logger.info("-- [FittingProcessor.processFitting]> Processing resource: {}", resource);
+			do {
+				pointer++;
+				Resource resource = requirements.get(pointer);
+				logger.info("-- [FittingProcessor.processFitting]> Processing resource: {}", resource);
 //				// Check resources that are Skills. Give them an special treatment.
 //				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 //					currentAction = new Skill(resource);
 //					this.registerAction(currentAction);
 //					continue;
 //				}
-					currentAction = new Action(resource);
-					EveTask newTask = new EveTask(Action.ETaskType.REQUEST, resource);
-					newTask.setQty(resource.getQuantity());
-					// We register the action before to get erased on restarts. This has no impact on data since we use pointers to the
-					// global structures.
-					this.registerAction(currentAction);
+				currentAction = new Action(resource);
+				EveTask newTask = new EveTask(Action.ETaskType.REQUEST, resource);
+				newTask.setQty(resource.getQuantity());
+				// We register the action before to get erased on restarts. This has no impact on data since we use pointers to the
+				// global structures.
+				this.registerAction(currentAction);
+				try {
 					this.processRequest(newTask);
-				} while (pointer < (requirements.size() - 1));
-			} catch (RuntimeException rtex) {
-				logger.info("RT> [FittingProcessor.processFitting]> Unexpected code behaviour. See stacktrace.");
-				rtex.printStackTrace();
-			}
+				} catch (RuntimeException rtex) {
+					logger.info("RT> [FittingProcessor.processFitting]> Unexpected code behaviour. See stacktrace.");
+					rtex.printStackTrace();
+				}
+			} while (pointer < (requirements.size() - 1));
 			return this.getActions();
 		} finally {
 			logger.info("<< [FittingProcessor.processFitting]");
@@ -253,9 +258,9 @@ public class FittingProcessor {
 			return;
 		}
 		// Get the Assets that match the current type id.
-		List<NeoComAsset> available = getAssetsManager().getAssets4Type(newTask.getResource().getItem().getItemId());
+		List<NeoComAsset> available = getAssetsManager().getAssets4Type(newTask.getResource().getItem().getTypeId());
 		//TODO - Shortcircuit the assets manager.
-		available = new ArrayList<>();
+//		available = new ArrayList<>();
 		logger.info("-- [FittingProcessor.processRequest]> Total available assets 4 type: {}", available);
 		// OPTIMIZATION. Do all Move tests only if there are items of this type available.
 		if (available.size() > 0) {
@@ -282,7 +287,7 @@ public class FittingProcessor {
 				if (this.moveAllowed()) {
 					// See if we have that resource elsewhere ready for transportation.
 					// MOVE - manufacture region
-					if (asset.getLocation().getRegionID() == manufactureLocation.getRegionID()) {
+					if (asset.getLocation().getRegionId() == manufactureLocation.getRegionId()) {
 						this.processMove(asset, newTask);
 						return;
 					}
@@ -322,7 +327,7 @@ public class FittingProcessor {
 		if (asset.getLocation().equals(manufactureLocation)) {
 			// Convert the move to AVAILABLE because the locations match.
 			// If the owner is -1 then this resource comes from a reprocessing.
-			if (asset.getOwnerID() == -1) {
+			if (asset.getOwnerId() == -1) {
 				moveTask.setTaskType(Action.ETaskType.EXTRACT);
 			} else {
 				moveTask.setTaskType(Action.ETaskType.AVAILABLE);
@@ -358,7 +363,7 @@ public class FittingProcessor {
 				}
 				// If we request a T1 blueprint then we have to check if we can create copies. This is a default
 				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-					//					ArrayList<Asset> bpcs = getAsset4Type(newTask.getItem().getTypeID());
+					//					ArrayList<Asset> bpcs = getAsset4Type(newTask.getItem().getTypeId());
 					//					// Search each blueprint to locate the BPO and then create the copies.
 					//					for (Asset asset : bpcs) {
 					//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetID());
@@ -445,10 +450,10 @@ public class FittingProcessor {
 	 * @param newTask
 	 */
 	protected void processBuy( final EveTask newTask ) {
-		final List<MarketOrder> scheduledOrders = this.accessScheduledOrders();
+//		final List<MarketOrder> scheduledOrders = this.accessScheduledOrders();
 		// Search for an order for this type.
 		for (final MarketOrder marketOrder : scheduledOrders)
-			if (marketOrder.getTypeId()== newTask.getTypeId()) { //if (marketOrder.getQuantity() < newTask.getQty()) {
+			if (marketOrder.getTypeId() == newTask.getTypeId()) { //if (marketOrder.getQuantity() < newTask.getQty()) {
 				final int taskQty = newTask.getQty();
 				final int orderQty = marketOrder.getVolumeRemain();
 				// Update the tasks depending on those two quantities.
@@ -461,6 +466,7 @@ public class FittingProcessor {
 				} catch (InterruptedException ie) {
 					newTask.setLocation(new EveLocation(60003466));
 				}
+				newTask.setMarketCounterPart(marketOrder);
 				newTask.setDestination(manufactureLocation);
 				newTask.setQty(Math.min(taskQty, orderQty));
 				this.registerTask(300, newTask);
@@ -659,7 +665,7 @@ final class AssetsManager {
 			if (null == hit) {
 				final HashMap<String, Object> filterParameters = new HashMap();
 				filterParameters.put("ownerID", currentPilotCredential.getAccountId());
-				filterParameters.put("typeID", typeId);
+				filterParameters.put("typeId", typeId);
 				hit = new GlobalDataManager().getNeocomDBHelper().getAssetDao().queryForFieldValues(filterParameters);
 				// Cache the new list of assets for the specified type.
 				asset4TypeCache.put(Integer.valueOf(typeId), hit);

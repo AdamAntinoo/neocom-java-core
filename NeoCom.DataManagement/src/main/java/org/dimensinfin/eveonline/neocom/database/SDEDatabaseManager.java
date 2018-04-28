@@ -78,7 +78,7 @@ public abstract class SDEDatabaseManager {
 	private static int ITEM_BYID_BASEPRICE_COLINDEX = 7;
 	private static int ITEM_BYID_VOLUME_COLINDEX = 8;
 	private static int ITEM_BYID_TECH_COLINDEX = 9;
-	private static final String SELECT_ITEM_BYID = "SELECT it.typeID AS typeID"
+	private static final String SELECT_ITEM_BYID = "SELECT it.typeId AS typeId"
 			+ " , it.typeName AS typeName"
 			+ " , ig.groupID AS groupID"
 			+ " , ig.groupName AS groupName"
@@ -89,8 +89,8 @@ public abstract class SDEDatabaseManager {
 			+ " , IFNULL(img.metaGroupName, " + '"' + "NOTECH" + '"' + ") AS Tech"
 			+ " FROM invTypes it" + " LEFT OUTER JOIN invGroups ig ON ig.groupID = it.groupID"
 			+ " LEFT OUTER JOIN invCategories ic ON ic.categoryID = ig.categoryID"
-			+ " LEFT OUTER JOIN invMetaTypes imt ON imt.typeID = it.typeID"
-			+ " LEFT OUTER JOIN invMetaGroups img ON img.metaGroupID = imt.metaGroupID" + " WHERE it.typeID = ?";
+			+ " LEFT OUTER JOIN invMetaTypes imt ON imt.typeId = it.typeId"
+			+ " LEFT OUTER JOIN invMetaGroups img ON img.metaGroupID = imt.metaGroupID" + " WHERE it.typeId = ?";
 
 	// - L O C A T I O N B Y I D
 	private static int LOCATIONBYID_SYSTEMID_COLINDEX = 5;
@@ -103,12 +103,12 @@ public abstract class SDEDatabaseManager {
 	private static int LOCATIONBYID_TYPEID_COLINDEX = 2;
 	private static int LOCATIONBYID_LOCATIONID_COLINDEX = 1;
 	private static int LOCATIONBYID_SECURITY_COLINDEX = 4;
-	private static final String SELECT_LOCATIONBYID = "SELECT md.itemID AS locationID, md.typeID AS typeID, md.itemName AS locationName, md.security AS security"
-			+ " , IFNULL(md.solarSystemID, -1) AS systemID, ms.solarSystemName AS system"
-			+ " , IFNULL(md.constellationID, -1) AS constellationID, mc.constellationName AS constellation"
-			+ " , IFNULL(md.regionID, -1) AS regionID, mr.regionName AS region" + " FROM mapDenormalize md"
-			+ " LEFT OUTER JOIN mapRegions mr ON mr.regionID = md.regionID"
-			+ " LEFT OUTER JOIN mapConstellations mc ON mc.constellationID = md.constellationID"
+	private static final String SELECT_LOCATIONBYID = "SELECT md.itemID AS locationID, md.typeId AS typeId, md.itemName AS locationName, md.security AS security"
+			+ " , IFNULL(md.solarSystemID, -1) AS systemId, ms.solarSystemName AS system"
+			+ " , IFNULL(md.constellationId, -1) AS constellationId, mc.constellationName AS constellation"
+			+ " , IFNULL(md.regionId, -1) AS regionId, mr.regionName AS region" + " FROM mapDenormalize md"
+			+ " LEFT OUTER JOIN mapRegions mr ON mr.regionId = md.regionId"
+			+ " LEFT OUTER JOIN mapConstellations mc ON mc.constellationId = md.constellationId"
 			+ " LEFT OUTER JOIN mapSolarSystems ms ON ms.solarSystemID = md.solarSystemID" + " WHERE itemID = ?";
 
 	// - L O C A T I O N B Y S Y S T E M
@@ -118,7 +118,7 @@ public abstract class SDEDatabaseManager {
 
 	// - S T A T I O N 4 T Y P E
 	private static int STATIONTYPEID_COLINDEX = 1;
-	private static final String SELECT_STATIONTYPE = "SELECT stationTypeID FROM staStations WHERE stationID = ?";
+	private static final String SELECT_STATIONTYPE = "SELECT stationTypeID FROM staStations WHERE stationId = ?";
 
 	// - I T E M G R O U P 4 I D
 	private static int ITEMGROUP_GROUPID_COLINDEX = 1;
@@ -150,7 +150,7 @@ public abstract class SDEDatabaseManager {
 	private static int SCHEMATICSID_QUANTITY_COLINDEX = 3;
 	private static int SCHEMATICSID_ISINPUT_COLINDEX = 4;
 	private static final String SELECT_SCHEMATICSID =
-			"SELECT        pstms.schematicID, pstms.typeID, pstms.quantity, pstms.isInput"
+			"SELECT        pstms.schematicID, pstms.typeId, pstms.quantity, pstms.isInput"
 					+ " FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms"
 					+ " WHERE  pstmt.schematicID = ?"
 					+ " AND    pstmt.isInput = 0"
@@ -261,23 +261,23 @@ public abstract class SDEDatabaseManager {
 				detected = true;
 				long fragmentID = cursor.getLong(LOCATIONBYID_SYSTEMID_COLINDEX);
 				if (fragmentID > 0) {
-					target.setSystemID(fragmentID);
+					target.setSystemId(fragmentID);
 					target.setSystem(cursor.getString(LOCATIONBYID_SYSTEM_COLINDEX));
 				} else {
 					target.setSystem(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
-					target.setSystemID(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
+					target.setSystemId(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
 				}
 				fragmentID = cursor.getLong(LOCATIONBYID_CONSTELLATIONID_COLINDEX);
 				if (fragmentID > 0) {
-					target.setConstellationID(fragmentID);
+					target.setConstellationId(fragmentID);
 					target.setConstellation(cursor.getString(LOCATIONBYID_CONSTELLATION_COLINDEX));
 				}
 				fragmentID = cursor.getLong(LOCATIONBYID_REGIONID_COLINDEX);
 				if (fragmentID > 0) {
-					target.setRegionID(fragmentID);
+					target.setRegionId(fragmentID);
 					target.setRegion(cursor.getString(LOCATIONBYID_REGION_COLINDEX));
 				}
-				target.setTypeID(ELocationType.CCPLOCATION);
+				target.setTypeId(ELocationType.CCPLOCATION);
 				target.setStation(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
 				target.setLocationID(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
 				target.setSecurity(cursor.getString(LOCATIONBYID_SECURITY_COLINDEX));
@@ -369,7 +369,11 @@ public abstract class SDEDatabaseManager {
 	 * Returns the resource identifier of the station class to locate icons or other type related resources.
 	 */
 	public int searchStationType( final long stationID ) {
-		logger.info(">< [SDEDatabaseManager.searchStationType]> stationID: {}", stationID);
+		logger.info(">< [SDEDatabaseManager.searchStationType]> stationId: {}", stationID);
+		if(stationID==-2){
+			// Test the cause of this error.
+			int f = 6;
+		}
 		int stationTypeID = 1529;
 		try {
 			final RawStatement cursor = constructStatement(SELECT_STATIONTYPE, new String[]{Long.valueOf(stationID).toString()});
@@ -388,7 +392,7 @@ public abstract class SDEDatabaseManager {
 	// --- M O D U L E 4 B L U E P R I N T
 	private static int PRODUCTTYPEID_MODULE4BLUEPRINT_COLINDEX = 1;
 	private static final String SELECT_MODULE4BLUEPRINT = "SELECT productTypeID FROM industryActivityProducts BT"
-			+ " WHERE typeID = ? AND activityID = 1";
+			+ " WHERE typeId = ? AND activityID = 1";
 
 
 	public int searchModule4Blueprint( final int blueprintTypeId ) {
@@ -413,9 +417,9 @@ public abstract class SDEDatabaseManager {
 	private static int TECH4BLUEPRINT_TYPENAME_COLINDEX = 2;
 	private static int TECH4BLUEPRINT_METAGROUPID_COLINDEX = 3;
 	private static int TECH4BLUEPRINT_METAGROUPNAME_COLINDEX = 4;
-	private static final String SELECT_TECH4BLUEPRINT = "SELECT iap.typeID, it.typeName, imt.metaGroupID, img.metaGroupName"
-			+ " FROM industryActivityProducts iap, invTypes it, invMetaTypes imt, invMetaGroups img" + " WHERE it.typeID =?"
-			+ " AND iap.typeID = it.typeID" + " AND imt.typeID = productTypeID" + " AND img.metaGroupID = imt.metaGroupID"
+	private static final String SELECT_TECH4BLUEPRINT = "SELECT iap.typeId, it.typeName, imt.metaGroupID, img.metaGroupName"
+			+ " FROM industryActivityProducts iap, invTypes it, invMetaTypes imt, invMetaGroups img" + " WHERE it.typeId =?"
+			+ " AND iap.typeId = it.typeId" + " AND imt.typeId = productTypeID" + " AND img.metaGroupID = imt.metaGroupID"
 			+ " AND iap.activityID = 1";
 
 	public String searchTech4Blueprint( final int blueprintID ) {
@@ -440,13 +444,13 @@ public abstract class SDEDatabaseManager {
 	private static int RAW_PRODUCTRESULT_TYPEID_COLINDEX = 1;
 	private static int RAW_PRODUCTRESULT_QUANTITY_COLINDEX = 2;
 	private static int RAW_PRODUCTRESULT_SCHEMATICID_COLINDEX = 3;
-	private static final String SELECT_RAW_PRODUCTRESULT = "SELECT pstmo.typeID, pstmo.quantity, pstmo.schematicID"
-			+ " FROM   planetSchematicsTypeMap pstmi, planetSchematicsTypeMap pstmo" + " WHERE  pstmi.typeID = ?"
+	private static final String SELECT_RAW_PRODUCTRESULT = "SELECT pstmo.typeId, pstmo.quantity, pstmo.schematicID"
+			+ " FROM   planetSchematicsTypeMap pstmi, planetSchematicsTypeMap pstmo" + " WHERE  pstmi.typeId = ?"
 			+ " AND    pstmo.schematicID = pstmi.schematicID" + " AND    pstmo.isInput = 0";
 
 
 	public int searchRawPlanetaryOutput( final int typeID ) {
-		logger.info(">< [SDEDatabaseManager.searchRawPlanetaryOutput]> typeID: {}", typeID);
+		logger.info(">< [SDEDatabaseManager.searchRawPlanetaryOutput]> typeId: {}", typeID);
 		int outputResourceId = typeID;
 		try {
 			final RawStatement cursor = constructStatement(SELECT_RAW_PRODUCTRESULT, new String[]{Integer.valueOf(typeID).toString()});
@@ -466,12 +470,12 @@ public abstract class SDEDatabaseManager {
 	private static int SCHEMATICS4OUTPUT_TYPEID_COLINDEX = 1;
 	private static int SCHEMATICS4OUTPUT_QUANTITY_COLINDEX = 2;
 	private static int SCHEMATICS4OUTPUT_ISINPUT_COLINDEX = 3;
-	private static final String SELECT_SCHEMATICS4OUTPUT = "SELECT pstms.typeID, pstms.quantity, pstms.isInput"
-			+ " FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms" + " WHERE  pstmt.typeID = ?"
+	private static final String SELECT_SCHEMATICS4OUTPUT = "SELECT pstms.typeId, pstms.quantity, pstms.isInput"
+			+ " FROM   planetSchematicsTypeMap pstmt, planetSchematicsTypeMap pstms" + " WHERE  pstmt.typeId = ?"
 			+ " AND    pstmt.isInput = 0" + " AND    pstms.schematicID = pstmt.schematicID";
 
 	public List<Schematics> searchSchematics4Output( final int targetId ) {
-		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeID: {}", targetId);
+		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeId: {}", targetId);
 		List<Schematics> scheList = new Vector<Schematics>();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_SCHEMATICS4OUTPUT, new String[]{Integer.valueOf(targetId).toString()});
@@ -492,20 +496,20 @@ public abstract class SDEDatabaseManager {
 // - UNUSED CODE ............................................................................................
 //[01]
 //				final Cursor cursor = this.getCCPDatabase().rawQuery(AndroidCCPDatabaseConnector.SELECT_ITEM_BYID,
-//						new String[]{Integer.valueOf(typeID).toString()});
+//						new String[]{Integer.valueOf(typeId).toString()});
 //				if (null != cursor) {
 //			final Cursor cursor = getCCPDatabase().rawQuery(SELECT_ITEM_BYID,
-//					new String[] { Integer.valueOf(typeID).toString() });
+//					new String[] { Integer.valueOf(typeId).toString() });
 //	      Statement stmt = getCCPDatabase().createStatement();
 //					prepStmt = getSDEConnection().prepareStatement(SELECT_ITEM_BYID);
-//					prepStmt.setString(1, Integer.valueOf(typeID).toString());
+//					prepStmt.setString(1, Integer.valueOf(typeId).toString());
 //					cursor = prepStmt.executeQuery();
 // The query can be run but now there are ids that do not return data.
 //					while (cursor.next()) {
 //				}
 //				}
 //				} catch(Exception e){
-//					logger.warn("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeID
+//					logger.warn("W> AndroidDatabaseConnector.searchItembyID -- Item <" + typeId
 //							+ "> not found.");
 //					return new EveItem();
 //				} finally{

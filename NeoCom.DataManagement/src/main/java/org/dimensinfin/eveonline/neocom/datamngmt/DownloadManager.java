@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.dimensinfin.eveonline.neocom.database.entity.Job;
-import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -73,81 +73,55 @@ public class DownloadManager {
 	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
 	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
 	 */
-	public void downloadPilotAssetsESI() {
+	public boolean downloadPilotAssetsESI() {
 		DownloadManager.logger.info(">> [AssetsManager.downloadPilotAssetsESI]");
 		try {
 			// Clear any previous record with owner -1 from database.
 			new GlobalDataManager().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
-//			synchronized (dbConn) {
-//				dbConn.clearInvalidRecords(credential.getAccountId());
-//			}
 			// Download the list of assets.
 			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = ESINetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
+			if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
+			// Create the list for orphaned locations assets. They should be processed later.
 			unlocatedAssets = new ArrayList<NeoComAsset>();
-			//				List<Asset> assets = response.getAll();
 			// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
 			for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
-				//	try {
-				// Convert the asset from the OK format to a MVC compatible structure.
-				//						final NeoComAsset myasset = modelMapper.map(assetOk, NeoComAsset.class);
-				final NeoComAsset myasset = this.convert2AssetFromESI(assetOk);
-				//					if ( null != parent ) {
-				//						//			myasset.setParent(parent);
-				//						myasset.setParentContainer(parent);
-				//						// Set the location to the parent's location is not set.
-				//						if ( myasset.getLocationID() == -1 ) {
-				//							myasset.setLocationID(parent.getLocationID());
-				//						}
-				//					}
-				// Only search names for containers and ships.
-				if (myasset.isShip()) {
-					downloadAssetEveName(myasset.getAssetId());
-				}
-				if (myasset.isContainer()) {
-					downloadAssetEveName(myasset.getAssetId());
-				}
+				//--- A S S E T   P R O C E S S I N G
 				try {
-					//			final Dao<NeoComAsset, String> assetDao = ModelAppConnector.getSingleton().getDBConnector().getAssetDAO();
-					//					this.accessDaos();
-					//						final HashSet<Asset> children = new HashSet<Asset>(eveAsset.getAssets());
-					//						if ( children.size() > 0 ) {
-					//							myasset.setContainer(true);
-					//						}
-					if (myasset.getCategory().equalsIgnoreCase("Ship")) {
+					// Convert the asset from the OK format to a MVC compatible structure.
+					final NeoComAsset myasset = this.convert2AssetFromESI(assetOk);
+					if (myasset.getCategoryName().equalsIgnoreCase("Ship")) {
 						myasset.setShip(true);
 					}
-					if (myasset.getCategory().equalsIgnoreCase("Blueprint")) {
-						//			myasset.setBlueprintType();
+					if (myasset.getCategoryName().equalsIgnoreCase("Blueprint")) {
+						myasset.setBlueprintType(assetOk.getQuantity());
 					}
-					myasset.setOwnerID(credential.getAccountId() * -1);
-					//					myasset.store();
+					if (myasset.isShip()) {
+						downloadAssetEveName(myasset.getAssetId());
+					}
+					if (myasset.isContainer()) {
+						downloadAssetEveName(myasset.getAssetId());
+					}
+					// Mark the asset owner to the work in progress value.
+					myasset.setOwnerId(credential.getAccountId() * -1);
 					// With assets separate the update from the creation because they use a generated unique key.
 					new GlobalDataManager().getNeocomDBHelper().getAssetDao().create(myasset);
+					DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
+
+					//--- L O C A T I O N   P R O C E S S I N G
 					// Check the asset location. The location can be a known game station, a known user structure, another asset
 					// or an unknown player structure. Check which one is this location.
 					EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(myasset.getLocationId());
-					if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
+					if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 						// Add this asset to the list of items to be reprocessed.
 						unlocatedAssets.add(myasset);
 					}
-					// Process all the children and convert them to assets.
-					//						if ( children.size() > 0 ) {
-					//							for (final Asset childAsset : children) {
-					//								this.processAsset(childAsset, myasset);
-					//							}
-					//						}
-					DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
-					//					} catch (final SQLException sqle) {
-					//						DownloadManager.logger.error("E> [AssetsManager.processAsset]Unable to create the new asset ["
-					//								+ myasset.getAssetId() + "]. " + sqle.getMessage());
-					//						sqle.printStackTrace();
-					//					}
 				} catch (final RuntimeException rtex) {
+					DownloadManager.logger.info("RTEX ´[AssetsManager.downloadPilotAssetsESI]> Processing asset: {} - {}"
+							, assetOk.getItemId(), rtex.getMessage());
 					rtex.printStackTrace();
-				} catch (final Exception ex) {
-					ex.printStackTrace();
 				}
 			}
+			//--- O R P H A N   L O C A T I O N   A S S E T S
 			// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
 			for (NeoComAsset asset : unlocatedAssets) {
 				this.validateLocation(asset);
@@ -159,8 +133,10 @@ public class DownloadManager {
 //			GlobalDataManager.dropAssetsManager(credential.getAccountId());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
+			return false;
 		}
 		DownloadManager.logger.info("<< [AssetsManager.downloadPilotAssetsESI]");
+		return true;
 	}
 
 	public void downloadPilotJobsESI() {
@@ -176,38 +152,10 @@ public class DownloadManager {
 		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMarketOrdersESI]");
 		try {
 			List<MarketOrder> ordersList = GlobalDataManager.downloadMarketOrders4Credential(credential);
-			 ordersList = GlobalDataManager.downloadMarketOrdersHistory4Credential(credential);
+			ordersList = GlobalDataManager.downloadMarketOrdersHistory4Credential(credential);
 		} finally {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotMarketOrdersESI]");
 		}
-
-
-//			try {
-//				// Download and parse the market orders.
-//				MarketOrdersParser parser = new MarketOrdersParser();
-//				final MarketOrdersResponse response = parser.getResponse(this.getAuthorization());
-//				if (null != response) {
-//					Set<MarketOrder> orders = response.getAll();
-//					for (final MarketOrder eveorder : orders) {
-//						final NeoComMarketOrder myorder = this.convert2Order(eveorder);
-//						try {
-//							final Dao<NeoComMarketOrder, String> marketOrderDao = ModelAppConnector.getSingleton().getDBConnector()
-//									.getMarketOrderDAO();
-//							marketOrderDao.createOrUpdate(myorder);
-//							Pilot.logger.finest(
-//									"-- EveChar.updateMarketOrders.Wrote MarketOrder to database id [" + myorder.getOrderID() + "]");
-//						} catch (final SQLException sqle) {
-//							Pilot.logger.severe("E> Unable to create the new Job [" + myorder.getOrderID() + "]. " + sqle.getMessage());
-//							sqle.printStackTrace();
-//						}
-//					}
-//					marketCacheTime = new Instant(response.getCachedUntil());
-//				}
-//			} catch (final ApiException apie) {
-//				apie.printStackTrace();
-//			}
-//			this.setDirty(true);
-//			Pilot.logger.info("<< EveChar.updateMarketOrders");
 	}
 
 	//--- P R I V A T E   M E T H O D S
@@ -215,7 +163,7 @@ public class DownloadManager {
 		// Create the asset from the API asset.
 		final NeoComAsset newAsset = new NeoComAsset(asset200Ok.getTypeId())
 				.setAssetId(asset200Ok.getItemId());
-		//	.setTypeId(asset200Ok.getTypeId());
+		// TODO -- Location management is done ourside this transormation. This is duplicated code.
 		Long locid = asset200Ok.getLocationId();
 		if (null == locid) {
 			locid = (long) -2;
@@ -228,16 +176,16 @@ public class DownloadManager {
 		// Get access to the Item and update the copied fields.
 		final EveItem item = new GlobalDataManager().searchItem4Id(newAsset.getTypeId());
 		if (null != item) {
-			try {
-				newAsset.setName(item.getName());
-				newAsset.setCategory(item.getCategory());
-				newAsset.setGroupName(item.getGroupName());
-				newAsset.setTech(item.getTech());
-				if (item.isBlueprint()) {
-					//			newAsset.setBlueprintType(eveAsset.getRawQuantity());
-				}
-			} catch (RuntimeException rtex) {
-			}
+//			try {
+			newAsset.setName(item.getName());
+			newAsset.setCategory(item.getCategoryName());
+			newAsset.setGroupName(item.getGroupName());
+			newAsset.setTech(item.getTech());
+//				if (item.isBlueprint()) {
+//					//			newAsset.setBlueprintType(eveAsset.getRawQuantity());
+//				}
+//			} catch (RuntimeException rtex) {
+//			}
 		}
 		// Add the asset value to the database.
 		newAsset.setIskValue(this.calculateAssetValue(newAsset));
@@ -250,14 +198,17 @@ public class DownloadManager {
 		if (null != asset) {
 			EveItem item = asset.getItem();
 			if (null != item) {
-				String category = item.getCategory();
+				String category = item.getCategoryName();
 				String group = item.getGroupName();
 				if (null != category) if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 					// Add the value and volume of the stack to the global result.
 					long quantity = asset.getQuantity();
-					double price = 0;
+					double price = 0.0;
 					try {
-						price = asset.getItem().getHighestBuyerPrice().getPrice();
+						// First try to set the average market price. If it fails search for the market data.
+						price = asset.getItem().getPrice();
+						if (price < 0)
+							price = asset.getItem().getHighestBuyerPrice().getPrice();
 					} catch (ExecutionException ee) {
 						price = asset.getItem().getPrice();
 					} catch (InterruptedException ee) {
@@ -279,28 +230,41 @@ public class DownloadManager {
 	private ELocationType validateLocation( final NeoComAsset asset ) {
 		long targetLocationid = asset.getLocationId();
 		EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(targetLocationid);
-		if (targetLoc.getTypeID() == ELocationType.UNKNOWN) {
+		if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 			try {
-				// Need to check if asset or unreachable location.
-				NeoComAsset target = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
-						.queryForId(Long.valueOf(targetLocationid).toString());
+				// Need to check if asset or unreachable location. Search for asset with locationid.
+				List<NeoComAsset> targetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
+						.queryForEq("assetId", Long.valueOf(targetLocationid));
+				NeoComAsset target = null;
+				if (targetList.size() > 0) target = targetList.get(0);
 				if (null == target)
 					return ELocationType.UNKNOWN;
 				else {
 					// Change the asset parentship and update the asset location with the location of the parent.
 					asset.setParentId(targetLocationid);
-					//// search for the location of the parent.
-					//ELocationType parentLocationType = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(target.getLocationID()).getTypeId();
-					//if(parentLocationType!=ELocationType.UNKNOWN)
-					asset.setLocationId(target.getLocationId());
-					asset.setDirty(true);
+
+					// Search recursively on the parentship chain until a leaf is found. Then check that location.
+					long parentIdentifier = target.getParentContainerId();
+					while (parentIdentifier != -1) {
+						validateLocation(target);
+						targetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
+								.queryForEq("assetId", Long.valueOf(parentIdentifier));
+						if (targetList.size() > 0) target = targetList.get(0);
+						parentIdentifier = target.getParentContainerId();
+					}
+					// Now target contains a parent with parentship -1.
+					// Set to this asset the parent location whichever it is.
+					asset.setLocationId(target.getLocationId())
+							.setLocationType(target.getLocationType())
+							.setFlag(target.getFlag());
+					asset.store();
+					return target.getLocation().getTypeId();
 				}
 			} catch (SQLException sqle) {
 				return ELocationType.UNKNOWN;
 			}
-			return ELocationType.UNKNOWN;
 		} else
-			return targetLoc.getTypeID();
+			return targetLoc.getTypeId();
 	}
 
 	/**

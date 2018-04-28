@@ -74,7 +74,7 @@ public class Resource extends NeoComNode {
 	public Resource( final int typeId, final int newQty ) {
 		this(typeId);
 //		resourceId = typeId;
-//		item = GlobalDataManager.searchItem4Id(typeID);
+//		item = GlobalDataManager.searchItem4Id(typeId);
 		baseQty = newQty;
 	}
 

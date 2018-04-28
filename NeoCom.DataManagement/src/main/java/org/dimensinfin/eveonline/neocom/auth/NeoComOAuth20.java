@@ -15,21 +15,6 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.auth;
 
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.exceptions.OAuthException;
-import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.github.scribejava.core.oauth.OAuth20Service;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -39,6 +24,21 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.exceptions.OAuthException;
+import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.oauth.OAuth20Service;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by Adam on 15/01/2018.
  */
@@ -47,7 +47,7 @@ import retrofit2.http.Header;
 public class NeoComOAuth20 {
 	public interface VerifyModelCharacter {
 		@GET("/oauth/verify")
-		Call<VerifyCharacterResponse> getVerification (@Header("Authorization") String token);
+		Call<VerifyCharacterResponse> getVerification( @Header("Authorization") String token );
 	}
 	//[01]
 
@@ -57,27 +57,27 @@ public class NeoComOAuth20 {
 			private Map<String, TokenTranslationResponse> map = new HashMap<>();
 
 			@Override
-			public void save (TokenTranslationResponse token) {
+			public void save( TokenTranslationResponse token ) {
 				this.map.put(token.getRefreshToken(), token);
 			}
 
 			@Override
-			public void delete (String refresh) {
+			public void delete( String refresh ) {
 				this.map.remove(refresh);
 			}
 
 			@Override
-			public TokenTranslationResponse get (String refresh) {
+			public TokenTranslationResponse get( String refresh ) {
 				return this.map.get(refresh);
 			}
 		};
 
 
-		void save (final TokenTranslationResponse token);
+		void save( final TokenTranslationResponse token );
 
-		void delete (final String refresh);
+		void delete( final String refresh );
 
-		TokenTranslationResponse get (final String refresh);
+		TokenTranslationResponse get( final String refresh );
 
 	}
 
@@ -90,22 +90,22 @@ public class NeoComOAuth20 {
 	private VerifyModelCharacter verify;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	private NeoComOAuth20 () {
+	private NeoComOAuth20() {
 		super();
 	}
 
-	public NeoComOAuth20 (final String clientID, final String clientKey, final String callback,
-												final String agent,
-												final ESIStore store,
-												final List<String> scopes) {
+	public NeoComOAuth20( final String clientID, final String clientKey, final String callback,
+	                      final String agent,
+	                      final ESIStore store,
+	                      final List<String> scopes ) {
 
 		this.store = store;
 		ServiceBuilder builder = new ServiceBuilder(clientID)
 				.apiKey(clientID)
 				.apiSecret(clientKey)
 				.state("NEOCOM-VERIFICATION-STATE");
-		if ( StringUtils.isNotBlank(callback) ) builder.callback(callback);
-		if ( !scopes.isEmpty() ) builder.scope(transformScopes(scopes));
+		if (StringUtils.isNotBlank(callback)) builder.callback(callback);
+		if (!scopes.isEmpty()) builder.scope(transformScopes(scopes));
 		this.oAuth20Service = builder.build(NeoComAuthApi20.instance());
 
 		OkHttpClient.Builder verifyClient =
@@ -118,11 +118,12 @@ public class NeoComOAuth20 {
 										.build())
 						.addInterceptor(chain -> chain.proceed(
 								chain.request()
-										 .newBuilder()
-										 .addHeader("User-Agent", agent)
-										 .build()));
+										.newBuilder()
+										.addHeader("User-Agent", agent)
+										.build()));
 		this.verify =
 				new Retrofit.Builder()
+						// TODO - This depends on the Tranquility/Singularity definition
 						.baseUrl("https://login.eveonline.com/")
 						.addConverterFactory(JacksonConverterFactory.create())
 						.client(verifyClient.build())
@@ -131,11 +132,11 @@ public class NeoComOAuth20 {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public String getAuthorizationUrl () {
+	public String getAuthorizationUrl() {
 		return this.oAuth20Service.getAuthorizationUrl();
 	}
 
-	public TokenTranslationResponse fromAuthCode (final String authCode) {
+	public TokenTranslationResponse fromAuthCode( final String authCode ) {
 		try {
 			final OAuth2AccessToken token = this.oAuth20Service.getAccessToken(authCode);
 			return save(token);
@@ -145,12 +146,12 @@ public class NeoComOAuth20 {
 		}
 	}
 
-	public TokenTranslationResponse fromRefresh (final String refresh) {
+	public TokenTranslationResponse fromRefresh( final String refresh ) {
 		logger.info(">> [NeoComOAuth20.fromRefresh]");
 		try {
 			TokenTranslationResponse existing = this.store.get(refresh);
 //			logger.info("-- [NeoComOAuth20.fromRefresh]> Token response: {}", existing.getAccessToken());
-			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
+			if ((null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000))) {
 				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
 //				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
@@ -165,12 +166,12 @@ public class NeoComOAuth20 {
 		}
 	}
 
-	public VerifyCharacterResponse verify (final String refresh) {
+	public VerifyCharacterResponse verify( final String refresh ) {
 		final TokenTranslationResponse stored = this.store.get(refresh);
 		try {
 			final Response<VerifyCharacterResponse> r =
 					this.verify.getVerification("Bearer " + stored.getAccessToken()).execute();
-			if ( r.isSuccessful() ) {
+			if (r.isSuccessful()) {
 				return r.body();
 			}
 			return null;
@@ -180,7 +181,7 @@ public class NeoComOAuth20 {
 		}
 	}
 
-	private TokenTranslationResponse save (final OAuth2AccessToken token) {
+	private TokenTranslationResponse save( final OAuth2AccessToken token ) {
 		TokenTranslationResponse returned =
 				new TokenTranslationResponse()
 						.setAccessToken(token.getAccessToken())
@@ -192,7 +193,7 @@ public class NeoComOAuth20 {
 		return returned;
 	}
 
-	private String transformScopes (final List<String> scopeList) {
+	private String transformScopes( final List<String> scopeList ) {
 		StringBuilder scope = new StringBuilder();
 		for (String s : scopeList) {
 			scope.append(s);
@@ -202,7 +203,7 @@ public class NeoComOAuth20 {
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("NeoComOAuth20 [");
 		buffer.append("name: ").append(0);
 		buffer.append("]");
@@ -212,115 +213,3 @@ public class NeoComOAuth20 {
 }
 // - UNUSED CODE ............................................................................................
 //[01]
-//	public static class NeoComAuthApi20 extends DefaultApi20 {
-//
-//		private static final String AUTHORIZE_URL = "https://login.eveonline.com/oauth/authorize";
-//		private static final String ACCESS_TOKEN_RESOURCE = "https://login.eveonline.com/oauth/token";
-//
-//		protected NeoComAuthApi20 () {
-//		}
-//
-//		private static class InstanceHolder {
-//			private static final NeoComAuthApi20 INSTANCE = new NeoComAuthApi20();
-//		}
-//
-//		public static NeoComAuthApi20 instance () {
-//			return NeoComAuthApi20.InstanceHolder.INSTANCE;
-//		}
-//
-//		@Override
-//		public String getAccessTokenEndpoint () {
-//			return ACCESS_TOKEN_RESOURCE;
-//		}
-//
-//		@Override
-//		protected String getAuthorizationBaseUrl () {
-//			return AUTHORIZE_URL;
-//		}
-//	}
-
-
-//	public static class VerifyCharacterResponse {
-//		@JsonProperty("CharacterID")
-//		private long characterID;
-//		@JsonProperty("CharacterName")
-//		private String characterName;
-//		@JsonProperty("ExpiresOn")
-//		private String expiresOn;
-//		private long expiresMillis;
-//		@JsonProperty("Scopes")
-//		private String scopes;
-//		@JsonProperty("TokenType")
-//		private String tokenType;
-//		@JsonProperty("CharacterOwnerHash")
-//		private String characterOwnerHash;
-//		@JsonProperty("IntellectualProperty")
-//		private String intellectualProperty;
-//
-//		public long getCharacterID () {
-//			return characterID;
-//		}
-//
-//		public void setCharacterID (final long characterID) {
-//			this.characterID = characterID;
-//		}
-//
-//		public String getCharacterName () {
-//			return characterName;
-//		}
-//
-//		public void setCharacterName (final String characterName) {
-//			this.characterName = characterName;
-//		}
-//
-//		public String getExpiresOn () {
-//			return expiresOn;
-//		}
-//
-//		public void setExpiresOn (final String expiresOn) {
-//			this.expiresOn = expiresOn;
-//			// Convert the string to a data and then to the date milliseconds.
-//			//			final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-ddTHH:mm:ss");
-//			//			expiresMillis = fmt.parseMillis(expiresOn);
-//		}
-//
-//		public long getExpiresMillis () {
-//			return expiresMillis;
-//		}
-//
-//		public void setExpiresMillis (final long expiresInstant) {
-//			this.expiresMillis = expiresInstant;
-//		}
-//
-//		public String getScopes () {
-//			return scopes;
-//		}
-//
-//		public void setScopes (final String scopes) {
-//			this.scopes = scopes;
-//		}
-//
-//		public String getTokenType () {
-//			return tokenType;
-//		}
-//
-//		public void setTokenType (final String tokenType) {
-//			this.tokenType = tokenType;
-//		}
-//
-//		public String getCharacterOwnerHash () {
-//			return characterOwnerHash;
-//		}
-//
-//		public void setCharacterOwnerHash (final String characterOwnerHash) {
-//			this.characterOwnerHash = characterOwnerHash;
-//		}
-//
-//		public String getIntellectualProperty () {
-//			return intellectualProperty;
-//		}
-//
-//		public void setIntellectualProperty (final String intellectualProperty) {
-//			this.intellectualProperty = intellectualProperty;
-//		}
-//	}

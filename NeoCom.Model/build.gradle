@@ -54,7 +54,7 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:1.1.0'
 
     // N E O C O M . M O D E L
-//    implementation 'com.beimin:eveapi:6.0.6'
+    implementation 'com.beimin:eveapi:6.0.6'
     implementation 'com.github.scribejava:scribejava-core:4.2.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'

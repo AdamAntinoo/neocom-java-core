@@ -287,7 +287,7 @@ public class Job extends NeoComNode {
 		try {
 			// Load the output location item reference.
 			final EveLocation ouputLocation = accessGlobal().searchLocation4Id(outputLocationId);
-			if (ouputLocation.getTypeID() == ELocationType.UNKNOWN) {
+			if (ouputLocation.getTypeId() == ELocationType.UNKNOWN) {
 				// If the output location is UNKNOWN then this should be a reachable item. Search for it.
 				jobOutputLocation = accessGlobal().getNeocomDBHelper()
 						.getAssetDao().queryForEq("assetId", outputLocationId).get(0);

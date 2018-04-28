@@ -90,7 +90,7 @@ public class PlanetaryScenery {
 		// If the resource is of type RAW then stock the transformation of that resource into a Tier1.
 		if (resource.getCategory().equalsIgnoreCase("Planetary Resources")) {
 			// TODO Removed until the new implementation is ready and the new functionas are on place.
-//			int outputType = GlobalDataManager.searchRawPlanetaryOutput(resource.getTypeID());
+//			int outputType = GlobalDataManager.searchRawPlanetaryOutput(resource.getTypeId());
 			int outputType = 89;
 			ProcessingAction action = new ProcessingAction(outputType);
 			action.addResource(resource);

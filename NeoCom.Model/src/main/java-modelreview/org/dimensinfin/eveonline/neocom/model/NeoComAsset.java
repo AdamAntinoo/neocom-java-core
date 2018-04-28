@@ -271,7 +271,7 @@ public GetCharactersCharacterIdAssets200Ok.LocationTypeEnum getLocationType(){
 				//				Container container = new Container();
 				//				container.setAssetID(newlocationId);
 				//				container.setLocationID(newlocationId);
-				//				container.setTypeID(17366);
+				//				container.setTypeId(17366);
 				//				container.setQuantity(1);
 				//				container.setSingleton(false);
 				//

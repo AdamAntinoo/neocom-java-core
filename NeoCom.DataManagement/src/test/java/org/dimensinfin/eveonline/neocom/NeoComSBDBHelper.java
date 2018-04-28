@@ -33,10 +33,11 @@ import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.FittingRequest;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
+import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Property;
@@ -78,6 +79,7 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 	private Dao<Property, String> propertyDao = null;
 	//	private Dao<NeoComBlueprint, String> blueprintDao = null;
 	private Dao<Job, String> jobDao = null;
+	private Dao<MarketOrder, String> marketOrderDao = null;
 	private Dao<FittingRequest, String> fittingRequestDao = null;
 
 	private DatabaseVersion storedVersion = null;
@@ -228,6 +230,11 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
 		try {
+			TableUtils.createTableIfNotExists(databaseConnection, MarketOrder.class);
+		} catch (SQLException sqle) {
+			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
+		}
+		try {
 			TableUtils.createTableIfNotExists(databaseConnection, FittingRequest.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
@@ -247,10 +254,6 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 		//		}
 		//		try {
 		//			TableUtils.createTableIfNotExists(databaseConnection, NeoComBlueprint.class);
-		//		} catch (SQLException sqle) {
-		//		}
-		//		try {
-		//			TableUtils.createTableIfNotExists(databaseConnection, NeoComMarketOrder.class);
 		//		} catch (SQLException sqle) {
 		//		}
 		this.loadSeedData();
@@ -368,11 +371,13 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 //						.setAccountName("Zach Zender")
 //						.setRefreshToken("HB68Z3aeNjQxpA8ebcNijfMGv9wfkcn-dkcy5qchW88Pe0ackWDHCy2yr5RrY_ERE4aKNCsR-J2a_-V_tS2sV_21HMTYcIKQ-QJHhz6GugotFfrdRcl6nsVjEuxOay5c7t-0tFu2diGy-2cF9y4qYCJ53da5slsLjNBWiIvUTxP7PUOQIs0y23_LhMPku1O1AXZsKG383NOLYQTCFL6vrVjThKJKXX9xRqm2rsRoe7xA_hyV0PiSmxjclUl9XzYULQEpVi_yl65jw8Xhn88bADOcsjeh4dAIyW2U5_b5GOf7KfKTLf2JzpIWP6jtcJreMD6L228hYYGrG-F0tQxPp1pEhQjVwS0KepHSJV-o4s9-tEfDRfhTd5FtvJm_pNwbbyVEdtzoU81L834jZz9c5U3gxhRMvTfT5dp8ZiF8TbqLTAYnyL6QICqOU7uSSVV59hFtZF7lbZOFnWpis-2_4YsUXMzdgfW-dMFAjPlE-bGCvEF3tteFPhbSWj24JJQ1sfbVCdXQ6WEEsM5DJoeo_hdW-_nsORIaI3Q3hjOWC_Wb9ucF3465IqzuFFJEhL2m3zpX_V4gk0_9ARU8XaT7GTrkCpbq-Ds-q0bTmz5zh1w1")
 //						.store();
-//				credential = new Credential(92223647)
-//						.setAccessToken("Su9nYs3_qDQBHB2utYKQyZVfDy1l4ScMo81rtiDmDTDpRKV4yIln_cxfXDQaAR81wj1oBu8S1Hjxbf7VcJavaA2")
-//						.setAccountName("Beth Ripley")
-//						.setRefreshToken("NyjPkFKg1nr1nBK1e8bSaezKENbLZKtXOu0hkvnbK1LyghAHim-shdiXjMXZ8z8uQwCxUGPmow-BnSF5BX--zvbKI_bEQ5tGE6jiCZNKv0EoUrM205wRtq7QEWt-I0E51_YzMMHW05YWAG7ds4I72fsKJMtA0HZmfrtRQtf6q_tCoGErf0cpwuwHtNxeTg87UkEqEXicWHAdRRXTHONtDqrWiZbzOL48BQNXcgV3goL-hMzzi0V6sY1JolAxQ47MDKzJf6Fri7Zk2am4qwv2dZioVsGQ4j-U-COZhiyPphWyBUVWVpmuMqhwlYVrxah0n503rl3-dUEn05agnumHRu-KA22M8z6CHwtGx3ta2v_p63iy6n4DGjXjXI9efFKPEa3h-gmT9qRF4QQUNQ8tvJGB62a6YvkHCAsFy7FeVX7c7Bgb73w88ToGo5AH5kn4aBhx-kOnBQEyW11hi1xc1uZIHZOX4jn5OmrOYnJcYhYSnSBKtkpFgsgqiYrcO4zcRK__5XhoX1Owb2d0yj3B_y0m4FZ2-fYmgNlSGyQjbB-o1l_Fy7056bxoC28JLGkGPa-3c2jTfAhx7kltvW6q4oqGHqX7i2YXUulamfIe7I81")
-//						.store();
+				credential = new Credential(92223647)
+						.setAccessToken("Su9nYs3_qDQBHB2utYKQyZVfDy1l4ScMo81rtiDmDTDpRKV4yIln_cxfXDQaAR81wj1oBu8S1Hjxbf7VcJavaA2")
+						.setAccountName("Beth Ripley")
+						.setRefreshToken("NyjPkFKg1nr1nBK1e8bSaezKENbLZKtXOu0hkvnbK1LyghAHim-shdiXjMXZ8z8uQwCxUGPmow-BnSF5BX--zvbKI_bEQ5tGE6jiCZNKv0EoUrM205wRtq7QEWt-I0E51_YzMMHW05YWAG7ds4I72fsKJMtA0HZmfrtRQtf6q_tCoGErf0cpwuwHtNxeTg87UkEqEXicWHAdRRXTHONtDqrWiZbzOL48BQNXcgV3goL-hMzzi0V6sY1JolAxQ47MDKzJf6Fri7Zk2am4qwv2dZioVsGQ4j-U-COZhiyPphWyBUVWVpmuMqhwlYVrxah0n503rl3-dUEn05agnumHRu-KA22M8z6CHwtGx3ta2v_p63iy6n4DGjXjXI9efFKPEa3h-gmT9qRF4QQUNQ8tvJGB62a6YvkHCAsFy7FeVX7c7Bgb73w88ToGo5AH5kn4aBhx-kOnBQEyW11hi1xc1uZIHZOX4jn5OmrOYnJcYhYSnSBKtkpFgsgqiYrcO4zcRK__5XhoX1Owb2d0yj3B_y0m4FZ2-fYmgNlSGyQjbB-o1l_Fy7056bxoC28JLGkGPa-3c2jTfAhx7kltvW6q4oqGHqX7i2YXUulamfIe7I81")
+						.setDataSource(GlobalDataManager.SERVER_DATASOURCE)
+						.setScope(ESINetworkManager.getStringScopes())
+						.store();
 //				credential = new Credential(93813310)
 //						.setAccessToken("_WWshtZkjlNwXLRmvs3T0ZUaKAVo4QEl6JFwzIVIyNmdgjfqHhb41uY7ambYFDmjZsFZyLBjtH-90ONWu1E1sA2")
 //						.setAccountName("Perico Tuerto")
@@ -501,6 +506,13 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 			jobDao = DaoManager.createDao(this.getConnectionSource(), Job.class);
 		}
 		return jobDao;
+	}
+
+	public Dao<MarketOrder, String> getMarketOrderDao() throws SQLException {
+		if (null == marketOrderDao) {
+			marketOrderDao = DaoManager.createDao(this.getConnectionSource(), MarketOrder.class);
+		}
+		return marketOrderDao;
 	}
 
 	public Dao<FittingRequest, String> getFittingRequestDao() throws SQLException {

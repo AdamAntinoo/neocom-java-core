@@ -89,7 +89,7 @@ public interface IDeprecatedDatabaseConnector {
 
 	//	public ArrayList<NeoComAsset> searchAsset4Category(final long characterID, final String categoryName);
 	//
-	//	public List<NeoComAsset> searchAsset4Type(long characterID, int typeID);
+	//	public List<NeoComAsset> searchAsset4Type(long characterID, int typeId);
 	//
 	//	public NeoComAsset searchAssetByID(long parentAssetID);
 
@@ -105,7 +105,7 @@ public interface IDeprecatedDatabaseConnector {
 
 //	public List<Job> searchJob4Class(long characterID, String string);
 
-//	public int searchJobExecutionTime(final int typeID, final int activityID);
+//	public int searchJobExecutionTime(final int typeId, final int activityID);
 
 //	public ArrayList<Resource> searchListOfDatacores(final int itemID);
 

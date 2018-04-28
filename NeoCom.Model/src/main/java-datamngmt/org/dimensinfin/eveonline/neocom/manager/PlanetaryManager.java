@@ -297,7 +297,7 @@ public class PlanetaryManager extends AbstractManager {
 	//	}
 	//
 	//	private void add2Region(final EveLocation target) {
-	//		long regionid = target.getRegionID();
+	//		long regionid = target.getRegionId();
 	//		Region region = regions.get(regionid);
 	//		if (null == region) {
 	//			region = new Region(target.getRegion());

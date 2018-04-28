@@ -117,7 +117,7 @@ public class ESINetworkManager {
 
 	private static final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
 	// TODO The refresh can be striped from the creation because it is only used at runtime when executing the callbacks.
-	private static final Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+	private static Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 
 	/**
 	 * Response cache using the ESI api cache times to speed up all possible repetitive access. Setting caches at the
@@ -450,6 +450,7 @@ public class ESINetworkManager {
 			return (List<GetCharactersCharacterIdOrders200Ok>) hit.body();
 		}
 	}
+
 	public static List<GetCharactersCharacterIdOrdersHistory200Ok> getCharactersCharacterIdOrdersHistory( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdOrdersHistory]");
@@ -517,6 +518,12 @@ public class ESINetworkManager {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			// Check if the problem is a connection reset.
+			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				// Recreate the retrofit.
+				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+			}
 		} finally {
 			logger.info("<< [ESINetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
