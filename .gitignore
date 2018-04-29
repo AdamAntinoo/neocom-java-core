@@ -15,3 +15,4 @@ NeoCom.Model/src/main/resources/properties/esiauthorization.properties
 gradlew
 gradlew.bat
 NeoCom.DataManagement/src/main/resources/cache/
+*.ppm

@@ -10,7 +10,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -51,6 +50,15 @@ public class Property extends ANeoComEntity {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public Property store() {
+		try {
+			Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
+			propertyDao.update(this);
+		} catch (final SQLException sqle) {
+		}
+		return this;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -79,37 +87,24 @@ public class Property extends ANeoComEntity {
 		ownerId = -1;
 	}
 
-	public Property store() {
-		try {
-			Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
-			propertyDao.update(this);
-		} catch (final SQLException sqle) {
-		}
-		return this;
-	}
-
 	public Property setNumericValue( final double numericValue ) {
 		this.numericValue = numericValue;
 		return this;
-//		this.setDirty(true);
 	}
 
 	public Property setOwnerId( final long ownerId ) {
 		this.ownerId = ownerId;
 		return this;
-//		this.setDirty(true);
 	}
 
 	public Property setPropertyType( final EPropertyTypes propertyType ) {
 		this.propertyType = propertyType.toString();
 		return this;
-//		this.setDirty(true);
 	}
 
 	public Property setStringValue( final String stringValue ) {
 		this.stringValue = stringValue;
 		return this;
-//		this.setDirty(true);
 	}
 
 	@Override

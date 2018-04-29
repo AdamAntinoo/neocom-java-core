@@ -38,7 +38,12 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
 
 	public enum ECacheTimes {
-		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS, MARKET_ORDERS
+		CHARACTER_PUBLIC, CHARACTER_CLONES
+		, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
+		, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS
+		, MARKET_PRICES
+		, INDUSTRY_JOBS, MARKET_ORDERS
+		, WALLET, CORPORATION_WALLET
 	}
 
 	static {
@@ -50,6 +55,8 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
 		ESICacheTimes.put(ECacheTimes.MARKET_ORDERS, TimeUnit.SECONDS.toMillis(1200));
+		ESICacheTimes.put(ECacheTimes.WALLET, TimeUnit.SECONDS.toMillis(120));
+		ESICacheTimes.put(ECacheTimes.CORPORATION_WALLET, TimeUnit.SECONDS.toMillis(300));
 	}
 
 	public static long getCacheTime4Type( final ECacheTimes selector ) {

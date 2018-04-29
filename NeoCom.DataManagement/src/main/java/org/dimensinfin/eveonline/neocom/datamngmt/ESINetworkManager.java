@@ -47,6 +47,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.WalletApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
@@ -487,8 +488,6 @@ public class ESINetworkManager {
 		return returnOrderList;
 	}
 
-
-	//---------------------------------------------------------------------------------------
 	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");
 		final Chrono accessFullTime = new Chrono();
@@ -576,6 +575,41 @@ public class ESINetworkManager {
 			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
+	}
+
+	//--- W A L L E T   S E C T I O N
+	public static Double getCharactersCharacterIdWallet( final int identifier
+			, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdWallet]");
+		// Check if this response already available at cache.
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.MARKET_ORDERS, identifier);
+		final Response<?> hit = okResponseCache.get(reference);
+		final Chrono accessFullTime = new Chrono();
+		if (null == hit) {
+			try {
+				// Set the refresh to be used during the request.
+				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+				String datasource = GlobalDataManager.SERVER_DATASOURCE;
+				if (null != server) datasource = server;
+				// Create the request to be returned so it can be called.
+				final Response<Double> walletApiResponse = neocomRetrofit
+						.create(WalletApi.class)
+						.getCharactersCharacterIdWallet(identifier, datasource, null, null, null).execute();
+				if (walletApiResponse.isSuccessful()) {
+					// Store results on the cache.
+					okResponseCache.put(reference, walletApiResponse);
+					return walletApiResponse.body();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdWallet]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			}
+			return 0.0;
+		} else {
+			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
+			return (Double) hit.body();
+		}
 	}
 
 	public static List<GetMarketsPrices200Ok> getMarketsPrices( String server ) {

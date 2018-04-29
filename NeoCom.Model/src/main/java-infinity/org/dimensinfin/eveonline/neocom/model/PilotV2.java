@@ -12,12 +12,15 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.joda.time.DateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
@@ -35,22 +38,23 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	// - F I E L D - S E C T I O N ............................................................................
 	public int characterId = -1;
 	public String name = "-NOT-KNOWN-";
-	public long birthday= 0;
-	public String gender="-undefined-";
-	public double securityStatus=0.0;
+	public long birthday = 0;
+	public String gender = "-undefined-";
+	public double securityStatus = 0.0;
 	public CorporationV1 corporation = null;
 	public AllianceV1 alliance = null;
 	public GetUniverseRaces200Ok race = null;
 	public GetUniverseBloodlines200Ok bloodline = null;
 	public GetUniverseAncestries ancestry = null;
-
-
 	public double accountBalance = -1.0;
 	public EveLocation lastKnownLocation = null;
 
 	private GetCharactersCharacterIdOk publicData = null;
 	private GetCharactersCharacterIdClonesOk cloneInformation = null;
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
+	private List<Property> locationRoles = new ArrayList<>();
+	private HashMap<Integer, Property> actions4Pilot = new HashMap<>();
+//	private  List<Property> pilotProperties = new ArrayList<>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV2() {
@@ -59,7 +63,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	// --- G E T T E R S   &   S E T T E R S
+	//--- G E T T E R S   &   S E T T E R S
 	public int getCharacterId() {
 		return characterId;
 	}
@@ -100,41 +104,18 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return ancestry;
 	}
 
-	//--- D E R I V E D   G E T T E R S
 	public double getAccountBalance() {
 		return accountBalance;
 	}
 
-	public EveLocation getLastKnownLocation() {
-		if (null != lastKnownLocation) return lastKnownLocation;
-		else if (null == homeLocation) return new EveLocation();
-		else {
-			try {
-				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
-			} catch (NeocomRuntimeException neoe) {
-				lastKnownLocation = new EveLocation();
-			}
-			return lastKnownLocation;
-		}
+	public List<Property> getLocationRoles() {
+		return locationRoles;
 	}
 
-	//--- D A T A   T R A N S F O R M A T I O N
-	/**
-	 * Use the public data to get access to more other Pilot information and to copy relevant data to the public fields. Public
-	 * data is not used on the normal instance use but the accessed data blocks from the public identifiers.
-	 *
-	 * @param publicData ESI data model with all public identifiers.
-	 */
-	public PilotV2 setPublicData( final GetCharactersCharacterIdOk publicData ) {
-		// Keep a local copy of the data.
-		this.publicData = publicData;
-		// Copy the relative public fields.
-		name=publicData.getName();
-		birthday=publicData.getBirthday().getMillis();
-		gender=publicData.getGender().name().toLowerCase();
-		securityStatus=publicData.getSecurityStatus();
-		return this;
+	public HashMap<Integer, Property> getActions4Pilot() {
+		return actions4Pilot;
 	}
+
 	public PilotV2 setCorporation( final CorporationV1 corporation ) {
 		this.corporation = corporation;
 		return this;
@@ -159,27 +140,95 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		this.ancestry = ancestry;
 		return this;
 	}
-//-----------------------------------------------------------------------------------------------------
-	//	public String getUrlforAvatar() {
-//		return urlforAvatar;
-//	}
-
 
 	public PilotV2 setCharacterId( final int characterIdentifier ) {
 		this.characterId = characterIdentifier;
 		return this;
 	}
 
-//	public PilotV2 setName( final String name ) {
-//		this.name = name;
-//		return this;
-//	}
-
 	public PilotV2 setAccountBalance( final double accountBalance ) {
 		this.accountBalance = accountBalance;
 		return this;
 	}
 
+	//--- D E R I V E D   G E T T E R S
+	public EveLocation getLastKnownLocation() {
+		if (null != lastKnownLocation) return lastKnownLocation;
+		else if (null == homeLocation) return new EveLocation();
+		else {
+			try {
+				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
+			} catch (NeocomRuntimeException neoe) {
+				lastKnownLocation = new EveLocation();
+			}
+			return lastKnownLocation;
+		}
+	}
+
+//--- D A T A   T R A N S F O R M A T I O N
+
+	/**
+	 * Use the public data to get access to more other Pilot information and to copy relevant data to the public fields. Public
+	 * data is not used on the normal instance use but the accessed data blocks from the public identifiers.
+	 *
+	 * @param publicData ESI data model with all public identifiers.
+	 */
+	public PilotV2 setPublicData( final GetCharactersCharacterIdOk publicData ) {
+		// Keep a local copy of the data.
+		this.publicData = publicData;
+		// Copy the relative public fields.
+		name = publicData.getName();
+		birthday = publicData.getBirthday().getMillis();
+		gender = publicData.getGender().name().toLowerCase();
+		securityStatus = publicData.getSecurityStatus();
+		return this;
+	}
+
+	/**
+	 * From the database list of properties for this Pilot we separate the sets and create the list of Locations Roles and the
+	 * list of Actions for Item to be used on Manufacturing activities.
+	 *
+	 * @param properties
+	 * @return
+	 */
+	public PilotV2 setProperties( final List<Property> properties ) {
+		locationRoles.clear();
+		actions4Pilot.clear();
+//		pilotProperties.clear();
+		for (Property prop : properties) {
+			if (prop.getPropertyType() == EPropertyTypes.MANUFACTUREACTION)
+				actions4Pilot.put(Double.valueOf(prop.getNumericValue()).intValue(), prop);
+			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)
+				locationRoles.add(prop);
+		}
+//		pilotProperties.addAll(properties);
+		return this;
+	}
+
+	public void addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
+		Property hit = new Property(EPropertyTypes.LOCATIONROLE)
+				.setOwnerId(getCharacterId())
+				.setNumericValue(theSelectedLocation.getID())
+				.setStringValue(locationrole)
+				.store();
+		locationRoles.add(hit);
+	}
+
+	public void addAction4Item( final int typeId, final String taskName ) {
+		Property hit = actions4Pilot.get(typeId);
+		if (null == hit) {
+			hit = new Property(EPropertyTypes.MANUFACTUREACTION)
+					.setOwnerId(getCharacterId())
+					.setNumericValue(typeId)
+					.setStringValue(taskName)
+					.store();
+			actions4Pilot.put(typeId, hit);
+		}
+		hit.setStringValue(taskName);
+	}
+
+
+	//-------------------------------------------------------------------------------------------
 	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
 		this.homeLocation = homeLocation;
 		// Convert this location pointer to a NeoCom location.
@@ -190,7 +239,6 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		}
 		return this;
 	}
-
 
 
 	public PilotV2 setCloneInformation( final GetCharactersCharacterIdClonesOk cloneInformation ) {
