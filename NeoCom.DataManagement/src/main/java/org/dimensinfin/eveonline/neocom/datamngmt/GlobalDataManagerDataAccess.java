@@ -12,6 +12,13 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +30,7 @@ import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
+import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
 /**
  * @author Adam Antinoo
@@ -57,17 +65,64 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	public static List<Credential> accessAllCredentials() {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
-//			final Dao<Credential, String> credentialDao = GlobalDataManager.getNeocomDBHelper().getCredentialDao();
-//			final PreparedQuery<Credential> preparedQuery = credentialDao.queryBuilder().prepare();
-//			credentialList = credentialDao.query(preparedQuery);
 			credentialList = new GlobalDataManager().getNeocomDBHelper().getCredentialDao().queryForAll();
+			if(GlobalDataManager.getResourceBoolean("R.runtime.mockdata")){
+				// Write down the credential list ot be used as mock data.
+				final File outFile = new File(GlobalDataManager.getResourceString("R.runtime.mockdata.location")
+						+ "accessAllCredentials.data");
+				try {
+					final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(outFile));
+					final ObjectOutput output = new ObjectOutputStream(buffer);
+					try {
+						output.writeObject(credentialList);
+						logger.info(
+								"-- [GlobalDataManagerDataAccess.accessAllCredentials]> Wrote credential list: {} entries."
+								,credentialList.size());
+					} finally {
+						output.flush();
+						output.close();
+						buffer.close();
+					}
+				} catch (final FileNotFoundException fnfe) {
+					logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> FileNotFoundException."); //$NON-NLS-1$
+				} catch (final IOException ex) {
+					logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> IOException."); //$NON-NLS-1$
+				}
+			}
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManagerDataAccess.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
 		}
 		return credentialList;
 	}
-
+	public static List<NeoComAsset> accessAllAssets4Credential( final Credential credential ) throws SQLException {
+		final List<NeoComAsset> assetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
+				.queryForEq("ownerId", credential.getAccountId());
+		if(GlobalDataManager.getResourceBoolean("R.runtime.mockdata")){
+			// Write down the credential list ot be used as mock data.
+			final File outFile = new File(GlobalDataManager.getResourceString("R.runtime.mockdata.location")
+					+ "accessAllAssets4Credential-"+credential.getAccountId()+".data");
+			try {
+				final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(outFile));
+				final ObjectOutput output = new ObjectOutputStream(buffer);
+				try {
+					output.writeObject(assetList);
+					logger.info(
+							"-- [GlobalDataManagerDataAccess.accessAllCredentials]> Wrote asset list: {} entries."
+							,assetList.size());
+				} finally {
+					output.flush();
+					output.close();
+					buffer.close();
+				}
+			} catch (final FileNotFoundException fnfe) {
+				logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> FileNotFoundException."); //$NON-NLS-1$
+			} catch (final IOException ex) {
+				logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> IOException."); //$NON-NLS-1$
+			}
+		}
+		return assetList;
+	}
 	public static List<Job> accessIndustryJobs4Credential( final Credential credential ) throws SQLException {
 		return new GlobalDataManager().getNeocomDBHelper().getJobDao()
 				.queryForEq("ownerId", credential.getAccountId());

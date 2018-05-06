@@ -24,7 +24,9 @@ import java.util.concurrent.Future;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,7 @@ import static org.dimensinfin.eveonline.neocom.datamngmt.MarketDataServer.cpuCou
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MarketDataServerTestUnit {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	public static Logger logger = LoggerFactory.getLogger("MarketDataServerTestUnit");
