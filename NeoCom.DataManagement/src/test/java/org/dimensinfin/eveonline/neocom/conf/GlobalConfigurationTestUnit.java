@@ -10,7 +10,7 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.testblock.configuration;
+package org.dimensinfin.eveonline.neocom.conf;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,6 +24,7 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 
 /**
@@ -31,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
  */
 // - CLASS IMPLEMENTATION ...................................................................................
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class GlobalConfigurationTestUnit extends GlobalConfigurationProvider {
+public class GlobalConfigurationTestUnit extends GlobalSBConfigurationProvider {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalConfigurationTestUnit");
 
@@ -46,7 +47,7 @@ public class GlobalConfigurationTestUnit extends GlobalConfigurationProvider {
 	@Test
 	public void test01GetResourceFiles() throws IOException {
 		logger.info(">> [GlobalConfigurationTestUnit.test01GetResourceFiles]");
-		final GlobalConfigurationProvider configuration = new GlobalConfigurationProvider(null);
+		final GlobalConfigurationProvider configuration = new GlobalSBConfigurationProvider(null);
 		final List<String> files = getResourceFiles("properties");
 		Assert.assertNotNull("-> Validating the list of files is not null...", files);
 		Assert.assertEquals("-> Validating the number of files to process...", 4, files.size());
@@ -57,7 +58,7 @@ public class GlobalConfigurationTestUnit extends GlobalConfigurationProvider {
 	public void test02ReadProperties() {
 		logger.info(">> [GlobalConfigurationTestUnit.test02ReadProperties]");
 		// Read all properties files on the classpath and consolidate into a unique list.
-		final GlobalConfigurationProvider configuration = new GlobalConfigurationProvider(null);
+		final GlobalConfigurationProvider configuration = new GlobalSBConfigurationProvider(null);
 		Assert.assertNotNull("-> Validating the configuration is not null...", configuration);
 		Assert.assertEquals("-> Validating read configuration matches...", 12, configuration.contentCount());
 		logger.info("<< [GlobalConfigurationTestUnit.test02ReadProperties]");

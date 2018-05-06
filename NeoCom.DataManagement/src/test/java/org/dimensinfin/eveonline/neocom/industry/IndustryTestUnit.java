@@ -23,6 +23,7 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
 import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
@@ -44,7 +45,7 @@ public class IndustryTestUnit {
 	public static void before01OpenAndConnectDatabase() throws SQLException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
-		GlobalDataManager.connectConfigurationManager(new GlobalConfigurationProvider("testproperties"));
+		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));
 
 		// Initialize the Model with the current global instance.
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting Global to Model...");

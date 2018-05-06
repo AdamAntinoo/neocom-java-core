@@ -57,34 +57,9 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManager extends GlobalDataManagerDataAccess implements IGlobalConnector {
+public class GlobalDataManager extends GlobalDataManagerExceptions implements IGlobalConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
-
-	//public getSingleton(){
-//	return new GlobalDataManager();
-//}
-
-	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
-	private static final List<ExceptionRecord> exceptionsIntercepted = new ArrayList();
-
-	public static void interceptException( final Exception exceptionIntercepted ) {
-		exceptionsIntercepted.add(new ExceptionRecord(exceptionIntercepted));
-	}
-
-	// --- E V E A P I   X M L   S E C T I O N
-//	/** Initialize the beimin Eve Api connector to remove SSL certification. From this point on we can use the beimin
-//	 * XML api to access CCP data. */
-//	static {
-//		EveApi.setConnector(new NeoComConnector(new CachingConnector(new LoggingConnector())));
-//		// Remove the secure XML access and configure the ApiConnector.
-//		ApiConnector.setSecureXmlProcessing(false);
-//	}
-//
-//	/**
-//	 * GDM singleton to store all data, caches and references. The use of a singleton will allow to drop all data
-//	 * on a single operation and restart all data caches.
-//	 */
 
 	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
@@ -221,6 +196,9 @@ public class GlobalDataManager extends GlobalDataManagerDataAccess implements IG
 
 	public static Future<?> submitJob2Generic( final Runnable task ) {
 		return downloadExecutor.submit(task);
+	}
+	public static Future<?> submitJob2ui( final Runnable task ) {
+		return uiDataExecutor.submit(task);
 	}
 
 	// --- D A T A B A S E   A R E A
@@ -463,28 +441,6 @@ public class GlobalDataManager extends GlobalDataManagerDataAccess implements IG
 //	}
 	// ........................................................................................................
 
-	// - CLASS IMPLEMENTATION ...................................................................................
-	public static class ExceptionRecord {
-		// - F I E L D - S E C T I O N ............................................................................
-		private long timeStamp = 0;
-		private Exception exceptionRegistered = null;
-
-		// - C O N S T R U C T O R - S E C T I O N ................................................................
-		public ExceptionRecord( final Exception newexception ) {
-			this.exceptionRegistered = newexception;
-			this.timeStamp = Instant.now().getMillis();
-		}
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-		public void setTimeStamp( final long timeStamp ) {
-			this.timeStamp = timeStamp;
-		}
-
-		public void setTimeStamp( final Instant timeStamp ) {
-			this.timeStamp = timeStamp.getMillis();
-		}
-	}
-	// ........................................................................................................
 
 //	// - CLASS IMPLEMENTATION ...................................................................................
 //	public static class SessionContext {

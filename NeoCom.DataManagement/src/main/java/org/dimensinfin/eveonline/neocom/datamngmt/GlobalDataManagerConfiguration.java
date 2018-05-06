@@ -75,7 +75,12 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	private static IConfigurationProvider accessconfigurationManager() {
 		// If the Configuration is not already loaded then connect a default configuration provider.
-		if (null == configurationManager) configurationManager = new GlobalConfigurationProvider(null);
+		if (null == configurationManager) throw new RuntimeException("No configuration manager present. Running with no " +
+				"configuration.");
+
+		/*configurationManager = new
+		GlobalConfigurationProvider
+		(null);*/
 		return configurationManager;
 	}
 

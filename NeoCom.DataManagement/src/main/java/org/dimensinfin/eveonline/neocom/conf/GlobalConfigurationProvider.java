@@ -12,19 +12,11 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.conf;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Properties;
-
-import com.annimon.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +27,13 @@ import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalConfigurationProvider implements IConfigurationProvider {
+public abstract class GlobalConfigurationProvider implements IConfigurationProvider {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalConfigurationProvider");
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties";
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private Properties globalConfigurationProperties = new Properties();
+	protected Properties globalConfigurationProperties = new Properties();
 	private String configuredPropertiesFolder = DEFAULT_PROPERTIES_FOLDER;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -87,63 +79,8 @@ public class GlobalConfigurationProvider implements IConfigurationProvider {
 		return globalConfigurationProperties.size();
 	}
 
-	private void readAllProperties() throws IOException {
-		logger.info(">> [GlobalConfigurationProvider.readAllProperties]");
-		// Read all .properties files under the predefined path on the /resources folder.
-		final List<String> propertyFiles = getResourceFiles(getResourceLocation());
-		final ClassLoader classLoader = getClass().getClassLoader();
-		Stream.of(propertyFiles)
-				.sorted()
-				.forEach(( fileName ) -> {
-					logger.info("-- [GlobalConfigurationProvider.readAllProperties]> Processing file: {}", fileName);
-					try {
-						Properties properties = new Properties();
-						// Generate the proper URI to ge tot the resource file.
-						final String propertyFileName = getResourceLocation() + "/" + fileName;
-						final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
-						properties.load(new FileInputStream(propertyURI.getPath()));
-						// Copy properties to globals.
-						globalConfigurationProperties.putAll(properties);
-					} catch (IOException ioe) {
-						logger.error("E [GlobalConfigurationProvider.readAllProperties]> Exception reading properties file {}. {}",
-								fileName, ioe.getMessage());
-						ioe.printStackTrace();
-					} catch (URISyntaxException e) {
-						e.printStackTrace();
-					}
-				});
-		logger.info("<< [GlobalConfigurationProvider.readAllProperties]> Total properties number: {}", contentCount());
-	}
-
-	private String getResourceLocation() {
+	protected String getResourceLocation() {
 		return configuredPropertiesFolder;
-	}
-
-	protected List<String> getResourceFiles( String path ) throws IOException {
-		List<String> filenames = new ArrayList<>();
-
-		try (
-				InputStream in = getResourceAsStream(path);
-				BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-			String resource;
-
-			while ((resource = br.readLine()) != null) {
-				filenames.add(resource);
-			}
-		}
-
-		return filenames;
-	}
-
-	private InputStream getResourceAsStream( String resource ) {
-		final InputStream in
-				= getContextClassLoader().getResourceAsStream(resource);
-
-		return in == null ? getClass().getResourceAsStream(resource) : in;
-	}
-
-	private ClassLoader getContextClassLoader() {
-		return Thread.currentThread().getContextClassLoader();
 	}
 
 	@Override
@@ -151,9 +88,13 @@ public class GlobalConfigurationProvider implements IConfigurationProvider {
 		return new StringBuffer("GlobalConfigurationProvider[")
 				.append("Property count: ").append(contentCount()).append(" ")
 				.append("]")
-//				.append("->").append(super.toString())
 				.toString();
 	}
+
+	//--- P L A T F O R M   S P E C I F I C   S E C T I O N
+	protected abstract void readAllProperties() throws IOException;
+
+	protected abstract List<String> getResourceFiles( String path ) throws IOException;
 }
 
 // - UNUSED CODE ............................................................................................

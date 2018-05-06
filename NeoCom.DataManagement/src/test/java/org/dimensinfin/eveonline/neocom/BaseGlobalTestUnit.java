@@ -39,7 +39,7 @@ public abstract class BaseGlobalTestUnit {
 	public static void before01OpenAndConnectDatabase() throws SQLException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
-		GlobalDataManager.connectConfigurationManager(new GlobalConfigurationProvider("testproperties"));
+		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));
 
 		// Initialize the Model with the current global instance.
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting Global to Model...");

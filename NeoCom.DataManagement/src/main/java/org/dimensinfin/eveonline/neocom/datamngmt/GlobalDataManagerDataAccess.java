@@ -77,7 +77,6 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		return new GlobalDataManager().getNeocomDBHelper().getMarketOrderDao()
 				.queryForEq("ownerId", credential.getAccountId());
 	}
-
 }
 
 // - UNUSED CODE ............................................................................................

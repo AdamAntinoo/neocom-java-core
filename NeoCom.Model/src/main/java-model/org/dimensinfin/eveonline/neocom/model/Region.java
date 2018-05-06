@@ -21,6 +21,9 @@ public class Region extends NeoComNode implements IExpandable {
 	private static final long							serialVersionUID	= 3623925848703776069L;
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private long regionId=-1;
+	private String name="-REGION-NAME-";
+
 	private boolean												_expanded					= false;
 	private boolean												_renderIfEmpty		= true;
 	private String												_title						= "-DEEP SPACE-";
@@ -29,7 +32,6 @@ public class Region extends NeoComNode implements IExpandable {
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public Region() {
 		super();
-		//		this.setDownloaded(true);
 		jsonClass = "Region";
 	}
 
@@ -46,19 +48,16 @@ public class Region extends NeoComNode implements IExpandable {
 		if (-1 == regionid) {
 			this.setTitle("-DEEP SPACE-");
 		}
+		this.regionId=regionid;
 	}
 
-	public Region(final String title) {
-		this();
-		_title = title;
-	}
+//	public Region(final String title) {
+//		this();
+//		_title = title;
+//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void addLocation(final EveLocation target) {
-		if (null != target) {
-			_locations.add(target);
-		}
-	}
+	// --- I E X P A N D A B L E   I N T E R F A C E
 
 	/**
 	 * Check visibility and extension before selecting what collaborates.
@@ -140,6 +139,30 @@ public class Region extends NeoComNode implements IExpandable {
 			else
 				return true;
 		}
+	}
+	public void addLocation(final EveLocation target) {
+		if (null != target) {
+			_locations.add(target);
+		}
+	}
+
+	// --- G E T T E R S   &   S E T T E R S
+	public long getRegionId () {
+		return regionId;
+	}
+
+	public String getName () {
+		return name;
+	}
+
+	public Region setRegionId (final long regionId) {
+		this.regionId = regionId;
+		return this;
+	}
+
+	public Region setName (final String name) {
+		this.name = name;
+		return this;
 	}
 }
 
