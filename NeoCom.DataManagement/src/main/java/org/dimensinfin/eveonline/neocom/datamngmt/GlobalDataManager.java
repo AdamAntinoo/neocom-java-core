@@ -57,7 +57,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManager extends GlobalDataManagerExceptions implements IGlobalConnector {
+public class GlobalDataManager extends GlobalDataManagerFileSystem implements IGlobalConnector {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 
@@ -314,14 +314,14 @@ public class GlobalDataManager extends GlobalDataManagerExceptions implements IG
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@Override
-	public String toString() {
-		StringBuffer buffer = new StringBuffer("GlobalDataManager [");
-		buffer.append("name: ").append(0);
-		buffer.append("]");
-		buffer.append("->").append(super.toString());
-		return buffer.toString();
-	}
+//	@Override
+//	public String toString() {
+//		StringBuffer buffer = new StringBuffer("GlobalDataManager [");
+//		buffer.append("name: ").append(0);
+//		buffer.append("]");
+//		buffer.append("->").append(super.toString());
+//		return buffer.toString();
+//	}
 
 	// - CLASS IMPLEMENTATION .................................................................................
 //	public static class ManagerOptimizedCache {

@@ -15,6 +15,9 @@ repositories {
     google()
     jcenter()
     maven { url 'https://jitpack.io' }
+//    flatDir {
+//        dirs 'Dynamic'
+//    }
 }
 
 sourceSets {
@@ -33,29 +36,28 @@ sourceSets {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
+//task sourcesJar(type: Jar, dependsOn: classes) {
+//    classifier = 'sources'
+//    from sourceSets.main.allSource
+//}
+//
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
+//
+//artifacts {
+//    archives sourcesJar
+//    archives javadocJar
+//}
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
-    implementation project(path: ':ESI.SwaggerApi')
+    compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
     api files('libs/jeveassets.3.1.2.jar')
-    api files('libs/CoreBase.core-2.0.3.jar')
-//    api files('libs/ESISwaggerApi-1.0.0.jar')
+    compileOnly files('libs/CoreBase.core-2.0.3.jar')
 
     // M O D U L E    D E P E N D E N C I E S
     // C O R E    D E P E N D E N C I E S

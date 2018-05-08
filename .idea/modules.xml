@@ -3,8 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/.idea/modules/ESI.SwaggerApi/ESI.SwaggerApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/.idea/modules/ESI.SwaggerApi/ESI.SwaggerApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom-DataMngmt_Infinity.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom-DataMngmt_Infinity.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom-DataMngmt_Infinity.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom-DataMngmt_Infinity.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement/NeoCom.DataManagement.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement/NeoCom.DataManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement/NeoCom.DataManagement.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement/NeoCom.DataManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom.Model/NeoCom.Model.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom.Model/NeoCom.Model.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom.Model/NeoCom.Model.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom.Model/NeoCom.Model.iml" />
     </modules>
   </component>

@@ -15,7 +15,6 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -73,14 +72,10 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	private static IConfigurationProvider configurationManager = null/*new GlobalConfigurationProvider(null)*/;
 
-	private static IConfigurationProvider accessconfigurationManager() {
+	private static IConfigurationProvider accessConfigurationManager () {
 		// If the Configuration is not already loaded then connect a default configuration provider.
-		if (null == configurationManager) throw new RuntimeException("No configuration manager present. Running with no " +
-				"configuration.");
-
-		/*configurationManager = new
-		GlobalConfigurationProvider
-		(null);*/
+		if (null == configurationManager)
+			throw new RuntimeException("No configuration manager present. Running with no configuration.");
 		return configurationManager;
 	}
 
@@ -94,16 +89,16 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	}
 
 	public static String getResourceString( final String key ) {
-		return accessconfigurationManager().getResourceString(key);
+		return accessConfigurationManager().getResourceString(key);
 	}
 
 	public static String getResourceString( final String key, final String defaultValue ) {
-		return accessconfigurationManager().getResourceString(key, defaultValue);
+		return accessConfigurationManager().getResourceString(key, defaultValue);
 	}
 
 	public static int getResourceInt( final String key ) {
 		try {
-			return Integer.valueOf(accessconfigurationManager().getResourceString(key)).intValue();
+			return Integer.valueOf(accessConfigurationManager().getResourceString(key)).intValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -111,7 +106,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	public static int getResourceInt( final String key, final String defaultValue ) {
 		try {
-			return Integer.valueOf(accessconfigurationManager().getResourceString(key, defaultValue)).intValue();
+			return Integer.valueOf(accessConfigurationManager().getResourceString(key, defaultValue)).intValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -119,7 +114,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	public static long getResourceLong( final String key ) {
 		try {
-			return Long.valueOf(accessconfigurationManager().getResourceString(key)).longValue();
+			return Long.valueOf(accessConfigurationManager().getResourceString(key)).longValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -127,18 +122,18 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	public static long getResourceLong( final String key, final String defaultValue ) {
 		try {
-			return Long.valueOf(accessconfigurationManager().getResourceString(key, defaultValue)).longValue();
+			return Long.valueOf(accessConfigurationManager().getResourceString(key, defaultValue)).longValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
 	}
 
 	public static boolean getResourceBoolean( final String key ) {
-		return Boolean.valueOf(accessconfigurationManager().getResourceString(key)).booleanValue();
+		return Boolean.valueOf(accessConfigurationManager().getResourceString(key)).booleanValue();
 	}
 
 	public static boolean getResourceBoolean( final String key, final boolean defaultValue ) {
-		return Boolean.valueOf(accessconfigurationManager().getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
+		return Boolean.valueOf(accessConfigurationManager().getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
 	}
 
 	// --- P R E F E R E N C E S   S E C T I O N

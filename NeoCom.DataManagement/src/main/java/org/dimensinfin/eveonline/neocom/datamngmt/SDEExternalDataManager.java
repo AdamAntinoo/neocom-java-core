@@ -145,7 +145,7 @@ public class SDEExternalDataManager {
 	}
 
 	public static void readAncestries() {
-		logger.info(">> [SDEExternalDataManager.readAncestries");
+		logger.info(">> [SDEExternalDataManager.readAncestries]");
 		try {
 			// Get the file location to process.
 			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
@@ -160,7 +160,7 @@ public class SDEExternalDataManager {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		logger.info(">> [SDEExternalDataManager.readAncestries");
+		logger.info(">> [SDEExternalDataManager.readAncestries]");
 	}
 
 	public static GetUniverseAncestries searchSDEAncestry( final int identifier ) {
@@ -171,7 +171,7 @@ public class SDEExternalDataManager {
 
 	//--- J S O N - B L O O D L I N E S
 	public static void readBloodLines() {
-		logger.info(">> [SDEExternalDataManager.readBloodLines");
+		logger.info(">> [SDEExternalDataManager.readBloodLines]");
 		try {
 			// Get the file location to process.
 			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
@@ -185,7 +185,7 @@ public class SDEExternalDataManager {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		logger.info(">> [SDEExternalDataManager.readBloodLines");
+		logger.info(">> [SDEExternalDataManager.readBloodLines]");
 	}
 
 	public static GetUniverseBloodlines200Ok searchSDEBloodline( final int identifier ) {
@@ -196,7 +196,7 @@ public class SDEExternalDataManager {
 
 	//--- J S O N - R A C E S
 	public static void readRaces() {
-		logger.info(">> [SDEExternalDataManager.readRaces");
+		logger.info(">> [SDEExternalDataManager.readRaces]");
 		try {
 			// Get the file location to process.
 			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
@@ -211,7 +211,7 @@ public class SDEExternalDataManager {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		logger.info(">> [SDEExternalDataManager.readRaces");
+		logger.info(">> [SDEExternalDataManager.readRaces]");
 	}
 
 	public static GetUniverseRaces200Ok searchSDERace( final int identifier ) {

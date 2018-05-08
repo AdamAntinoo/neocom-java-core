@@ -16,3 +16,5 @@ gradlew
 gradlew.bat
 NeoCom.DataManagement/src/main/resources/cache/
 *.ppm
+NeoCom.DataManagement/libs/
+NeoCom.Model/libs/
