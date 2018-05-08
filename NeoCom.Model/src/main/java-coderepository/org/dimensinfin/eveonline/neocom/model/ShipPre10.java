@@ -190,7 +190,7 @@ public class ShipPre10 extends NeoComAsset implements IAssetContainer, IDownload
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
 		buffer.append("itemID:").append(this.getAssetId()).append(" ");
-		//		buffer.append("typeId:")..append(" ");
+		//		buffer.append("typeID:")..append(" ");
 		buffer.append("locationID:").append(this.getLocationId()).append(" ");
 		buffer.append("ownerID:").append(this.getOwnerID()).append(" ");
 		//	buffer.append("quantity:").append(this.getQuantity()).append(" ");
