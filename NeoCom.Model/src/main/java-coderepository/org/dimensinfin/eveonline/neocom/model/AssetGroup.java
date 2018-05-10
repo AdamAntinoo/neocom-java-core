@@ -80,7 +80,7 @@ public class AssetGroup extends Container implements IAssetContainer {
 		return groupType;
 	}
 
-	//	public void setTitle(final String newtitle) {
+	//	public void setName(final String newtitle) {
 	//		title = newtitle;
 	//	}
 

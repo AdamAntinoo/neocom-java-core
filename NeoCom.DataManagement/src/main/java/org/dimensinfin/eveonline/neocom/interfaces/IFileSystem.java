@@ -12,9 +12,17 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IFileSystem {
-	public InputStream openAsset4Input(final String filePath);
+	public InputStream openResource4Input (final String filePath) throws IOException;
+
+	public InputStream openAsset4Input (final String filePath) throws IOException;
+
+	public File accessAppStorageFile (final String resourceString);
+
+	public String accessAssetPath ();
 }

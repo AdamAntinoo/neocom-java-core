@@ -80,10 +80,12 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		logger.info(">> [GlobalDataManager.readLocationsDataCache]");
 		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
 				+ GlobalDataManager.getResourceString("R.cache.locationscache.filename");
-		logger.info("-- [GlobalDataManager.readLocationsDataCache]> Openning cache file: {}", cacheFileName);
-		File modelStoreFile = new File(cacheFileName);
+		logger.info("-- [GlobalDataManager.readLocationsDataCache]> Opening cache file: {}", cacheFileName);
+//		File modelStoreFile = new File(cacheFileName);
 		try {
-			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
+			final BufferedInputStream buffer = new BufferedInputStream(
+					GlobalDataManager.openResource4Input(cacheFileName)
+			);
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
 				locationCache = (Hashtable<Long, EveLocation>) input.readObject();

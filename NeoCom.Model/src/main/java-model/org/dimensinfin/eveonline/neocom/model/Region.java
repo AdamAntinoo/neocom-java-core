@@ -18,16 +18,16 @@ import org.dimensinfin.core.interfaces.IExpandable;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Region extends NeoComNode implements IExpandable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long							serialVersionUID	= 3623925848703776069L;
+	private static final long serialVersionUID = 3623925848703776069L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private long regionId=-1;
-	private String name="-REGION-NAME-";
+	private long regionId = -1;
+	private String name = "-REGION-NAME-";
 
-	private boolean												_expanded					= false;
-	private boolean												_renderIfEmpty		= true;
-	private String												_title						= "-DEEP SPACE-";
-	private final ArrayList<EveLocation>	_locations				= new ArrayList<EveLocation>();
+	private boolean _expanded = false;
+	private boolean _renderIfEmpty = true;
+	//	private String												_title						= "-DEEP SPACE-";
+	private final ArrayList<EveLocation> _locations = new ArrayList<EveLocation>();
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public Region() {
@@ -38,23 +38,18 @@ public class Region extends NeoComNode implements IExpandable {
 	/**
 	 * If the region id is -1 this means that this is probable coming from an space structure not registered on
 	 * CCP data. So we can assume that this is a User Structure in an unknown place of space.
-	 * 
 	 * @param regionid
 	 * @param regionName
 	 */
 	public Region(final long regionid, final String regionName) {
 		this();
 		// If undefined update the name.
+		this.name = regionName;
 		if (-1 == regionid) {
-			this.setTitle("-DEEP SPACE-");
+			this.setName("-DEEP SPACE-");
 		}
-		this.regionId=regionid;
+		this.regionId = regionid;
 	}
-
-//	public Region(final String title) {
-//		this();
-//		_title = title;
-//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	// --- I E X P A N D A B L E   I N T E R F A C E
@@ -65,11 +60,7 @@ public class Region extends NeoComNode implements IExpandable {
 	@Override
 	public List<ICollaboration> collaborate2Model(final String variant) {
 		ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
-		//		if (this.isVisible()) {
-		//			if (this.isExpanded()) {
 		results.addAll(this.getLocations());
-		//		}
-		//		}
 		return results;
 	}
 
@@ -79,10 +70,6 @@ public class Region extends NeoComNode implements IExpandable {
 
 	public ArrayList<EveLocation> getLocations() {
 		return _locations;
-	}
-
-	public String getTitle() {
-		return _title;
 	}
 
 	public boolean isEmpty() {
@@ -99,14 +86,15 @@ public class Region extends NeoComNode implements IExpandable {
 	//		return this;
 	//	}
 
-	public void setTitle(final String title) {
-		_title = title;
-	}
+	//	public void setName (final String title) {
+	//		_title = title;
+	//	}
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("Region [");
-		buffer.append(_title).append(" [").append(_locations.size()).append("]");
+		StringBuffer buffer = new StringBuffer("Region [ ");
+		buffer.append(name).append(" #").append(regionId)
+				.append(" [").append(_locations.size()).append("]");
 		buffer.append(" ]");
 		return buffer.toString();
 	}
@@ -140,6 +128,7 @@ public class Region extends NeoComNode implements IExpandable {
 				return true;
 		}
 	}
+
 	public void addLocation(final EveLocation target) {
 		if (null != target) {
 			_locations.add(target);

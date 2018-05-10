@@ -15,6 +15,8 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -43,13 +45,25 @@ public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
 		else throw new NeocomRuntimeException("File System isolation layer is not installed.");
 	}
 
-	public static InputStream openResource4Input (final String filePath) {
-		if ( filePath.toLowerCase().contains("asset") ) return getFileSystem().openAsset4Input(filePath);
+	public static InputStream openResource4Input (final String filePath) throws IOException {
+		return getFileSystem().openResource4Input(filePath);
+	}
+
+	public static InputStream openAsset4Input (final String filePath) throws IOException {
 		return getFileSystem().openAsset4Input(filePath);
 	}
 
-	public static InputStream openAsset4Input (final String filePath) {
-		return getFileSystem().openAsset4Input(filePath);
+	public static String accessAssetPath () {
+		return getFileSystem().accessAssetPath();
+	}
+
+	public static boolean checkAssetFile (final String resourceString) {
+		return checkStorageResource(new File(GlobalDataManager.accessAssetPath()), resourceString);
+	}
+
+	public static boolean checkStorageResource (final File base, final String fileName) {
+		File toCheck = new File(base, fileName);
+		return toCheck.exists();
 	}
 }
 // - UNUSED CODE ............................................................................................

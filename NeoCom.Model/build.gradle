@@ -1,7 +1,7 @@
 apply plugin: 'java-library'
 
-archivesBaseName = 'NeoCom.DataManagement'
-version = '2.1.0'
+archivesBaseName = 'NeoCom.Model'
+version = '0.12.1'
 group = 'org.dimensinfin.eveonline.neocom'
 description='Version with XML api stripped out because deprecation. New rework where production files should be moved to ' +
         'Infinity. Swagger version 0.7.5'
@@ -28,10 +28,6 @@ sourceSets {
             srcDirs += 'src/main/java-infinity'
             srcDirs += 'src/main/java-planetary'
             srcDirs += 'src/main/java-industry'
-//            srcDirs += 'src/main/java-secglobal'
-//            srcDirs += 'src/main/java-datamngmt'
-//            srcDirs += 'src/main/java-model'
-//            srcDirs += 'src/main/java-incubation'
         }
     }
 }
