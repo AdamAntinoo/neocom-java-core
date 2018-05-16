@@ -22,14 +22,13 @@ import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 /**
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "FittingRequest")
+@DatabaseTable(tableName = "FittingRequests")
 public class FittingRequest extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("FittingRequest");
@@ -55,26 +54,12 @@ public class FittingRequest extends NeoComNode {
 	public double estimatedCost = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	protected FittingRequest() {
+	public FittingRequest() {
 		super();
 		jsonClass = "FittingRequest";
+//		registrationDate= Instant.now().getMillis();
 	}
 
-//	public FittingRequest( final int newIdentifier ) {
-//		this();
-//		accountId = 		accountId = newAccountIdentifier;
-//		;
-//		try {
-//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-//			// Try to create the key. It fails then  it was already created.
-//			credentialDao.create(this);
-//		} catch (final SQLException sqle) {
-//			Credential.logger.warn("WR [Credential.<constructor>]> Credential exists. Update values.");
-//			this.store();
-//		} catch (final NeoComException neoe) {
-//		}
-//	}
-//
 	// - M E T H O D - S E C T I O N ..........................................................................
 
 	/**
@@ -83,7 +68,7 @@ public class FittingRequest extends NeoComNode {
 	public FittingRequest store() {
 		try {
 			final Dao<FittingRequest, String> fittingRequestDao = accessGlobal().getNeocomDBHelper().getFittingRequestDao();
-			fittingRequestDao.update(this);
+			fittingRequestDao.createOrUpdate(this);
 			logger.info("-- [FittingRequest.store]> FittingRequest data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
@@ -92,6 +77,21 @@ public class FittingRequest extends NeoComNode {
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
+	public FittingRequest setCorporationId( final int corporationId ) {
+		this.corporationId = corporationId;
+		return this;
+	}
+
+	public FittingRequest setTargetFitting( final int targetFitting ) {
+		this.targetFitting = targetFitting;
+		// TODO Need to calculate the estimated cost for the fitting.
+		return this;
+	}
+
+	public FittingRequest setCopies( final int copies ) {
+		this.copies = copies;
+		return this;
+	}
 
 	// --- D E L E G A T E D   M E T H O D S
 	@Override

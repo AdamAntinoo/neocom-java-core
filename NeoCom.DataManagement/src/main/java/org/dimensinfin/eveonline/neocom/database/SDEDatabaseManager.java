@@ -13,15 +13,18 @@
 package org.dimensinfin.eveonline.neocom.database;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
@@ -370,7 +373,7 @@ public abstract class SDEDatabaseManager {
 	 */
 	public int searchStationType( final long stationID ) {
 		logger.info(">< [SDEDatabaseManager.searchStationType]> stationId: {}", stationID);
-		if(stationID==-2){
+		if (stationID == -2) {
 			// Test the cause of this error.
 			int f = 6;
 		}
@@ -409,6 +412,31 @@ public abstract class SDEDatabaseManager {
 		} finally {
 			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
 			return productTypeId;
+		}
+	}
+
+	// --- B L U E P R I N T 4 M O D U L E
+	private static int TYPEID_BLUEPRINT4MODULE_COLINDEX = 1;
+	private static final String SELECT_BLUEPRINT4MODULE = "SELECT typeID FROM industryActivityProducts BT"
+			+ " WHERE productTypeID = ? AND activityID = 1";
+
+	/**
+	 * Returns the blueprint id that matched this module from the <code>invBlueprintTypes</code> table.
+	 */
+	public int searchBlueprint4Module( final int moduleId ) {
+		logger.info(">< [SDEDatabaseManager.searchBlueprint4Module]> moduleId: {}", moduleId);
+		int blueprintTypeId = -1;
+		try {
+			final RawStatement cursor = constructStatement(SELECT_BLUEPRINT4MODULE, new String[]{Integer.valueOf(moduleId).toString()});
+			while (cursor.moveToNext()) {
+				blueprintTypeId = cursor.getInt(TYPEID_BLUEPRINT4MODULE_COLINDEX);
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchBlueprint4Module]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchBlueprint4Module]");
+			return blueprintTypeId;
 		}
 	}
 
@@ -490,6 +518,53 @@ public abstract class SDEDatabaseManager {
 		} finally {
 			logger.info("<< [SDEDatabaseManager.searchSchematics4Output]");
 			return scheList;
+		}
+	}
+
+	// --- L I S T O F M A T E R I A L S
+	private static int LISTOFMATERIALS_TYPEID_COLINDEX = 1;
+	private static int LISTOFMATERIALS_MATERIALTYPEID_COLINDEX = 2;
+	private static int LISTOFMATERIALS_QUANTITY_COLINDEX = 3;
+	private static final String SELECT_LIST_OF_MATERIALS = "SELECT typeID, materialTypeID, quantity " +
+			" FROM industryActivityMaterials " +
+			" WHERE typeID = ? AND activityID = 1";
+
+	public List<Resource> searchListOfMaterials( final int bpid ) {
+		logger.info(">< [SDEDatabaseManager.searchListOfMaterials]> bpid: {}", bpid);
+		List<Resource> lom = new ArrayList<Resource>();
+		final Chrono chrono = new Chrono();
+		try {
+			final RawStatement cursor = constructStatement(SELECT_LIST_OF_MATERIALS, new String[]{Integer.valueOf(bpid).toString()});
+//			int blueprintId = -1;
+			while (cursor.moveToNext()) {
+				lom.add(new Resource(cursor.getInt(LISTOFMATERIALS_MATERIALTYPEID_COLINDEX)
+						, cursor.getInt(LISTOFMATERIALS_QUANTITY_COLINDEX)));
+//				blueprintId = cursor.getInt(cursor.getInt(LISTOFMATERIALS_TYPEID_COLINDEX));
+			}
+			// Add the required blueprint to the list of materials.
+			if (bpid != -1) {
+				lom.add(new Resource(bpid, 1));
+			}
+
+//			// Add the skills to the list of resources
+//			cursor = ccpDatabase.rawQuery(SEARCH_LISTOFMATERIALS,
+//					new String[]{Integer.valueOf(itemID).toString()});
+//			if ( null == cursor ) throw new Exception("E> Invalid cursor or empty.");
+//			while (cursor.moveToNext()) {
+//				// The the data of the resource. Check for blueprints.
+//				int skillID = cursor.getInt(cursor.getColumnIndex("skillID"));
+//				int level = cursor.getInt(cursor.getColumnIndex("level"));
+//				Resource resource = new Resource(skillID, level);
+//				buildJob.add(resource);
+//			}
+//			cursor.close();
+
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchSchematics4Output]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchSchematics4Output]");
+			return lom;
 		}
 	}
 }

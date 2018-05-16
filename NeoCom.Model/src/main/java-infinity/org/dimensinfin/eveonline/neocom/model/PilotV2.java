@@ -12,9 +12,12 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.j256.ormlite.dao.Dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,14 +197,12 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public PilotV2 setProperties( final List<Property> properties ) {
 		locationRoles.clear();
 		actions4Pilot.clear();
-//		pilotProperties.clear();
 		for (Property prop : properties) {
 			if (prop.getPropertyType() == EPropertyTypes.MANUFACTUREACTION)
 				actions4Pilot.put(Double.valueOf(prop.getNumericValue()).intValue(), prop);
 			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)
 				locationRoles.add(prop);
 		}
-//		pilotProperties.addAll(properties);
 		return this;
 	}
 
@@ -212,6 +213,17 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 				.setStringValue(locationrole)
 				.store();
 		locationRoles.add(hit);
+	}
+
+	public void deleteRole( final Property target ) {
+		try {
+			final Dao<Property, String> dao = accessGlobal().getNeocomDBHelper().getPropertyDao();
+//			final Property targetRole = dao.queryForId(Long.valueOf(target.getId()).toString());
+			dao.deleteById(Long.valueOf(target.getId()).toString());
+			locationRoles.remove(target);
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
 	}
 
 	public void addAction4Item( final int typeId, final String taskName ) {

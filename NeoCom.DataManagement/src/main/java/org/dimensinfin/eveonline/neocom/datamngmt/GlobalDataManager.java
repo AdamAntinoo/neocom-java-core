@@ -15,14 +15,12 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -199,6 +198,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	public static Future<?> submitJob2Generic( final Runnable task ) {
 		return downloadExecutor.submit(task);
 	}
+
 	public static Future<?> submitJob2ui( final Runnable task ) {
 		return uiDataExecutor.submit(task);
 	}
@@ -286,6 +286,10 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		return new GlobalDataManager().getSDEDBHelper().searchModule4Blueprint(bpitemID);
 	}
 
+	public int searchBlueprint4Module( final int moduleId ) {
+		return new GlobalDataManager().getSDEDBHelper().searchBlueprint4Module(moduleId);
+	}
+
 	public static String searchTech4Blueprint( final int blueprintID ) {
 		return new GlobalDataManager().getSDEDBHelper().searchTech4Blueprint(blueprintID);
 	}
@@ -298,6 +302,9 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		return new GlobalDataManager().getSDEDBHelper().searchSchematics4Output(targetId);
 	}
 
+	public static List<Resource> searchListOfMaterials4Blueprint( final int bpid ) {
+		return new GlobalDataManager().getSDEDBHelper().searchListOfMaterials(bpid);
+	}
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E
 //	public static String serializeCredentialList( final List<Credential> credentials ) {
 //		// Use my own serialization control to return the data to generate exactly what I want.

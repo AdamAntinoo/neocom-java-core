@@ -18,6 +18,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * This class implements the isolation layer to the File System. Files and data paths are different on the platforms
@@ -47,6 +48,9 @@ public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
 
 	public static InputStream openResource4Input (final String filePath) throws IOException {
 		return getFileSystem().openResource4Input(filePath);
+	}
+	public static OutputStream openResource4Output ( final String filePath) throws IOException {
+		return getFileSystem().openResource4Output(filePath);
 	}
 
 	public static InputStream openAsset4Input (final String filePath) throws IOException {

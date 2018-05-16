@@ -22,7 +22,7 @@ public class Property extends ANeoComEntity {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(generatedId = true, index = true)
-	private final long id = -2;
+	private long id = -2;
 	@DatabaseField
 	private String propertyType = EPropertyTypes.UNDEFINED.name();
 	@DatabaseField

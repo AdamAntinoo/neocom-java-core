@@ -15,14 +15,17 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IFileSystem {
-	public InputStream openResource4Input (final String filePath) throws IOException;
+	public InputStream openResource4Input( final String filePath ) throws IOException;
 
-	public InputStream openAsset4Input (final String filePath) throws IOException;
+	public OutputStream openResource4Output( String filePath ) throws IOException;;
 
-	public File accessAppStorageFile (final String resourceString);
+	public InputStream openAsset4Input( final String filePath ) throws IOException;
 
-	public String accessAssetPath ();
+	public File accessAppStorageFile( final String resourceString );
+
+	public String accessAssetPath();
 }

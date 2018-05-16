@@ -16,9 +16,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -145,7 +143,9 @@ public class MarketDataServer {
 	public synchronized void readMarketDataCacheFromStorage() {
 		File modelStoreFile = new File(getCacheStoreName());
 		try {
-			final BufferedInputStream buffer = new BufferedInputStream(new FileInputStream(modelStoreFile));
+			final BufferedInputStream buffer = new BufferedInputStream(
+					GlobalDataManager.openResource4Input(modelStoreFile.getPath())
+			);
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
 				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
@@ -173,7 +173,9 @@ public class MarketDataServer {
 	public synchronized void writeMarketDataCacheToStorage() {
 		File modelStoreFile = new File(getCacheStoreName());
 		try {
-			final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(modelStoreFile));
+			final BufferedOutputStream buffer = new BufferedOutputStream(
+					GlobalDataManager.openResource4Output(modelStoreFile.getPath())
+			);
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
 				output.writeObject(buyMarketDataCache);
@@ -225,6 +227,19 @@ public class MarketDataServer {
 	 */
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 		logger.info(">< [MarketDataServer.searchMarketData]> ItemId: {}/{}.", itemId, side.name());
+		// Filter out invalid localizers.
+		if (itemId < 1) {
+			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download replaced because item id is not valid [{}]."
+					, itemId);
+			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
+				return new MarketDataSet(34, side);
+			});
+			// Register the Future request onto the list to count them down.
+			synchronized (runningJobsList) {
+				runningJobsList.add(fut);
+			}
+			return fut;
+		}
 		// Check if the user preferences allows to go to the market downloader.
 		if (GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name(), false)) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download cancelled because preferences 'BlockMarket'.");
@@ -624,7 +639,6 @@ public class MarketDataServer {
 		protected List<TrackEntry> parseMarketDataEMD( final String itemName, final EMarketSide opType ) throws IOException, SAXException {
 			logger.info(">> [MarketDataJobDownloadManager.parseMarketDataEMD]");
 			Vector<TrackEntry> marketEntries = new Vector<TrackEntry>();
-//			try {
 			XMLReader reader;
 			reader = XMLReaderFactory.createXMLReader("org.htmlparser.sax.XMLReader");
 

@@ -12,15 +12,16 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-
-import java.sql.SQLException;
-import java.util.List;
 
 /**
  * This interface defines the methods that should be implemented at the database adapter for the Eve Online
@@ -33,35 +34,39 @@ import java.util.List;
 public interface ISDEDBHelper {
 	public static AccessStatistics locationsCacheStatistics = new AccessStatistics();
 
-	public ISDEDBHelper setDatabaseSchema (final String newschema);
+	public ISDEDBHelper setDatabaseSchema( final String newschema );
 
-	public ISDEDBHelper setDatabasePath (final String newpath);
+	public ISDEDBHelper setDatabasePath( final String newpath );
 
-	public ISDEDBHelper setDatabaseName (final String instanceName);
+	public ISDEDBHelper setDatabaseName( final String instanceName );
 
-	public ISDEDBHelper build () throws SQLException;
+	public ISDEDBHelper build() throws SQLException;
 
-	public String getConnectionDescriptor ();
+	public String getConnectionDescriptor();
 
-	public boolean databaseIsValid ();
+	public boolean databaseIsValid();
 
-	public EveItem searchItem4Id (final int typeId);
+	public EveItem searchItem4Id( final int typeId );
 
-	public EveLocation searchLocation4Id (final long locationId);
+	public EveLocation searchLocation4Id( final long locationId );
 
-	public EveLocation searchLocationBySystem (final String name);
+	public EveLocation searchLocationBySystem( final String name );
 
-	public ItemGroup searchItemGroup4Id (final int targetGroupId);
+	public ItemGroup searchItemGroup4Id( final int targetGroupId );
 
-	public ItemCategory searchItemCategory4Id (final int targetCategoryId);
+	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
 
-	public int searchStationType (final long stationId);
+	public int searchStationType( final long stationId );
 
-	public int searchModule4Blueprint (final int bpitemID);
+	public int searchModule4Blueprint( final int bpitemID );
 
-	public String searchTech4Blueprint (final int blueprintID);
+	public int searchBlueprint4Module( final int moduleId );
 
-	public int searchRawPlanetaryOutput (final int typeID);
+	public String searchTech4Blueprint( final int blueprintID );
 
-	public List<Schematics> searchSchematics4Output (final int targetId);
+	public int searchRawPlanetaryOutput( final int typeID );
+
+	public List<Schematics> searchSchematics4Output( final int targetId );
+
+	public List<Resource> searchListOfMaterials( final int bpid );
 }

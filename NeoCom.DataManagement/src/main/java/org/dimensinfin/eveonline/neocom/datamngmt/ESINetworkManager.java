@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -153,9 +154,11 @@ public class ESINetworkManager {
 	private static List<String> constructScopes() {
 		try {
 			final String propertyFileName = GlobalDataManager.getResourceString("R.esi.authorization.scopes.filename");
-			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
-			final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
-			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
+//			final ClassLoader classLoader = ESINetworkManager.class.getClassLoader();
+//			final URI propertyURI = new URI(classLoader.getResource(propertyFileName).toString());
+//			final BufferedReader input = new BufferedReader(new InputStreamReader(new FileInputStream(propertyURI.getPath())));
+			final InputStream istream = GlobalDataManager.openAsset4Input(propertyFileName);
+			final BufferedReader input = new BufferedReader(new InputStreamReader(istream));
 			String line = input.readLine();
 			while (StringUtils.isNotEmpty(line)) {
 				SCOPES.add(line);
@@ -164,8 +167,8 @@ public class ESINetworkManager {
 
 			// Convert the scopes to a single string.
 			SCOPESTRING = transformScopes(SCOPES);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
+//		} catch (URISyntaxException e) {
+//			e.printStackTrace();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
