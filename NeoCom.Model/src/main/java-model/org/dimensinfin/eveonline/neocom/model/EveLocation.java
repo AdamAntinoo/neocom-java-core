@@ -97,29 +97,6 @@ public class EveLocation extends NeoComNode {
 		}
 	}
 
-//	/**
-//	 * Create a location from an Outpost read on the current list of player outposts.
-//	 *
-//	 * @param out
-//	 */
-//	public EveLocation( final Outpost out ) {
-//		this();
-//		try {
-//			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
-//			// Calculate the locationID from the source item and update the rest of the fields.
-//			this.updateFromSystem(out.getSolarSystem());
-//			id = out.getFacilityID();
-//			typeId = ELocationType.OUTPOST.name();
-//			this.setStation(out.getName());
-//			// Try to create the pair. It fails then  it was already created.
-//			locationDao.createOrUpdate(this);
-//		} catch (final SQLException sqle) {
-//			sqle.printStackTrace();
-//			this.store();
-//		} catch (NeoComException neoe) {
-//		}
-//	}
-
 	public EveLocation( final Station station ) {
 		this();
 		try {
@@ -127,6 +104,7 @@ public class EveLocation extends NeoComNode {
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
+			stationId = station.getStationID();
 			typeId = ELocationType.OUTPOST.name();
 			this.setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.

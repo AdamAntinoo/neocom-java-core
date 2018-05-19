@@ -12,6 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
@@ -58,7 +57,7 @@ public class MarketDataServerTestUnit {
 	private FutureEveItem item = null;
 
 	@BeforeClass
-	public static void before01OpenAndConnectDatabase() throws SQLException {
+	public static void before01OpenAndConnectDatabase() throws SQLException, IOException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
 		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));
@@ -197,7 +196,7 @@ public class MarketDataServerTestUnit {
 
 		public MarketDataSet searchMarketData( final int localizer, final EMarketSide side ) {
 			MarketDataServerTestUnit.logger.info(">> [MarketDataServer.searchMarketData]> ItemId: {}/{}.", localizer, side.name());
-			 MarketDataSet set = new MarketDataSet(localizer, side);
+			MarketDataSet set = new MarketDataSet(localizer, side);
 			final EveItem item = new GlobalDataManager().searchItem4Id(localizer);
 			try {
 				try {

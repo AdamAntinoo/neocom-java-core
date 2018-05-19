@@ -1,18 +1,20 @@
-//	PROJECT:        NeoCom.Android (NEOC.A)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2016 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Application to get access to CCP api information and help manage industrial activities
-//									for characters and corporations at Eve Online. The set is composed of some projects
-//									with implementation for Android and for an AngularJS web interface based on REST
-//									services on Sprint Boot Cloud.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -54,8 +56,9 @@ public class Resource extends NeoComNode {
 	public int baseQty = 0;
 	public int stackSize = 1;
 	private double damage = 1.0;
-	@JsonIgnore
 	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
+
+	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	/**
 	 * Builds a new resource of quantity 1.
@@ -70,11 +73,8 @@ public class Resource extends NeoComNode {
 		jsonClass = "Resource";
 	}
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Resource( final int typeId, final int newQty ) {
 		this(typeId);
-//		resourceId = typeId;
-//		item = GlobalDataManager.searchItem4Id(typeId);
 		baseQty = newQty;
 	}
 
@@ -186,8 +186,9 @@ public class Resource extends NeoComNode {
 		this.registrationDate = registrationDate;
 	}
 
-	public void setStackSize( final int stackSize ) {
+	public Resource setStackSize( final int stackSize ) {
 		this.stackSize = stackSize;
+		return this;
 	}
 
 	@Override

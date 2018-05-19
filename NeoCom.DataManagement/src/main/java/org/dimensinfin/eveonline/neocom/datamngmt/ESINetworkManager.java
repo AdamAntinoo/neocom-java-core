@@ -17,13 +17,10 @@ import retrofit2.Retrofit;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -101,8 +98,10 @@ public class ESINetworkManager {
 	private static final List<String> SCOPES = new ArrayList<>(2);
 	private static String SCOPESTRING = "publicData";
 
-	public static void initialize() {
+	public static void initialize() throws IOException {
 		logger.info(">> [ESINetworkManager.initialize]");
+		// Read the configuration and open the ESI requests cache.
+		cacheDataFile = GlobalDataManager.accessStorageResourcePath(cacheFilePath);
 		// Read the scoped from a resource file
 		constructScopes();
 		logger.info("<< [ESINetworkManager.initialize]");
@@ -111,9 +110,9 @@ public class ESINetworkManager {
 	/**
 	 * This is the location where to STORE the downloaded data from network cache.
 	 */
-	private static final String filePath = GlobalDataManager.getResourceString("R.cache.directorypath")
+	private static final String cacheFilePath = GlobalDataManager.getResourceString("R.cache.directorypath")
 			+ GlobalDataManager.getResourceString("R.cache.esinetwork.filename");
-	private static final File cacheDataFile = new File(filePath);
+	private static File cacheDataFile = new File(cacheFilePath);
 	private static final long cacheSize = 100 * 1024 * 1024;
 	private static final long timeout = TimeUnit.SECONDS.toMillis(60);
 

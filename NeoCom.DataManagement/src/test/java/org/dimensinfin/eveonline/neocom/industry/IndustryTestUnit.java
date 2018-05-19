@@ -12,8 +12,8 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
@@ -42,7 +40,7 @@ public class IndustryTestUnit {
 	private static Logger logger = LoggerFactory.getLogger("IndustryTestUnit");
 
 	@BeforeClass
-	public static void before01OpenAndConnectDatabase() throws SQLException {
+	public static void before01OpenAndConnectDatabase() throws SQLException, IOException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
 		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));
@@ -113,13 +111,13 @@ public class IndustryTestUnit {
 	public void test01Resource() {
 		logger.info(">> [IndustryTestUnit.test01Resource]");
 		// Test the proper creation of a resource from type identifier.
-		final int typeId=578;
+		final int typeId = 578;
 		final int quantity = 10;
-		final Resource testResource=new Resource(typeId, quantity);
+		final Resource testResource = new Resource(typeId, quantity);
 		logger.info(">> [IndustryTestUnit.test01Resource]-> Validating we get a Resource...");
-		Assert.assertNotNull("-> Validating we get a Resource...",testResource);
+		Assert.assertNotNull("-> Validating we get a Resource...", testResource);
 		logger.info(">> [IndustryTestUnit.test01Resource]-> Validating Resource contents. Resource type...");
-		Assert.assertEquals("-> Validating Resource contents. Resource type...",typeId,testResource.getTypeId());
+		Assert.assertEquals("-> Validating Resource contents. Resource type...", typeId, testResource.getTypeId());
 		logger.info("<< [IndustryTestUnit.test01Resource]");
 	}
 }

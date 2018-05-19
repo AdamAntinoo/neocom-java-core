@@ -8,7 +8,7 @@
 //               the source for the specific functionality for the backend services.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.Serializable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 
@@ -37,7 +36,7 @@ public class GlobalDataManagerDataAccessTestUnit {
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerDataAccessTestUnit");
 
 	@BeforeClass
-	public static void before01OpenAndConnectDatabase() throws SQLException {
+	public static void before01OpenAndConnectDatabase() throws SQLException, IOException {
 		logger.info(">> [GlobalDataManagerDataAccessTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [GlobalDataManagerDataAccessTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
 		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));
@@ -90,11 +89,12 @@ public class GlobalDataManagerDataAccessTestUnit {
 		final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
 		logger.info("<< [GlobalDataManagerDataAccessTestUnit.test01CredentialList]");
 	}
+
 	@Test
 	public void test02AssetList() throws SQLException {
 		logger.info(">> [GlobalDataManagerDataAccessTestUnit.test02AssetList]");
 		final List<Credential> credentials = GlobalDataManager.accessAllCredentials();
-		for(Credential cred: credentials){
+		for (Credential cred : credentials) {
 			final List<NeoComAsset> assets = GlobalDataManager.accessAllAssets4Credential(cred);
 		}
 		logger.info("<< [GlobalDataManagerDataAccessTestUnit.test02AssetList]");

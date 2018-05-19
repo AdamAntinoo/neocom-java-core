@@ -69,4 +69,6 @@ public interface ISDEDBHelper {
 	public List<Schematics> searchSchematics4Output( final int targetId );
 
 	public List<Resource> searchListOfMaterials( final int bpid );
+
+	public List<Resource> refineOre( final int oreId );
 }

@@ -10,8 +10,10 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.enums;
+package org.dimensinfin.eveonline.neocom.interfaces;
 
-public enum EPropertyTypes {
-	UNDEFINED, USERLABEL, MANUFACTUREACTION, LOCATIONROLE,LOCATIONPROPERTY
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+
+public interface IResourceContainer {
+	public int addResource( final Resource resource );
 }

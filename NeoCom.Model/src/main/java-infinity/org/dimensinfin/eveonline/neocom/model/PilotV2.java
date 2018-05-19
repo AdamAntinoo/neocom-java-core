@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.database.entity.Property;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
@@ -57,7 +58,6 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
 	private List<Property> locationRoles = new ArrayList<>();
 	private HashMap<Integer, Property> actions4Pilot = new HashMap<>();
-//	private  List<Property> pilotProperties = new ArrayList<>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV2() {

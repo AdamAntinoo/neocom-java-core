@@ -10,90 +10,71 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.industry;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.interfaces.IResourceContainer;
 
 /**
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ManufactureResourcesRequest extends NeoComNode {
+public class FacetedAssetContainer<T> implements IResourceContainer {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("ManufactureResourcesRequest");
+	private static Logger logger = LoggerFactory.getLogger("FacetedAssetContainer");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int jobBlueprintId = -5;
-	private EveItem jobBlueprint = null;
-	private int copies = 1;
-	private List<Resource> lom = new ArrayList<>();
+	private Map<Integer, Resource> _contents = new HashMap<>();
+	private T _facet;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ManufactureResourcesRequest( final int bpid ) {
-		super();
-		this.jobBlueprintId = bpid;
-		jobBlueprint = accessGlobal().searchItem4Id(bpid);
-		jsonClass="ManufactureResourcesRequest";
+	public FacetedAssetContainer( final T facet ) {
+		this._facet = facet;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	// --- G E T T E R S   &   S E T T E R S
-	public int getJobBlueprintId() {
-		return jobBlueprintId;
+	@Override
+	public int addResource( final Resource resource ) {
+		// Before setting the contents check if there already a resource with this id. If exists then add the resources.
+		final Resource hit = _contents.get(resource.getTypeId());
+		if (null == hit)
+			_contents.put(resource.getTypeId(), resource);
+		else
+			hit.setQuantity(hit.getQuantity() + resource.getQuantity());
+		return _contents.size();
 	}
 
-	public EveItem getJobBlueprint() {
-		return jobBlueprint;
+	public Map<Integer, Resource> getContents() {
+		return _contents;
 	}
 
-	public int getCopies() {
-		return copies;
-	}
-
-	public List<Resource> getLom() {
-		return lom;
-	}
-
-	public ManufactureResourcesRequest setJobBlueprintId( final int jobBlueprintId ) {
-		this.jobBlueprintId = jobBlueprintId;
+	public FacetedAssetContainer<T> setContents( final Map<Integer, Resource> _contents ) {
+		this._contents = _contents;
 		return this;
 	}
 
-	public ManufactureResourcesRequest setNumberOfCopies( final int copies ) {
-		this.copies = copies;
-		// Update the lom if already defined to the new number of copies.
-		for(Resource res : lom){
-			res.setStackSize(copies);
-		}
-		return this;
+	public T getFacet() {
+		return _facet;
 	}
 
-	public ManufactureResourcesRequest setLOM( final List<Resource> lom ) {
-		this.lom = lom;
-		// Update the lom if already defined to the new number of copies.
-		for(Resource res : lom){
-			res.setStackSize(copies);
-		}
+	public FacetedAssetContainer<T> setFacet( final T _facet ) {
+		this._facet = _facet;
 		return this;
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("ManufactureResourcesRequest [ ")
-				.append("jobBlueprintId: ").append(jobBlueprintId).append(" ");
-		if (null != jobBlueprint)
-			buffer.append("name: ").append(jobBlueprint.getName()).append(" ");
-		buffer.append("copies: ").append(copies).append(" ")
+		return new StringBuffer("FacetedAssetContainer [")
+//				.append("field:").append().append(" ")
 				.append("]")
-				.append("->").append(super.toString());
-		return buffer.toString();
+//				.append("->").append(super.toString())
+				.toString();
 	}
 }
 

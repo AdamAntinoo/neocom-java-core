@@ -12,8 +12,8 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.processor;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Assert;
@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
@@ -49,7 +48,7 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 	public static MarketDataServer mdServer = null;
 
 	@BeforeClass
-	public static void before01OpenAndConnectDatabase() throws SQLException {
+	public static void before01OpenAndConnectDatabase() throws SQLException, IOException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
 		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));

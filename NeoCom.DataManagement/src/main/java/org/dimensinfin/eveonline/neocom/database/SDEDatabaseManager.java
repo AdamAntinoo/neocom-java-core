@@ -563,10 +563,40 @@ public abstract class SDEDatabaseManager {
 		} catch (final Exception ex) {
 			logger.error("E [SDEDatabaseManager.searchSchematics4Output]> Exception processing statement: {}" + ex.getMessage());
 		} finally {
-			logger.info("<< [SDEDatabaseManager.searchSchematics4Output]");
+			logger.info("<< [SDEDatabaseManager.searchSchematics4Output]> [TIMING] ");
 			return lom;
 		}
 	}
+
+	// ---  R E F I N E O R E
+	private static int REFININGASTEROID_MATERIALTYPEID_COLINDEX = 1;
+	private static int REFININGASTEROID_QUANTITY_COLINDEX = 2;
+	private static int REFININGASTEROID_MATERIALNAME_COLINDEX = 3;
+	private static int REFININGASTEROID_PORTIONSIZE_COLINDEX = 4;
+	private static final String SELECT_REFININGASTEROID = "SELECT itm.materialTypeID AS materialTypeID, itm.quantity AS qty"
+			+ " , it.typeName AS materialName" + " , ito.portionSize AS portionSize"
+			+ " FROM invTypeMaterials itm, invTypes it, invTypes ito" + " WHERE itm.typeID = ?"
+			+ " AND it.typeID = itm.materialTypeID" + " AND ito.typeID = itm.typeID" + " ORDER BY itm.materialTypeID";
+
+	public List<Resource> refineOre( final int oreId ) {
+		List<Resource> results = new ArrayList<Resource>();
+		try {
+			final RawStatement cursor = constructStatement(SELECT_REFININGASTEROID, new String[]{Integer.valueOf(oreId).toString()});
+			while (cursor.moveToNext()) {
+				results.add(new Resource(cursor.getInt(REFININGASTEROID_MATERIALTYPEID_COLINDEX)
+						, cursor.getInt(REFININGASTEROID_QUANTITY_COLINDEX))
+						.setStackSize(cursor.getInt(REFININGASTEROID_PORTIONSIZE_COLINDEX))
+				);
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.refineOre]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.refineOre]> [TIMING] ");
+			return results;
+		}
+	}
+
 }
 // - UNUSED CODE ............................................................................................
 //[01]

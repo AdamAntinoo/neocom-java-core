@@ -12,6 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.junit.Assert;
@@ -21,7 +22,6 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
@@ -36,7 +36,7 @@ public abstract class BaseGlobalTestUnit {
 	private static Logger logger = LoggerFactory.getLogger("BaseGlobalTestUnit");
 
 	@BeforeClass
-	public static void before01OpenAndConnectDatabase() throws SQLException {
+	public static void before01OpenAndConnectDatabase() throws SQLException, IOException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
 		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));

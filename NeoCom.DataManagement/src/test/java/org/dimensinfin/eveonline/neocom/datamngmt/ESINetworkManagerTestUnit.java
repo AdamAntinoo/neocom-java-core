@@ -12,6 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
@@ -42,7 +42,7 @@ public class ESINetworkManagerTestUnit {
 	private static Credential testCredential = null;
 
 	@BeforeClass
-	public static void before01OpenAndConnectDatabase() throws SQLException {
+	public static void before01OpenAndConnectDatabase() throws SQLException, IOException {
 		logger.info(">> [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]");
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting the Configuration Manager...");
 		GlobalDataManager.connectConfigurationManager(new GlobalSBConfigurationProvider("testproperties"));
@@ -117,7 +117,7 @@ public class ESINetworkManagerTestUnit {
 		List<GetCharactersCharacterIdFittings200Ok> data = ESINetworkManager.getCharactersCharacterIdFittings(92002067
 				, testCredential.getRefreshToken()
 				, GlobalDataManager.getResourceString("R.esi.authorization.datasource"));
-		logger.info("-- [ESINetworkManagerTestUnit.test01DownloadFittings]> Fitting count: ",data.size());
+		logger.info("-- [ESINetworkManagerTestUnit.test01DownloadFittings]> Fitting count: ", data.size());
 		Assert.assertNotNull("-> Validating existence of response...", data);
 //		Assert.assertEquals("-> Validating the Pilot data..."
 //				, 1427661573l
