@@ -52,9 +52,9 @@ public abstract class AbstractContentManager implements IContentManager {
 		return results;
 	}
 
-	public long getID() {
-		return parent.getRealId();
-	}
+//	public long getID() {
+//		return parent.getRealId();
+//	}
 
 	public List<NeoComAsset> getContents() {
 		return _contents;

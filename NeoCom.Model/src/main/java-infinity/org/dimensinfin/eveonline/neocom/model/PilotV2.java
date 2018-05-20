@@ -209,6 +209,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public void addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
 		Property hit = new Property(EPropertyTypes.LOCATIONROLE)
 				.setOwnerId(getCharacterId())
+				.setTargetId(theSelectedLocation.getID())
 				.setNumericValue(theSelectedLocation.getID())
 				.setStringValue(locationrole)
 				.store();
@@ -218,7 +219,6 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public void deleteRole( final Property target ) {
 		try {
 			final Dao<Property, String> dao = accessGlobal().getNeocomDBHelper().getPropertyDao();
-//			final Property targetRole = dao.queryForId(Long.valueOf(target.getId()).toString());
 			dao.deleteById(Long.valueOf(target.getId()).toString());
 			locationRoles.remove(target);
 		} catch (SQLException sqle) {

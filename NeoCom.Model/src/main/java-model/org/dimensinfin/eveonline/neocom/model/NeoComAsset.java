@@ -528,7 +528,7 @@ public class NeoComAsset extends NeoComNode {
 	 */
 	private EveLocation moveAssetToUnknown( final long newlocationid ) {
 		final EveLocation newundefloc = new EveLocation();
-		newundefloc.setId(newlocationid);
+//		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");
 		newundefloc.setSystem("Undefined");
 		newundefloc.setStation("Station#" + newlocationid);

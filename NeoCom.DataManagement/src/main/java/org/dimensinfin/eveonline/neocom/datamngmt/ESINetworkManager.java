@@ -102,6 +102,7 @@ public class ESINetworkManager {
 		logger.info(">> [ESINetworkManager.initialize]");
 		// Read the configuration and open the ESI requests cache.
 		cacheDataFile = GlobalDataManager.accessStorageResourcePath(cacheFilePath);
+		neocomRetrofit=NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 		// Read the scoped from a resource file
 		constructScopes();
 		logger.info("<< [ESINetworkManager.initialize]");
@@ -118,7 +119,7 @@ public class ESINetworkManager {
 
 	private static final NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
 	// TODO The refresh can be striped from the creation because it is only used at runtime when executing the callbacks.
-	private static Retrofit neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+	private static Retrofit neocomRetrofit = null;
 
 	/**
 	 * Response cache using the ESI api cache times to speed up all possible repetitive access. Setting caches at the

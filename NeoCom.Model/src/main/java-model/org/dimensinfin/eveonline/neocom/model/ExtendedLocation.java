@@ -61,7 +61,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		this.setRenderWhenEmpty(false);
 		this.delegate = delegate;
 		// Copy important identifiers from delegate.
-		id = delegate.getRealId();
+		id = delegate.id;
 		stationId = delegate.getStationId();
 		constellationId = delegate.getConstellationId();
 		regionId = delegate.getRegionId();

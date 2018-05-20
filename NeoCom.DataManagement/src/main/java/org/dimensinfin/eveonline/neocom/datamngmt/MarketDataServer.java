@@ -155,6 +155,7 @@ public class MarketDataServer {
 				sellMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
 				logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache SELL: " + sellMarketDataCache.size()
 						+ " entries.");
+				expirationTimeMarketData= (HashMap<Integer, Instant>) input.readObject();
 			} finally {
 				input.close();
 				buffer.close();
@@ -184,6 +185,7 @@ public class MarketDataServer {
 				output.writeObject(sellMarketDataCache);
 				logger.info(
 						"-- [MarketDataServer.writeCacheToStorage]> Wrote cache SELL: " + sellMarketDataCache.size() + " entries.");
+				output.writeObject(expirationTimeMarketData);
 			} finally {
 				output.flush();
 				output.close();

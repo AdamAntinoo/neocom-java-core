@@ -88,6 +88,7 @@ public class EveLocation extends NeoComNode {
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
+			stationId = citadelid;
 			typeId = ELocationType.CITADEL.name();
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
@@ -149,9 +150,9 @@ public class EveLocation extends NeoComNode {
 		return system + " - " + station;
 	}
 
-	public long getRealId() {
-		return id;
-	}
+//	public long getRealId() {
+//		return id;
+//	}
 
 	public String getRegion() {
 		return region;
@@ -199,26 +200,26 @@ public class EveLocation extends NeoComNode {
 	 */
 	public String getUrlLocationIcon() {
 		if (null == urlLocationIcon) {
-			if (id == -2) {
+//			if (id == -2) {
+//				urlLocationIcon = new StringBuffer()
+//						.append("http://image.eveonline.com/Render/")
+//						.append(id)
+//						.append("_64.png")
+//						.toString();
+//			} else
+			try {
 				urlLocationIcon = new StringBuffer()
 						.append("http://image.eveonline.com/Render/")
-						.append(id)
+						.append(accessGlobal().searchStationType(stationId))
 						.append("_64.png")
 						.toString();
-			} else
-				try {
-					urlLocationIcon = new StringBuffer()
-							.append("http://image.eveonline.com/Render/")
-							.append(accessGlobal().searchStationType(id))
-							.append("_64.png")
-							.toString();
-				} catch (NeocomRuntimeException neoe) {
-					urlLocationIcon = new StringBuffer()
-							.append("http://image.eveonline.com/Render/")
-							.append(id)
-							.append("_64.png")
-							.toString();
-				}
+			} catch (NeocomRuntimeException neoe) {
+				urlLocationIcon = new StringBuffer()
+						.append("http://image.eveonline.com/Render/")
+						.append(stationId)
+						.append("_64.png")
+						.toString();
+			}
 		}
 		return urlLocationIcon;
 	}
@@ -241,7 +242,7 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public final boolean isUnknown() {
-		return (id == -2);
+		return (this.getStationId() <1);
 	}
 
 	public void setConstellation( final String constellation ) {
@@ -262,9 +263,9 @@ public class EveLocation extends NeoComNode {
 		return this;
 	}
 
-	public void setId( final long newid ) {
-		id = newid;
-	}
+//	public void setId( final long newid ) {
+//		id = newid;
+//	}
 
 	public void setLocationID( final long stationID ) {
 		this.stationId = stationID;
