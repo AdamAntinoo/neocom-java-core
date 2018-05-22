@@ -54,11 +54,11 @@ public class EveTask extends NeoComNode {
 	}
 
 	public EveItem getItem() {
-		return resource.item;
+		return resource.getItem();
 	}
 
 	public String getItemName() {
-		return resource.item.getName();
+		return resource.getItem().getName();
 	}
 
 	public EveLocation getLocation() {
@@ -68,11 +68,11 @@ public class EveTask extends NeoComNode {
 
 	public double getPrice() {
 		try {
-			return resource.item.getLowestSellerPrice().getPrice();
+			return resource.getItem().getLowestSellerPrice().getPrice();
 		} catch (ExecutionException ee) {
-			return resource.item.getPrice();
+			return resource.getItem().getPrice();
 		} catch (InterruptedException ie) {
-			return resource.item.getPrice();
+			return resource.getItem().getPrice();
 		}
 	}
 

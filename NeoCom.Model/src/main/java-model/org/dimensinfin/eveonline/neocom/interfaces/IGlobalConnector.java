@@ -48,5 +48,9 @@ public interface IGlobalConnector {
 	public int searchModule4Blueprint( final int bpitemId );
 
 	public InventoryFlag searchFlag4Id( final int identifier );
+
+	public String getResourcePropertyString( final String key );
+
+	public Integer getResourcePropertyInteger( final String key );
 }
 // - UNUSED CODE ............................................................................................

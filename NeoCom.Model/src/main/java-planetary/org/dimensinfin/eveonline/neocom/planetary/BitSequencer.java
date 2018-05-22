@@ -1,59 +1,68 @@
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2017 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API16.
-//	DESCRIPTION:		Isolated model structures to access and manage Eve Online character data and their
-//									available databases.
-//									This version includes the access to the latest 6.x version of eveapi libraries to
-//									download and parse the CCP XML API data.
-//									Code integration that is not dependent on any specific platform.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.planetary;
 
-//- IMPORT SECTION .........................................................................................
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
+
 /**
  * Uses a BitSet implementation to calculate all the Planetary combinations of the different resources. If we
- * start with the Tier 2 resources it will get all the possible combiantions, then remove the ones that do not
+ * start with the Tier 2 resources it will get all the possible combinations, then remove the ones that do not
  * have one or both resources to be processed and finally will generate ona by one all the possible
- * combinations with the remainding by running a binary counter. <br>
+ * combinations with the remaining by running a binary counter. <br>
  * Each of the bits represents a planetary resource and each number in sequence will represent a set of
  * resources to be processed.
- * 
+ *
  * @author Adam Antinoo
  */
 public class BitSequencer {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger										logger							= Logger.getLogger("BitSequencer");
-	private static final long								serialVersionUID		= -2437083317973194379L;
-	private static HashMap<Integer, String>	sequencer						= null;
+	private static Logger logger = LoggerFactory.getLogger("BitSequencer");
+	private static final long serialVersionUID = -2437083317973194379L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private final Vector<ProcessingAction>	optimizedSequencer	= new Vector<ProcessingAction>();
-	private Vector<Resource>								sourceResources			= null;
-	private int															bitsNumber					= 0;
-	private long														position						= 0;
-	private double													maxCounter					= 0.0;
+	private HashMap<Integer, String> sequencer = null;
+	private final List<ProcessingAction> optimizedSequencer = new Vector<ProcessingAction>();
+	private List<Resource> sourceResources = null;
+	private int bitsNumber = 0;
+	private long position = 0;
+	private double maxCounter = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+
 	/**
 	 * Create a bit set with the list of planetary resources to be used for the sequence calculation. The sets
 	 * received are the full list for Tier 2 or Tier 3 and so on.
 	 */
-	public BitSequencer(final HashMap<Integer, String> productList) {
-		BitSequencer.sequencer = productList;
+	public BitSequencer( final HashMap<Integer, String> productList ) {
+		sequencer = productList;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	/**
 	 * Iterate over the different possible sequences depending on the bit configuration of the set. Use a binary
 	 * counter to iterate over all the possible combinations.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean hasSequence() {
@@ -64,14 +73,14 @@ public class BitSequencer {
 			return false;
 	}
 
-	public Vector<ProcessingAction> nextSequence() {
+	public List<ProcessingAction> nextSequence() {
 		// Check if last sequence reached.
 		if (this.hasSequence()) {
 			position++;
 			// Get the bits conversion of the position number;
 			BitSet bits = Bits.convert(position);
 			// Compose the sequence from the active bits.
-			Vector<ProcessingAction> sequence = new Vector<ProcessingAction>();
+			List<ProcessingAction> sequence = new Vector<ProcessingAction>();
 			for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
 				sequence.add(optimizedSequencer.get(i));
 			}
@@ -80,17 +89,34 @@ public class BitSequencer {
 			return new Vector<ProcessingAction>();
 	}
 
+	public List<ProcessingAction> maxSequence() {
+		// Check if last sequence reached.
+//		if (this.hasSequence()) {
+//			position++;
+		// Get the bits conversion of the position number;
+//			BitSet bits = Bits.convert(position);
+		// Compose the sequence from the active bits.
+		List<ProcessingAction> sequence = new Vector<ProcessingAction>();
+//			for (int i = 0; i >= 0; i = bits.nextSetBit(i + 1)) {
+		sequence.addAll(optimizedSequencer);
+//			}
+		return sequence;
+//		} else
+//			return new Vector<ProcessingAction>();
+	}
+
 	/**
 	 * Load into the sequencer the list of scenery resources that should be processed.
-	 * 
+	 *
 	 * @param resources
+	 * @return the max number of iterations needed to process the list of different planetary resources.
 	 */
-	public void setResources(final Vector<Resource> resources) {
+	public long setResources( final List<Resource> resources ) {
 		sourceResources = resources;
 		// Validate witch combinations can be generated.
 		// Search for TierN optimizations
-		for (int target : BitSequencer.sequencer.keySet()) {
-			BitSequencer.logger.info("-- [BitSequencer.setResources]> Searching: " + BitSequencer.sequencer.get(target));
+		for (int target : sequencer.keySet()) {
+			BitSequencer.logger.info("-- [BitSequencer.setResources]> Searching: " + sequencer.get(target));
 			ProcessingAction action = new ProcessingAction(target);
 			// Get the input resources from the Scenery if available.
 			for (Schematics input : action.getInputs()) {
@@ -108,14 +134,15 @@ public class BitSequencer {
 		bitsNumber = optimizedSequencer.size();
 		this.reset();
 		BitSequencer.logger.info("-- [BitSequencer.setResources]> optimizedSequencer: " + optimizedSequencer);
+		return Double.valueOf(Math.floor(maxCounter)).longValue();
 	}
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("BitSequencer [");
-		buffer.append("resources: ").append(sourceResources);
-		buffer.append("sequence").append(optimizedSequencer);
-		//		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
+		final StringBuffer buffer = new StringBuffer("BitSequencer [ ");
+		buffer.append("resources: ").append(sourceResources).append(" ");
+		buffer.append("sequence").append(optimizedSequencer).append(" ");
+		buffer.append("position").append(position).append("/").append(maxCounter).append(" ");
 		//		buffer.append("stack: ").append(stackSize).append(" ");
 		//		buffer.append("total: ").append(this.getQuantity()).append(" ");
 		//buffer.append("#").append(this.getTypeId()).append(" ");
@@ -126,11 +153,11 @@ public class BitSequencer {
 	/**
 	 * Return the stocked Planetary Resource that matches the parameter id. If not found return a Resource of
 	 * quantity ZERO.
-	 * 
+	 *
 	 * @param inputResourceId
 	 * @return
 	 */
-	private Resource getResource(final int inputResourceId) {
+	private Resource getResource( final int inputResourceId ) {
 		for (Resource res : sourceResources) {
 			if (res.getTypeId() == inputResourceId) return res;
 		}
@@ -141,15 +168,15 @@ public class BitSequencer {
 	 * Reinitializes the sequence pointer and counter that generates the list of processing packs.
 	 */
 	private void reset() {
-		//		clear();
 		position = 0;
+		bitsNumber = optimizedSequencer.size();
 		maxCounter = Math.pow(2, bitsNumber) - 1;
 	}
 }
 
 final class Bits {
 
-	public static long convert(final BitSet bits) {
+	public static long convert( final BitSet bits ) {
 		long value = 0L;
 		for (int i = 0; i < bits.length(); ++i) {
 			value += bits.get(i) ? (1L << i) : 0L;
@@ -157,7 +184,7 @@ final class Bits {
 		return value;
 	}
 
-	public static BitSet convert(long value) {
+	public static BitSet convert( long value ) {
 		BitSet bits = new BitSet();
 		int index = 0;
 		while (value != 0L) {

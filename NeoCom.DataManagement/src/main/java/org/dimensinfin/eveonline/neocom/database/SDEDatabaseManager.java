@@ -596,7 +596,6 @@ public abstract class SDEDatabaseManager {
 			return results;
 		}
 	}
-
 }
 // - UNUSED CODE ............................................................................................
 //[01]

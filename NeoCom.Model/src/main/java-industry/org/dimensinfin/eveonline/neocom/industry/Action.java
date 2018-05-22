@@ -99,15 +99,15 @@ public class Action extends NeoComExpandableNode {
 	}
 
 	public EIndustryGroup getItemIndustryGroup() {
-		return resource.item.getIndustryGroup();
+		return resource.getItem().getIndustryGroup();
 	}
 
 	public String getItemName() {
-		return resource.item.getName();
+		return resource.getItem().getName();
 	}
 
 	public double getPrice() {
-		return resource.item.getPrice();
+		return resource.getItem().getPrice();
 	}
 
 	public int getPriority() {

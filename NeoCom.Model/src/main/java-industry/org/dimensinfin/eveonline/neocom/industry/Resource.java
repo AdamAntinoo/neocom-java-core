@@ -14,7 +14,6 @@ package org.dimensinfin.eveonline.neocom.industry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -42,20 +41,21 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 public class Resource extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 921961484632479376L;
-	private static Logger logger = Logger.getLogger("Resource");
-	private static final int INDUSTRY_SKILL = 5;
-	private static final int PRODUCTIONEFFICENCY_SKILL = 5;
-	private static final int DEFAULT_T1ME = 10;
-	private static final int DEFAULT_T2ME = 7;
-	private static final int DEFAULT_T1TE = 20;
-	private static final int DEFAULT_T2TE = 14;
+//	private static Logger logger = Logger.getLogger("Resource");
+//	private static final int INDUSTRY_SKILL = 5;
+//	private static final int PRODUCTIONEFFICENCY_SKILL = 5;
+//	private static final int DEFAULT_T1ME = 10;
+//	private static final int DEFAULT_T2ME = 7;
+//	private static final int DEFAULT_T1TE = 20;
+//	private static final int DEFAULT_T2TE = 14;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	public EveItem item = new EveItem();
-	private int resourceId = -1;
-	public int baseQty = 0;
-	public int stackSize = 1;
-	private double damage = 1.0;
+	public int typeId = -1;
+	protected int baseQty = 0;
+	protected int stackSize = 1;
+	protected double damage = 1.0;
+
+	private transient EveItem item = new EveItem();
 	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -67,15 +67,19 @@ public class Resource extends NeoComNode {
 	 */
 	public Resource( final int typeId ) {
 		super();
-		resourceId = typeId;
+		this.typeId = typeId;
 		item = accessGlobal().searchItem4Id(typeId);
-		baseQty = 0;
+		this.baseQty = 0;
 		jsonClass = "Resource";
 	}
 
 	public Resource( final int typeId, final int newQty ) {
 		this(typeId);
-		baseQty = newQty;
+		this.baseQty = newQty;
+	}
+	public Resource( final int typeId, final int newQty , final int stackSize) {
+		this(typeId,newQty);
+		this.stackSize = stackSize;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -174,12 +178,14 @@ public class Resource extends NeoComNode {
 		}
 	}
 
-	public void setDamage( final double damage ) {
+	public Resource setDamage( final double damage ) {
 		this.damage = damage;
+		return this;
 	}
 
-	public void setQuantity( final int newQuantity ) {
+	public Resource setQuantity( final int newQuantity ) {
 		baseQty = newQuantity;
+		return this;
 	}
 
 	public void setRegistrationDate( final DateTime registrationDate ) {

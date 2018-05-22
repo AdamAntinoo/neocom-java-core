@@ -72,7 +72,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	private static IConfigurationProvider configurationManager = null/*new GlobalConfigurationProvider(null)*/;
 
-	private static IConfigurationProvider accessConfigurationManager () {
+	private static IConfigurationProvider accessConfigurationManager() {
 		// If the Configuration is not already loaded then connect a default configuration provider.
 		if (null == configurationManager)
 			throw new RuntimeException("No configuration manager present. Running with no configuration.");
@@ -94,6 +94,13 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	public static String getResourceString( final String key, final String defaultValue ) {
 		return accessConfigurationManager().getResourceString(key, defaultValue);
+	}
+
+	public String getResourcePropertyString( final String key ) {
+		return accessConfigurationManager().getResourceString(key);
+	}
+	public Integer getResourcePropertyInteger( final String key ) {
+		return getResourceInt(key);
 	}
 
 	public static int getResourceInt( final String key ) {

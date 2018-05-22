@@ -138,7 +138,7 @@ public class NeoComAsset extends NeoComNode {
 		try {
 			final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
 			assetDao.update(this);
-			logger.info("-- [NeoComAsset.store]> Credential data updated successfully.");
+			logger.info("-- [NeoComAsset.store]> NeoComAsset data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 		}
