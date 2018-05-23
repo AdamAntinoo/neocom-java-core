@@ -57,6 +57,13 @@ public class BitSequencer {
 		sequencer = productList;
 	}
 
+	public BitSequencer( final List<Resource> resourceList ) {
+		sequencer = new HashMap<Integer, String>();
+		for (Resource res : resourceList) {
+			sequencer.put(res.getTypeId(), res.getName());
+		}
+	}
+
 	// - M E T H O D - S E C T I O N ..........................................................................
 
 	/**

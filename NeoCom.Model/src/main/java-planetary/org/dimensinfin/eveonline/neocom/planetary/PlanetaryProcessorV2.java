@@ -110,7 +110,7 @@ public class PlanetaryProcessorV2 extends PlanetaryProcessor {
 
 			// Run the whole production tree and get the number of cycles for the Tier target.
 			// Process Tier 2 resources and add them to the list of context resources.
-			BitSequencer t2sequence = new BitSequencer(PlanetaryProcessor.t2ProductList);
+			BitSequencer t2sequence = new BitSequencer(requirementsTier2);
 			t2sequence.setResources(contextResources);
 			List<ProcessingAction> next2Sequence = t2sequence.maxSequence();
 			List<Resource> new2Resources = this.processActions(next2Sequence, contextResources);
