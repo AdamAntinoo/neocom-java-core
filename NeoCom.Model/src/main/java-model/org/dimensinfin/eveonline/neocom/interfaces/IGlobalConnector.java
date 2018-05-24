@@ -12,6 +12,9 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -49,8 +52,16 @@ public interface IGlobalConnector {
 
 	public InventoryFlag searchFlag4Id( final int identifier );
 
+	// --- C O N F I G U R A T I O N
 	public String getResourcePropertyString( final String key );
 
 	public Integer getResourcePropertyInteger( final String key );
+
+	// --- F I L E S Y S T E M
+//	public String accessAssetPath( final String path );
+//
+//	public InputStream openAsset4Input( final String filePath ) throws IOException;
+//
+//	public File accessStorageResourcePath( final String path );
 }
 // - UNUSED CODE ............................................................................................

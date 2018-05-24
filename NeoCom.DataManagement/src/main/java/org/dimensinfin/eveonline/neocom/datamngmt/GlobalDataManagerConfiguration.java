@@ -99,6 +99,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	public String getResourcePropertyString( final String key ) {
 		return accessConfigurationManager().getResourceString(key);
 	}
+
 	public Integer getResourcePropertyInteger( final String key ) {
 		return getResourceInt(key);
 	}

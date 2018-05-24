@@ -62,6 +62,10 @@ public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
 		return getFileSystem().accessAssetPath();
 	}
 
+	public static String accessAssetPath( final String path ) {
+		return getFileSystem().accessAssetPath() + path;
+	}
+
 	public static File accessStorageResourcePath( final String path ) {
 		return getFileSystem().accessAppStorageFile(path);
 	}

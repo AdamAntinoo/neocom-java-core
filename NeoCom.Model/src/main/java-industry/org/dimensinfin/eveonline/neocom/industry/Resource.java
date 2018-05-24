@@ -41,13 +41,6 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 public class Resource extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 921961484632479376L;
-//	private static Logger logger = Logger.getLogger("Resource");
-//	private static final int INDUSTRY_SKILL = 5;
-//	private static final int PRODUCTIONEFFICENCY_SKILL = 5;
-//	private static final int DEFAULT_T1ME = 10;
-//	private static final int DEFAULT_T2ME = 7;
-//	private static final int DEFAULT_T1TE = 20;
-//	private static final int DEFAULT_T2TE = 14;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	public int typeId = -1;
@@ -99,7 +92,6 @@ public class Resource extends NeoComNode {
 		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
 		baseQty = newqty;
 		stackSize = 1;
-		//	wasteQty = 0;
 	}
 
 	/**
@@ -118,7 +110,7 @@ public class Resource extends NeoComNode {
 	}
 
 	public String getCategory() {
-		return item.getCategory();
+		return getItem().getCategoryName();
 	}
 
 	public double getDamage() {
@@ -126,15 +118,16 @@ public class Resource extends NeoComNode {
 	}
 
 	public String getGroupName() {
-		return item.getGroupName();
+		return getItem().getGroupName();
 	}
 
 	public EveItem getItem() {
+		if(null==item)item=accessGlobal().searchItem4Id(typeId);
 		return item;
 	}
 
 	public String getName() {
-		return item.getName();
+		return getItem().getName();
 	}
 
 	/**
@@ -158,12 +151,13 @@ public class Resource extends NeoComNode {
 	}
 
 	public int getTypeId() {
-		return item.getItemId();
+		return getItem().getTypeId();
 	}
 
 	public void setAdaptiveStackSize( final int size ) {
 		this.setStackSize(size);
-		if (item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+		getItem();
+		if (item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 				final double stack = Math.ceil(size / 10d);
 				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
@@ -173,7 +167,7 @@ public class Resource extends NeoComNode {
 				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
 		}
-		if (item.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+		if (item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 			this.setStackSize(1);
 		}
 	}
@@ -201,7 +195,7 @@ public class Resource extends NeoComNode {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("Resource [");
 		buffer.append("[").append(this.getCategory()).append("] ");
-		buffer.append(item.getName()).append(" x").append(baseQty).append(" ");
+		buffer.append(getItem().getName()).append(" x").append(baseQty).append(" ");
 		buffer.append("stack: ").append(stackSize).append(" ");
 		buffer.append("total: ").append(this.getQuantity()).append(" ");
 		buffer.append("#").append(this.getTypeId()).append(" ");

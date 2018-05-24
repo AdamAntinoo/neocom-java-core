@@ -615,14 +615,20 @@ public class ESINetworkManager {
 		}
 	}
 
-	public static List<GetMarketsPrices200Ok> getMarketsPrices( String server ) {
+	/**
+	 * Go to the ESI api to ge the list of market prices. This method does not use other server than the Tranquility because
+	 * probably there is not valid market price information at other servers.
+	 * @param server
+	 * @return
+	 */
+	public static List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
 		logger.info(">> [ESINetworkManager.getMarketsPrices]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 //			// Set the refresh to be used during the request.
 //			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+//			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)
 					.getMarketsPrices("tranquility", null, null)
