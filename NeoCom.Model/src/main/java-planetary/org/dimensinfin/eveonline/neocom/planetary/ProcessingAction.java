@@ -15,10 +15,10 @@ package org.dimensinfin.eveonline.neocom.planetary;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -33,7 +33,6 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
  * data to the result data. <br>
  * Also stores the number of cycles required for the complete transformation of the resources and then the
  * total time to perfrom the transformation.
- *
  * @author Adam Antinoo
  */
 public class ProcessingAction extends NeoComNode {
@@ -41,12 +40,12 @@ public class ProcessingAction extends NeoComNode {
 	private static final long serialVersionUID = 3885877535917258089L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private int targetId = 0;
+	public int targetId = 0;
 	public EveItem targetItem = null;
-	private List<Schematics> schematics = new Vector<Schematics>();
-	private final List<Schematics> inputList = new Vector<Schematics>();
-	private Schematics output = null;
-	private final HashMap<Integer, Resource> actionResources = new HashMap<Integer, Resource>();
+	protected List<Schematics> schematics = new Vector<Schematics>();
+	protected final List<Schematics> inputList = new Vector<Schematics>();
+	protected Schematics output = null;
+	protected final Map<Integer, Resource> actionResources = new HashMap<Integer, Resource>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -54,7 +53,6 @@ public class ProcessingAction extends NeoComNode {
 	 * Instance a new <code>ProcessingAction</code> and set the target product id to be produced by this action.
 	 * This should get the schematics information so the action can process the quantities and the length of the
 	 * cycles.
-	 *
 	 * @param targetId
 	 */
 	public ProcessingAction( final int targetId ) {
@@ -87,18 +85,10 @@ public class ProcessingAction extends NeoComNode {
 		this.stockResource(resource);
 	}
 
-	@Override
-	public List<ICollaboration> collaborate2Model( final String variant ) {
-		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
-		results.add(new PlanetaryTarget(targetItem));
-		return results;
-	}
-
 	/**
 	 * Return the list of resources left and new from the action processing following the current schematics.
 	 * This is the result of subtracting from the input resources the input quantity multiplied by the cycles
 	 * and adding to the result the output resource quantity multiplied by the same cycles.
-	 *
 	 * @return
 	 */
 	public List<Resource> getActionResults() {
@@ -125,7 +115,6 @@ public class ProcessingAction extends NeoComNode {
 
 	/**
 	 * Return the number of cycles that can be run with the current quantities of input resources.
-	 *
 	 * @return
 	 */
 	public int getPossibleCycles() {
@@ -144,10 +133,9 @@ public class ProcessingAction extends NeoComNode {
 
 	/**
 	 * Returns the list of resources at the end of the transformations.
-	 *
 	 * @return
 	 */
-	public HashMap<Integer, Resource> getResources() {
+	public Map<Integer, Resource> getResources() {
 		return actionResources;
 	}
 
@@ -155,32 +143,13 @@ public class ProcessingAction extends NeoComNode {
 		return targetId;
 	}
 
-	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("ProcessingAction [");
-		buffer.append(inputList).append(" ").append(output).append("\n");
-		buffer.append("output: #").append(targetItem.getTypeID()).append(" ").append(targetItem.getName()).append(" ");
-		buffer.append("resources: ").append(actionResources).append(" ");
-		buffer.append("]");
-		return buffer.toString();
-	}
-
-	@Override
-	protected ProcessingAction clone() throws CloneNotSupportedException {
-		final ProcessingAction clone = new ProcessingAction(targetId);
-		for (final Integer resource : actionResources.keySet()) {
-			clone.addResource(new Resource(resource, actionResources.get(resource).getQuantity()));
-		}
-		return clone;
-	}
 
 	/**
 	 * Processes one resource from the number of cycles indicated for the schematic received.
-	 *
 	 * @param sche
 	 * @return
 	 */
-	private Resource processResource( final Schematics sche, final int cycles ) {
+	protected Resource processResource( final Schematics sche, final int cycles ) {
 		// Get the resource from the list of available resources.
 		final Resource res = actionResources.get(sche.getTypeId());
 		if (null != res)
@@ -192,17 +161,44 @@ public class ProcessingAction extends NeoComNode {
 	/**
 	 * Adds a new PlanetaryResource to the list of current resources stacking it to an already existing
 	 * resource. If the resource is not already in the list then we put it on the aaction resource list.
-	 *
 	 * @param newResource the resource to stack.
 	 */
 	private void stockResource( final Resource newResource ) {
 		//		logger.info(">> [ProcessingAction.stockResource]");
 		final Resource hit = actionResources.get(newResource.getTypeId());
 		if (null == hit) {
-			actionResources.put(newResource.getTypeId(), newResource);
+			actionResources.put(newResource.getTypeId(), new Resource(newResource.getTypeId(), newResource.getQuantity()));
 		} else {
 			hit.setQuantity(hit.getQuantity() + newResource.getQuantity());
 		}
+	}
+
+	// --- I C O L L A B O R A T I O N   I N T E R F A C
+	@Override
+	public List<ICollaboration> collaborate2Model( final String variant ) {
+		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
+		results.add(new PlanetaryTarget(targetItem));
+		return results;
+	}
+
+	// --- D E L E G A T E D   M E T H O D S
+	@Override
+	public String toString() {
+		final StringBuffer buffer = new StringBuffer("ProcessingAction [ ");
+		buffer.append(inputList).append(" ").append(output).append("\n");
+		buffer.append("output: #").append(targetItem.getTypeId()).append(" ").append(targetItem.getName()).append(" ");
+		buffer.append("resources: ").append(actionResources).append(" ");
+		buffer.append(" ]");
+		return buffer.toString();
+	}
+
+	@Override
+	protected ProcessingAction clone() throws CloneNotSupportedException {
+		final ProcessingAction clone = new ProcessingAction(targetId);
+		for (final Integer resource : actionResources.keySet()) {
+			clone.addResource(new Resource(resource, actionResources.get(resource).getQuantity()));
+		}
+		return clone;
 	}
 }
 

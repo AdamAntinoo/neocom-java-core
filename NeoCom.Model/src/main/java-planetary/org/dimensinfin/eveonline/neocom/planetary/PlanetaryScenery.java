@@ -25,7 +25,6 @@ import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 /**
  * This class stocks the planetary resources available for an Optimization session. It also defines and stores all the
  * environment data that should be used by a processor to perform the optimization evaluation.
- *
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -51,7 +50,6 @@ public class PlanetaryScenery extends ANeoComEntity {
 	 * <code>PlanetaryResource</code> and also remove from the list any non planetary resource. <br>
 	 * It will also transform RAW Planetary Resources to Tier 1 to simplify the transformations algorithms since
 	 * RAW are never more profitable that their Tier 1 transformations.
-	 *
 	 * @param planetaryAssets The list of Resources to be used as the start and input.
 	 */
 	public void stock( final List<Resource> planetaryAssets ) {
@@ -71,14 +69,19 @@ public class PlanetaryScenery extends ANeoComEntity {
 		// Move the resource to the removed list.
 		removedSceneryResources.add(target);
 		logger.info(">> [PlanetaryScenery.removeLowestResource]> Removed resource: {} with quantity {}"
-				,target.getName(),target.getQuantity());
+				, target.getName(), target.getQuantity());
 		sceneryResources.remove(target);
 	}
+
+	public void addAction( final ProcessingActionV2 action ) {
+		actions.add(action);
+	}
+
+
 	// --- G E T T E R S   &   S E T T E R S
 
 	/**
 	 * Return the list of resources stocked on this scenery.
-	 *
 	 * @return
 	 */
 	public List<Resource> getResources() {
@@ -106,7 +109,6 @@ public class PlanetaryScenery extends ANeoComEntity {
 	/**
 	 * Return the stocked Planetary Resource that matches the parameter id. If not found return a Resource of
 	 * quantity ZERO.
-	 *
 	 * @param inputResourceId
 	 * @return
 	 */
@@ -122,7 +124,6 @@ public class PlanetaryScenery extends ANeoComEntity {
 	/**
 	 * Convert RAW Planetary Resources to Tier 1 and store the results into the list of resources for this
 	 * scenery. Other resources are stored with no processing.
-	 *
 	 * @param resource resource to check and store.
 	 */
 	private void stock( final Resource resource ) {
