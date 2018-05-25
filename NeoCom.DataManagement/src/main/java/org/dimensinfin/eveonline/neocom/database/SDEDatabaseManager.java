@@ -503,7 +503,7 @@ public abstract class SDEDatabaseManager {
 			+ " AND    pstmt.isInput = 0" + " AND    pstms.schematicID = pstmt.schematicID";
 
 	public List<Schematics> searchSchematics4Output( final int targetId ) {
-		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeId: {}", targetId);
+//		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeId: {}", targetId);
 		List<Schematics> scheList = new Vector<Schematics>();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_SCHEMATICS4OUTPUT, new String[]{Integer.valueOf(targetId).toString()});

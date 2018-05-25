@@ -29,6 +29,7 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
 public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("PlanetaryProcessorV3");
+	private static final int Tier4ResourcesByCycle = 1;
 	private static final int Tier3Resources4OneUnit = 6;
 	private static final int Tier3ResourcesByCycle = 3;
 	private static final int Tier2Resources4OneUnit = 10;
@@ -63,7 +64,7 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 		// Do the processing until there is no more candidates that generate action processing.
 		boolean continueProcessing = true;
 		while (continueProcessing) {
-			// Clear the processing flag. If suring the loops we do not found any target we can exit the process.
+			// Clear the processing flag. If during the loops we do not found any target we can exit the process.
 			continueProcessing = false;
 			// Start processing the possibility to get Tier 4 products.
 			List<ProcessStorage> storages = new ArrayList<>();
@@ -77,10 +78,12 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 					// We calculate a 100 units Tier 4 to have simple maths when going down.
 					final int TIER4_MULTIPLIER = 100;
 					final int tier3Required = Tier3Resources4OneUnit * TIER4_MULTIPLIER;
-					final int tier4Available = scenery.getResource(typeId).getQuantity();
-					final int tier3RequestQuantity = tier3Required - (tier4Available * Tier3Resources4OneUnit);
+//					final int tier4Available = scenery.getResource(typeId).getQuantity();
+					final int tier3RequestQuantity = tier3Required;
 					final int tier3Available = scenery.getResource(res3.getTypeId()).getQuantity();
 					final int tier3ToBuild = tier3RequestQuantity - tier3Available;
+					// Update request data.
+					processStorage.setRequestQuantity(TIER4_MULTIPLIER);
 
 					// Generate a request only if we have less than required.
 					if (tier3Available < tier3RequestQuantity) {
@@ -156,8 +159,11 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 				PlanetaryProcessor.logger.info("-- [PlanetaryProcessorV3.startProfitSearch]> Located candidate: {}"
 						, target.targetTypeId);
 				// Perform the action processing and update the scenario.
-				performActions("TIER4", target.targetTypeId, Double.valueOf(Math.round(coverage)).intValue());
-				continueProcessing = true;
+				final int targetQuantity = Double.valueOf(Math.round(target.quantity * coverage / 100.0)).intValue();
+				if (targetQuantity > 0) {
+					performActions("TIER4", target.targetTypeId, targetQuantity);
+					continueProcessing = true;
+				}
 			} else {
 				PlanetaryProcessor.logger.info("-- [PlanetaryProcessorV3.startProfitSearch]> No more TIER 4 candidates. Searching Tier " +
 						"3");
@@ -171,12 +177,14 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 					for (Resource res2 : requirementsTier2) {
 						// Calculate the requirements for this resource depending on its target availability and current availabilities.
 						// We calculate a 100 units Tier 3 to have simple maths when going down.
-						final int TIER3_MULTIPLIER = 100;
-						final int tier2Required = Tier2Resources4OneUnit * TIER3_MULTIPLIER;
-						final int tier3Available = scenery.getResource(typeId).getQuantity();
-						final int tier2RequestQuantity = tier2Required - (tier3Available * Tier2Resources4OneUnit);
+						final int TIER3_MULTIPLIER = 999;
+						final int tier2Required = Tier2Resources4OneUnit * TIER3_MULTIPLIER / Tier3ResourcesByCycle;
+//						final int tier3Available = scenery.getResource(typeId).getQuantity();
+						final int tier2RequestQuantity = tier2Required;
 						final int tier2Available = scenery.getResource(res2.getTypeId()).getQuantity();
 						final int tier2ToBuild = tier2RequestQuantity - tier2Available;
+						// Update request data.
+						processStorage.setRequestQuantity(TIER3_MULTIPLIER);
 
 						// Generate a request only if we have less than required.
 						if (tier2Available < tier2RequestQuantity) {
@@ -235,8 +243,11 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 					// Perform the action processing and update the scenario.
 					PlanetaryProcessor.logger.info("-- [PlanetaryProcessorV3.startProfitSearch]> Located candidate: {}"
 							, target.targetTypeId);
-					performActions("TIER3", target.targetTypeId, Double.valueOf(Math.round(coverage)).intValue());
-					continueProcessing = true;
+					final int targetQuantity = Double.valueOf(Math.round(target.quantity * coverage / 100.0)).intValue();
+					if (targetQuantity > 0) {
+						performActions("TIER3", target.targetTypeId, targetQuantity);
+						continueProcessing = true;
+					}
 				} else {
 					PlanetaryProcessor.logger.info("-- [PlanetaryProcessorV3.startProfitSearch]> No more TIER 3 candidates. Searching " +
 							"Tier " +
@@ -250,13 +261,15 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 						// Tier 1 needs 20 resources to initiate a cycle.
 						for (Resource res1 : requirementsTier1) {
 							// Calculate the requirements for this resource depending on its target availability and current availabilities.
-							// We calculate a 1000 units Tier 2 to have simple maths when going down.
-							final int TIER2_MULTIPLIER = 1000;
-							final int tier1Required = Tier1Resources4OneUnit * TIER2_MULTIPLIER;
-							final int tier2Available = scenery.getResource(typeId).getQuantity();
-							final int tier1RequestQuantity = tier1Required - (tier2Available * Tier1Resources4OneUnit);
+							// We calculate a 10000 units Tier 2 to have simple maths when going down.
+							final int TIER2_MULTIPLIER = 10000;
+							final int tier1Required = Tier1Resources4OneUnit * TIER2_MULTIPLIER / Tier2ResourcesByCycle;
+//							final int tier2Available = scenery.getResource(typeId).getQuantity();
+							final int tier1RequestQuantity = tier1Required;
 							final int tier1Available = scenery.getResource(res1.getTypeId()).getQuantity();
 							final int tier1ToBuild = tier1RequestQuantity - tier1Available;
+							// Update request data.
+							processStorage.setRequestQuantity(TIER2_MULTIPLIER);
 
 							// Generate a request only if we have less than required.
 							if (tier1Available < tier1RequestQuantity) {
@@ -297,8 +310,11 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 					// Target will now have the best candidate and the coverage the number of cycles to process. Or null if no target found.
 					if (null != target) {
 						// Perform the action processing and update the scenario.
-						performActions("TIER2", target.targetTypeId, Double.valueOf(Math.round(coverage)).intValue());
-						continueProcessing = true;
+						final int targetQuantity = Double.valueOf(Math.round(target.quantity * coverage / 100.0)).intValue();
+						if (targetQuantity > 0) {
+							performActions("TIER2", target.targetTypeId, targetQuantity);
+							continueProcessing = true;
+						}
 					}
 				}
 			}
@@ -320,57 +336,123 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 	protected boolean performActions( final String tier, final int typeId, final int quantity ) {
 		PlanetaryProcessor.logger.info(">< [PlanetaryProcessorV3.performActions]> [{}] {} x{}"
 				, tier, typeId, quantity);
-		// Do the processing depending on the Tier.
-		if (tier == "TIER2") {
-			final ProcessingActionV2 action = new ProcessingActionV2(typeId)
-					.setCycles(quantity);
-			// Get the input resources from the Scenery if available.
-			for (Schematics input : action.getInputs()) {
-				action.addResource(scenery.getResource(input.getTypeId()));
-			}
-			final List<Resource> results = action.getLimitedActionResults();
-			// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
-			scenery.stock(results);
-			scenery.addAction(action);
-			return true;
-		}
-		if (tier == "TIER3") {
-			// First do the processing for the sources from Tier 2.
-			final List<Resource> requirementsTier2 = addProductsRequired(typeId);
-			for (Resource res2 : requirementsTier2) {
-				// Calculate the requirements for this resource depending on its target availability and current availabilities.
-					final int tier2Required = quantity;
-				final int tier3Available = scenery.getResource(typeId).getQuantity();
-				final int tier2RequestQuantity = tier2Required - (tier3Available * Tier2Resources4OneUnit);
-				final int tier2Available = scenery.getResource(res2.getTypeId()).getQuantity();
-				final int tier2ToBuild = tier2RequestQuantity - tier2Available;
-
-				// Generate a request only if we have less than required.
-				if (tier2Available < tier2RequestQuantity) {
-					final ProcessingActionV2 action = new ProcessingActionV2(typeId)
-							.setCycles(tier2ToBuild);
-					// Get the input resources from the Scenery if available.
-					for (Schematics input : action.getInputs()) {
-						action.addResource(scenery.getResource(input.getTypeId()));
-					}
-					final List<Resource> results = action.getLimitedActionResults();
-					// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
-					scenery.stock(results);
-					scenery.addAction(action);
+		if (quantity > 0) {
+			// Do the processing depending on the Tier.
+			if (tier == "TIER2") {
+				final ProcessingActionV2 action = new ProcessingActionV2(typeId)
+						.setCycles(quantity);
+				// Get the input resources from the Scenery if available.
+				for (Schematics input : action.getInputs()) {
+					action.addResource(scenery.getResource(input.getTypeId()));
 				}
+				final List<Resource> results = action.getLimitedActionResults();
+				// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
+				scenery.stock(results);
+				scenery.addAction(action);
+				return true;
 			}
-			// Do the processing for the Tier 3 resource.
-			final ProcessingActionV2 action = new ProcessingActionV2(typeId)
-					.setCycles(quantity);
-			// Get the input resources from the Scenery if available.
-			for (Schematics input : action.getInputs()) {
-				action.addResource(scenery.getResource(input.getTypeId()));
+			if (tier == "TIER3") {
+				// First do the processing for the sources from Tier 2.
+				final List<Resource> requirementsTier2 = addProductsRequired(typeId);
+				for (Resource res2 : requirementsTier2) {
+					// Calculate the requirements for this resource depending on current availabilities.
+					final int tier2Required = quantity * Tier2Resources4OneUnit / Tier3ResourcesByCycle;
+					final int tier2RequestQuantity = tier2Required;
+					final int tier2Available = scenery.getResource(res2.getTypeId()).getQuantity();
+					final int tier2ToBuild = tier2RequestQuantity - tier2Available;
+
+					// Generate a request only if we have less than required.
+					if (tier2Available < tier2RequestQuantity) {
+						final ProcessingActionV2 action = new ProcessingActionV2(res2.getTypeId())
+								.setCycles(tier2ToBuild);
+						// Get the input resources from the Scenery if available.
+						for (Schematics input : action.getInputs()) {
+							action.addResource(scenery.getResource(input.getTypeId()));
+						}
+						final List<Resource> results = action.getLimitedActionResults();
+						// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
+						PlanetaryProcessor.logger.info(">< [PlanetaryProcessorV3.performActions]> Action resources: ", results.toString());
+						scenery.stock(results);
+						scenery.addAction(action);
+					}
+				}
+				// Do the processing for the Tier 3 resource.
+				final ProcessingActionV2 action = new ProcessingActionV2(typeId)
+						.setCycles(quantity);
+				// Get the input resources from the Scenery if available.
+				for (Schematics input : action.getInputs()) {
+					action.addResource(scenery.getResource(input.getTypeId()));
+				}
+				final List<Resource> results = action.getLimitedActionResults();
+				// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
+				PlanetaryProcessor.logger.info(">< [PlanetaryProcessorV3.performActions]> Action resources: ", results.toString());
+				scenery.stock(results);
+				scenery.addAction(action);
+				return true;
 			}
-			final List<Resource> results = action.getLimitedActionResults();
-			// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
-			scenery.stock(results);
-			scenery.addAction(action);
-			return true;
+			if (tier == "TIER4") {
+				// First do the processing for the sources from Tier 3.
+				final List<Resource> requirementsTier3 = addProductsRequired(typeId);
+				for (Resource res3 : requirementsTier3) {
+					// Calculate the requirements for this resource depending on current availabilities.
+					final int tier3Required = quantity * Tier3Resources4OneUnit;
+					final int tier3RequestQuantity = tier3Required;
+					final int tier3Available = scenery.getResource(res3.getTypeId()).getQuantity();
+					final int tier3ToBuild = tier3RequestQuantity - tier3Available;
+
+					// Generate a request only if we have less than required.
+					if (tier3Available < tier3RequestQuantity) {
+						final List<Resource> requirementsTier2 = addProductsRequired(res3.getTypeId());
+						for (Resource res2 : requirementsTier2) {
+							// Calculate the requirements for this resource depending on current availabilities.
+							final int tier2Required = tier3ToBuild * Tier2Resources4OneUnit / Tier3ResourcesByCycle;
+							final int tier2RequestQuantity = tier2Required;
+							final int tier2Available = scenery.getResource(res2.getTypeId()).getQuantity();
+							final int tier2ToBuild = tier2RequestQuantity - tier2Available;
+
+							// Generate a request only if we have less than required.
+							if (tier2Available < tier2RequestQuantity) {
+								final ProcessingActionV2 action = new ProcessingActionV2(res2.getTypeId())
+										.setCycles(tier2ToBuild);
+								// Get the input resources from the Scenery if available.
+								for (Schematics input : action.getInputs()) {
+									action.addResource(scenery.getResource(input.getTypeId()));
+								}
+								final List<Resource> results = action.getLimitedActionResults();
+								// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
+								PlanetaryProcessor.logger.info(">< [PlanetaryProcessorV3.performActions]> Action resources: ", results.toString());
+								scenery.stock(results);
+								scenery.addAction(action);
+							}
+						}
+						final ProcessingActionV2 action = new ProcessingActionV2(res3.getTypeId())
+								.setCycles(tier3ToBuild);
+						// Get the input resources from the Scenery if available.
+						for (Schematics input : action.getInputs()) {
+							action.addResource(scenery.getResource(input.getTypeId()));
+						}
+						final List<Resource> results = action.getLimitedActionResults();
+						// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
+						PlanetaryProcessor.logger.info(">< [PlanetaryProcessorV3.performActions]> Action resources: ", results.toString());
+						scenery.stock(results);
+						scenery.addAction(action);
+					}
+				}
+
+				// Do the processing for the Tier 4 resource.
+				final ProcessingActionV2 action = new ProcessingActionV2(typeId)
+						.setCycles(quantity);
+				// Get the input resources from the Scenery if available.
+				for (Schematics input : action.getInputs()) {
+					action.addResource(scenery.getResource(input.getTypeId()));
+				}
+				final List<Resource> results = action.getLimitedActionResults();
+				// Update the scenery data with this list by adding the resulting resources. Consumed have already been made negative.
+				PlanetaryProcessor.logger.info(">< [PlanetaryProcessorV3.performActions]> Action resources: ", results.toString());
+				scenery.stock(results);
+				scenery.addAction(action);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -379,12 +461,18 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 	public static class ProcessStorage {
 		//		private static final int INITIAL_T4_MULTIPLIER = 100;
 		private final int targetTypeId;
+		private int quantity = 1;
 		private final PlanetaryScenery scenery;
 		private Map<Integer, ResourceStorage> resources = new HashMap();
 
 		public ProcessStorage( final int typeId, final PlanetaryScenery scenery ) {
 			this.targetTypeId = typeId;
 			this.scenery = scenery;
+		}
+
+		public ProcessStorage setRequestQuantity( final int requestQuantity ) {
+			this.quantity = requestQuantity;
+			return this;
 		}
 
 		public void addRequirement( final int typeId, final int requestQuantity ) {
@@ -433,6 +521,7 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 			}
 			return minCoverage;
 		}
+
 //
 //		/**
 //		 * Add the number of available resources for the target planetary resource that can be generated with this resource. The

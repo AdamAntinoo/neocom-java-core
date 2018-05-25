@@ -66,8 +66,8 @@ public class ProcessingActionV2 extends ProcessingAction {
 		if (cycles > 0) {
 			for (final Schematics sche : inputList) {
 				// Replace the calculated quantity by a negative subtraction quantity.
-				final Resource res = this.processResource(sche, cycles);
-				res.setQuantity(res.getQuantity() * -1);
+				final Resource res = new Resource(sche.getTypeId(), -1 * sche.getQty() * cycles);
+//				res.setQuantity(res.getQuantity() * -1);
 				results.add(res);
 			}
 			// Add the output

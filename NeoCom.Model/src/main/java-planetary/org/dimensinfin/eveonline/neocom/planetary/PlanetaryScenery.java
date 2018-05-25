@@ -79,6 +79,9 @@ public class PlanetaryScenery extends ANeoComEntity {
 
 
 	// --- G E T T E R S   &   S E T T E R S
+	public List<ProcessingAction> getActions() {
+		return this.actions;
+	}
 
 	/**
 	 * Return the list of resources stocked on this scenery.
@@ -135,11 +138,19 @@ public class PlanetaryScenery extends ANeoComEntity {
 			List<Resource> results = action.getActionResults();
 			// TODO - Add also the remainder of the RAW resource to the list?. It will just complete the costing
 			for (Resource planetaryResource : results) {
-				sceneryResources.add(planetaryResource);
+				consolidateResource(planetaryResource);
 			}
-		} else {
-			sceneryResources.add(resource);
+		} else consolidateResource(resource);
+	}
+
+	private void consolidateResource( final Resource resource ) {
+		for (Resource res : sceneryResources) {
+			if (res.getTypeId() == resource.getTypeId()) {
+				res.setQuantity(res.getQuantity() + resource.getQuantity());
+				return;
+			}
 		}
+		sceneryResources.add(resource);
 	}
 }
 
