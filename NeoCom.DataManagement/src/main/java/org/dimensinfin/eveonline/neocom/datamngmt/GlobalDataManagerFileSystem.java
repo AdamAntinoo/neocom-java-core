@@ -28,7 +28,6 @@ import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
  * <p>
  * The File System it is a plugin that should be installed at startup because if not it should trigger runtime
  * exceptions on each file access.
- *
  * @author Adam Antinoo
  */
 
@@ -58,24 +57,44 @@ public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
 		return getFileSystem().openAsset4Input(filePath);
 	}
 
-	public static String accessAssetPath() {
-		return getFileSystem().accessAssetPath();
+	public static String accessAsset4Path( final String filePath ) throws IOException {
+		return getFileSystem().accessAsset4Path(filePath);
 	}
 
-	public static String accessAssetPath( final String path ) {
-		return getFileSystem().accessAssetPath() + path;
+	public static String accessResource4Path( final String filePath ) {
+		return getFileSystem().accessResource4Path(filePath);
 	}
 
-	public static File accessStorageResourcePath( final String path ) {
-		return getFileSystem().accessAppStorageFile(path);
+	public static String accessAppStorage4Path( final String filePath ) {
+		return getFileSystem().accessResource4Path(filePath);
 	}
+
+//	public static String openAsset4InputPath( final String filePath ) throws IOException {
+//		return getFileSystem().openAsset4InputPath(filePath);
+//	}
+//
+//	public static String accessAssetPath() {
+//		return getFileSystem().accessAssetPath();
+//	}
+//
+//	public static String accessAssetPath( final String path ) {
+//		return getFileSystem().accessAssetPath() + path;
+//	}
+//
+//	public static File accessStorageResourcePath( final String path ) {
+//		return getFileSystem().accessAppStorageFile(path);
+//	}
 
 	public static boolean checkAssetFile( final String resourceString ) {
-		return checkStorageResource(new File(GlobalDataManager.accessAssetPath()), resourceString);
+		try {
+			return checkStorageResource(accessAsset4Path(resourceString));
+		} catch (IOException ioe) {
+			return false;
+		}
 	}
 
-	public static boolean checkStorageResource( final File base, final String fileName ) {
-		File toCheck = new File(base, fileName);
+	public static boolean checkStorageResource( final String fileName ) {
+		File toCheck = new File(fileName);
 		return toCheck.exists();
 	}
 }

@@ -168,7 +168,7 @@ public class EVEMarketDataParser extends AbstractXMLHandler {
 	 * Added to bypass the use of namespaces. The method searches for the index of the selected QName and then
 	 * retrieves the right attribute by index.
 	 * 
-	 * @param string
+	 * @param name
 	 * @return
 	 */
 	private String getAttributeValue(final Attributes attributes, final String name) {

@@ -56,8 +56,8 @@ public class EveItem extends NeoComNode {
 	 * and it is not tied to any specific market place.
 	 */
 	public double defaultprice = -1.0;
-	private double volume = 0.0;
 	private String tech = ModelWideConstants.eveglobal.TechI;
+	private double volume = 0.0;
 
 	// - A D D I T I O N A L   F I E L D S
 	private transient EIndustryGroup industryGroup = EIndustryGroup.UNDEFINED;

@@ -64,7 +64,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacter
 /**
  * This class download the OK data classes from the ESI api using the ESI authorization. It will then simply return the results
  * to the caller to be converted or to be used.
- *
  * @author Adam Antinoo
  */
 
@@ -101,8 +100,8 @@ public class ESINetworkManager {
 	public static void initialize() throws IOException {
 		logger.info(">> [ESINetworkManager.initialize]");
 		// Read the configuration and open the ESI requests cache.
-		cacheDataFile = GlobalDataManager.accessStorageResourcePath(cacheFilePath);
-		neocomRetrofit=NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+		cacheDataFile = new File(GlobalDataManager.accessResource4Path(cacheFilePath));
+		neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 		// Read the scoped from a resource file
 		constructScopes();
 		logger.info("<< [ESINetworkManager.initialize]");

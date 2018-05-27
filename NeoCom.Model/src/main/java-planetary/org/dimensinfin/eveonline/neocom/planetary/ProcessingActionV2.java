@@ -77,6 +77,10 @@ public class ProcessingActionV2 extends ProcessingAction {
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
+	public int getQuantity() {
+		return this.quantity;
+	}
+
 	public ProcessingActionV2 setCycles( final int quantity ) {
 		this.quantity = quantity;
 		return this;

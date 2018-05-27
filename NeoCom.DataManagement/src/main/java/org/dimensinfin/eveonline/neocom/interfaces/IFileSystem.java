@@ -21,11 +21,15 @@ import java.io.OutputStream;
 public interface IFileSystem {
 	public InputStream openResource4Input( final String filePath ) throws IOException;
 
-	public OutputStream openResource4Output( String filePath ) throws IOException;;
+	public OutputStream openResource4Output( String filePath ) throws IOException;
 
 	public InputStream openAsset4Input( final String filePath ) throws IOException;
 
-	public File accessAppStorageFile( final String resourceString );
+	public String accessAsset4Path( final String filePath ) throws IOException;
 
-	public String accessAssetPath();
+	public String accessResource4Path( final String filePath );
+
+//	public String accessAppStorage4Path( final String filePath );
+
+//	public String accessAssetPath();
 }
