@@ -13,21 +13,15 @@
 package org.dimensinfin.eveonline.neocom.database.entity;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -48,7 +42,6 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  * data allows to get repeated access without the need to repeat the login process. ON single user repositories there is no
  * problem sharing the information on different sessions. ONn contrary on the multi user applications like Infinity there
  * should be an isolation level and the Credential should only be used to update cache data.
- *
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Credentials")
@@ -65,10 +58,10 @@ public class Credential extends NeoComNode {
 	@DatabaseField
 	public String accessToken = "";
 	@DatabaseField
-	public String tokenType = "";
+	public String tokenType = "Bearer";
 	@DatabaseField
 	public String dataSource = "tranquility";
-	@DatabaseField (dataType =DataType.LONG_STRING)
+	@DatabaseField(dataType = DataType.LONG_STRING)
 	public String scope = "publicData";
 	/**
 	 * Future expiration Instant time in milliseconds. This field is not required to be stored because the library
@@ -82,12 +75,14 @@ public class Credential extends NeoComNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected Credential() {
 		super();
-		jsonClass = "Credential";
+		this.jsonClass = "Credential";
 	}
 
 	public Credential( final int newAccountIdentifier ) {
 		this();
-		accountId = newAccountIdentifier;
+		this.accountId = newAccountIdentifier;
+		// Set the default value for the datasource from the current Global configuration.
+		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
 		try {
 			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
 			// Try to create the key. It fails then  it was already created.
@@ -110,32 +105,32 @@ public class Credential extends NeoComNode {
 			Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
-			}
+		}
 		return this;
 	}
 
-	/**
-	 * Check all the cache time stamps for existence and stored at the database.
-	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
-	 * time reported by CCP.
-	 * Just returns the list of TS leaving the calculation to the caller to take the decision to launch an update.
-	 */
-	public List<TimeStamp> needsUpdate() {
-		// Check for character data to be updated. There will be different levels but now only V1 is implemented.
-		List<TimeStamp> timesList = new ArrayList();
-		try {
-			// Get all the timeStamps for this credential.
-			final Dao<TimeStamp, String> timeStampDao = accessGlobal().getNeocomDBHelper().getTimeStampDao();
-			QueryBuilder<TimeStamp, String> queryBuilder = timeStampDao.queryBuilder();
-			Where<TimeStamp, String> where = queryBuilder.where();
-			where.eq("credentialId", getAccountId());
-			PreparedQuery<TimeStamp> preparedQuery = queryBuilder.prepare();
-			timesList = timeStampDao.query(preparedQuery);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return timesList;
-	}
+//	/**
+//	 * Check all the cache time stamps for existence and stored at the database.
+//	 * TS are stored at the database and updated any time some data is downloaded and updated with the cached
+//	 * time reported by CCP.
+//	 * Just returns the list of TS leaving the calculation to the caller to take the decision to launch an update.
+//	 */
+//	public List<TimeStamp> needsUpdate() {
+//		// Check for character data to be updated. There will be different levels but now only V1 is implemented.
+//		List<TimeStamp> timesList = new ArrayList();
+//		try {
+//			// Get all the timeStamps for this credential.
+//			final Dao<TimeStamp, String> timeStampDao = accessGlobal().getNeocomDBHelper().getTimeStampDao();
+//			QueryBuilder<TimeStamp, String> queryBuilder = timeStampDao.queryBuilder();
+//			Where<TimeStamp, String> where = queryBuilder.where();
+//			where.eq("credentialId", getAccountId());
+//			PreparedQuery<TimeStamp> preparedQuery = queryBuilder.prepare();
+//			timesList = timeStampDao.query(preparedQuery);
+//		} catch (final SQLException sqle) {
+//			sqle.printStackTrace();
+//		}
+//		return timesList;
+//	}
 
 	// --- G E T T E R S   &   S E T T E R S
 	public int getAccountId() {

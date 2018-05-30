@@ -30,7 +30,7 @@ public class Property extends ANeoComEntity {
 	public static final int TASK_ACTION_PROPERTY = 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(generatedId = true, index = true)
+	@DatabaseField(index = true, generatedIdSequence="Properties_id_seq")
 	private long id = -2;
 	@DatabaseField
 	private String propertyType = EPropertyTypes.UNDEFINED.name();

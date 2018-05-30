@@ -204,13 +204,15 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		}
 	}
 	@Override
-	public void setConstellation (final String constellation) {
+	public EveLocation setConstellation (final String constellation) {
 		delegate.setConstellation(constellation);
+		return this;
 	}
 
 	@Override
-	public void setConstellationId (final long constellationID) {
+	public EveLocation setConstellationId (final long constellationID) {
 		delegate.setConstellationId(constellationID);
+		return this;
 	}
 
 	public void setContentManager (final IContentManager manager) {

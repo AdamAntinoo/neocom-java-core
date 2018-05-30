@@ -13,18 +13,19 @@ import org.xml.sax.Attributes;
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
  * The current parse format is the one shown next
- * <tr class="r1">
- * <td class=""><span class="sec_null">0.0</span> Catch - 25S-6P</td>
- * <td class="qty ">60,428,316</td>
- * <td class="isk ">6.00 <span class="isk_format_isk">ISK</span></td>
- * <td class=" ">Station</td>
- * <td class=" " style="text-align:center"><span class="seconds_ago_bad">9 hours ago</span></td>
- * <td class="numeric ">&nbsp;</td>
- * </tr>
- * 
+  *
  * @author Adam Antinoo
  * 
  */
+//* <tr class="r1">
+//		* <td class=""><span class="sec_null">0.0</span> Catch - 25S-6P</td>
+//		* <td class="qty ">60,428,316</td>
+//		* <td class="isk ">6.00 <span class="isk_format_isk">ISK</span></td>
+//		* <td class=" ">Station</td>
+//		* <td class=" " style="text-align:center"><span class="seconds_ago_bad">9 hours ago</span></td>
+//		* <td class="numeric ">&nbsp;</td>
+//		* </tr>
+
 public class EVEMarketDataParser extends AbstractXMLHandler {
 	// - S T A T I C - S E C T I O N ..........................................................................
 

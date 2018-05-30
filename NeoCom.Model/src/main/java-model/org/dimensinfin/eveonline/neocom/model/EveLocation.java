@@ -36,7 +36,6 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
  * by Citadels. I have a reference to get the list of Citadels until that API entry point is available on the
  * new CCP api. <br>
  * Once we know the type then we check if on the database cache and add or update as needed.
- *
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Locations")
@@ -75,10 +74,10 @@ public class EveLocation extends NeoComNode {
 		jsonClass = "EveLocation";
 	}
 
-	public EveLocation( final long locationID ) {
+	public EveLocation( final long locationId ) {
 		this();
-		id = locationID;
-		stationId = locationID;
+		id = locationId;
+		stationId = locationId;
 	}
 
 	public EveLocation( final long citadelid, final Citadel cit ) {
@@ -124,6 +123,11 @@ public class EveLocation extends NeoComNode {
 		return true;
 	}
 
+	// --- G E T T E R S   &   S E T T E R S
+	public EveLocation setLocationIdentifier(final long newUniqueIdentifier){
+		this.id=newUniqueIdentifier;
+		return this;
+	}
 	public String getConstellation() {
 		return constellation;
 	}
@@ -137,13 +141,14 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public long getID() {
-		return Math.max(Math.max(Math.max(stationId, systemId), constellationId), regionId);
+		long newid= Math.max(Math.max(Math.max(stationId, systemId), constellationId), regionId);
+		this.id = newid;
+		return newid;
 	}
 
 	/**
 	 * This return some understandable location name. This is not valid for most locations that are not
 	 * stations.
-	 *
 	 * @return
 	 */
 	public String getName() {
@@ -242,15 +247,52 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public final boolean isUnknown() {
-		return (this.getStationId() <1);
+		return (this.getStationId() < 1);
 	}
 
-	public void setConstellation( final String constellation ) {
-		this.constellation = constellation;
+	public EveLocation setStationId( final long stationId ) {
+		this.stationId = stationId;
+		return this;
 	}
 
-	public void setConstellationId( final long constellationId ) {
+	public EveLocation setStation( final String station ) {
+		this.station = station;
+		return this;
+	}
+
+	public EveLocation setSystemId( final long systemId ) {
+		this.systemId = systemId;
+		return this;
+	}
+
+	public EveLocation setSystem( final String system ) {
+		this.system = system;
+		return this;
+	}
+
+	public EveLocation setConstellationId( final long constellationId ) {
 		this.constellationId = constellationId;
+		return this;
+	}
+
+	public EveLocation setConstellation( final String constellation ) {
+		this.constellation = constellation;
+		return this;
+	}
+
+	public EveLocation setRegionId( final long regionId ) {
+		this.regionId = regionId;
+		return this;
+	}
+
+	public EveLocation setRegion( final String region ) {
+		this.region = region;
+		return this;
+	}
+
+	public EveLocation setSecurity( final String security ) {
+		this.security = security;
+		return this;
 	}
 
 	public EveLocation store() {
@@ -263,48 +305,14 @@ public class EveLocation extends NeoComNode {
 		return this;
 	}
 
-//	public void setId( final long newid ) {
-//		id = newid;
-//	}
-
-	public void setLocationID( final long stationID ) {
-		this.stationId = stationID;
-	}
-
-	public void setRegion( final String region ) {
-		this.region = region;
-	}
-
-	public void setRegionId( final long regionId ) {
-		this.regionId = regionId;
-	}
-
-	public void setSecurity( final String security ) {
-		this.security = security;
-	}
-
-	public void setStation( final String station ) {
-		this.station = station;
-	}
-
-	public void setStationId( final long stationId ) {
-		this.stationId = stationId;
-	}
-
-	public void setSystem( final String system ) {
-		this.system = system;
-	}
-
-	public void setSystemId( final long systemId ) {
-		this.systemId = systemId;
-	}
-
-	public void setTypeId( final ELocationType typeId ) {
+	public EveLocation setTypeId( final ELocationType typeId ) {
 		this.typeId = typeId.name();
+		return this;
 	}
 
-	public void setUrlLocationIcon( final String urlLocationIcon ) {
+	public EveLocation setUrlLocationIcon( final String urlLocationIcon ) {
 		this.urlLocationIcon = urlLocationIcon;
+		return this;
 	}
 
 	@Override
@@ -351,7 +359,6 @@ public class EveLocation extends NeoComNode {
 
 	/**
 	 * Two Locations are equal if they have the same locations codes.
-	 *
 	 * @param obj the target EveLocation to compare.
 	 * @return
 	 */

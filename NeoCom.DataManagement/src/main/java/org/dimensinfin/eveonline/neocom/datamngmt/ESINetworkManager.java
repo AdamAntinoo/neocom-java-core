@@ -72,27 +72,6 @@ public class ESINetworkManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
 
-//	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
-//	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
-//
-//	public enum ECacheTimes {
-//		CHARACTER_PUBLIC, CHARACTER_CLONES, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS, MARKET_PRICES, INDUSTRY_JOBS
-//	}
-//
-//	static {
-//		ESICacheTimes.put(ECacheTimes.CHARACTER_PUBLIC, TimeUnit.SECONDS.toMillis(3600));
-//		ESICacheTimes.put(ECacheTimes.CHARACTER_CLONES, TimeUnit.SECONDS.toMillis(200));
-//		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
-//		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
-//		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
-//		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
-//		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
-//	}
-
-	private static final String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
-	private static final String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
-	private static final String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
-	private static final String AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
 	private static final ESIStore STORE = ESIStore.DEFAULT;
 	private static final List<String> SCOPES = new ArrayList<>(2);
 	private static String SCOPESTRING = "publicData";
@@ -104,8 +83,23 @@ public class ESINetworkManager {
 		neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 		// Read the scoped from a resource file
 		constructScopes();
+
+		// Initialize global constants from configuration files.
+		CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
+		SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
+		CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
+		AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
+		// Verify that the constants have values. Otherwise launch exception.
+		assert !CLIENT_ID.isEmpty() : "ESI configuration property is empty.";
+		assert !SECRET_KEY.isEmpty() : "ESI configuration property is empty.";
+		assert !CALLBACK.isEmpty() : "ESI configuration property is empty.";
 		logger.info("<< [ESINetworkManager.initialize]");
 	}
+
+	private static String CLIENT_ID = GlobalDataManager.getResourceString("R.esi.authorization.clientid");
+	private static String SECRET_KEY = GlobalDataManager.getResourceString("R.esi.authorization.secretkey");
+	private static String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
+	private static String AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
 
 	/**
 	 * This is the location where to STORE the downloaded data from network cache.

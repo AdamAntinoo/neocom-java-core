@@ -12,9 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -56,6 +53,8 @@ public interface IGlobalConnector {
 	public String getResourcePropertyString( final String key );
 
 	public Integer getResourcePropertyInteger( final String key );
+
+	public String getEveOnlineServerDatasource();
 
 	// --- F I L E S Y S T E M
 //	public String accessAssetPath( final String path );

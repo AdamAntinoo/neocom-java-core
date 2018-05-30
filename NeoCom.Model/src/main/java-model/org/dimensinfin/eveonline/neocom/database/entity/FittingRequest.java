@@ -38,7 +38,7 @@ public class FittingRequest extends NeoComNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(generatedId = true)
+	@DatabaseField(index = true, generatedIdSequence="FittingRequests_id_seq")
 	public long id = -2;
 	@DatabaseField
 	public int corporationId = -1;

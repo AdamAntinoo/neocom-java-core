@@ -144,6 +144,10 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 		return Boolean.valueOf(accessConfigurationManager().getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
 	}
 
+	public String getEveOnlineServerDatasource() {
+		return SERVER_DATASOURCE;
+	}
+
 	// --- P R E F E R E N C E S   S E C T I O N
 	private static final IGlobalPreferencesManager preferencesManager = new GlobalPreferencesManager();
 
