@@ -38,7 +38,7 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
  * Once we know the type then we check if on the database cache and add or update as needed.
  * @author Adam Antinoo
  */
-@DatabaseTable(tableName = "Locations")
+@DatabaseTable(tableName = "locations")
 public class EveLocation extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1522765618286937377L;

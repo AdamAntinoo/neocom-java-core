@@ -28,7 +28,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "FittingRequests")
+@DatabaseTable(tableName = "fittingrequests")
 public class FittingRequest extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("FittingRequest");
@@ -38,7 +38,7 @@ public class FittingRequest extends NeoComNode {
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(index = true, generatedIdSequence="FittingRequests_id_seq")
+	@DatabaseField(index = true, generatedIdSequence="fittingfequests_id_seq")
 	public long id = -2;
 	@DatabaseField
 	public int corporationId = -1;

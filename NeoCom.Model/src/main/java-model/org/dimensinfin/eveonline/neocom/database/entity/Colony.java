@@ -50,7 +50,7 @@ import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "Colony")
+@DatabaseTable(tableName = "colony")
 public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(Colony.class);

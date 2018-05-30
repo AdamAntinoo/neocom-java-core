@@ -23,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
  * have a version so there is no need to allow the creation of more records.
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "Version")
+@DatabaseTable(tableName = "version")
 public class DatabaseVersion extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("DatabaseVersion");

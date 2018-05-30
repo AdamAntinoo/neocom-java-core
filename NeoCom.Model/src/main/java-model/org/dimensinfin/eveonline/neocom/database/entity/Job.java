@@ -32,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "Jobs")
+@DatabaseTable(tableName = "jobs")
 public class Job extends NeoComNode {
 	public enum EJobType {
 		CCP,NEOCOM

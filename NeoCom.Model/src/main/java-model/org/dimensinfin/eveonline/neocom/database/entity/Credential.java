@@ -44,7 +44,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  * should be an isolation level and the Credential should only be used to update cache data.
  * @author Adam Antinoo
  */
-@DatabaseTable(tableName = "Credentials")
+@DatabaseTable(tableName = "credentials")
 public class Credential extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -4248173464157148843L;

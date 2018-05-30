@@ -22,7 +22,7 @@ import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "Properties")
+@DatabaseTable(tableName = "properties")
 public class Property extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1209487969346789159L;
@@ -30,7 +30,7 @@ public class Property extends ANeoComEntity {
 	public static final int TASK_ACTION_PROPERTY = 20;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(index = true, generatedIdSequence="Properties_id_seq")
+	@DatabaseField(index = true, generatedIdSequence="properties_id_seq")
 	private long id = -2;
 	@DatabaseField
 	private String propertyType = EPropertyTypes.UNDEFINED.name();

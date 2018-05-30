@@ -30,7 +30,7 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-@DatabaseTable(tableName = "MarketOrders")
+@DatabaseTable(tableName = "marketorders")
 public class MarketOrder extends NeoComNode {
 	public enum EOrderStates {
 		OPEN, CLOSED, EXPIRED, CANCELLED, PENDING, SCHEDULED
