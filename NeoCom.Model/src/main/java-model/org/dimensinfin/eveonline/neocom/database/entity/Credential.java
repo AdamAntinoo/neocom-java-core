@@ -101,7 +101,7 @@ public class Credential extends NeoComNode {
 	public Credential store() {
 		try {
 			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-			credentialDao.update(this);
+			credentialDao.createOrUpdate(this);
 			Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
