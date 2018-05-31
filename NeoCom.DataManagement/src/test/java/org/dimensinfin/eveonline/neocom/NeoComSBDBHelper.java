@@ -35,19 +35,19 @@ import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.FittingRequest;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
+import org.dimensinfin.eveonline.neocom.database.entity.Property;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.database.entity.Property;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 /**
  * NeoCom private database connector that will have the same api as the connector to be used on Android. This
  * version already uses the mySql database JDBC implementation instead the SQLite copied from the Android
  * platform.
  * The class will encapsulate all dao and connection access.
- *
  * @author Adam Antinoo
  */
 
@@ -77,7 +77,7 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 	private Dao<NeoComAsset, String> assetDao = null;
 	private Dao<EveLocation, String> locationDao = null;
 	private Dao<Property, String> propertyDao = null;
-	//	private Dao<NeoComBlueprint, String> blueprintDao = null;
+	private Dao<NeoComBlueprint, String> blueprintDao = null;
 	private Dao<Job, String> jobDao = null;
 	private Dao<MarketOrder, String> marketOrderDao = null;
 	private Dao<FittingRequest, String> fittingRequestDao = null;
@@ -216,6 +216,11 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 //		}
 		try {
 			TableUtils.createTableIfNotExists(databaseConnection, NeoComAsset.class);
+		} catch (SQLException sqle) {
+			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
+		}
+		try {
+			TableUtils.createTableIfNotExists(databaseConnection, NeoComBlueprint.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
@@ -494,13 +499,13 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 		return propertyDao;
 	}
 
-	//
-//	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException {
-//		if (null == blueprintDao) {
-//			blueprintDao = DaoManager.createDao(this.getConnectionSource(), NeoComBlueprint.class);
-//		}
-//		return blueprintDao;
-//	}
+	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException {
+		if (null == blueprintDao) {
+			blueprintDao = DaoManager.createDao(this.getConnectionSource(), NeoComBlueprint.class);
+		}
+		return blueprintDao;
+	}
+
 	public Dao<Job, String> getJobDao() throws SQLException {
 		if (null == jobDao) {
 			jobDao = DaoManager.createDao(this.getConnectionSource(), Job.class);
@@ -619,7 +624,6 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 	 * Open a new pooled JDBC datasource connection list and stores its reference for use of the whole set of
 	 * services. Being a pooled connection it can create as many connections as required to do requests in
 	 * parallel to the database instance. This only is effective for MySql databases.
-	 *
 	 * @return
 	 */
 	private boolean openNeoComDB() {
@@ -642,7 +646,6 @@ public class NeoComSBDBHelper implements INeoComDBHelper {
 
 	/**
 	 * Creates and configures the connection datasource to the database.
-	 *
 	 * @throws SQLException
 	 */
 	private void createConnectionSource() throws SQLException {

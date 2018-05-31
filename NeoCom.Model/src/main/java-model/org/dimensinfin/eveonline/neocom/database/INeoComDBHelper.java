@@ -21,19 +21,19 @@ import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.FittingRequest;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
+import org.dimensinfin.eveonline.neocom.database.entity.Property;
+import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.database.entity.Property;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 /**
  * This interface defines the methods that should be implemented at the final Helper implementation so all
  * platforms share a compatible api. This helper is associated to the NeoCom private database only. That database
  * is used through Dao elements and the api exports the same functionality that are found on Android database
  * helpers.
- *
  * @author Adam Antinoo
  */
 public interface INeoComDBHelper {
@@ -51,20 +51,6 @@ public interface INeoComDBHelper {
 
 	public void loadSeedData();
 
-//	public INeoComDBHelper setDatabaseHost( final String hostName );
-//
-//	public INeoComDBHelper setDatabaseName( final String instanceName );
-//
-//	public INeoComDBHelper setDatabaseUser( final String user );
-//
-//	public INeoComDBHelper setDatabasePassword( final String password );
-//
-//	public INeoComDBHelper setDatabaseVersion( final int newVersion );
-//
-//	public INeoComDBHelper build() throws SQLException;
-
-//	public ConnectionSource getConnectionSource() throws SQLException;
-
 	public Dao<DatabaseVersion, String> getVersionDao() throws SQLException;
 
 	public Dao<TimeStamp, String> getTimeStampDao() throws SQLException;
@@ -80,8 +66,8 @@ public interface INeoComDBHelper {
 //	public Dao<ColonySerialized, String> getColonySerializedDao() throws SQLException;
 
 	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
-//	@Deprecated
-//	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
+
+	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
 
 	public Dao<EveLocation, String> getLocationDao() throws SQLException;
 

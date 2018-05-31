@@ -366,7 +366,7 @@ public class FittingProcessor {
 					//					ArrayList<Asset> bpcs = getAsset4Type(newTask.getItem().getTypeId());
 					//					// Search each blueprint to locate the BPO and then create the copies.
 					//					for (Asset asset : bpcs) {
-					//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetID());
+					//						Blueprint bp = industryAssetsManager.searchBlueprintByID(asset.getAssetId());
 					//						if (bp.isBpo()) {
 					newTask.setTaskType(Action.ETaskType.COPY);
 //					this.processRequest(newTask);

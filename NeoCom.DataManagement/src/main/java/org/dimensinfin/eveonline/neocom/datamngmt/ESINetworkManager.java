@@ -48,6 +48,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.WalletApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
@@ -484,7 +485,9 @@ public class ESINetworkManager {
 		return returnOrderList;
 	}
 
-	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier, final String refreshToken, final String server ) {
+	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier
+			, final String refreshToken
+			, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");
 		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
@@ -523,6 +526,48 @@ public class ESINetworkManager {
 			logger.info("<< [ESINetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return returnAssetList;
+	}
+	public static List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final int identifier
+			, final String refreshToken
+			, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdBlueprints]");
+		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>(1000);
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			if (null != server) datasource = server;
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = neocomRetrofit
+						.create(CharacterApi.class)
+						.getCharactersCharacterIdBlueprints(identifier, datasource, pageCounter, null, null, null).execute();
+				if (!characterApiResponse.isSuccessful()) {
+					// Or error or we have reached the end of the list.
+					return returnBlueprintList;
+				} else {
+					// Copy the assets to the result list.
+					returnBlueprintList.addAll(characterApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if (characterApiResponse.body().size() < 1) morePages = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			// Check if the problem is a connection reset.
+			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				// Recreate the retrofit.
+				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+			}
+		} finally {
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdBlueprints]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return returnBlueprintList;
 	}
 
 	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {

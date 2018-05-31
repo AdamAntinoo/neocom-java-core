@@ -10,8 +10,11 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import com.j256.ormlite.dao.Dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +25,12 @@ import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 
 /**
  * @author Adam Antinoo
@@ -136,6 +141,60 @@ public class DownloadManager {
 			return false;
 		}
 		DownloadManager.logger.info("<< [AssetsManager.downloadPilotAssetsESI]");
+		return true;
+	}
+
+	public boolean downloadPilotBlueprintsESI() {
+		DownloadManager.logger.info(">> [AssetsManager.downloadPilotBlueprintsESI]");
+		try {
+			// Clear any previous record with owner -1 from database.
+			new GlobalDataManager().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
+			// Download the list of blueprints.
+			final List<GetCharactersCharacterIdBlueprints200Ok> blueprintOkList = ESINetworkManager
+					.getCharactersCharacterIdBlueprints(
+							credential.getAccountId()
+							, credential.getRefreshToken()
+							, null
+					);
+			if ((null == blueprintOkList) || (blueprintOkList.size() < 1)) return false;
+//			// Create the list for orphaned locations assets. They should be processed later.
+			final List<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
+			// Blueprints point to another node qualified as asset. So the location and the rest of the data comes from that already
+			// processed asset. While adding that field we expect the blueprint instance to auto connect itself.
+			for (final GetCharactersCharacterIdBlueprints200Ok blueprintOk : blueprintOkList) {
+				//--- B L U E P R I N T   P R O C E S S I N G
+				 NeoComBlueprint newBlueprint =null;
+				try {
+					// TODO - Check that after the asset association we have the correct location information.
+					 newBlueprint = new NeoComBlueprint(blueprintOk.getItemId())
+							.setTypeId(blueprintOk.getTypeId())
+							.setQuantity(blueprintOk.getQuantity())
+							.setTimeEfficiency(blueprintOk.getTimeEfficiency())
+							.setMaterialEfficiency(blueprintOk.getMaterialEfficiency())
+							.setRuns(blueprintOk.getRuns())
+							.setPackaged((blueprintOk.getQuantity() == -1) ? true : false);
+					// Detect if BPO or BPC and set the flag.
+					if (blueprintOk.getRuns() == -1) {
+						newBlueprint.setBpo(true);
+					}
+				} catch (final RuntimeException rtex) {
+					// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
+					DownloadManager.logger.info("W> The Blueprint " + newBlueprint.getAssetId() + " has no matching asset.");
+					DownloadManager.logger.info("W> " + newBlueprint.toString());
+				}
+			}
+			// Pack the blueprints and store them on the database.
+			storeBlueprints(bplist);
+			// Assign the blueprints to the pilot.
+			new GlobalDataManager().getNeocomDBHelper().replaceBlueprints(credential.getAccountId());
+			// Remove from memory the managers that contain now stale data.
+			//TODO Removed until this is checked if required.
+//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		DownloadManager.logger.info("<< [AssetsManager.downloadPilotBlueprintsESI]");
 		return true;
 	}
 
@@ -302,6 +361,75 @@ public class DownloadManager {
 				sqle.printStackTrace();
 			}
 		});
+	}
+	/**
+	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
+	 * This will simplify the quantity of data exported to presentation layers.<br>
+	 * Aggregation is performed by TYPEID-LOCATION-CONTAINER-RUNS
+	 *
+	 * @param bplist list of newly created Blueprints from the CCP API download
+	 */
+	protected void storeBlueprints( final List<NeoComBlueprint> bplist ) {
+		logger.info(">> [DownloadManager.storeBlueprints]");
+		HashMap<String, NeoComBlueprint> bpStacks = new HashMap<String, NeoComBlueprint>();
+		for (NeoComBlueprint blueprint : bplist) {
+			this.checkBPCStacking(bpStacks, blueprint);
+		}
+
+		// Extract stacks and store them into the caches.
+//		blueprintCache.addAll(bpStacks.values());
+		// Update the database information.
+		for (NeoComBlueprint blueprint : bpStacks.values()) {
+			try {
+				Dao<NeoComBlueprint, String> blueprintDao = new GlobalDataManager().getNeocomDBHelper().getBlueprintDao();
+				// Be sure the owner is reset to undefined when stored at the database.
+				blueprint.resetOwner();
+				// Set new calculated values to reduce the time for blueprint part rendering.
+				// REFACTOR This has to be rewrite to allow this calculation on download time.
+				//				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
+				//				blueprint.setManufactureIndex(process.getProfitIndex());
+				//				blueprint.setJobProductionCost(process.getJobCost());
+				//				blueprint.setManufacturableCount(process.getManufacturableCount());
+				blueprintDao.create(blueprint);
+				DownloadManager.logger.info("-- [DownloadManager.storeBlueprints]> Wrote blueprint to database id [" + blueprint
+						.getAssetId() + "]");
+			} catch (final SQLException sqle) {
+				DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
+						.getAssetId() + "]. "
+						+ sqle.getMessage());
+				sqle.printStackTrace();
+			} catch (final RuntimeException rtex) {
+				DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
+						.getAssetId() + "]. "
+						+ rtex.getMessage());
+				rtex.printStackTrace();
+			}
+		}
+		logger.info("<< [DownloadManager.storeBlueprints]");
+	}
+	/**
+	 * Stacks blueprints that are equal and that are located on the same location. The also should be inside the
+	 * same container so the locationID, the parentContainer and the typeId should match to perform the
+	 * aggregation.<br>
+	 * Aggregation key: ID-LOCATION-CONTAINER
+	 *
+	 * @param targetContainer the stack storage that contains the list of registered blueprints
+	 * @param bp              the blueprint part to be added to the hierarchy
+	 */
+	private void checkBPCStacking( final HashMap<String, NeoComBlueprint> targetContainer, final NeoComBlueprint bp ) {
+		// Get the unique identifier for a blueprint related to stack aggregation. TYPEID.LOCATIONID.ASSETID
+		String id = bp.getStackId();
+		NeoComBlueprint hit = targetContainer.get(id);
+		if (null == hit) {
+			// Miss. The blueprint is not registered.
+			DownloadManager.logger.info("-- AssetsManager.checkBPCStacking >Stacked blueprint. " + bp.toString());
+			bp.registerReference(bp.getAssetId());
+			targetContainer.put(id, bp);
+		} else {
+			//Hit. Increment the counter for this stack. And store the id
+			hit.setQuantity(hit.getQuantity() + bp.getQuantity());
+			hit.registerReference(bp.getAssetId());
+		}
 	}
 
 	// --- D E L E G A T E D   M E T H O D S

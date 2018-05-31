@@ -34,11 +34,6 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class SDEDatabaseManager {
 	public abstract static class RawStatement {
-
-//		public abstract int getCount ();
-//
-//		public abstract int getPosition ();
-
 		public abstract boolean moveToFirst();
 
 		public abstract boolean moveToLast();
@@ -48,7 +43,6 @@ public abstract class SDEDatabaseManager {
 		public abstract boolean isFirst();
 
 		public abstract boolean isLast();
-//		public abstract int getColumnIndex (final String s);
 
 		public abstract String getString( final int i );
 
@@ -62,8 +56,6 @@ public abstract class SDEDatabaseManager {
 
 		public abstract double getDouble( final int i );
 
-		//	public abstract int getType (final int i);
-
 		public abstract void close();
 	}
 
@@ -71,29 +63,6 @@ public abstract class SDEDatabaseManager {
 	private static Logger logger = LoggerFactory.getLogger("SDEDatabaseManager");
 
 	// --- S Q L   S T A T E M E N T S   S E C T I O N
-	// - I T E M B Y I D
-	private static int ITEM_BYID_TYPEID_COLINDEX = 1;
-	private static int ITEM_BYID_TYPENAME_COLINDEX = 2;
-	private static int ITEM_BYID_GROUPID_COLINDEX = 3;
-	private static int ITEM_BYID_GROUPNAME_COLINDEX = 4;
-	private static int ITEM_BYID_CATEGORYID_COLINDEX = 5;
-	private static int ITEM_BYID_CATEGORYNAME_COLINDEX = 6;
-	private static int ITEM_BYID_BASEPRICE_COLINDEX = 7;
-	private static int ITEM_BYID_VOLUME_COLINDEX = 8;
-	private static int ITEM_BYID_TECH_COLINDEX = 9;
-	private static final String SELECT_ITEM_BYID = "SELECT it.typeId AS typeId"
-			+ " , it.typeName AS typeName"
-			+ " , ig.groupID AS groupID"
-			+ " , ig.groupName AS groupName"
-			+ " , ic.categoryID AS categoryID"
-			+ " , ic.categoryName AS categoryName"
-			+ " , it.basePrice AS basePrice"
-			+ " , it.volume AS volume"
-			+ " , IFNULL(img.metaGroupName, " + '"' + "NOTECH" + '"' + ") AS Tech"
-			+ " FROM invTypes it" + " LEFT OUTER JOIN invGroups ig ON ig.groupID = it.groupID"
-			+ " LEFT OUTER JOIN invCategories ic ON ic.categoryID = ig.categoryID"
-			+ " LEFT OUTER JOIN invMetaTypes imt ON imt.typeId = it.typeId"
-			+ " LEFT OUTER JOIN invMetaGroups img ON img.metaGroupID = imt.metaGroupID" + " WHERE it.typeId = ?";
 
 	// - L O C A T I O N B Y I D
 	private static int LOCATIONBYID_SYSTEMID_COLINDEX = 5;
@@ -173,6 +142,30 @@ public abstract class SDEDatabaseManager {
 	protected abstract RawStatement constructStatement( final String query, final String[] parameters ) throws SQLException;
 
 	// - S Q L   A C C E S S   M E T H O D S
+
+	// --- S E A R C H I T E M B Y I D
+	private static int ITEM_BYID_TYPEID_COLINDEX = 1;
+	private static int ITEM_BYID_TYPENAME_COLINDEX = 2;
+	private static int ITEM_BYID_GROUPID_COLINDEX = 3;
+	private static int ITEM_BYID_GROUPNAME_COLINDEX = 4;
+	private static int ITEM_BYID_CATEGORYID_COLINDEX = 5;
+	private static int ITEM_BYID_CATEGORYNAME_COLINDEX = 6;
+	private static int ITEM_BYID_BASEPRICE_COLINDEX = 7;
+	private static int ITEM_BYID_VOLUME_COLINDEX = 8;
+	private static int ITEM_BYID_TECH_COLINDEX = 9;
+	private static final String SELECT_ITEM_BYID = "SELECT it.typeId AS typeId"
+			+ " , it.typeName AS typeName"
+			+ " , ig.groupID AS groupID"
+			+ " , ig.groupName AS groupName"
+			+ " , ic.categoryID AS categoryID"
+			+ " , ic.categoryName AS categoryName"
+			+ " , it.basePrice AS basePrice"
+			+ " , it.volume AS volume"
+			+ " , IFNULL(img.metaGroupName, " + '"' + "NOTECH" + '"' + ") AS Tech"
+			+ " FROM invTypes it" + " LEFT OUTER JOIN invGroups ig ON ig.groupID = it.groupID"
+			+ " LEFT OUTER JOIN invCategories ic ON ic.categoryID = ig.categoryID"
+			+ " LEFT OUTER JOIN invMetaTypes imt ON imt.typeId = it.typeId"
+			+ " LEFT OUTER JOIN invMetaGroups img ON img.metaGroupID = imt.metaGroupID" + " WHERE it.typeId = ?";
 
 	/**
 	 * Search on the sde.sqlite database for the attributes that describe an Item. Items are the lowest data
@@ -302,7 +295,6 @@ public abstract class SDEDatabaseManager {
 
 	/**
 	 * Search for the location using only the system identifier.
-	 *
 	 * @param name
 	 * @return
 	 */
@@ -450,23 +442,22 @@ public abstract class SDEDatabaseManager {
 			+ " AND iap.typeId = it.typeId" + " AND imt.typeId = productTypeID" + " AND img.metaGroupID = imt.metaGroupID"
 			+ " AND iap.activityID = 1";
 
-	public String searchTech4Blueprint( final int blueprintID ) {
-		logger.info(">< [SDEDatabaseManager.searchTech4Blueprint]> blueprintID: {}", blueprintID);
-		String productTypeID = ModelWideConstants.eveglobal.TechI;
+	public String searchTech4Blueprint( final int blueprintId ) {
+		logger.info(">< [SDEDatabaseManager.searchTech4Blueprint]> blueprintId: {}", blueprintId);
+		String tech = ModelWideConstants.eveglobal.TechI;
 		try {
-			final RawStatement cursor = constructStatement(SELECT_TECH4BLUEPRINT, new String[]{Integer.valueOf(blueprintID).toString()});
+			final RawStatement cursor = constructStatement(SELECT_TECH4BLUEPRINT, new String[]{Integer.valueOf(blueprintId).toString()});
 			while (cursor.moveToNext()) {
-				productTypeID = cursor.getString(TECH4BLUEPRINT_METAGROUPNAME_COLINDEX);
+				tech = cursor.getString(TECH4BLUEPRINT_METAGROUPNAME_COLINDEX);
 			}
 			cursor.close();
 		} catch (final Exception ex) {
-			logger.error("E [SDEDatabaseManager.searchModule4Blueprint]> Exception processing statement: {}" + ex.getMessage());
+			logger.error("E [SDEDatabaseManager.searchTech4Blueprint]> Exception processing statement: {}" + ex.getMessage());
 		} finally {
-			logger.info("<< [SDEDatabaseManager.searchModule4Blueprint]");
-			return productTypeID;
+			logger.info("<< [SDEDatabaseManager.searchTech4Blueprint]");
+			return tech;
 		}
 	}
-
 
 	// --- R A W P L A N E T A R Y O U T P U T
 	private static int RAW_PRODUCTRESULT_TYPEID_COLINDEX = 1;
