@@ -423,11 +423,11 @@ public class DownloadManager {
 			for (NeoComBlueprint blueprint : bpStacks.values()) {
 				try {
 					// Set new calculated values to reduce the time for blueprint part rendering.
-					// REFACTOR This has to be rewrite to allow this calculation on download time.
-									IJobProcess process = JobManager.generateJobProcess(this.credential, blueprint, EJobClasses.MANUFACTURE);
-									blueprint.setManufactureIndex(process.getProfitIndex());
-									blueprint.setJobProductionCost(process.getJobCost());
-									blueprint.setManufacturableCount(process.getManufacturableCount());
+					// TODO - This has to be rewrite to allow this calculation on download time.
+//									IJobProcess process = JobManager.generateJobProcess(this.credential, blueprint, EJobClasses.MANUFACTURE);
+//									blueprint.setManufactureIndex(process.getProfitIndex());
+//									blueprint.setJobProductionCost(process.getJobCost());
+//									blueprint.setManufacturableCount(process.getManufacturableCount());
 					blueprintDao.create(blueprint);
 					DownloadManager.logger.info("-- [DownloadManager.storeBlueprints]> Wrote blueprint to database id [" + blueprint
 							.getBlueprintId() + "]");
@@ -444,9 +444,9 @@ public class DownloadManager {
 				}
 			}
 		} catch (final SQLException sqle) {
-			DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
-					.getBlueprintId() + "]. "
-					+ sqle.getMessage());
+//			DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
+//					.getBlueprintId() + "]. "
+//					+ sqle.getMessage());
 			sqle.printStackTrace();
 		}
 		logger.info("<< [DownloadManager.storeBlueprints]");

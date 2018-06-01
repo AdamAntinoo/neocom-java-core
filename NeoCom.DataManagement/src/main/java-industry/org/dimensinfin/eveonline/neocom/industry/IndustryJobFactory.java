@@ -10,29 +10,23 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.datamngmt;
+package org.dimensinfin.eveonline.neocom.industry;
 
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.R;
-import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
-import org.dimensinfin.eveonline.neocom.enums.EJobClasses;
 import org.dimensinfin.eveonline.neocom.interfaces.IJobProcess;
-import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
-import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
-import org.dimensinfin.eveonline.neocom.part.BlueprintPart;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
@@ -85,17 +79,20 @@ public class IndustryJobFactory /*implements Serializable*/ {
 
 	public static IJobProcess generateJobProcess( final Credential credential, final NeoComBlueprint target,
 	                                              final EJobClasses action) {
-		if (null == credential) throw
-				new NeoComRuntimeException("E> JobManager cannot complete an incomplete request");
-		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
+		if (null == credential)
+			throw new NeoComRuntimeException("RT [IndustryJobFactory.generateJobProcess]> JobManager cannot " +
+				"complete an incomplete request");
+		if (null == target)
+			throw new RuntimeException("RT [IndustryJobFactory.generateJobProcess]> JobManager cannot complete an incomplete request");
 		switch (action) {
 			case MANUFACTURE:
 				// Get the tech of the blueprint to generate the correct job processor.
-				final String tech = target.getTech();
-				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-					IJobProcess job = JobManager.checkCache("T1", thePilot, target);
-					if (null == job) {
-						job = new T1ManufactureProcess(JobManager.industryAssetsManager);
+				final EveItem.ItemTechnology tech = target.getTech();
+				switch (tech){
+					case Tech_1:
+//					IJobProcess job = JobManager.checkCache("T1", thePilot, target);
+//					if (null == job) {
+						job = new T1ManufactureProcess(IndustryJobFactory.industryAssetsManager);
 						job.setAssetsManager(JobManager.industryAssetsManager);
 						job.setPilot(thePilot);
 						job.setBlueprint(target);
@@ -103,13 +100,13 @@ public class IndustryJobFactory /*implements Serializable*/ {
 								+ Long.valueOf(target.getAssetID()).toString();
 						JobManager.jobprocesscache.put(jobid, job);
 						Log.i("CACHE", "-- Adding new process " + jobid);
-					}
+//					}
 					return job;
-				}
+//				}
 				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 					IJobProcess job = JobManager.checkCache("T2", thePilot, target);
 					if (null == job) {
-						job = new T2ManufactureProcess(JobManager.industryAssetsManager);
+						job = new org.dimensinfin.evedroid.industry.T2ManufactureProcess(JobManager.industryAssetsManager);
 						job.setAssetsManager(JobManager.industryAssetsManager);
 						job.setPilot(thePilot);
 						job.setBlueprint(target);
@@ -124,7 +121,7 @@ public class IndustryJobFactory /*implements Serializable*/ {
 			case INVENTION:
 				IJobProcess job = JobManager.checkCache("INV", thePilot, target);
 				if (null == job) {
-					job = new InventionProcess(JobManager.industryAssetsManager);
+					job = new org.dimensinfin.evedroid.industry.InventionProcess(JobManager.industryAssetsManager);
 					job.setAssetsManager(JobManager.industryAssetsManager);
 					job.setPilot(thePilot);
 					job.setBlueprint(target);

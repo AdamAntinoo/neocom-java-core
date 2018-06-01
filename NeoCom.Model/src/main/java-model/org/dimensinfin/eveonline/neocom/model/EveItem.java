@@ -12,6 +12,8 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -24,6 +26,35 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveItem extends NeoComNode {
+	public enum ItemTechnology {
+		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
+
+		// --- E N U M   I M P L E M E N T A T I O N
+		private String label;
+
+		ItemTechnology( String newlabel ) {
+			this.label = newlabel;
+		}
+
+		public String getName() {
+			return this.label;
+		}
+
+		/** Return the item tech from the label string by matching it to the enum label. */
+		public static ItemTechnology lookupLabel( String label ) {
+			return lookup.get(label);
+		}
+
+		// --- I N V E R S E   L O O K U P   T A B L E
+		private static final Map<String, ItemTechnology> lookup = new HashMap<>();
+
+		static {
+			for (ItemTechnology env : ItemTechnology.values()) {
+				lookup.put(env.getName(), env);
+			}
+		}
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2548296399305221197L;
 	private static EveItem defaultItem = null;
@@ -222,7 +253,6 @@ public class EveItem extends NeoComNode {
 	/**
 	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
 	 * not using now.
-	 *
 	 * @return
 	 */
 	public double getPrice() {
@@ -248,7 +278,6 @@ public class EveItem extends NeoComNode {
 	 * This is the key method used when instantiating an EveItem to set the eve item identifier of the game objectt that is
 	 * represented. During the setting for this value we instantiate the market data futures to be posted on a worker thread with
 	 * the hope to be resolved before the user requirement for the market data real values.
-	 *
 	 * @param typeId the eve game unique type identifier.
 	 */
 	public void setTypeId( final int typeId ) {
@@ -370,7 +399,6 @@ public class EveItem extends NeoComNode {
 	 * Submits a <code>Callable</code> request to the background threads to retrieve the data into the <code>Future</code>. In
 	 * the case the market data is accessed and the Future was not completed the thread should wait until the market data access
 	 * completes. Most of the calls will execute fast because the data being cached continuously py the scheduled submitted jobs.
-	 *
 	 * @param itemId the items id to search market data.
 	 * @param side   if we should search buy orders or sell orders.
 	 * @return a <code>Future</code> with the whole market data values.

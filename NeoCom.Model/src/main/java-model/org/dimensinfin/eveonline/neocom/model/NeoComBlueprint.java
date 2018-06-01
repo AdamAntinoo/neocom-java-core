@@ -87,7 +87,7 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 	@DatabaseField
 	private boolean packaged = false;
 	@DatabaseField
-	private String tech = ModelWideConstants.eveglobal.TechI;
+	private EveItem.ItemTechnology tech = EveItem.ItemTechnology.Tech_1;
 	/**
 	 * Blueprints are packed. Most of the times the blueprints are multiple stacks of a single item with some many copies. This
 	 * is not usable on lists so while processing we pack blueprints of equal characteristics (same type, same efficiency, same
@@ -281,7 +281,7 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 		return stackIdRefences;
 	}
 
-	public String getTech() {
+	public EveItem.ItemTechnology getTech() {
 		return tech;
 	}
 
@@ -393,7 +393,7 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 		return this;
 	}
 
-	public void setTech( final String tech ) {
+	public void setTech( final EveItem.ItemTechnology tech ) {
 		this.tech = tech;
 	}
 
@@ -520,8 +520,8 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 	 * @return
 	 */
 	// TODO - We need to recode this call from the stack of SDE queries.
-	private String obtainTech() {
-		return accessSDEDBHelper().searchTech4Blueprint(this.typeId);
+	private EveItem.ItemTechnology obtainTech() {
+		return EveItem.ItemTechnology.lookupLabel(accessSDEDBHelper().searchTech4Blueprint(this.typeId));
 	}
 }
 

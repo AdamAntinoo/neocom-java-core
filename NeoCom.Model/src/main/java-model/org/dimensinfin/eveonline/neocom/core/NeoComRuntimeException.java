@@ -18,7 +18,7 @@ public class NeoComRuntimeException extends RuntimeException {
 	private static final long serialVersionUID = 8864888568628860054L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String jsonClass = "Exception";
+	private String jsonClass = "NeoComRuntimeException";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComRuntimeException() {
