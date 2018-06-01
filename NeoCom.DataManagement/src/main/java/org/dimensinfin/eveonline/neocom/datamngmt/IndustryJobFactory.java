@@ -1,35 +1,42 @@
-//	PROJECT:        EVEIndustrialist (EVEI)
-//	AUTHORS:        Adam Antinoo - adamantinoo.git@gmail.com
-//	COPYRIGHT:      (c) 2013-2014 by Dimensinfin Industries, all rights reserved.
-//	ENVIRONMENT:		Android API11.
-//	DESCRIPTION:		Application helper for Eve Online Industrialists. Will help on Industry and Manufacture.
+//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
+//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
+//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
+//  ENVIRONMENT: Java 1.8 Library.
+//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
+//               functionality than the model definitions for the Eve Online NeoCom application.
+//               If now defines the pure java code for all the repositories, caches and managers that do
+//               not have an specific Android implementation serving as a code base for generic platform
+//               development. The architecture model has also changed to a better singleton/static
+//               implementation that reduces dependencies and allows separate use of the modules. Still
+//               there should be some initialization/configuration code to connect the new library to the
+//               runtime implementation provided by the Application.
+package org.dimensinfin.eveonline.neocom.datamngmt;
 
-package org.dimensinfin.evedroid.industry;
-
-// - IMPORT SECTION .........................................................................................
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.dimensinfin.evedroid.R;
-import org.dimensinfin.evedroid.connector.AppConnector;
-import org.dimensinfin.evedroid.constant.ModelWideConstants;
-import org.dimensinfin.evedroid.core.EIndustryGroup;
-import org.dimensinfin.evedroid.manager.AssetsManager;
-import org.dimensinfin.evedroid.model.Action;
-import org.dimensinfin.evedroid.model.Blueprint;
-import org.dimensinfin.evedroid.model.EveChar;
-import org.dimensinfin.evedroid.model.EveLocation;
-import org.dimensinfin.evedroid.model.Job;
-import org.dimensinfin.evedroid.part.BlueprintPart;
+import com.j256.ormlite.dao.Dao;
+
+import org.dimensinfin.eveonline.neocom.R;
+import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.database.entity.Job;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.enums.EJobClasses;
+import org.dimensinfin.eveonline.neocom.interfaces.IJobProcess;
+import org.dimensinfin.eveonline.neocom.manager.AssetsManager;
+import org.dimensinfin.eveonline.neocom.model.Action;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.model.NeoComCharacter;
+import org.dimensinfin.eveonline.neocom.part.BlueprintPart;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Instant;
-
-import android.util.Log;
-
-import com.j256.ormlite.dao.Dao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Job Manager will be the application element responsible to get all the structures required to create an
@@ -47,23 +54,26 @@ import com.j256.ormlite.dao.Dao;
  * The result for all this is a new <code>IJob</code> that will implement the requested Action. The action is
  * not an object and may be a parameter but the result is the object we will use to create the element used by
  * the interface like List Of Materials, durations, costs and more.
- * 
+ *
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class JobManager implements Serializable {
+public class IndustryJobFactory /*implements Serializable*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long													serialVersionUID			= 8549982228327471340L;
+//	private static final long													serialVersionUID			= 8549982228327471340L;
+	private static Logger logger = LoggerFactory.getLogger("NeoComAsset");
+
 	private static final HashMap<String, IJobProcess>	jobprocesscache				= new HashMap<String, IJobProcess>();
 	private static AssetsManager											industryAssetsManager	= null;
 
 	public static void clearCache() {
 		Log.i("CACHE", "-- CLEARING job process cache");
-		jobprocesscache.clear();
-		industryAssetsManager = null;
+		JobManager.jobprocesscache.clear();
+		JobManager.industryAssetsManager = null;
 	}
 
-	public static IJobProcess generateJobProcess(final EveChar thePilot, final Blueprint target, final EJobClasses action) {
+	public static IJobProcess generateJobProcess(final NeoComCharacter thePilot, final NeoComBlueprint target,
+			final EJobClasses action) {
 		if (null == thePilot) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		switch (action) {
@@ -71,44 +81,44 @@ public class JobManager implements Serializable {
 				// Get the tech of the blueprint to generate the correct job processor.
 				final String tech = target.getTech();
 				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-					IJobProcess job = checkCache("T1", thePilot, target);
+					IJobProcess job = JobManager.checkCache("T1", thePilot, target);
 					if (null == job) {
-						job = new T1ManufactureProcess(industryAssetsManager);
-						job.setAssetsManager(industryAssetsManager);
+						job = new T1ManufactureProcess(JobManager.industryAssetsManager);
+						job.setAssetsManager(JobManager.industryAssetsManager);
 						job.setPilot(thePilot);
 						job.setBlueprint(target);
 						final String jobid = "T1." + Long.valueOf(thePilot.getCharacterID()).toString() + "."
 								+ Long.valueOf(target.getAssetID()).toString();
-						jobprocesscache.put(jobid, job);
+						JobManager.jobprocesscache.put(jobid, job);
 						Log.i("CACHE", "-- Adding new process " + jobid);
 					}
 					return job;
 				}
 				if (tech.equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-					IJobProcess job = checkCache("T2", thePilot, target);
+					IJobProcess job = JobManager.checkCache("T2", thePilot, target);
 					if (null == job) {
-						job = new T2ManufactureProcess(industryAssetsManager);
-						job.setAssetsManager(industryAssetsManager);
+						job = new T2ManufactureProcess(JobManager.industryAssetsManager);
+						job.setAssetsManager(JobManager.industryAssetsManager);
 						job.setPilot(thePilot);
 						job.setBlueprint(target);
 						final String jobid = "T2." + Long.valueOf(thePilot.getCharacterID()).toString() + "."
 								+ Long.valueOf(target.getAssetID()).toString();
-						jobprocesscache.put(jobid, job);
+						JobManager.jobprocesscache.put(jobid, job);
 						Log.i("CACHE", "-- Adding new process " + jobid);
 					}
 					return job;
 				}
 				break;
 			case INVENTION:
-				IJobProcess job = checkCache("INV", thePilot, target);
+				IJobProcess job = JobManager.checkCache("INV", thePilot, target);
 				if (null == job) {
-					job = new InventionProcess(industryAssetsManager);
-					job.setAssetsManager(industryAssetsManager);
+					job = new InventionProcess(JobManager.industryAssetsManager);
+					job.setAssetsManager(JobManager.industryAssetsManager);
 					job.setPilot(thePilot);
 					job.setBlueprint(target);
 					final String jobid = "INV." + Long.valueOf(thePilot.getCharacterID()).toString() + "."
 							+ Long.valueOf(target.getAssetID()).toString();
-					jobprocesscache.put(jobid, job);
+					JobManager.jobprocesscache.put(jobid, job);
 					Log.i("CACHE", "-- Adding new process " + jobid);
 				}
 				return job;
@@ -140,21 +150,22 @@ public class JobManager implements Serializable {
 	 * so next action will not found "reserved" resources as available. Blueprints are an exception because they
 	 * are already segregated into different virtual stacks, some of them visible to Industry and some not.
 	 */
-	public static void initializeAssets(final EveChar pilot) {
+	public static void initializeAssets(final NeoComCharacter pilot) {
 		Log.i("EVEI", ">> JobManager.initializeAssets");
 		if (null != pilot) {
-			industryAssetsManager = new AssetsManager(pilot);
+			JobManager.industryAssetsManager = new AssetsManager(pilot);
 
 			// Get the user jobs and start processing their resources.
-			final ArrayList<Job> userjobs = AppConnector.getDBConnector().searchJob4Class(pilot.getCharacterID(), "UJOB");
+			final ArrayList<Job> userjobs = (ArrayList<Job>) NeoComAppConnector.getSingleton().getDBConnector()
+					.searchJob4Class(pilot.getCharacterID(), "UJOB");
 			Log.i("EVEI", "-- JobManager.initializeAssets.userjobs:" + userjobs);
 			for (final Job job : userjobs) {
 				// Get the unique blueprint used on the job and generate the jobs tasks.
-				final Blueprint blueprint = industryAssetsManager.searchBlueprintByID(job.getBlueprintID());
+				final NeoComBlueprint blueprint = JobManager.industryAssetsManager.searchBlueprintByID(job.getBlueprintID());
 				// If the blueprint if not found then the job has been started on real. Drop the job
 				if (null == blueprint) {
 					try {
-						AppConnector.getDBConnector().getJobDAO().delete(job);
+						NeoComAppConnector.getSingleton().getDBConnector().getJobDAO().delete(job);
 						// Clear the cache in memory
 						pilot.cleanJobs();
 					} catch (final SQLException e) {
@@ -162,7 +173,7 @@ public class JobManager implements Serializable {
 					continue;
 				}
 				// Create a new blueprint for the processing adjusting the thread count to 1.
-				final Blueprint bp = new Blueprint(blueprint.getAssetID());
+				final NeoComBlueprint bp = new NeoComBlueprint(blueprint.getAssetID());
 				bp.setRuns(job.getRuns());
 				final IJobProcess process = JobManager.generateJobProcess(pilot, bp,
 						EJobClasses.decodeActivity(job.getActivityID()));
@@ -181,7 +192,7 @@ public class JobManager implements Serializable {
 	 * We can locate the list of blueprints with a selected typeID and then filter them to the location. It
 	 * would also be possible to pack the single blueprint instances inside the children list of the stack
 	 * during the stacking.
-	 * 
+	 *
 	 * @param pilot
 	 *          the character that is going to launch the manufacture job
 	 * @param part
@@ -191,10 +202,11 @@ public class JobManager implements Serializable {
 	 * @param activityID
 	 *          the code of the activity. Maybe manufacture or invention or whatever.
 	 */
-	public static void launchJob(final EveChar pilot, final BlueprintPart part, final int runs, final int activityID) {
+	public static void launchJob(final NeoComCharacter pilot, final BlueprintPart part, final int runs,
+			final int activityID) {
 		Log.i("EVEI", ">> JobManager.launchJob.Blueprint:" + part + " [" + runs + "]");
 		// Get the list of blueprint assets stacked on this part.
-		final Blueprint blueprint = part.getCastedModel();
+		final NeoComBlueprint blueprint = part.getCastedModel();
 		final String refList = blueprint.getStackIDRefences();
 		final String[] refs = refList.split(ModelWideConstants.STACKID_SEPARATOR);
 		int refPosition = 0;
@@ -225,7 +237,7 @@ public class JobManager implements Serializable {
 				newJob.setStartDate(now.toDate());
 				newJob.setEndDate(now.plus(part.getRunTime() * jobRuns * 1000).toDate());
 				try {
-					final Dao<Job, String> jobDao = AppConnector.getDBConnector().getJobDAO();
+					final Dao<Job, String> jobDao = NeoComAppConnector.getSingleton().getDBConnector().getJobDAO();
 					jobDao.create(newJob);
 					refPosition++;
 					Log.i("EVEI", "-- JobManager.launchJob.Wrote [" + newJob + "]");
@@ -247,7 +259,7 @@ public class JobManager implements Serializable {
 
 	//	/**
 	//	 * Searches in the SDE database the blueprint type id used to invent this T2 blueprint.
-	//	 * 
+	//	 *
 	//	 * @param typeID
 	//	 * @return
 	//	 */
@@ -256,24 +268,24 @@ public class JobManager implements Serializable {
 	//	}
 
 	public static ArrayList<Resource> searchListOfMaterials4Manufacture(final int bpid) {
-		return AppConnector.getDBConnector().searchListOfMaterials(bpid);
+		return NeoComAppConnector.getSingleton().getDBConnector().searchListOfMaterials(bpid);
 	}
 
 	/**
 	 * Check the existence of this precise job process in the cache. If found it will return that instance. This
 	 * will speed up most of the process because if the job is already created all the initialization code can
 	 * be removed from the access and moved to the creation.
-	 * 
+	 *
 	 * @param tech
-	 * 
+	 *
 	 * @param pilot
 	 * @param target
 	 * @return
 	 */
-	private static IJobProcess checkCache(final String tech, final EveChar pilot, final Blueprint target) {
+	private static IJobProcess checkCache(final String tech, final NeoComCharacter pilot, final NeoComBlueprint target) {
 		final String jobid = tech + "." + Long.valueOf(pilot.getCharacterID()).toString() + "."
 				+ Long.valueOf(target.getTypeID()).toString();
-		final IJobProcess hit = jobprocesscache.get(jobid);
+		final IJobProcess hit = JobManager.jobprocesscache.get(jobid);
 		return hit;
 	}
 	// - F I E L D - S E C T I O N ............................................................................
