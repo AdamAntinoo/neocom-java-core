@@ -49,9 +49,6 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 	 */
 	@DatabaseField(index = true, generatedId = true)
 	private final long id = -2;
-	//	/**
-//	 * This field connects the blueprint with the matching asset. The asset reference is not database enforced.
-//	 */
 	@DatabaseField(index = true)
 	protected long blueprintId;
 	@DatabaseField(index = true)
@@ -107,11 +104,10 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 	private int manufactureIndex = -1;
 	@DatabaseField
 	private final int inventionIndex = -1;
-
-//	@DatabaseField
-//	private double						jobProductionCost		= -1.0;
-//	@DatabaseField
-//	private int								manufacturableCount	= -1;
+	@DatabaseField
+	private double jobProductionCost = -1.0;
+	@DatabaseField
+	private int manufacturableCount = -1;
 
 	// - F I E L D - S E C T I O N ............................................................................
 	protected transient NeoComAsset parentAssetCache = null;
