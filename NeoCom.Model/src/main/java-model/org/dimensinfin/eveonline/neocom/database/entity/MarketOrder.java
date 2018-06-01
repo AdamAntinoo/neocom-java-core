@@ -23,7 +23,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
@@ -156,7 +156,7 @@ public class MarketOrder extends NeoComNode {
 		if (null == orderItem) {
 			try {
 				orderItem = accessGlobal().searchItem4Id(typeId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				orderItem = new EveItem();
 			}
 		}
@@ -167,7 +167,7 @@ public class MarketOrder extends NeoComNode {
 		if (null == orderLocation) {
 			try {
 				orderLocation = accessGlobal().searchLocation4Id(locationId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				orderLocation = new EveLocation();
 			}
 		}

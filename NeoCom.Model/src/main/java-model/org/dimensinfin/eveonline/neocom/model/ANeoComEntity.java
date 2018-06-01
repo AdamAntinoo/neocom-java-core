@@ -13,8 +13,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.core.model.AbstractPropertyChanger;
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.interfaces.IDatabaseEntity;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
@@ -46,10 +45,10 @@ public abstract class ANeoComEntity extends AbstractPropertyChanger implements I
 	public static void connectGlobal( final IGlobalConnector global ) {
 		globalConnector = global;
 	}
-	public static IGlobalConnector accessGlobal( ) throws NeocomRuntimeException {
+	public static IGlobalConnector accessGlobal( ) throws NeoComRuntimeException {
 		if (null != globalConnector) return globalConnector;
 		else
-			throw new NeocomRuntimeException("[ANeoComEntity.accessGlobal]> Global connector not connected to Model. Database " +
+			throw new NeoComRuntimeException("[ANeoComEntity.accessGlobal]> Global connector not connected to Model. Database " +
 					                          "disabled as other application functionality.");
 	}
 	/**
@@ -70,10 +69,10 @@ public abstract class ANeoComEntity extends AbstractPropertyChanger implements I
 //		neocomDBHelper = helper;
 //	}
 
-	public static ISDEDBHelper accessSDEDBHelper() throws NeocomRuntimeException {
+	public static ISDEDBHelper accessSDEDBHelper() throws NeoComRuntimeException {
 		if (null != SDEHelper) return SDEHelper;
 		else
-			throw new NeocomRuntimeException("[ANeoComEntity.accessSDEDBHelper]> Database Helper not connected to Model. Database " +
+			throw new NeoComRuntimeException("[ANeoComEntity.accessSDEDBHelper]> Database Helper not connected to Model. Database " +
 					                          "disabled.");
 	}
 

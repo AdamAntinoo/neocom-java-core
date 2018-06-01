@@ -131,7 +131,7 @@ public class CCPDatabaseModelConnector {
 	//		if ( null != cursor ) {
 	//			final RawStatement statement = new RawStatement(cursor);
 	//			return statement;
-	//		} else throw new NeocomRuntimeException("Invalid cursor when processing query: "+query);
+	//		} else throw new NeoComRuntimeException("Invalid cursor when processing query: "+query);
 	//	}
 
 	/**

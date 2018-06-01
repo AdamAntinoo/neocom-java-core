@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.Colony;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
@@ -101,7 +101,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 				}
 			}
 			return results;
-		} catch (NeocomRuntimeException nrex) {
+		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadIndustryJobs4Credential]> Credential not found in the list. Exception: {}", nrex
 					.getMessage());
 			return new ArrayList<>();
@@ -135,7 +135,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 				}
 			}
 			return results;
-		} catch (NeocomRuntimeException nrex) {
+		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadMarketOrders4Credential]> Credential not found in the list. Exception: {}", nrex
 					.getMessage());
 			return new ArrayList<>();
@@ -174,7 +174,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 				}
 			}
 			return results;
-		} catch (NeocomRuntimeException nrex) {
+		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadMarketOrdersHistory4Credential]> Credential not found in the list. Exception: {}", nrex
 					.getMessage());
 			return new ArrayList<>();
@@ -309,7 +309,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 				}
 			}
 			return results;
-		} catch (NeocomRuntimeException nrex) {
+		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadFittings4Credential]> Credential not found in the list. Exception: {}", nrex
 					.getMessage());
 			return new ArrayList<>();

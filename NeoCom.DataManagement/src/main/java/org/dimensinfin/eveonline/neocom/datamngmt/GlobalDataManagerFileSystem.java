@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 
 /**
@@ -42,7 +42,7 @@ public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
 
 	protected static IFileSystem getFileSystem() {
 		if (null != fileSystemIsolation) return fileSystemIsolation;
-		else throw new NeocomRuntimeException("File System isolation layer is not installed.");
+		else throw new NeoComRuntimeException("File System isolation layer is not installed.");
 	}
 
 	public static InputStream openResource4Input( final String filePath ) throws IOException {

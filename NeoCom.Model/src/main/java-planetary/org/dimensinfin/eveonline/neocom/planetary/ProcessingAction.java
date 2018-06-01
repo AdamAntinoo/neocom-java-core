@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -60,7 +60,7 @@ public class ProcessingAction extends NeoComNode {
 		// Get the item for the target id to be identified on the Json serialization.
 		try {
 			targetItem = accessGlobal().searchItem4Id(targetId);
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			targetItem = new EveItem();
 		}
 		// Get the schematics information.

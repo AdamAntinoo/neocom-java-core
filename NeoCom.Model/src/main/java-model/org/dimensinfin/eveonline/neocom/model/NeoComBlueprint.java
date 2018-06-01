@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
@@ -203,7 +203,7 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 			if (null == locationCache) {
 				locationCache = accessGlobal().searchLocation4Id(locationId);
 			}
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			locationCache = new EveLocation();
 		}
 		return locationCache;

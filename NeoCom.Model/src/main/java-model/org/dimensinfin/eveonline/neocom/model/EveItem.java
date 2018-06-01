@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
@@ -100,7 +100,7 @@ public class EveItem extends NeoComNode {
 		if (null == category) {
 			try {
 				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				category = new ItemCategory();
 			}
 		}
@@ -111,7 +111,7 @@ public class EveItem extends NeoComNode {
 		if (null == group) {
 			try {
 				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				group = new ItemGroup();
 			}
 		}
@@ -123,7 +123,7 @@ public class EveItem extends NeoComNode {
 		if (null == category) {
 			try {
 				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				category = new ItemCategory();
 			}
 		}
@@ -134,7 +134,7 @@ public class EveItem extends NeoComNode {
 		if (null == category) {
 			try {
 				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				category = new ItemCategory();
 			}
 		}
@@ -145,7 +145,7 @@ public class EveItem extends NeoComNode {
 		if (null == group) {
 			try {
 				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				group = new ItemGroup();
 			}
 		}
@@ -229,7 +229,7 @@ public class EveItem extends NeoComNode {
 		if (defaultprice < 0.0) {
 			try {
 				defaultprice = accessGlobal().searchMarketPrice(getTypeId()).getAdjustedPrice();
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				defaultprice = -1.0;
 			}
 			if (defaultprice < 1.0) defaultprice = baseprice;
@@ -261,7 +261,7 @@ public class EveItem extends NeoComNode {
 		this.groupId = groupid;
 		try {
 			group = accessSDEDBHelper().searchItemGroup4Id(groupid);
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			group = new ItemGroup();
 		}
 	}
@@ -270,7 +270,7 @@ public class EveItem extends NeoComNode {
 		this.categoryId = categoryid;
 		try {
 			category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			category = new ItemCategory();
 		}
 	}

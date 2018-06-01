@@ -13,7 +13,7 @@
 package org.dimensinfin.eveonline.neocom.core;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class NeocomRuntimeException extends RuntimeException {
+public class NeoComRuntimeException extends RuntimeException {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 8864888568628860054L;
 
@@ -21,11 +21,11 @@ public class NeocomRuntimeException extends RuntimeException {
 	private String jsonClass = "Exception";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeocomRuntimeException() {
+	public NeoComRuntimeException() {
 		super();
 	}
 
-	public NeocomRuntimeException( final String message ) {
+	public NeoComRuntimeException( final String message ) {
 		super(message);
 	}
 

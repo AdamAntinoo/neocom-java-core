@@ -22,6 +22,7 @@ import com.j256.ormlite.dao.Dao;
 import org.dimensinfin.eveonline.neocom.R;
 import org.dimensinfin.eveonline.neocom.connector.NeoComAppConnector;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EJobClasses;
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Job Manager will be the application element responsible to get all the structures required to create an
  * Industry job and create the right IJob component that will control all the data required by the user and
- * the UI to show the job requirements.<br>
+ * the UI to show the job requirements.
  * <ul>
  * <li>The elements required start by the Owner (a <code>EveChar</code>) of the resources. This is needed to
  * get access to the list of assets, the locations and skill information between other required data.</li>
@@ -59,22 +60,33 @@ import org.slf4j.LoggerFactory;
  */
 // - CLASS IMPLEMENTATION ...................................................................................
 public class IndustryJobFactory /*implements Serializable*/ {
+	public enum EJobClasses {
+		MANUFACTURE, INVENTION, TIMERESEARCH, MATERIALRESEARCH, COPYING;
+
+		public static EJobClasses decodeActivity(final int activityID) {
+			if (activityID == 1) return MANUFACTURE;
+			if (activityID == 8) return INVENTION;
+			return MANUFACTURE;
+		}
+	}
+
 	// - S T A T I C - S E C T I O N ..........................................................................
 //	private static final long													serialVersionUID			= 8549982228327471340L;
 	private static Logger logger = LoggerFactory.getLogger("NeoComAsset");
 
-	private static final HashMap<String, IJobProcess>	jobprocesscache				= new HashMap<String, IJobProcess>();
-	private static AssetsManager											industryAssetsManager	= null;
+//	private static final HashMap<String, IJobProcess>	jobprocesscache				= new HashMap<String, IJobProcess>();
+//	private static AssetsManager											industryAssetsManager	= null;
 
 	public static void clearCache() {
-		Log.i("CACHE", "-- CLEARING job process cache");
-		JobManager.jobprocesscache.clear();
-		JobManager.industryAssetsManager = null;
+//		Log.i("CACHE", "-- CLEARING job process cache");
+//		IndustryJobFactory.jobprocesscache.clear();
+//		IndustryJobFactory.industryAssetsManager = null;
 	}
 
-	public static IJobProcess generateJobProcess(final NeoComCharacter thePilot, final NeoComBlueprint target,
-			final EJobClasses action) {
-		if (null == thePilot) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
+	public static IJobProcess generateJobProcess( final Credential credential, final NeoComBlueprint target,
+	                                              final EJobClasses action) {
+		if (null == credential) throw
+				new NeoComRuntimeException("E> JobManager cannot complete an incomplete request");
 		if (null == target) throw new RuntimeException("E> JobManager cannot complete an incomplete request");
 		switch (action) {
 			case MANUFACTURE:

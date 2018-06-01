@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -134,7 +134,7 @@ public class Job extends NeoComNode {
 			if (null == blueprintItem) {
 				blueprintItem = accessGlobal().searchItem4Id(blueprintTypeId);
 			}
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			blueprintItem = new EveItem();
 		}
 		return blueprintItem.getName();
@@ -177,7 +177,7 @@ public class Job extends NeoComNode {
 			if (null == jobLocation) {
 				jobLocation = accessGlobal().searchLocation4Id(facilityId);
 			}
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			jobLocation = new EveLocation();
 		}
 		return jobLocation;
@@ -260,7 +260,7 @@ public class Job extends NeoComNode {
 			this.blueprintLocationId = blueprintLocationId;
 			// Cache the location pointed bu this identifier.
 			blueprintLocation = accessGlobal().searchLocation4Id(blueprintLocationId);
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			blueprintLocation = new EveLocation();
 		}
 		return this;
@@ -274,7 +274,7 @@ public class Job extends NeoComNode {
 			// Calculate the resulting item type.
 			productTypeId = accessGlobal().searchModule4Blueprint(blueprintTypeId);
 			productItem = accessGlobal().searchItem4Id(productTypeId);
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			blueprintItem = new EveItem();
 			productTypeId = 34;
 			productItem = new EveItem();
@@ -294,7 +294,7 @@ public class Job extends NeoComNode {
 			} else jobOutputLocation = ouputLocation;
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-		} catch (NeocomRuntimeException neoe) {
+		} catch (NeoComRuntimeException neoe) {
 			jobOutputLocation = new EveLocation();
 		}
 		return this;

@@ -21,7 +21,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.core.NeocomRuntimeException;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -218,7 +218,7 @@ public class EveLocation extends NeoComNode {
 						.append(accessGlobal().searchStationType(stationId))
 						.append("_64.png")
 						.toString();
-			} catch (NeocomRuntimeException neoe) {
+			} catch (NeoComRuntimeException neoe) {
 				urlLocationIcon = new StringBuffer()
 						.append("http://image.eveonline.com/Render/")
 						.append(stationId)
@@ -345,7 +345,7 @@ public class EveLocation extends NeoComNode {
 		EveLocation systemLocation;
 		try {
 			systemLocation = accessGlobal().searchLocation4Id(newid);
-		} catch (NeocomRuntimeException newe) {
+		} catch (NeoComRuntimeException newe) {
 			systemLocation = new EveLocation();
 		}
 		systemId = systemLocation.getSystemId();
