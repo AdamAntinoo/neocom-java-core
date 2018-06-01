@@ -27,6 +27,7 @@ import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
@@ -42,8 +43,8 @@ public class DownloadManager {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private transient Credential credential = null;
-	//	private transient Dao<NeoComAsset, String> assetDao = null;
-	private List<NeoComAsset> unlocatedAssets = null;
+	private final List<NeoComAsset> unlocatedAssets = new ArrayList<>();
+	private final List<NeoComBlueprint> unlocatedBlueprints = new ArrayList<>();
 	private transient final List<Long> id4Names = new ArrayList<>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -87,7 +88,7 @@ public class DownloadManager {
 			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = ESINetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
 			if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
 			// Create the list for orphaned locations assets. They should be processed later.
-			unlocatedAssets = new ArrayList<NeoComAsset>();
+			this.unlocatedAssets.clear();
 			// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
 			for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
 				//--- A S S E T   P R O C E S S I N G
@@ -118,7 +119,7 @@ public class DownloadManager {
 					EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(myasset.getLocationId());
 					if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 						// Add this asset to the list of items to be reprocessed.
-						unlocatedAssets.add(myasset);
+						this.unlocatedAssets.add(myasset);
 					}
 				} catch (final RuntimeException rtex) {
 					DownloadManager.logger.info("RTEX ´[AssetsManager.downloadPilotAssetsESI]> Processing asset: {} - {}"
@@ -128,7 +129,7 @@ public class DownloadManager {
 			}
 			//--- O R P H A N   L O C A T I O N   A S S E T S
 			// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
-			for (NeoComAsset asset : unlocatedAssets) {
+			for (NeoComAsset asset : this.unlocatedAssets) {
 				this.validateLocation(asset);
 			}
 			// Assign the assets to the pilot.
@@ -144,6 +145,22 @@ public class DownloadManager {
 		return true;
 	}
 
+	/**
+	 * The new reingeneered blueprint download should behave as the assets download. Now blueprints are not listed under the
+	 * assets api but at the character and generate a new paged list of the blueprints. As the new list of assets the blueprint
+	 * has two location fields, una is the location identifier and the other is the flag that tells which type of locations this
+	 * identifier represents.
+	 *
+	 * Once the initial list of blueprints is processed, we should do two new actions, the first is to replace the location by a
+	 * real location running up the parent hierarchy list and setting the location identifier as the parent container parent. The
+	 * second action is to pack the blueprints of identical characteristics and at the same location under a unique record, but
+	 * keeping the list of former blueprint records to be able to reconstruct the original list. To do this we generate a
+	 * blueprint stack identifier and merge all the blueprints with the same stack identifier into a single database record.
+	 *
+	 * The download method will also precalculate the Industrial indexes for the blueprint stack and store the result into the
+	 * database record.
+	 * @return
+	 */
 	public boolean downloadPilotBlueprintsESI() {
 		DownloadManager.logger.info(">> [AssetsManager.downloadPilotBlueprintsESI]");
 		try {
@@ -158,16 +175,17 @@ public class DownloadManager {
 					);
 			if ((null == blueprintOkList) || (blueprintOkList.size() < 1)) return false;
 //			// Create the list for orphaned locations assets. They should be processed later.
+			this.unlocatedBlueprints.clear();
 			final List<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
-			// Blueprints point to another node qualified as asset. So the location and the rest of the data comes from that already
-			// processed asset. While adding that field we expect the blueprint instance to auto connect itself.
 			for (final GetCharactersCharacterIdBlueprints200Ok blueprintOk : blueprintOkList) {
 				//--- B L U E P R I N T   P R O C E S S I N G
-				 NeoComBlueprint newBlueprint =null;
+				NeoComBlueprint newBlueprint =null;
 				try {
-					// TODO - Check that after the asset association we have the correct location information.
-					 newBlueprint = new NeoComBlueprint(blueprintOk.getItemId())
-							.setTypeId(blueprintOk.getTypeId())
+					// Convert the blueprint from the OK format to a MVC compatible structure.
+					newBlueprint = new NeoComBlueprint(blueprintOk.getItemId(),blueprintOk.getTypeId())
+//							.setTypeId(blueprintOk.getTypeId())
+							.setLocationId(blueprintOk.getLocationId())
+							.setLocationFlag(blueprintOk.getLocationFlag())
 							.setQuantity(blueprintOk.getQuantity())
 							.setTimeEfficiency(blueprintOk.getTimeEfficiency())
 							.setMaterialEfficiency(blueprintOk.getMaterialEfficiency())
@@ -177,12 +195,49 @@ public class DownloadManager {
 					if (blueprintOk.getRuns() == -1) {
 						newBlueprint.setBpo(true);
 					}
+					// Mark the asset owner to the work in progress value.
+					newBlueprint.setOwnerId(this.credential.getAccountId() * -1);
+					// With blueprints separate the update from the creation because they use a generated unique key.
+					new GlobalDataManager().getNeocomDBHelper().getBlueprintDao().create(newBlueprint);
+					DownloadManager.logger.info("-- Wrote blueprint to database id [" + newBlueprint.getBlueprintId() + "]");
+
+					//--- L O C A T I O N   P R O C E S S I N G
+					// Check the blueprint location. The location can be a known game station, a known user structure, another asset
+					// or an unknown player structure. Check which one is this location.
+					EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(newBlueprint.getLocationId());
+					if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+						// Add this blueprint to the list of items to be reprocessed.
+						this.unlocatedBlueprints.add(newBlueprint);
+					}
 				} catch (final RuntimeException rtex) {
-					// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-					DownloadManager.logger.info("W> The Blueprint " + newBlueprint.getAssetId() + " has no matching asset.");
-					DownloadManager.logger.info("W> " + newBlueprint.toString());
+					DownloadManager.logger.info("RTEX ´[AssetsManager.downloadPilotBlueprintsESI]> Processing blueprint: {} - {}"
+							, newBlueprint.getBlueprintId(), rtex.getMessage());
+					rtex.printStackTrace();
 				}
 			}
+			//--- O R P H A N   L O C A T I O N   A S S E T S
+			// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
+			for (NeoComBlueprint blu : this.unlocatedBlueprints) {
+				this.validateLocation(blu);
+			}
+
+
+
+
+
+			// Blueprints point to another node qualified as asset. So the location and the rest of the data comes from that already
+			// processed asset. While adding that field we expect the blueprint instance to auto connect itself.
+//			for (final GetCharactersCharacterIdBlueprints200Ok blueprintOk : blueprintOkList) {
+//				//--- B L U E P R I N T   P R O C E S S I N G
+//				 NeoComBlueprint newBlueprint =null;
+//				try {
+//					// TODO - Check that after the asset association we have the correct location information.
+//				} catch (final RuntimeException rtex) {
+//					// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
+//					DownloadManager.logger.info("W> The Blueprint " + newBlueprint.getAssetId() + " has no matching asset.");
+//					DownloadManager.logger.info("W> " + newBlueprint.toString());
+//				}
+//			}
 			// Pack the blueprints and store them on the database.
 			storeBlueprints(bplist);
 			// Assign the blueprints to the pilot.
@@ -230,7 +285,7 @@ public class DownloadManager {
 		newAsset.setLocationId(locid)
 				.setLocationType(asset200Ok.getLocationType())
 				.setQuantity(asset200Ok.getQuantity())
-				.setFlag(asset200Ok.getLocationFlag())
+				.setLocationFlag(asset200Ok.getLocationFlag())
 				.setSingleton(asset200Ok.getIsSingleton());
 		// Get access to the Item and update the copied fields.
 		final EveItem item = new GlobalDataManager().searchItem4Id(newAsset.getTypeId());
@@ -286,8 +341,8 @@ public class DownloadManager {
 	 * (Container, Ship, etc) or another player/corporation structure resource that is not listed on the asset
 	 * list.
 	 */
-	private ELocationType validateLocation( final NeoComAsset asset ) {
-		long targetLocationid = asset.getLocationId();
+	private ELocationType validateLocation( final ILocatableAsset locatable ) {
+		long targetLocationid = locatable.getLocationId();
 		EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(targetLocationid);
 		if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 			try {
@@ -300,7 +355,7 @@ public class DownloadManager {
 					return ELocationType.UNKNOWN;
 				else {
 					// Change the asset parentship and update the asset location with the location of the parent.
-					asset.setParentId(targetLocationid);
+					locatable.setParentId(targetLocationid);
 
 					// Search recursively on the parentship chain until a leaf is found. Then check that location.
 					long parentIdentifier = target.getParentContainerId();
@@ -313,10 +368,10 @@ public class DownloadManager {
 					}
 					// Now target contains a parent with parentship -1.
 					// Set to this asset the parent location whichever it is.
-					asset.setLocationId(target.getLocationId())
-							.setLocationType(target.getLocationType())
-							.setFlag(target.getFlag());
-					asset.store();
+					locatable.setLocationId(target.getLocationId());
+					locatable.setLocationType(target.getLocationType());
+					locatable.setLocationFlag(target.getFlag());
+					locatable.store();
 					return target.getLocation().getTypeId();
 				}
 			} catch (SQLException sqle) {
@@ -330,10 +385,10 @@ public class DownloadManager {
 	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
 	 */
 	private void downloadAssetEveName( final long assetId ) {
-		id4Names.add(assetId);
-		if (id4Names.size() > 9) {
+		this.id4Names.add(assetId);
+		if (this.id4Names.size() > 9) {
 			postUserLabelNameDownload();
-			id4Names.clear();
+			this.id4Names.clear();
 		}
 	}
 
@@ -392,15 +447,15 @@ public class DownloadManager {
 				//				blueprint.setManufacturableCount(process.getManufacturableCount());
 				blueprintDao.create(blueprint);
 				DownloadManager.logger.info("-- [DownloadManager.storeBlueprints]> Wrote blueprint to database id [" + blueprint
-						.getAssetId() + "]");
+						.getBlueprintId() + "]");
 			} catch (final SQLException sqle) {
 				DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
-						.getAssetId() + "]. "
+						.getBlueprintId() + "]. "
 						+ sqle.getMessage());
 				sqle.printStackTrace();
 			} catch (final RuntimeException rtex) {
 				DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
-						.getAssetId() + "]. "
+						.getBlueprintId() + "]. "
 						+ rtex.getMessage());
 				rtex.printStackTrace();
 			}
@@ -423,12 +478,12 @@ public class DownloadManager {
 		if (null == hit) {
 			// Miss. The blueprint is not registered.
 			DownloadManager.logger.info("-- AssetsManager.checkBPCStacking >Stacked blueprint. " + bp.toString());
-			bp.registerReference(bp.getAssetId());
+			bp.registerReference(bp.getBlueprintId());
 			targetContainer.put(id, bp);
 		} else {
 			//Hit. Increment the counter for this stack. And store the id
 			hit.setQuantity(hit.getQuantity() + bp.getQuantity());
-			hit.registerReference(bp.getAssetId());
+			hit.registerReference(bp.getBlueprintId());
 		}
 	}
 

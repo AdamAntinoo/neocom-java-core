@@ -524,7 +524,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		}
 	//
 	//		newAsset.setQuantity(eveAsset.getQuantity());
-	//		newAsset.setFlag(eveAsset.getFlag());
+	//		newAsset.setLocationFlag(eveAsset.getFlag());
 	//		newAsset.setSingleton(eveAsset.getSingleton());
 	//
 	//		// Get access to the Item and update the copied fields.
@@ -552,7 +552,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//		newBlueprint.setTypeId(eveBlue.getTypeId());
 	//		newBlueprint.setTypeName(eveBlue.getTypeName());
 	//		newBlueprint.setLocationID(eveBlue.getLocationID());
-	//		newBlueprint.setFlag(eveBlue.getFlagID());
+	//		newBlueprint.setLocationFlag(eveBlue.getFlagID());
 	//		newBlueprint.setQuantity(eveBlue.getQuantity());
 	//		newBlueprint.setTimeEfficiency(eveBlue.getTimeEfficiency());
 	//		newBlueprint.setMaterialEfficiency(eveBlue.getMaterialEfficiency());

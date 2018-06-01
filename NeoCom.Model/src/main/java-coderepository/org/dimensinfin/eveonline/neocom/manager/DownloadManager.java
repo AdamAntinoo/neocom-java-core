@@ -483,7 +483,7 @@ public class DownloadManager {
 //		newAsset.setLocationId(locid);
 //
 //		newAsset.setQuantity(eveAsset.getQuantity());
-//		//		newAsset.setFlag(eveAsset.getFlag());
+//		//		newAsset.setLocationFlag(eveAsset.getFlag());
 //		newAsset.setSingleton(eveAsset.getSingleton());
 //
 //		// Get access to the Item and update the copied fields.
@@ -565,7 +565,7 @@ public class DownloadManager {
 //		newBlueprint.setTypeId(eveBlue.getTypeId());
 //		newBlueprint.setTypeName(eveBlue.getTypeName());
 //		newBlueprint.setLocationID(eveBlue.getLocationID());
-//		newBlueprint.setFlag(eveBlue.getFlagID());
+//		newBlueprint.setLocationFlag(eveBlue.getFlagID());
 //		newBlueprint.setQuantity(eveBlue.getQuantity());
 //		newBlueprint.setTimeEfficiency(eveBlue.getTimeEfficiency());
 //		newBlueprint.setMaterialEfficiency(eveBlue.getMaterialEfficiency());
