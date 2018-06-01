@@ -179,10 +179,10 @@ public class DownloadManager {
 			final List<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			for (final GetCharactersCharacterIdBlueprints200Ok blueprintOk : blueprintOkList) {
 				//--- B L U E P R I N T   P R O C E S S I N G
-				NeoComBlueprint newBlueprint =null;
+				NeoComBlueprint newBlueprint = null;
 				try {
 					// Convert the blueprint from the OK format to a MVC compatible structure.
-					newBlueprint = new NeoComBlueprint(blueprintOk.getItemId(),blueprintOk.getTypeId())
+					newBlueprint = new NeoComBlueprint(blueprintOk.getItemId(), blueprintOk.getTypeId())
 //							.setTypeId(blueprintOk.getTypeId())
 							.setLocationId(blueprintOk.getLocationId())
 							.setLocationFlag(blueprintOk.getLocationFlag())
@@ -190,7 +190,8 @@ public class DownloadManager {
 							.setTimeEfficiency(blueprintOk.getTimeEfficiency())
 							.setMaterialEfficiency(blueprintOk.getMaterialEfficiency())
 							.setRuns(blueprintOk.getRuns())
-							.setPackaged((blueprintOk.getQuantity() == -1) ? true : false);
+							.setPackaged((blueprintOk.getQuantity() < 0) ? true : false);
+					bplist.add(newBlueprint);
 					// Detect if BPO or BPC and set the flag.
 					if (blueprintOk.getRuns() == -1) {
 						newBlueprint.setBpo(true);
@@ -221,23 +222,6 @@ public class DownloadManager {
 				this.validateLocation(blu);
 			}
 
-
-
-
-
-			// Blueprints point to another node qualified as asset. So the location and the rest of the data comes from that already
-			// processed asset. While adding that field we expect the blueprint instance to auto connect itself.
-//			for (final GetCharactersCharacterIdBlueprints200Ok blueprintOk : blueprintOkList) {
-//				//--- B L U E P R I N T   P R O C E S S I N G
-//				 NeoComBlueprint newBlueprint =null;
-//				try {
-//					// TODO - Check that after the asset association we have the correct location information.
-//				} catch (final RuntimeException rtex) {
-//					// Intercept any exception for blueprints that do not match the asset. Remove them from the listing
-//					DownloadManager.logger.info("W> The Blueprint " + newBlueprint.getAssetId() + " has no matching asset.");
-//					DownloadManager.logger.info("W> " + newBlueprint.toString());
-//				}
-//			}
 			// Pack the blueprints and store them on the database.
 			storeBlueprints(bplist);
 			// Assign the blueprints to the pilot.
@@ -417,11 +401,11 @@ public class DownloadManager {
 			}
 		});
 	}
+
 	/**
 	 * Gets the list of blueprints from the API processor and packs them into stacks aggregated by some keys.
 	 * This will simplify the quantity of data exported to presentation layers.<br>
 	 * Aggregation is performed by TYPEID-LOCATION-CONTAINER-RUNS
-	 *
 	 * @param bplist list of newly created Blueprints from the CCP API download
 	 */
 	protected void storeBlueprints( final List<NeoComBlueprint> bplist ) {
@@ -438,7 +422,7 @@ public class DownloadManager {
 			try {
 				Dao<NeoComBlueprint, String> blueprintDao = new GlobalDataManager().getNeocomDBHelper().getBlueprintDao();
 				// Be sure the owner is reset to undefined when stored at the database.
-				blueprint.resetOwner();
+//				blueprint.resetOwner();
 				// Set new calculated values to reduce the time for blueprint part rendering.
 				// REFACTOR This has to be rewrite to allow this calculation on download time.
 				//				IJobProcess process = JobManager.generateJobProcess(getPilot(), blueprint, EJobClasses.MANUFACTURE);
@@ -462,28 +446,37 @@ public class DownloadManager {
 		}
 		logger.info("<< [DownloadManager.storeBlueprints]");
 	}
+
 	/**
 	 * Stacks blueprints that are equal and that are located on the same location. The also should be inside the
 	 * same container so the locationID, the parentContainer and the typeId should match to perform the
 	 * aggregation.<br>
 	 * Aggregation key: ID-LOCATION-CONTAINER
-	 *
 	 * @param targetContainer the stack storage that contains the list of registered blueprints
 	 * @param bp              the blueprint part to be added to the hierarchy
 	 */
 	private void checkBPCStacking( final HashMap<String, NeoComBlueprint> targetContainer, final NeoComBlueprint bp ) {
-		// Get the unique identifier for a blueprint related to stack aggregation. TYPEID.LOCATIONID.ASSETID
-		String id = bp.getStackId();
-		NeoComBlueprint hit = targetContainer.get(id);
-		if (null == hit) {
-			// Miss. The blueprint is not registered.
-			DownloadManager.logger.info("-- AssetsManager.checkBPCStacking >Stacked blueprint. " + bp.toString());
-			bp.registerReference(bp.getBlueprintId());
-			targetContainer.put(id, bp);
-		} else {
-			//Hit. Increment the counter for this stack. And store the id
-			hit.setQuantity(hit.getQuantity() + bp.getQuantity());
-			hit.registerReference(bp.getBlueprintId());
+		// If the blueprint is a BPO then do not stack.
+		if (bp.isBpo()) targetContainer.put(Long.valueOf(bp.getBlueprintId()).toString(), bp);
+		else {
+			// Get the unique identifier for a blueprint related to stack aggregation. TYPEID.LOCATIONID.RUNS
+			String id = bp.getStackId();
+			NeoComBlueprint hit = targetContainer.get(id);
+			if (null == hit) {
+				// Miss. The blueprint is not registered.
+				DownloadManager.logger.info("-- [DownloadManager.checkBPCStacking]> Stacking blueprint {} into {}"
+						, bp.getBlueprintId(), id);
+				bp.registerReference(bp.getBlueprintId());
+				targetContainer.put(id, bp);
+				// Count as 1.
+				bp.setQuantity(1);
+			} else {
+				DownloadManager.logger.info("-- [DownloadManager.checkBPCStacking]> Stacking blueprint {} into {}"
+						, bp.getBlueprintId(), id);
+				// Hit. Increment the counter for this stack. And store the id
+				hit.setQuantity(hit.getQuantity() + bp.getQuantity());
+				hit.registerReference(bp.getBlueprintId());
+			}
 		}
 	}
 

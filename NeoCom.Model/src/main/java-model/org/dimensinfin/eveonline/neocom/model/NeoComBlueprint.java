@@ -66,6 +66,7 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 	/**
 	 * A range of numbers with a minimum of -2 and no maximum value where -1 is an original and -2 is a copy. It can be a
 	 * positive integer if it is a stack of blueprint originals fresh from the market (e.g. no activities performed on them yet).
+	 * If the blueprints are stacked, then this is the number of packs on the stack, similar to other stacks.
 	 */
 	@DatabaseField
 	private int quantity = 1;
@@ -76,7 +77,6 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 	/** Number of runs remaining if the blueprint is a copy, -1 if it is an original. */
 	@DatabaseField
 	private int runs = 0;
-	/** Here starts the fields that come from item data but useful for search operations. */
 	@DatabaseField
 	private long ownerId = -1;
 	@DatabaseField
@@ -277,7 +277,7 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 
 	public String getStackId() {
 		final StringBuffer stackid = new StringBuffer();
-		stackid.append(typeId).append(".").append(this.getLocationId()).append(this.getRuns());
+		stackid.append(typeId).append(".").append(this.getLocationId()).append(".").append(this.getRuns());
 		return stackid.toString();
 	}
 
@@ -329,9 +329,9 @@ public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
 		}
 	}
 
-	public void resetOwner() {
-		ownerId = -1;
-	}
+//	public void resetOwner() {
+//		ownerId = -1;
+//	}
 
 	public NeoComBlueprint setBpo( final boolean bpo ) {
 		this.bpo = bpo;
