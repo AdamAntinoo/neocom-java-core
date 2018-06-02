@@ -17,7 +17,6 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,8 +59,8 @@ public class MarketDataServer {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("MarketDataServer");
 	// TODO - Keep the number of threads low until the code is stable.
-//	public static final int cpuCount = Runtime.getRuntime().availableProcessors();
-	public static final int cpuCount = 8;
+	public static final int cpuCount = Runtime.getRuntime().availableProcessors();
+	//	public static final int cpuCount = 8;
 	private static final ExecutorService downloadExecutor = Executors.newFixedThreadPool(cpuCount);
 	public static final List<String> stationList = new ArrayList<>();
 
@@ -79,16 +78,15 @@ public class MarketDataServer {
 	/**
 	 * Does the service initialization and start the service. This mean to read back from storage the latest saved cache and then
 	 * start the background services to download more Market data.
-	 *
 	 * @return
 	 */
 	public MarketDataServer start() {
 		logger.info(">> [MarketDataServer.start]");
 		readMarketDataCacheFromStorage();
 		try {
-			// Read the configured list of preferential marked data hubs.
+			// Read the configured list of preferential marked data hubs from the assets store.
 			final String stationsFileName = GlobalDataManager.getResourceString("R.cache.marketdata.markethubs.configuration.path");
-			BufferedReader reader = new BufferedReader(new FileReader(stationsFileName));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(GlobalDataManager.openAsset4Input(stationsFileName)));
 			String line = null;
 			try {
 				while ((line = reader.readLine()) != null) {
@@ -116,7 +114,6 @@ public class MarketDataServer {
 
 	/**
 	 * Clone the list of stations to be consumed by a filter.
-	 *
 	 * @return a clone of the marter list read from configuration.
 	 */
 	public static List<String> getStationList() {
@@ -135,7 +132,7 @@ public class MarketDataServer {
 		synchronized (sellMarketDataCache) {
 			sellMarketDataCache.clear();
 		}
-//		downloadManager.clear();
+		//		downloadManager.clear();
 		logger.info("<< [MarketDataServer.clear]");
 		return this;
 	}
@@ -147,15 +144,15 @@ public class MarketDataServer {
 					GlobalDataManager.openResource4Input(modelStoreFile.getPath())
 			);
 			final ObjectInputStream input = new ObjectInputStream(buffer);
+			logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", modelStoreFile.getPath());
 			try {
-				//				this.getStore().setApiKeys((HashMap<Integer, NeoComApiKey>) input.readObject());
 				buyMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
 				logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache BUY: " + buyMarketDataCache.size()
 						+ " entries.");
 				sellMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
 				logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache SELL: " + sellMarketDataCache.size()
 						+ " entries.");
-				expirationTimeMarketData= (HashMap<Integer, Instant>) input.readObject();
+				expirationTimeMarketData = (HashMap<Integer, Instant>) input.readObject();
 			} finally {
 				input.close();
 				buffer.close();
@@ -204,7 +201,7 @@ public class MarketDataServer {
 		int done = 0;
 		synchronized (runningJobsList) {
 			for (Future<MarketDataSet> fut : runningJobsList) {
-				if (fut.isDone()) done++;
+				if ( fut.isDone() ) done++;
 				else pending++;
 			}
 		}
@@ -222,7 +219,6 @@ public class MarketDataServer {
 	 * io related to disk is minimized.
 	 * If the data is not located on the case call the market data downloader and processor to get a new copy
 	 * and store it on the cache.
-	 *
 	 * @param itemId item id code of the item assigned to this market request.
 	 * @param side   differentiates if we like to BUY or SELL the item.
 	 * @return the cached data or an empty locator ready to receive downloaded data.
@@ -230,7 +226,7 @@ public class MarketDataServer {
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 		logger.info(">< [MarketDataServer.searchMarketData]> ItemId: {}/{}.", itemId, side.name());
 		// Filter out invalid localizers.
-		if (itemId < 1) {
+		if ( itemId < 1 ) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download replaced because item id is not valid [{}]."
 					, itemId);
 			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
@@ -243,7 +239,7 @@ public class MarketDataServer {
 			return fut;
 		}
 		// Check if the user preferences allows to go to the market downloader.
-		if (GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name(), false)) {
+		if ( GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name(), false) ) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download cancelled because preferences 'BlockMarket'.");
 			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
 				return new MarketDataSet(itemId, side);
@@ -257,18 +253,18 @@ public class MarketDataServer {
 			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
 				// Search on the cache. By default load the SELLER as If I am buying the item.
 				HashMap<Integer, MarketDataSet> cache = sellMarketDataCache;
-				if (side == EMarketSide.BUYER) {
+				if ( side == EMarketSide.BUYER ) {
 					cache = buyMarketDataCache;
 				}
 				MarketDataSet entry = cache.get(itemId);
-				if (null == entry) {
+				if ( null == entry ) {
 					// The data is not on the cache and neither on the latest disk copy read at initialization.
 					// Do a new market data download process.
 					try {
 						// Report the number of jobs pending.
 						reportMarketDataJobs();
 						final MarketDataSet data = downloadManager.doMarketDataRequest(itemId, side);
-						if (null != data) {
+						if ( null != data ) {
 							// Save the data on the cache and update the expiration time.
 							data.setSide(side);
 							synchronized (cache) {
@@ -290,8 +286,8 @@ public class MarketDataServer {
 					logger.info("-- [MarketDataServer.searchMarketData]> Cache hit on memory.");
 					// Check again the expiration time. If expired clear cache and request a refresh.
 					Instant expirationTime = expirationTimeMarketData.get(itemId);
-					if (null == expirationTime) expirationTime = Instant.now().minus(TimeUnit.MINUTES.toMillis(1));
-					if (expirationTime.isBefore(Instant.now())) {
+					if ( null == expirationTime ) expirationTime = Instant.now().minus(TimeUnit.MINUTES.toMillis(1));
+					if ( expirationTime.isBefore(Instant.now()) ) {
 						// Clear the cache entry.
 						synchronized (cache) {
 							cache.remove(itemId);
@@ -309,13 +305,12 @@ public class MarketDataServer {
 		}
 	}
 
-//	public void activateMarketDataCache4Id( final int typeId ) {
-//		expirationTimeMarketData.put(typeId, Instant.now().plus(TimeUnit.HOURS.toMillis(1)));
-//	}
+	//	public void activateMarketDataCache4Id( final int typeId ) {
+	//		expirationTimeMarketData.put(typeId, Instant.now().plus(TimeUnit.HOURS.toMillis(1)));
+	//	}
 
 	/**
 	 * Read the configured cache location for the Market data save/restore serialization file.
-	 *
 	 * @return
 	 */
 	protected String getCacheStoreName() {
@@ -335,12 +330,12 @@ public class MarketDataServer {
 	 * With the use of utures we can track pending jobs and be sure the update mechanics are followed as
 	 * requested.
 	 */
-//- CLASS IMPLEMENTATION ...................................................................................
+	//- CLASS IMPLEMENTATION ...................................................................................
 	public static class MarketDataJobDownloadManager {
 		// - S T A T I C - S E C T I O N ..........................................................................
-//		public int marketJobCounter = 0;
-//		private static ExecutorService marketDataDownloadExecutor = null;
-//		public static final Hashtable<String, Future<MarketDataSet>> runningJobs = new Hashtable();
+		//		public int marketJobCounter = 0;
+		//		private static ExecutorService marketDataDownloadExecutor = null;
+		//		public static final Hashtable<String, Future<MarketDataSet>> runningJobs = new Hashtable();
 
 		// - F I E L D - S E C T I O N ............................................................................
 		private final int threadSize;
@@ -348,67 +343,67 @@ public class MarketDataServer {
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public MarketDataJobDownloadManager( final int threadSize ) {
 			this.threadSize = threadSize;
-//			marketDataDownloadExecutor = Executors.newFixedThreadPool(threadSize);
+			//			marketDataDownloadExecutor = Executors.newFixedThreadPool(threadSize);
 		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................
-//		public void clear() {
-//			runningJobs.clear();
-//		}
+		//		public void clear() {
+		//			runningJobs.clear();
+		//		}
 
 		//		/**
-//		 * Submits a request for a new Market data update. This should create a new job and update the job counters.
-//		 *
-//		 * @param typeId the job to update some information.
-//		 */
-//		public synchronized MarketDataSet addMarketDataRequest( final int typeId ) {
-//			// TODO - This code should be trimmed out once the new model is working. There is no more job launching.
-//			// Launch the updater job only if the market data updater process is allowed.
-////			if (!GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name())) {
-//				final String identifier = generateMarketDataJobReference(typeId);
-//				logger.info(">> [MarketDataJobDownloadManager.addMarketDataRequest]");
-//				try {
-//					// Search for the job to detect duplications
-//					final Future<MarketDataSet> hit = runningJobs.get(identifier);
-//					if (null == hit) {
-//						// New job. Launch it and store the reference.
-//						runningJobs.put(identifier, launchDownloadJob(typeId));
-//					} else {
-//						// Check for job completed.
-//						if (hit.isDone()) {
-//							// The job with this same reference has completed. We can launch a new one.
-//							runningJobs.put(identifier, launchDownloadJob(typeId));
-//						}
-//					}
-//					return hit;
-//				} catch (RuntimeException neoe) {
-//					neoe.printStackTrace();
-//				}
-////			}
-//			return null;
-//		}
+		//		 * Submits a request for a new Market data update. This should create a new job and update the job counters.
+		//		 *
+		//		 * @param typeId the job to update some information.
+		//		 */
+		//		public synchronized MarketDataSet addMarketDataRequest( final int typeId ) {
+		//			// TODO - This code should be trimmed out once the new model is working. There is no more job launching.
+		//			// Launch the updater job only if the market data updater process is allowed.
+		////			if (!GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name())) {
+		//				final String identifier = generateMarketDataJobReference(typeId);
+		//				logger.info(">> [MarketDataJobDownloadManager.addMarketDataRequest]");
+		//				try {
+		//					// Search for the job to detect duplications
+		//					final Future<MarketDataSet> hit = runningJobs.get(identifier);
+		//					if (null == hit) {
+		//						// New job. Launch it and store the reference.
+		//						runningJobs.put(identifier, launchDownloadJob(typeId));
+		//					} else {
+		//						// Check for job completed.
+		//						if (hit.isDone()) {
+		//							// The job with this same reference has completed. We can launch a new one.
+		//							runningJobs.put(identifier, launchDownloadJob(typeId));
+		//						}
+		//					}
+		//					return hit;
+		//				} catch (RuntimeException neoe) {
+		//					neoe.printStackTrace();
+		//				}
+		////			}
+		//			return null;
+		//		}
 		public MarketDataSet doMarketDataRequest( final int typeId, final EMarketSide side ) {
 			final int localizer = typeId;
 			logger.info(">> [MarketDataJobDownloadManager.doMarketDataRequest]> Processing type {}", localizer);
 			// Download the market data and return it to store the new data into the cache.
 			final EveItem item = new GlobalDataManager().searchItem4Id(localizer);
 			MarketDataSet reference = new MarketDataSet(localizer, side);
-//			try {
+			//			try {
 			logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing {}", side.name());
 			List<TrackEntry> marketEntries = new ArrayList();
 			// Check which data provider should be used for the data.
 			// Preference is: eve-market-data/eve-central/esi-marketdata
 			try {
-				if (marketEntries.size() < 1) {
-					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
+				if ( marketEntries.size() < 1 ) {
+					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true) )
 						marketEntries = parseMarketDataEMD(item.getName(), side);
 				}
-				if (marketEntries.size() < 1) {
-					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false))
+				if ( marketEntries.size() < 1 ) {
+					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false) )
 						marketEntries = parseMarketDataEC(localizer, side);
 				}
-				if (marketEntries.size() < 1) {
-					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false))
+				if ( marketEntries.size() < 1 ) {
+					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false) )
 						marketEntries = parseMarketDataESI(localizer, side);
 				}
 				List<MarketDataEntry> hubData = extractMarketData(marketEntries);
@@ -424,98 +419,97 @@ public class MarketDataServer {
 			return reference;
 		}
 
-//		protected MarketDataSet launchDownloadJob( final int typeId ) {
-//			try {
-//				logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob]> Launching job {}", typeId);
-//				marketJobCounter++;
-//				final Future<?> future = marketDataDownloadExecutor.submit(() -> {
-//					final int localizer = typeId;
-//					logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing type {}", localizer);
-//					// Download the market data and store the new data into the cache.
-//					final EveItem item = new GlobalDataManager().searchItem4Id(localizer);
-//					try {
-//						logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing SELLER");
-//						List<TrackEntry> marketEntries = new ArrayList();
-//						// Check which data provider should be used for the data.
-//						// Preference is: eve-market-data/eve-central/esi-marketdata
-//						if (marketEntries.size() < 1) {
-//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
-//								marketEntries = parseMarketDataEMD(item.getName(), EMarketSide.SELLER);
-//						}
-//						if (marketEntries.size() < 1) {
-//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", true))
-//								marketEntries = parseMarketDataEC(localizer, EMarketSide.SELLER);
-//						}
-//						if (marketEntries.size() < 1) {
-//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", true))
-//								marketEntries = parseMarketDataESI(localizer, EMarketSide.SELLER);
-//						}
-//
-//						List<MarketDataEntry> hubData = extractMarketData(marketEntries);
-//						// Update the structures related to the newly downloaded data.
-////					MarketDataSet reference = new MarketDataSet(localizer, EMarketSide.SELLER);
-//						MarketDataSet reference = new GlobalDataManager().searchMarketData(localizer, EMarketSide.SELLER);
-//						reference.setData(hubData);
-//						logger.info("-- [MarketDataJobDownloadManager.launchDownloadJob.submit]> Storing data entries {}", hubData.size());
-//					} catch (RuntimeException rtex) {
-//						rtex.printStackTrace();
-//					}
-//					// Do the same for the other side.
-//					try {
-//						logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing BUYER");
-//						List<TrackEntry> marketEntries = new ArrayList();
-//						// Check which data provider should be used for the data.
-//						// Preference is: eve-market-data/eve-central/esi-marketdata
-//						if (marketEntries.size() < 1) {
-//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
-//								marketEntries = parseMarketDataEMD(item.getName(), EMarketSide.BUYER);
-//						}
-//						if (marketEntries.size() < 1) {
-//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", true))
-//								marketEntries = parseMarketDataEC(localizer, EMarketSide.BUYER);
-//						}
-//						if (marketEntries.size() < 1) {
-//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", true))
-//								marketEntries = parseMarketDataESI(localizer, EMarketSide.BUYER);
-//						}
-//
-//						List<MarketDataEntry> hubData = extractMarketData(marketEntries);
-//						// Update the structures related to the newly downloaded data.
-//						MarketDataSet reference = new MarketDataSet(localizer, EMarketSide.BUYER);
-//						reference.setData(hubData);
-//						logger.info("-- [MarketDataJobDownloadManager.launchDownloadJob.submit]> Storing data entries {}", hubData.size());
-//					} catch (RuntimeException rtex) {
-//						rtex.printStackTrace();
-//					}
-//					// If there was no exceptions now the market data is stored on the cache.
-//					// But still we need to setup the cache time.
-//					GlobalDataManager.activateMarketDataCache4Id(localizer);
-//					// Decrement the counter.
-//					marketJobCounter--;
-//					logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob.submit]> Completing job {}", typeId);
-//				});
-//				return (Future<MarketDataSet>) future;
-//			} finally {
-//				logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob]");
-//			}
-//		}
+		//		protected MarketDataSet launchDownloadJob( final int typeId ) {
+		//			try {
+		//				logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob]> Launching job {}", typeId);
+		//				marketJobCounter++;
+		//				final Future<?> future = marketDataDownloadExecutor.submit(() -> {
+		//					final int localizer = typeId;
+		//					logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing type {}", localizer);
+		//					// Download the market data and store the new data into the cache.
+		//					final EveItem item = new GlobalDataManager().searchItem4Id(localizer);
+		//					try {
+		//						logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing SELLER");
+		//						List<TrackEntry> marketEntries = new ArrayList();
+		//						// Check which data provider should be used for the data.
+		//						// Preference is: eve-market-data/eve-central/esi-marketdata
+		//						if (marketEntries.size() < 1) {
+		//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
+		//								marketEntries = parseMarketDataEMD(item.getName(), EMarketSide.SELLER);
+		//						}
+		//						if (marketEntries.size() < 1) {
+		//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", true))
+		//								marketEntries = parseMarketDataEC(localizer, EMarketSide.SELLER);
+		//						}
+		//						if (marketEntries.size() < 1) {
+		//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", true))
+		//								marketEntries = parseMarketDataESI(localizer, EMarketSide.SELLER);
+		//						}
+		//
+		//						List<MarketDataEntry> hubData = extractMarketData(marketEntries);
+		//						// Update the structures related to the newly downloaded data.
+		////					MarketDataSet reference = new MarketDataSet(localizer, EMarketSide.SELLER);
+		//						MarketDataSet reference = new GlobalDataManager().searchMarketData(localizer, EMarketSide.SELLER);
+		//						reference.setData(hubData);
+		//						logger.info("-- [MarketDataJobDownloadManager.launchDownloadJob.submit]> Storing data entries {}", hubData.size());
+		//					} catch (RuntimeException rtex) {
+		//						rtex.printStackTrace();
+		//					}
+		//					// Do the same for the other side.
+		//					try {
+		//						logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing BUYER");
+		//						List<TrackEntry> marketEntries = new ArrayList();
+		//						// Check which data provider should be used for the data.
+		//						// Preference is: eve-market-data/eve-central/esi-marketdata
+		//						if (marketEntries.size() < 1) {
+		//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
+		//								marketEntries = parseMarketDataEMD(item.getName(), EMarketSide.BUYER);
+		//						}
+		//						if (marketEntries.size() < 1) {
+		//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", true))
+		//								marketEntries = parseMarketDataEC(localizer, EMarketSide.BUYER);
+		//						}
+		//						if (marketEntries.size() < 1) {
+		//							if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", true))
+		//								marketEntries = parseMarketDataESI(localizer, EMarketSide.BUYER);
+		//						}
+		//
+		//						List<MarketDataEntry> hubData = extractMarketData(marketEntries);
+		//						// Update the structures related to the newly downloaded data.
+		//						MarketDataSet reference = new MarketDataSet(localizer, EMarketSide.BUYER);
+		//						reference.setData(hubData);
+		//						logger.info("-- [MarketDataJobDownloadManager.launchDownloadJob.submit]> Storing data entries {}", hubData.size());
+		//					} catch (RuntimeException rtex) {
+		//						rtex.printStackTrace();
+		//					}
+		//					// If there was no exceptions now the market data is stored on the cache.
+		//					// But still we need to setup the cache time.
+		//					GlobalDataManager.activateMarketDataCache4Id(localizer);
+		//					// Decrement the counter.
+		//					marketJobCounter--;
+		//					logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob.submit]> Completing job {}", typeId);
+		//				});
+		//				return (Future<MarketDataSet>) future;
+		//			} finally {
+		//				logger.info("<< [MarketDataJobDownloadManager.launchDownloadJob]");
+		//			}
+		//		}
 
-//		public int countRunningJobs() {
-//			// Count the running or pending jobs to update the ActionBar counter.
-//			int counter = 0;
-//			for (Future<?> future : runningJobs.values()) {
-//				if (!future.isDone()) counter++;
-//			}
-//			marketJobCounter = counter;
-//			return counter;
-//		}
+		//		public int countRunningJobs() {
+		//			// Count the running or pending jobs to update the ActionBar counter.
+		//			int counter = 0;
+		//			for (Future<?> future : runningJobs.values()) {
+		//				if (!future.isDone()) counter++;
+		//			}
+		//			marketJobCounter = counter;
+		//			return counter;
+		//		}
 
 		/**
 		 * Converts the raw TrackEntry structures into aggregated data by location and system. This has a new
 		 * implementation that will use real location data for the system to better classify and store the market
 		 * data information. It will also remove the current limit on the selected market hubs and will aggregate
 		 * all the systems found into the highsec and other sec categories.
-		 *
 		 * @param entries
 		 * @return
 		 */
@@ -526,7 +520,7 @@ public class MarketDataServer {
 			while (meit.hasNext()) {
 				final TrackEntry entry = meit.next();
 				// Filtering for only preferred market hubs.
-				if (filterStations(entry, stationList)) {
+				if ( filterStations(entry, stationList) ) {
 					// Start searching for more records to sum all entries with the same or a close price to get
 					// a better understanding of the market depth. That information is not to relevant so make a
 					// best try.
@@ -536,9 +530,9 @@ public class MarketDataServer {
 					while (meit.hasNext()) {
 						final TrackEntry searchEntry = meit.next();
 						// Check that station and prices are the same or price is inside margin.
-						if (searchEntry.getStationName().equals(stationName)) {
-							if ((stationPrice >= (searchEntry.getPrice() * 0.99))
-									&& (stationPrice <= (searchEntry.getPrice() * 1.01))) {
+						if ( searchEntry.getStationName().equals(stationName) ) {
+							if ( (stationPrice >= (searchEntry.getPrice() * 0.99))
+									&& (stationPrice <= (searchEntry.getPrice() * 1.01)) ) {
 								stationQty += searchEntry.getQty();
 							} else {
 								break;
@@ -560,40 +554,40 @@ public class MarketDataServer {
 		}
 
 		//		protected List<String> getMarketHubs() {
-//			final List<String> stationList = new ArrayList<>();
-//			//		stationList.add("0.8 Tash-Murkon - Tash-Murkon Prime");
-//			stationList.add("1.0 Domain - Amarr");
-//			stationList.add("1.0 Domain - Sarum Prime");
-//			stationList.add("0.8 Devoid - Hati");
-//			stationList.add("0.6 Devoid - Esescama");
-//			stationList.add("0.8 Heimatar - Odatrik");
-//			stationList.add("0.9 Heimatar - Rens");
-//			stationList.add("0.8 Heimatar - Frarn");
-//			stationList.add("0.9 Heimatar - Lustrevik");
-//			stationList.add("0.9 Heimatar - Eystur");
-//			stationList.add("0.5 Metropolis - Hek");
-//			stationList.add("0.5 Sinq Laison - Deltole");
-//			stationList.add("0.5 Sinq Laison - Aufay");
-//			stationList.add("0.9 Sinq Laison - Dodixie");
-//			stationList.add("0.9 Essence - Renyn");
-//			stationList.add("0.7 Kador - Romi");
-//			stationList.add("0.8 The Citadel - Kaaputenen");
-//			stationList.add("1.0 The Forge - Urlen");
-//			stationList.add("1.0 The Forge - Perimeter");
-//			stationList.add("0.9 The Forge - Jita");
-//			return stationList;
-//		}
-//
+		//			final List<String> stationList = new ArrayList<>();
+		//			//		stationList.add("0.8 Tash-Murkon - Tash-Murkon Prime");
+		//			stationList.add("1.0 Domain - Amarr");
+		//			stationList.add("1.0 Domain - Sarum Prime");
+		//			stationList.add("0.8 Devoid - Hati");
+		//			stationList.add("0.6 Devoid - Esescama");
+		//			stationList.add("0.8 Heimatar - Odatrik");
+		//			stationList.add("0.9 Heimatar - Rens");
+		//			stationList.add("0.8 Heimatar - Frarn");
+		//			stationList.add("0.9 Heimatar - Lustrevik");
+		//			stationList.add("0.9 Heimatar - Eystur");
+		//			stationList.add("0.5 Metropolis - Hek");
+		//			stationList.add("0.5 Sinq Laison - Deltole");
+		//			stationList.add("0.5 Sinq Laison - Aufay");
+		//			stationList.add("0.9 Sinq Laison - Dodixie");
+		//			stationList.add("0.9 Essence - Renyn");
+		//			stationList.add("0.7 Kador - Romi");
+		//			stationList.add("0.8 The Citadel - Kaaputenen");
+		//			stationList.add("1.0 The Forge - Urlen");
+		//			stationList.add("1.0 The Forge - Perimeter");
+		//			stationList.add("0.9 The Forge - Jita");
+		//			return stationList;
+		//		}
+		//
 		protected boolean filterStations( final TrackEntry entry, final List<String> stationList ) {
-//			final Iterator<String> slit = stationList.iterator();
-//			while (slit.hasNext()) {
-//				final String stationNameMatch = slit.next();
-//				final String station = entry.getStationName();
-//				if (station.contains(stationNameMatch)) return true;
-//			}
+			//			final Iterator<String> slit = stationList.iterator();
+			//			while (slit.hasNext()) {
+			//				final String stationNameMatch = slit.next();
+			//				final String station = entry.getStationName();
+			//				if (station.contains(stationNameMatch)) return true;
+			//			}
 			final String station = entry.getStationName();
 			for (String stationNameMatch : stationList) {
-				if (station.contains(stationNameMatch)) return true;
+				if ( station.contains(stationNameMatch) ) return true;
 			}
 			return false;
 		}
@@ -601,7 +595,6 @@ public class MarketDataServer {
 		/**
 		 * Creates a EveLocation instance from the data retrieved from the eve-marketdata records. We can only go to the system
 		 * because the source data does not include the station.
-		 *
 		 * @param hubName
 		 * @return
 		 */
@@ -624,7 +617,7 @@ public class MarketDataServer {
 					.append("MDJ:")
 					.append(typeId)
 					.append(":")
-//					.append(Instant.now().toString())
+					//					.append(Instant.now().toString())
 					.toString();
 		}
 
@@ -649,13 +642,13 @@ public class MarketDataServer {
 			reader.setContentHandler(content);
 			reader.setErrorHandler(content);
 			String URLDestination = null;
-			if (opType == EMarketSide.SELLER) {
+			if ( opType == EMarketSide.SELLER ) {
 				URLDestination = this.getModuleLink(itemName, "SELL");
 			}
-			if (opType == EMarketSide.BUYER) {
+			if ( opType == EMarketSide.BUYER ) {
 				URLDestination = this.getModuleLink(itemName, "BUY");
 			}
-			if (null != URLDestination) {
+			if ( null != URLDestination ) {
 				reader.parse(URLDestination);
 				marketEntries = content.getEntries();
 			}
@@ -679,13 +672,13 @@ public class MarketDataServer {
 				JSONObject all = part1.getJSONObject("all");
 				JSONObject sell = part1.getJSONObject("sell");
 				JSONObject target = null;
-				if (opType == EMarketSide.SELLER) {
+				if ( opType == EMarketSide.SELLER ) {
 					target = sell;
 				} else {
 					target = buy;
 				}
 				double price = 0.0;
-				if (opType == EMarketSide.SELLER) {
+				if ( opType == EMarketSide.SELLER ) {
 					price = target.getDouble("min");
 				} else {
 					price = target.getDouble("max");
@@ -712,7 +705,7 @@ public class MarketDataServer {
 				InputStream is = new BufferedInputStream(urlConnection.getInputStream());
 				// InputStream is = NeoComAppConnector.getSingleton().getStorageConnector().accessNetworkResource(
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-				if (is != null) {
+				if ( is != null ) {
 					while ((str = reader.readLine()) != null) {
 						data.append(str);
 					}
@@ -726,7 +719,6 @@ public class MarketDataServer {
 
 		/**
 		 * Get the eve-marketdata link for a requested module and market side.
-		 *
 		 * @param moduleName The module name to be used on the link.
 		 * @param opType     if the set is from sell or buy orders.
 		 * @return the URL to access the HTML page with the data.

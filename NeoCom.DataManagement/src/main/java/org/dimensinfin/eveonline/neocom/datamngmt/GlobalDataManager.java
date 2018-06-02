@@ -80,7 +80,6 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
 				+ GlobalDataManager.getResourceString("R.cache.locationscache.filename");
 		logger.info("-- [GlobalDataManager.readLocationsDataCache]> Opening cache file: {}", cacheFileName);
-//		File modelStoreFile = new File(cacheFileName);
 		try {
 			final BufferedInputStream buffer = new BufferedInputStream(
 					GlobalDataManager.openResource4Input(cacheFileName)
@@ -138,8 +137,8 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	/**
 	 * Background executor to use for long downloading jobs.
 	 */
-	private static final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
-	private static final ExecutorService marketDataExecutor = Executors.newFixedThreadPool(2);
+	private static final ExecutorService downloadExecutor = Executors.newFixedThreadPool(4);
+//	private static final ExecutorService marketDataExecutor = Executors.newFixedThreadPool(2);
 	private static final ExecutorService uiDataExecutor = Executors.newSingleThreadExecutor();
 
 	public void shutdownExecutors() {
@@ -156,19 +155,19 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 			downloadExecutor.shutdownNow();
 			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
 		}
-		try {
-			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown marketDataExecutor");
-			marketDataExecutor.shutdown();
-			marketDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
-		} catch (final InterruptedException iee) {
-			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
-		} finally {
-			if (!marketDataExecutor.isTerminated()) {
-				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
-			}
-			marketDataExecutor.shutdownNow();
-			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
-		}
+//		try {
+//			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown marketDataExecutor");
+//			marketDataExecutor.shutdown();
+//			marketDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
+//		} catch (final InterruptedException iee) {
+//			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+//		} finally {
+//			if (!marketDataExecutor.isTerminated()) {
+//				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+//			}
+//			marketDataExecutor.shutdownNow();
+//			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
+//		}
 		try {
 			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown uiDataExecutor");
 			uiDataExecutor.shutdown();

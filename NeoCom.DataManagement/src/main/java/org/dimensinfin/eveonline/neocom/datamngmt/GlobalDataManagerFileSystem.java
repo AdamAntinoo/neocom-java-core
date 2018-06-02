@@ -87,7 +87,8 @@ public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
 
 	public static boolean checkAssetFile( final String resourceString ) {
 		try {
-			return checkStorageResource(accessAsset4Path(resourceString));
+			final InputStream toCheck = GlobalDataManager.openAsset4Input(resourceString);
+			return true;
 		} catch (IOException ioe) {
 			return false;
 		}
