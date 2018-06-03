@@ -8,12 +8,12 @@
 //               the source for the specific functionality for the backend services.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Adam Antinoo
@@ -30,15 +30,19 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
 	private static final List<ExceptionRecord> exceptionsIntercepted = new ArrayList();
 
-	public static void registerException (final String location
+	public static void registerException( final String location
 			, final Exception exceptionIntercepted
-			, final EExceptionSeverity severity) {
+			, final EExceptionSeverity severity ) {
+		logger.info(">< [GlobalDataManagerExceptions.registerException]> Exception loc/desc: {}/{}"
+				, location, exceptionIntercepted.getMessage());
 		exceptionsIntercepted.add(new ExceptionRecord(location, exceptionIntercepted, severity));
 	}
 
-	public static void registerRuntimeException (final String location
+	public static void registerRuntimeException( final String location
 			, final RuntimeException exceptionIntercepted
-			, final EExceptionSeverity severity) {
+			, final EExceptionSeverity severity ) {
+		logger.info(">< [GlobalDataManagerExceptions.registerRuntimeException]> Exception loc/desc: {}/{}"
+				, location, exceptionIntercepted.getMessage());
 		exceptionsIntercepted.add(new RuntimeExceptionRecord(location, exceptionIntercepted, severity));
 	}
 
@@ -51,9 +55,9 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 		private EExceptionSeverity severity = EExceptionSeverity.UNEXPECTED;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
-		public ExceptionRecord (final String location
+		public ExceptionRecord( final String location
 				, final Exception newexception
-				, final EExceptionSeverity severity) {
+				, final EExceptionSeverity severity ) {
 			this.exceptionRegistered = newexception;
 			this.timeStamp = Instant.now().getMillis();
 			this.interceptionMethod = location;
@@ -66,11 +70,11 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................
-		public void setTimeStamp (final long timeStamp) {
+		public void setTimeStamp( final long timeStamp ) {
 			this.timeStamp = timeStamp;
 		}
 
-		public void setTimeStamp (final Instant timeStamp) {
+		public void setTimeStamp( final Instant timeStamp ) {
 			this.timeStamp = timeStamp.getMillis();
 		}
 	}
@@ -81,7 +85,7 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 		// - F I E L D - S E C T I O N ............................................................................
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
-		public RuntimeExceptionRecord (final String location
+		public RuntimeExceptionRecord( final String location
 				, final Exception newexception
 				, final EExceptionSeverity severity
 		) {

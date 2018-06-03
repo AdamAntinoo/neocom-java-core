@@ -58,6 +58,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
 	private List<Property> locationRoles = new ArrayList<>();
 	private HashMap<Integer, Property> actions4Pilot = new HashMap<>();
+	private int totalAssetsNumber = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV2() {
@@ -156,8 +157,8 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	//--- D E R I V E D   G E T T E R S
 	public EveLocation getLastKnownLocation() {
-		if (null != lastKnownLocation) return lastKnownLocation;
-		else if (null == homeLocation) return new EveLocation();
+		if ( null != lastKnownLocation ) return lastKnownLocation;
+		else if ( null == homeLocation ) return new EveLocation();
 		else {
 			try {
 				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
@@ -168,12 +169,28 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		}
 	}
 
-//--- D A T A   T R A N S F O R M A T I O N
+	public long getTotalAssetsNumber() {
+		if ( this.totalAssetsNumber < 0 ) {
+			final List<NeoComAsset> pilotAssets;
+			try {
+				pilotAssets = accessGlobal().getNeocomDBHelper().getAssetDao()
+				                            .queryForEq("ownerId", this.characterId);
+				this.totalAssetsNumber = pilotAssets.size();
+			} catch (SQLException sqle) {
+				this.totalAssetsNumber = 0;
+			}
+		}
+		return totalAssetsNumber;
+	}
+	public String getUrlforAvatar() {
+		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
+	}
+
+	//--- D A T A   T R A N S F O R M A T I O N
 
 	/**
 	 * Use the public data to get access to more other Pilot information and to copy relevant data to the public fields. Public
 	 * data is not used on the normal instance use but the accessed data blocks from the public identifiers.
-	 *
 	 * @param publicData ESI data model with all public identifiers.
 	 */
 	public PilotV2 setPublicData( final GetCharactersCharacterIdOk publicData ) {
@@ -190,7 +207,6 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	/**
 	 * From the database list of properties for this Pilot we separate the sets and create the list of Locations Roles and the
 	 * list of Actions for Item to be used on Manufacturing activities.
-	 *
 	 * @param properties
 	 * @return
 	 */
@@ -198,9 +214,9 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		locationRoles.clear();
 		actions4Pilot.clear();
 		for (Property prop : properties) {
-			if (prop.getPropertyType() == EPropertyTypes.MANUFACTUREACTION)
+			if ( prop.getPropertyType() == EPropertyTypes.MANUFACTUREACTION )
 				actions4Pilot.put(Double.valueOf(prop.getNumericValue()).intValue(), prop);
-			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)
+			if ( prop.getPropertyType() == EPropertyTypes.LOCATIONROLE )
 				locationRoles.add(prop);
 		}
 		return this;
@@ -228,7 +244,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	public void addAction4Item( final int typeId, final String taskName ) {
 		Property hit = actions4Pilot.get(typeId);
-		if (null == hit) {
+		if ( null == hit ) {
 			hit = new Property(EPropertyTypes.MANUFACTUREACTION)
 					.setOwnerId(getCharacterId())
 					.setNumericValue(typeId)
@@ -259,14 +275,10 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	}
 
 	// --- D E L E G A T E D   M E T H O D S
-	public String getUrlforAvatar() {
-//		urlforAvatar="http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
-		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
-	}
 
 
 	public int compareTo( final PilotV2 o ) {
-		if (o.getCharacterId() == getCharacterId()) return 0;
+		if ( o.getCharacterId() == getCharacterId() ) return 0;
 		else return o.getName().compareTo(getName());
 	}
 
@@ -275,7 +287,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return new StringBuffer("PilotV2 [")
 				.append("[#").append(characterId).append("] ")
 				.append("]")
-//				.append("->").append(super.toString())
+				//				.append("->").append(super.toString())
 				.toString();
 	}
 }

@@ -26,11 +26,6 @@ import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComAuthApi20 extends DefaultApi20 {
 	// - S T A T I C - S E C T I O N ..........................................................................
-//	private static final String AUTHORIZE_URL = "https://login.eveonline.com/oauth/authorize";
-//	private static final String ACCESS_TOKEN_RESOURCE = "https://login.eveonline.com/oauth/token";
-//	public static final String PECK =
-//			"ZWY2ODI5OGQ1ODJjNGRmZWJiNjc4ODZlMzBkMDg4YTg6emdQZnhPNjNRUFIyZUgxMXJOcGdQQUwwSjJtQjZmWko3SFFDcmkwcQ==";
-//	public static final String CONTENT_TYPE = "application/json";
 	private static class InstanceHolder {
 		private static final NeoComAuthApi20 INSTANCE = new NeoComAuthApi20();
 	}
@@ -42,8 +37,6 @@ public class NeoComAuthApi20 extends DefaultApi20 {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-//	protected NeoComAuthApi20 () {
-//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
@@ -51,17 +44,17 @@ public class NeoComAuthApi20 extends DefaultApi20 {
 	public String getAccessTokenEndpoint() {
 		// Compose the endpoint from the configuration file.
 		return GlobalDataManager.getResourceString("R.esi.authorization.authorizationserver"
-				,"https://login.eveonline.com/")+
+				, "https://login.eveonline.com/") +
 				GlobalDataManager.getResourceString("R.esi.authorization.authapi.accesstokenresource"
-						,"oauth/token");
+						, "oauth/token");
 	}
 
 	@Override
 	protected String getAuthorizationBaseUrl() {
 		return GlobalDataManager.getResourceString("R.esi.authorization.authorizationserver"
-				,"https://login.eveonline.com/")+
+				, "https://login.eveonline.com/") +
 				GlobalDataManager.getResourceString("R.esi.authorization.authapi.authorizeurl"
-						,"oauth/authorize");
+						, "oauth/authorize");
 	}
 }
 // - UNUSED CODE ............................................................................................

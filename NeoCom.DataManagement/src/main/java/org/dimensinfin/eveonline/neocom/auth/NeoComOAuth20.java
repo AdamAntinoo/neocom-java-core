@@ -15,15 +15,6 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.auth;
 
-import okhttp3.CertificatePinner;
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +29,15 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import okhttp3.CertificatePinner;
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 
 /**
  * Created by Adam on 15/01/2018.
@@ -104,8 +104,8 @@ public class NeoComOAuth20 {
 				.apiKey(clientID)
 				.apiSecret(clientKey)
 				.state("NEOCOM-VERIFICATION-STATE");
-		if (StringUtils.isNotBlank(callback)) builder.callback(callback);
-		if (!scopes.isEmpty()) builder.scope(transformScopes(scopes));
+		if ( StringUtils.isNotBlank(callback) ) builder.callback(callback);
+		if ( !scopes.isEmpty() ) builder.scope(transformScopes(scopes));
 		this.oAuth20Service = builder.build(NeoComAuthApi20.instance());
 
 		OkHttpClient.Builder verifyClient =
@@ -118,9 +118,9 @@ public class NeoComOAuth20 {
 										.build())
 						.addInterceptor(chain -> chain.proceed(
 								chain.request()
-										.newBuilder()
-										.addHeader("User-Agent", agent)
-										.build()));
+								     .newBuilder()
+								     .addHeader("User-Agent", agent)
+								     .build()));
 		this.verify =
 				new Retrofit.Builder()
 						// TODO - This depends on the Tranquility/Singularity definition
@@ -150,11 +150,11 @@ public class NeoComOAuth20 {
 		logger.info(">> [NeoComOAuth20.fromRefresh]");
 		try {
 			TokenTranslationResponse existing = this.store.get(refresh);
-//			logger.info("-- [NeoComOAuth20.fromRefresh]> Token response: {}", existing.getAccessToken());
-			if ((null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000))) {
+			//			logger.info("-- [NeoComOAuth20.fromRefresh]> Token response: {}", existing.getAccessToken());
+			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
 				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
-//				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
+				//				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
 				logger.info("<< [NeoComOAuth20.fromRefresh]> Saving new token.");
 				return save(token);
 			}
@@ -171,7 +171,7 @@ public class NeoComOAuth20 {
 		try {
 			final Response<VerifyCharacterResponse> r =
 					this.verify.getVerification("Bearer " + stored.getAccessToken()).execute();
-			if (r.isSuccessful()) {
+			if ( r.isSuccessful() ) {
 				return r.body();
 			}
 			return null;

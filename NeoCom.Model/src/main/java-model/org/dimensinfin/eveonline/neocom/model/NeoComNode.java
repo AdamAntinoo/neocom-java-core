@@ -40,7 +40,7 @@ public abstract class NeoComNode extends ANeoComEntity implements ICollaboration
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComNode() {
-		jsonClass = "NeoComNode";
+		jsonClass = this.getClass().getSimpleName();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -52,9 +52,9 @@ public abstract class NeoComNode extends ANeoComEntity implements ICollaboration
 		return jsonClass;
 	}
 
-	private void setJsonClass( final String jsonClass ) {
-		this.jsonClass = jsonClass;
-	}
+//	private void setJsonClass( final String jsonClass ) {
+//		this.jsonClass = jsonClass;
+//	}
 
 	@Override
 	public String toString() {

@@ -75,7 +75,7 @@ public class Credential extends NeoComNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	protected Credential() {
 		super();
-		this.jsonClass = "Credential";
+//		this.jsonClass = "Credential";
 	}
 
 	public Credential( final int newAccountIdentifier ) {

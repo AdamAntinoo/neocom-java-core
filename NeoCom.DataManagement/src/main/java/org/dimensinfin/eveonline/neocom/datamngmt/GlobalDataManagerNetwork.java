@@ -63,8 +63,8 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 
 	static {
 		modelMapper.getConfiguration()
-				.setFieldMatchingEnabled(true)
-				.setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
+		           .setFieldMatchingEnabled(true)
+		           .setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
 	}
 
 	/**
@@ -77,12 +77,21 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		jsonMapper.registerModule(new JodaModule());
 		// Add our own serializers.
 		SimpleModule neocomSerializerModule = new SimpleModule();
-//		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
+		//		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
 		neocomSerializerModule.addSerializer(Credential.class, new CredentialSerializer());
 		jsonMapper.registerModule(neocomSerializerModule);
 	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
+
+	/**
+	 * Get access to the Authorization URL from the OAuth20 interface instance.
+	 * @return the authorization URL to call.
+	 */
+	public static String getAuthorizationUrl() {
+		return ESINetworkManager.getAuthorizationUrl();
+	}
+
 	public static List<Job> downloadIndustryJobs4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
 		List<Job> results = new ArrayList<>();
@@ -91,11 +100,11 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			final List<GetCharactersCharacterIdIndustryJobs200Ok> industryJobs = ESINetworkManager.getCharactersCharacterIdIndustryJobs(credential.getAccountId()
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
-			if (null != industryJobs) {
+			if ( null != industryJobs ) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdIndustryJobs200Ok job : industryJobs) {
 					final Job newjob = modelMapper.map(job, Job.class);
-//								.setOwnerId(credential.getAccountId())
+					//								.setOwnerId(credential.getAccountId())
 					newjob.store();
 					results.add(newjob);
 				}
@@ -123,7 +132,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					(credential.getAccountId()
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
-			if (null != marketOrders) {
+			if ( null != marketOrders ) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrders200Ok order : marketOrders) {
 					final MarketOrder neworder = modelMapper.map(order, MarketOrder.class);
@@ -147,6 +156,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			logger.info("<< [GlobalDataManagerNetwork.downloadMarketOrders4Credential]");
 		}
 	}
+
 	public static List<MarketOrder> downloadMarketOrdersHistory4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManagerNetwork.downloadMarketOrdersHistory4Credential]");
 		List<MarketOrder> results = new ArrayList<>();
@@ -156,15 +166,15 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					(credential.getAccountId()
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
-			if (null != marketOrders) {
+			if ( null != marketOrders ) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrdersHistory200Ok order : marketOrders) {
 					final MarketOrder neworder = modelMapper.map(order, MarketOrder.class);
 					final GetCharactersCharacterIdOrdersHistory200Ok.StateEnum state = order.getState();
 					MarketOrder.EOrderStates newState = MarketOrder.EOrderStates.CLOSED;
-					if(state==GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.CANCELLED)
+					if ( state == GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.CANCELLED )
 						newState = MarketOrder.EOrderStates.CANCELLED;
-					if(state==GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.EXPIRED)
+					if ( state == GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.EXPIRED )
 						newState = MarketOrder.EOrderStates.EXPIRED;
 					neworder
 							.setOwnerId(credential.getAccountId())
@@ -203,13 +213,13 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					// Block to add additional data not downloaded on this call.
 					// To set more information about this particular planet we should call the Universe database.
 					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-					if (null != planetData) col.setPlanetData(planetData);
+					if ( null != planetData ) col.setPlanetData(planetData);
 
 					try {
 						// During this first phase download all the rest of the information.
 						// Get to the Network and download the data from the ESI api.
 						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-						if (null != colonyStructures) {
+						if ( null != colonyStructures ) {
 							// Add the original data to the colony if we need some more information later.
 							col.setStructuresData(colonyStructures);
 							List<ColonyStructure> results = new ArrayList<>();
@@ -225,10 +235,10 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 											, col.getPlanetId());
 									// TODO Removed until the compilation is complete. This is something we should review before adding
 									// it back.
-//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-//											.setPlanetIdentifier(storageIdentifier)
-//											.setColonySerialization(serialized)
-//											.store();
+									//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+									//											.setPlanetIdentifier(storageIdentifier)
+									//											.setColonySerialization(serialized)
+									//											.store();
 								} catch (JsonProcessingException jpe) {
 									jpe.printStackTrace();
 								}
@@ -256,39 +266,39 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
 		logger.info(">> [GlobalDataManager.accessStructures4Colony]");
 		List<ColonyStructure> results = new ArrayList<>();
-//		// Get the Credential that matched the received identifier.
-//		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
-//		if (null != credential) {
-//			// Get to the Network and download the data from the ESI api.
-//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
-//			if (null != colonyStructures) {
-//				// Process the structures converting the pin to the Colony structures compatible with MVC.
-//				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-//				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-//					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
-//					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-//					try {
-//						final String serialized = jsonMapper.writeValueAsString(newstruct);
-//						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
-//						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-//								.setPlanetIdentifier(storageIdentifier)
-//								.setColonySerialization(serialized)
-//								.store();
-//					} catch (JsonProcessingException jpe) {
-//						jpe.printStackTrace();
-//					}
-//					results.add(newstruct);
-//				}
-//			}
-//		} else {
-//			// TODO. It will not return null. The miss searching for a credential will generate an exception.
-//			// Possible that because the application has been previously removed from memory that data is not reloaded.
-//			// Call the reloading mechanism and have a second opportunity.
-//			DataManagementModelStore.accessCredentialList();
-//			credential = DataManagementModelStore.getCredential4Id(characterid);
-//			if (null == credential) return new ArrayList<>();
-//			else return GlobalDataManager.downloadStructures4Colony(characterid, planetid);
-//		}
+		//		// Get the Credential that matched the received identifier.
+		//		Credential credential = DataManagementModelStore.getCredential4Id(characterid);
+		//		if (null != credential) {
+		//			// Get to the Network and download the data from the ESI api.
+		//			final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), planetid, credential.getRefreshToken(), SERVER_DATASOURCE);
+		//			if (null != colonyStructures) {
+		//				// Process the structures converting the pin to the Colony structures compatible with MVC.
+		//				final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+		//				for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+		//					ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
+		//					// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+		//					try {
+		//						final String serialized = jsonMapper.writeValueAsString(newstruct);
+		//						final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId(), planetid);
+		//						final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+		//								.setPlanetIdentifier(storageIdentifier)
+		//								.setColonySerialization(serialized)
+		//								.store();
+		//					} catch (JsonProcessingException jpe) {
+		//						jpe.printStackTrace();
+		//					}
+		//					results.add(newstruct);
+		//				}
+		//			}
+		//		} else {
+		//			// TODO. It will not return null. The miss searching for a credential will generate an exception.
+		//			// Possible that because the application has been previously removed from memory that data is not reloaded.
+		//			// Call the reloading mechanism and have a second opportunity.
+		//			DataManagementModelStore.accessCredentialList();
+		//			credential = DataManagementModelStore.getCredential4Id(characterid);
+		//			if (null == credential) return new ArrayList<>();
+		//			else return GlobalDataManager.downloadStructures4Colony(characterid, planetid);
+		//		}
 		return results;
 	}
 
@@ -301,7 +311,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					(credential.getAccountId()
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
-			if (null != fittings) {
+			if ( null != fittings ) {
 				// Process the fittings processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
 					final Fitting newfitting = modelMapper.map(fit, Fitting.class);

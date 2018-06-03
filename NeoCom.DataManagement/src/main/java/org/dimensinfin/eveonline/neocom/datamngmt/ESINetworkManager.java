@@ -146,6 +146,10 @@ public class ESINetworkManager {
 				.toString();
 	}
 
+	public static String getAuthorizationUrl() {
+		return neocomAuth20.getAuthorizationUrl();
+	}
+
 	public static String getStringScopes() {
 		return SCOPESTRING;
 	}
