@@ -29,7 +29,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	// --- P U B L I C   E N U M E R A T O R S
 	public enum EDataUpdateJobs {
-		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, COLONYDATA, SKILL_DATA
+		READY, CHARACTER_CORE, CHARACTER_FULL, ASSETDATA, BLUEPRINTDATA, INDUSTRYJOBS, MARKETORDERS, MININGEXTRACTIONS, COLONYDATA, SKILL_DATA
 	}
 
 	// --- P R I V A T E   E N U M E R A T O R S
@@ -112,9 +112,10 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 		}
 	}
 
-	public static int getResourceInt( final String key, final String defaultValue ) {
+	public static int getResourceInt( final String key, final int defaultValue ) {
 		try {
-			return Integer.valueOf(accessConfigurationManager().getResourceString(key, defaultValue)).intValue();
+			return Integer.valueOf(accessConfigurationManager().getResourceString(key
+					, Integer.valueOf(defaultValue).toString())).intValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -128,9 +129,10 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 		}
 	}
 
-	public static long getResourceLong( final String key, final String defaultValue ) {
+	public static long getResourceLong( final String key, final long defaultValue ) {
 		try {
-			return Long.valueOf(accessConfigurationManager().getResourceString(key, defaultValue)).longValue();
+			return Long.valueOf(accessConfigurationManager().getResourceString(key
+					, Long.valueOf(defaultValue).toString())).longValue();
 		} catch (NumberFormatException nfe) {
 			return 0;
 		}
@@ -141,7 +143,8 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	}
 
 	public static boolean getResourceBoolean( final String key, final boolean defaultValue ) {
-		return Boolean.valueOf(accessConfigurationManager().getResourceString(key, Boolean.valueOf(defaultValue).toString())).booleanValue();
+		return Boolean.valueOf(accessConfigurationManager().getResourceString(key
+				, Boolean.valueOf(defaultValue).toString())).booleanValue();
 	}
 
 	public String getEveOnlineServerDatasource() {

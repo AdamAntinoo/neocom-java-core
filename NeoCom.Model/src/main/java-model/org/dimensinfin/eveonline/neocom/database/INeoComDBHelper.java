@@ -23,11 +23,12 @@ import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.database.entity.FittingRequest;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
+import org.dimensinfin.eveonline.neocom.database.entity.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.database.entity.Property;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComBlueprint;
 
 /**
  * This interface defines the methods that should be implemented at the final Helper implementation so all
@@ -57,21 +58,13 @@ public interface INeoComDBHelper {
 
 	public Dao<Credential, String> getCredentialDao() throws SQLException;
 
-	public Dao<Colony, String> getColonyDao() throws SQLException;
+	public Dao<EveLocation, String> getLocationDao() throws SQLException;
 
-//	@Deprecated
-//	public Dao<ColonyStorage, String> getColonyStorageDao() throws SQLException;
-//
-//	@Deprecated
-//	public Dao<ColonySerialized, String> getColonySerializedDao() throws SQLException;
+	public Dao<Property, String> getPropertyDao() throws SQLException;
 
 	public Dao<NeoComAsset, String> getAssetDao() throws SQLException;
 
 	public Dao<NeoComBlueprint, String> getBlueprintDao() throws SQLException;
-
-	public Dao<EveLocation, String> getLocationDao() throws SQLException;
-
-	public Dao<Property, String> getPropertyDao() throws SQLException;
 
 	public Dao<Job, String> getJobDao() throws SQLException;
 
@@ -79,9 +72,20 @@ public interface INeoComDBHelper {
 
 	public Dao<FittingRequest, String> getFittingRequestDao() throws SQLException;
 
+	public Dao<MiningExtraction, String> getMiningExtractionDao() throws SQLException;
+
 	public void clearInvalidRecords( final long pilotid );
 
 	public void replaceAssets( final long pilotid );
 
 	public void replaceBlueprints( final long pilotid );
+
+	public Dao<Colony, String> getColonyDao() throws SQLException;
+
+	//	@Deprecated
+	//	public Dao<ColonyStorage, String> getColonyStorageDao() throws SQLException;
+	//
+	//	@Deprecated
+	//	public Dao<ColonySerialized, String> getColonySerializedDao() throws SQLException;
+
 }

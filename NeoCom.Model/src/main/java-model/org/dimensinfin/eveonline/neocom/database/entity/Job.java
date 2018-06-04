@@ -111,12 +111,25 @@ public class Job extends NeoComNode {
 			// Try to create the record. It fails then it was already created.
 			jobDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
-			logger.info("WR [TimeStamp.<constructor>]> Industry Job exists. Update values.");
+			logger.info("WR [Job.<constructor>]> Industry Job exists. Update values.");
 			this.store();
 		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public Job store() {
+		try {
+			Dao<Job, String> jobDao = accessGlobal().getNeocomDBHelper().getJobDao();
+			// Try to create the record. It fails then it was already created.
+			jobDao.createOrUpdate(this);
+		} catch (final SQLException sqle) {
+			logger.info("WR [Job.<constructor>]> Industry Job exists. Update values.");
+			this.store();
+		}
+		return this;
+	}
+
+	// ---  G E T T E R S   &   S E T T E R S
 	public int getActivityId() {
 		return activityId;
 	}
@@ -378,18 +391,6 @@ public class Job extends NeoComNode {
 //	public void setTimeInSeconds( final int timeInSeconds ) {
 //		this.timeInSeconds = timeInSeconds;
 //	}
-
-	public Job store() {
-		try {
-			Dao<Job, String> jobDao = accessGlobal().getNeocomDBHelper().getJobDao();
-			// Try to create the record. It fails then it was already created.
-			jobDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			logger.info("WR [TimeStamp.<constructor>]> Industry Job exists. Update values.");
-			this.store();
-		}
-		return this;
-	}
 
 	@Override
 	public String toString() {

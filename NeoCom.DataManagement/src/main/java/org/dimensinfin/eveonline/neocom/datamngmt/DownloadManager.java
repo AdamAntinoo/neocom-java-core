@@ -20,18 +20,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
+import org.dimensinfin.eveonline.neocom.database.entity.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComBlueprint;
 
 /**
  * @author Adam Antinoo
@@ -56,14 +59,15 @@ public class DownloadManager {
 		this();
 		this.credential = credential;
 		// Preload the dao.
-//		try {
-//			assetDao = new GlobalDataManager().getNeocomDBHelper().getAssetDao();
-//		} catch (SQLException sqle) {
-//			sqle.printStackTrace();
-//		}
+		//		try {
+		//			assetDao = new GlobalDataManager().getNeocomDBHelper().getAssetDao();
+		//		} catch (SQLException sqle) {
+		//			sqle.printStackTrace();
+		//		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	// - A S S E T S
 
 	/**
 	 * This downloader will use the new ESI api to get access to the full list of assets for this character.
@@ -86,7 +90,7 @@ public class DownloadManager {
 			new GlobalDataManager().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
 			// Download the list of assets.
 			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = ESINetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
-			if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
+			if ( (null == assetOkList) || (assetOkList.size() < 1) ) return false;
 			// Create the list for orphaned locations assets. They should be processed later.
 			this.unlocatedAssets.clear();
 			// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
@@ -95,16 +99,16 @@ public class DownloadManager {
 				try {
 					// Convert the asset from the OK format to a MVC compatible structure.
 					final NeoComAsset myasset = this.convert2AssetFromESI(assetOk);
-					if (myasset.getCategoryName().equalsIgnoreCase("Ship")) {
+					if ( myasset.getCategoryName().equalsIgnoreCase("Ship") ) {
 						myasset.setShip(true);
 					}
-					if (myasset.getCategoryName().equalsIgnoreCase("Blueprint")) {
+					if ( myasset.getCategoryName().equalsIgnoreCase("Blueprint") ) {
 						myasset.setBlueprintType(assetOk.getQuantity());
 					}
-					if (myasset.isShip()) {
+					if ( myasset.isShip() ) {
 						downloadAssetEveName(myasset.getAssetId());
 					}
-					if (myasset.isContainer()) {
+					if ( myasset.isContainer() ) {
 						downloadAssetEveName(myasset.getAssetId());
 					}
 					// Mark the asset owner to the work in progress value.
@@ -117,7 +121,7 @@ public class DownloadManager {
 					// Check the asset location. The location can be a known game station, a known user structure, another asset
 					// or an unknown player structure. Check which one is this location.
 					EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(myasset.getLocationId());
-					if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+					if ( targetLoc.getTypeId() == ELocationType.UNKNOWN ) {
 						// Add this asset to the list of items to be reprocessed.
 						this.unlocatedAssets.add(myasset);
 					}
@@ -136,7 +140,7 @@ public class DownloadManager {
 			new GlobalDataManager().getNeocomDBHelper().replaceAssets(credential.getAccountId());
 			// Remove from memory the managers that contain now stale data.
 			//TODO Removed until this is checked if required.
-//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
+			//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -173,8 +177,8 @@ public class DownloadManager {
 							, credential.getRefreshToken()
 							, null
 					);
-			if ((null == blueprintOkList) || (blueprintOkList.size() < 1)) return false;
-//			// Create the list for orphaned locations assets. They should be processed later.
+			if ( (null == blueprintOkList) || (blueprintOkList.size() < 1) ) return false;
+			//			// Create the list for orphaned locations assets. They should be processed later.
 			this.unlocatedBlueprints.clear();
 			final List<NeoComBlueprint> bplist = new ArrayList<NeoComBlueprint>();
 			for (final GetCharactersCharacterIdBlueprints200Ok blueprintOk : blueprintOkList) {
@@ -183,7 +187,7 @@ public class DownloadManager {
 				try {
 					// Convert the blueprint from the OK format to a MVC compatible structure.
 					newBlueprint = new NeoComBlueprint(blueprintOk.getItemId(), blueprintOk.getTypeId())
-//							.setTypeId(blueprintOk.getTypeId())
+							//							.setTypeId(blueprintOk.getTypeId())
 							.setLocationId(blueprintOk.getLocationId())
 							.setLocationFlag(blueprintOk.getLocationFlag())
 							.setQuantity(blueprintOk.getQuantity())
@@ -193,7 +197,7 @@ public class DownloadManager {
 							.setPackaged((blueprintOk.getQuantity() < 0) ? true : false);
 					bplist.add(newBlueprint);
 					// Detect if BPO or BPC and set the flag.
-					if (blueprintOk.getRuns() == -1) {
+					if ( blueprintOk.getRuns() == -1 ) {
 						newBlueprint.setBpo(true);
 					}
 					// Mark the asset owner to the work in progress value.
@@ -206,7 +210,7 @@ public class DownloadManager {
 					// Check the blueprint location. The location can be a known game station, a known user structure, another asset
 					// or an unknown player structure. Check which one is this location.
 					EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(newBlueprint.getLocationId());
-					if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+					if ( targetLoc.getTypeId() == ELocationType.UNKNOWN ) {
 						// Add this blueprint to the list of items to be reprocessed.
 						this.unlocatedBlueprints.add(newBlueprint);
 					}
@@ -228,7 +232,7 @@ public class DownloadManager {
 			new GlobalDataManager().getNeocomDBHelper().replaceBlueprints(credential.getAccountId());
 			// Remove from memory the managers that contain now stale data.
 			//TODO Removed until this is checked if required.
-//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
+			//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 			return false;
@@ -237,6 +241,7 @@ public class DownloadManager {
 		return true;
 	}
 
+	// - I N D U S T R Y
 	public void downloadPilotJobsESI() {
 		DownloadManager.logger.info(">> [DownloadManager.downloadPilotJobsESI]");
 		try {
@@ -245,7 +250,98 @@ public class DownloadManager {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotJobsESI]");
 		}
 	}
+	/**
+	 * Mining actions are small records that register the ore collected by a Pilot or the Moon mining done by a Corporation. The time base
+	 * is 10 minutes and I suppose that those records are aggregated during a day. The data is a list of entries, each one declaring the
+	 * quantity of one ore mined on a date and related to a single star system.
+	 *
+	 * I should reprocess that information and extract the quantity differences from the last ESI access. This way I will collect the delta
+	 * increment on ore extracted on the last 10 minute period and with that information be able to interpolate isk profits er unit of time.
+	 */
+	public List<MiningExtraction> downloadPilotMiningActionsESI() {
+		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]");
+		try {
+			List<MiningExtraction> oreExtractions = new ArrayList<>();
+			try {
+				final Dao<MiningExtraction, String> miningDao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
+				// Get to the Network and download the data from the ESI api.
+				final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = ESINetworkManager.getCharactersCharacterIdMining(credential.getAccountId()
+						, credential.getRefreshToken()
+						, GlobalDataManager.SERVER_DATASOURCE);
+				if ( null != miningActionsOk ) {
+					// Process the data and convert it to structures compatible with MVC.
+					for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
+						// Before doing any store of the data, see if this is a delta.
+						// Search fro the previous record and check the quantity.
+						HashMap<String, Object> where = new HashMap<String, Object>();
+						where.put("ownerId", credential.getAccountId());
+						where.put("typeId", extractionOk.getTypeId());
+						where.put("solarSystemId", extractionOk.getSolarSystemId());
+						final String targetData = extractionOk.getDate().toString("YYYY/MM/dd");
+						where.put("extractionIndexDate", targetData);
+						List<MiningExtraction> targetExtraction = null;
+						try {
+							targetExtraction = miningDao.queryForFieldValues(where);
+						} catch (SQLException sqle) {
+							logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> {}", sqle.getMessage());
+						}
+						if ( (null != targetExtraction) && (targetExtraction.size() > 0) ) {
+							// There is a record at the same date from the same owner and for the same ore type.
+							if ( targetExtraction.get(0).getQuantity() == extractionOk.getQuantity() )
+								continue;
+							else {
+								// Create the delta record.
+								final MiningExtraction newExtraction = new MiningExtraction()
+										.setTypeId(extractionOk.getTypeId())
+										.setSolarSystemId(extractionOk.getSolarSystemId())
+										.setDate(extractionOk.getDate())
+										.setQuantity(extractionOk.getQuantity() - targetExtraction.get(0).getQuantity())
+										.setOwnerId(credential.getAccountId());
+								// Create the new record using the day and not the store. This is only used for updates.
+								miningDao.create(newExtraction);
+								logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {}"
+								,newExtraction.toString());
+								oreExtractions.add(newExtraction);
+							}
+						} else {
+							// Insert a new record.
+							final MiningExtraction newExtraction = new MiningExtraction()
+									.setTypeId(extractionOk.getTypeId())
+									.setSolarSystemId(extractionOk.getSolarSystemId())
+									.setDate(extractionOk.getDate())
+									.setQuantity(extractionOk.getQuantity())
+									.setOwnerId(credential.getAccountId());
+							// Create the new record using the day and not the store. This is only used for updates.
+							miningDao.create(newExtraction);
+							logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {}"
+									,newExtraction.toString());
+							oreExtractions.add(newExtraction);
+						}
+					}
+				}
+				return oreExtractions;
+			} catch (SQLException sqle) {
+				logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+						, sqle.getMessage());
+				return new ArrayList<>();
+			} catch (NeoComRuntimeException nrex) {
+				logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+						, nrex.getMessage());
+				return new ArrayList<>();
+			} catch (RuntimeException ntex) {
+				logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Mapping error - {}"
+						, ntex.getMessage());
+				return new ArrayList<>();
+			} finally {
+				logger.info("<< [DownloadManager.downloadPilotMiningActionsESI]");
+			}
 
+		} finally {
+			DownloadManager.logger.info("<< [DownloadManager.downloadPilotMiningActionsESI]");
+		}
+	}
+
+	// - M A R K E T   O R D E R S
 	public void downloadPilotMarketOrdersESI() {
 		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMarketOrdersESI]");
 		try {
@@ -256,34 +352,34 @@ public class DownloadManager {
 		}
 	}
 
-	//--- P R I V A T E   M E T H O D S
+	// --- P R I V A T E   M E T H O D S
 	private NeoComAsset convert2AssetFromESI( final GetCharactersCharacterIdAssets200Ok asset200Ok ) {
 		// Create the asset from the API asset.
 		final NeoComAsset newAsset = new NeoComAsset(asset200Ok.getTypeId())
 				.setAssetId(asset200Ok.getItemId());
 		// TODO -- Location management is done ourside this transormation. This is duplicated code.
 		Long locid = asset200Ok.getLocationId();
-		if (null == locid) {
+		if ( null == locid ) {
 			locid = (long) -2;
 		}
 		newAsset.setLocationId(locid)
-				.setLocationType(asset200Ok.getLocationType())
-				.setQuantity(asset200Ok.getQuantity())
-				.setLocationFlag(asset200Ok.getLocationFlag())
-				.setSingleton(asset200Ok.getIsSingleton());
+		        .setLocationType(asset200Ok.getLocationType())
+		        .setQuantity(asset200Ok.getQuantity())
+		        .setLocationFlag(asset200Ok.getLocationFlag())
+		        .setSingleton(asset200Ok.getIsSingleton());
 		// Get access to the Item and update the copied fields.
 		final EveItem item = new GlobalDataManager().searchItem4Id(newAsset.getTypeId());
-		if (null != item) {
-//			try {
+		if ( null != item ) {
+			//			try {
 			newAsset.setName(item.getName());
 			newAsset.setCategory(item.getCategoryName());
 			newAsset.setGroupName(item.getGroupName());
 			newAsset.setTech(item.getTech());
-//				if (item.isBlueprint()) {
-//					//			newAsset.setBlueprintType(eveAsset.getRawQuantity());
-//				}
-//			} catch (RuntimeException rtex) {
-//			}
+			//				if (item.isBlueprint()) {
+			//					//			newAsset.setBlueprintType(eveAsset.getRawQuantity());
+			//				}
+			//			} catch (RuntimeException rtex) {
+			//			}
 		}
 		// Add the asset value to the database.
 		newAsset.setIskValue(this.calculateAssetValue(newAsset));
@@ -293,19 +389,19 @@ public class DownloadManager {
 	private synchronized double calculateAssetValue( final NeoComAsset asset ) {
 		// Skip blueprints from the value calculations
 		double assetValueISK = 0.0;
-		if (null != asset) {
+		if ( null != asset ) {
 			EveItem item = asset.getItem();
-			if (null != item) {
+			if ( null != item ) {
 				String category = item.getCategoryName();
 				String group = item.getGroupName();
-				if (null != category) if (!category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+				if ( null != category ) if ( !category.equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint) ) {
 					// Add the value and volume of the stack to the global result.
 					long quantity = asset.getQuantity();
 					double price = 0.0;
 					try {
 						// First try to set the average market price. If it fails search for the market data.
 						price = asset.getItem().getPrice();
-						if (price < 0)
+						if ( price < 0 )
 							price = asset.getItem().getHighestBuyerPrice().getPrice();
 					} catch (ExecutionException ee) {
 						price = asset.getItem().getPrice();
@@ -328,14 +424,14 @@ public class DownloadManager {
 	private ELocationType validateLocation( final ILocatableAsset locatable ) {
 		long targetLocationid = locatable.getLocationId();
 		EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(targetLocationid);
-		if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+		if ( targetLoc.getTypeId() == ELocationType.UNKNOWN ) {
 			try {
 				// Need to check if asset or unreachable location. Search for asset with locationid.
 				List<NeoComAsset> targetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
-						.queryForEq("assetId", Long.valueOf(targetLocationid));
+				                                                      .queryForEq("assetId", Long.valueOf(targetLocationid));
 				NeoComAsset target = null;
-				if (targetList.size() > 0) target = targetList.get(0);
-				if (null == target)
+				if ( targetList.size() > 0 ) target = targetList.get(0);
+				if ( null == target )
 					return ELocationType.UNKNOWN;
 				else {
 					// Change the asset parentship and update the asset location with the location of the parent.
@@ -346,8 +442,8 @@ public class DownloadManager {
 					while (parentIdentifier != -1) {
 						validateLocation(target);
 						targetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
-								.queryForEq("assetId", Long.valueOf(parentIdentifier));
-						if (targetList.size() > 0) target = targetList.get(0);
+						                                    .queryForEq("assetId", Long.valueOf(parentIdentifier));
+						if ( targetList.size() > 0 ) target = targetList.get(0);
 						parentIdentifier = target.getParentContainerId();
 					}
 					// Now target contains a parent with parentship -1.
@@ -370,7 +466,7 @@ public class DownloadManager {
 	 */
 	private void downloadAssetEveName( final long assetId ) {
 		this.id4Names.add(assetId);
-		if (this.id4Names.size() > 9) {
+		if ( this.id4Names.size() > 9 ) {
 			postUserLabelNameDownload();
 			this.id4Names.clear();
 		}
@@ -393,7 +489,7 @@ public class DownloadManager {
 						logger.info("-- [DownloadManager.downloadAssetEveName]> Setting UserLabel name {} for asset {}.", name
 								.getName(), name.getItemId());
 						asset.setUserLabel(name.getName())
-								.store();
+						     .store();
 					}
 				}
 			} catch (SQLException sqle) {
@@ -416,7 +512,7 @@ public class DownloadManager {
 		}
 
 		// Extract stacks and store them into the caches.
-//		blueprintCache.addAll(bpStacks.values());
+		//		blueprintCache.addAll(bpStacks.values());
 		// Update the database information.
 		try {
 			final Dao<NeoComBlueprint, String> blueprintDao = new GlobalDataManager().getNeocomDBHelper().getBlueprintDao();
@@ -424,10 +520,10 @@ public class DownloadManager {
 				try {
 					// Set new calculated values to reduce the time for blueprint part rendering.
 					// TODO - This has to be rewrite to allow this calculation on download time.
-//									IJobProcess process = JobManager.generateJobProcess(this.credential, blueprint, EJobClasses.MANUFACTURE);
-//									blueprint.setManufactureIndex(process.getProfitIndex());
-//									blueprint.setJobProductionCost(process.getJobCost());
-//									blueprint.setManufacturableCount(process.getManufacturableCount());
+					//									IJobProcess process = JobManager.generateJobProcess(this.credential, blueprint, EJobClasses.MANUFACTURE);
+					//									blueprint.setManufactureIndex(process.getProfitIndex());
+					//									blueprint.setJobProductionCost(process.getJobCost());
+					//									blueprint.setManufacturableCount(process.getManufacturableCount());
 					blueprintDao.create(blueprint);
 					DownloadManager.logger.info("-- [DownloadManager.storeBlueprints]> Wrote blueprint to database id [" + blueprint
 							.getBlueprintId() + "]");
@@ -444,9 +540,9 @@ public class DownloadManager {
 				}
 			}
 		} catch (final SQLException sqle) {
-//			DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
-//					.getBlueprintId() + "]. "
-//					+ sqle.getMessage());
+			//			DownloadManager.logger.error("E> [DownloadManager.storeBlueprints]> Unable to create the new blueprint [" + blueprint
+			//					.getBlueprintId() + "]. "
+			//					+ sqle.getMessage());
 			sqle.printStackTrace();
 		}
 		logger.info("<< [DownloadManager.storeBlueprints]");
@@ -462,12 +558,12 @@ public class DownloadManager {
 	 */
 	private void checkBPCStacking( final HashMap<String, NeoComBlueprint> targetContainer, final NeoComBlueprint bp ) {
 		// If the blueprint is a BPO then do not stack.
-		if (bp.isBpo()) targetContainer.put(Long.valueOf(bp.getBlueprintId()).toString(), bp);
+		if ( bp.isBpo() ) targetContainer.put(Long.valueOf(bp.getBlueprintId()).toString(), bp);
 		else {
 			// Get the unique identifier for a blueprint related to stack aggregation. TYPEID.LOCATIONID.RUNS
 			String id = bp.getStackId();
 			NeoComBlueprint hit = targetContainer.get(id);
-			if (null == hit) {
+			if ( null == hit ) {
 				// Miss. The blueprint is not registered.
 				DownloadManager.logger.info("-- [DownloadManager.checkBPCStacking]> Stacking blueprint {} into {}"
 						, bp.getBlueprintId(), id);
@@ -488,7 +584,7 @@ public class DownloadManager {
 	// --- D E L E G A T E D   M E T H O D S
 	@Override
 	public String toString() {
-		if (null != credential) return new StringBuffer("DownloadManager [")
+		if ( null != credential ) return new StringBuffer("DownloadManager [")
 				.append("owner:").append(credential.getAccountId()).append(" ")
 				.append("]")
 				.append("->").append(super.toString())

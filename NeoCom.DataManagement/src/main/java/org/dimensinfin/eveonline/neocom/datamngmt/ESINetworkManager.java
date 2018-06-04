@@ -50,6 +50,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
@@ -190,8 +191,7 @@ public class ESINetworkManager {
 	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E
-	// - C H A R A C T E R
-	//--- CHARACTER PUBLIC INFORMATION
+	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
 	public static GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
 		final Chrono accessFullTime = new Chrono();
@@ -221,7 +221,6 @@ public class ESINetworkManager {
 
 
 	// - C L O N E S
-	//--- CLONES
 	public static GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
 		final Chrono accessFullTime = new Chrono();
@@ -244,10 +243,8 @@ public class ESINetworkManager {
 		}
 		return null;
 	}
-	//--- IMPLANTS
 
 	// - C O R P O R A T I O N S
-	//--- CORPORATION INFORMATION
 	public static GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
 		final Chrono accessFullTime = new Chrono();
@@ -273,7 +270,6 @@ public class ESINetworkManager {
 	}
 
 	// - A L L I A N C E S
-	//--- ALLIANCE INFORMATION
 	public static GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
 		final Chrono accessFullTime = new Chrono();
@@ -424,11 +420,55 @@ public class ESINetworkManager {
 		}
 	}
 
+	public static List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
+			, final String refreshToken
+			, final String server ) {
+		logger.info(">> [ESINetworkManager.getCharactersCharacterIdMining]");
+		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>(1000);
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			if ( null != server ) datasource = server;
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = neocomRetrofit
+						.create(IndustryApi.class)
+						.getCharactersCharacterIdMining(identifier, datasource, pageCounter, null, null, null).execute();
+				if ( !industryApiResponse.isSuccessful() ) {
+					// Or error or we have reached the end of the list.
+					return returnMiningList;
+				} else {
+					// Copy the assets to the result list.
+					returnMiningList.addAll(industryApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if ( industryApiResponse.body().size() < 1 ) morePages = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			// Check if the problem is a connection reset.
+			if ( rtex.getMessage().toLowerCase().contains("connection reset") ) {
+				// Recreate the retrofit.
+				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+			}
+		} finally {
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdMining]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return returnMiningList;
+	}
+
+	// - M A R K E T   O R D E R S
 	public static List<GetCharactersCharacterIdOrders200Ok> getCharactersCharacterIdOrders( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdOrders]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.MARKET_ORDERS, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.INDUSTRY_MARKET_ORDERS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
 		if ( null == hit ) {
@@ -494,6 +534,7 @@ public class ESINetworkManager {
 		return returnOrderList;
 	}
 
+	// - A S S E T S
 	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier
 			, final String refreshToken
 			, final String server ) {
@@ -633,7 +674,7 @@ public class ESINetworkManager {
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdWallet]");
 		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.MARKET_ORDERS, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.WALLET, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
 		if ( null == hit ) {

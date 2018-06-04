@@ -42,7 +42,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
 		, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS
 		, MARKET_PRICES
-		, INDUSTRY_JOBS, MARKET_ORDERS
+		, INDUSTRY_JOBS, INDUSTRY_MARKET_ORDERS, INDUSTRY_MINING
 		, WALLET, CORPORATION_WALLET
 	}
 
@@ -52,12 +52,11 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		ESICacheTimes.put(ECacheTimes.CHARACTER_BLUEPRINTS, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
-//		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600));
-		// TODO - Changing some values during debugging.
-		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.HOURS.toMillis(4));
+		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600*4));// TODO - Changing some values during debugging.
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
-		ESICacheTimes.put(ECacheTimes.MARKET_ORDERS, TimeUnit.SECONDS.toMillis(1200));
+		ESICacheTimes.put(ECacheTimes.INDUSTRY_MARKET_ORDERS, TimeUnit.SECONDS.toMillis(1200));
+		ESICacheTimes.put(ECacheTimes.INDUSTRY_MINING, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.WALLET, TimeUnit.SECONDS.toMillis(120));
 		ESICacheTimes.put(ECacheTimes.CORPORATION_WALLET, TimeUnit.SECONDS.toMillis(300));
 	}
