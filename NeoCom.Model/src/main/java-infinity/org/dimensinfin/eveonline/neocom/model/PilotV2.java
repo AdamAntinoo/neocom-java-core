@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.database.entity.Property;
+import org.dimensinfin.eveonline.neocom.database.entity.*;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
@@ -171,7 +171,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	public long getTotalAssetsNumber() {
 		if ( this.totalAssetsNumber < 0 ) {
-			final List<NeoComAsset> pilotAssets;
+			final List<org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset> pilotAssets;
 			try {
 				pilotAssets = accessGlobal().getNeocomDBHelper().getAssetDao()
 				                            .queryForEq("ownerId", this.characterId);

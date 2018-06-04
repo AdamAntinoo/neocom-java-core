@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.database.entity.*;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 
@@ -69,7 +69,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public int addContent (final NeoComAsset asset) {
+	public int addContent (final org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset asset) {
 		if ( null != contentManager )
 			return contentManager.add(asset);
 		else
@@ -89,11 +89,11 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	@JsonIgnore
-	public List<NeoComAsset> downloadContents () {
+	public List<org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset> downloadContents () {
 		if ( null != contentManager )
 			return contentManager.getContents();
 		else
-			return new ArrayList<NeoComAsset>();
+			return new ArrayList<org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset>();
 	}
 
 	@Override

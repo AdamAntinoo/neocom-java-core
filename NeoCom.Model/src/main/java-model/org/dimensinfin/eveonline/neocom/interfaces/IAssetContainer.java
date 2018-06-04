@@ -14,8 +14,7 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 
 import java.util.List;
 
-import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 
 /**
  * This interface the methos for a virtual Asset container. Such type of containers have lists of assets while also store a

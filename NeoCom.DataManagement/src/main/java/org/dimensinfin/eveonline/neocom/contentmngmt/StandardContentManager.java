@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.contentmngmt;
 
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 

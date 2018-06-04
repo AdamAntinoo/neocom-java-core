@@ -13,7 +13,7 @@ import java.util.List;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public interface IContentManager extends ICollaboration, IJsonAngular {

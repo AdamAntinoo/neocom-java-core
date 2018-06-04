@@ -24,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 
 /**
  * @author Adam Antinoo

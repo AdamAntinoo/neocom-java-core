@@ -39,7 +39,7 @@ import org.dimensinfin.eveonline.neocom.exception.NEOE;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
 import org.dimensinfin.eveonline.neocom.model.AllianceV1;
 import org.dimensinfin.eveonline.neocom.model.CorporationV1;
-import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.PilotV2;
 
 /**
@@ -95,13 +95,14 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			//				logger.info("-- [GlobalDataManager.reachCorporationV1]> Instance not found at cache. Downloading Corporation <{}> info.",identifier);
 			final CorporationV1 newcorp = new CorporationV1();
 			// Corporation information.
-			logger.info("-- [GlobalDataManager.requestCorporationV1]> ESI Compatible. Download corporation information.");
+			//			logger.info("-- [GlobalDataManager.requestCorporationV1]> ESI Compatible. Download corporation information.");
 			final GetCorporationsCorporationIdOk publicData = ESINetworkManager.getCorporationsCorporationId(corpIdentifier
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
 			newcorp.setCorporationId(corpIdentifier)
-			       .setPublicData(publicData)
-			       .setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
+			       .setPublicData(publicData);
+			if ( null != publicData.getAllianceId() )
+				newcorp.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
 
 			return newcorp;
 			//			} else {
@@ -143,11 +144,11 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			// Process the public data and get the referenced instances for the Corporation, race, etc.
 			newchar
 					.setCorporation(GlobalDataManager.requestCorporationV1(publicData.getCorporationId(), credential))
-					.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential))
 					.setRace(GlobalDataManager.searchSDERace(publicData.getRaceId()))
 					.setBloodline(GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId()))
 					.setAncestry(GlobalDataManager.searchSDEAncestry(publicData.getAncestryId()));
-
+			if ( null != publicData.getAllianceId() )
+				newchar.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
 			// Wallet status
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
 			final Double walletAmount = ESINetworkManager.getCharactersCharacterIdWallet(credential.getAccountId()
