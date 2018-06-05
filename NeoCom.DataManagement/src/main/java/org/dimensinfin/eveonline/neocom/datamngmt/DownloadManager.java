@@ -89,7 +89,9 @@ public class DownloadManager {
 			// Clear any previous record with owner -1 from database.
 			new GlobalDataManager().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
 			// Download the list of assets.
-			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = ESINetworkManager.getCharactersCharacterIdAssets(credential.getAccountId(), credential.getRefreshToken(), null);
+			final List<GetCharactersCharacterIdAssets200Ok> assetOkList = ESINetworkManager.getCharactersCharacterIdAssets(
+					credential.getAccountId(), credential.getRefreshToken(), null
+			);
 			if ( (null == assetOkList) || (assetOkList.size() < 1) ) return false;
 			// Create the list for orphaned locations assets. They should be processed later.
 			this.unlocatedAssets.clear();
@@ -250,94 +252,70 @@ public class DownloadManager {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotJobsESI]");
 		}
 	}
+
 	/**
 	 * Mining actions are small records that register the ore collected by a Pilot or the Moon mining done by a Corporation. The time base
 	 * is 10 minutes and I suppose that those records are aggregated during a day. The data is a list of entries, each one declaring the
 	 * quantity of one ore mined on a date and related to a single star system.
 	 *
-	 * I should reprocess that information and extract the quantity differences from the last ESI access. This way I will collect the delta
-	 * increment on ore extracted on the last 10 minute period and with that information be able to interpolate isk profits er unit of time.
+	 * The processing algoritm should add the capturing hour of day to the search index and update with the current value or create a new
+	 * record when the index matches. The <b>id</b> of the record is changed to an string having the next fields:
+	 * YEAR/MONTH/DAY:HOUR-TYPEID-SYSTEMID-OWNERID.
+	 * Once one record if found instead storing on the database a single record per day/item/system/owner we store this same data for each
+	 * hour until the date changes and then we stop processing entries until we have new current mining extractions.
 	 */
 	public List<MiningExtraction> downloadPilotMiningActionsESI() {
 		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]");
+		List<MiningExtraction> oreExtractions = new ArrayList<>();
 		try {
-			List<MiningExtraction> oreExtractions = new ArrayList<>();
-			try {
-				final Dao<MiningExtraction, String> miningDao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
-				// Get to the Network and download the data from the ESI api.
-				final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = ESINetworkManager.getCharactersCharacterIdMining(credential.getAccountId()
-						, credential.getRefreshToken()
-						, GlobalDataManager.SERVER_DATASOURCE);
-				if ( null != miningActionsOk ) {
-					// Process the data and convert it to structures compatible with MVC.
-					for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
-						// Before doing any store of the data, see if this is a delta.
-						// Search fro the previous record and check the quantity.
-						HashMap<String, Object> where = new HashMap<String, Object>();
-						where.put("ownerId", credential.getAccountId());
-						where.put("typeId", extractionOk.getTypeId());
-						where.put("solarSystemId", extractionOk.getSolarSystemId());
-						final String targetData = extractionOk.getDate().toString("YYYY/MM/dd");
-						where.put("extractionIndexDate", targetData);
-						List<MiningExtraction> targetExtraction = null;
-						try {
-							targetExtraction = miningDao.queryForFieldValues(where);
-						} catch (SQLException sqle) {
-							logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> {}", sqle.getMessage());
-						}
-						if ( (null != targetExtraction) && (targetExtraction.size() > 0) ) {
-							// There is a record at the same date from the same owner and for the same ore type.
-							if ( targetExtraction.get(0).getQuantity() == extractionOk.getQuantity() )
-								continue;
-							else {
-								// Create the delta record.
-								final MiningExtraction newExtraction = new MiningExtraction()
-										.setTypeId(extractionOk.getTypeId())
-										.setSolarSystemId(extractionOk.getSolarSystemId())
-										.setDate(extractionOk.getDate())
-										.setQuantity(extractionOk.getQuantity() - targetExtraction.get(0).getQuantity())
-										.setOwnerId(credential.getAccountId());
-								// Create the new record using the day and not the store. This is only used for updates.
-								miningDao.create(newExtraction);
-								logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {}"
-								,newExtraction.toString());
-								oreExtractions.add(newExtraction);
-							}
-						} else {
-							// Insert a new record.
-							final MiningExtraction newExtraction = new MiningExtraction()
-									.setTypeId(extractionOk.getTypeId())
-									.setSolarSystemId(extractionOk.getSolarSystemId())
-									.setDate(extractionOk.getDate())
-									.setQuantity(extractionOk.getQuantity())
-									.setOwnerId(credential.getAccountId());
-							// Create the new record using the day and not the store. This is only used for updates.
-							miningDao.create(newExtraction);
-							logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {}"
-									,newExtraction.toString());
-							oreExtractions.add(newExtraction);
-						}
+			final Dao<MiningExtraction, String> miningDao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
+			// Get to the Network and download the data from the ESI api.
+			final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = ESINetworkManager.getCharactersCharacterIdMining(credential.getAccountId()
+					, credential.getRefreshToken()
+					, GlobalDataManager.SERVER_DATASOURCE);
+			if ( null != miningActionsOk ) {
+				// Process the data and convert it to structures compatible with MVC.
+				for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
+					// Before doing any store of the data, see if this is a delta. Search for an already existing record.
+					final String recordId = MiningExtraction.generateRecordId(extractionOk.getDate(), extractionOk.getTypeId()
+							, extractionOk.getSolarSystemId(), credential.getAccountId());
+					MiningExtraction recordFound = null;
+					try {
+						recordFound = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao().queryForId(recordId);
+					} catch (NeoComRuntimeException nrex) {
+						logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+								, nrex.getMessage());
+					}
+					// If we found and exact record then we can update the value that can have changed or not.
+					if ( null != recordFound ) {
+						recordFound.setQuantity(extractionOk.getQuantity());
+						logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Updating mining extraction: {}"
+								, recordId);
+					} else {
+						final MiningExtraction newExtraction = new MiningExtraction()
+								.setTypeId(extractionOk.getTypeId())
+								.setSolarSystemId(extractionOk.getSolarSystemId())
+								.setExtractionDate(extractionOk.getDate())
+								.setQuantity(extractionOk.getQuantity())
+								.setOwnerId(credential.getAccountId())
+								.create(recordId);
+						logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {}"
+								, recordId);
 					}
 				}
-				return oreExtractions;
-			} catch (SQLException sqle) {
-				logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
-						, sqle.getMessage());
-				return new ArrayList<>();
-			} catch (NeoComRuntimeException nrex) {
-				logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
-						, nrex.getMessage());
-				return new ArrayList<>();
-			} catch (RuntimeException ntex) {
-				logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Mapping error - {}"
-						, ntex.getMessage());
-				return new ArrayList<>();
-			} finally {
-				logger.info("<< [DownloadManager.downloadPilotMiningActionsESI]");
 			}
-
+		} catch (SQLException sqle) {
+			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+					, sqle.getMessage());
+		} catch (NeoComRuntimeException nrex) {
+			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+					, nrex.getMessage());
+		} catch (RuntimeException ntex) {
+			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Mapping error - {}"
+					, ntex.getMessage());
 		} finally {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotMiningActionsESI]");
+			return oreExtractions;
 		}
 	}
 

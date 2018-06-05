@@ -157,12 +157,12 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 
 	@Deprecated
 	public String getCategory() {
-		if (null == category) return "NOCAT";
+		if ( null == category ) return "NOCAT";
 		return category;
 	}
 
 	public String getCategoryName() {
-		if (null == category) return "NOCAT";
+		if ( null == category ) return "NOCAT";
 		return category;
 	}
 
@@ -198,7 +198,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	 */
 	public EveItem getItem() {
 		try {
-			if (null == itemCache) {
+			if ( null == itemCache ) {
 				itemCache = accessGlobal().searchItem4Id(typeId);
 			}
 		} catch (NeoComRuntimeException neoe) {
@@ -214,7 +214,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	@Override
 	public EveLocation getLocation() {
 		try {
-			if (null == locationCache) {
+			if ( null == locationCache ) {
 				locationCache = accessGlobal().searchLocation4Id(locationId);
 			}
 		} catch (NeoComRuntimeException neoe) {
@@ -229,18 +229,18 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	 */
 	@Override
 	public long getLocationId() {
-//		if (locationId == -1) {
-//			if (this.getParentContainerId() == -1)
-//				return -1L;
-//			else {
-//				// Get the location from the parent.
-//				final NeoComAsset par = this.getParentContainer();
-//				if (null == par)
-//					return -1L;
-//				else
-//					return par.getLocationId();
-//			}
-//		} else
+		//		if (locationId == -1) {
+		//			if (this.getParentContainerId() == -1)
+		//				return -1L;
+		//			else {
+		//				// Get the location from the parent.
+		//				final NeoComAsset par = this.getParentContainer();
+		//				if (null == par)
+		//					return -1L;
+		//				else
+		//					return par.getLocationId();
+		//			}
+		//		} else
 		return locationId;
 	}
 
@@ -248,9 +248,9 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		return name;
 	}
 
-//	public String getOrderingName() {
-//		return name;
-//	}
+	//	public String getOrderingName() {
+	//		return name;
+	//	}
 
 	public long getOwnerId() {
 		return ownerId;
@@ -285,35 +285,35 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	public boolean isContainer() {
-		if (this.isBlueprint()) return false;
+		if ( this.isBlueprint() ) return false;
 		// Use a list of types to set what is a container
-		if (this.getTypeId() == 11488) return true;
-		if (this.getTypeId() == 11489) return true;
-		if (this.getTypeId() == 11490) return true;
-		if (this.getTypeId() == 17363) return true;
-		if (this.getTypeId() == 17364) return true;
-		if (this.getTypeId() == 17365) return true;
-		if (this.getTypeId() == 17366) return true;
-		if (this.getTypeId() == 17367) return true;
-		if (this.getTypeId() == 17368) return true;
-		if (this.getTypeId() == 2263) return true;
-		if (this.getTypeId() == 23) return true;
-		if (this.getTypeId() == 24445) return true;
-		if (this.getTypeId() == 28570) return true;
-		if (this.getTypeId() == 3293) return true;
-		if (this.getTypeId() == 3296) return true;
-		if (this.getTypeId() == 3297) return true;
-		if (this.getTypeId() == 33003) return true;
-		if (this.getTypeId() == 33005) return true;
-		if (this.getTypeId() == 33007) return true;
-		if (this.getTypeId() == 33009) return true;
-		if (this.getTypeId() == 33011) return true;
-		if (this.getTypeId() == 3465) return true;
-		if (this.getTypeId() == 3466) return true;
-		if (this.getTypeId() == 3467) return true;
-		if (this.getTypeId() == 3468) return true;
-		if (this.getTypeId() == 41567) return true;
-		if (this.getName().contains("Container"))
+		if ( this.getTypeId() == 11488 ) return true;
+		if ( this.getTypeId() == 11489 ) return true;
+		if ( this.getTypeId() == 11490 ) return true;
+		if ( this.getTypeId() == 17363 ) return true;
+		if ( this.getTypeId() == 17364 ) return true;
+		if ( this.getTypeId() == 17365 ) return true;
+		if ( this.getTypeId() == 17366 ) return true;
+		if ( this.getTypeId() == 17367 ) return true;
+		if ( this.getTypeId() == 17368 ) return true;
+		if ( this.getTypeId() == 2263 ) return true;
+		if ( this.getTypeId() == 23 ) return true;
+		if ( this.getTypeId() == 24445 ) return true;
+		if ( this.getTypeId() == 28570 ) return true;
+		if ( this.getTypeId() == 3293 ) return true;
+		if ( this.getTypeId() == 3296 ) return true;
+		if ( this.getTypeId() == 3297 ) return true;
+		if ( this.getTypeId() == 33003 ) return true;
+		if ( this.getTypeId() == 33005 ) return true;
+		if ( this.getTypeId() == 33007 ) return true;
+		if ( this.getTypeId() == 33009 ) return true;
+		if ( this.getTypeId() == 33011 ) return true;
+		if ( this.getTypeId() == 3465 ) return true;
+		if ( this.getTypeId() == 3466 ) return true;
+		if ( this.getTypeId() == 3467 ) return true;
+		if ( this.getTypeId() == 3468 ) return true;
+		if ( this.getTypeId() == 41567 ) return true;
+		if ( this.getName().contains("Container") )
 			return true;
 		else
 			return false;
@@ -337,7 +337,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	public void setBlueprintType( final int rawQuantity ) {
-		if (-1 == rawQuantity) {
+		if ( -1 == rawQuantity ) {
 			this.setName(name + " (BPO)");
 		} else {
 			this.setName(name + " (BPC)");
@@ -346,9 +346,11 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	public void setCategory( final String category ) {
-		this.category = category;
-		if (category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship)) {
-			shipFlag = true;
+		if ( null != category ) {
+			this.category = category;
+			if ( category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship) ) {
+				shipFlag = true;
+			}
 		}
 	}
 
@@ -356,17 +358,17 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		containerFlag = value;
 	}
 
-//	public void setDirty( final boolean flag ) {
-//		if (flag) {
-//			try {
-//				final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
-//				// Try to create the pair. It fails then  it was already created.
-//				assetDao.createOrUpdate(this);
-//			} catch (final SQLException sqle) {
-//				sqle.printStackTrace();
-//			}
-//		}
-//	}
+	//	public void setDirty( final boolean flag ) {
+	//		if (flag) {
+	//			try {
+	//				final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
+	//				// Try to create the pair. It fails then  it was already created.
+	//				assetDao.createOrUpdate(this);
+	//			} catch (final SQLException sqle) {
+	//				sqle.printStackTrace();
+	//			}
+	//		}
+	//	}
 
 	@Override
 	public NeoComAsset setLocationFlag( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newFlag ) {
@@ -441,7 +443,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	public NeoComAsset setUserLabel( final String label ) {
-		if (null != label) {
+		if ( null != label ) {
 			userLabel = label;
 		}
 		return this;
@@ -459,11 +461,11 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	 */
 	@Override
 	public NeoComAsset getParentContainer() {
-		if (parentAssetId > 0) if (null == parentAssetCache) {
+		if ( parentAssetId > 0 ) if ( null == parentAssetCache ) {
 			// Search for the parent asset. If not found then go to the transformation method.
 			try {
 				parentAssetCache = accessGlobal().getNeocomDBHelper().getAssetDao()
-						.queryForId(Long.valueOf(parentAssetId).toString());
+				                                 .queryForId(Long.valueOf(parentAssetId).toString());
 			} catch (SQLException sqle) {
 				return null;
 			}
@@ -478,7 +480,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 
 	@Override
 	public boolean hasParent() {
-		if (parentAssetId > 0)
+		if ( parentAssetId > 0 )
 			return true;
 		else
 			return false;
@@ -486,7 +488,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 
 	@Override
 	public void setParentContainer( final NeoComAsset newParent ) {
-		if (null != newParent) {
+		if ( null != newParent ) {
 			parentAssetCache = newParent;
 			parentAssetId = newParent.getAssetId();
 			// Trigger an update of the record at the database.
@@ -506,7 +508,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComAsset [");
 		buffer.append("#").append(typeId).append(" - ").append(this.getName()).append(" ");
-		if (null != this.getUserLabel()) {
+		if ( null != this.getUserLabel() ) {
 			buffer.append("[").append(this.getUserLabel()).append("] ");
 		}
 		buffer.append("itemID:").append(assetId).append(" ");
@@ -523,7 +525,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	 */
 	private EveLocation moveAssetToUnknown( final long newlocationid ) {
 		final EveLocation newundefloc = new EveLocation();
-//		newundefloc.setId(newlocationid);
+		//		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");
 		newundefloc.setSystem("Undefined");
 		newundefloc.setStation("Station#" + newlocationid);

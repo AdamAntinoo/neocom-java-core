@@ -19,7 +19,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.joda.time.DateTime;
-import org.joda.time.Instant;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +37,56 @@ public class MiningExtraction extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("MiningExtraction");
 
+	/**
+	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
+	 * the current date we should not chage any data on the database since we understand that old data is not being modified. But it can
+	 * happen that old data is the first time the it is added to the database. So we set the hout of day to the number 24.
+	 * @param date
+	 * @param typeId
+	 * @param systemId
+	 * @param ownerId
+	 * @return
+	 */
+	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
+		// Check the date.
+		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
+		final String targetDate = date.toString("YYYY/MM/dd");
+		if ( todayDate.equalsIgnoreCase(targetDate) )
+			return new StringBuffer()
+					.append(date.toString("YYYY/MM/dd")).append(":")
+					.append(DateTime.now().getHourOfDay()).append("-")
+					.append(typeId).append("-")
+					.append(systemId).append("-")
+					.append(ownerId)
+					.toString();
+		else
+			return new StringBuffer()
+					.append(date.toString("YYYY/MM/dd")).append(":")
+					.append(24).append("-")
+					.append(typeId).append("-")
+					.append(systemId).append("-")
+					.append(ownerId)
+					.toString();
+	}
+	public static String generateExtractionDateName( final LocalDate date ) {
+		// Check the date.
+		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
+		final String targetDate = date.toString("YYYY/MM/dd");
+		if ( todayDate.equalsIgnoreCase(targetDate) )
+			return new StringBuffer()
+					.append(date.toString("YYYY/MM/dd")).append(":")
+					.append(DateTime.now().getHourOfDay())
+					.toString();
+		else
+			return new StringBuffer()
+					.append(date.toString("YYYY/MM/dd")).append(":")
+					.append(24)
+					.toString();
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
-	@DatabaseField(index = true, generatedId = true)
-	private long id=-1;
+	@DatabaseField(id = true)
+	private String id = "YYYY/MM/DD:HH-TYPEID-SYSTEMID-OWNERID";
 	@DatabaseField
 	private int typeId = -1;
 	@DatabaseField
@@ -48,16 +94,12 @@ public class MiningExtraction extends NeoComNode {
 	@DatabaseField
 	private long quantity = 0;
 	@DatabaseField
-	private long extractionDateNumber = 0;
-	@DatabaseField(index = true)
-	private String extractionIndexDate = "0000/00/00";
-	@DatabaseField
-	private String extractionDate = "0000/00/00";
+	private String extractionDateName = "YYYY/MM/DD:HH";
 	@DatabaseField(index = true)
 	private long ownerId = -1;
 
-	private transient EveItem resourceCache=null;
-	private transient EveLocation systemCache=null;
+	private transient EveItem resourceCache = null;
+	private transient EveLocation systemCache = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MiningExtraction() {
@@ -67,13 +109,29 @@ public class MiningExtraction extends NeoComNode {
 	// - M E T H O D - S E C T I O N ..........................................................................
 
 	public MiningExtraction store() {
+		// Update the extraction time.
+		//		this.extractionDateNumber = DateTime.now().getMillis();
 		try {
 			Dao<MiningExtraction, String> miningExtractionDao = accessGlobal().getNeocomDBHelper().getMiningExtractionDao();
-			// Try to create the record. It fails then it was already created.
-			miningExtractionDao.createOrUpdate(this);
+			// Store should only update already created records. Tables with generated id should use create() for creation.
+			miningExtractionDao.update(this);
 		} catch (final SQLException sqle) {
 			logger.info("WR [MiningExtraction.<constructor>]> Exception Updating values. {}"
-			,sqle.getMessage());
+					, sqle.getMessage());
+		}
+		return this;
+	}
+
+	public MiningExtraction create( final String recordId ) {
+		this.id = recordId;
+		//		this.extractionDateNumber = DateTime.now().getMillis();
+		try {
+			Dao<MiningExtraction, String> miningExtractionDao = accessGlobal().getNeocomDBHelper().getMiningExtractionDao();
+			// Tables with generated id should use create() for creation.
+			miningExtractionDao.create(this);
+		} catch (final SQLException sqle) {
+			logger.info("WR [MiningExtraction.<constructor>]> Exception creating new record: {} - {}"
+					, this.id, sqle.getMessage());
 		}
 		return this;
 	}
@@ -91,16 +149,22 @@ public class MiningExtraction extends NeoComNode {
 		return quantity;
 	}
 
-	public String getSystemName(){
-		if(null==this.systemCache)
-			this.systemCache=accessGlobal().searchLocation4Id(this.solarSystemId);
+	public String getSystemName() {
+		if ( null == this.systemCache )
+			this.systemCache = accessGlobal().searchLocation4Id(this.solarSystemId);
 		return systemCache.getSystem();
 	}
-	public String getResourceName(){
-		if(null==this.resourceCache)
-			this.resourceCache=accessGlobal().searchItem4Id(this.typeId);
+
+	public String getResourceName() {
+		if ( null == this.resourceCache )
+			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
 		return this.resourceCache.getName();
 	}
+
+	public String getExtractionDate() {
+		return this.extractionDateName;
+	}
+
 	public MiningExtraction setTypeId( final int typeId ) {
 		this.typeId = typeId;
 		return this;
@@ -116,18 +180,14 @@ public class MiningExtraction extends NeoComNode {
 		return this;
 	}
 
-	public MiningExtraction setDate( final LocalDate date ) {
-		// Converts the date to Joda and then to millliseconds.
-//		final DateTime extraction = new DateTime(date);
-		this.extractionDateNumber = Instant.now().getMillis();
-		this.extractionDate = Instant.now().toString();
-		this.extractionIndexDate = date.toString("YYYY/MM/dd");
-//		logger.info("WR [MiningExtraction.<constructor>]> Datestring {}",date.toString("YYYY/MM/dd"));
+	public MiningExtraction setOwnerId( final long ownerId ) {
+		this.ownerId = ownerId;
 		return this;
 	}
 
-	public MiningExtraction setOwnerId( final long ownerId ) {
-		this.ownerId = ownerId;
+	public MiningExtraction setExtractionDate( final LocalDate extractionDate ) {
+		// Update the extractions date string.
+		this.extractionDateName = generateExtractionDateName(extractionDate);
 		return this;
 	}
 

@@ -15,7 +15,6 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -82,8 +81,8 @@ public class MarketDataServer {
 	 */
 	public MarketDataServer start() {
 		logger.info(">> [MarketDataServer.start]");
-		readMarketDataCacheFromStorage();
 		try {
+			readMarketDataCacheFromStorage();
 			// Read the configured list of preferential marked data hubs from the assets store.
 			final String stationsFileName = GlobalDataManager.getResourceString("R.cache.marketdata.markethubs.configuration.path");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(GlobalDataManager.openAsset4Input(stationsFileName)));
@@ -138,13 +137,15 @@ public class MarketDataServer {
 	}
 
 	public synchronized void readMarketDataCacheFromStorage() {
-		File modelStoreFile = new File(getCacheStoreName());
+		logger.info(">> [MarketDataServer.readMarketDataCacheFromStorage]");
+		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
+				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename");
+		logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", cacheFileName);
 		try {
-			final BufferedInputStream buffer = new BufferedInputStream(
-					GlobalDataManager.openResource4Input(modelStoreFile.getPath())
-			);
+			// Open the file on the Application storage area.
+			final BufferedInputStream buffer = new BufferedInputStream(GlobalDataManager.openResource4Input(cacheFileName));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
-			logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", modelStoreFile.getPath());
+			logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", cacheFileName);
 			try {
 				buyMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
 				logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache BUY: " + buyMarketDataCache.size()
@@ -158,21 +159,23 @@ public class MarketDataServer {
 				buffer.close();
 			}
 		} catch (final ClassNotFoundException ex) {
-			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> ClassNotFoundException."); //$NON-NLS-1$
+			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> ClassNotFoundException.");
 		} catch (final FileNotFoundException fnfe) {
-			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> FileNotFoundException."); //$NON-NLS-1$
+			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> FileNotFoundException. {}"
+					, cacheFileName);
 		} catch (final IOException ex) {
-			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> IOException."); //$NON-NLS-1$
+			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> IOException.");
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 		}
 	}
 
 	public synchronized void writeMarketDataCacheToStorage() {
-		File modelStoreFile = new File(getCacheStoreName());
+		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
+				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename");
 		try {
 			final BufferedOutputStream buffer = new BufferedOutputStream(
-					GlobalDataManager.openResource4Output(modelStoreFile.getPath())
+					GlobalDataManager.openResource4Output(cacheFileName)
 			);
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
@@ -189,7 +192,7 @@ public class MarketDataServer {
 				buffer.close();
 			}
 		} catch (final FileNotFoundException fnfe) {
-			logger.warn("W> [MarketDataServer.writeCacheToStorage]> FileNotFoundException."); //$NON-NLS-1$
+			logger.warn("W> [MarketDataServer.writeCacheToStorage]> FileNotFoundException. {}", cacheFileName);
 		} catch (final IOException ex) {
 			logger.warn("W> [MarketDataServer.writeCacheToStorage]> IOException."); //$NON-NLS-1$
 		}
@@ -303,19 +306,6 @@ public class MarketDataServer {
 			}
 			return fut;
 		}
-	}
-
-	//	public void activateMarketDataCache4Id( final int typeId ) {
-	//		expirationTimeMarketData.put(typeId, Instant.now().plus(TimeUnit.HOURS.toMillis(1)));
-	//	}
-
-	/**
-	 * Read the configured cache location for the Market data save/restore serialization file.
-	 * @return
-	 */
-	protected String getCacheStoreName() {
-		return GlobalDataManager.getResourceString("R.cache.directorypath")
-				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename");
 	}
 
 	/**

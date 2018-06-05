@@ -30,6 +30,7 @@ import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
 import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
+import org.dimensinfin.eveonline.neocom.database.entity.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entity.Property;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
@@ -213,10 +214,11 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		return neocomDBHelper;
 	}
 
-	public static void connectNeoComDBConnector( final INeoComDBHelper newhelper ) {
+	public static INeoComDBHelper connectNeoComDBConnector( final INeoComDBHelper newhelper ) {
 		if ( null != newhelper ) neocomDBHelper = newhelper;
 		else
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
+		return neocomDBHelper;
 	}
 
 	/**
@@ -293,6 +295,10 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 	public static List<MarketOrder> accessMarketOrders4Credential( final Credential credential ) throws SQLException {
 		return new GlobalDataManager().getNeocomDBHelper().getMarketOrderDao()
+		                              .queryForEq("ownerId", credential.getAccountId());
+	}
+	public static List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential) throws SQLException {
+		return new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao()
 		                              .queryForEq("ownerId", credential.getAccountId());
 	}
 }
