@@ -58,12 +58,6 @@ public class DownloadManager {
 	public DownloadManager( final Credential credential ) {
 		this();
 		this.credential = credential;
-		// Preload the dao.
-		//		try {
-		//			assetDao = new GlobalDataManager().getNeocomDBHelper().getAssetDao();
-		//		} catch (SQLException sqle) {
-		//			sqle.printStackTrace();
-		//		}
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -264,10 +258,10 @@ public class DownloadManager {
 	 * Once one record if found instead storing on the database a single record per day/item/system/owner we store this same data for each
 	 * hour until the date changes and then we stop processing entries until we have new current mining extractions.
 	 */
-	public List<MiningExtraction> downloadPilotMiningActionsESI() {
-		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]");
+	public List<MiningExtraction> downloadPilotMiningActionsESI() throws SQLException {
+		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]> Credential: []", credential.getAccountName());
 		List<MiningExtraction> oreExtractions = new ArrayList<>();
-		try {
+//		try {
 			final Dao<MiningExtraction, String> miningDao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
 			// Get to the Network and download the data from the ESI api.
 			final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = ESINetworkManager.getCharactersCharacterIdMining(credential.getAccountId()
@@ -288,9 +282,9 @@ public class DownloadManager {
 					}
 					// If we found and exact record then we can update the value that can have changed or not.
 					if ( null != recordFound ) {
-						recordFound.setQuantity(extractionOk.getQuantity());
-						logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Updating mining extraction: {}"
-								, recordId);
+						recordFound.setQuantity(extractionOk.getQuantity()).store();
+						logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Updating mining extraction: {} -Quantity: {}"
+								, recordId, extractionOk.getQuantity());
 					} else {
 						final MiningExtraction newExtraction = new MiningExtraction()
 								.setTypeId(extractionOk.getTypeId())
@@ -304,19 +298,19 @@ public class DownloadManager {
 					}
 				}
 			}
-		} catch (SQLException sqle) {
-			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
-					, sqle.getMessage());
-		} catch (NeoComRuntimeException nrex) {
-			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
-					, nrex.getMessage());
-		} catch (RuntimeException ntex) {
-			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Mapping error - {}"
-					, ntex.getMessage());
-		} finally {
+//		} catch (SQLException sqle) {
+//			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+//					, sqle.getMessage());
+//		} catch (NeoComRuntimeException nrex) {
+//			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
+//					, nrex.getMessage());
+//		} catch (RuntimeException ntex) {
+//			logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Mapping error - {}"
+//					, ntex.getMessage());
+//		} finally {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotMiningActionsESI]");
 			return oreExtractions;
-		}
+//		}
 	}
 
 	// - M A R K E T   O R D E R S
@@ -454,7 +448,7 @@ public class DownloadManager {
 		// Launch the download of the names block.
 		final List<Long> idList = new ArrayList<>();
 		idList.addAll(id4Names);
-		GlobalDataManager.submitJob2Download(() -> {
+		GlobalDataManager.submitJob2ui(() -> {
 			// Copy yhe list of assets to local to allow parallel use.
 			final List<Long> localIdList = new ArrayList<>();
 			localIdList.addAll(idList);

@@ -41,7 +41,7 @@ public class UpdateJobManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("UpdateJobManager");
 	public static int updateJobCounter = 0;
-	public static final ExecutorService downloadExecutor = Executors.newSingleThreadExecutor();
+	public static final ExecutorService updaterExecutor = Executors.newSingleThreadExecutor();
 	private static final Hashtable<String, Future<?>> runningJobs = new Hashtable();
 
 	/**

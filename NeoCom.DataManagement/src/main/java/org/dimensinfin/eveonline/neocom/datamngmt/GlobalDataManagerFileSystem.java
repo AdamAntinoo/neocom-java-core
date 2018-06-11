@@ -32,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManagerFileSystem extends GlobalDataManagerExceptions {
+public class GlobalDataManagerFileSystem extends GlobalDataManagerFastDataAccess {
 	// - F I L E   S Y S T E M   S E C T I O N
 	private static IFileSystem fileSystemIsolation = null;
 

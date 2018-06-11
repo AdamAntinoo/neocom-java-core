@@ -12,6 +12,24 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
+import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
+import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.market.TrackEntry;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.joda.time.Instant;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -34,33 +52,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.joda.time.Instant;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
-import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
-import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.market.TrackEntry;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-
 // - CLASS IMPLEMENTATION ...................................................................................
 public class MarketDataServer {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("MarketDataServer");
-	// TODO - Keep the number of threads low until the code is stable.
-	public static final int cpuCount = Runtime.getRuntime().availableProcessors();
-	//	public static final int cpuCount = 8;
-	private static final ExecutorService downloadExecutor = Executors.newFixedThreadPool(cpuCount);
+	public static int cpuCount = 1;
+
+	static {
+		if (GlobalDataManager.getResourceString("R.runtime.platform").equalsIgnoreCase("Android"))
+			cpuCount = 2;
+		else
+			cpuCount = Runtime.getRuntime().availableProcessors();
+	}
+
+	private static final ExecutorService marketUpdaterExecutor = Executors.newFixedThreadPool(cpuCount);
 	public static final List<String> stationList = new ArrayList<>();
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -147,13 +152,21 @@ public class MarketDataServer {
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", cacheFileName);
 			try {
-				buyMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
-				logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache BUY: " + buyMarketDataCache.size()
-						+ " entries.");
-				sellMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
-				logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache SELL: " + sellMarketDataCache.size()
-						+ " entries.");
-				expirationTimeMarketData = (HashMap<Integer, Instant>) input.readObject();
+				synchronized (buyMarketDataCache) {
+					buyMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
+					logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache BUY: " + buyMarketDataCache.size()
+							+ " entries.");
+				}
+				synchronized (sellMarketDataCache) {
+					sellMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
+					logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored cache SELL: " + sellMarketDataCache.size()
+							+ " entries.");
+				}
+				synchronized (expirationTimeMarketData) {
+					expirationTimeMarketData = (HashMap<Integer, Instant>) input.readObject();
+					logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Restored expiration times: " + expirationTimeMarketData.size()
+							+ " entries.");
+				}
 			} finally {
 				input.close();
 				buffer.close();
@@ -178,14 +191,23 @@ public class MarketDataServer {
 					GlobalDataManager.openResource4Output(cacheFileName)
 			);
 			final ObjectOutput output = new ObjectOutputStream(buffer);
+			// Block the object to write before handling them.
 			try {
-				output.writeObject(buyMarketDataCache);
-				logger.info(
-						"-- [MarketDataServer.writeCacheToStorage]> Wrote cache BUY: " + buyMarketDataCache.size() + " entries.");
-				output.writeObject(sellMarketDataCache);
-				logger.info(
-						"-- [MarketDataServer.writeCacheToStorage]> Wrote cache SELL: " + sellMarketDataCache.size() + " entries.");
-				output.writeObject(expirationTimeMarketData);
+				synchronized (buyMarketDataCache) {
+					output.writeObject(buyMarketDataCache);
+					logger.info(
+							"-- [MarketDataServer.writeCacheToStorage]> Wrote cache BUY: " + buyMarketDataCache.size() + " entries.");
+				}
+				synchronized (sellMarketDataCache) {
+					output.writeObject(sellMarketDataCache);
+					logger.info(
+							"-- [MarketDataServer.writeCacheToStorage]> Wrote cache SELL: " + sellMarketDataCache.size() + " entries.");
+				}
+				synchronized (expirationTimeMarketData) {
+					output.writeObject(expirationTimeMarketData);
+					logger.info(
+							"-- [MarketDataServer.writeCacheToStorage]> Wrote expiration times: " + expirationTimeMarketData.size() + " entries.");
+				}
 			} finally {
 				output.flush();
 				output.close();
@@ -204,7 +226,7 @@ public class MarketDataServer {
 		int done = 0;
 		synchronized (runningJobsList) {
 			for (Future<MarketDataSet> fut : runningJobsList) {
-				if ( fut.isDone() ) done++;
+				if (fut.isDone()) done++;
 				else pending++;
 			}
 		}
@@ -229,10 +251,10 @@ public class MarketDataServer {
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 		logger.info(">< [MarketDataServer.searchMarketData]> ItemId: {}/{}.", itemId, side.name());
 		// Filter out invalid localizers.
-		if ( itemId < 1 ) {
+		if (itemId < 1) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download replaced because item id is not valid [{}]."
 					, itemId);
-			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
+			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
 				return new MarketDataSet(34, side);
 			});
 			// Register the Future request onto the list to count them down.
@@ -242,9 +264,9 @@ public class MarketDataServer {
 			return fut;
 		}
 		// Check if the user preferences allows to go to the market downloader.
-		if ( GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name(), false) ) {
+		if (GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name(), false)) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download cancelled because preferences 'BlockMarket'.");
-			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
+			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
 				return new MarketDataSet(itemId, side);
 			});
 			// Register the Future request onto the list to count them down.
@@ -253,21 +275,21 @@ public class MarketDataServer {
 			}
 			return fut;
 		} else {
-			final Future<MarketDataSet> fut = downloadExecutor.submit(() -> {
+			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
 				// Search on the cache. By default load the SELLER as If I am buying the item.
 				HashMap<Integer, MarketDataSet> cache = sellMarketDataCache;
-				if ( side == EMarketSide.BUYER ) {
+				if (side == EMarketSide.BUYER) {
 					cache = buyMarketDataCache;
 				}
 				MarketDataSet entry = cache.get(itemId);
-				if ( null == entry ) {
+				if (null == entry) {
 					// The data is not on the cache and neither on the latest disk copy read at initialization.
 					// Do a new market data download process.
 					try {
 						// Report the number of jobs pending.
 						reportMarketDataJobs();
 						final MarketDataSet data = downloadManager.doMarketDataRequest(itemId, side);
-						if ( null != data ) {
+						if (null != data) {
 							// Save the data on the cache and update the expiration time.
 							data.setSide(side);
 							synchronized (cache) {
@@ -289,8 +311,8 @@ public class MarketDataServer {
 					logger.info("-- [MarketDataServer.searchMarketData]> Cache hit on memory.");
 					// Check again the expiration time. If expired clear cache and request a refresh.
 					Instant expirationTime = expirationTimeMarketData.get(itemId);
-					if ( null == expirationTime ) expirationTime = Instant.now().minus(TimeUnit.MINUTES.toMillis(1));
-					if ( expirationTime.isBefore(Instant.now()) ) {
+					if (null == expirationTime) expirationTime = Instant.now().minus(TimeUnit.MINUTES.toMillis(1));
+					if (expirationTime.isBefore(Instant.now())) {
 						// Clear the cache entry.
 						synchronized (cache) {
 							cache.remove(itemId);
@@ -384,16 +406,16 @@ public class MarketDataServer {
 			// Check which data provider should be used for the data.
 			// Preference is: eve-market-data/eve-central/esi-marketdata
 			try {
-				if ( marketEntries.size() < 1 ) {
-					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true) )
+				if (marketEntries.size() < 1) {
+					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
 						marketEntries = parseMarketDataEMD(item.getName(), side);
 				}
-				if ( marketEntries.size() < 1 ) {
-					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false) )
+				if (marketEntries.size() < 1) {
+					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false))
 						marketEntries = parseMarketDataEC(localizer, side);
 				}
-				if ( marketEntries.size() < 1 ) {
-					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false) )
+				if (marketEntries.size() < 1) {
+					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false))
 						marketEntries = parseMarketDataESI(localizer, side);
 				}
 				List<MarketDataEntry> hubData = extractMarketData(marketEntries);
@@ -510,7 +532,7 @@ public class MarketDataServer {
 			while (meit.hasNext()) {
 				final TrackEntry entry = meit.next();
 				// Filtering for only preferred market hubs.
-				if ( filterStations(entry, stationList) ) {
+				if (filterStations(entry, stationList)) {
 					// Start searching for more records to sum all entries with the same or a close price to get
 					// a better understanding of the market depth. That information is not to relevant so make a
 					// best try.
@@ -520,9 +542,9 @@ public class MarketDataServer {
 					while (meit.hasNext()) {
 						final TrackEntry searchEntry = meit.next();
 						// Check that station and prices are the same or price is inside margin.
-						if ( searchEntry.getStationName().equals(stationName) ) {
-							if ( (stationPrice >= (searchEntry.getPrice() * 0.99))
-									&& (stationPrice <= (searchEntry.getPrice() * 1.01)) ) {
+						if (searchEntry.getStationName().equals(stationName)) {
+							if ((stationPrice >= (searchEntry.getPrice() * 0.99))
+									&& (stationPrice <= (searchEntry.getPrice() * 1.01))) {
 								stationQty += searchEntry.getQty();
 							} else {
 								break;
@@ -577,7 +599,7 @@ public class MarketDataServer {
 			//			}
 			final String station = entry.getStationName();
 			for (String stationNameMatch : stationList) {
-				if ( station.contains(stationNameMatch) ) return true;
+				if (station.contains(stationNameMatch)) return true;
 			}
 			return false;
 		}
@@ -632,13 +654,13 @@ public class MarketDataServer {
 			reader.setContentHandler(content);
 			reader.setErrorHandler(content);
 			String URLDestination = null;
-			if ( opType == EMarketSide.SELLER ) {
+			if (opType == EMarketSide.SELLER) {
 				URLDestination = this.getModuleLink(itemName, "SELL");
 			}
-			if ( opType == EMarketSide.BUYER ) {
+			if (opType == EMarketSide.BUYER) {
 				URLDestination = this.getModuleLink(itemName, "BUY");
 			}
-			if ( null != URLDestination ) {
+			if (null != URLDestination) {
 				reader.parse(URLDestination);
 				marketEntries = content.getEntries();
 			}
@@ -662,13 +684,13 @@ public class MarketDataServer {
 				JSONObject all = part1.getJSONObject("all");
 				JSONObject sell = part1.getJSONObject("sell");
 				JSONObject target = null;
-				if ( opType == EMarketSide.SELLER ) {
+				if (opType == EMarketSide.SELLER) {
 					target = sell;
 				} else {
 					target = buy;
 				}
 				double price = 0.0;
-				if ( opType == EMarketSide.SELLER ) {
+				if (opType == EMarketSide.SELLER) {
 					price = target.getDouble("min");
 				} else {
 					price = target.getDouble("max");
@@ -695,7 +717,7 @@ public class MarketDataServer {
 				InputStream is = new BufferedInputStream(urlConnection.getInputStream());
 				// InputStream is = NeoComAppConnector.getSingleton().getStorageConnector().accessNetworkResource(
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-				if ( is != null ) {
+				if (is != null) {
 					while ((str = reader.readLine()) != null) {
 						data.append(str);
 					}

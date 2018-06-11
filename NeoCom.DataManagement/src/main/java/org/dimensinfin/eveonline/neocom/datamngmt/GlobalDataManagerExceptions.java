@@ -46,6 +46,10 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 		exceptionsIntercepted.add(new RuntimeExceptionRecord(location, exceptionIntercepted, severity));
 	}
 
+	public static Exception getLastException() {
+		return exceptionsIntercepted.get(exceptionsIntercepted.size() - 1).getException();
+	}
+
 	// - CLASS IMPLEMENTATION ...................................................................................
 	public static class ExceptionRecord {
 		// - F I E L D - S E C T I O N ............................................................................
@@ -70,6 +74,10 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................
+		public Exception getException() {
+			return this.exceptionRegistered;
+		}
+
 		public void setTimeStamp( final long timeStamp ) {
 			this.timeStamp = timeStamp;
 		}

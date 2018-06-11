@@ -76,7 +76,7 @@ public class ServiceJob {
 			throw new NeoComException("[Job]> Credential not identified.. Cannot run job on unidentified target.");
 
 		// Launch job and read back the future to control the execution
-		return UpdateJobManager.downloadExecutor.submit(task);
+		return UpdateJobManager.updaterExecutor.submit(task);
 	}
 
 	// --- D E L E G A T E D   M E T H O D S

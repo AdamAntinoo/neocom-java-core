@@ -12,11 +12,23 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ItemCategory;
+import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
+import org.joda.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
@@ -28,21 +40,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.joda.time.Instant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ItemCategory;
-import org.dimensinfin.eveonline.neocom.model.ItemGroup;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-
 /**
  * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
  * of the application and will hide the internals of how that data is obtained, managed and stored.
@@ -51,7 +48,6 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
  * that information available and up to date.
  * <p>
  * The initial release will start transferring the ModelFactory functionality.
- *
  * @author Adam Antinoo
  */
 
@@ -86,9 +82,11 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 			);
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
-				locationCache = (Hashtable<Long, EveLocation>) input.readObject();
-				logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
-						+ " entries.");
+				synchronized (locationCache) {
+					locationCache = (Hashtable<Long, EveLocation>) input.readObject();
+					logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
+							+ " entries.");
+				}
 			} finally {
 				input.close();
 				buffer.close();
@@ -111,14 +109,18 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
 				+ GlobalDataManager.getResourceString("R.cache.locationscache.filename");
 		logger.info("-- [GlobalDataManager.writeLocationsDatacache]> Openning cache file: {}", cacheFileName);
-		File modelStoreFile = new File(cacheFileName);
+		//		File modelStoreFile = new File(cacheFileName);
 		try {
-			final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(modelStoreFile));
+			final BufferedOutputStream buffer = new BufferedOutputStream(
+					GlobalDataManager.openResource4Output(cacheFileName)
+			);
 			final ObjectOutput output = new ObjectOutputStream(buffer);
 			try {
-				output.writeObject(locationCache);
-				logger.info(
-						"-- [GlobalDataManager.writeLocationsDatacache]> Wrote Locations cache: " + locationCache.size() + " entries.");
+				synchronized (locationCache) {
+					output.writeObject(locationCache);
+					logger.info(
+							"-- [GlobalDataManager.writeLocationsDatacache]> Wrote Locations cache: " + locationCache.size() + " entries.");
+				}
 			} finally {
 				output.flush();
 				output.close();
@@ -137,37 +139,37 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	/**
 	 * Background executor to use for long downloading jobs.
 	 */
-	private static final ExecutorService downloadExecutor = Executors.newFixedThreadPool(4);
-//	private static final ExecutorService marketDataExecutor = Executors.newFixedThreadPool(2);
+//	private static final ExecutorService downloadExecutor = Executors.newFixedThreadPool(4);
+	//	private static final ExecutorService marketDataExecutor = Executors.newFixedThreadPool(2);
 	private static final ExecutorService uiDataExecutor = Executors.newSingleThreadExecutor();
 
 	public void shutdownExecutors() {
-		try {
-			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown downloadExecutor");
-			downloadExecutor.shutdown();
-			downloadExecutor.awaitTermination(1, TimeUnit.MINUTES);
-		} catch (final InterruptedException iee) {
-			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
-		} finally {
-			if (!downloadExecutor.isTerminated()) {
-				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
-			}
-			downloadExecutor.shutdownNow();
-			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
-		}
 //		try {
-//			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown marketDataExecutor");
-//			marketDataExecutor.shutdown();
-//			marketDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
+//			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown updaterExecutor");
+//			downloadExecutor.shutdown();
+//			downloadExecutor.awaitTermination(1, TimeUnit.MINUTES);
 //		} catch (final InterruptedException iee) {
 //			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
 //		} finally {
-//			if (!marketDataExecutor.isTerminated()) {
+//			if (!downloadExecutor.isTerminated()) {
 //				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
 //			}
-//			marketDataExecutor.shutdownNow();
+//			downloadExecutor.shutdownNow();
 //			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
 //		}
+		//		try {
+		//			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown marketDataExecutor");
+		//			marketDataExecutor.shutdown();
+		//			marketDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
+		//		} catch (final InterruptedException iee) {
+		//			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+		//		} finally {
+		//			if (!marketDataExecutor.isTerminated()) {
+		//				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
+		//			}
+		//			marketDataExecutor.shutdownNow();
+		//			logger.info("-- [GlobalDataManager.shutdownExecutor]> Shutdown completed.");
+		//		}
 		try {
 			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown uiDataExecutor");
 			uiDataExecutor.shutdown();
@@ -190,13 +192,13 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		}
 	}
 
-	public static Future<?> submitJob2Download( final Runnable task ) {
-		return downloadExecutor.submit(task);
-	}
-
-	public static Future<?> submitJob2Generic( final Runnable task ) {
-		return downloadExecutor.submit(task);
-	}
+//	public static Future<?> submitJob2Download( final Runnable task ) {
+//		return downloadExecutor.submit(task);
+//	}
+//
+//	public static Future<?> submitJob2Generic( final Runnable task ) {
+//		return downloadExecutor.submit(task);
+//	}
 
 	public static Future<?> submitJob2ui( final Runnable task ) {
 		return uiDataExecutor.submit(task);
@@ -305,184 +307,136 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		return new GlobalDataManager().getSDEDBHelper().searchListOfMaterials(bpid);
 	}
 
+	// --- S E R V E R   S E C T I O N
+	public static String serverStatus(){
+		// TODO - Implement it with ESI data.
+		return "tranquility: 1,345 capsuleers";
+	}
+
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E
-//	public static String serializeCredentialList( final List<Credential> credentials ) {
-//		// Use my own serialization control to return the data to generate exactly what I want.
-//		String contentsSerialized = "[jsonClass: \"Exception\"," +
-//				"message: \"Unprocessed data. Possible JsonProcessingException exception.\"]";
-//		try {
-//			contentsSerialized = jsonMapper.writeValueAsString(credentials);
-//		} catch (JsonProcessingException jpe) {
-//			jpe.printStackTrace();
-//		}
-//		return contentsSerialized;
-//	}
+	//	public static String serializeCredentialList( final List<Credential> credentials ) {
+	//		// Use my own serialization control to return the data to generate exactly what I want.
+	//		String contentsSerialized = "[jsonClass: \"Exception\"," +
+	//				"message: \"Unprocessed data. Possible JsonProcessingException exception.\"]";
+	//		try {
+	//			contentsSerialized = jsonMapper.writeValueAsString(credentials);
+	//		} catch (JsonProcessingException jpe) {
+	//			jpe.printStackTrace();
+	//		}
+	//		return contentsSerialized;
+	//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-//	@Override
-//	public String toString() {
-//		StringBuffer buffer = new StringBuffer("GlobalDataManager [");
-//		buffer.append("name: ").append(0);
-//		buffer.append("]");
-//		buffer.append("->").append(super.toString());
-//		return buffer.toString();
-//	}
+	//	@Override
+	//	public String toString() {
+	//		StringBuffer buffer = new StringBuffer("GlobalDataManager [");
+	//		buffer.append("name: ").append(0);
+	//		buffer.append("]");
+	//		buffer.append("->").append(super.toString());
+	//		return buffer.toString();
+	//	}
 
 	// - CLASS IMPLEMENTATION .................................................................................
-//	public static class ManagerOptimizedCache {
-//
-//		// - F I E L D - S E C T I O N ............................................................................
-//		private Hashtable<String, AbstractManager> _managerCacheStore = new Hashtable();
-//
-//		// - M E T H O D - S E C T I O N ..........................................................................
-//		public int size() {
-//			return _managerCacheStore.size();
-//		}
-//
-//		public String constructManagerIdentifier( final String type, final long identifier ) {
-//			return new StringBuffer(type).append("/").append(identifier).toString();
-//		}
-//
-//		public AbstractManager access( final EManagerCodes variant, long longIdentifier ) {
-//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
-//			final AbstractManager hit = _managerCacheStore.get(locator);
-//			return hit;
-//		}
-//
-//		public boolean store( final EManagerCodes variant, final AbstractManager instance, final long longIdentifier ) {
-//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
-//			_managerCacheStore.put(locator, instance);
-//			return true;
-//		}
-//
-//		public AbstractManager delete( final EManagerCodes variant, final long longIdentifier ) {
-//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
-//			final AbstractManager hit = _managerCacheStore.get(locator);
-//			_managerCacheStore.remove(locator);
-//			return hit;
-//		}
-//	}
+	//	public static class ManagerOptimizedCache {
+	//
+	//		// - F I E L D - S E C T I O N ............................................................................
+	//		private Hashtable<String, AbstractManager> _managerCacheStore = new Hashtable();
+	//
+	//		// - M E T H O D - S E C T I O N ..........................................................................
+	//		public int size() {
+	//			return _managerCacheStore.size();
+	//		}
+	//
+	//		public String constructManagerIdentifier( final String type, final long identifier ) {
+	//			return new StringBuffer(type).append("/").append(identifier).toString();
+	//		}
+	//
+	//		public AbstractManager access( final EManagerCodes variant, long longIdentifier ) {
+	//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+	//			final AbstractManager hit = _managerCacheStore.get(locator);
+	//			return hit;
+	//		}
+	//
+	//		public boolean store( final EManagerCodes variant, final AbstractManager instance, final long longIdentifier ) {
+	//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+	//			_managerCacheStore.put(locator, instance);
+	//			return true;
+	//		}
+	//
+	//		public AbstractManager delete( final EManagerCodes variant, final long longIdentifier ) {
+	//			final String locator = constructManagerIdentifier(variant.name(), longIdentifier);
+	//			final AbstractManager hit = _managerCacheStore.get(locator);
+	//			_managerCacheStore.remove(locator);
+	//			return hit;
+	//		}
+	//	}
 	// ........................................................................................................
+
 
 	// - CLASS IMPLEMENTATION ...................................................................................
-	public static class ModelTimedCache {
-
-		// - F I E L D - S E C T I O N ............................................................................
-		private Hashtable<String, ICollaboration> _instanceCacheStore = new Hashtable();
-		private Hashtable<String, Instant> _timeCacheStore = new Hashtable();
-
-		// - M E T H O D - S E C T I O N ..........................................................................
-		public int size() {
-			return _instanceCacheStore.size();
-		}
-
-		public ICollaboration access( final EModelVariants variant, long longIdentifier ) {
-			if (variant == EModelVariants.PILOTV1) {
-				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
-				final ICollaboration hit = _instanceCacheStore.get(locator);
-				if (null != hit) {
-					final Instant expitationTime = _timeCacheStore.get(locator);
-					if (expitationTime.isBefore(Instant.now())) return null;
-					else return hit;
-				}
-			}
-			return null;
-		}
-
-		public ICollaboration delete( final EModelVariants variant, long longIdentifier ) {
-			if (variant == EModelVariants.PILOTV1) {
-				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
-				final ICollaboration hit = _instanceCacheStore.get(locator);
-				_instanceCacheStore.put(locator, null);
-				return hit;
-			}
-			return null;
-		}
-
-		public boolean store( final EModelVariants variant, final ICollaboration instance, final Instant expirationTime, final long longIdentifier ) {
-			// Store command for PILOTV1 instances.
-			if (variant == EModelVariants.PILOTV1) {
-				final String locator = EModelVariants.PILOTV1.name() + "/" + Long.valueOf(longIdentifier).toString();
-				_instanceCacheStore.put(locator, instance);
-				_timeCacheStore.put(locator, expirationTime);
-				return true;
-			}
-//			// Store command for APIKEY instances.
-//			if (variant == EModelVariants.APIKEY) {
-//				final String locator = EModelVariants.APIKEY.name() + "/" + Long.valueOf(longIdentifier).toString();
-//				_instanceCacheStore.put(locator, instance);
-//				_timeCacheStore.put(locator, expirationTime);
-//				return true;
-//			}
-			return false;
-		}
-	}
-	// ........................................................................................................
-
-	// - CLASS IMPLEMENTATION ...................................................................................
-//	public static class ShipSerializer extends JsonSerializer<Ship> {
-//		// - F I E L D - S E C T I O N ............................................................................
-//
-//		// - M E T H O D - S E C T I O N ..........................................................................
-//		@Override
-//		public void serialize( final Ship value, final JsonGenerator jgen, final SerializerProvider provider )
-//				throws IOException, JsonProcessingException {
-//			jgen.writeStartObject();
-//			jgen.writeStringField("jsonClass", value.getJsonClass());
-//			jgen.writeNumberField("assetId", value.getAssetId());
-//			jgen.writeNumberField("typeId", value.getTypeId());
-//			jgen.writeNumberField("ownerId", value.getOwnerId());
-//			jgen.writeStringField("name", value.getItemName());
-//			jgen.writeStringField("category", value.getCategory());
-//			jgen.writeStringField("groupName", value.getGroupName());
-//			jgen.writeStringField("tech", value.getTech());
-//			jgen.writeStringField("userLabel", value.getUserLabel());
-//			jgen.writeNumberField("price", value.getItem().getPrice());
-//			jgen.writeNumberField("highesBuyerPrice", value.getItem().getHighestBuyerPrice().getPrice());
-//			jgen.writeNumberField("lowerSellerPrice", value.getItem().getLowestSellerPrice().getPrice());
-//			jgen.writeObjectField("item", value.getItem());
-//			jgen.writeEndObject();
-//		}
-//	}
+	//	public static class ShipSerializer extends JsonSerializer<Ship> {
+	//		// - F I E L D - S E C T I O N ............................................................................
+	//
+	//		// - M E T H O D - S E C T I O N ..........................................................................
+	//		@Override
+	//		public void serialize( final Ship value, final JsonGenerator jgen, final SerializerProvider provider )
+	//				throws IOException, JsonProcessingException {
+	//			jgen.writeStartObject();
+	//			jgen.writeStringField("jsonClass", value.getJsonClass());
+	//			jgen.writeNumberField("assetId", value.getAssetId());
+	//			jgen.writeNumberField("typeId", value.getTypeId());
+	//			jgen.writeNumberField("ownerId", value.getOwnerId());
+	//			jgen.writeStringField("name", value.getItemName());
+	//			jgen.writeStringField("category", value.getCategory());
+	//			jgen.writeStringField("groupName", value.getGroupName());
+	//			jgen.writeStringField("tech", value.getTech());
+	//			jgen.writeStringField("userLabel", value.getUserLabel());
+	//			jgen.writeNumberField("price", value.getItem().getPrice());
+	//			jgen.writeNumberField("highesBuyerPrice", value.getItem().getHighestBuyerPrice().getPrice());
+	//			jgen.writeNumberField("lowerSellerPrice", value.getItem().getLowestSellerPrice().getPrice());
+	//			jgen.writeObjectField("item", value.getItem());
+	//			jgen.writeEndObject();
+	//		}
+	//	}
 	// ........................................................................................................
 
 
-//	// - CLASS IMPLEMENTATION ...................................................................................
-//	public static class SessionContext {
-//		// - S T A T I C - S E C T I O N ..........................................................................
-//
-//		// - F I E L D - S E C T I O N ............................................................................
-//		private Credential credential = null;
-//
-//		// - C O N S T R U C T O R - S E C T I O N ................................................................
-//		public SessionContext() {
-//		}
-//
-//		// - M E T H O D - S E C T I O N ..........................................................................
-//
-//		public Credential getCredential() {
-//			return credential;
-//		}
-//
-//		public void setCredential( final Credential credential ) {
-//			this.credential = credential;
-//		}
-//
-//		// --- D E L E G A T E D   M E T H O D S
-//		@Override
-//		public String toString() {
-//			return new StringBuffer("SessionContext [ ")
-//					.append("Credential:").append(credential.getAccountName()).append(" ")
-//					.append("]")
-////				.append("->").append(super.toString())
-//					.toString();
-//		}
-//	}
-//	// ........................................................................................................
+	//	// - CLASS IMPLEMENTATION ...................................................................................
+	//	public static class SessionContext {
+	//		// - S T A T I C - S E C T I O N ..........................................................................
+	//
+	//		// - F I E L D - S E C T I O N ............................................................................
+	//		private Credential credential = null;
+	//
+	//		// - C O N S T R U C T O R - S E C T I O N ................................................................
+	//		public SessionContext() {
+	//		}
+	//
+	//		// - M E T H O D - S E C T I O N ..........................................................................
+	//
+	//		public Credential getCredential() {
+	//			return credential;
+	//		}
+	//
+	//		public void setCredential( final Credential credential ) {
+	//			this.credential = credential;
+	//		}
+	//
+	//		// --- D E L E G A T E D   M E T H O D S
+	//		@Override
+	//		public String toString() {
+	//			return new StringBuffer("SessionContext [ ")
+	//					.append("Credential:").append(credential.getAccountName()).append(" ")
+	//					.append("]")
+	////				.append("->").append(super.toString())
+	//					.toString();
+	//		}
+	//	}
+	//	// ........................................................................................................
 }
 // - UNUSED CODE ............................................................................................
 //[01]

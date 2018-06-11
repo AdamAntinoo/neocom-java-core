@@ -15,13 +15,11 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 
 /**
  * Implements the MVC adaptation for the Corporation data. Its contents depend on multiple ESI calls even most of them are
  * related to Universe data that is loaded on demand.
- *
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -102,7 +100,7 @@ public class CorporationV1 extends NeoComNode {
 		memberCount = publicData.getMemberCount();
 		description = publicData.getDescription();
 		taxRate = publicData.getTaxRate();
-		dateFounded = publicData.getDateFounded().getMillis();
+		if ( null != publicData.getDateFounded() ) dateFounded = publicData.getDateFounded().getMillis();
 		url4Icon = "http://image.eveonline.com/Corporation/" + corporationId + "_128.png";
 		return this;
 	}
@@ -113,7 +111,7 @@ public class CorporationV1 extends NeoComNode {
 	}
 
 	public CorporationV1 setHomeStation( final long stationIdentifier ) {
-			this.homeStation = accessGlobal().searchLocation4Id(stationIdentifier);
+		this.homeStation = accessGlobal().searchLocation4Id(stationIdentifier);
 		return this;
 	}
 
@@ -123,7 +121,7 @@ public class CorporationV1 extends NeoComNode {
 		return new StringBuffer("CorporationV1 [")
 				.append("[#").append(corporationId).append("] ")
 				.append("]")
-//				.append("->").append(super.toString())
+				//				.append("->").append(super.toString())
 				.toString();
 	}
 }

@@ -12,20 +12,19 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database.entity;
 
-import java.sql.SQLException;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import java.sql.SQLException;
 
 /**
  * @author Adam Antinoo
@@ -51,42 +50,53 @@ public class MiningExtraction extends NeoComNode {
 		// Check the date.
 		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
 		final String targetDate = date.toString("YYYY/MM/dd");
-		if ( todayDate.equalsIgnoreCase(targetDate) )
+		if (todayDate.equalsIgnoreCase(targetDate))
 			return new StringBuffer()
 					.append(date.toString("YYYY/MM/dd")).append(":")
 					.append(DateTime.now().getHourOfDay()).append("-")
-					.append(typeId).append("-")
 					.append(systemId).append("-")
+					.append(typeId).append("-")
 					.append(ownerId)
 					.toString();
 		else
 			return new StringBuffer()
 					.append(date.toString("YYYY/MM/dd")).append(":")
 					.append(24).append("-")
-					.append(typeId).append("-")
 					.append(systemId).append("-")
+					.append(typeId).append("-")
 					.append(ownerId)
 					.toString();
 	}
-	public static String generateExtractionDateName( final LocalDate date ) {
-		// Check the date.
-		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
-		final String targetDate = date.toString("YYYY/MM/dd");
-		if ( todayDate.equalsIgnoreCase(targetDate) )
-			return new StringBuffer()
-					.append(date.toString("YYYY/MM/dd")).append(":")
-					.append(DateTime.now().getHourOfDay())
-					.toString();
-		else
-			return new StringBuffer()
-					.append(date.toString("YYYY/MM/dd")).append(":")
-					.append(24)
-					.toString();
+
+	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
+		return new StringBuffer()
+				.append(date).append(":")
+				.append(hour).append("-")
+				.append(systemId).append("-")
+				.append(typeId).append("-")
+				.append(ownerId)
+				.toString();
 	}
+
+	//	public static String generateExtractionDateName( final LocalDate date ) {
+	//		// Check the date.
+	//		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
+	//		final String targetDate = date.toString("YYYY/MM/dd");
+	//		if ( todayDate.equalsIgnoreCase(targetDate) )
+	//			return new StringBuffer()
+	//					.append(date.toString("YYYY/MM/dd")).append(":")
+	//					.append(DateTime.now().getHourOfDay())
+	//					.toString();
+	//		else
+	//			return new StringBuffer()
+	//					.append(date.toString("YYYY/MM/dd")).append(":")
+	//					.append(24)
+	//					.toString();
+	//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true)
-	private String id = "YYYY/MM/DD:HH-TYPEID-SYSTEMID-OWNERID";
+	private String id = "YYYY/MM/DD:HH-SYSTEMID-TYPEID-OWNERID";
 	@DatabaseField
 	private int typeId = -1;
 	@DatabaseField
@@ -94,7 +104,11 @@ public class MiningExtraction extends NeoComNode {
 	@DatabaseField
 	private long quantity = 0;
 	@DatabaseField
-	private String extractionDateName = "YYYY/MM/DD:HH";
+	private long delta = 0;
+	@DatabaseField
+	private String extractionDateName = "YYYY/MM/DD";
+	@DatabaseField
+	private int extractionHour = 24;
 	@DatabaseField(index = true)
 	private long ownerId = -1;
 
@@ -107,10 +121,12 @@ public class MiningExtraction extends NeoComNode {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public String getRecordId() {
+		return this.id;
+	}
 
 	public MiningExtraction store() {
 		// Update the extraction time.
-		//		this.extractionDateNumber = DateTime.now().getMillis();
 		try {
 			Dao<MiningExtraction, String> miningExtractionDao = accessGlobal().getNeocomDBHelper().getMiningExtractionDao();
 			// Store should only update already created records. Tables with generated id should use create() for creation.
@@ -124,7 +140,6 @@ public class MiningExtraction extends NeoComNode {
 
 	public MiningExtraction create( final String recordId ) {
 		this.id = recordId;
-		//		this.extractionDateNumber = DateTime.now().getMillis();
 		try {
 			Dao<MiningExtraction, String> miningExtractionDao = accessGlobal().getNeocomDBHelper().getMiningExtractionDao();
 			// Tables with generated id should use create() for creation.
@@ -149,20 +164,32 @@ public class MiningExtraction extends NeoComNode {
 		return quantity;
 	}
 
+	public long getDelta() {
+		return delta;
+	}
+
 	public String getSystemName() {
-		if ( null == this.systemCache )
+		if (null == this.systemCache)
 			this.systemCache = accessGlobal().searchLocation4Id(this.solarSystemId);
 		return systemCache.getSystem();
 	}
 
 	public String getResourceName() {
-		if ( null == this.resourceCache )
+		if (null == this.resourceCache)
 			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
 		return this.resourceCache.getName();
 	}
 
 	public String getExtractionDate() {
 		return this.extractionDateName;
+	}
+
+	public int getExtractionHour() {
+		return this.extractionHour;
+	}
+
+	public long getOwnerId() {
+		return ownerId;
 	}
 
 	public MiningExtraction setTypeId( final int typeId ) {
@@ -180,6 +207,11 @@ public class MiningExtraction extends NeoComNode {
 		return this;
 	}
 
+	public MiningExtraction setDelta( long delta ) {
+		this.delta = delta;
+		return this;
+	}
+
 	public MiningExtraction setOwnerId( final long ownerId ) {
 		this.ownerId = ownerId;
 		return this;
@@ -187,7 +219,13 @@ public class MiningExtraction extends NeoComNode {
 
 	public MiningExtraction setExtractionDate( final LocalDate extractionDate ) {
 		// Update the extractions date string.
-		this.extractionDateName = generateExtractionDateName(extractionDate);
+		this.extractionDateName = extractionDate.toString("YYYY/MM/dd");
+		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
+		final String targetDate = extractionDate.toString("YYYY/MM/dd");
+		if (todayDate.equalsIgnoreCase(targetDate))
+			this.extractionHour = DateTime.now().getHourOfDay();
+		else
+			this.extractionHour = 24;
 		return this;
 	}
 

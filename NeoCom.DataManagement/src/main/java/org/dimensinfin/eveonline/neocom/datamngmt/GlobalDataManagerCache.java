@@ -34,8 +34,8 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
 
 	//--- C A C H E   S T O R A G E   S E C T I O N
-	private static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
-	private static final long DEFAULT_CACHE_TIME = 600 * 1000;
+	public static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
+	public static final long DEFAULT_CACHE_TIME = TimeUnit.SECONDS.toMillis(600);
 
 	public enum ECacheTimes {
 		CHARACTER_PUBLIC, CHARACTER_CLONES, CHARACTER_BLUEPRINTS
@@ -52,7 +52,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		ESICacheTimes.put(ECacheTimes.CHARACTER_BLUEPRINTS, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
-		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600*4));// TODO - Changing some values during debugging.
+		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600*1));// TODO - Changing some values during debugging.
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_MARKET_ORDERS, TimeUnit.SECONDS.toMillis(1200));
@@ -76,7 +76,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		marketDataService = manager;
 		// At this point we should have been initialized.
 		// The next section should be executed out of the main thread to be compatible con Android.
-		GlobalDataManager.submitJob2Download(() -> {
+		GlobalDataManager.submitJob2ui(() -> {
 			// Initialize and process the list of market process form the ESI full market data.
 			final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(GlobalDataManager.SERVER_DATASOURCE);
 			logger.info(">> [GlobalDataManagerCache.setMarketDataManager]> Process all market prices: {} items", marketPrices.size());

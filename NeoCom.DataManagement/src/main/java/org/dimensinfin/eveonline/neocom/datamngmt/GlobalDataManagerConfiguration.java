@@ -33,9 +33,9 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	}
 
 	// --- P R I V A T E   E N U M E R A T O R S
-	protected enum EModelVariants {
-		PILOTV1, PILOTV2, CORPORATIONV1, ALLIANCEV1
-	}
+//	protected enum EModelVariants {
+//		PILOTV1, PILOTV2, CORPORATIONV1, ALLIANCEV1
+//	}
 
 	private enum EManagerCodes {
 		PLANETARY_MANAGER, ASSETS_MANAGER
