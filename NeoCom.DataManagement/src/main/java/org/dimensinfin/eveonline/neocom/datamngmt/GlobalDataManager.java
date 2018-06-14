@@ -21,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+import org.dimensinfin.eveonline.neocom.model.ServerStatus;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
@@ -308,9 +309,9 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	}
 
 	// --- S E R V E R   S E C T I O N
-	public static String serverStatus(){
+	public static ServerStatus serverStatus(){
 		// TODO - Implement it with ESI data.
-		return "tranquility: 1,345 capsuleers";
+		return new ServerStatus();
 	}
 
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E

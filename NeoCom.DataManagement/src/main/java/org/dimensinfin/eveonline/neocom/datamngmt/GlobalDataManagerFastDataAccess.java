@@ -72,8 +72,21 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 				if (null != hit) {
 					// Check if the object has expired. If so fire a background updating event.
 					if (_timeCacheStore.get(locator).isBefore(Instant.now())) {
-
-					}
+						GlobalDataManager.submitJob2ui(() -> {
+							final PilotV2 instance;
+							try {
+								instance = GlobalDataManager.requestPilotV2(credential);
+								store(EModelDataTypes.PILOTV2
+										, instance
+										, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))
+										, credential.getAccountId());
+							} catch (NeoComRegisteredException neoe) {
+								neoe.printStackTrace();
+							}
+						});
+						return hit;
+					} else
+						return hit;
 				} else {
 					// The object is not cached. Get it from the network and wait until the Future completes.
 					final Future<PilotV2> fut = modelUpdaterExecutor.submit(() -> {

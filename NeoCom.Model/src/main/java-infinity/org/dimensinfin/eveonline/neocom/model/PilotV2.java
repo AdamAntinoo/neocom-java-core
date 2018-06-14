@@ -12,24 +12,23 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.j256.ormlite.dao.Dao;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.database.entity.*;
+import org.dimensinfin.eveonline.neocom.database.entity.Property;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Adam Antinoo
@@ -38,6 +37,10 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("PilotV2");
+
+	public static String getUrlforAvatar( final int identifier ) {
+		return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	public int characterId = -1;
@@ -157,8 +160,8 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	//--- D E R I V E D   G E T T E R S
 	public EveLocation getLastKnownLocation() {
-		if ( null != lastKnownLocation ) return lastKnownLocation;
-		else if ( null == homeLocation ) return new EveLocation();
+		if (null != lastKnownLocation) return lastKnownLocation;
+		else if (null == homeLocation) return new EveLocation();
 		else {
 			try {
 				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
@@ -170,11 +173,11 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	}
 
 	public long getTotalAssetsNumber() {
-		if ( this.totalAssetsNumber < 0 ) {
+		if (this.totalAssetsNumber < 0) {
 			final List<org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset> pilotAssets;
 			try {
 				pilotAssets = accessGlobal().getNeocomDBHelper().getAssetDao()
-				                            .queryForEq("ownerId", this.characterId);
+						.queryForEq("ownerId", this.characterId);
 				this.totalAssetsNumber = pilotAssets.size();
 			} catch (SQLException sqle) {
 				this.totalAssetsNumber = 0;
@@ -182,6 +185,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		}
 		return totalAssetsNumber;
 	}
+
 	public String getUrlforAvatar() {
 		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
 	}
@@ -214,9 +218,9 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		locationRoles.clear();
 		actions4Pilot.clear();
 		for (Property prop : properties) {
-			if ( prop.getPropertyType() == EPropertyTypes.MANUFACTUREACTION )
+			if (prop.getPropertyType() == EPropertyTypes.MANUFACTUREACTION)
 				actions4Pilot.put(Double.valueOf(prop.getNumericValue()).intValue(), prop);
-			if ( prop.getPropertyType() == EPropertyTypes.LOCATIONROLE )
+			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)
 				locationRoles.add(prop);
 		}
 		return this;
@@ -244,7 +248,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	public void addAction4Item( final int typeId, final String taskName ) {
 		Property hit = actions4Pilot.get(typeId);
-		if ( null == hit ) {
+		if (null == hit) {
 			hit = new Property(EPropertyTypes.MANUFACTUREACTION)
 					.setOwnerId(getCharacterId())
 					.setNumericValue(typeId)
@@ -278,7 +282,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 
 	public int compareTo( final PilotV2 o ) {
-		if ( o.getCharacterId() == getCharacterId() ) return 0;
+		if (o.getCharacterId() == getCharacterId()) return 0;
 		else return o.getName().compareTo(getName());
 	}
 
