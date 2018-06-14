@@ -38,10 +38,10 @@ import java.util.List;
 /**
  * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
  * of the application and will hide the internals of how that data is obtained, managed and stored.
- * All thet now are direct database access or cache access or even Model list accesses will be hidden under an api
+ * All they now are direct database access or cache access or even Model list accesses will be hidden under an api
  * that will decide at any point from where to get the information and if there are more jobs to do to keep
  * that information available and up to date.
- * <p>
+ *
  * The initial release will start transferring the ModelFactory functionality.
  *
  * @author Adam Antinoo
