@@ -14,9 +14,9 @@ package org.dimensinfin.eveonline.neocom.services;
 
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
-import org.dimensinfin.eveonline.neocom.datamngmt.DownloadManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
+import org.dimensinfin.eveonline.neocom.managers.DownloadManager;
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

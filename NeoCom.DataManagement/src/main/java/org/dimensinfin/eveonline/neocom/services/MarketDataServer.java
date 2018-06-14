@@ -10,8 +10,9 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.datamngmt;
+package org.dimensinfin.eveonline.neocom.services;
 
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
 import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;

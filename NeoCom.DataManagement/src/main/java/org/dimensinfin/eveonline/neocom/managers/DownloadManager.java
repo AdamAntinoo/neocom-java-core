@@ -6,7 +6,7 @@
 //               application based on Angular+SB. This is the web version for the NeoCom Android native
 //               application. Most of the source code is common to both platforms and this module includes
 //               the source for the specific functionality for the backend services.
-package org.dimensinfin.eveonline.neocom.datamngmt;
+package org.dimensinfin.eveonline.neocom.managers;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -18,6 +18,8 @@ import org.dimensinfin.eveonline.neocom.database.entity.MarketOrder;
 import org.dimensinfin.eveonline.neocom.database.entity.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.database.entity.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
