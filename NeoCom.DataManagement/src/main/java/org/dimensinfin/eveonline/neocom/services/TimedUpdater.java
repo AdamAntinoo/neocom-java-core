@@ -49,17 +49,17 @@ public class TimedUpdater {
 					, cred.getAccountId(), cred.getAccountName());
 			// Set up the complete list depending on the Preferences selected.
 			boolean blockDownloads = GlobalDataManager.getDefaultSharedPreferences()
-					.getBoolean(PreferenceKeys.prefkey_BlockDownloads.name(), false);
+					.getBooleanPreference(PreferenceKeys.prefkey_BlockDownloads.name(), true);
 			final ArrayList<GlobalDataManager.EDataUpdateJobs> joblist = new ArrayList<>();
 			if (!blockDownloads) {
 				// Check Character Update
 				boolean blockCharacter = GlobalDataManager.getDefaultSharedPreferences()
-						.getBoolean(PreferenceKeys.prefkey_BlockCharacterUpdate.name(), false);
+						.getBooleanPreference(PreferenceKeys.prefkey_BlockCharacterUpdate.name(), true);
 				if (!blockCharacter) joblist.add(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE);
 
 				// Check Assets
 				boolean blockAssets = GlobalDataManager.getDefaultSharedPreferences()
-						.getBoolean(PreferenceKeys.prefkey_BlockAssetsUpdate.name(), false);
+						.getBooleanPreference(PreferenceKeys.prefkey_BlockAssetsUpdate.name(), true);
 				if (!blockAssets) {
 					joblist.add(GlobalDataManager.EDataUpdateJobs.ASSETDATA);
 					joblist.add(GlobalDataManager.EDataUpdateJobs.BLUEPRINTDATA);
@@ -67,22 +67,27 @@ public class TimedUpdater {
 
 				// Check Colony data
 				boolean blockColony = GlobalDataManager.getDefaultSharedPreferences()
-						.getBoolean(PreferenceKeys.prefkey_BlockColonyUpdate.name(), false);
+						.getBooleanPreference(PreferenceKeys.prefkey_BlockColonyUpdate.name(), true);
 				if (!blockColony) joblist.add(GlobalDataManager.EDataUpdateJobs.COLONYDATA);
 
 				// Check Skills
 				boolean blockSkills = GlobalDataManager.getDefaultSharedPreferences()
-						.getBoolean(PreferenceKeys.prefkey_BlockSkillsUpdate.name(), false);
+						.getBooleanPreference(PreferenceKeys.prefkey_BlockSkillsUpdate.name(), true);
 				if (!blockSkills) joblist.add(GlobalDataManager.EDataUpdateJobs.SKILL_DATA);
 
 				// Check Industry downloads
 				boolean blockIndustry = GlobalDataManager.getDefaultSharedPreferences()
-						.getBoolean(PreferenceKeys.prefkey_BlockIndustryUpdate.name(), false);
+						.getBooleanPreference(PreferenceKeys.prefkey_BlockIndustryUpdate.name(), true);
 				if (!blockIndustry) {
-					// TODO - Disabled temporarily.
-					//					joblist.add(GlobalDataManager.EDataUpdateJobs.INDUSTRYJOBS);
-					//					joblist.add(GlobalDataManager.EDataUpdateJobs.MARKETORDERS);
+					joblist.add(GlobalDataManager.EDataUpdateJobs.INDUSTRYJOBS);
 					joblist.add(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS);
+				}
+
+				// Check Market Orders downloads
+				boolean blockOrders = GlobalDataManager.getDefaultSharedPreferences()
+						.getBooleanPreference(PreferenceKeys.prefkey_BlockMarketOrdersUpdate.name(), true);
+				if (!blockOrders) {
+					joblist.add(GlobalDataManager.EDataUpdateJobs.MARKETORDERS);
 				}
 			}
 

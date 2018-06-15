@@ -42,29 +42,33 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
 	// --- S E R V E R
-	public static GetStatusOk getStatus( final int identifier, final String refreshToken, final String
+	public static GetStatusOk getStatus( /*final int identifier, final String refreshToken, */final String
 			server ) {
-		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
+		logger.info(">> [ESINetworkManager.getStatus]");
+		// Store the response at the cache or if there is a network failure return the last access if available
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
 		final Chrono accessFullTime = new Chrono();
 		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetStatusOk> statusApiResponse = neocomRetrofit
 					.create(StatusApi.class)
 					.getStatus(datasource, null, null).execute();
-			if (!statusApiResponse.isSuccessful()) {
-				return null;
-			} else return statusApiResponse.body();
+			if (statusApiResponse.isSuccessful()) {
+				// Store results on the cache.
+				okResponseCache.put(reference, statusApiResponse);
+				return statusApiResponse.body();
+			} else {
+				// Use the cached data is available.
+				return (GetStatusOk) okResponseCache.get(reference).body();
+			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}"
+			logger.info("<< [ESINetworkManager.getStatus]> [TIMING] Full elapsed: {}"
 					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
-		logger.info("<<>>>> [ESINetworkManager.getUniversePlanetsPlanetId]");
 		return null;
 	}
 

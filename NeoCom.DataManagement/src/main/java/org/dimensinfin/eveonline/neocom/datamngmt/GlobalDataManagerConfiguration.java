@@ -12,12 +12,11 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
+import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.eveonline.neocom.conf.GlobalPreferencesManager;
-import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 
 /**
  * @author Adam Antinoo
@@ -25,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerConfiguration");
+//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerConfiguration");
 
 	// --- P U B L I C   E N U M E R A T O R S
 	public enum EDataUpdateJobs {
@@ -33,9 +32,9 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	}
 
 	// --- P R I V A T E   E N U M E R A T O R S
-//	protected enum EModelVariants {
-//		PILOTV1, PILOTV2, CORPORATIONV1, ALLIANCEV1
-//	}
+	//	protected enum EModelVariants {
+	//		PILOTV1, PILOTV2, CORPORATIONV1, ALLIANCEV1
+	//	}
 
 	private enum EManagerCodes {
 		PLANETARY_MANAGER, ASSETS_MANAGER
@@ -152,21 +151,19 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	}
 
 	// --- P R E F E R E N C E S   S E C T I O N
-	private static final IGlobalPreferencesManager preferencesManager = new GlobalPreferencesManager();
+	private static IGlobalPreferencesManager preferencesprovider = null;
+
+	public static void connectPreferencesManager( final IGlobalPreferencesManager newPreferencesProvider ) {
+		preferencesprovider = newPreferencesProvider;
+	}
 
 	public static IGlobalPreferencesManager getDefaultSharedPreferences() {
-		return preferencesManager;
+		if (null != preferencesprovider) return preferencesprovider;
+		else
+			throw new NeoComRuntimeException("[GlobalDataManagerConfiguration.getDefaultSharedPreferences]> Preferences provider not " +
+					"configured " +
+					"into the Global area.");
 	}
-//	/**
-//	 * Export the api methods found on the Preferences management at Android. Return a boolena formatted result.
-//	 */
-//	public static boolean getBooleanPreference( final String preferenceName ) {
-//		return preferencesManager.getBooleanPreference(preferenceName);
-//	}
-//
-//	public static boolean getBooleanPreference( final String preferenceName, final boolean defaultValue ) {
-//		return preferencesManager.getBooleanPreference(preferenceName, defaultValue);
-//	}
 }
 
 // - UNUSED CODE ............................................................................................

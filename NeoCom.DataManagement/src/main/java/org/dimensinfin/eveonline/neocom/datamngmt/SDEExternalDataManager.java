@@ -50,7 +50,7 @@ import java.util.List;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SDEExternalDataManager {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("SDEExternalDataManager");
+	protected static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 
 	public static void initialize () {
 		// Load SDE data files and create the caches.

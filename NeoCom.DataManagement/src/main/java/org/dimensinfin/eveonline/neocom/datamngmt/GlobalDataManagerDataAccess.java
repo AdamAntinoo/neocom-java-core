@@ -148,10 +148,11 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					.setPublicData(publicData);
 			// Process the public data and get the referenced instances for the Corporation, race, etc.
 			newchar
-					.setCorporation(GlobalDataManager.requestCorporationV1(publicData.getCorporationId(), credential))
 					.setRace(GlobalDataManager.searchSDERace(publicData.getRaceId()))
 					.setBloodline(GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId()))
 					.setAncestry(GlobalDataManager.searchSDEAncestry(publicData.getAncestryId()));
+			if (null != publicData.getCorporationId())
+				newchar.setCorporation(GlobalDataManager.requestCorporationV1(publicData.getCorporationId(), credential));
 			if (null != publicData.getAllianceId())
 				newchar.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
 			// Wallet status

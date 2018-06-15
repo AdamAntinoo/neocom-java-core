@@ -579,7 +579,7 @@ public class FittingProcessor {
 	protected boolean moveAllowed() {
 		// Read the flag values from the preferences.
 		boolean moveAllowed = GlobalDataManager.getDefaultSharedPreferences()
-				.getBoolean(PreferenceKeys.prefkey_AllowMoveRequests.name(), true);
+				.getBooleanPreference(PreferenceKeys.prefkey_AllowMoveRequests.name(), true);
 		return moveAllowed;
 	}
 

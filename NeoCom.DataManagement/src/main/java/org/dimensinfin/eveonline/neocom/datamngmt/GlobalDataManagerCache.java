@@ -32,22 +32,24 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
+//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
 
 	//--- C A C H E   S T O R A G E   S E C T I O N
 	public static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
 	public static final long DEFAULT_CACHE_TIME = TimeUnit.SECONDS.toMillis(600);
 
 	public enum ECacheTimes {
-		CHARACTER_PUBLIC, CHARACTER_CLONES, CHARACTER_BLUEPRINTS, CHARACTER_SKILLQUEUE, CHARACTER_SKILLS
-		, PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES
-		, ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS
-		, MARKET_PRICES
-		, INDUSTRY_JOBS, INDUSTRY_MARKET_ORDERS, INDUSTRY_MINING
-		, WALLET, CORPORATION_WALLET
+		SERVERSTATUS,
+		CHARACTER_PUBLIC, CHARACTER_CLONES, CHARACTER_BLUEPRINTS, CHARACTER_SKILLQUEUE, CHARACTER_SKILLS,
+		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES,
+		ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS,
+		MARKET_PRICES,
+		INDUSTRY_JOBS, INDUSTRY_MARKET_ORDERS, INDUSTRY_MINING,
+		WALLET, CORPORATION_WALLET
 	}
 
 	static {
+		ESICacheTimes.put(ECacheTimes.SERVERSTATUS, TimeUnit.SECONDS.toMillis(30));
 		ESICacheTimes.put(ECacheTimes.CHARACTER_PUBLIC, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.CHARACTER_CLONES, TimeUnit.SECONDS.toMillis(200));
 		ESICacheTimes.put(ECacheTimes.CHARACTER_BLUEPRINTS, TimeUnit.SECONDS.toMillis(3600));

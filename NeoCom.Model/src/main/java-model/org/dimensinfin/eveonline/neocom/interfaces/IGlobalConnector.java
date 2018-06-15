@@ -12,9 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.util.List;
-import java.util.concurrent.Future;
-
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
@@ -25,25 +22,32 @@ import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
+import java.util.List;
+import java.util.concurrent.Future;
+
 /**
  * @author Adam Antinoo
  */
 public interface IGlobalConnector {
+	// --- H E L P E R S
 	public INeoComDBHelper getNeocomDBHelper();
 
 	public ISDEDBHelper getSDEDBHelper();
 
+	// --- M A R K E T   D A T A
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side );
 
 	public GetMarketsPrices200Ok searchMarketPrice( final int typeId );
 
+	// --- C O L O N Y
+	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid );
+
+	// --- S D E   S E A R C H S
 	public int searchStationType( final long typeId );
 
 	public EveItem searchItem4Id( final int typeId );
 
 	public EveLocation searchLocation4Id( final long locationId );
-
-	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid );
 
 	public int searchModule4Blueprint( final int bpitemId );
 
@@ -57,10 +61,10 @@ public interface IGlobalConnector {
 	public String getEveOnlineServerDatasource();
 
 	// --- F I L E S Y S T E M
-//	public String accessAssetPath( final String path );
-//
-//	public InputStream openAsset4Input( final String filePath ) throws IOException;
-//
-//	public File accessStorageResourcePath( final String path );
+	//	public String accessAssetPath( final String path );
+	//
+	//	public InputStream openAsset4Input( final String filePath ) throws IOException;
+	//
+	//	public File accessStorageResourcePath( final String path );
 }
 // - UNUSED CODE ............................................................................................

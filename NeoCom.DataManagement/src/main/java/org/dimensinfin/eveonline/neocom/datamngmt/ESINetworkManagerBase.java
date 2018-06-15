@@ -175,10 +175,6 @@ public class ESINetworkManagerBase {
 		logger.info(">> [ESINetworkManager.getMarketsPrices]");
 		final Chrono accessFullTime = new Chrono();
 		try {
-			//			// Set the refresh to be used during the request.
-			//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			//			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)
 					.getMarketsPrices("tranquility", null, null)

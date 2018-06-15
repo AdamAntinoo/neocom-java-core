@@ -13,9 +13,9 @@
 package org.dimensinfin.eveonline.neocom.conf;
 
 public interface IGlobalPreferencesManager {
-	public boolean getBoolean( final String preferenceName );
-
-	public boolean getBoolean( final String preferenceName, final boolean defaultValue );
+//	public boolean getBoolean( final String preferenceName );
+//
+//	public boolean getBoolean( final String preferenceName, final boolean defaultValue );
 	public boolean getBooleanPreference( final String preferenceName );
 
 	public boolean getBooleanPreference( final String preferenceName, final boolean defaultValue );

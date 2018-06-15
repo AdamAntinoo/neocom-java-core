@@ -554,7 +554,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Check if this response already available at cache.
 			return (GetCharactersCharacterIdSkillsOk) okResponseCache.get(reference).body();
 		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdSkills]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdSkills]> [TIMING] Full elapsed: {}"
+					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}

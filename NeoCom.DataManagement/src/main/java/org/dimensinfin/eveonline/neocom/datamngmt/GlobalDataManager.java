@@ -308,12 +308,6 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		return new GlobalDataManager().getSDEDBHelper().searchListOfMaterials(bpid);
 	}
 
-	// --- S E R V E R   S E C T I O N
-	public static ServerStatus serverStatus(){
-		// TODO - Implement it with ESI data.
-		return new ServerStatus();
-	}
-
 	// --- S E R I A L I Z A T I O N   I N T E R F A C E
 	//	public static String serializeCredentialList( final List<Credential> credentials ) {
 	//		// Use my own serialization control to return the data to generate exactly what I want.

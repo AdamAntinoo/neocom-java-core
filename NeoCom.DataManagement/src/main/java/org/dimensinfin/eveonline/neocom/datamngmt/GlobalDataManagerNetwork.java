@@ -12,10 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -24,11 +20,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
@@ -43,9 +34,18 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.industry.Fitting;
+import org.dimensinfin.eveonline.neocom.model.Skill;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Adam Antinoo
@@ -53,7 +53,7 @@ import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerNetwork");
+	//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerNetwork");
 
 	// --- M A P P E R S   &   T R A N S F O R M E R S   S E C T I O N
 	/**
@@ -63,8 +63,8 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 
 	static {
 		modelMapper.getConfiguration()
-		           .setFieldMatchingEnabled(true)
-		           .setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
+				.setFieldMatchingEnabled(true)
+				.setMethodAccessLevel(Configuration.AccessLevel.PRIVATE);
 	}
 
 	/**
@@ -82,8 +82,6 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		jsonMapper.registerModule(neocomSerializerModule);
 	}
 
-	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
-
 	/**
 	 * Get access to the Authorization URL from the OAuth20 interface instance.
 	 * @return the authorization URL to call.
@@ -92,6 +90,8 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		return ESINetworkManager.getAuthorizationUrl();
 	}
 
+	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
+	// - I N D U S T R Y
 	public static List<Job> downloadIndustryJobs4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
 		List<Job> results = new ArrayList<>();
@@ -100,7 +100,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			final List<GetCharactersCharacterIdIndustryJobs200Ok> industryJobs = ESINetworkManager.getCharactersCharacterIdIndustryJobs(credential.getAccountId()
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
-			if ( null != industryJobs ) {
+			if (null != industryJobs) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdIndustryJobs200Ok job : industryJobs) {
 					final Job newjob = modelMapper.map(job, Job.class);
@@ -123,6 +123,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		}
 	}
 
+	// - M A R K E T   O R D E R S
 	public static List<MarketOrder> downloadMarketOrders4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManagerNetwork.downloadMarketOrders4Credential]");
 		List<MarketOrder> results = new ArrayList<>();
@@ -132,7 +133,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					(credential.getAccountId()
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
-			if ( null != marketOrders ) {
+			if (null != marketOrders) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrders200Ok order : marketOrders) {
 					final MarketOrder neworder = modelMapper.map(order, MarketOrder.class);
@@ -166,15 +167,15 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					(credential.getAccountId()
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
-			if ( null != marketOrders ) {
+			if (null != marketOrders) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrdersHistory200Ok order : marketOrders) {
 					final MarketOrder neworder = modelMapper.map(order, MarketOrder.class);
 					final GetCharactersCharacterIdOrdersHistory200Ok.StateEnum state = order.getState();
 					MarketOrder.EOrderStates newState = MarketOrder.EOrderStates.CLOSED;
-					if ( state == GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.CANCELLED )
+					if (state == GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.CANCELLED)
 						newState = MarketOrder.EOrderStates.CANCELLED;
-					if ( state == GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.EXPIRED )
+					if (state == GetCharactersCharacterIdOrdersHistory200Ok.StateEnum.EXPIRED)
 						newState = MarketOrder.EOrderStates.EXPIRED;
 					neworder
 							.setOwnerId(credential.getAccountId())
@@ -213,13 +214,13 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					// Block to add additional data not downloaded on this call.
 					// To set more information about this particular planet we should call the Universe database.
 					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-					if ( null != planetData ) col.setPlanetData(planetData);
+					if (null != planetData) col.setPlanetData(planetData);
 
 					try {
 						// During this first phase download all the rest of the information.
 						// Get to the Network and download the data from the ESI api.
 						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
-						if ( null != colonyStructures ) {
+						if (null != colonyStructures) {
 							// Add the original data to the colony if we need some more information later.
 							col.setStructuresData(colonyStructures);
 							List<ColonyStructure> results = new ArrayList<>();
@@ -302,6 +303,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		return results;
 	}
 
+	// - F I T T I N G S
 	public static List<Fitting> downloadFittings4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManager.downloadFittings4Credential]> Credential: {}", credential.getAccountId());
 		List<Fitting> results = new ArrayList<>();
@@ -311,7 +313,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					(credential.getAccountId()
 							, credential.getRefreshToken()
 							, SERVER_DATASOURCE);
-			if ( null != fittings ) {
+			if (null != fittings) {
 				// Process the fittings processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
 					final Fitting newfitting = modelMapper.map(fit, Fitting.class);
@@ -329,6 +331,49 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			return new ArrayList<>();
 		} finally {
 			logger.info("<< [GlobalDataManager.downloadFittings4Credential]");
+		}
+	}
+
+	// - S K I L L S
+	public static List<Skill> downloadSkillQueue4Credential( final Credential credential ) {
+		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
+		List<Skill> skillList = new ArrayList<>();
+		try {
+			// Get to the Network and download the data from the ESI api.
+			List<GetCharactersCharacterIdSkillqueue200Ok> skills = ESINetworkManager.getCharactersCharacterIdSkillqueue(
+					credential.getAccountId()
+					, credential.getRefreshToken()
+					, SERVER_DATASOURCE);
+			if (null != skills) {
+				// Process the skills processing them and converting the data to structures compatible with MVC.
+				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
+					final Skill newskill = modelMapper.map(skill, Skill.class);
+					skillList.add(newskill);
+				}
+			}
+			return skillList;
+		} finally {
+			logger.info("<< [GlobalDataManager.downloadSkillQueue4Credential]");
+		}
+	}
+
+	// - S E R V E R
+	public static GetStatusOk serverStatus() {
+		//		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
+		//		List<Skill> skillList = new ArrayList<>();
+		try {
+			// Get to the Network and download the data from the ESI api.
+			GetStatusOk status = ESINetworkManager.getStatus(SERVER_DATASOURCE);
+			if (null != status) {
+				// Process the skills processing them and converting the data to structures compatible with MVC.
+				//				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
+				//					final Skill newskill = modelMapper.map(skill, Skill.class);
+				//					skillList.add(newskill);
+				//				}
+				return status;
+			} else return new GetStatusOk();
+		} finally {
+			logger.info("<< [GlobalDataManager.downloadSkillQueue4Credential]");
 		}
 	}
 

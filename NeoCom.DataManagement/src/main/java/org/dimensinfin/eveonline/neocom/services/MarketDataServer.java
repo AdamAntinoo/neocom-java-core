@@ -265,7 +265,7 @@ public class MarketDataServer {
 			return fut;
 		}
 		// Check if the user preferences allows to go to the market downloader.
-		if (GlobalDataManager.getDefaultSharedPreferences().getBoolean(PreferenceKeys.prefkey_BlockMarket.name(), false)) {
+		if (GlobalDataManager.getDefaultSharedPreferences().getBooleanPreference(PreferenceKeys.prefkey_BlockMarket.name(), true)) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download cancelled because preferences 'BlockMarket'.");
 			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
 				return new MarketDataSet(itemId, side);
