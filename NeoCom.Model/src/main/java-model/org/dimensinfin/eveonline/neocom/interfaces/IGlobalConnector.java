@@ -60,6 +60,9 @@ public interface IGlobalConnector {
 
 	public String getEveOnlineServerDatasource();
 
+	// --- M U L T Y T H R E A D I N G
+//	public Future<?> submitJob2ui( final Runnable task );
+
 	// --- F I L E S Y S T E M
 	//	public String accessAssetPath( final String path );
 	//

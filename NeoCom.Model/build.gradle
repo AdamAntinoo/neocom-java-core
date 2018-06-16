@@ -73,7 +73,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.j256.ormlite:ormlite-core:4.48'
 //    implementation 'com.github.scribejava:scribejava-core:4.2.0'
-//    implementation 'com.annimon:stream:1.1.9'
+    implementation 'com.annimon:stream:1.1.9'
 //    implementation 'org.apache.commons:commons-lang3:3.7'
 //    implementation 'org.htmlparser:htmlparser:2.1'
 

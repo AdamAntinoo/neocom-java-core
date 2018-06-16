@@ -37,6 +37,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
 import org.dimensinfin.eveonline.neocom.industry.Fitting;
 import org.dimensinfin.eveonline.neocom.model.Skill;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
@@ -348,6 +349,16 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
 					final Skill newskill = modelMapper.map(skill, Skill.class);
+					// Search and add the skill name.
+					// Access the skill name on the ids lookup entry point.
+					GlobalDataManager.submitJob2ui(() -> {
+						logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]");
+						List<Integer> ids = new ArrayList<>();
+						ids.add(newskill.getSkillId());
+						List<PostUniverseNames200Ok> namesList = GlobalDataManager.downloadUniverName4Ids(ids);
+						if((null!=namesList)&&namesList.size()>0)
+							newskill.setSkillName(namesList.get(0).getName());
+					});
 					skillList.add(newskill);
 				}
 			}
@@ -358,6 +369,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	}
 
 	// - S E R V E R
+
 	public static GetStatusOk serverStatus() {
 		//		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
 		//		List<Skill> skillList = new ArrayList<>();
@@ -375,6 +387,11 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		} finally {
 			logger.info("<< [GlobalDataManager.downloadSkillQueue4Credential]");
 		}
+	}
+
+	// - U N I V E R S E
+	public static List<PostUniverseNames200Ok> downloadUniverName4Ids( final List<Integer> idList ) {
+		return ESINetworkManager.postUserLabelNameDownload(idList, SERVER_DATASOURCE);
 	}
 
 	// - CLASS IMPLEMENTATION ...................................................................................

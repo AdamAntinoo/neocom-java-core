@@ -436,7 +436,7 @@ public class DownloadManager {
 		// Launch the download of the names block.
 		final List<Long> idList = new ArrayList<>();
 		idList.addAll(id4Names);
-		GlobalDataManager.submitJob2ui(() -> {
+		new GlobalDataManager().submitJob2ui(() -> {
 			// Copy yhe list of assets to local to allow parallel use.
 			final List<Long> localIdList = new ArrayList<>();
 			localIdList.addAll(idList);

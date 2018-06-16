@@ -15,7 +15,7 @@ package org.dimensinfin.eveonline.neocom.model;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 		//		this.parentAssetID = reference.parentAssetID;
 
 		//- D E R I V E D   F I E L D S
-		this.setOwnerID(asset.getOwnerID());
+		this.setOwnerId(asset.getOwnerId());
 		this.setName(asset.getName());
 		this.setCategory(asset.getCategory());
 		this.setGroupName(asset.getGroupName());
@@ -168,7 +168,7 @@ public class SpaceContainer extends NeoComAsset implements IAssetContainer, IDow
 		return this;
 	}
 
-	public IExpandable setRenderWhenEmpty (final boolean renderWhenEmpty) {
+	public IExpandable setRenderWhenEmpty ( final boolean renderWhenEmpty) {
 		_renderIfEmpty = renderWhenEmpty;
 		return this;
 	}

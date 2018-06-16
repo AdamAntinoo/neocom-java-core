@@ -34,13 +34,11 @@ public abstract class NeoComExpandableNode extends NeoComNode implements IExpand
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	@JsonIgnore
 	public boolean collapse () {
 		_expanded = false;
 		return _expanded;
 	}
 
-	@JsonIgnore
 	public boolean expand () {
 		_expanded = true;
 		return _expanded;

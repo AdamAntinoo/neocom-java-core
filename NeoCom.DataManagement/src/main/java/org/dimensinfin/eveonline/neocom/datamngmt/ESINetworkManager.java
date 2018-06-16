@@ -15,7 +15,9 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
@@ -23,8 +25,13 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdO
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
 
@@ -42,8 +49,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
 	// --- S E R V E R
-	public static GetStatusOk getStatus( /*final int identifier, final String refreshToken, */final String
-			server ) {
+	public static GetStatusOk getStatus(  final String	server ) {
 		logger.info(">> [ESINetworkManager.getStatus]");
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
@@ -92,12 +98,39 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			} else return universeApiResponse.body();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
 		} finally {
 			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
-		return null;
 	}
-
+	public static List<PostUniverseNames200Ok> postUserLabelNameDownload( final List<Integer> sourceidList, final String	server) {
+		logger.info(">> [ESINetworkManager.postUserLabelNameDownload]");
+		// Store the response at the cache or if there is a network failure return the last access if available
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
+		final Chrono accessFullTime = new Chrono();
+		final List<Integer> idList = new ArrayList<>();
+		try {
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			Response<List<PostUniverseNames200Ok>> universeApiResponse = neocomRetrofit.create(UniverseApi.class)
+					.postUniverseNames(idList, datasource, null, null).execute();
+			if (universeApiResponse.isSuccessful()) {
+				// Store results on the cache.
+				okResponseCache.put(reference, universeApiResponse);
+				return universeApiResponse.body();
+			} else {
+				// Use the cached data is available.
+				return (List<PostUniverseNames200Ok>) okResponseCache.get(reference).body();
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			return null;
+		} finally {
+			logger.info("<< [ESINetworkManager.postUserLabelNameDownload]> [TIMING] Full elapsed: {}"
+					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+	}
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C O R P O R A T I O N   A P I
 	// --- C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
 	public static GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {

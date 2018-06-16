@@ -9,12 +9,14 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.model.Container;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
+
+import java.util.List;
+import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class AssetGroup extends Container implements IAssetContainer {
@@ -24,14 +26,17 @@ public class AssetGroup extends Container implements IAssetContainer {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 8066964529677353362L;
+	private static final long serialVersionUID = 8066964529677353362L;
 
 	// - F I E L D - S E C T I O N ............................................................................
+	private double totalValue = 0.0;
+	private double totalVolume = 0.0;
+
 	//	public final Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
 	//	private boolean										_expanded					= false;
 	//	private boolean										_renderIfEmpty		= true;
 	//	private final boolean							_downloaded				= false;
-	public EGroupType					groupType					= EGroupType.DEFAULT;
+	public EGroupType groupType = EGroupType.DEFAULT;
 
 	//	public String											title							= "-";
 
@@ -43,13 +48,13 @@ public class AssetGroup extends Container implements IAssetContainer {
 		jsonClass = "AssetGroup";
 	}
 
-	public AssetGroup(final String newtitle) {
+	public AssetGroup( final String newtitle ) {
 		super(newtitle);
 		this.expand();
 		jsonClass = "AssetGroup";
 	}
 
-	public AssetGroup(final String newtitle, final EGroupType newtype) {
+	public AssetGroup( final String newtitle, final EGroupType newtype ) {
 		super(newtitle);
 		this.expand();
 		jsonClass = "AssetGroup";
@@ -63,8 +68,16 @@ public class AssetGroup extends Container implements IAssetContainer {
 	//		return this.getContentSize();
 	//	}
 
-	public int addAsset(final NeoComAsset asset) {
+	public int addAsset( final NeoComAsset asset ) {
 		super.addContent(asset);
+		try {
+			totalValue += asset.getQuantity() * asset.getItem().getHighestBuyerPrice().getPrice();
+		} catch (ExecutionException ee) {
+			totalValue += asset.getQuantity() * asset.getItem().getPrice();
+		} catch (InterruptedException ie) {
+			totalValue += asset.getQuantity() * asset.getItem().getPrice();
+		}
+		totalVolume += asset.getQuantity() * asset.getItem().getVolume();
 		return this.getContentSize();
 	}
 
@@ -75,6 +88,15 @@ public class AssetGroup extends Container implements IAssetContainer {
 		}
 		return result;
 	}
+	@Override
+	public double getTotalValue() {
+		return this.totalValue;
+	}
+
+	@Override
+	public double getTotalVolume() {
+		return this.totalVolume;
+	}
 
 	public EGroupType getGroupType() {
 		return groupType;
@@ -84,7 +106,7 @@ public class AssetGroup extends Container implements IAssetContainer {
 	//		title = newtitle;
 	//	}
 
-	public AssetGroup setGroupType(final EGroupType newtype) {
+	public AssetGroup setGroupType( final EGroupType newtype ) {
 		groupType = newtype;
 		return this;
 	}

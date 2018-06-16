@@ -12,18 +12,23 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.interfaces;
 
-import java.util.List;
-
 import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 
+import java.util.List;
+
 /**
- * This interface the methos for a virtual Asset container. Such type of containers have lists of assets while also store a
- * reference to the faceted owner of those assets like  Locations, Containers, Holds or Ships and Citadels.
- * 
+ * This interface has the methods for a virtual Asset container. Such type of containers have lists of assets while also store a
+ * reference to the faceted owner of those assets like Locations, Containers, Holds or Ships and Citadels.
  * @author Adam Antinoo
  */
-public interface IAssetContainer /*extends IExpandable */{
-	public int addAsset(NeoComAsset asset);
+public interface IAssetContainer /*extends IExpandable */ {
+	public int addAsset( NeoComAsset asset );
 
 	public List<NeoComAsset> getAssets();
+
+	public int getContentSize();
+
+	public double getTotalValue();
+
+	public double getTotalVolume();
 }

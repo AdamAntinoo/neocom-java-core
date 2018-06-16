@@ -16,7 +16,7 @@ import com.annimon.stream.Stream;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.model.Container;
-import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.enums.ENeoComVariants;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
@@ -26,13 +26,13 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This new implementation of the ship will unify the management of the contents to a single container because the
  * new location flag we get on the ESI api will classify the right aggregation for it when required. So that
  * information is not a must at the model level and only used to render the contents under different groups and that
  * can be performed dynamically during render preparation.
- *
  * @author Adam Antinoo
  */
 
@@ -53,7 +53,7 @@ public class Ship extends ShipPre10 {
 	private double totalValue = 0.0;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public Ship () {
+	public Ship() {
 		super();
 	}
 
@@ -68,17 +68,16 @@ public class Ship extends ShipPre10 {
 	 * On the list by category, the ship should not be expandable.
 	 * And finally when showing the Fitting we should add as much information as required to the different sections and
 	 * holders.
-	 *
 	 * @param variant the fragment variant when this collaboration is going to be used.
 	 * @return
 	 */
-	public List<ICollaboration> collaborate2Model (final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant ) {
 		ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
-		if ( !this.isDownloaded() ) {
-			this.downloadShipData();
-		}
-		if ( variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYCATEGORY.name()) ) return result;
-		if ( variant.equalsIgnoreCase(ENeoComVariants.PLANETARY_BYLOCATION.name()) ) {
+		//		if ( !this.isDownloaded() ) {
+		//			this.downloadShipData();
+		//		}
+		if (variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYCATEGORY.name())) return result;
+		if (variant.equalsIgnoreCase(ENeoComVariants.PLANETARY_BYLOCATION.name())) {
 			// Filter out anything that is not the planetary cargohold resources.
 			// TODO test grouping experiment.
 			//		 groups = Stream.of(_contents)
@@ -86,27 +85,27 @@ public class Ship extends ShipPre10 {
 			//		                .entrySet().
 			//		                .toList();
 			Stream.of(_contents)
-			      .filter(ShipContent::isInCargoHold)
-			      .filter((node) -> {
-				      if ( node.getCategory().equalsIgnoreCase("Planetary Commodities") )
-					      return true;
-				      if ( node.getCategory().equalsIgnoreCase("Planetary Resources") )
-					      return true;
-				      return false;
-			      })
-			      .forEach((node) -> {
-				      // Add the found item to the result.
-				      result.add(node.getContent());
-			      });
+					.filter(ShipContent::isInCargoHold)
+					.filter(( node ) -> {
+						if (node.getCategory().equalsIgnoreCase("Planetary Commodities"))
+							return true;
+						if (node.getCategory().equalsIgnoreCase("Planetary Resources"))
+							return true;
+						return false;
+					})
+					.forEach(( node ) -> {
+						// Add the found item to the result.
+						result.add(node.getContent());
+					});
 		}
-		if ( variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYLOCATION.name()) ) {
+		if (variant.equalsIgnoreCase(ENeoComVariants.ASSETS_BYLOCATION.name())) {
 			// For the assets by location we should generate just two sets. The elements on the fitting and the elements on
 			// cargoholds
 			final List<ICollaboration> fittingContents = new ArrayList<>();
 			Stream.of(_contents)
-			      .forEach((node) -> {
-				      if ( node.isFitted() ) fittingContents.add(node.getContent());
-			      });
+					.forEach(( node ) -> {
+						if (node.isFitted()) fittingContents.add(node.getContent());
+					});
 			final ShipAssetGroup fittings = new ShipAssetGroup("FITTING", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HIDDENMODIFIERS);
 			fittings.addContentList(fittingContents);
 			result.add(fittings);
@@ -114,9 +113,9 @@ public class Ship extends ShipPre10 {
 			// Do the same with the cargoholds contents.
 			final List<ICollaboration> cargoContents = new ArrayList<>();
 			Stream.of(_contents)
-			      .forEach((node) -> {
-				      if ( node.isInCargoHold() ) cargoContents.add(node.getContent());
-			      });
+					.forEach(( node ) -> {
+						if (node.isInCargoHold()) cargoContents.add(node.getContent());
+					});
 			final ShipAssetGroup cargo = new ShipAssetGroup("CARGO", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum
 					.HIDDENMODIFIERS);
 			cargo.addContentList(cargoContents);
@@ -125,9 +124,9 @@ public class Ship extends ShipPre10 {
 			// Put the rest into a Other container
 			final List<ICollaboration> otherContents = new ArrayList<>();
 			Stream.of(_contents)
-			      .filterNot(ShipContent::isFitted)
-			      .filterNot(ShipContent::isInCargoHold)
-			      .forEach((node) -> otherContents.add(node.getContent()));
+					.filterNot(ShipContent::isFitted)
+					.filterNot(ShipContent::isInCargoHold)
+					.forEach(( node ) -> otherContents.add(node.getContent()));
 			final ShipAssetGroup other = new ShipAssetGroup("OTHER", GetCharactersCharacterIdAssets200Ok.LocationFlagEnum
 					.HIDDENMODIFIERS);
 			other.addContentList(cargoContents);
@@ -157,27 +156,28 @@ public class Ship extends ShipPre10 {
 		}
 		return result;
 	}
-	public int addAsset (final NeoComAsset asset) {
+
+	public int addAsset( final NeoComAsset asset ) {
 		super.addAsset(asset);
-		_contents.add(new ShipContent(asset.getFlag(),asset));
+		_contents.add(new ShipContent(asset.getFlag(), asset));
 		return _contents.size();
 	}
-	protected void downloadShipData () {
-		ArrayList<NeoComAsset> contents = GlobalDataManager.accessAssetsContainedAt(this.getAssetId());
-		for(NeoComAsset asset: contents){
-			final ShipContent newcontent = new ShipContent(asset.getFlag(), asset);
-			_contents.add(newcontent);
-		}
-		this.setDownloaded(true);
-	}
+	//	protected void downloadShipData () {
+	//		ArrayList<NeoComAsset> contents = GlobalDataManager.accessAssetsContainedAt(this.getAssetId());
+	//		for(NeoComAsset asset: contents){
+	//			final ShipContent newcontent = new ShipContent(asset.getFlag(), asset);
+	//			_contents.add(newcontent);
+	//		}
+	//		this.setDownloaded(true);
+	//	}
 
 	@Override
-	public Ship copyFrom (final NeoComAsset asset) {
+	public Ship copyFrom( final NeoComAsset asset ) {
 		return (Ship) super.copyFrom(asset);
 	}
 
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuffer buffer = new StringBuffer("Ship [");
 		buffer.append("name: ").append(0);
 		buffer.append("]");
@@ -194,7 +194,7 @@ public class Ship extends ShipPre10 {
 		private ICollaboration content = null;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
-		public ShipContent (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group, final ICollaboration content) {
+		public ShipContent( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group, final ICollaboration content ) {
 			super();
 			this.group = group;
 			this.content = content;
@@ -202,94 +202,94 @@ public class Ship extends ShipPre10 {
 
 		// - M E T H O D - S E C T I O N ..........................................................................
 
-		private GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getGroup () {
+		private GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getGroup() {
 			return group;
 		}
 
-		private ICollaboration getContent () {
+		private ICollaboration getContent() {
 			return content;
 		}
 
-		private void setGroup (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group) {
+		private void setGroup( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum group ) {
 			this.group = group;
 		}
 
-		private void setContent (final ICollaboration content) {
+		private void setContent( final ICollaboration content ) {
 			this.content = content;
 		}
 
 		// --- G R O U P I N G   E V A L U A T I O N S
-		public boolean isInCargoHold () {
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.ASSETSAFETY ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.CARGO ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.DELIVERIES ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.FLEETHANGAR ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGARALL ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOCKED ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SHIPHANGAR ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDAMMOHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDCOMMANDCENTERHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDFUELBAY ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDGASHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDINDUSTRIALSHIPHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDLARGESHIPHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMATERIALBAY ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMEDIUMSHIPHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMINERALHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDOREHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDPLANETARYCOMMODITIESHOLD )
+		public boolean isInCargoHold() {
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.ASSETSAFETY) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.CARGO) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.DELIVERIES) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.FLEETHANGAR) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGARALL) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOCKED) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SHIPHANGAR) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDAMMOHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDCOMMANDCENTERHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDFUELBAY) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDGASHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDINDUSTRIALSHIPHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDLARGESHIPHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMATERIALBAY) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMEDIUMSHIPHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDMINERALHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDOREHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDPLANETARYCOMMODITIESHOLD)
 				return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSALVAGEHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSHIPHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSMALLSHIPHOLD ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.UNLOCKED ) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSALVAGEHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSHIPHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.SPECIALIZEDSMALLSHIPHOLD) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.UNLOCKED) return true;
 
 			return false;
 		}
 
-		public boolean isFitted () {
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT0 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT1 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT2 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT3 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT4 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT5 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT6 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT7 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT0 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT1 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT2 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT3 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT4 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT5 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT6 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT7 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT0 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT1 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT2 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT3 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT4 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT5 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT6 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT7 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT0 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT1 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT2 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT3 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT4 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT5 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT6 ) return true;
-			if ( group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT7 ) return true;
+		public boolean isFitted() {
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT0) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT1) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT2) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT3) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT4) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT5) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT6) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HISLOT7) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT0) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT1) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT2) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT3) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT4) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT5) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT6) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.LOSLOT7) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT0) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT1) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT2) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT3) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT4) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT5) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT6) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.MEDSLOT7) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT0) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT1) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT2) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT3) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT4) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT5) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT6) return true;
+			if (group == GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.RIGSLOT7) return true;
 
 			return false;
 		}
 
 		// --- D E L E G A T E D
-		public String getCategory () {
-			if ( content instanceof NeoComAsset ) {
-				return ((NeoComAsset) content).getCategory();
+		public String getCategory() {
+			if (content instanceof NeoComAsset) {
+				return ((NeoComAsset) content).getCategoryName();
 			} else return "-NO CATEGORIZED-";
 		}
 	}
@@ -305,34 +305,45 @@ public class Ship extends ShipPre10 {
 		private static final long serialVersionUID = 8066964529677353362L;
 
 		// - F I E L D - S E C T I O N ............................................................................
+		private double totalValue = 0.0;
+		private double totalVolume = 0.0;
+
 		public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum groupType =
 				GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.CARGO;
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
-		public ShipAssetGroup () {
+		public ShipAssetGroup() {
 			super();
 			this.expand();
 			jsonClass = "AssetGroup";
 		}
 
-		public ShipAssetGroup (final String newtitle) {
+		public ShipAssetGroup( final String newtitle ) {
 			super(newtitle);
 			this.expand();
 			jsonClass = "AssetGroup";
 		}
 
-		public ShipAssetGroup (final String newtitle, final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newtype) {
+		public ShipAssetGroup( final String newtitle, final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newtype ) {
 			this(newtitle);
 			groupType = newtype;
 		}
 
 		// - M E T H O D - S E C T I O N ..........................................................................
-		public int addAsset (final NeoComAsset asset) {
+		public int addAsset( final NeoComAsset asset ) {
 			super.addContent(asset);
+			try {
+				totalValue += asset.getQuantity() * asset.getItem().getHighestBuyerPrice().getPrice();
+			} catch (ExecutionException ee) {
+				totalValue += asset.getQuantity() * asset.getItem().getPrice();
+			} catch (InterruptedException ie) {
+				totalValue += asset.getQuantity() * asset.getItem().getPrice();
+			}
+			totalVolume += asset.getQuantity() * asset.getItem().getVolume();
 			return this.getContentSize();
 		}
 
-		public List<NeoComAsset> getAssets () {
+		public List<NeoComAsset> getAssets() {
 			Vector<NeoComAsset> result = new Vector<NeoComAsset>();
 			for (ICollaboration node : super.getContents()) {
 				result.add((NeoComAsset) node);
@@ -340,17 +351,32 @@ public class Ship extends ShipPre10 {
 			return result;
 		}
 
-		public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getGroupType () {
+		@Override
+		public int getContentSize() {
+			return super.getContentSize();
+		}
+
+		@Override
+		public double getTotalValue() {
+			return this.totalValue;
+		}
+
+		@Override
+		public double getTotalVolume() {
+			return this.totalVolume;
+		}
+
+		public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getGroupType() {
 			return groupType;
 		}
 
-		public ShipAssetGroup setGroupType (final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newtype) {
+		public ShipAssetGroup setGroupType( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newtype ) {
 			groupType = newtype;
 			return this;
 		}
 
 		@Override
-		public String toString () {
+		public String toString() {
 			StringBuffer buffer = new StringBuffer("AssetGroup [");
 			buffer.append(this.getTitle()).append(" type: ").append(groupType.name());
 			//		buffer.append(" [").append(this.getContentSize()).append("]");

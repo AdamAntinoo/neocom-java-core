@@ -12,15 +12,30 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Response;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Skill extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 8494419560386675752L;
+	private static Logger logger = LoggerFactory.getLogger("Skill");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int skillId = -1;
+	private String skillName = "-SKILL-";
 	private DateTime finishDate = null;
 	private DateTime startDate = null;
 	private int finishedLevel = 0;
@@ -35,6 +50,10 @@ public class Skill extends NeoComNode {
 	// --- G E T T E R S   &   S E T T E R S
 	public int getSkillId() {
 		return skillId;
+	}
+
+	public String getSkillName() {
+		return skillName;
 	}
 
 	public DateTime getFinishDate() {
@@ -67,6 +86,11 @@ public class Skill extends NeoComNode {
 
 	public Skill setSkillId( int skillId ) {
 		this.skillId = skillId;
+		return this;
+	}
+
+	public Skill setSkillName( String skillName ) {
+		this.skillName = skillName;
 		return this;
 	}
 
