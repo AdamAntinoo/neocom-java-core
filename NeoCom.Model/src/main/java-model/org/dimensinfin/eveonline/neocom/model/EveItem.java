@@ -12,17 +12,17 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveItem extends NeoComNode {
@@ -60,15 +60,15 @@ public class EveItem extends NeoComNode {
 	private static EveItem defaultItem = null;
 	private static final int DEFAULT_TYPE_ID = 34;
 
-//	public static EveItem getDefaultItem()  {
-//		if (null == EveItem.defaultItem) {
-//			EveItem.defaultItem = accessSDEDBHelper().searchItem4Id(EveItem.DEFAULT_TYPE_ID);
-////			EveItem.defaultItem.setDefaultPrice(GlobalDataManager.searchMarketPrice(EveItem.DEFAULT_TYPE_ID));
-////			EveItem.defaultItem.futureBuyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
-////			EveItem.defaultItem.futureSellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
-//		}
-//		return EveItem.defaultItem;
-//	}
+	//	public static EveItem getDefaultItem()  {
+	//		if (null == EveItem.defaultItem) {
+	//			EveItem.defaultItem = accessSDEDBHelper().searchItem4Id(EveItem.DEFAULT_TYPE_ID);
+	////			EveItem.defaultItem.setDefaultPrice(GlobalDataManager.searchMarketPrice(EveItem.DEFAULT_TYPE_ID));
+	////			EveItem.defaultItem.futureBuyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
+	////			EveItem.defaultItem.futureSellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
+	//		}
+	//		return EveItem.defaultItem;
+	//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int id = 34;
@@ -147,6 +147,10 @@ public class EveItem extends NeoComNode {
 			}
 		}
 		return group.getGroupId();
+	}
+
+	public ItemGroup getGroupInstance() {
+		return this.group;
 	}
 
 	@Deprecated

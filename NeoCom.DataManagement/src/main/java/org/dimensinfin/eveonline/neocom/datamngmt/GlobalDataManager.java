@@ -57,6 +57,11 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 
+	// --- N E T W O R K   S T A T U S
+	public static boolean getNetworkStatus(){
+		return true;
+	}
+
 	// --- C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
 	private static Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();

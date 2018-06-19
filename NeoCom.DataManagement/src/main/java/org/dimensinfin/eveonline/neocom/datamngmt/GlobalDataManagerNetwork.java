@@ -35,11 +35,12 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
 import org.dimensinfin.eveonline.neocom.industry.Fitting;
-import org.dimensinfin.eveonline.neocom.model.Skill;
+import org.dimensinfin.eveonline.neocom.model.SkillInTraining;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
@@ -60,7 +61,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	/**
 	 * Instance for the mapping of OK instances to the MVC compatible classes.
 	 */
-	private static final ModelMapper modelMapper = new ModelMapper();
+	public static final ModelMapper modelMapper = new ModelMapper();
 
 	static {
 		modelMapper.getConfiguration()
@@ -336,29 +337,19 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	}
 
 	// - S K I L L S
-	public static List<Skill> downloadSkillQueue4Credential( final Credential credential ) {
+	public static List<SkillInTraining> downloadSkillQueue4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
-		List<Skill> skillList = new ArrayList<>();
+		List<SkillInTraining> skillList = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
-			List<GetCharactersCharacterIdSkillqueue200Ok> skills = ESINetworkManager.getCharactersCharacterIdSkillqueue(
+			final List<GetCharactersCharacterIdSkillqueue200Ok> skills = ESINetworkManager.getCharactersCharacterIdSkillqueue(
 					credential.getAccountId()
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
 			if (null != skills) {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
-					final Skill newskill = modelMapper.map(skill, Skill.class);
-					// Search and add the skill name.
-					// Access the skill name on the ids lookup entry point.
-					GlobalDataManager.submitJob2ui(() -> {
-						logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]");
-						List<Integer> ids = new ArrayList<>();
-						ids.add(newskill.getSkillId());
-						List<PostUniverseNames200Ok> namesList = GlobalDataManager.downloadUniverName4Ids(ids);
-						if((null!=namesList)&&namesList.size()>0)
-							newskill.setSkillName(namesList.get(0).getName());
-					});
+					final SkillInTraining newskill = modelMapper.map(skill, SkillInTraining.class);
 					skillList.add(newskill);
 				}
 			}
@@ -368,18 +359,26 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		}
 	}
 
+	public static GetCharactersCharacterIdSkillsOk downloadSkillsTrained4Credential( final Credential credential ) {
+		logger.info("><>> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
+		return ESINetworkManager.getCharactersCharacterIdSkills(
+				credential.getAccountId()
+				, credential.getRefreshToken()
+				, SERVER_DATASOURCE);
+	}
+
 	// - S E R V E R
 
 	public static GetStatusOk serverStatus() {
 		//		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
-		//		List<Skill> skillList = new ArrayList<>();
+		//		List<SkillInTraining> skillList = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
 			GetStatusOk status = ESINetworkManager.getStatus(SERVER_DATASOURCE);
 			if (null != status) {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				//				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
-				//					final Skill newskill = modelMapper.map(skill, Skill.class);
+				//					final SkillInTraining newskill = modelMapper.map(skill, SkillInTraining.class);
 				//					skillList.add(newskill);
 				//				}
 				return status;

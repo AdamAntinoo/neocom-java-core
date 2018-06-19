@@ -162,8 +162,8 @@ public class FittingProcessor {
 				Resource resource = requirements.get(pointer);
 				logger.info("-- [FittingProcessor.processFitting]> Processing resource: {}", resource);
 //				// Check resources that are Skills. Give them an special treatment.
-//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-//					currentAction = new Skill(resource);
+//				if (resource.getCategory().equalsIgnoreCase(ModelWideConstants.eveglobal.SkillInTraining)) {
+//					currentAction = new SkillInTraining(resource);
 //					this.registerAction(currentAction);
 //					continue;
 //				}

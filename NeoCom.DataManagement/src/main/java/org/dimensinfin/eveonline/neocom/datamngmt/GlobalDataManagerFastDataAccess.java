@@ -106,7 +106,8 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 					} catch (InterruptedException ie) {
 						return null;
 					} catch (ExecutionException ee) {
-						ee.printStackTrace();return null;
+						ee.printStackTrace();
+						return null;
 					}
 				}
 			}

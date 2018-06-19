@@ -12,25 +12,17 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Skill extends NeoComNode {
+public class SkillTrained extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = 8494419560386675752L;
-	private static Logger logger = LoggerFactory.getLogger("Skill");
+	//	private static final long serialVersionUID = 8494419560386675752L;
+	//	private static Logger logger = LoggerFactory.getLogger("SkillInTraining");
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int skillId = -1;
-	private DateTime finishDate = null;
-	private DateTime startDate = null;
-	private int finishedLevel = 0;
-	private int queuePosition = 0;
-	private int trainingStartSp = 0;
-	private int levelEndSp = 0;
-	private int levelStartSp = 0;
+	private long skillpointsInSkill = 0;
+	private int trainedSkillLevel = 0;
+	private int activeSkillLevel = 0;
 
 	private transient EveItem skillItem = null;
 
@@ -48,84 +40,51 @@ public class Skill extends NeoComNode {
 		return this.skillItem.getName();
 	}
 
-	public DateTime getFinishDate() {
-		return finishDate;
+	public long getSkillpointsInSkill() {
+		return skillpointsInSkill;
 	}
 
-	public DateTime getStartDate() {
-		return startDate;
+	public int getTrainedSkillLevel() {
+		return trainedSkillLevel;
 	}
 
-	public double getPctDone() {
-		if (null == startDate) return 0.0;
-		final DateTime now = DateTime.now();
-		if (startDate.isBeforeNow()) {
-			// The skill is on training
-			double secondsTotal = (this.finishDate.getMillis() - this.startDate.getMillis()) / 1000.0;
-			double secondsDone = (this.finishDate.getMillis() - DateTime.now().getMillis()) / 1000.0;
-			return secondsDone / secondsTotal;
-		} else return 0.0;
+	public int getActiveSkillLevel() {
+		return activeSkillLevel;
 	}
 
-	public int getFinishedLevel() {
-		return finishedLevel;
-	}
-
-	public int getQueuePosition() {
-		return queuePosition;
-	}
-
-	public int getTrainingStartSp() {
-		return trainingStartSp;
-	}
-
-	public int getLevelEndSp() {
-		return levelEndSp;
-	}
-
-	public int getLevelStartSp() {
-		return levelStartSp;
-	}
-
-	public Skill setSkillId( int skillId ) {
+	public SkillTrained setSkillId( int skillId ) {
 		this.skillId = skillId;
 		return this;
 	}
 
-	public Skill setFinishDate( DateTime finishDate ) {
-		this.finishDate = finishDate;
+	public int getGroupId() {
+		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
+		return this.skillItem.getGroupId();
+	}
+
+	public String getGroupName() {
+		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
+		return this.skillItem.getGroupName();
+	}
+
+	public ItemGroup getGroupInstance() {
+		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
+		return this.skillItem.getGroupInstance();
+	}
+
+	public SkillTrained setSkillpointsInSkill( final long skillpointsInSkill ) {
+		this.skillpointsInSkill = skillpointsInSkill;
 		return this;
 	}
 
-	public Skill setStartDate( DateTime startDate ) {
-		this.startDate = startDate;
+	public SkillTrained setTrainedSkillLevel( final int trainedSkillLevel ) {
+		this.trainedSkillLevel = trainedSkillLevel;
 		return this;
 	}
 
-	public Skill setFinishedLevel( int finishedLevel ) {
-		this.finishedLevel = finishedLevel;
-		return this;
-	}
-
-	public Skill setQueuePosition( int queuePosition ) {
-		this.queuePosition = queuePosition;
-		return this;
-	}
-
-	public Skill setTrainingStartSp( int trainingStartSp ) {
-		this.trainingStartSp = trainingStartSp;
-		return this;
-	}
-
-	public Skill setLevelEndSp( int levelEndSp ) {
-		this.levelEndSp = levelEndSp;
-		return this;
-	}
-
-	public Skill setLevelStartSp( int levelStartSp ) {
-		this.levelStartSp = levelStartSp;
+	public SkillTrained setActiveSkillLevel( final int activeSkillLevel ) {
+		this.activeSkillLevel = activeSkillLevel;
 		return this;
 	}
 }
-
 // - UNUSED CODE ............................................................................................
