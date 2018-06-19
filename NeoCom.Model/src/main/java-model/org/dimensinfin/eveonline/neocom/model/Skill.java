@@ -12,20 +12,9 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Response;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Skill extends NeoComNode {
@@ -35,7 +24,6 @@ public class Skill extends NeoComNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	private int skillId = -1;
-	private String skillName = "-SKILL-";
 	private DateTime finishDate = null;
 	private DateTime startDate = null;
 	private int finishedLevel = 0;
@@ -43,6 +31,8 @@ public class Skill extends NeoComNode {
 	private int trainingStartSp = 0;
 	private int levelEndSp = 0;
 	private int levelStartSp = 0;
+
+	private transient EveItem skillItem = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -53,7 +43,9 @@ public class Skill extends NeoComNode {
 	}
 
 	public String getSkillName() {
-		return skillName;
+		if (null == this.skillItem)
+			this.skillItem = accessGlobal().getSDEDBHelper().searchItem4Id(this.skillId);
+		return this.skillItem.getName();
 	}
 
 	public DateTime getFinishDate() {
@@ -62,6 +54,17 @@ public class Skill extends NeoComNode {
 
 	public DateTime getStartDate() {
 		return startDate;
+	}
+
+	public double getPctDone() {
+		if (null == startDate) return 0.0;
+		final DateTime now = DateTime.now();
+		if (startDate.isBeforeNow()) {
+			// The skill is on training
+			double secondsTotal = (this.finishDate.getMillis() - this.startDate.getMillis()) / 1000.0;
+			double secondsDone = (this.finishDate.getMillis() - DateTime.now().getMillis()) / 1000.0;
+			return secondsDone / secondsTotal;
+		} else return 0.0;
 	}
 
 	public int getFinishedLevel() {
@@ -86,11 +89,6 @@ public class Skill extends NeoComNode {
 
 	public Skill setSkillId( int skillId ) {
 		this.skillId = skillId;
-		return this;
-	}
-
-	public Skill setSkillName( String skillName ) {
-		this.skillName = skillName;
 		return this;
 	}
 
