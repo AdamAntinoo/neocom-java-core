@@ -47,6 +47,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElementDecl;
+
 /**
  * @author Adam Antinoo
  */
@@ -227,36 +229,16 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 	// --- N E O C O M   P R I V A T E   D A T A B A S E   S E C T I O N
 	/**
-	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the
-	 * interpretation used by the application.
+	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the interpretation used by the
+	 * application.
+	 * The method only returns Credentials authorized for the current eve online server. This way I can have different sets of
+	 * credentials with not overriding them and still having the guarantee that they are unique.
 	 */
-	public static List<Credential> accessAllCredentials() {
+	public static List<Credential> accessAllCredentials()  {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
-			credentialList = new GlobalDataManager().getNeocomDBHelper().getCredentialDao().queryForAll();
-			//			if(GlobalDataManager.getResourceBoolean("R.runtime.mockdata")){
-			//				// Write down the credential list ot be used as mock data.
-			//				final File outFile = new File(GlobalDataManager.getResourceString("R.runtime.mockdata.location")
-			//						+ "accessAllCredentials.data");
-			//				try {
-			//					final BufferedOutputStream buffer = new BufferedOutputStream(new FileOutputStream(outFile));
-			//					final ObjectOutput output = new ObjectOutputStream(buffer);
-			//					try {
-			//						output.writeObject(credentialList);
-			//						logger.info(
-			//								"-- [GlobalDataManagerDataAccess.accessAllCredentials]> Wrote credential list: {} entries."
-			//								,credentialList.size());
-			//					} finally {
-			//						output.flush();
-			//						output.close();
-			//						buffer.close();
-			//					}
-			//				} catch (final FileNotFoundException fnfe) {
-			//					logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> FileNotFoundException."); //$NON-NLS-1$
-			//				} catch (final IOException ex) {
-			//					logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> IOException."); //$NON-NLS-1$
-			//				}
-			//			}
+			return new GlobalDataManager().getNeocomDBHelper().getCredentialDao()
+					.queryForEq("dataSource", new GlobalDataManager().getEveOnlineServerDatasource());
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManagerDataAccess.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
