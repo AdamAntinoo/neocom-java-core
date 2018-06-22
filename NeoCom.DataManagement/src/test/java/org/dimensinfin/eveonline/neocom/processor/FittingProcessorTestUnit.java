@@ -95,7 +95,7 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 		// Connect the MarketData service.
 		logger.info("-- [NeoComMicroServiceApplication.main]> Starting Market Data service...");
 		mdServer = new MarketDataServer().start();
-		GlobalDataManager.setMarketDataManager(mdServer);
+		GlobalDataManager.connectMarketDataManager(mdServer);
 
 		// Load the Locations cache to speed up the Citadel and Outpost search.
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Read Locations data cache...");

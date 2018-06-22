@@ -221,7 +221,7 @@ public class MarketDataServer {
 		}
 	}
 
-	public synchronized void reportMarketDataJobs() {
+	public synchronized int reportMarketDataJobs() {
 		// Count the jobs.
 		int pending = 0;
 		int done = 0;
@@ -234,6 +234,7 @@ public class MarketDataServer {
 		logger.info(">< [MarketDataServer.reportMarketDataJobs]> Pending: {}.", pending);
 		logger.info(">< [MarketDataServer.reportMarketDataJobs]> Done   : {}.", done);
 		logger.info(">< [MarketDataServer.reportMarketDataJobs]> TOTAL  : {}.", pending + done);
+		return pending;
 	}
 
 	/**

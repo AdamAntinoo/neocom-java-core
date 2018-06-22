@@ -368,7 +368,6 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	}
 
 	// - S E R V E R
-
 	public static GetStatusOk serverStatus() {
 		//		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
 		//		List<SkillInTraining> skillList = new ArrayList<>();
@@ -391,6 +390,15 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	// - U N I V E R S E
 	public static List<PostUniverseNames200Ok> downloadUniverName4Ids( final List<Integer> idList ) {
 		return ESINetworkManager.postUserLabelNameDownload(idList, SERVER_DATASOURCE);
+	}
+
+	// - R O U T E S
+	public static int calculateRouteJumps( final Credential credential, final int origin, final int destination ) {
+		logger.info(">> [GlobalDataManager.calculateRouteJumps]");
+		final List<Integer> jumps = ESINetworkManager.calculateRouteJumps(origin, destination
+				, credential.getRefreshToken(), SERVER_DATASOURCE);
+		if (jumps.size() < 1) return 999;
+		else return jumps.size();
 	}
 
 	// - CLASS IMPLEMENTATION ...................................................................................

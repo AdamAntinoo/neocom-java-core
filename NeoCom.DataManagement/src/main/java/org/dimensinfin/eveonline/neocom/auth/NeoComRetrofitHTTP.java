@@ -168,14 +168,14 @@ public class NeoComRetrofitHTTP {
 						.build();
 	}
 
-	@Override
-	public String toString () {
-		StringBuffer buffer = new StringBuffer("NeoComRetrofitHTTP [");
-		buffer.append("name: ").append(0);
-		buffer.append("]");
-		buffer.append("->").append(super.toString());
-		return buffer.toString();
-	}
+//	@Override
+//	public String toString () {
+//		StringBuffer buffer = new StringBuffer("NeoComRetrofitHTTP [");
+//		buffer.append("name: ").append(0);
+//		buffer.append("]");
+//		buffer.append("->").append(super.toString());
+//		return buffer.toString();
+//	}
 }
 // - UNUSED CODE ............................................................................................
 //[01]

@@ -16,6 +16,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Adam Antinoo
@@ -190,6 +192,26 @@ public class MiningExtraction extends NeoComNode {
 
 	public long getOwnerId() {
 		return ownerId;
+	}
+
+	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
+		if (null == this.resourceCache)
+			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
+		return resourceCache.getLowestSellerPrice();
+	}
+
+	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
+		if (null == this.resourceCache)
+			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
+		return resourceCache.getHighestBuyerPrice();
+	}
+
+	public double getVolume() {
+		return resourceCache.getVolume();
+	}
+
+	public double getPrice() {
+		return resourceCache.getPrice();
 	}
 
 	public MiningExtraction setTypeId( final int typeId ) {

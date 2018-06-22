@@ -12,15 +12,14 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.services;
 
+import org.dimensinfin.eveonline.neocom.core.NeoComException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
 
 /**
  * The main responsibility of this class is to have a unique list of update jobs. If every minute we check for
@@ -33,7 +32,6 @@ import org.dimensinfin.eveonline.neocom.core.NeoComException;
  * if the process fails or gets interrupted.
  * With the use of futures we can track pending jobs and be sure the update mechanics are followed as
  * requested.
- *
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -47,7 +45,6 @@ public class UpdateJobManager {
 	/**
 	 * Submits the job to out private executor. Store the Future to control job duplicated and to check when the
 	 * job completes. The job reference can be used a primary key to detect job duplicates and collision.
-	 *
 	 * @param newJob the job to update some information.
 	 */
 	public synchronized static void submit( final ServiceJob newJob ) {
@@ -55,14 +52,14 @@ public class UpdateJobManager {
 			// Search for the job to detect duplications
 			final String identifier = newJob.getReference();
 			final Future<?> hit = runningJobs.get(identifier);
-			if (null == hit) {
+			if ( null == hit ) {
 				// New job. Launch it and store the reference.
 				logger.info("-- [UpdateJobManager.submit]> Launching job {}", newJob.getReference());
 				final Future<?> future = newJob.submit();
 				runningJobs.put(identifier, future);
 			} else {
 				// Check for job completed.
-				if (hit.isDone()) {
+				if ( hit.isDone() ) {
 					// The job with this same reference has completed. We can launch a new one.
 					final Future<?> future = newJob.submit();
 					runningJobs.put(identifier, future);
@@ -74,9 +71,18 @@ public class UpdateJobManager {
 		// Count the running or pending jobs to update the ActionBar counter.
 		int counter = 0;
 		for (Future<?> future : runningJobs.values()) {
-			if (!future.isDone()) counter++;
+			if ( !future.isDone() ) counter++;
 		}
 		updateJobCounter = counter;
+	}
+
+	public synchronized static int getPendingJobsCount() {
+		int pending = 0;
+		for (Future<?> job : runningJobs.values()) {
+			if ( job.isDone() ) continue;
+			pending++;
+		}
+		return pending;
 	}
 
 	// - F I E L D - S E C T I O N ............................................................................

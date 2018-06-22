@@ -15,21 +15,18 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.RoutesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +46,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
 	// --- S E R V E R
-	public static GetStatusOk getStatus(  final String	server ) {
+	public static GetStatusOk getStatus( final String server ) {
 		logger.info(">> [ESINetworkManager.getStatus]");
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
@@ -103,7 +100,8 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 	}
-	public static List<PostUniverseNames200Ok> postUserLabelNameDownload( final List<Integer> sourceidList, final String	server) {
+
+	public static List<PostUniverseNames200Ok> postUserLabelNameDownload( final List<Integer> sourceidList, final String server ) {
 		logger.info(">> [ESINetworkManager.postUserLabelNameDownload]");
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
@@ -131,6 +129,31 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 	}
+
+	public static List<Integer> calculateRouteJumps( final int origin, final int destination, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.calculateRouteJumps]");
+		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<Integer>> routeApiResponse = neocomRetrofit
+					.create(RoutesApi.class)
+					.getRouteOriginDestination(destination, origin, null, null
+							, datasource, "shortest", null, null).execute();
+			if (!routeApiResponse.isSuccessful()) {
+				return new ArrayList<>();
+			} else return routeApiResponse.body();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			return null;
+		} finally {
+			logger.info("<< [ESINetworkManager.calculateRouteJumps]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+	}
+
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C O R P O R A T I O N   A P I
 	// --- C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
 	public static GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {

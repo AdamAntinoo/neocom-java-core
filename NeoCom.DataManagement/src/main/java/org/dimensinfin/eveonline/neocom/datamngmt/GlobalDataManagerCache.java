@@ -12,19 +12,16 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.services.MarketDataServer;
+
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.services.MarketDataServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 
 /**
  * @author Adam Antinoo
@@ -32,7 +29,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	// - S T A T I C - S E C T I O N ..........................................................................
-//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
+	//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerCache");
 
 	//--- C A C H E   S T O R A G E   S E C T I O N
 	public static final Hashtable<ECacheTimes, Long> ESICacheTimes = new Hashtable();
@@ -57,7 +54,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		ESICacheTimes.put(ECacheTimes.CHARACTER_SKILLS, TimeUnit.SECONDS.toMillis(120));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
-		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600*1));// TODO - Changing some values during debugging.
+		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600 * 1));// TODO - Changing some values during debugging.
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_JOBS, TimeUnit.SECONDS.toMillis(300));
 		ESICacheTimes.put(ECacheTimes.INDUSTRY_MARKET_ORDERS, TimeUnit.SECONDS.toMillis(1200));
@@ -68,7 +65,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 
 	public static long getCacheTime4Type( final ECacheTimes selector ) {
 		final Long hit = ESICacheTimes.get(selector);
-		if (null == hit) return DEFAULT_CACHE_TIME;
+		if ( null == hit ) return DEFAULT_CACHE_TIME;
 		else return hit.longValue();
 	}
 
@@ -76,25 +73,28 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	private static MarketDataServer marketDataService = null;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public static void setMarketDataManager( final MarketDataServer manager ) {
-		logger.info(">> [GlobalDataManagerCache.setMarketDataManager]");
+	public static void connectMarketDataManager( final MarketDataServer manager ) {
+		logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]");
 		marketDataService = manager;
 		// At this point we should have been initialized.
 		// The next section should be executed out of the main thread to be compatible con Android.
 		GlobalDataManager.submitJob2ui(() -> {
 			// Initialize and process the list of market process form the ESI full market data.
 			final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(GlobalDataManager.SERVER_DATASOURCE);
-			logger.info(">> [GlobalDataManagerCache.setMarketDataManager]> Process all market prices: {} items", marketPrices.size());
+			logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]> Process all market prices: {} items", marketPrices.size());
 			for (GetMarketsPrices200Ok price : marketPrices) {
 				marketDefaultPrices.put(price.getTypeId(), price);
 			}
 		});
-		logger.info("<< [GlobalDataManagerCache.setMarketDataManager]");
+		logger.info("<< [GlobalDataManagerCache.connectMarketDataManager]");
+	}
+
+	public static MarketDataServer currentMarketDataManager() {
+		return marketDataService;
 	}
 
 	/**
 	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
-	 *
 	 * @param typeId
 	 * @return
 	 */
@@ -102,7 +102,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		final GetMarketsPrices200Ok hit = marketDefaultPrices.get(typeId);
 		// TODO - If there is no data for the item on the ESI data source we should go to the best buyer price at Jita. We can do
 		// it with another future that evaluates when the price is consumed.
-		if (null == hit) {
+		if ( null == hit ) {
 			final GetMarketsPrices200Ok newprice = new GetMarketsPrices200Ok().typeId(typeId);
 			newprice.setAdjustedPrice(-1.0);
 			newprice.setAveragePrice(-1.0);
@@ -111,13 +111,13 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	}
 
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
-		if (null != marketDataService) return marketDataService.searchMarketData(itemId, side);
+		if ( null != marketDataService ) return marketDataService.searchMarketData(itemId, side);
 		else throw new RuntimeException("No MarketDataManager service connected.");
 	}
-//	public static void activateMarketDataCache4Id( final int typeId ) {
-//		if (null != marketDataService) marketDataService.activateMarketDataCache4Id(typeId);
-//		else throw new RuntimeException("No MarketDataManager service connected.");
-//	}
+	//	public static void activateMarketDataCache4Id( final int typeId ) {
+	//		if (null != marketDataService) marketDataService.activateMarketDataCache4Id(typeId);
+	//		else throw new RuntimeException("No MarketDataManager service connected.");
+	//	}
 }
 // - UNUSED CODE ............................................................................................
 //[01]

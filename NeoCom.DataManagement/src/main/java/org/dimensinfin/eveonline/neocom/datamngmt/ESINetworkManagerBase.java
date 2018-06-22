@@ -89,7 +89,7 @@ public class ESINetworkManagerBase {
 	protected static final String cacheFilePath = GlobalDataManager.getResourceString("R.cache.directorypath")
 			+ GlobalDataManager.getResourceString("R.cache.esinetwork.filename");
 	protected static File cacheDataFile = new File(cacheFilePath);
-	protected static final long cacheSize = 100 * 1024 * 1024;
+	protected static final long cacheSize = 10 * 1024 * 1024;
 	protected static final long timeout = TimeUnit.SECONDS.toMillis(60);
 
 	protected static NeoComOAuth20 neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
