@@ -63,8 +63,8 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		// Copy important identifiers from delegate.
 		id = delegate.id;
 		stationId = delegate.getStationId();
-		constellationId = delegate.getConstellationId();
-		regionId = delegate.getRegionId();
+		constellationId = Long.valueOf(delegate.getConstellationId()).intValue();
+		regionId = Long.valueOf(delegate.getRegionId()).intValue();
 		jsonClass = "ExtendedLocation";
 	}
 
@@ -209,7 +209,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		return this;
 	}
 
-	@Override
+//	@Override
 	public EveLocation setConstellationId (final long constellationID) {
 		delegate.setConstellationId(constellationID);
 		return this;

@@ -12,14 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
@@ -30,6 +22,13 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class SDEDatabaseManager {
@@ -189,14 +188,14 @@ public abstract class SDEDatabaseManager {
 				hit.setVolume(cursor.getDouble(ITEM_BYID_VOLUME_COLINDEX));
 				// Process the Tech field. The query marks blueprints
 				String tech = cursor.getString(ITEM_BYID_TECH_COLINDEX);
-				if (tech.equalsIgnoreCase("NOTECH")) {
+				if ( tech.equalsIgnoreCase("NOTECH") ) {
 					// Update the Tech value when item is a Blueprint.
 					hit.setTech(ModelWideConstants.eveglobal.TechI);
-					if (hit.getName().contains(" II Blueprint")) {
-						if (hit.getName().contains(" II Blueprint")) {
+					if ( hit.getName().contains(" II Blueprint") ) {
+						if ( hit.getName().contains(" II Blueprint") ) {
 							hit.setTech(ModelWideConstants.eveglobal.TechII);
 						}
-						if (hit.getName().contains(" III Blueprint")) {
+						if ( hit.getName().contains(" III Blueprint") ) {
 							hit.setTech(ModelWideConstants.eveglobal.TechIII);
 						}
 					}
@@ -205,7 +204,7 @@ public abstract class SDEDatabaseManager {
 				}
 			}
 			cursor.close();
-			if (!found) {
+			if ( !found ) {
 				logger.warn("W> [SDEDatabaseManager.searchItem4Id]> Item <{}> not found.", typeId);
 			}
 		} catch (SQLException sqle) {
@@ -239,7 +238,7 @@ public abstract class SDEDatabaseManager {
 			return new EveLocation(locationID);
 		}
 		// Check list contents. If found we have the location, else search for a SDE game location.
-		if (locationList.size() < 1) {
+		if ( locationList.size() < 1 ) {
 			return searchLocation4IdAtSDE(locationID);
 		} else {
 			// Location found on the Application database.
@@ -255,21 +254,21 @@ public abstract class SDEDatabaseManager {
 			boolean detected = false;
 			while (cursor.moveToNext()) {
 				detected = true;
-				long fragmentID = cursor.getLong(LOCATIONBYID_SYSTEMID_COLINDEX);
-				if (fragmentID > 0) {
-					target.setSystemId(fragmentID);
+				int systemIdentifier = cursor.getInt(LOCATIONBYID_SYSTEMID_COLINDEX);
+				if ( systemIdentifier > 0 ) {
+					target.setSystemId(systemIdentifier);
 					target.setSystem(cursor.getString(LOCATIONBYID_SYSTEM_COLINDEX));
 				} else {
 					target.setSystem(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
-					target.setSystemId(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
+					target.setSystemId(cursor.getInt(LOCATIONBYID_LOCATIONID_COLINDEX));
 				}
-				fragmentID = cursor.getLong(LOCATIONBYID_CONSTELLATIONID_COLINDEX);
-				if (fragmentID > 0) {
+				long fragmentID = cursor.getLong(LOCATIONBYID_CONSTELLATIONID_COLINDEX);
+				if ( fragmentID > 0 ) {
 					target.setConstellationId(fragmentID);
 					target.setConstellation(cursor.getString(LOCATIONBYID_CONSTELLATION_COLINDEX));
 				}
 				fragmentID = cursor.getLong(LOCATIONBYID_REGIONID_COLINDEX);
-				if (fragmentID > 0) {
+				if ( fragmentID > 0 ) {
 					target.setRegionId(fragmentID);
 					target.setRegion(cursor.getString(LOCATIONBYID_REGION_COLINDEX));
 				}
@@ -281,14 +280,14 @@ public abstract class SDEDatabaseManager {
 				target.getID();
 			}
 			cursor.close();
-			if (!detected) {
+			if ( !detected ) {
 				logger.info("-- [SDEDatabaseManager.searchLocation4IdAtSDE]> Location: {} not found on any Database - UNKNOWN-.", locationId);
 				target.setSystem("ID>" + Long.valueOf(locationId).toString());
 			}
 		} catch (final SQLException sqle) {
 			logger.error("E [SDEDatabaseManager.searchLocation4IdAtSDE]> Exception processing statement: {}" + sqle.getMessage());
 		} finally {
-//			logger.info("<< [SDEDatabaseManager.searchLocation4IdAtSDE]");
+			//			logger.info("<< [SDEDatabaseManager.searchLocation4IdAtSDE]");
 			return target;
 		}
 	}
@@ -365,7 +364,7 @@ public abstract class SDEDatabaseManager {
 	 */
 	public int searchStationType( final long stationID ) {
 		logger.info(">< [SDEDatabaseManager.searchStationType]> stationId: {}", stationID);
-		if (stationID == -2) {
+		if ( stationID == -2 ) {
 			// Test the cause of this error.
 			int f = 6;
 		}
@@ -494,7 +493,7 @@ public abstract class SDEDatabaseManager {
 			+ " AND    pstmt.isInput = 0" + " AND    pstms.schematicID = pstmt.schematicID";
 
 	public List<Schematics> searchSchematics4Output( final int targetId ) {
-//		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeId: {}", targetId);
+		//		logger.info(">< [SDEDatabaseManager.searchSchematics4Output]> typeId: {}", targetId);
 		List<Schematics> scheList = new Vector<Schematics>();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_SCHEMATICS4OUTPUT, new String[]{Integer.valueOf(targetId).toString()});
@@ -526,29 +525,29 @@ public abstract class SDEDatabaseManager {
 		final Chrono chrono = new Chrono();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_LIST_OF_MATERIALS, new String[]{Integer.valueOf(bpid).toString()});
-//			int blueprintId = -1;
+			//			int blueprintId = -1;
 			while (cursor.moveToNext()) {
 				lom.add(new Resource(cursor.getInt(LISTOFMATERIALS_MATERIALTYPEID_COLINDEX)
 						, cursor.getInt(LISTOFMATERIALS_QUANTITY_COLINDEX)));
-//				blueprintId = cursor.getInt(cursor.getInt(LISTOFMATERIALS_TYPEID_COLINDEX));
+				//				blueprintId = cursor.getInt(cursor.getInt(LISTOFMATERIALS_TYPEID_COLINDEX));
 			}
 			// Add the required blueprint to the list of materials.
-			if (bpid != -1) {
+			if ( bpid != -1 ) {
 				lom.add(new Resource(bpid, 1));
 			}
 
-//			// Add the skills to the list of resources
-//			cursor = ccpDatabase.rawQuery(SEARCH_LISTOFMATERIALS,
-//					new String[]{Integer.valueOf(itemID).toString()});
-//			if ( null == cursor ) throw new Exception("E> Invalid cursor or empty.");
-//			while (cursor.moveToNext()) {
-//				// The the data of the resource. Check for blueprints.
-//				int skillID = cursor.getInt(cursor.getColumnIndex("skillID"));
-//				int level = cursor.getInt(cursor.getColumnIndex("level"));
-//				Resource resource = new Resource(skillID, level);
-//				buildJob.add(resource);
-//			}
-//			cursor.close();
+			//			// Add the skills to the list of resources
+			//			cursor = ccpDatabase.rawQuery(SEARCH_LISTOFMATERIALS,
+			//					new String[]{Integer.valueOf(itemID).toString()});
+			//			if ( null == cursor ) throw new Exception("E> Invalid cursor or empty.");
+			//			while (cursor.moveToNext()) {
+			//				// The the data of the resource. Check for blueprints.
+			//				int skillID = cursor.getInt(cursor.getColumnIndex("skillID"));
+			//				int level = cursor.getInt(cursor.getColumnIndex("level"));
+			//				Resource resource = new Resource(skillID, level);
+			//				buildJob.add(resource);
+			//			}
+			//			cursor.close();
 
 			cursor.close();
 		} catch (final Exception ex) {

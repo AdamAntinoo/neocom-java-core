@@ -51,7 +51,7 @@ public class EveLocation extends NeoComNode {
 	@DatabaseField
 	private String station = "SPACE";
 	@DatabaseField
-	protected long systemId = -1;
+	protected int systemId = -1;
 	@DatabaseField
 	private String system = "UNKNOWN";
 	@DatabaseField
@@ -192,7 +192,7 @@ public class EveLocation extends NeoComNode {
 		return system;
 	}
 
-	public long getSystemId() {
+	public int getSystemId() {
 		return systemId;
 	}
 
@@ -261,7 +261,7 @@ public class EveLocation extends NeoComNode {
 		return this;
 	}
 
-	public EveLocation setSystemId( final long systemId ) {
+	public EveLocation setSystemId( final int systemId ) {
 		this.systemId = systemId;
 		return this;
 	}
@@ -337,8 +337,7 @@ public class EveLocation extends NeoComNode {
 		// Copy the data from the citadel location.
 		stationId = newid;
 		station = cit.name;
-		systemId = cit.systemId;
-		//		citadel = true;
+		systemId = Long.valueOf(cit.systemId).intValue();
 	}
 
 	private void updateFromSystem( final long newid ) {
@@ -351,9 +350,9 @@ public class EveLocation extends NeoComNode {
 		}
 		systemId = systemLocation.getSystemId();
 		system = systemLocation.getSystem();
-		constellationId = systemLocation.getConstellationId();
+		constellationId = Long.valueOf(systemLocation.getConstellationId()).intValue();
 		constellation = systemLocation.getConstellation();
-		regionId = systemLocation.getRegionId();
+		regionId = Long.valueOf(systemLocation.getRegionId()).intValue();
 		region = systemLocation.getRegion();
 		security = systemLocation.getSecurity();
 	}

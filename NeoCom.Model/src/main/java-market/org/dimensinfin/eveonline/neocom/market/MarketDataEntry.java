@@ -7,40 +7,41 @@
 package org.dimensinfin.eveonline.neocom.market;
 
 // - IMPORT SECTION .........................................................................................
-import java.io.Serializable;
 
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
+import java.io.Serializable;
+
 // - CLASS IMPLEMENTATION ...................................................................................
+
 /**
  * This is a simple class to store the data information for a module in a single market hub, like the better
  * price or the aggregated quantity on the top orders. Information may be of two flavors, BUY order or SELL
  * orders. EveDroid only uses the BUY orders for their calculations but this will improve usability on other
  * apps. These data will be made persistent to the app database so at any time we can have obsolete but valid
  * price information.
- * 
  * @author Adam Antinoo
  */
 public class MarketDataEntry implements Serializable {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long	serialVersionUID	= 7263135920147527466L;
+	private static final long serialVersionUID = 7263135920147527466L;
 	//	private static Logger			logger						= Logger.getLogger("MarketData");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private EveLocation				location					= null;
-	private int								qty								= 0;
-	private double						price							= 999999999999.99;
+	private EveLocation location = null;
+	private int qty = 0;
+	private double price = 999999999999.99;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketDataEntry() {
 	}
 
-	public MarketDataEntry(final EveLocation entryLocation) {
+	public MarketDataEntry( final EveLocation entryLocation ) {
 		location = entryLocation;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void addQty(final int addqty) {
+	public void addQty( final int addqty ) {
 		qty += addqty;
 	}
 
@@ -68,19 +69,23 @@ public class MarketDataEntry implements Serializable {
 		return location.getSecurity();
 	}
 
-	public String getSystem() {
-		return location.getSystem();
+	public int getSystemId() {
+		return this.location.getSystemId();
 	}
 
-	public void setLocation(final EveLocation location) {
+	public String getSystem() {
+		return this.location.getSystem();
+	}
+
+	public void setLocation( final EveLocation location ) {
 		this.location = location;
 	}
 
-	public void setPrice(final double price) {
+	public void setPrice( final double price ) {
 		this.price = price;
 	}
 
-	public void setQty(final int qty) {
+	public void setQty( final int qty ) {
 		this.qty = qty;
 	}
 

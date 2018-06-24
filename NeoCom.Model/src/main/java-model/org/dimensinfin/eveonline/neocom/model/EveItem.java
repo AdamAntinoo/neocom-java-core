@@ -419,7 +419,7 @@ public class EveItem extends NeoComNode {
 	 * errors during the parsing of the information. In such cases I should be ready to get the price
 	 * information from other sources like the default price information.
 	 */
-	private MarketDataSet getBuyerMarketData() throws ExecutionException, InterruptedException {
+	public MarketDataSet getBuyerMarketData() throws ExecutionException, InterruptedException {
 		if (null == futureBuyerData) {
 			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.BUYER);
 		}
@@ -434,7 +434,7 @@ public class EveItem extends NeoComNode {
 	 * errors during the parsing of the information. In such cases I should be ready to get the price
 	 * information from other sources like the default price information.
 	 */
-	private MarketDataSet getSellerMarketData() throws ExecutionException, InterruptedException {
+	public MarketDataSet getSellerMarketData() throws ExecutionException, InterruptedException {
 		if (null == futureBuyerData) {
 			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
 		}
