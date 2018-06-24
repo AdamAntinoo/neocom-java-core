@@ -92,7 +92,7 @@ public class TimedUpdater {
 			}
 
 			// Now process all job classes contained on the list . If the TS is found check it. If not fire an update.
-			logger.info("-- [TimedUpdater.timeTick]> Jobs scheduled for expiration: {}", joblist);
+			logger.info("-- [TimedUpdater.timeTick]> Jobs in list because allowed: {}", joblist);
 			for (GlobalDataManager.EDataUpdateJobs jobName : joblist) {
 				try {
 					final String reference = ServiceJob.constructReference(jobName, cred.getAccountId());

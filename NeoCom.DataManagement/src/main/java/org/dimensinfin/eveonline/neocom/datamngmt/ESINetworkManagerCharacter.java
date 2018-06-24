@@ -114,7 +114,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
 		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_PUBLIC, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_CLONES, identifier);
 		// Check if network is available and we have configured allowed access to download data.
 		if (allowDownloadPass()) {
 			try {
@@ -193,7 +193,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
 		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier);
 		// Check if network is available and we have configured allowed access to download data.
 		if (allowDownloadPass()) {
 			try {

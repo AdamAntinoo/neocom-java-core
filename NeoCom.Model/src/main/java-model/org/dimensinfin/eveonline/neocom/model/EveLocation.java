@@ -126,6 +126,7 @@ public class EveLocation extends NeoComNode {
 	// --- G E T T E R S   &   S E T T E R S
 	public EveLocation setLocationIdentifier(final long newUniqueIdentifier){
 		this.id=newUniqueIdentifier;
+		this.stationId=newUniqueIdentifier;
 		return this;
 	}
 	public String getConstellation() {

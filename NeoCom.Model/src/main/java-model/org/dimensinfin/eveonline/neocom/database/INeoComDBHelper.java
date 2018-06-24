@@ -12,8 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
-import java.sql.SQLException;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
@@ -27,8 +25,11 @@ import org.dimensinfin.eveonline.neocom.database.entity.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.database.entity.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.database.entity.Property;
+import org.dimensinfin.eveonline.neocom.database.entity.RefiningData;
 import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+
+import java.sql.SQLException;
 
 /**
  * This interface defines the methods that should be implemented at the final Helper implementation so all
@@ -73,6 +74,8 @@ public interface INeoComDBHelper {
 	public Dao<FittingRequest, String> getFittingRequestDao() throws SQLException;
 
 	public Dao<MiningExtraction, String> getMiningExtractionDao() throws SQLException;
+
+	public Dao<RefiningData, String> getRefiningDataDao() throws SQLException;
 
 	public void clearInvalidRecords( final long pilotid );
 

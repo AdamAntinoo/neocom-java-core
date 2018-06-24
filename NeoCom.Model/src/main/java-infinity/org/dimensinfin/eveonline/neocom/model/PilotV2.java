@@ -226,7 +226,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return this;
 	}
 
-	public void addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
+	public Property addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
 		Property hit = new Property(EPropertyTypes.LOCATIONROLE)
 				.setOwnerId(getCharacterId())
 				.setTargetId(theSelectedLocation.getID())
@@ -234,6 +234,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 				.setStringValue(locationrole)
 				.store();
 		locationRoles.add(hit);
+		return hit;
 	}
 
 	public void deleteRole( final Property target ) {
@@ -243,6 +244,29 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 			locationRoles.remove(target);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
+		}
+	}
+	/**
+	 * Removes the records that define the association of roles to the selected location. This clears all the
+	 * roles for a location and if the user only wants to clear one he/she has to activate the others again
+	 * since all get removed.
+	 *
+	 * @param theSelectedLocation
+	 */
+	public void clearLocationRoles(final EveLocation theSelectedLocation) {
+//		if (null == locationRoles) accessLocationRoles();
+		for (Property role : locationRoles) {
+			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getID())) {
+				//		Property hit = locationRoles.get(theSelectedLocation.getID());
+				//		if (null != hit) {
+				try {
+					Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
+					propertyDao.delete(role);
+					locationRoles.remove(role);
+				} catch (final SQLException sqle) {
+					sqle.printStackTrace();
+				}
+			}
 		}
 	}
 

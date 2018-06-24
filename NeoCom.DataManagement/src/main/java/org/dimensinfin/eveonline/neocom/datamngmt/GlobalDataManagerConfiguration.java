@@ -137,6 +137,23 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 		}
 	}
 
+	public static float getResourceFloat( final String key ) {
+		try {
+			return Float.valueOf(accessConfigurationManager().getResourceString(key)).floatValue();
+		} catch (NumberFormatException nfe) {
+			return 0.0f;
+		}
+	}
+
+	public static float getResourceFloat( final String key, final float defaultValue ) {
+		try {
+			return Float.valueOf(accessConfigurationManager().getResourceString(key
+					, Float.valueOf(defaultValue).toString())).floatValue();
+		} catch (NumberFormatException nfe) {
+			return defaultValue;
+		}
+	}
+
 	public static boolean getResourceBoolean( final String key ) {
 		return Boolean.valueOf(accessConfigurationManager().getResourceString(key)).booleanValue();
 	}
