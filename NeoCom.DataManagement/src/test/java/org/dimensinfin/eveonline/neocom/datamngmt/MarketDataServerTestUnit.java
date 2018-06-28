@@ -40,8 +40,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.TrackEntry;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-
-import static org.dimensinfin.eveonline.neocom.datamngmt.MarketDataServer.cpuCount;
+import org.dimensinfin.eveonline.neocom.services.MarketDataServer;
 
 /**
  * @author Adam Antinoo
@@ -73,11 +72,11 @@ public class MarketDataServerTestUnit {
 		logger.info("-- [NeoComMicroServiceApplication.main]> Connecting SDE database...");
 		try {
 			GlobalDataManager.connectSDEDBConnector(new SDESBDBHelper()
-					.setDatabaseSchema(GlobalDataManager.getResourceString("R.database.sdedatabase.databaseschema"))
-					.setDatabasePath(GlobalDataManager.getResourceString("R.database.sdedatabase.databasepath"))
-					.setDatabaseName(GlobalDataManager.getResourceString("R.database.sdedatabase.databasename"))
-					.build()
-			);
+					                                        .setDatabaseSchema(GlobalDataManager.getResourceString("R.database.sdedatabase.databaseschema"))
+					                                        .setDatabasePath(GlobalDataManager.getResourceString("R.database.sdedatabase.databasepath"))
+					                                        .setDatabaseName(GlobalDataManager.getResourceString("R.database.sdedatabase.databasename"))
+					                                        .build()
+			                                       );
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -87,15 +86,15 @@ public class MarketDataServerTestUnit {
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting NeoCom private database...");
 		try {
 			GlobalDataManager.connectNeoComDBConnector(new NeoComSBDBHelper()
-					.setDatabaseHost(GlobalDataManager.getResourceString("R.database.neocom.databasehost"
-							, "jdbc:mysql://localhost:3306"))
-					.setDatabaseName("neocom")
-					.setDatabaseUser(GlobalDataManager.getResourceString("R.database.neocom.databaseuser"
-							, "NEOCOM"))
-					.setDatabasePassword(GlobalDataManager.getResourceString("R.database.neocom.databasepassword"))
-					.setDatabaseVersion(GlobalDataManager.getResourceInt("R.database.neocom.databaseversion"))
-					.build()
-			);
+					                                           .setDatabaseHost(GlobalDataManager.getResourceString("R.database.neocom.databasehost"
+							                                           , "jdbc:mysql://localhost:3306"))
+					                                           .setDatabaseName("neocom")
+					                                           .setDatabaseUser(GlobalDataManager.getResourceString("R.database.neocom.databaseuser"
+							                                           , "NEOCOM"))
+					                                           .setDatabasePassword(GlobalDataManager.getResourceString("R.database.neocom.databasepassword"))
+					                                           .setDatabaseVersion(GlobalDataManager.getResourceInt("R.database.neocom.databaseversion"))
+					                                           .build()
+			                                          );
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -135,7 +134,7 @@ public class MarketDataServerTestUnit {
 		final int itemId = 34;
 		item = new FutureEveItem(itemId);
 		logger.info("-- [MarketDataServerTestUnit.test01InitiateFutureEveItem]> Created a new Item that is accessing the market " +
-				"data.");
+				            "data.");
 		logger.info("<< [MarketDataServerTestUnit.test01InitiateFutureEveItem]");
 //	}
 //
@@ -153,7 +152,7 @@ public class MarketDataServerTestUnit {
 		private transient Future<MarketDataSet> futureSellerData = null;
 		private ExecutorService executor = Executors.newFixedThreadPool(1);
 
-		public FutureEveItem( final int typeId ) {
+		public FutureEveItem(final int typeId) {
 			super();
 			// Start the lookup for the market data futures.
 			setTypeId(typeId);
@@ -176,7 +175,7 @@ public class MarketDataServerTestUnit {
 			}
 		}
 
-		private Future<MarketDataSet> retrieveMarketData( final int itemId, final EMarketSide side ) {
+		private Future<MarketDataSet> retrieveMarketData(final int itemId, final EMarketSide side) {
 			Callable<MarketDataSet> task = () -> {
 				return marketDataService.searchMarketData(itemId, side);
 			};
@@ -188,13 +187,14 @@ public class MarketDataServerTestUnit {
 	public static class FutureMarketDataDownloader extends MarketDataServer.MarketDataJobDownloadManager {
 		private HashMap<Integer, MarketDataSet> buyMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
 		private HashMap<Integer, MarketDataSet> sellMarketDataCache = new HashMap<Integer, MarketDataSet>(1000);
-		protected final MarketDataServer.MarketDataJobDownloadManager downloadManager = new MarketDataServer.MarketDataJobDownloadManager(cpuCount);
+		protected final MarketDataServer.MarketDataJobDownloadManager downloadManager = new MarketDataServer
+				.MarketDataJobDownloadManager(1);
 
-		public FutureMarketDataDownloader( final int threadSize ) {
+		public FutureMarketDataDownloader(final int threadSize) {
 			super(threadSize);
 		}
 
-		public MarketDataSet searchMarketData( final int localizer, final EMarketSide side ) {
+		public MarketDataSet searchMarketData(final int localizer, final EMarketSide side) {
 			MarketDataServerTestUnit.logger.info(">> [MarketDataServer.searchMarketData]> ItemId: {}/{}.", localizer, side.name());
 			MarketDataSet set = new MarketDataSet(localizer, side);
 			final EveItem item = new GlobalDataManager().searchItem4Id(localizer);

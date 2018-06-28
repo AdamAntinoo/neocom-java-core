@@ -30,11 +30,11 @@ import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.datamngmt.MarketDataServer;
 import org.dimensinfin.eveonline.neocom.industry.Action;
 import org.dimensinfin.eveonline.neocom.industry.EveTask;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
+import org.dimensinfin.eveonline.neocom.services.MarketDataServer;
 
 /**
  * @author Adam Antinoo
@@ -64,11 +64,11 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 		logger.info("-- [NeoComMicroServiceApplication.main]> Connecting SDE database...");
 		try {
 			GlobalDataManager.connectSDEDBConnector(new SDESBDBHelper()
-					.setDatabaseSchema(GlobalDataManager.getResourceString("R.database.sdedatabase.databaseschema"))
-					.setDatabasePath(GlobalDataManager.getResourceString("R.database.sdedatabase.databasepath"))
-					.setDatabaseName(GlobalDataManager.getResourceString("R.database.sdedatabase.databasename"))
-					.build()
-			);
+					                                        .setDatabaseSchema(GlobalDataManager.getResourceString("R.database.sdedatabase.databaseschema"))
+					                                        .setDatabasePath(GlobalDataManager.getResourceString("R.database.sdedatabase.databasepath"))
+					                                        .setDatabaseName(GlobalDataManager.getResourceString("R.database.sdedatabase.databasename"))
+					                                        .build()
+			                                       );
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -78,15 +78,15 @@ public class FittingProcessorTestUnit extends FittingProcessor {
 		logger.info("-- [ESINetworkManagerTestUnit.before01OpenAndConnectDatabase]> Connecting NeoCom private database...");
 		try {
 			GlobalDataManager.connectNeoComDBConnector(new NeoComSBDBHelper()
-					.setDatabaseHost(GlobalDataManager.getResourceString("R.database.neocom.databasehost"
-							, "jdbc:mysql://localhost:3306"))
-					.setDatabaseName("neocom")
-					.setDatabaseUser(GlobalDataManager.getResourceString("R.database.neocom.databaseuser"
-							, "NEOCOM"))
-					.setDatabasePassword(GlobalDataManager.getResourceString("R.database.neocom.databasepassword"))
-					.setDatabaseVersion(GlobalDataManager.getResourceInt("R.database.neocom.databaseversion"))
-					.build()
-			);
+					                                           .setDatabaseHost(GlobalDataManager.getResourceString("R.database.neocom.databasehost"
+							                                           , "jdbc:mysql://localhost:3306"))
+					                                           .setDatabaseName("neocom")
+					                                           .setDatabaseUser(GlobalDataManager.getResourceString("R.database.neocom.databaseuser"
+							                                           , "NEOCOM"))
+					                                           .setDatabasePassword(GlobalDataManager.getResourceString("R.database.neocom.databasepassword"))
+					                                           .setDatabaseVersion(GlobalDataManager.getResourceInt("R.database.neocom.databaseversion"))
+					                                           .build()
+			                                          );
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}

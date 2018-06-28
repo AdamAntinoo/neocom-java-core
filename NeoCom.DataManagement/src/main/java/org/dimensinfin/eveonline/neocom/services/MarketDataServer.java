@@ -60,7 +60,7 @@ public class MarketDataServer {
 	public static int cpuCount = 1;
 
 	static {
-		if (GlobalDataManager.getResourceString("R.runtime.platform").equalsIgnoreCase("Android"))
+		if (GlobalDataManager.getResourceString("R.runtime.platform","Android").equalsIgnoreCase("Android"))
 			cpuCount = 2;
 		else
 			cpuCount = Runtime.getRuntime().availableProcessors();
