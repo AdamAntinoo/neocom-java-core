@@ -18,7 +18,7 @@ import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
-import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.slf4j.Logger;

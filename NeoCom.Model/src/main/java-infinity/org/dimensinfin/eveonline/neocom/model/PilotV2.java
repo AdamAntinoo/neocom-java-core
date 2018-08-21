@@ -14,7 +14,7 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.entity.Property;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;

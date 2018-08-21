@@ -13,10 +13,8 @@
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
-import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Adam Antinoo

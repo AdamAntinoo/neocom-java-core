@@ -11,8 +11,6 @@ package org.dimensinfin.eveonline.neocom.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.core.NeoComException;
-
 /**
  * @author Adam Antinoo
  */

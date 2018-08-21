@@ -13,7 +13,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.core.model.AbstractPropertyChanger;
-import org.dimensinfin.eveonline.neocom.core.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.interfaces.IDatabaseEntity;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;

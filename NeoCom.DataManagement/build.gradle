@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 group 'org.dimensinfin'
-version '0.12.0'
+version '0.12.1'
 archivesBaseName = 'NeoCom.DataManagement'
 
 sourceCompatibility = 1.8
@@ -38,10 +38,10 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
     compileOnly project(path: ':NeoCom.Model')
-    compileOnly project(path: ':ESI.SwaggerApi')
+//    compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
-    compileOnly files('libs/CoreBase.core-2.0.3.jar')
+//    compileOnly files('libs/CoreBase.core-2.0.3.jar')
 
     // M O D U L E    D E P E N D E N C I E S
     // C O R E    D E P E N D E N C I E S
@@ -61,6 +61,9 @@ dependencies {
     implementation 'com.j256.ormlite:ormlite-core:4.48'
 
     // N E O C O M . D A T A M A N A G E M E N T
+    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
+    compileOnly 'org.dimensinfin:ESI.SwaggerApi:2.0.0'
+
     implementation 'org.htmlparser:htmlparser:2.1'
     implementation 'com.github.scribejava:scribejava-core:5.4.0'
     implementation 'com.annimon:stream:1.1.9'

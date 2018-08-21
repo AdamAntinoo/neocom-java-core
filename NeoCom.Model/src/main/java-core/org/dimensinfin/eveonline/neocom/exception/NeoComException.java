@@ -10,29 +10,34 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.core;
+package org.dimensinfin.eveonline.neocom.exception;
+
+/**
+ * @author Adam Antinoo
+ */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class NeoComRuntimeException extends RuntimeException {
+public class NeoComException extends Exception {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = 8864888568628860054L;
+	private static final long serialVersionUID = 5849163290874460121L;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String jsonClass = "NeoComRuntimeException";
+	private String jsonClass = "Exception";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComRuntimeException() {
+	public NeoComException() {
 		super();
 	}
 
-	public NeoComRuntimeException( final String message ) {
+	public NeoComException( final String message ) {
 		super(message);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+
 	public String getJsonClass() {
 		return jsonClass;
 	}
 }
-
 // - UNUSED CODE ............................................................................................
+//[01]
