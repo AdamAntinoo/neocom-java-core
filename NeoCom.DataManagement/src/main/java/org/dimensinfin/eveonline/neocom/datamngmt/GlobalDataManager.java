@@ -12,21 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ItemCategory;
-import org.dimensinfin.eveonline.neocom.model.ItemGroup;
-import org.dimensinfin.eveonline.neocom.model.ServerStatus;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-import org.joda.time.Instant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -40,6 +25,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ItemCategory;
+import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 /**
  * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
@@ -58,7 +55,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	private static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
 
 	// --- N E T W O R K   S T A T U S
-	public static boolean getNetworkStatus(){
+	public static boolean getNetworkStatus() {
 		return true;
 	}
 
@@ -97,13 +94,13 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 				input.close();
 				buffer.close();
 			}
-		} catch (final ClassNotFoundException ex) {
+		} catch ( final ClassNotFoundException ex ) {
 			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> ClassNotFoundException."); //$NON-NLS-1$
-		} catch (final FileNotFoundException fnfe) {
+		} catch ( final FileNotFoundException fnfe ) {
 			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> FileNotFoundException."); //$NON-NLS-1$
-		} catch (final IOException ex) {
+		} catch ( final IOException ex ) {
 			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IOException."); //$NON-NLS-1$
-		} catch (final RuntimeException rex) {
+		} catch ( final RuntimeException rex ) {
 			rex.printStackTrace();
 		} finally {
 			logger.info("<< [GlobalDataManager.readLocationsDataCache]");
@@ -132,9 +129,9 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 				output.close();
 				buffer.close();
 			}
-		} catch (final FileNotFoundException fnfe) {
+		} catch ( final FileNotFoundException fnfe ) {
 			logger.warn("W> [GlobalDataManager.writeLocationsDatacache]> FileNotFoundException."); //$NON-NLS-1$
-		} catch (final IOException ex) {
+		} catch ( final IOException ex ) {
 			logger.warn("W> [GlobalDataManager.writeLocationsDatacache]> IOException."); //$NON-NLS-1$
 		} finally {
 			logger.info("<< [GlobalDataManager.writeLocationsDatacache]");
@@ -180,10 +177,10 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 			logger.info("-- [GlobalDataManager.shutdownExecutor]> Attempt to shutdown uiDataExecutor");
 			uiDataExecutor.shutdown();
 			uiDataExecutor.awaitTermination(1, TimeUnit.MINUTES);
-		} catch (final InterruptedException iee) {
+		} catch ( final InterruptedException iee ) {
 			logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
 		} finally {
-			if (!uiDataExecutor.isTerminated()) {
+			if ( !uiDataExecutor.isTerminated() ) {
 				logger.info("W- [GlobalDataManager.shutdownExecutor]> Cancelling tasks. Grace time elapsed.");
 			}
 			uiDataExecutor.shutdownNow();
@@ -194,7 +191,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	public static void suspendThread( final long millis ) {
 		try {
 			Thread.sleep(millis);
-		} catch (InterruptedException ie) {
+		} catch ( InterruptedException ie ) {
 		}
 	}
 
@@ -218,20 +215,20 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	private static ISDEDBHelper neocomSDEHelper = null;
 
 	public ISDEDBHelper getSDEDBHelper() {
-		if (null == neocomSDEHelper)
+		if ( null == neocomSDEHelper )
 			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
 		return neocomSDEHelper;
 	}
 
 	public static void connectSDEDBConnector( final ISDEDBHelper newhelper ) {
-		if (null != newhelper) neocomSDEHelper = newhelper;
+		if ( null != newhelper ) neocomSDEHelper = newhelper;
 		else
 			throw new RuntimeException("[NeoComDatabase]> SDE Eve database neocomSDEHelper not defined. No access to platform library to get SDE data.");
 	}
 
 	public EveItem searchItem4Id( final int typeId ) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
-		if (itemCache.containsKey(typeId)) return itemCache.get(typeId);
+		if ( itemCache.containsKey(typeId) ) return itemCache.get(typeId);
 		else {
 			final EveItem hit = new GlobalDataManager().getSDEDBHelper().searchItem4Id(typeId);
 			// Add the hit to the cache.
@@ -242,7 +239,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 
 	public EveLocation searchLocation4Id( final long locationId ) {
 		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
-		if (locationCache.containsKey(locationId)) {
+		if ( locationCache.containsKey(locationId) ) {
 			// Account for a hit on the cache.
 			int access = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
 			int hits = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.getHits();
@@ -251,7 +248,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		} else {
 			final EveLocation hit = new GlobalDataManager().getSDEDBHelper().searchLocation4Id(locationId);
 			// Add the hit to the cache but only when it is not UNKNOWN.
-			if (hit.getTypeId() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
+			if ( hit.getTypeId() != ELocationType.UNKNOWN ) locationCache.put(locationId, hit);
 			// Account for a miss on the cache.
 			int access = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
 			int hits = new GlobalDataManager().getSDEDBHelper().locationsCacheStatistics.getHits();
@@ -266,7 +263,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	}
 
 	public static ItemGroup searchItemGroup4Id( final int targetGroupId ) {
-		if (itemGroupCache.containsKey(targetGroupId)) return itemGroupCache.get(targetGroupId);
+		if ( itemGroupCache.containsKey(targetGroupId) ) return itemGroupCache.get(targetGroupId);
 		else {
 			final ItemGroup hit = new GlobalDataManager().getSDEDBHelper().searchItemGroup4Id(targetGroupId);
 			// Add the hit to the cache.
@@ -276,7 +273,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	}
 
 	public static ItemCategory searchItemCategory4Id( final int targetCategoryId ) {
-		if (itemCategoryCache.containsKey(targetCategoryId)) return itemCategoryCache.get(targetCategoryId);
+		if ( itemCategoryCache.containsKey(targetCategoryId) ) return itemCategoryCache.get(targetCategoryId);
 		else {
 			final ItemCategory hit = new GlobalDataManager().getSDEDBHelper().searchItemCategory4Id(targetCategoryId);
 			// Add the hit to the cache.

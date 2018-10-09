@@ -15,15 +15,12 @@ package org.dimensinfin.eveonline.neocom.conf;
 import java.io.IOException;
 import java.util.List;
 
-import com.sun.istack.internal.Nullable;
-
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 
 /**
@@ -38,7 +35,7 @@ public class GlobalConfigurationTestUnit extends GlobalSBConfigurationProvider {
 	// - F I E L D - S E C T I O N ............................................................................
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public GlobalConfigurationTestUnit( @Nullable final String resourcePath ) {
+	public GlobalConfigurationTestUnit(final String resourcePath) {
 		super(resourcePath);
 	}
 

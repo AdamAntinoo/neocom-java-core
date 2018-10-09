@@ -16,6 +16,20 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entity.Credential;
 import org.dimensinfin.eveonline.neocom.database.entity.Job;
@@ -32,22 +46,6 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
 import org.dimensinfin.eveonline.neocom.model.AllianceV1;
 import org.dimensinfin.eveonline.neocom.model.CorporationV1;
 import org.dimensinfin.eveonline.neocom.model.PilotV2;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.bind.annotation.XmlElementDecl;
 
 /**
  * @author Adam Antinoo
@@ -108,7 +106,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					, SERVER_DATASOURCE);
 			newcorp.setCorporationId(corpIdentifier)
 					.setPublicData(publicData);
-			if (null != publicData.getAllianceId())
+			if ( null != publicData.getAllianceId() )
 				newcorp.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
 
 			return newcorp;
@@ -145,7 +143,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
 			// Public data can be null if there are problems accessing the server.
-			if (null == publicData) throw new NeoComRegisteredException(NEOE.ESIDATA_NULL);
+			if ( null == publicData ) throw new NeoComRegisteredException(NEOE.ESIDATA_NULL);
 			newchar.setCharacterId(credential.getAccountId())
 					.setPublicData(publicData);
 			// Process the public data and get the referenced instances for the Corporation, race, etc.
@@ -153,9 +151,9 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					.setRace(GlobalDataManager.searchSDERace(publicData.getRaceId()))
 					.setBloodline(GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId()))
 					.setAncestry(GlobalDataManager.searchSDEAncestry(publicData.getAncestryId()));
-			if (null != publicData.getCorporationId())
+			if ( null != publicData.getCorporationId() )
 				newchar.setCorporation(GlobalDataManager.requestCorporationV1(publicData.getCorporationId(), credential));
-			if (null != publicData.getAllianceId())
+			if ( null != publicData.getAllianceId() )
 				newchar.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
 			// Wallet status
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
@@ -169,14 +167,14 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 				final List<Property> properties = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForEq("ownerId"
 						, credential.getAccountId());
 				newchar.setProperties(properties);
-			} catch (SQLException sqle) {
+			} catch ( SQLException sqle ) {
 			}
 			// Clone data
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download clone information.");
 			final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(credential.getAccountId()
 					, credential.getRefreshToken()
 					, SERVER_DATASOURCE);
-			if (null != cloneInformation) {
+			if ( null != cloneInformation ) {
 				newchar.setCloneInformation(cloneInformation);
 				newchar.setHomeLocation(cloneInformation.getHomeLocation());
 			}
@@ -215,31 +213,32 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	private static INeoComDBHelper neocomDBHelper = null;
 
 	public INeoComDBHelper getNeocomDBHelper() {
-		if (null == neocomDBHelper)
+		if ( null == neocomDBHelper )
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
 		return neocomDBHelper;
 	}
 
 	public static INeoComDBHelper connectNeoComDBConnector( final INeoComDBHelper newhelper ) {
-		if (null != newhelper) neocomDBHelper = newhelper;
+		if ( null != newhelper ) neocomDBHelper = newhelper;
 		else
 			throw new RuntimeException("[NeoComDatabase]> NeoCom database neocomDBHelper not defined. No access to platform library to get database results.");
 		return neocomDBHelper;
 	}
 
 	// --- N E O C O M   P R I V A T E   D A T A B A S E   S E C T I O N
+
 	/**
 	 * Reads all the list of credentials stored at the Database and returns them. Activation depends on the interpretation used by the
 	 * application.
 	 * The method only returns Credentials authorized for the current eve online server. This way I can have different sets of
 	 * credentials with not overriding them and still having the guarantee that they are unique.
 	 */
-	public static List<Credential> accessAllCredentials()  {
+	public static List<Credential> accessAllCredentials() {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
 			return new GlobalDataManager().getNeocomDBHelper().getCredentialDao()
 					.queryForEq("dataSource", new GlobalDataManager().getEveOnlineServerDatasource());
-		} catch (java.sql.SQLException sqle) {
+		} catch ( java.sql.SQLException sqle ) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManagerDataAccess.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
 		}
@@ -249,7 +248,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	public static List<NeoComAsset> accessAllAssets4Credential( final Credential credential ) throws SQLException {
 		final List<NeoComAsset> assetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
 				.queryForEq("ownerId", credential.getAccountId());
-		if (GlobalDataManager.getResourceBoolean("R.runtime.mockdata")) {
+		if ( GlobalDataManager.getResourceBoolean("R.runtime.mockdata") ) {
 			// Write down the credential list ot be used as mock data.
 			final File outFile = new File(GlobalDataManager.getResourceString("R.runtime.mockdata.location")
 					+ "accessAllAssets4Credential-" + credential.getAccountId() + ".data");
@@ -266,9 +265,9 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					output.close();
 					buffer.close();
 				}
-			} catch (final FileNotFoundException fnfe) {
+			} catch ( final FileNotFoundException fnfe ) {
 				logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> FileNotFoundException."); //$NON-NLS-1$
-			} catch (final IOException ex) {
+			} catch ( final IOException ex ) {
 				logger.warn("W> [GlobalDataManagerDataAccess.accessAllCredentials]> IOException."); //$NON-NLS-1$
 			}
 		}
@@ -288,8 +287,10 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	/**
 	 * Get the list of Mining Extractions that are registered on the database. This can be a lot of records that need sorting and also
 	 * grouping previously to rendering. This method can do the sorting but the grouping it not one of its features.
-	 * The mining operations for a single day aggregate all the ore for a single type, but have different records for different systems and
-	 * for different ores. So for a single day we can have around 6-8 records. The mining ledger information at the neocom database has to
+	 * The mining operations for a single day aggregate all the ore for a single type, but have different records for different systems
+	 * and
+	 * for different ores. So for a single day we can have around 6-8 records. The mining ledger information at the neocom database has
+	 * to
 	 * expiration time so the number of days is still not predetermined.
 	 * @param credential
 	 * @return
@@ -305,7 +306,8 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	}
 
 	/**
-	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is that
+	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
+	 * that
 	 * today records are aggregated by hour instead of by day. So we will have a record for one ore/system since the hour we did the
 	 * extractions until the 23 hours. The first extration will add to the hour until the next hour starts. Then the accounting for this
 	 * new hour will show the new ore totals and so on hour after hour.
@@ -326,9 +328,9 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		List<MiningExtraction> results = new ArrayList<>();
 		final String filterDate = DateTime.now().toString("YYYY/MM/dd");
 		// Filter out all records not belonging to today.
-		for (MiningExtraction extraction : dataList) {
+		for ( MiningExtraction extraction : dataList ) {
 			final String date = extraction.getExtractionDate().split(":")[0];
-			if (date.equalsIgnoreCase(filterDate)) results.add(extraction);
+			if ( date.equalsIgnoreCase(filterDate) ) results.add(extraction);
 		}
 		return results;
 	}

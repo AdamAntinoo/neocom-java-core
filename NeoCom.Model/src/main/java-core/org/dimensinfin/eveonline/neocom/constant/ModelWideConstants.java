@@ -112,21 +112,21 @@ public class ModelWideConstants {
 	}
 
 	// - E X P I R A T I O N   T I M E S
-	public static final int			NOW								= 0;
-	public static final int			SECONDS1					= 1 * 1000;
-	public static final int			SECONDS5					= 5 * ModelWideConstants.SECONDS1;
-	public static final int			MINUTES1					= 1 * 60 * ModelWideConstants.SECONDS1;
-	public static final int			MINUTES15					= 15 * ModelWideConstants.MINUTES1;
-	public static final int			MINUTES30					= 30 * ModelWideConstants.MINUTES1;
-	public static final int			MINUTES45					= 45 * ModelWideConstants.MINUTES1;
-	public static final int			MINUTES60					= 60 * ModelWideConstants.MINUTES1;
-	public static final int			HOURS1						= 1 * 60 * ModelWideConstants.MINUTES1;
-	public static final int			HOURS2						= 2 * ModelWideConstants.HOURS1;
-	public static final int			HOURS3						= 3 * ModelWideConstants.HOURS1;
-	public static final int			HOURS8						= 8 * ModelWideConstants.HOURS1;
-
-	public static final int			HOURS6						= 6 * ModelWideConstants.HOURS1;
-	public static final int			HOURS24						= 24 * ModelWideConstants.HOURS1;
+//	public static final int			NOW								= 0;
+//	public static final int			SECONDS1					= 1 * 1000;
+//	public static final int			SECONDS5					= 5 * ModelWideConstants.SECONDS1;
+//	public static final int			MINUTES1					= 1 * 60 * ModelWideConstants.SECONDS1;
+//	public static final int			MINUTES15					= 15 * ModelWideConstants.MINUTES1;
+//	public static final int			MINUTES30					= 30 * ModelWideConstants.MINUTES1;
+//	public static final int			MINUTES45					= 45 * ModelWideConstants.MINUTES1;
+//	public static final int			MINUTES60					= 60 * ModelWideConstants.MINUTES1;
+//	public static final int			HOURS1						= 1 * 60 * ModelWideConstants.MINUTES1;
+//	public static final int			HOURS2						= 2 * ModelWideConstants.HOURS1;
+//	public static final int			HOURS3						= 3 * ModelWideConstants.HOURS1;
+//	public static final int			HOURS8						= 8 * ModelWideConstants.HOURS1;
+//
+//	public static final int			HOURS6						= 6 * ModelWideConstants.HOURS1;
+//	public static final int			HOURS24						= 24 * ModelWideConstants.HOURS1;
 	public static final String	STACKID_SEPARATOR	= "/";
 }
 

@@ -8,7 +8,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/ESI.SwaggerApi" />
             <option value="$PROJECT_DIR$/NeoCom.DataManagement" />
             <option value="$PROJECT_DIR$/NeoCom.Model" />
           </set>

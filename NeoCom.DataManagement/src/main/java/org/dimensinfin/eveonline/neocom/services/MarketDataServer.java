@@ -12,25 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.services;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
-import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
-import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.market.TrackEntry;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.joda.time.Instant;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -53,6 +34,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.joda.time.Instant;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
+import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
+import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.market.TrackEntry;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public class MarketDataServer {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -60,7 +60,7 @@ public class MarketDataServer {
 	public static int cpuCount = 1;
 
 	static {
-		if (GlobalDataManager.getResourceString("R.runtime.platform","Android").equalsIgnoreCase("Android"))
+		if ( GlobalDataManager.getResourceString("R.runtime.platform", "Android").equalsIgnoreCase("Android") )
 			cpuCount = 2;
 		else
 			cpuCount = Runtime.getRuntime().availableProcessors();
@@ -97,18 +97,18 @@ public class MarketDataServer {
 				while ((line = reader.readLine()) != null) {
 					stationList.add(line);
 				}
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				// If there are exceptions add some key stations.
 				stationList.add("1.0 Domain - Amarr");
 				stationList.add("0.9 The Forge - Jita");
 			} finally {
 				reader.close();
 			}
-		} catch (FileNotFoundException fnfe) {
+		} catch ( FileNotFoundException fnfe ) {
 			// If there are exceptions add some key stations.
 			stationList.add("1.0 Domain - Amarr");
 			stationList.add("0.9 The Forge - Jita");
-		} catch (IOException ioe) {
+		} catch ( IOException ioe ) {
 			// If there are exceptions add some key stations.
 			stationList.add("1.0 Domain - Amarr");
 			stationList.add("0.9 The Forge - Jita");
@@ -123,7 +123,7 @@ public class MarketDataServer {
 	 */
 	public static List<String> getStationList() {
 		final List<String> result = new ArrayList<>();
-		for (String station : stationList) {
+		for ( String station : stationList ) {
 			result.add(station);
 		}
 		return result;
@@ -172,14 +172,14 @@ public class MarketDataServer {
 				input.close();
 				buffer.close();
 			}
-		} catch (final ClassNotFoundException ex) {
+		} catch ( final ClassNotFoundException ex ) {
 			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> ClassNotFoundException.");
-		} catch (final FileNotFoundException fnfe) {
+		} catch ( final FileNotFoundException fnfe ) {
 			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> FileNotFoundException. {}"
 					, cacheFileName);
-		} catch (final IOException ex) {
+		} catch ( final IOException ex ) {
 			logger.warn("W> [MarketDataServer.readMarketDataCacheFromStorage]> IOException.");
-		} catch (final RuntimeException rex) {
+		} catch ( final RuntimeException rex ) {
 			rex.printStackTrace();
 		}
 	}
@@ -214,9 +214,9 @@ public class MarketDataServer {
 				output.close();
 				buffer.close();
 			}
-		} catch (final FileNotFoundException fnfe) {
+		} catch ( final FileNotFoundException fnfe ) {
 			logger.warn("W> [MarketDataServer.writeCacheToStorage]> FileNotFoundException. {}", cacheFileName);
-		} catch (final IOException ex) {
+		} catch ( final IOException ex ) {
 			logger.warn("W> [MarketDataServer.writeCacheToStorage]> IOException."); //$NON-NLS-1$
 		}
 	}
@@ -226,8 +226,8 @@ public class MarketDataServer {
 		int pending = 0;
 		int done = 0;
 		synchronized (runningJobsList) {
-			for (Future<MarketDataSet> fut : runningJobsList) {
-				if (fut.isDone()) done++;
+			for ( Future<MarketDataSet> fut : runningJobsList ) {
+				if ( fut.isDone() ) done++;
 				else pending++;
 			}
 		}
@@ -253,7 +253,7 @@ public class MarketDataServer {
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 		logger.info(">< [MarketDataServer.searchMarketData]> ItemId: {}/{}.", itemId, side.name());
 		// Filter out invalid localizers.
-		if (itemId < 1) {
+		if ( itemId < 1 ) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download replaced because item id is not valid [{}]."
 					, itemId);
 			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
@@ -266,7 +266,7 @@ public class MarketDataServer {
 			return fut;
 		}
 		// Check if the user preferences allows to go to the market downloader.
-		if (GlobalDataManager.getDefaultSharedPreferences().getBooleanPreference(PreferenceKeys.prefkey_BlockMarket.name(), true)) {
+		if ( GlobalDataManager.getDefaultSharedPreferences().getBooleanPreference(PreferenceKeys.prefkey_BlockMarket.name(), true) ) {
 			logger.info("-- [MarketDataServer.searchMarketData]> Market Data download cancelled because preferences 'BlockMarket'.");
 			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
 				return new MarketDataSet(itemId, side);
@@ -280,18 +280,18 @@ public class MarketDataServer {
 			final Future<MarketDataSet> fut = marketUpdaterExecutor.submit(() -> {
 				// Search on the cache. By default load the SELLER as If I am buying the item.
 				HashMap<Integer, MarketDataSet> cache = sellMarketDataCache;
-				if (side == EMarketSide.BUYER) {
+				if ( side == EMarketSide.BUYER ) {
 					cache = buyMarketDataCache;
 				}
 				MarketDataSet entry = cache.get(itemId);
-				if (null == entry) {
+				if ( null == entry ) {
 					// The data is not on the cache and neither on the latest disk copy read at initialization.
 					// Do a new market data download process.
 					try {
 						// Report the number of jobs pending.
 						reportMarketDataJobs();
 						final MarketDataSet data = downloadManager.doMarketDataRequest(itemId, side);
-						if (null != data) {
+						if ( null != data ) {
 							// Save the data on the cache and update the expiration time.
 							data.setSide(side);
 							synchronized (cache) {
@@ -305,7 +305,7 @@ public class MarketDataServer {
 							// Post again another Future to refresh the cache value.
 							searchMarketData(itemId, side);
 						}
-					} catch (RuntimeException rtex) {
+					} catch ( RuntimeException rtex ) {
 						rtex.printStackTrace();
 						entry = new MarketDataSet(itemId, side);
 					}
@@ -313,8 +313,8 @@ public class MarketDataServer {
 					logger.info("-- [MarketDataServer.searchMarketData]> Cache hit on memory.");
 					// Check again the expiration time. If expired clear cache and request a refresh.
 					Instant expirationTime = expirationTimeMarketData.get(itemId);
-					if (null == expirationTime) expirationTime = Instant.now().minus(TimeUnit.MINUTES.toMillis(1));
-					if (expirationTime.isBefore(Instant.now())) {
+					if ( null == expirationTime ) expirationTime = Instant.now().minus(TimeUnit.MINUTES.toMillis(1));
+					if ( expirationTime.isBefore(Instant.now()) ) {
 						// Clear the cache entry.
 						synchronized (cache) {
 							cache.remove(itemId);
@@ -408,25 +408,25 @@ public class MarketDataServer {
 			// Check which data provider should be used for the data.
 			// Preference is: eve-market-data/eve-central/esi-marketdata
 			try {
-				if (marketEntries.size() < 1) {
-					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true))
+				if ( marketEntries.size() < 1 ) {
+					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true) )
 						marketEntries = parseMarketDataEMD(item.getName(), side);
 				}
-				if (marketEntries.size() < 1) {
-					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false))
+				if ( marketEntries.size() < 1 ) {
+					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false) )
 						marketEntries = parseMarketDataEC(localizer, side);
 				}
-				if (marketEntries.size() < 1) {
-					if (GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false))
+				if ( marketEntries.size() < 1 ) {
+					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false) )
 						marketEntries = parseMarketDataESI(localizer, side);
 				}
 				List<MarketDataEntry> hubData = extractMarketData(marketEntries);
 				logger.info("-- [MarketDataJobDownloadManager.doMarketDataRequest]> Storing data entries {}", hubData.size());
 				reference.setData(hubData);
-			} catch (SAXException saxe) {
+			} catch ( SAXException saxe ) {
 				logger.error("E [MarketDataJobDownloadManager.parseMarketDataEMD]> Parsing exception while downloading market data for module [" + item.getName() + "]. " + saxe.getMessage());
 				reference = null;
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("E [MarketDataJobDownloadManager.parseMarketDataEMD]> Error parsing the market information. " + ioe.getMessage());
 				reference = null;
 			}
@@ -534,7 +534,7 @@ public class MarketDataServer {
 			while (meit.hasNext()) {
 				final TrackEntry entry = meit.next();
 				// Filtering for only preferred market hubs.
-				if (filterStations(entry, stationList)) {
+				if ( filterStations(entry, stationList) ) {
 					// Start searching for more records to sum all entries with the same or a close price to get
 					// a better understanding of the market depth. That information is not to relevant so make a
 					// best try.
@@ -544,9 +544,9 @@ public class MarketDataServer {
 					while (meit.hasNext()) {
 						final TrackEntry searchEntry = meit.next();
 						// Check that station and prices are the same or price is inside margin.
-						if (searchEntry.getStationName().equals(stationName)) {
-							if ((stationPrice >= (searchEntry.getPrice() * 0.99))
-									&& (stationPrice <= (searchEntry.getPrice() * 1.01))) {
+						if ( searchEntry.getStationName().equals(stationName) ) {
+							if ( (stationPrice >= (searchEntry.getPrice() * 0.99))
+									&& (stationPrice <= (searchEntry.getPrice() * 1.01)) ) {
 								stationQty += searchEntry.getQty();
 							} else {
 								break;
@@ -600,8 +600,8 @@ public class MarketDataServer {
 			//				if (station.contains(stationNameMatch)) return true;
 			//			}
 			final String station = entry.getStationName();
-			for (String stationNameMatch : stationList) {
-				if (station.contains(stationNameMatch)) return true;
+			for ( String stationNameMatch : stationList ) {
+				if ( station.contains(stationNameMatch) ) return true;
 			}
 			return false;
 		}
@@ -656,13 +656,13 @@ public class MarketDataServer {
 			reader.setContentHandler(content);
 			reader.setErrorHandler(content);
 			String URLDestination = null;
-			if (opType == EMarketSide.SELLER) {
+			if ( opType == EMarketSide.SELLER ) {
 				URLDestination = this.getModuleLink(itemName, "SELL");
 			}
-			if (opType == EMarketSide.BUYER) {
+			if ( opType == EMarketSide.BUYER ) {
 				URLDestination = this.getModuleLink(itemName, "BUY");
 			}
-			if (null != URLDestination) {
+			if ( null != URLDestination ) {
 				reader.parse(URLDestination);
 				marketEntries = content.getEntries();
 			}
@@ -686,13 +686,13 @@ public class MarketDataServer {
 				JSONObject all = part1.getJSONObject("all");
 				JSONObject sell = part1.getJSONObject("sell");
 				JSONObject target = null;
-				if (opType == EMarketSide.SELLER) {
+				if ( opType == EMarketSide.SELLER ) {
 					target = sell;
 				} else {
 					target = buy;
 				}
 				double price = 0.0;
-				if (opType == EMarketSide.SELLER) {
+				if ( opType == EMarketSide.SELLER ) {
 					price = target.getDouble("min");
 				} else {
 					price = target.getDouble("max");
@@ -703,7 +703,7 @@ public class MarketDataServer {
 				entry.setQty(Long.valueOf(volume).toString());
 				entry.setStationName("0.9 The Forge - Jita");
 				marketEntries.add(entry);
-			} catch (JSONException e) {
+			} catch ( JSONException e ) {
 				e.printStackTrace();
 			}
 			logger.info("<< [MarketDataJobDownloadManager.parseMarketDataEC]> MarketEntries [" + marketEntries.size() + "]");
@@ -719,13 +719,13 @@ public class MarketDataServer {
 				InputStream is = new BufferedInputStream(urlConnection.getInputStream());
 				// InputStream is = NeoComAppConnector.getSingleton().getStorageConnector().accessNetworkResource(
 				BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-				if (is != null) {
+				if ( is != null ) {
 					while ((str = reader.readLine()) != null) {
 						data.append(str);
 					}
 				}
 				is.close();
-			} catch (Exception ex) {
+			} catch ( Exception ex ) {
 				ex.printStackTrace();
 			}
 			return data.toString();

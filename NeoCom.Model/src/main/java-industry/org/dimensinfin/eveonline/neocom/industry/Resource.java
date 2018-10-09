@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -35,7 +34,6 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  * We also consider that T2 BPC have 10 runs while T1 BPC have 300.<br>
  * In short the blueprints will have the correct ME/TE/RUNS available so this values will be set from the
  * blueprint from where the resource was extracted.
- *
  * @author Adam Antinoo
  */
 public class Resource extends NeoComNode {
@@ -55,10 +53,9 @@ public class Resource extends NeoComNode {
 
 	/**
 	 * Builds a new resource of quantity 1.
-	 *
 	 * @param typeId
 	 */
-	public Resource( final int typeId ) {
+	public Resource(final int typeId) {
 		super();
 		this.typeId = typeId;
 		item = accessGlobal().searchItem4Id(typeId);
@@ -66,17 +63,18 @@ public class Resource extends NeoComNode {
 		jsonClass = "Resource";
 	}
 
-	public Resource( final int typeId, final int newQty ) {
+	public Resource(final int typeId, final int newQty) {
 		this(typeId);
 		this.baseQty = newQty;
 	}
-	public Resource( final int typeId, final int newQty , final int stackSize) {
-		this(typeId,newQty);
+
+	public Resource(final int typeId, final int newQty, final int stackSize) {
+		this(typeId, newQty);
 		this.stackSize = stackSize;
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void add( final int count ) {
+	public void add(final int count) {
 		baseQty += count;
 	}
 
@@ -84,10 +82,9 @@ public class Resource extends NeoComNode {
 	 * Adds the quantities of two resources of the same type. On this moment the original resource losses the
 	 * stack values and the equivalent quantity is calculated before adding the new quantity calculated exactly
 	 * on the same way. The final result is the total quantity but with a stack size of one.
-	 *
 	 * @param newResource
 	 */
-	public void addition( final Resource newResource ) {
+	public void addition(final Resource newResource) {
 		int newqty = this.getBaseQuantity() * this.getStackSize();
 		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
 		baseQty = newqty;
@@ -96,7 +93,6 @@ public class Resource extends NeoComNode {
 
 	/**
 	 * Generate the model elements that want to be represented at the UI.
-	 *
 	 * @return
 	 */
 	public List<ICollaboration> collaborate2Model() {
@@ -122,7 +118,7 @@ public class Resource extends NeoComNode {
 	}
 
 	public EveItem getItem() {
-		if(null==item)item=accessGlobal().searchItem4Id(typeId);
+		if ( null == item ) item = accessGlobal().searchItem4Id(typeId);
 		return item;
 	}
 
@@ -132,7 +128,6 @@ public class Resource extends NeoComNode {
 
 	/**
 	 * Apply the manufacture formulas to get the correct value of the quantity for this user.
-	 *
 	 * @return my manufacture quantity
 	 */
 	public int getQuantity() {
@@ -140,7 +135,7 @@ public class Resource extends NeoComNode {
 	}
 
 	public DateTime getRegistrationDate() {
-		if (null == registrationDate) {
+		if ( null == registrationDate ) {
 			registrationDate = new DateTime(DateTimeZone.UTC);
 		}
 		return registrationDate;
@@ -154,39 +149,39 @@ public class Resource extends NeoComNode {
 		return getItem().getTypeId();
 	}
 
-	public void setAdaptiveStackSize( final int size ) {
+	public void setAdaptiveStackSize(final int size) {
 		this.setStackSize(size);
 		getItem();
-		if (item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+		if ( item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint) ) {
+			if ( item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII) ) {
 				final double stack = Math.ceil(size / 10d);
 				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
-			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+			if ( item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI) ) {
 				final double stack = Math.ceil(size / 300d);
 				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
 		}
-		if (item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+		if ( item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill) ) {
 			this.setStackSize(1);
 		}
 	}
 
-	public Resource setDamage( final double damage ) {
+	public Resource setDamage(final double damage) {
 		this.damage = damage;
 		return this;
 	}
 
-	public Resource setQuantity( final int newQuantity ) {
+	public Resource setQuantity(final int newQuantity) {
 		baseQty = newQuantity;
 		return this;
 	}
 
-	public void setRegistrationDate( final DateTime registrationDate ) {
+	public void setRegistrationDate(final DateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
-	public Resource setStackSize( final int stackSize ) {
+	public Resource setStackSize(final int stackSize) {
 		this.stackSize = stackSize;
 		return this;
 	}
