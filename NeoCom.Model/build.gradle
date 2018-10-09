@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 
 //--- P R O J E C T   D E F I N I T I O N
 group ='org.dimensinfin'
-version ='0.12.2'
+version ='0.12.3'
 archivesBaseName = 'NeoCom.Model'
 description = 'Version with XML api stripped out because deprecation. New rework where production files should be moved to ' +
         'Infinity. Swagger version 2.0.0 in use.'

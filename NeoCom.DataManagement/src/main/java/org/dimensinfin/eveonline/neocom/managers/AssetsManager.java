@@ -15,8 +15,8 @@ package org.dimensinfin.eveonline.neocom.managers;
 import com.beimin.eveapi.model.shared.Asset;
 import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.entities.Credential;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.PilotV2;
 

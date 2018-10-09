@@ -11,8 +11,8 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import com.j256.ormlite.dao.Dao;
 
-import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;

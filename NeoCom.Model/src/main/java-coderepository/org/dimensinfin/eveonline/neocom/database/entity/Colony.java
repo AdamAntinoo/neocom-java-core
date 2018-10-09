@@ -13,7 +13,7 @@
 //               designed for Spring Boot Angular 4 platform.
 //               The model management is shown using a generic Model View Controller that allows make the
 //               rendering of the model data similar on all the platforms used.
-package org.dimensinfin.eveonline.neocom.database.entity;
+package org.dimensinfin.eveonline.neocom.entities;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;

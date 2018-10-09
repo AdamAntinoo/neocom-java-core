@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.GlobalSBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.NeoComSBDBHelper;
 import org.dimensinfin.eveonline.neocom.SDESBDBHelper;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
+import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Action;

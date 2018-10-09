@@ -12,7 +12,7 @@ package org.dimensinfin.eveonline.neocom.contentmngmt;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 
 import java.util.ArrayList;
 import java.util.List;

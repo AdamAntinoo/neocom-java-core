@@ -16,7 +16,7 @@ import com.annimon.stream.Stream;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.model.Container;
-import org.dimensinfin.eveonline.neocom.database.entity.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.slf4j.Logger;

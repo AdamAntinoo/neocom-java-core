@@ -10,7 +10,7 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.database.entity;
+package org.dimensinfin.eveonline.neocom.entities;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;

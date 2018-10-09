@@ -11,7 +11,7 @@
 //                of the downloaded data on an external database.
 //                The code isolates from the external database implementation to the extent to keep
 //                the code compatible with Android and SpringBoot.
-package org.dimensinfin.eveonline.neocom.database.entity;
+package org.dimensinfin.eveonline.neocom.entities;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;

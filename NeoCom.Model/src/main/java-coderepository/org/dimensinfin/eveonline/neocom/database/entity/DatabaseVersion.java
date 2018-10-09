@@ -4,7 +4,7 @@
 //	ENVIRONMENT:	Java 1.8 Library.
 //	DESCRIPTION:	SQLite database access library. Isolates Neocom database access from any
 //					environment limits.
-package org.dimensinfin.eveonline.neocom.database.entity;
+package org.dimensinfin.eveonline.neocom.entities;
 
 import java.sql.SQLException;
 

@@ -21,12 +21,12 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dimensinfin.eveonline.neocom.database.entity.Colony;
-import org.dimensinfin.eveonline.neocom.database.entity.ColonyStorage;
-import org.dimensinfin.eveonline.neocom.database.entity.Credential;
-import org.dimensinfin.eveonline.neocom.database.entity.TimeStamp;
+import org.dimensinfin.eveonline.neocom.entities.Colony;
+import org.dimensinfin.eveonline.neocom.entities.ColonyStorage;
+import org.dimensinfin.eveonline.neocom.entities.Credential;
+import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.model.ApiKey;
-import org.dimensinfin.eveonline.neocom.database.entity.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
