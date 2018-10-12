@@ -114,7 +114,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	public long getLocationId () {
-		return delegate.getID();
+		return delegate.getId();
 	}
 
 	@Override

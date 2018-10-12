@@ -12,14 +12,25 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +65,17 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	private static final long serialVersionUID = -2662145568311324496L;
 	private static Logger logger = LoggerFactory.getLogger("NeoComAsset");
 
+	private static final ObjectMapper jsonMapper = new ObjectMapper();
+
+	static {
+		jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
+		jsonMapper.registerModule(new JodaModule());
+		// Add our own serializers.
+		SimpleModule neocomSerializerModule = new SimpleModule();
+		neocomSerializerModule.addSerializer(EveItem.class, new EveItemSerializer());
+		jsonMapper.registerModule(neocomSerializerModule);
+	}
+
 	// - F I E L D - S E C T I O N ............................................................................
 	/**
 	 * This is a generated identifier to allow having duplicated asset numbers when processing updates. This is
@@ -64,7 +86,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	// - A P I   C C P   F I E L D S
 	@DatabaseField(index = true)
 	private long assetId;
-	@DatabaseField(index = true)
+	@DatabaseField
 	private int typeId;
 	@DatabaseField
 	private int quantity = 0;
@@ -104,37 +126,68 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	@DatabaseField
 	private double iskValue = 0.0;
 
+	//- S P E C I A L   F I E L D S
+	private EveItem item = null;
+	@DatabaseField(dataType = DataType.LONG_STRING, useGetSet = true)
+	private String itemSerialized;
+
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset parentAssetCache = null;
 	private transient EveLocation locationCache = null;
-	private transient EveItem itemCache = null;
+//	private transient EveItem itemCache = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComAsset() {
 		super();
-		//		this.jsonClass = "NeoComAsset";
 		id = -2;
 		locationId = -1;
 		locationType = null;
 	}
 
-	public NeoComAsset(final int typeIdentifier) {
+	/**
+	 * Initialize the asset with a type identifier. This should fire the load of the Eve Item.
+	 * @param typeIdentifier
+	 */
+	public NeoComAsset( final int typeIdentifier ) {
 		this();
-		typeId = typeIdentifier;
+		this.setTypeId(typeIdentifier);
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	public String getItemSerialized(){
+		try {
+			final String serialized = jsonMapper.writeValueAsString(this.item);
+			return serialized;
+		} catch ( JsonProcessingException e ) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	public void setItemSerialized(String personstr){
+		try {
+//			final String contents = databaseResults.getString(columnPos);
+			final EveItem neweveitem = jsonMapper.readValue(personstr, EveItem.class);
+			this.item = neweveitem;
+//			return neweveitem;
+		} catch ( IOException e ) {
+			e.printStackTrace();
+//			return null;
+		}
+	}
+
+	//--- I C O L L A B O R A T I O N   I N T E R F A C E
 
 	/**
 	 * Assets should collaborate to the model adding their children. Most of the assets will not have children
 	 * but the containers that maybe will use this code or be created as other kind of specialized asset.
 	 */
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant ) {
 		final ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
-		//		results = this.concatenateChildren(results, this.getChildren());
 		return results;
 	}
+
+	//--- I D A T A B A S E E N T I T Y   I N T E R F A C E
 
 	/**
 	 * Update the values at the database record.
@@ -150,31 +203,28 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		return this;
 	}
 
+	//--- G E T T E R S   &   S E T T E R S
+	public long getDAOId() {
+		return id;
+	}
+
 	public long getAssetId() {
 		return assetId;
 	}
 
-	//	@Deprecated
-	//	public String getCategory() {
-	//		if ( null == category ) return "NOCAT";
-	//		return category;
-	//	}
-
-	public String getCategoryName() {
-		if ( null == category ) return "NOCAT";
-		return category;
+	public int getTypeId() {
+		return typeId;
 	}
 
-	//	@Deprecated
-	//	public int getContentCount() {
-	//		return 0;
-	//	}
-
-	public long getDAOID() {
-		return id;
+	public int getQuantity() {
+		return quantity;
 	}
 
-	public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getFlag() {
+	public long getOwnerId() {
+		return ownerId;
+	}
+
+	public GetCharactersCharacterIdAssets200Ok.LocationFlagEnum getLocationFlag() {
 		return locationFlag;
 	}
 
@@ -183,31 +233,220 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		return this.locationType;
 	}
 
-	public String getGroupName() {
-		return groupName;
+	public String getCategoryName() {
+		if ( null == this.category ) return "NOCAT";
+		else return this.category;
 	}
 
+	public String getGroupName() {
+		if ( null == this.groupName ) return "NOGROUP";
+		else return this.groupName;
+	}
+
+	@Deprecated
 	public double getIskValue() {
 		return iskValue;
 	}
 
 	/**
-	 * New optimization will leave this filed for lazy evaluation. So check if this is empty before getting any
+	 * This has not to go to the item to get the information since this is copied to the Asset at creation time.
+	 * @return
+	 */
+	public String getItemName() {
+		return this.getName();
+	}
+
+	/**
+	 * Return the location id of the asset. If the asset is in a container then the location is lost and the
+	 * value is -1. In that cases we should search for the location on the parent asset if that exists.
+	 */
+	@Override
+	public long getLocationId() {
+		return locationId;
+	}
+
+	@Deprecated
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * The old implementation is deprecated because forced the Market data fetch. Now it should return the declared price calculated
+	 * when the asset was generated.
+	 * @return
+	 */
+	public double getPrice() {
+		return this.iskValue;
+	}
+
+	public String getTech() {
+		return this.getItem().getTech();
+	}
+
+	public String getUserLabel() {
+		return userLabel;
+	}
+
+	public boolean isBlueprint() {
+		return blueprintFlag;
+	}
+
+	public boolean isContainer() {
+		return this.containerFlag;
+	}
+
+	public boolean isPackaged() {
+		return !isSingleton;
+	}
+
+	public boolean isShip() {
+		return shipFlag;
+	}
+
+	public void setId( final long id ) {
+		this.id = id;
+	}
+
+	public NeoComAsset setAssetId( final long assetIdentifier ) {
+		this.assetId = assetIdentifier;
+		return this;
+	}
+
+	public void setBlueprintType( final int rawQuantity ) {
+		if ( -1 == rawQuantity ) {
+			this.setName(name + " (BPO)");
+		} else {
+			this.setName(name + " (BPC)");
+		}
+		blueprintFlag = true;
+		this.containerFlag = this.checkIfContainer();
+	}
+
+	public void setCategory( final String category ) {
+		if ( null != category ) {
+			this.category = category;
+			if ( category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship) ) {
+				shipFlag = true;
+			}
+		}
+	}
+
+	public void setContainer( final boolean value ) {
+		containerFlag = value;
+	}
+
+	@Override
+	public NeoComAsset setLocationFlag( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newFlag ) {
+		this.locationFlag = newFlag;
+		return this;
+	}
+
+	@Override
+	public NeoComAsset setLocationFlag( final GetCharactersCharacterIdBlueprints200Ok.LocationFlagEnum newFlag ) {
+		this.locationFlag = GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.valueOf(newFlag.name());
+		return this;
+	}
+
+	public void setGroupName( final String name ) {
+		groupName = name;
+	}
+
+	public void setIskValue( final double iskvalue ) {
+		iskValue = iskvalue;
+	}
+
+	@Override
+	public NeoComAsset setLocationId( final long location ) {
+		locationId = location;
+		locationCache = null;
+		return this;
+	}
+
+	@Override
+	public NeoComAsset setLocationType( final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
+		this.locationType = locationType;
+		return this;
+	}
+
+	public NeoComAsset setName( final String name ) {
+		this.name = name;
+		this.containerFlag = this.checkIfContainer();
+		return this;
+	}
+
+	public void setOwnerId( final long ownerId ) {
+		this.ownerId = ownerId;
+	}
+
+	public NeoComAsset setQuantity( final int count ) {
+		quantity = count;
+		return this;
+	}
+
+	@Deprecated
+	public void setShip( final boolean value ) {
+		shipFlag = value;
+	}
+
+	public void setAsShip( final boolean value ) {
+		shipFlag = value;
+	}
+
+	@Deprecated
+	public void setShipFlag( final boolean shipFlag ) {
+		this.shipFlag = shipFlag;
+	}
+
+	public NeoComAsset setSingleton( final boolean newSingleton ) {
+		isSingleton = newSingleton;
+		return this;
+	}
+
+	public void setTech( final String newTech ) {
+		tech = newTech;
+	}
+
+	/**
+	 * Durent the new implementation when the asset gets the item identifier we should go to the Eve Item provider and get a fresh
+	 * copy to be inserted serialized on the database.
+	 * @param newTypeId
+	 * @return
+	 */
+	public NeoComAsset setTypeId( final int newTypeId ) {
+		typeId = newTypeId;
+		// Get the item and store on the database field.
+		this.item = accessGlobal().searchItem4Id(typeId);
+		// Copy the item fields to the asset fields to get them ready for use.
+		this.name = this.getItem().getName();
+		this.category = this.getItem().getCategoryName();
+		this.groupName = this.getItem().getGroupName();
+		this.tech = this.getItem().getTech();
+		this.containerFlag = this.checkIfContainer();
+		return this;
+	}
+
+	public NeoComAsset setUserLabel( final String label ) {
+		if ( null != label ) {
+			userLabel = label;
+		}
+		return this;
+	}
+
+	//--- V I R T U A L   G E T T E R S
+
+	/**
+	 * New optimization will leave this field for lazy evaluation. So check if this is empty before getting any
 	 * access and if so download from the Item Cache.
 	 */
 	public EveItem getItem() {
 		try {
-			if ( null == itemCache ) {
-				itemCache = accessGlobal().searchItem4Id(typeId);
+			if ( null == item ) {
+				item = accessGlobal().searchItem4Id(typeId);
 			}
 		} catch ( NeoComRuntimeException neoe ) {
-			itemCache = new EveItem();
+			item = new EveItem();
 		}
-		return itemCache;
-	}
-
-	public String getItemName() {
-		return this.getItem().getName();
+		return item;
 	}
 
 	@Override
@@ -222,68 +461,13 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		return locationCache;
 	}
 
-	/**
-	 * Return the location id of the asset. If the asset is in a container then the location is lost and the
-	 * value is -1. In that cases we should search for the location on the parent asset if that exists.
-	 */
-	@Override
-	public long getLocationId() {
-		//		if (locationId == -1) {
-		//			if (this.getParentContainerId() == -1)
-		//				return -1L;
-		//			else {
-		//				// Get the location from the parent.
-		//				final NeoComAsset par = this.getParentContainer();
-		//				if (null == par)
-		//					return -1L;
-		//				else
-		//					return par.getLocationId();
-		//			}
-		//		} else
-		return locationId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	//	public String getOrderingName() {
-	//		return name;
-	//	}
-
-	public long getOwnerId() {
-		return ownerId;
-	}
-
-	public double getPrice() {
-		return this.getItem().getPrice();
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
+	@JsonIgnore
 	public String getRegion() {
 		return this.getLocation().getRegion();
 	}
 
-	public String getTech() {
-		return this.getItem().getTech();
-	}
-
-	public int getTypeId() {
-		return typeId;
-	}
-
-	public String getUserLabel() {
-		return userLabel;
-	}
-
-	public boolean isBlueprint() {
-		return blueprintFlag;
-	}
-
-	public boolean isContainer() {
+	@JsonIgnore
+	public boolean checkIfContainer() {
 		if ( this.isBlueprint() ) return false;
 		// Use a list of types to set what is a container
 		if ( this.getTypeId() == 11488 ) return true;
@@ -313,139 +497,9 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		if ( this.getTypeId() == 3468 ) return true;
 		if ( this.getTypeId() == 41567 ) return true;
 		if ( this.getTypeId() == 60 ) return true; // Asset Safety Wrap
-		if ( this.getName().contains("Container") ) return true;
-		if ( this.getName().contains("Wrap") ) return true;
+		if ( this.getItemName().contains("Container") ) return true;
+		if ( this.getItemName().contains("Wrap") ) return true;
 		return false;
-	}
-
-	public boolean isPackaged() {
-		return !isSingleton;
-	}
-
-	public boolean isShip() {
-		return shipFlag;
-	}
-
-//	public boolean isShipFlag() {
-//		return shipFlag;
-//	}
-
-	public NeoComAsset setAssetId(final long assetIdentifier) {
-		assetId = assetIdentifier;
-		return this;
-	}
-
-	public void setBlueprintType(final int rawQuantity) {
-		if ( -1 == rawQuantity ) {
-			this.setName(name + " (BPO)");
-		} else {
-			this.setName(name + " (BPC)");
-		}
-		blueprintFlag = true;
-	}
-
-	public void setCategory(final String category) {
-		if ( null != category ) {
-			this.category = category;
-			if ( category.equalsIgnoreCase(ModelWideConstants.eveglobal.Ship) ) {
-				shipFlag = true;
-			}
-		}
-	}
-
-	public void setContainer(final boolean value) {
-		containerFlag = value;
-	}
-
-	//	public void setDirty( final boolean flag ) {
-	//		if (flag) {
-	//			try {
-	//				final Dao<NeoComAsset, String> assetDao = accessGlobal().getNeocomDBHelper().getAssetDao();
-	//				// Try to create the pair. It fails then  it was already created.
-	//				assetDao.createOrUpdate(this);
-	//			} catch (final SQLException sqle) {
-	//				sqle.printStackTrace();
-	//			}
-	//		}
-	//	}
-
-	@Override
-	public NeoComAsset setLocationFlag(final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum newFlag) {
-		this.locationFlag = newFlag;
-		return this;
-	}
-
-	@Override
-	public NeoComAsset setLocationFlag(final GetCharactersCharacterIdBlueprints200Ok.LocationFlagEnum newFlag) {
-		this.locationFlag = GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.valueOf(newFlag.name());
-		return this;
-	}
-
-	public void setGroupName(final String name) {
-		groupName = name;
-	}
-
-	public void setId(final long id) {
-		this.id = id;
-	}
-
-	public void setIskValue(final double iskvalue) {
-		iskValue = iskvalue;
-	}
-
-	@Override
-	public NeoComAsset setLocationId(final long location) {
-		locationId = location;
-		locationCache = null;
-		return this;
-	}
-
-	@Override
-	public NeoComAsset setLocationType(final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType) {
-		this.locationType = locationType;
-		return this;
-	}
-
-	public void setName(final String name) {
-		this.name = name;
-	}
-
-	public void setOwnerId(final long ownerId) {
-		this.ownerId = ownerId;
-	}
-
-
-	public NeoComAsset setQuantity(final int count) {
-		quantity = count;
-		return this;
-	}
-
-	public void setShip(final boolean value) {
-		shipFlag = value;
-	}
-
-	public void setShipFlag(final boolean shipFlag) {
-		this.shipFlag = shipFlag;
-	}
-
-	public NeoComAsset setSingleton(final boolean newSingleton) {
-		isSingleton = newSingleton;
-		return this;
-	}
-
-	public void setTech(final String newTech) {
-		tech = newTech;
-	}
-
-	public void setTypeId(final int newTypeId) {
-		typeId = newTypeId;
-	}
-
-	public NeoComAsset setUserLabel(final String label) {
-		if ( null != label ) {
-			userLabel = label;
-		}
-		return this;
 	}
 
 	// --- I L O C A T A B L E    I N T E R F A C E
@@ -486,7 +540,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	@Override
-	public void setParentContainer(final NeoComAsset newParent) {
+	public void setParentContainer( final NeoComAsset newParent ) {
 		if ( null != newParent ) {
 			parentAssetCache = newParent;
 			parentAssetId = newParent.getAssetId();
@@ -496,7 +550,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	@Override
-	public void setParentId(final long pid) {
+	public void setParentId( final long pid ) {
 		parentAssetId = pid;
 	}
 
@@ -522,7 +576,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	/**
 	 * Replaces a non reachable parent asset into an Unknown Location.
 	 */
-	private EveLocation moveAssetToUnknown(final long newlocationid) {
+	private EveLocation moveAssetToUnknown( final long newlocationid ) {
 		final EveLocation newundefloc = new EveLocation();
 		//		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");
@@ -539,5 +593,41 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		//		}
 		return newundefloc;
 	}
+	// - CLASS IMPLEMENTATION ...................................................................................
+	public static class EveItemSerializer extends JsonSerializer<EveItem> {
+		// - F I E L D - S E C T I O N ............................................................................
+
+		// - M E T H O D - S E C T I O N ..........................................................................
+		@Override
+		public void serialize( final EveItem value, final JsonGenerator jgen, final SerializerProvider provider )
+				throws IOException, JsonProcessingException {
+			jgen.writeStartObject();
+			jgen.writeStringField("jsonClass", value.getJsonClass());
+			jgen.writeNumberField("typeId", value.getTypeId());
+			jgen.writeStringField("name", value.getName());
+			jgen.writeNumberField("categoryId", value.getCategoryId());
+			jgen.writeStringField("categoryName", value.getCategoryName());
+			jgen.writeNumberField("groupId", value.getGroupId());
+			jgen.writeStringField("groupName", value.getGroupName());
+			jgen.writeNumberField("baseprice", value.getBaseprice());
+			jgen.writeNumberField("price", value.getPrice());
+			jgen.writeStringField("tech", value.getTech());
+			jgen.writeNumberField("volume", value.getVolume());
+			jgen.writeStringField("industryGroup", value.getIndustryGroup().name());
+			jgen.writeStringField("hullGroup", value.getHullGroup());
+			try {
+				jgen.writeObjectField("lowestSellerPrice", value.getLowestSellerPrice());
+			} catch ( ExecutionException e ) {
+			} catch ( InterruptedException e ) {
+			}
+			try {
+				jgen.writeObjectField("highestBuyerPrice", value.getHighestBuyerPrice());
+			} catch ( ExecutionException e ) {
+			} catch ( InterruptedException e ) {
+			}
+			jgen.writeEndObject();
+		}
+	}
+	// ..........................................................................................................
 }
 //- UNUSED CODE ............................................................................................

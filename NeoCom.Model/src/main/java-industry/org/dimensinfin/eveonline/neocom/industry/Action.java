@@ -240,7 +240,7 @@ public class Action extends NeoComExpandableNode {
 		this.performTask(task, targetAsset);
 		// Filter out assets already on the final location
 		if (task.getTaskType() == ETaskType.MOVE) {
-			if (task.getLocation().getID() != task.getDestination().getID()) {
+			if (task.getLocation().getId() != task.getDestination().getId()) {
 				this.registerTask(pri, task);
 			}
 		} else {

@@ -14,7 +14,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 
 /**
@@ -54,7 +53,8 @@ public class CorporationV1 extends NeoComNode {
 	}
 
 	public int getAllianceId() {
-		return alliance.getAllianceId();
+		if ( null == this.alliance ) return -1;
+		else return this.alliance.getAllianceId();
 	}
 
 	public String getName() {

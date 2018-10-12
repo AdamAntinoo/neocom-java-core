@@ -69,7 +69,7 @@ public class SkillTrained extends NeoComNode {
 
 	public ItemGroup getGroupInstance() {
 		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
-		return this.skillItem.getGroupInstance();
+		return this.skillItem.getGroup();
 	}
 
 	public SkillTrained setSkillpointsInSkill( final long skillpointsInSkill ) {

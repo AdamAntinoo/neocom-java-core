@@ -274,10 +274,10 @@ public abstract class SDEDatabaseManager {
 				}
 				target.setTypeId(ELocationType.CCPLOCATION);
 				target.setStation(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
-				target.setLocationIdentifier(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
+				target.setId(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
 				target.setSecurity(cursor.getString(LOCATIONBYID_SECURITY_COLINDEX));
 				// Update the final ID
-				target.getID();
+				target.getId();
 			}
 			cursor.close();
 			if ( !detected ) {

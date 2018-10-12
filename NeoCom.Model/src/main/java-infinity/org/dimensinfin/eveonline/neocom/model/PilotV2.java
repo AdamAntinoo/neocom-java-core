@@ -229,8 +229,8 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public Property addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
 		Property hit = new Property(EPropertyTypes.LOCATIONROLE)
 				.setOwnerId(getCharacterId())
-				.setTargetId(theSelectedLocation.getID())
-				.setNumericValue(theSelectedLocation.getID())
+				.setTargetId(theSelectedLocation.getId())
+				.setNumericValue(theSelectedLocation.getId())
 				.setStringValue(locationrole)
 				.store();
 		locationRoles.add(hit);
@@ -256,7 +256,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public void clearLocationRoles(final EveLocation theSelectedLocation) {
 //		if (null == locationRoles) accessLocationRoles();
 		for (Property role : locationRoles) {
-			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getID())) {
+			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getId())) {
 				//		Property hit = locationRoles.get(theSelectedLocation.getID());
 				//		if (null != hit) {
 				try {

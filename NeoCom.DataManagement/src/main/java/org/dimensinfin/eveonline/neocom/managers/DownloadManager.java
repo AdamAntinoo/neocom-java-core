@@ -52,7 +52,7 @@ public class DownloadManager {
 	private transient final List<Long> id4Names = new ArrayList<>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public DownloadManager() {
+@Deprecated	public DownloadManager() {
 		super();
 	}
 
@@ -410,7 +410,7 @@ public class DownloadManager {
 					// Set to this asset the parent location whichever it is.
 					locatable.setLocationId(target.getLocationId());
 					locatable.setLocationType(target.getLocationType());
-					locatable.setLocationFlag(target.getFlag());
+					locatable.setLocationFlag(target.getLocationFlag());
 					locatable.store();
 					return target.getLocation().getTypeId();
 				}

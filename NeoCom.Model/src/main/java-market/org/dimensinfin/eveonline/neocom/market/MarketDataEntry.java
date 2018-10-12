@@ -8,9 +8,11 @@ package org.dimensinfin.eveonline.neocom.market;
 
 // - IMPORT SECTION .........................................................................................
 
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
+
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -41,52 +43,52 @@ public class MarketDataEntry implements Serializable {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public void addQty( final int addqty ) {
-		qty += addqty;
+	//--- G E T T E R S   &   S E T T E R S
+	public EveLocation getLocation() {
+		return this.location;
 	}
 
+	public MarketDataEntry setLocation( final EveLocation location ) {
+		this.location = location;
+		return this;
+	}
+
+	public int getQty() {
+		return this.qty;
+	}
+
+	public MarketDataEntry setQty( final int qty ) {
+		this.qty = qty;
+		return this;
+	}
+
+	public double getPrice() {
+		return this.price;
+	}
+
+	public MarketDataEntry setPrice( final double price ) {
+		this.price = price;
+		return this;
+	}
+
+	//--- N O N   E X P O R T A B L E   F I E L D S
+	@JsonIgnore
 	public String getConstellation() {
 		return location.getConstellation();
 	}
 
-	public EveLocation getLocation() {
-		return location;
-	}
-
-	public double getPrice() {
-		return price;
-	}
-
-	public int getQty() {
-		return qty;
-	}
-
+	@JsonIgnore
 	public String getRegion() {
 		return location.getRegion();
 	}
 
+	@JsonIgnore
 	public String getSecurity() {
 		return location.getSecurity();
 	}
 
-	public int getSystemId() {
-		return this.location.getSystemId();
-	}
-
-	public String getSystem() {
-		return this.location.getSystem();
-	}
-
-	public void setLocation( final EveLocation location ) {
-		this.location = location;
-	}
-
-	public void setPrice( final double price ) {
-		this.price = price;
-	}
-
-	public void setQty( final int qty ) {
-		this.qty = qty;
+	public void addQty( final int addqty ) {
+		qty += addqty;
 	}
 
 	@Override

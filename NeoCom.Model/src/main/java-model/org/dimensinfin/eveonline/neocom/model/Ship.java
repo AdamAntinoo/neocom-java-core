@@ -158,7 +158,7 @@ public class Ship extends ShipPre10 {
 
 	public int addAsset( final NeoComAsset asset ) {
 		super.addAsset(asset);
-		_contents.add(new ShipContent(asset.getFlag(), asset));
+		_contents.add(new ShipContent(asset.getLocationFlag(), asset));
 		return _contents.size();
 	}
 	//	protected void downloadShipData () {
