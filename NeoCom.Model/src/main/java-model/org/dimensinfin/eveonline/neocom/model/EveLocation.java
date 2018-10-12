@@ -12,17 +12,17 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.sql.SQLException;
-
-import net.nikr.eve.jeveasset.data.Citadel;
-
 import com.beimin.eveapi.model.eve.Station;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import net.nikr.eve.jeveasset.data.Citadel;
+
+import java.sql.SQLException;
+
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -91,7 +91,7 @@ public class EveLocation extends NeoComNode {
 			typeId = ELocationType.CITADEL.name();
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
+		} catch ( final SQLException sqle ) {
 			sqle.printStackTrace();
 			this.store();
 		}
@@ -109,7 +109,7 @@ public class EveLocation extends NeoComNode {
 			this.setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
+		} catch ( final SQLException sqle ) {
 			sqle.printStackTrace();
 			this.store();
 		}
@@ -117,18 +117,19 @@ public class EveLocation extends NeoComNode {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public boolean equals( final EveLocation obj ) {
-		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
-		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
-		if (!this.getStation().equalsIgnoreCase(obj.getStation())) return false;
+		if ( !this.getRegion().equalsIgnoreCase(obj.getRegion()) ) return false;
+		if ( !this.getSystem().equalsIgnoreCase(obj.getSystem()) ) return false;
+		if ( !this.getStation().equalsIgnoreCase(obj.getStation()) ) return false;
 		return true;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
-	public EveLocation setLocationIdentifier(final long newUniqueIdentifier){
-		this.id=newUniqueIdentifier;
-		this.stationId=newUniqueIdentifier;
+	public EveLocation setLocationIdentifier( final long newUniqueIdentifier ) {
+		this.id = newUniqueIdentifier;
+		this.stationId = newUniqueIdentifier;
 		return this;
 	}
+
 	public String getConstellation() {
 		return constellation;
 	}
@@ -142,7 +143,7 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public long getID() {
-		long newid= Math.max(Math.max(Math.max(stationId, systemId), constellationId), regionId);
+		long newid = Math.max(Math.max(Math.max(stationId, systemId), constellationId), regionId);
 		this.id = newid;
 		return newid;
 	}
@@ -175,7 +176,7 @@ public class EveLocation extends NeoComNode {
 	public double getSecurityValue() {
 		try {
 			return Double.parseDouble(security);
-		} catch (final RuntimeException rtex) {
+		} catch ( final RuntimeException rtex ) {
 		}
 		return 0.0;
 	}
@@ -205,7 +206,7 @@ public class EveLocation extends NeoComNode {
 	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
 	 */
 	public String getUrlLocationIcon() {
-		if (null == urlLocationIcon) {
+		if ( null == urlLocationIcon ) {
 //			if (id == -2) {
 //				urlLocationIcon = new StringBuffer()
 //						.append("http://image.eveonline.com/Render/")
@@ -219,7 +220,7 @@ public class EveLocation extends NeoComNode {
 						.append(accessGlobal().searchStationType(stationId))
 						.append("_64.png")
 						.toString();
-			} catch (NeoComRuntimeException neoe) {
+			} catch ( NeoComRuntimeException neoe ) {
 				urlLocationIcon = new StringBuffer()
 						.append("http://image.eveonline.com/Render/")
 						.append(stationId)
@@ -231,7 +232,7 @@ public class EveLocation extends NeoComNode {
 	}
 
 	public final boolean isCitadel() {
-		if (this.getTypeId() == ELocationType.CITADEL) return true;
+		if ( this.getTypeId() == ELocationType.CITADEL ) return true;
 		return false;
 	}
 
@@ -300,7 +301,7 @@ public class EveLocation extends NeoComNode {
 		try {
 			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
 			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
+		} catch ( final SQLException sqle ) {
 			sqle.printStackTrace();
 		}
 		return this;
@@ -322,10 +323,10 @@ public class EveLocation extends NeoComNode {
 		buffer.append("#").append(this.getID()).append(" ");
 		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
 		buffer.append("[").append(this.getRegion()).append("] ");
-		if (null != system) {
+		if ( null != system ) {
 			buffer.append("system: ").append(system).append(" ");
 		}
-		if (null != station) {
+		if ( null != station ) {
 			buffer.append("station: ").append(station).append(" ");
 		}
 		buffer.append("]");
@@ -345,7 +346,7 @@ public class EveLocation extends NeoComNode {
 		EveLocation systemLocation;
 		try {
 			systemLocation = accessGlobal().searchLocation4Id(newid);
-		} catch (NeoComRuntimeException newe) {
+		} catch ( NeoComRuntimeException newe ) {
 			systemLocation = new EveLocation();
 		}
 		systemId = systemLocation.getSystemId();
@@ -364,10 +365,10 @@ public class EveLocation extends NeoComNode {
 	 */
 	@Override
 	public boolean equals( final Object obj ) {
-		if (stationId != ((EveLocation) obj).getStationId()) return false;
-		if (systemId != ((EveLocation) obj).getSystemId()) return false;
-		if (constellationId != ((EveLocation) obj).getConstellationId()) return false;
-		if (regionId != ((EveLocation) obj).getRegionId()) return false;
+		if ( stationId != ((EveLocation) obj).getStationId() ) return false;
+		if ( systemId != ((EveLocation) obj).getSystemId() ) return false;
+		if ( constellationId != ((EveLocation) obj).getConstellationId() ) return false;
+		if ( regionId != ((EveLocation) obj).getRegionId() ) return false;
 		return true;
 	}
 
