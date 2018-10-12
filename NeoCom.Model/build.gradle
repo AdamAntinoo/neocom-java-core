@@ -26,6 +26,7 @@ sourceSets {
         java {
             srcDirs += 'src/main/java-core'
             srcDirs += 'src/main/java-model'
+            srcDirs += 'src/main/java-database'
             srcDirs += 'src/main/java-market'
             srcDirs += 'src/main/java-infinity'
             srcDirs += 'src/main/java-planetary'
