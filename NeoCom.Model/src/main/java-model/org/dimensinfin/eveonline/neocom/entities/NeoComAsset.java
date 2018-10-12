@@ -129,6 +129,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	//- S P E C I A L   F I E L D S
 	private EveItem item = null;
 	@DatabaseField(dataType = DataType.LONG_STRING, useGetSet = true)
+	@JsonIgnore
 	private String itemSerialized;
 
 	// - C A C H E D   F I E L D S
@@ -154,6 +155,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
+	@JsonIgnore
 	public String getItemSerialized(){
 		try {
 			final String serialized = jsonMapper.writeValueAsString(this.item);
