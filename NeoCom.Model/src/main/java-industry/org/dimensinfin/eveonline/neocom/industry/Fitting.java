@@ -12,6 +12,8 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -125,6 +127,7 @@ public class Fitting extends NeoComNode {
 		private int typeId = -1;
 		private int flag = 0;
 		private int quantity = 0;
+		@JsonIgnore
 		private transient EveItem itemDetails = null;
 		//		private EShipSlotLocation slotLocation=EShipSlotLocation.CARGOHOLD;
 		private InventoryFlag detailedFlag = null;
@@ -150,6 +153,7 @@ public class Fitting extends NeoComNode {
 			return quantity;
 		}
 
+		@JsonIgnore
 		public EveItem getItemDetails() {
 			return itemDetails;
 		}

@@ -152,7 +152,7 @@ public class MarketDataSet extends ANeoComEntity implements Serializable {
 	}
 
 	//--- N O N   E X P O R T A B L E   F I E L D S
-	@JsonIgnore
+//	@JsonIgnore
 	public MarketDataEntry getBestMarket() {
 		return bestmarketHigh;
 	}
@@ -176,7 +176,8 @@ public class MarketDataSet extends ANeoComEntity implements Serializable {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("MarketDataSet [");
-		buffer.append(side).append(" ").append(bestmarketHigh.toString());
+		buffer.append(side).append(" ");
+		if ( null != bestmarketHigh ) buffer.append(bestmarketHigh.toString());
 		buffer.append("]");
 		return buffer.toString();
 	}
