@@ -84,7 +84,7 @@ dependencies {
     compileOnly 'org.slf4j:slf4j-api:1.7.25'
     implementation 'joda-time:joda-time:2.3'
     implementation 'org.dimensinfin:CoreBase.core:2.2.0'
-    implementation 'org.dimensinfin:ESI.SwaggerApi:2.0.0'
+    implementation 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
 
     // N E O C O M . D A T A M A N A G E M E N T
     implementation 'org.htmlparser:htmlparser:2.1'

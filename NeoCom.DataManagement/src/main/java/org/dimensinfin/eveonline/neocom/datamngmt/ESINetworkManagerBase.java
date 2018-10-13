@@ -12,18 +12,6 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import org.apache.commons.lang3.StringUtils;
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.core.util.Chrono.ChronoOptions;
-import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
-import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
-import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,6 +22,18 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.core.util.Chrono.ChronoOptions;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
+import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -69,11 +69,11 @@ public class ESINetworkManagerBase {
 		CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
 		AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
 		// Verify that the constants have values. Otherwise launch exception.
-		if (CLIENT_ID.isEmpty())
+		if ( CLIENT_ID.isEmpty() )
 			throw new NeoComRuntimeException("RT [ESINetworkManager.initialize]> ESI configuration property is empty.");
-		if (SECRET_KEY.isEmpty())
+		if ( SECRET_KEY.isEmpty() )
 			throw new NeoComRuntimeException("RT [ESINetworkManager.initialize]> ESI configuration property is empty.");
-		if (CALLBACK.isEmpty())
+		if ( CALLBACK.isEmpty() )
 			throw new NeoComRuntimeException("RT [ESINetworkManager.initialize]> ESI configuration property is empty.");
 		neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
 		neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
@@ -85,7 +85,7 @@ public class ESINetworkManagerBase {
 	protected static String CALLBACK = GlobalDataManager.getResourceString("R.esi.authorization.callback");
 	protected static String AGENT = GlobalDataManager.getResourceString("R.esi.authorization.agent");
 
-	/**This is the location where to STORE the downloaded data from network cache. */
+	/** This is the location where to STORE the downloaded data from network cache. */
 	protected static final String cacheFilePath = GlobalDataManager.getResourceString("R.cache.directorypath")
 			+ GlobalDataManager.getResourceString("R.cache.esinetwork.filename");
 	protected static File cacheDataFile = new File(cacheFilePath);
@@ -139,7 +139,7 @@ public class ESINetworkManagerBase {
 			final InputStream istream = GlobalDataManager.openAsset4Input(propertyFileName);
 			final BufferedReader input = new BufferedReader(new InputStreamReader(istream));
 			String line = input.readLine();
-			while (StringUtils.isNotEmpty(line)) {
+			while ( StringUtils.isNotEmpty(line) ) {
 				SCOPES.add(line);
 				line = input.readLine();
 			}
@@ -148,9 +148,9 @@ public class ESINetworkManagerBase {
 			SCOPESTRING = transformScopes(SCOPES);
 			//		} catch (URISyntaxException e) {
 			//			e.printStackTrace();
-		} catch (FileNotFoundException e) {
+		} catch ( FileNotFoundException e ) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
 		}
 		return SCOPES;
@@ -158,7 +158,7 @@ public class ESINetworkManagerBase {
 
 	protected static String transformScopes( final List<String> scopeList ) {
 		StringBuilder scope = new StringBuilder();
-		for (String s : scopeList) {
+		for ( String s : scopeList ) {
 			scope.append(s);
 			scope.append(" ");
 		}
@@ -177,12 +177,12 @@ public class ESINetworkManagerBase {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)
-					.getMarketsPrices("tranquility", null, null)
+					.getMarketsPrices("tranquility", null)
 					.execute();
-			if (!marketApiResponse.isSuccessful()) {
+			if ( !marketApiResponse.isSuccessful() ) {
 				return new ArrayList<>();
 			} else return marketApiResponse.body();
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));

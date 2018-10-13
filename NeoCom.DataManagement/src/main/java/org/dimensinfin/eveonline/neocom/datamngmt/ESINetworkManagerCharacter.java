@@ -12,6 +12,10 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
@@ -40,10 +44,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import retrofit2.Response;
 
 /**
@@ -60,7 +60,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	protected static boolean allowDownloadPass() {
-		if (GlobalDataManager.getDefaultSharedPreferences().getBooleanPreference(PreferenceKeys.prefkey_BlockDownloads.name(), true))
+		if ( GlobalDataManager.getDefaultSharedPreferences().getBooleanPreference(PreferenceKeys.prefkey_BlockDownloads.name(), true) )
 			return false;
 		else
 			return GlobalDataManager.getNetworkStatus();
@@ -74,29 +74,29 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_PUBLIC, identifier);
 		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
+		if ( allowDownloadPass() ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
 				// Use server parameter to override configuration server to use.
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<GetCharactersCharacterIdOk> characterResponse = neocomRetrofit
 						.create(CharacterApi.class)
 						.getCharactersCharacterId(identifier
-								, datasource, null, null).execute();
-				if (characterResponse.isSuccessful()) {
+								, datasource, null).execute();
+				if ( characterResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, characterResponse);
 					return characterResponse.body();
 				} else return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
 				ioe.printStackTrace();
 				// Return cached response if available
 				return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-			} catch (RuntimeException rte) {
+			} catch ( RuntimeException rte ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
 				rte.printStackTrace();
 				// Return cached response if available
@@ -116,27 +116,27 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_CLONES, identifier);
 		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
+		if ( allowDownloadPass() ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<GetCharactersCharacterIdClonesOk> cloneApiResponse = neocomRetrofit
 						.create(ClonesApi.class)
-						.getCharactersCharacterIdClones(identifier, datasource, null, null, null).execute();
-				if (cloneApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdClones(identifier, datasource, null, null).execute();
+				if ( cloneApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, cloneApiResponse);
 					return cloneApiResponse.body();
 				} else return (GetCharactersCharacterIdClonesOk) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
 				ioe.printStackTrace();
 				// Return cached response if available
 				return (GetCharactersCharacterIdClonesOk) okResponseCache.get(reference).body();
-			} catch (RuntimeException rte) {
+			} catch ( RuntimeException rte ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
 				rte.printStackTrace();
 				// Return cached response if available
@@ -156,27 +156,27 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
 		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
+		if ( allowDownloadPass() ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = neocomRetrofit
 						.create(PlanetaryInteractionApi.class)
-						.getCharactersCharacterIdPlanets(identifier, datasource, null, null, null).execute();
-				if (planetaryApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdPlanets(identifier, datasource, null, null).execute();
+				if ( planetaryApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, planetaryApiResponse);
 					return planetaryApiResponse.body();
 				} else return (List<GetCharactersCharacterIdPlanets200Ok>) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
 				ioe.printStackTrace();
 				// Return cached response if available
 				return (List<GetCharactersCharacterIdPlanets200Ok>) okResponseCache.get(reference).body();
-			} catch (RuntimeException rte) {
+			} catch ( RuntimeException rte ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
 				rte.printStackTrace();
 				// Return cached response if available
@@ -195,27 +195,27 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier);
 		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
+		if ( allowDownloadPass() ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = neocomRetrofit
 						.create(PlanetaryInteractionApi.class)
-						.getCharactersCharacterIdPlanetsPlanetId(identifier, planetid, datasource, null, null, null).execute();
-				if (planetaryApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdPlanetsPlanetId(identifier, planetid, datasource, null, null).execute();
+				if ( planetaryApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, planetaryApiResponse);
 					return planetaryApiResponse.body();
 				} else return (GetCharactersCharacterIdPlanetsPlanetIdOk) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
 				ioe.printStackTrace();
 				// Return cached response if available
 				return (GetCharactersCharacterIdPlanetsPlanetIdOk) okResponseCache.get(reference).body();
-			} catch (RuntimeException rte) {
+			} catch ( RuntimeException rte ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
 				rte.printStackTrace();
 				// Return cached response if available
@@ -235,23 +235,23 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.INDUSTRY_JOBS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
-		if (null == hit) {
+		if ( null == hit ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<List<GetCharactersCharacterIdIndustryJobs200Ok>> industryApiResponse = neocomRetrofit
 						.create(IndustryApi.class)
-						.getCharactersCharacterIdIndustryJobs(identifier, datasource, true
-								, null, null, null).execute();
-				if (industryApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdIndustryJobs(identifier, datasource, null, true
+								, null).execute();
+				if ( industryApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, industryApiResponse);
 					return industryApiResponse.body();
 				}
-			} catch (IOException e) {
+			} catch ( IOException e ) {
 				e.printStackTrace();
 			} finally {
 				logger.info("<< [ESINetworkManager.getCharactersCharacterIdIndustryJobs]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -273,15 +273,15 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+			if ( null != server ) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
-			while (morePages) {
+			while ( morePages ) {
 				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = neocomRetrofit
 						.create(IndustryApi.class)
-						.getCharactersCharacterIdMining(identifier, datasource, pageCounter, null, null, null).execute();
-				if (!industryApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
+				if ( !industryApiResponse.isSuccessful() ) {
 					// Or error or we have reached the end of the list.
 					return returnMiningList;
 				} else {
@@ -289,14 +289,14 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 					returnMiningList.addAll(industryApiResponse.body());
 					pageCounter++;
 					// Check for out of page running.
-					if (industryApiResponse.body().size() < 1) morePages = false;
+					if ( industryApiResponse.body().size() < 1 ) morePages = false;
 				}
 			}
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
-		} catch (RuntimeException rtex) {
+		} catch ( RuntimeException rtex ) {
 			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+			if ( rtex.getMessage().toLowerCase().contains("connection reset") ) {
 				// Recreate the retrofit.
 				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
@@ -314,22 +314,22 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.INDUSTRY_MARKET_ORDERS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
-		if (null == hit) {
+		if ( null == hit ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<List<GetCharactersCharacterIdOrders200Ok>> marketApiResponse = neocomRetrofit
 						.create(MarketApi.class)
-						.getCharactersCharacterIdOrders(identifier, datasource, null, null, null).execute();
-				if (marketApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdOrders(identifier, datasource, null, null).execute();
+				if ( marketApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, marketApiResponse);
 					return marketApiResponse.body();
 				}
-			} catch (IOException e) {
+			} catch ( IOException e ) {
 				e.printStackTrace();
 			} finally {
 				logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrders]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -350,15 +350,15 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+			if ( null != server ) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
-			while (morePages) {
+			while ( morePages ) {
 				final Response<List<GetCharactersCharacterIdOrdersHistory200Ok>> marketApiResponse = neocomRetrofit
 						.create(MarketApi.class)
-						.getCharactersCharacterIdOrdersHistory(identifier, datasource, pageCounter, null, null, null).execute();
-				if (!marketApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdOrdersHistory(identifier, datasource, null, pageCounter, null).execute();
+				if ( !marketApiResponse.isSuccessful() ) {
 					// Or error or we have reached the end of the list.
 					return returnOrderList;
 				} else {
@@ -366,10 +366,10 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 					returnOrderList.addAll(marketApiResponse.body());
 					pageCounter++;
 					// Check for out of page running.
-					if (marketApiResponse.body().size() < 1) morePages = false;
+					if ( marketApiResponse.body().size() < 1 ) morePages = false;
 				}
 			}
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrdersHistory]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -388,15 +388,15 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+			if ( null != server ) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
-			while (morePages) {
+			while ( morePages ) {
 				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
 						.create(AssetsApi.class)
-						.getCharactersCharacterIdAssets(identifier, datasource, pageCounter, null, null, null).execute();
-				if (!assetsApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdAssets(identifier, datasource, null, pageCounter, null).execute();
+				if ( !assetsApiResponse.isSuccessful() ) {
 					// Or error or we have reached the end of the list.
 					return returnAssetList;
 				} else {
@@ -404,14 +404,14 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 					returnAssetList.addAll(assetsApiResponse.body());
 					pageCounter++;
 					// Check for out of page running.
-					if (assetsApiResponse.body().size() < 1) morePages = false;
+					if ( assetsApiResponse.body().size() < 1 ) morePages = false;
 				}
 			}
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
-		} catch (RuntimeException rtex) {
+		} catch ( RuntimeException rtex ) {
 			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+			if ( rtex.getMessage().toLowerCase().contains("connection reset") ) {
 				// Recreate the retrofit.
 				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
@@ -431,15 +431,15 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+			if ( null != server ) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
-			while (morePages) {
+			while ( morePages ) {
 				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = neocomRetrofit
 						.create(CharacterApi.class)
-						.getCharactersCharacterIdBlueprints(identifier, datasource, pageCounter, null, null, null).execute();
-				if (!characterApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdBlueprints(identifier, datasource, null, pageCounter, null).execute();
+				if ( !characterApiResponse.isSuccessful() ) {
 					// Or error or we have reached the end of the list.
 					return returnBlueprintList;
 				} else {
@@ -447,14 +447,14 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 					returnBlueprintList.addAll(characterApiResponse.body());
 					pageCounter++;
 					// Check for out of page running.
-					if (characterApiResponse.body().size() < 1) morePages = false;
+					if ( characterApiResponse.body().size() < 1 ) morePages = false;
 				}
 			}
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
-		} catch (RuntimeException rtex) {
+		} catch ( RuntimeException rtex ) {
 			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+			if ( rtex.getMessage().toLowerCase().contains("connection reset") ) {
 				// Recreate the retrofit.
 				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
@@ -471,15 +471,15 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
 					.create(AssetsApi.class)
-					.postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource, null, null, null).execute();
-			if (!assetsApiResponse.isSuccessful()) {
+					.postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource, null).execute();
+			if ( !assetsApiResponse.isSuccessful() ) {
 				return null;
 			} else return assetsApiResponse.body();
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -495,17 +495,17 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.SERVER_DATASOURCE;
-			if (null != server) datasource = server;
+			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdFittings200Ok>> fittingApiResponse = neocomRetrofit
 					.create(FittingsApi.class)
-					.getCharactersCharacterIdFittings(identifier, datasource, null, null, null).execute();
-			if (!fittingApiResponse.isSuccessful()) {
+					.getCharactersCharacterIdFittings(identifier, datasource, null, null).execute();
+			if ( !fittingApiResponse.isSuccessful() ) {
 				return null;
 			} else return fittingApiResponse.body();
-		} catch (RuntimeException rte) {
+		} catch ( RuntimeException rte ) {
 			rte.printStackTrace();
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -521,22 +521,22 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.WALLET, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
 		final Chrono accessFullTime = new Chrono();
-		if (null == hit) {
+		if ( null == hit ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				final Response<Double> walletApiResponse = neocomRetrofit
 						.create(WalletApi.class)
-						.getCharactersCharacterIdWallet(identifier, datasource, null, null, null).execute();
-				if (walletApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdWallet(identifier, datasource, null, null).execute();
+				if ( walletApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, walletApiResponse);
 					return walletApiResponse.body();
 				}
-			} catch (IOException e) {
+			} catch ( IOException e ) {
 				e.printStackTrace();
 			} finally {
 				logger.info("<< [ESINetworkManager.getCharactersCharacterIdWallet]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -556,27 +556,27 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_SKILLQUEUE, identifier);
 		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
+		if ( allowDownloadPass() ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				Response<List<GetCharactersCharacterIdSkillqueue200Ok>> skillsApiResponse = neocomRetrofit
 						.create(SkillsApi.class)
-						.getCharactersCharacterIdSkillqueue(identifier, datasource, null, null, null).execute();
-				if (skillsApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdSkillqueue(identifier, datasource, null, null).execute();
+				if ( skillsApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, skillsApiResponse);
 					return skillsApiResponse.body();
 				} else return (List<GetCharactersCharacterIdSkillqueue200Ok>) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdSkillqueue]> [EXCEPTION]: {}", ioe.getMessage());
 				ioe.printStackTrace();
 				// Return cached response if available
 				return (List<GetCharactersCharacterIdSkillqueue200Ok>) okResponseCache.get(reference).body();
-			} catch (RuntimeException rte) {
+			} catch ( RuntimeException rte ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdSkillqueue]> [EXCEPTION]: {}", rte.getMessage());
 				rte.printStackTrace();
 				// Return cached response if available
@@ -595,27 +595,27 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_SKILLQUEUE, identifier);
 		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
+		if ( allowDownloadPass() ) {
 			try {
 				// Set the refresh to be used during the request.
 				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 				String datasource = GlobalDataManager.SERVER_DATASOURCE;
-				if (null != server) datasource = server;
+				if ( null != server ) datasource = server;
 				// Create the request to be returned so it can be called.
 				Response<GetCharactersCharacterIdSkillsOk> skillsApiResponse = neocomRetrofit
 						.create(SkillsApi.class)
-						.getCharactersCharacterIdSkills(identifier, datasource, null, null, null).execute();
-				if (skillsApiResponse.isSuccessful()) {
+						.getCharactersCharacterIdSkills(identifier, datasource, null, null).execute();
+				if ( skillsApiResponse.isSuccessful() ) {
 					// Store results on the cache.
 					okResponseCache.put(reference, skillsApiResponse);
 					return skillsApiResponse.body();
 				} else return (GetCharactersCharacterIdSkillsOk) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
+			} catch ( IOException ioe ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdSkills]> [EXCEPTION]: {}", ioe.getMessage());
 				ioe.printStackTrace();
 				// Return cached response if available
 				return (GetCharactersCharacterIdSkillsOk) okResponseCache.get(reference).body();
-			} catch (RuntimeException rte) {
+			} catch ( RuntimeException rte ) {
 				logger.error("EX [ESINetworkManager.getCharactersCharacterIdSkills]> [EXCEPTION]: {}", rte.getMessage());
 				rte.printStackTrace();
 				// Return cached response if available
