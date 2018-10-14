@@ -68,9 +68,9 @@ public class AssetsManager implements Serializable {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	// --- G E T T E R S   &   S E T T E R S
-	public PilotV2 getPilot() {
-		return pilot;
-	}
+//	public PilotV2 getPilot() {
+//		return pilot;
+//	}
 
 	public int getTotalAssets() {
 		return this.totalAssets;
@@ -410,7 +410,7 @@ public class AssetsManager implements Serializable {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("AssetsManager [ ");
-		buffer.append("owner:").append(getPilot().getName())
+		buffer.append("owner:").append(this._credential.getAccountName())
 				.append("assetCount:").append(fullAssetList.size()).append(" ")
 				.append("totalCount:").append(totalAssets).append(" ")
 				.append("]");

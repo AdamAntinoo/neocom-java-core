@@ -24,8 +24,9 @@ import org.slf4j.LoggerFactory;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GetUniverseAncestries {
+public class GetUniverseAncestries implements Serializable{
 	// - S T A T I C - S E C T I O N ..........................................................................
+	private static final long serialVersionUID = 389565210048963699L;
 	private static Logger logger = LoggerFactory.getLogger("GetUniverseAncestries");
 
 	// - F I E L D - S E C T I O N ............................................................................

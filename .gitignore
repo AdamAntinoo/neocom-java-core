@@ -11,11 +11,11 @@ NeoCom.Model/out/
 NeoCom.DataManagement/out/
 
 /.idea/libraries
-#/local.properties
-#/.idea/workspace.xml
+/.idea/workspace.xml
 #.DS_Store
 #/captures
 #.externalNativeBuild
+#/local.properties
 #NeoCom.Model/src/main/resources/properties/esiauthorization.properties
 #NeoCom.DataManagement/src/main/resources/cache/
 #NeoCom.DataManagement/libs/

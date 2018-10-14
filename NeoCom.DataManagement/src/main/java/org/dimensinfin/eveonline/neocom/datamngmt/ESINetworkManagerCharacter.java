@@ -56,7 +56,7 @@ import retrofit2.Response;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ESINetworkManagerCharacter extends ESINetworkManagerBase {
+public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	// - S T A T I C - S E C T I O N ..........................................................................
 
 	protected static boolean allowDownloadPass() {

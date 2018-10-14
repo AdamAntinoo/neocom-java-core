@@ -38,6 +38,7 @@ import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -156,7 +157,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@JsonIgnore
-	public String getItemSerialized(){
+	public String getItemSerialized() {
 		try {
 			final String serialized = jsonMapper.writeValueAsString(this.item);
 			return serialized;
@@ -165,7 +166,8 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 			return "";
 		}
 	}
-	public void setItemSerialized(String personstr){
+
+	public void setItemSerialized( String personstr ) {
 		try {
 //			final String contents = databaseResults.getString(columnPos);
 			final EveItem neweveitem = jsonMapper.readValue(personstr, EveItem.class);
@@ -349,6 +351,11 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		return this;
 	}
 
+	public NeoComAsset setLocationFlag( final GetCorporationsCorporationIdAssets200Ok.LocationFlagEnum newFlag ) {
+		this.locationFlag = GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.valueOf(newFlag.name());
+		return this;
+	}
+
 	public void setGroupName( final String name ) {
 		groupName = name;
 	}
@@ -367,6 +374,11 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 	@Override
 	public NeoComAsset setLocationType( final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
 		this.locationType = locationType;
+		return this;
+	}
+
+	public NeoComAsset setLocationType( final GetCorporationsCorporationIdAssets200Ok.LocationTypeEnum locationType ) {
+		this.locationType = GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.valueOf(locationType.name());
 		return this;
 	}
 
@@ -595,6 +607,7 @@ public class NeoComAsset extends NeoComNode implements ILocatableAsset {
 		//		}
 		return newundefloc;
 	}
+
 	// - CLASS IMPLEMENTATION ...................................................................................
 	public static class EveItemSerializer extends JsonSerializer<EveItem> {
 		// - F I E L D - S E C T I O N ............................................................................
