@@ -52,7 +52,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
 		final Chrono accessFullTime = new Chrono();
 		try {
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetStatusOk> statusApiResponse = neocomRetrofit
@@ -83,7 +83,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
 			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
@@ -108,7 +108,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		final Chrono accessFullTime = new Chrono();
 		final List<Integer> idList = new ArrayList<>();
 		try {
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
 			Response<List<PostUniverseNames200Ok>> universeApiResponse = neocomRetrofit.create(UniverseApi.class)
@@ -136,7 +136,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<Integer>> routeApiResponse = neocomRetrofit
@@ -162,7 +162,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			// Use server parameter to override configuration server to use.
 			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.
@@ -187,7 +187,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			// Use server parameter to override configuration server to use.
 			if ( null != server ) datasource = server;
 			// Create the request to be returned so it can be called.

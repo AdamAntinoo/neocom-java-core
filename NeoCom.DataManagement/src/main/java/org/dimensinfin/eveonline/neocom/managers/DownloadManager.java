@@ -265,7 +265,7 @@ public class DownloadManager {
 		// Get to the Network and download the data from the ESI api.
 		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = ESINetworkManager.getCharactersCharacterIdMining(credential.getAccountId()
 				, credential.getRefreshToken()
-				, GlobalDataManager.SERVER_DATASOURCE);
+				, credential.getDataSource());
 		if ( null != miningActionsOk ) {
 			// Process the data and convert it to structures compatible with MVC.
 			for ( GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk ) {
@@ -281,9 +281,10 @@ public class DownloadManager {
 				}
 				// If we found and exact record then we can update the value that can have changed or not.
 				if ( null != recordFound ) {
+					final long currentQty = recordFound.getQuantity();
 					recordFound.setQuantity(extractionOk.getQuantity()).store();
-					logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Updating mining extraction: {} -Quantity: {}"
-							, recordId, extractionOk.getQuantity());
+					logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Updating mining extraction: {} > Quantity: {}/{}"
+							, recordId, extractionOk.getQuantity(), currentQty);
 				} else {
 					final MiningExtraction newExtraction = new MiningExtraction()
 							.setTypeId(extractionOk.getTypeId())
@@ -292,7 +293,7 @@ public class DownloadManager {
 							.setQuantity(extractionOk.getQuantity())
 							.setOwnerId(credential.getAccountId())
 							.create(recordId);
-					logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {} -Quantity: {}"
+					logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {} > Quantity: {}"
 							, recordId, extractionOk.getQuantity());
 				}
 			}

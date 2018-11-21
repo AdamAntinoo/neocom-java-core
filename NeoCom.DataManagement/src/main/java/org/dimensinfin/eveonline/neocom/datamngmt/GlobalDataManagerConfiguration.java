@@ -65,7 +65,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	}
 
 	// --- C O N F I G U R A T I O N   S E C T I O N
-	public static String SERVER_DATASOURCE = "tranquility";
+	public static String TRANQUILITY_DATASOURCE = "tranquility";
 
 	private static IConfigurationProvider configurationManager = null/*new GlobalConfigurationProvider(null)*/;
 
@@ -80,7 +80,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 		configurationManager = newconfigurationProvider;
 		// Load configuration properties into default values.
 		// ESI Server selection
-		SERVER_DATASOURCE = GlobalDataManager.getResourceString("R.esi.authorization.datasource", "tranquility");
+//		SERVER_DATASOURCE = GlobalDataManager.getResourceString("R.esi.authorization.datasource", "tranquility");
 		// ESI Data load.
 		SDEExternalDataManager.initialize();
 	}
@@ -161,9 +161,9 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 				, Boolean.valueOf(defaultValue).toString())).booleanValue();
 	}
 
-	public String getEveOnlineServerDatasource() {
-		return SERVER_DATASOURCE;
-	}
+//	public String getEveOnlineServerDatasource() {
+//		return SERVER_DATASOURCE;
+//	}
 
 	// --- P R E F E R E N C E S   S E C T I O N
 	private static IGlobalPreferencesManager preferencesprovider = null;

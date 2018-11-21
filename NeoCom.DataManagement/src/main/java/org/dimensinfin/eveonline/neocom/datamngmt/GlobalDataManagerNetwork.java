@@ -101,7 +101,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			// Get to the Network and download the data from the ESI api.
 			final List<GetCharactersCharacterIdIndustryJobs200Ok> industryJobs = ESINetworkManager.getCharactersCharacterIdIndustryJobs(credential.getAccountId()
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			if (null != industryJobs) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdIndustryJobs200Ok job : industryJobs) {
@@ -134,7 +134,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			final List<GetCharactersCharacterIdOrders200Ok> marketOrders = ESINetworkManager.getCharactersCharacterIdOrders
 					(credential.getAccountId()
 							, credential.getRefreshToken()
-							, SERVER_DATASOURCE);
+							, credential.getDataSource());
 			if (null != marketOrders) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrders200Ok order : marketOrders) {
@@ -168,7 +168,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			final List<GetCharactersCharacterIdOrdersHistory200Ok> marketOrders = ESINetworkManager.getCharactersCharacterIdOrdersHistory
 					(credential.getAccountId()
 							, credential.getRefreshToken()
-							, SERVER_DATASOURCE);
+							, credential.getDataSource());
 			if (null != marketOrders) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrdersHistory200Ok order : marketOrders) {
@@ -208,20 +208,27 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		try {
 			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
 			final int identifier = credential.getAccountId();
-			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = ESINetworkManager.getCharactersCharacterIdPlanets(identifier, credential.getRefreshToken(), SERVER_DATASOURCE);
+			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = ESINetworkManager.getCharactersCharacterIdPlanets(identifier
+					, credential.getRefreshToken()
+					, credential.getDataSource());
 			// Transform the received OK instance into a NeoCom compatible model instance.
 			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
 				try {
 					Colony col = modelMapper.map(colonyOK, Colony.class);
 					// Block to add additional data not downloaded on this call.
 					// To set more information about this particular planet we should call the Universe database.
-					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
+					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId()
+							, credential.getRefreshToken()
+							, credential.getDataSource());
 					if (null != planetData) col.setPlanetData(planetData);
 
 					try {
 						// During this first phase download all the rest of the information.
 						// Get to the Network and download the data from the ESI api.
-						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId(), col.getPlanetId(), credential.getRefreshToken(), SERVER_DATASOURCE);
+						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
+								, col.getPlanetId()
+								, credential.getRefreshToken()
+								, credential.getDataSource());
 						if (null != colonyStructures) {
 							// Add the original data to the colony if we need some more information later.
 							col.setStructuresData(colonyStructures);
@@ -314,7 +321,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings
 					(credential.getAccountId()
 							, credential.getRefreshToken()
-							, SERVER_DATASOURCE);
+							, credential.getDataSource());
 			if (null != fittings) {
 				// Process the fittings processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
@@ -345,7 +352,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			final List<GetCharactersCharacterIdSkillqueue200Ok> skills = ESINetworkManager.getCharactersCharacterIdSkillqueue(
 					credential.getAccountId()
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			if (null != skills) {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
@@ -364,7 +371,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		return ESINetworkManager.getCharactersCharacterIdSkills(
 				credential.getAccountId()
 				, credential.getRefreshToken()
-				, SERVER_DATASOURCE);
+				, credential.getDataSource());
 	}
 
 	// - S E R V E R
@@ -373,7 +380,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		//		List<SkillInTraining> skillList = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
-			GetStatusOk status = ESINetworkManager.getStatus(SERVER_DATASOURCE);
+			GetStatusOk status = ESINetworkManager.getStatus(TRANQUILITY_DATASOURCE);
 			if (null != status) {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				//				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {
@@ -389,14 +396,14 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 
 	// - U N I V E R S E
 	public static List<PostUniverseNames200Ok> downloadUniverName4Ids( final List<Integer> idList ) {
-		return ESINetworkManager.postUserLabelNameDownload(idList, SERVER_DATASOURCE);
+		return ESINetworkManager.postUserLabelNameDownload(idList, TRANQUILITY_DATASOURCE);
 	}
 
 	// - R O U T E S
 	public static int calculateRouteJumps( final Credential credential, final int origin, final int destination ) {
 		logger.info(">> [GlobalDataManager.calculateRouteJumps]");
 		final List<Integer> jumps = ESINetworkManager.calculateRouteJumps(origin, destination
-				, credential.getRefreshToken(), SERVER_DATASOURCE);
+				, credential.getRefreshToken(), TRANQUILITY_DATASOURCE);
 		if (jumps.size() < 1) return 999;
 		else return jumps.size();
 	}

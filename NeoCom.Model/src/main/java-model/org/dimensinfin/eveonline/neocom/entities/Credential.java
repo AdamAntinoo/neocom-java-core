@@ -89,7 +89,7 @@ public class Credential extends NeoComNode {
 		this();
 		this.accountId = newAccountIdentifier;
 		// Set the default value for the datasource from the current Global configuration.
-		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
+//		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
 		try {
 			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();

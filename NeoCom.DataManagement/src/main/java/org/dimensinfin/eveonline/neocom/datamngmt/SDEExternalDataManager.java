@@ -159,7 +159,7 @@ public class SDEExternalDataManager {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		logger.info(">> [SDEExternalDataManager.readAncestries]");
+		logger.info("<< [SDEExternalDataManager.readAncestries]");
 	}
 
 	public static GetUniverseAncestries searchSDEAncestry (final int identifier) {
@@ -185,7 +185,7 @@ public class SDEExternalDataManager {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		logger.info(">> [SDEExternalDataManager.readBloodLines]");
+		logger.info("<< [SDEExternalDataManager.readBloodLines]");
 	}
 
 	public static GetUniverseBloodlines200Ok searchSDEBloodline (final int identifier) {
@@ -211,7 +211,7 @@ public class SDEExternalDataManager {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
-		logger.info(">> [SDEExternalDataManager.readRaces]");
+		logger.info("<< [SDEExternalDataManager.readRaces]");
 	}
 
 	public static GetUniverseRaces200Ok searchSDERace (final int identifier) {

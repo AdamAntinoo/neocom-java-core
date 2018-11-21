@@ -58,7 +58,7 @@ public interface IGlobalConnector {
 
 	public Integer getResourcePropertyInteger( final String key );
 
-	public String getEveOnlineServerDatasource();
+//	public String getEveOnlineServerDatasource();
 
 	// --- M U L T Y T H R E A D I N G
 //	public Future<?> submitJob2ui( final Runnable task );

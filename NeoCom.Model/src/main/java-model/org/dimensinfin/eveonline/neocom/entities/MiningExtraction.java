@@ -118,7 +118,8 @@ public class MiningExtraction extends NeoComNode {
 	private transient EveLocation systemCache = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public MiningExtraction() {
+	public
+	MiningExtraction() {
 		super();
 	}
 

@@ -138,7 +138,7 @@ public class FittingProcessor {
 
 		// STEP 02. Decompose the list of items and the hull for this Fitting.
 		// Add the hull to the list of requirements.
-		requirements.add(new Resource(target.getShipHullInfo().getItemId(), copyCount));
+		requirements.add(new Resource(target.getShipHullInfo().getTypeId(), copyCount));
 		// Add the list of items to the list of requirements.
 		for (Fitting.FittingItem item : target.getItems()) {
 			//During the addition of requirements join all the same type requests.
@@ -664,7 +664,7 @@ final class AssetsManager {
 			hit = asset4TypeCache.get(Integer.valueOf(typeId));
 			if (null == hit) {
 				final HashMap<String, Object> filterParameters = new HashMap();
-				filterParameters.put("ownerID", currentPilotCredential.getAccountId());
+				filterParameters.put("ownerId", currentPilotCredential.getAccountId());
 				filterParameters.put("typeId", typeId);
 				hit = new GlobalDataManager().getNeocomDBHelper().getAssetDao().queryForFieldValues(filterParameters);
 				// Cache the new list of assets for the specified type.

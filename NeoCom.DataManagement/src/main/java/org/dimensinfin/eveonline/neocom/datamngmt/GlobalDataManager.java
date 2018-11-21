@@ -12,6 +12,18 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.ItemCategory;
+import org.dimensinfin.eveonline.neocom.model.ItemGroup;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -25,18 +37,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.ItemCategory;
-import org.dimensinfin.eveonline.neocom.model.ItemGroup;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 /**
  * This static class centralizes all the functionality to access data. It will provide a consistent api to the rest
@@ -95,11 +95,13 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 				buffer.close();
 			}
 		} catch ( final ClassNotFoundException ex ) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> ClassNotFoundException."); //$NON-NLS-1$
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> ClassNotFoundException. {}", ex.getMessage()); //$NON-NLS-1$
 		} catch ( final FileNotFoundException fnfe ) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> FileNotFoundException."); //$NON-NLS-1$
-		} catch ( final IOException ex ) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IOException."); //$NON-NLS-1$
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> FileNotFoundException. {}", fnfe.getMessage()); //$NON-NLS-1$
+		} catch ( final IOException ioe ) {
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IOException. {}", ioe.getMessage()); //$NON-NLS-1$
+		} catch ( final IllegalArgumentException iae ) {
+			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IllegalArgumentException. {}", iae.getMessage()); //$NON-NLS-1$
 		} catch ( final RuntimeException rex ) {
 			rex.printStackTrace();
 		} finally {

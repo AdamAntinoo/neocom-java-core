@@ -1,6 +1,7 @@
 //--- P L U G I N S
 apply plugin: 'java-library'
 apply plugin: 'maven-publish'
+apply plugin: 'project-report'
 
 //--- P R O J E C T   D E F I N I T I O N
 group ='org.dimensinfin'
@@ -77,14 +78,14 @@ dependencies {
 //    compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
-    api files('libs/jeveassets.3.1.2.jar')
+//    implementation files('libs/jeveassets.3.1.2.jar')
 
     // M O D U L E    D E P E N D E N C I E S
     // C O R E    D E P E N D E N C I E S
     compileOnly 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'joda-time:joda-time:2.3'
-    implementation 'org.dimensinfin:CoreBase.core:2.2.0'
-    implementation 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
+    compileOnly 'joda-time:joda-time:2.3'
+    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
+    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
 
     // N E O C O M . D A T A M A N A G E M E N T
     implementation 'org.htmlparser:htmlparser:2.1'
@@ -99,8 +100,8 @@ dependencies {
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
     implementation 'org.modelmapper:modelmapper:1.1.0'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.annimon:stream:1.1.9'
 
     // D A T A B A S E

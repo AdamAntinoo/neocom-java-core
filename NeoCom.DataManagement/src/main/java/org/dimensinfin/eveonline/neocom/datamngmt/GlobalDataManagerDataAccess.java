@@ -75,7 +75,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			final GetAlliancesAllianceIdOk publicData = ESINetworkManager.getAlliancesAllianceId(Long.valueOf(allianceIdentifier)
 							.intValue()
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			newalliance.setAllianceId(allianceIdentifier)
 					.setPublicData(publicData);
 			//					.setExecutorCorporation(GlobalDataManager.requestCorporationV1(publicData.getExecutorCorporationId(), credential));
@@ -103,7 +103,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			//			logger.info("-- [GlobalDataManager.requestCorporationV1]> ESI Compatible. Download corporation information.");
 			final GetCorporationsCorporationIdOk publicData = ESINetworkManager.getCorporationsCorporationId(corpIdentifier
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			newcorp.setCorporationId(corpIdentifier)
 					.setPublicData(publicData);
 			if ( null != publicData.getAllianceId() )
@@ -141,7 +141,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download public data information.");
 			final GetCharactersCharacterIdOk publicData = ESINetworkManager.getCharactersCharacterId(credential.getAccountId()
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			// Public data can be null if there are problems accessing the server.
 			if ( null == publicData ) throw new NeoComRegisteredException(NEOE.ESIDATA_NULL);
 			newchar.setCharacterId(credential.getAccountId())
@@ -159,7 +159,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
 			final Double walletAmount = ESINetworkManager.getCharactersCharacterIdWallet(credential.getAccountId()
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			newchar.setAccountBalance(walletAmount);
 			// Properties
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Pilot Properties.");
@@ -173,7 +173,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download clone information.");
 			final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(credential.getAccountId()
 					, credential.getRefreshToken()
-					, SERVER_DATASOURCE);
+					, credential.getDataSource());
 			if ( null != cloneInformation ) {
 				newchar.setCloneInformation(cloneInformation);
 				newchar.setHomeLocation(cloneInformation.getHomeLocation());
@@ -237,7 +237,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
 			return new GlobalDataManager().getNeocomDBHelper().getCredentialDao()
-					.queryForEq("dataSource", new GlobalDataManager().getEveOnlineServerDatasource());
+					.queryForEq("dataSource", GlobalDataManager.TRANQUILITY_DATASOURCE);
 		} catch ( java.sql.SQLException sqle ) {
 			sqle.printStackTrace();
 			logger.warn("W [GlobalDataManagerDataAccess.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
@@ -307,9 +307,8 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 	/**
 	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
-	 * that
-	 * today records are aggregated by hour instead of by day. So we will have a record for one ore/system since the hour we did the
-	 * extractions until the 23 hours. The first extration will add to the hour until the next hour starts. Then the accounting for this
+	 * that today records are aggregated by hour instead of by day. So we will have a record for one ore/system since the hour we did the
+	 * extractions until the 23 hours. The first extraction will add to the hour until the next hour starts. Then the accounting for this
 	 * new hour will show the new ore totals and so on hour after hour.
 	 * @param credential
 	 * @return

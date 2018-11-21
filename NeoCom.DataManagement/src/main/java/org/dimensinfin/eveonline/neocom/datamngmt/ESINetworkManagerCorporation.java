@@ -36,7 +36,7 @@ public class ESINetworkManagerCorporation extends ESINetworkManagerBase {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.SERVER_DATASOURCE;
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			if ( null != server ) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;

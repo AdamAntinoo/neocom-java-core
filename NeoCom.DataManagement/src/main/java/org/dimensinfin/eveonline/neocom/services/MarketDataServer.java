@@ -12,6 +12,25 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.services;
 
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
+import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
+import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
+import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+import org.dimensinfin.eveonline.neocom.market.TrackEntry;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.joda.time.Instant;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -33,25 +52,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.joda.time.Instant;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
-import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
-import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.market.TrackEntry;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class MarketDataServer {
@@ -123,7 +123,7 @@ public class MarketDataServer {
 	 */
 	public static List<String> getStationList() {
 		final List<String> result = new ArrayList<>();
-		for ( String station : stationList ) {
+		for (String station : stationList) {
 			result.add(station);
 		}
 		return result;
@@ -151,7 +151,7 @@ public class MarketDataServer {
 			// Open the file on the Application storage area.
 			final BufferedInputStream buffer = new BufferedInputStream(GlobalDataManager.openResource4Input(cacheFileName));
 			final ObjectInputStream input = new ObjectInputStream(buffer);
-			logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", cacheFileName);
+//			logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", cacheFileName);
 			try {
 				synchronized (buyMarketDataCache) {
 					buyMarketDataCache = (HashMap<Integer, MarketDataSet>) input.readObject();
@@ -226,7 +226,7 @@ public class MarketDataServer {
 		int pending = 0;
 		int done = 0;
 		synchronized (runningJobsList) {
-			for ( Future<MarketDataSet> fut : runningJobsList ) {
+			for (Future<MarketDataSet> fut : runningJobsList) {
 				if ( fut.isDone() ) done++;
 				else pending++;
 			}
@@ -600,7 +600,7 @@ public class MarketDataServer {
 			//				if (station.contains(stationNameMatch)) return true;
 			//			}
 			final String station = entry.getStationName();
-			for ( String stationNameMatch : stationList ) {
+			for (String stationNameMatch : stationList) {
 				if ( station.contains(stationNameMatch) ) return true;
 			}
 			return false;
@@ -663,7 +663,14 @@ public class MarketDataServer {
 				URLDestination = this.getModuleLink(itemName, "BUY");
 			}
 			if ( null != URLDestination ) {
-				reader.parse(URLDestination);
+				try {
+					reader.parse(URLDestination);
+				} catch ( SAXException saxe ) {
+					marketEntries = content.getEntries();
+					logger.info("-- [MarketDataJobDownloadManager.parseMarketDataEMD]> Exception during parse. Stopping processing.");
+					logger.info("<< [MarketDataJobDownloadManager.parseMarketDataEMD]> MarketEntries [" + marketEntries.size() + "]");
+					return marketEntries;
+				}
 				marketEntries = content.getEntries();
 			}
 			logger.info("<< [MarketDataJobDownloadManager.parseMarketDataEMD]> MarketEntries [" + marketEntries.size() + "]");

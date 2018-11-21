@@ -86,7 +86,7 @@ dependencies {
     // M O D U L E    D E P E N D E N C I E S
     // C O R E   P L A T F O R M
     compileOnly 'org.slf4j:slf4j-api:1.7.25'
-    implementation 'joda-time:joda-time:2.3'
+    compileOnly 'joda-time:joda-time:2.3'
 
     // P R O J E C T S
 //    compileOnly project(path: ':ESI.SwaggerApi')

@@ -16,6 +16,7 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -110,6 +112,7 @@ public class NeoComOAuth20 {
 
 		OkHttpClient.Builder verifyClient =
 				new OkHttpClient.Builder()
+						.protocols(Arrays.asList(Protocol.HTTP_1_1))
 						.certificatePinner(
 								new CertificatePinner.Builder()
 										.add("login.eveonline.com", "sha256/5UeWOuDyX7IUmcKnsVdx+vLMkxEGAtzfaOUQT/caUBE=")
