@@ -30,6 +30,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import retrofit2.Response;
 
 /**
@@ -44,6 +46,7 @@ import retrofit2.Response;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ESINetworkManager extends ESINetworkManagerCharacter {
 	// - S T A T I C - S E C T I O N ..........................................................................
+
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
 	// --- S E R V E R
 	public static GetStatusOk getStatus( final String server ) {

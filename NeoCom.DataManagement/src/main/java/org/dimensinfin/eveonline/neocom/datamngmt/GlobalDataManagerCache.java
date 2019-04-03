@@ -38,7 +38,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	public enum ECacheTimes {
 		SERVERSTATUS,
 		CHARACTER_PUBLIC, CHARACTER_CLONES, CHARACTER_BLUEPRINTS, CHARACTER_SKILLQUEUE, CHARACTER_SKILLS,
-		PLANETARY_INTERACTION_PLANETS, PLANETARY_INTERACTION_STRUCTURES,
+		CHARACTER_COLONIES, PLANETARY_INTERACTION_STRUCTURES,
 		ASSETS_ASSETS, CORPORATION_CUSTOM_OFFICES, UNIVERSE_SCHEMATICS,
 		MARKET_PRICES,
 		INDUSTRY_JOBS, INDUSTRY_MARKET_ORDERS, INDUSTRY_MINING,
@@ -52,7 +52,7 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		ESICacheTimes.put(ECacheTimes.CHARACTER_BLUEPRINTS, TimeUnit.SECONDS.toMillis(3600));
 		ESICacheTimes.put(ECacheTimes.CHARACTER_SKILLQUEUE, TimeUnit.SECONDS.toMillis(120));
 		ESICacheTimes.put(ECacheTimes.CHARACTER_SKILLS, TimeUnit.SECONDS.toMillis(120));
-		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_PLANETS, TimeUnit.SECONDS.toMillis(600));
+		ESICacheTimes.put(ECacheTimes.CHARACTER_COLONIES, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, TimeUnit.SECONDS.toMillis(600));
 		ESICacheTimes.put(ECacheTimes.ASSETS_ASSETS, TimeUnit.SECONDS.toMillis(3600 * 1));// TODO - Changing some values during debugging.
 		ESICacheTimes.put(ECacheTimes.MARKET_PRICES, TimeUnit.SECONDS.toMillis(3600));

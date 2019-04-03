@@ -23,7 +23,7 @@ import retrofit2.Response;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ESINetworkManagerCorporation extends ESINetworkManagerBase {
+public class ESINetworkManagerCorporation extends ESINetworkManagerZBase{
 	// - S T A T I C - S E C T I O N ..........................................................................
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C O R P O R A T I O N   A P I
 	// --- A S S E T S

@@ -219,7 +219,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_PLANETS, identifier);
+		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_COLONIES, identifier);
 		// Check if network is available and we have configured allowed access to download data.
 		if ( allowDownloadPass() ) {
 			try {

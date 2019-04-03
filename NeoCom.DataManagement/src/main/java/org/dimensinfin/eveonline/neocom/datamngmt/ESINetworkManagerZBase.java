@@ -48,10 +48,8 @@ import retrofit2.Retrofit;
  */
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ESINetworkManagerBase {
-	// - S T A T I C - S E C T I O N ..........................................................................
+public class ESINetworkManagerZBase  {
 	protected static Logger logger = LoggerFactory.getLogger("ESINetworkManager");
-
 	protected static final ESIStore STORE = ESIStore.DEFAULT;
 	protected static final List<String> SCOPES = new ArrayList<>(2);
 	protected static String SCOPESTRING = "publicData";

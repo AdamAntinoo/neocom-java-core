@@ -339,7 +339,7 @@ public class TimedUpdater {
 		//
 		//							// Update the timer for this download at the database.
 		//							final Instant validUntil = Instant.now()
-		//							                                  .plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.PLANETARY_INTERACTION_PLANETS));
+		//							                                  .plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.CHARACTER_COLONIES));
 		//							final TimeStamp ts = new TimeStamp(transferredCurrentrequestReference, validUntil)
 		//									.setCredentialId(credential.getAccountId())
 		//									.store();
