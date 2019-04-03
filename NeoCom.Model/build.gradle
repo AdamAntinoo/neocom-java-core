@@ -89,14 +89,14 @@ dependencies {
     compileOnly 'joda-time:joda-time:2.3'
 
     // P R O J E C T S
-//    compileOnly project(path: ':ESI.SwaggerApi')
+    compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L   L I B R A R I E S
     implementation files('libs/jeveassets.3.1.2.jar')
 
     // N E O C O M . M O D E L
     compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
-    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
+//    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
 
     implementation 'com.beimin:eveapi:6.0.6'
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
