@@ -12,16 +12,16 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.entities;
 
+import java.sql.SQLException;
+
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -58,9 +58,9 @@ public class Credential extends NeoComNode {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true, index = true)
-	private String uniqueCredential = "tranquility/-1";
+	protected String uniqueCredential = "tranquility/-1";
 	@DatabaseField
-	private int accountId = -2;
+	protected int accountId = -2;
 	@DatabaseField
 	private String accountName = "-NAME-";
 	@DatabaseField

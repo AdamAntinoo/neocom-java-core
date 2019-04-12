@@ -15,9 +15,19 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.auth;
 
+import java.io.File;
+import java.lang.reflect.Type;
+import java.util.concurrent.TimeUnit;
+
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-
+import okhttp3.Cache;
+import okhttp3.CertificatePinner;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -25,16 +35,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.lang.reflect.Type;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.Cache;
-import okhttp3.CertificatePinner;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -162,7 +162,7 @@ public class NeoComRetrofitHTTP {
 				.build();
 		return
 				new Retrofit.Builder()
-						.baseUrl("https://esi.tech.ccp.is/latest/")
+						.baseUrl(GlobalDataManager.getResourceString("R.esi.data.server.location"))
 						.addConverterFactory(GSON_CONVERTER_FACTORY)
 						.client(httpClient)
 						.build();

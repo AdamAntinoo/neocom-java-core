@@ -13,17 +13,15 @@
 package org.dimensinfin.eveonline.neocom.industry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import java.util.ArrayList;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Fitting extends NeoComNode {
@@ -125,7 +123,7 @@ public class Fitting extends NeoComNode {
 
 		// - F I E L D - S E C T I O N ............................................................................
 		private int typeId = -1;
-		private int flag = 0;
+		private CharacterscharacterIdfittingsItems.FlagEnum flag = CharacterscharacterIdfittingsItems.FlagEnum.CARGO;
 		private int quantity = 0;
 		@JsonIgnore
 		private transient EveItem itemDetails = null;
@@ -167,11 +165,11 @@ public class Fitting extends NeoComNode {
 			return this;
 		}
 
-		public FittingItem setFlag( final int flag ) {
+		public FittingItem setFlag( final CharacterscharacterIdfittingsItems.FlagEnum flag ) {
 			this.flag = flag;
 			// Transform the numeric flag to a categorized value.
 			try {
-				detailedFlag = accessGlobal().searchFlag4Id(flag);
+				detailedFlag = accessGlobal().searchFlag4Id(flag.hashCode());
 			} catch (NeoComRuntimeException neoe) {
 				detailedFlag = new InventoryFlag()
 						.setFlagID(4)
