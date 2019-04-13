@@ -111,38 +111,38 @@ public class NeoComRetrofitHTTP {
 
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
-						.addInterceptor(chain -> {
-							Request.Builder builder = chain.request().newBuilder()
-																						 .addHeader("User-Agent", agent);
-							return chain.proceed(builder.build());
-						})
-						.addInterceptor(chain -> {
-							if ( StringUtils.isBlank(getRefreshToken()) ) {
-								return chain.proceed(chain.request());
-							}
-
-							Request.Builder builder = chain.request().newBuilder();
-							final TokenTranslationResponse token = auth.fromRefresh(getRefreshToken());
-							if ( null != token ) {
-								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
-							}
-							return chain.proceed(builder.build());
-						})
-						.addInterceptor(chain -> {
-							if ( StringUtils.isBlank(getRefreshToken()) ) {
-								return chain.proceed(chain.request());
-							}
-
-							Response r = chain.proceed(chain.request());
-							if ( r.isSuccessful() ) {
-								return r;
-							}
-							if ( r.body().string().contains("invalid_token") ) {
-								auth.fromRefresh(getRefreshToken());
-								r = chain.proceed(chain.request());
-							}
-							return r;
-						});
+//						.addInterceptor(chain -> {
+//							Request.Builder builder = chain.request().newBuilder()
+//																						 .addHeader("User-Agent", agent);
+//							return chain.proceed(builder.build());
+//						})
+						.addInterceptor(new MockInterceptor());
+//							if ( StringUtils.isBlank(getRefreshToken()) ) {
+//								return chain.proceed(chain.request());
+//							}
+//
+//							Request.Builder builder = chain.request().newBuilder();
+//							final TokenTranslationResponse token = auth.fromRefresh(getRefreshToken());
+//							if ( null != token ) {
+//								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
+//							}
+//							return chain.proceed(builder.build());
+//						})
+//						.addInterceptor(chain -> {
+//							if ( StringUtils.isBlank(getRefreshToken()) ) {
+//								return chain.proceed(chain.request());
+//							}
+//
+//							Response r = chain.proceed(chain.request());
+//							if ( r.isSuccessful() ) {
+//								return r;
+//							}
+//							if ( r.body().string().contains("invalid_token") ) {
+//								auth.fromRefresh(getRefreshToken());
+//								r = chain.proceed(chain.request());
+//							}
+//							return r;
+//						});
 
 		if ( timeout != -1 ) {
 			retrofitClient.readTimeout(timeout, TimeUnit.MILLISECONDS);
