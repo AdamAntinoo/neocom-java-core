@@ -1,18 +1,3 @@
-//  PROJECT:     NeoCom.Android (NEOC.A)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Android API22.
-//  DESCRIPTION: Android Application related to the Eve Online game. The purpose is to download and organize
-//               the game data to help capsuleers organize and prioritize activities. The strong points are
-//               help at the Industry level tracking and calculating costs and benefits. Also the market
-//               information update service will help to identify best prices and locations.
-//               Planetary Interaction and Ship fittings are point under development.
-//               ESI authorization is a new addition that will give continuity and allow download game data
-//               from the new CCP data services.
-//               This is the Android application version but shares libraries and code with other application
-//               designed for Spring Boot Angular 4 platform.
-//               The model management is shown using a generic Model View Controller that allows make the
-//               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.File;
@@ -111,38 +96,38 @@ public class NeoComRetrofitHTTP {
 
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
-//						.addInterceptor(chain -> {
-//							Request.Builder builder = chain.request().newBuilder()
-//																						 .addHeader("User-Agent", agent);
-//							return chain.proceed(builder.build());
-//						})
-						.addInterceptor(new MockInterceptor());
-//							if ( StringUtils.isBlank(getRefreshToken()) ) {
-//								return chain.proceed(chain.request());
-//							}
-//
-//							Request.Builder builder = chain.request().newBuilder();
-//							final TokenTranslationResponse token = auth.fromRefresh(getRefreshToken());
-//							if ( null != token ) {
-//								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
-//							}
-//							return chain.proceed(builder.build());
-//						})
-//						.addInterceptor(chain -> {
-//							if ( StringUtils.isBlank(getRefreshToken()) ) {
-//								return chain.proceed(chain.request());
-//							}
-//
-//							Response r = chain.proceed(chain.request());
-//							if ( r.isSuccessful() ) {
-//								return r;
-//							}
-//							if ( r.body().string().contains("invalid_token") ) {
-//								auth.fromRefresh(getRefreshToken());
-//								r = chain.proceed(chain.request());
-//							}
-//							return r;
-//						});
+						.addInterceptor(chain -> {
+							Request.Builder builder = chain.request().newBuilder()
+																						 .addHeader("User-Agent", agent);
+							return chain.proceed(builder.build());
+						})
+						.addInterceptor(chain -> {
+							if ( StringUtils.isBlank(getRefreshToken()) ) {
+								return chain.proceed(chain.request());
+							}
+
+							Request.Builder builder = chain.request().newBuilder();
+							final TokenTranslationResponse token = auth.fromRefresh(getRefreshToken());
+							if ( null != token ) {
+								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
+							}
+							return chain.proceed(builder.build());
+						})
+						.addInterceptor(chain -> {
+							if ( StringUtils.isBlank(getRefreshToken()) ) {
+								return chain.proceed(chain.request());
+							}
+
+							Response r = chain.proceed(chain.request());
+							if ( r.isSuccessful() ) {
+								return r;
+							}
+							if ( r.body().string().contains("invalid_token") ) {
+								auth.fromRefresh(getRefreshToken());
+								r = chain.proceed(chain.request());
+							}
+							return r;
+						});
 
 		if ( timeout != -1 ) {
 			retrofitClient.readTimeout(timeout, TimeUnit.MILLISECONDS);
@@ -167,15 +152,4 @@ public class NeoComRetrofitHTTP {
 						.client(httpClient)
 						.build();
 	}
-
-//	@Override
-//	public String toString () {
-//		StringBuffer buffer = new StringBuffer("NeoComRetrofitHTTP [");
-//		buffer.append("name: ").append(0);
-//		buffer.append("]");
-//		buffer.append("->").append(super.toString());
-//		return buffer.toString();
-//	}
 }
-// - UNUSED CODE ............................................................................................
-//[01]

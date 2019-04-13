@@ -195,7 +195,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		} else return (GetCharactersCharacterIdClonesOk) okResponseCache.get(reference).body();
 	}
 
-	// --- P L A N E T A R Y   I N T E R A C T I O N
+	// - P L A N E T A R Y   I N T E R A C T I O N
 	public static List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets(final int identifier
 			, final String refreshToken, final String server) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
