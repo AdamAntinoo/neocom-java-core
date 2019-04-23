@@ -67,16 +67,17 @@ publishing {
 }
 publish.dependsOn build
 
-//--- P R O D U C T   V E R S I O N S
+// - P R O D U C T   V E R S I O N S
 ext {
     jacksonVersion = '2.9.4'
     ormliteVersion = '4.48'
+    retrofitVersion = '2.3.0'
 }
 
 dependencies {
     // P R O J E C T    D E P E N D E N C I E S
     compileOnly project(path: ':NeoCom.Model')
-//    compileOnly project(path: ':ESI.SwaggerApi')
+    compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
 //    implementation files('libs/jeveassets.3.1.2.jar')
@@ -85,31 +86,21 @@ dependencies {
     // C O R E    D E P E N D E N C I E S
     compileOnly 'org.slf4j:slf4j-api:1.7.25'
     compileOnly 'joda-time:joda-time:2.3'
-    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
-    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
+//    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
+//    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
 
-    // N E O C O M . D A T A M A N A G E M E N T
-    implementation 'org.htmlparser:htmlparser:2.1'
-    implementation 'com.github.scribejava:scribejava-core:5.4.0'
-    implementation 'org.apache.commons:commons-lang3:3.7'
 
     // N E O C O M . M O D E L
-    implementation 'com.beimin:eveapi:6.0.6'
-    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
-    implementation 'org.modelmapper:modelmapper:1.1.0'
-    implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-    implementation 'com.annimon:stream:1.1.9'
-
-    // D A T A B A S E
-    implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
-    implementation 'org.xerial:sqlite-jdbc:3.16.1'
-    implementation 'javax.persistence:javax.persistence-api:2.2'
-
+//    implementation 'com.beimin:eveapi:6.0.6'
+//    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+//    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+//    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
+//    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+//    implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
+//    implementation 'org.modelmapper:modelmapper:1.1.0'
+//    implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
+//    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+//    implementation 'com.annimon:stream:1.1.9'
 
     // T E S T I N G   D E P E N D E N C I E S
     testImplementation 'junit:junit:4.12'
@@ -117,4 +108,29 @@ dependencies {
     testImplementation 'joda-time:joda-time:2.3'
     testImplementation 'mysql:mysql-connector-java:5.1.45'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+}
+// - N E O C O M . M O D E L
+dependencies{
+    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
+
+    implementation 'com.beimin:eveapi:6.0.6'
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
+    implementation 'org.modelmapper:modelmapper:1.1.0'
+    implementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation 'com.annimon:stream:1.1.9'
+}
+// - N E O C O M . D A T A M A N A G E M E N T
+dependencies {
+    implementation 'org.htmlparser:htmlparser:2.1'
+    implementation 'com.github.scribejava:scribejava-core:5.4.0'
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    // D A T A B A S E
+    implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
+    implementation 'org.xerial:sqlite-jdbc:3.25.2'
+    implementation 'javax.persistence:javax.persistence-api:2.2'
 }

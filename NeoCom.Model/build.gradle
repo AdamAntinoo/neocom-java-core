@@ -92,11 +92,20 @@ dependencies {
     compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L   L I B R A R I E S
-    implementation files('libs/jeveassets.3.1.2.jar')
+    api files('libs/jeveassets.3.1.2.jar')
 
-    // N E O C O M . M O D E L
+    // D A T A B A S E
+    implementation "com.j256.ormlite:ormlite-core:$ormliteVersion"
+    implementation 'javax.persistence:javax.persistence-api:2.2'
+
+    // T E S T I N G   D E P E N D E N C I E S
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
+    testImplementation 'joda-time:joda-time:2.3'
+}
+// - N E O C O M . M O D E L
+dependencies{
     compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
-//    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
 
     implementation 'com.beimin:eveapi:6.0.6'
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
@@ -108,13 +117,4 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-jackson:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
     implementation 'com.annimon:stream:1.1.9'
-
-    // D A T A B A S E
-    implementation "com.j256.ormlite:ormlite-core:$ormliteVersion"
-    implementation 'javax.persistence:javax.persistence-api:2.2'
-
-    // T E S T I N G   D E P E N D E N C I E S
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
-    testImplementation 'joda-time:joda-time:2.3'
 }
