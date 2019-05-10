@@ -1,15 +1,3 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import java.io.IOException;
@@ -42,13 +30,11 @@ import retrofit2.Response;
  * exception.
  * @author Adam Antinoo
  */
-
-// - CLASS IMPLEMENTATION ...................................................................................
 public class ESINetworkManager extends ESINetworkManagerCharacter {
-	// - S T A T I C - S E C T I O N ..........................................................................
+	// - S T A T I C - S E C T I O N
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
-	// --- S E R V E R
+	// - S E R V E R
 	public static GetStatusOk getStatus( final String server ) {
 		logger.info(">> [ESINetworkManager.getStatus]");
 		// Store the response at the cache or if there is a network failure return the last access if available
@@ -79,7 +65,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - U N I V E R S E   A P I
-	// --- U N I V E R S E
+	// - U N I V E R S E
 	public static GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
 		final Chrono accessFullTime = new Chrono();

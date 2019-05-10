@@ -29,7 +29,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class GlobalConfigurationProvider implements IConfigurationProvider {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalConfigurationProvider");
+	protected static Logger logger = LoggerFactory.getLogger(GlobalConfigurationProvider.class);
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties";
 
 	// - F I E L D - S E C T I O N ............................................................................
@@ -39,7 +39,7 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public GlobalConfigurationProvider( final String propertiesFolder ) {
 		if (null != propertiesFolder) configuredPropertiesFolder = propertiesFolder;
-		initialize();
+//		initialize();
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -96,6 +96,3 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 
 	protected abstract List<String> getResourceFiles( String path ) throws IOException;
 }
-
-// - UNUSED CODE ............................................................................................
-//[01]
