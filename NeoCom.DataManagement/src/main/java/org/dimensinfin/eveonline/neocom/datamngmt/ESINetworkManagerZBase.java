@@ -164,6 +164,14 @@ public class ESINetworkManagerZBase {
 		this.fileSystemAdapter = fileSystemAdapter;
 	}
 
+	public IConfigurationProvider getConfigurationProvider() {
+		return configurationProvider;
+	}
+
+	public IFileSystem getFileSystemAdapter() {
+		return fileSystemAdapter;
+	}
+
 	private void initialise() {
 		logger.info(">> [ESIAdapter.initialize]");
 		// Read the configuration and open the ESI requests cache.
@@ -240,11 +248,6 @@ public class ESINetworkManagerZBase {
 		}
 
 		public ESINetworkManagerZBase build() {
-			// Check that required fields are informed successfully
-			//			assertNotNull(	CLIENT_ID );
-			//			assertNotNull (SECRET_KEY );
-			//			assertNotNull (CALLBACK );
-			//			assertNotNull (AGENT);
 			// Run the initialisation code.
 			this.onConstruction.initialise();
 			return this.onConstruction;

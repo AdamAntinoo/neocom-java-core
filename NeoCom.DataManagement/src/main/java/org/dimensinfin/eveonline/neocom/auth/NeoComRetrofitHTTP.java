@@ -56,7 +56,7 @@ public class NeoComRetrofitHTTP {
 		}
 	}
 
-	private static final Converter.Factory GSON_CONVERTER_FACTORY =
+	protected static final Converter.Factory GSON_CONVERTER_FACTORY =
 			GsonConverterFactory.create(
 					new GsonBuilder()
 							.registerTypeAdapter(DateTime.class, new GSONDateTimeDeserializer())
@@ -64,7 +64,7 @@ public class NeoComRetrofitHTTP {
 							.create());
 	private static String refreshToken = "";
 
-	private static String getRefreshToken() {
+	protected static String getRefreshToken() {
 		return refreshToken;
 	}
 
@@ -74,11 +74,11 @@ public class NeoComRetrofitHTTP {
 
 	// - F I E L D S
 	private IConfigurationProvider configurationProvider;
-	private NeoComOAuth20 neoComOAuth20;
-	private String agent;
-	private File cacheDataFile;
-	private long cacheSize = 1024 * 1024;
-	private long timeout = TimeUnit.SECONDS.toMillis(60);
+	protected NeoComOAuth20 neoComOAuth20;
+	protected String agent;
+	protected File cacheDataFile;
+	protected long cacheSize = 1024 * 1024;
+	protected long timeout = TimeUnit.SECONDS.toMillis(60);
 
 	// - C O N S T R U C T O R - S E C T I O N
 	public NeoComRetrofitHTTP( final IConfigurationProvider configurationProvider ) {

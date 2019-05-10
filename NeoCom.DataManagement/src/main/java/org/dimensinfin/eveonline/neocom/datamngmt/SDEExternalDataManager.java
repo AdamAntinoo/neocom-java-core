@@ -23,6 +23,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
@@ -82,7 +83,7 @@ public class SDEExternalDataManager {
 		readRaces();
 	}
 
-	//--- Y A M L - L O C A T I O N   F L A G S
+	// - Y A M L - L O C A T I O N   F L A G S
 	private static ObjectMapper yamlMapper = null;
 
 	static {
@@ -95,6 +96,11 @@ public class SDEExternalDataManager {
 	}
 
 	private static final HashMap<Integer, InventoryFlag> flagStore = new HashMap();
+
+//	public static void loadSDEData() {
+//		data =
+//		ancestriesCache.
+//	}
 
 	//	private static final String inventoryFlagFileLocation = GlobalDataManager.getResourceString("R.sde.external.yaml.locationpath")
 	//			+ GlobalDataManager.getResourceString("R.sde.external.yaml.inventoryFlag");
@@ -129,9 +135,9 @@ public class SDEExternalDataManager {
 	 * Jackson mapper to use for object json serialization.
 	 */
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
-	private static Hashtable<Integer, GetUniverseAncestries> ancestriesCache = new Hashtable<>();
-	private static Hashtable<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new Hashtable<>();
-	private static Hashtable<Integer, GetUniverseRaces200Ok> racesCache = new Hashtable<>();
+	protected static Hashtable<Integer, GetUniverseAncestries200Ok> ancestriesCache = new Hashtable<>();
+	protected static Hashtable<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new Hashtable<>();
+	protected static Hashtable<Integer, GetUniverseRaces200Ok> racesCache = new Hashtable<>();
 
 	static {
 		jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -149,11 +155,11 @@ public class SDEExternalDataManager {
 			// Get the file location to process.
 			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
 					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.ancestries");
-			final List<GetUniverseAncestries> ancestries = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
-					, new TypeReference<List<GetUniverseAncestries>>() {
+			final List<GetUniverseAncestries200Ok> ancestries = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
+					, new TypeReference<List<GetUniverseAncestries200Ok>>() {
 					});
 			ancestriesCache.clear();
-			for (GetUniverseAncestries line : ancestries) {
+			for (GetUniverseAncestries200Ok line : ancestries) {
 				ancestriesCache.put(line.getId(), line);
 			}
 		} catch (IOException ioe) {
@@ -162,9 +168,9 @@ public class SDEExternalDataManager {
 		logger.info("<< [SDEExternalDataManager.readAncestries]");
 	}
 
-	public static GetUniverseAncestries searchSDEAncestry (final int identifier) {
-		GetUniverseAncestries hit = ancestriesCache.get(identifier);
-		if ( null == hit ) hit = new GetUniverseAncestries();
+	public static GetUniverseAncestries200Ok searchSDEAncestry (final int identifier) {
+		GetUniverseAncestries200Ok hit = ancestriesCache.get(identifier);
+		if ( null == hit ) hit = new GetUniverseAncestries200Ok();
 		return hit;
 	}
 

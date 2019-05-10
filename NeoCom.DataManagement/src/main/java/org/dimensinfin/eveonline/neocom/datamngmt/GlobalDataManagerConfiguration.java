@@ -82,7 +82,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 		// ESI Server selection
 //		SERVER_DATASOURCE = GlobalDataManager.getResourceString("R.esi.authorization.datasource", "tranquility");
 		// ESI Data load.
-		SDEExternalDataManager.initialize();
+//		SDEExternalDataManager.initialize();
 	}
 
 	public static String getResourceString( final String key ) {
@@ -165,7 +165,7 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 //		return SERVER_DATASOURCE;
 //	}
 
-	// --- P R E F E R E N C E S   S E C T I O N
+	// - P R E F E R E N C E S   S E C T I O N
 	private static IGlobalPreferencesManager preferencesprovider = null;
 
 	public static void connectPreferencesManager( final IGlobalPreferencesManager newPreferencesProvider ) {
