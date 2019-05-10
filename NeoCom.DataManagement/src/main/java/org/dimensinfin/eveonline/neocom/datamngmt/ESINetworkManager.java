@@ -194,5 +194,3 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		return null;
 	}
 }
-// - UNUSED CODE ............................................................................................
-//[01]

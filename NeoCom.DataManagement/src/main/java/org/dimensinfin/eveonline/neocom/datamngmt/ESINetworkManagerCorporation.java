@@ -62,7 +62,8 @@ public class ESINetworkManagerCorporation extends ESINetworkManagerZBase{
 			// Check if the problem is a connection reset.
 			if ( rtex.getMessage().toLowerCase().contains("connection reset") ) {
 				// Recreate the retrofit.
-				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
 		} finally {
 			logger.info("<< [ESINetworkManagerCorporation.getCorporationsCorporationIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
@@ -72,5 +73,3 @@ public class ESINetworkManagerCorporation extends ESINetworkManagerZBase{
 
 }
 
-// - UNUSED CODE ............................................................................................
-//[01]

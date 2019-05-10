@@ -4,7 +4,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -27,16 +27,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by Adam on 15/01/2018.
  */
-
-// - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComRetrofitHTTP {
-	public static class GSONDateTimeDeserializer implements com.google.gson.JsonDeserializer<DateTime> {
+	// - S T A T I C - S E C T I O N
+	private static Logger logger = LoggerFactory.getLogger(NeoComRetrofitHTTP.class);
 
+	public static class GSONDateTimeDeserializer implements com.google.gson.JsonDeserializer<DateTime> {
 		@Override
-		public DateTime deserialize (
+		public DateTime deserialize(
 				com.google.gson.JsonElement element,
 				Type arg1,
-				com.google.gson.JsonDeserializationContext arg2) throws JsonParseException {
+				com.google.gson.JsonDeserializationContext arg2 ) throws JsonParseException {
 			String date = element.getAsString();
 			return DateTime.parse(date);
 		}
@@ -47,10 +47,10 @@ public class NeoComRetrofitHTTP {
 		private static final DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd");
 
 		@Override
-		public LocalDate deserialize (
+		public LocalDate deserialize(
 				com.google.gson.JsonElement element,
 				Type arg1,
-				com.google.gson.JsonDeserializationContext arg2) throws JsonParseException {
+				com.google.gson.JsonDeserializationContext arg2 ) throws JsonParseException {
 			String date = element.getAsString();
 			return LocalDate.parse(date, format);
 		}
@@ -64,92 +64,122 @@ public class NeoComRetrofitHTTP {
 							.create());
 	private static String refreshToken = "";
 
-	private static String getRefreshToken () {
+	private static String getRefreshToken() {
 		return refreshToken;
 	}
 
-	public static void setRefeshToken (final String token) {
+	public static void setRefeshToken( final String token ) {
 		refreshToken = token;
 	}
 
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger(NeoComRetrofitHTTP.class);
+	// - F I E L D S
+	private IConfigurationProvider configurationProvider;
+	private NeoComOAuth20 neoComOAuth20;
+	private String agent;
+	private File cacheDataFile;
+	private long cacheSize = 1024 * 1024;
+	private long timeout = TimeUnit.SECONDS.toMillis(60);
 
-	// - F I E L D - S E C T I O N ............................................................................
-
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public NeoComRetrofitHTTP () {
+	// - C O N S T R U C T O R - S E C T I O N
+	public NeoComRetrofitHTTP( final IConfigurationProvider configurationProvider ) {
 		super();
+		this.configurationProvider = configurationProvider;
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	public static Retrofit build (final String refresh, final NeoComOAuth20 auth, final String agent, final File cache
-			, final long cacheSize
-			, final long timeout) {
-		NeoComRetrofitHTTP.setRefeshToken(refresh);
-		return build(auth, agent, cache, cacheSize, timeout);
-	}
-
-	public static Retrofit build (final NeoComOAuth20 auth, final String agent, final File cache
-			, final long cacheSize
-			, final long timeout) {
-
+	// - M E T H O D - S E C T I O N
+	private Retrofit build() {
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
 						.addInterceptor(chain -> {
 							Request.Builder builder = chain.request().newBuilder()
-																						 .addHeader("User-Agent", agent);
+									                          .addHeader("User-Agent", this.agent);
 							return chain.proceed(builder.build());
 						})
 						.addInterceptor(chain -> {
-							if ( StringUtils.isBlank(getRefreshToken()) ) {
+							if (StringUtils.isBlank(getRefreshToken())) {
 								return chain.proceed(chain.request());
 							}
 
 							Request.Builder builder = chain.request().newBuilder();
-							final TokenTranslationResponse token = auth.fromRefresh(getRefreshToken());
-							if ( null != token ) {
+							final TokenTranslationResponse token = this.neoComOAuth20.fromRefresh(getRefreshToken());
+							if (null != token) {
 								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
 							}
 							return chain.proceed(builder.build());
 						})
 						.addInterceptor(chain -> {
-							if ( StringUtils.isBlank(getRefreshToken()) ) {
+							if (StringUtils.isBlank(getRefreshToken())) {
 								return chain.proceed(chain.request());
 							}
 
 							Response r = chain.proceed(chain.request());
-							if ( r.isSuccessful() ) {
+							if (r.isSuccessful()) {
 								return r;
 							}
-							if ( r.body().string().contains("invalid_token") ) {
-								auth.fromRefresh(getRefreshToken());
+							if (r.body().string().contains("invalid_token")) {
+								this.neoComOAuth20.fromRefresh(getRefreshToken());
 								r = chain.proceed(chain.request());
 							}
 							return r;
 						});
 
-		if ( timeout != -1 ) {
-			retrofitClient.readTimeout(timeout, TimeUnit.MILLISECONDS);
+		if (this.timeout != -1) {
+			retrofitClient.readTimeout(this.timeout, TimeUnit.MILLISECONDS);
 		}
 
-		if ( null != cache ) {
-			retrofitClient.cache(new Cache(cache, cacheSize));
+		if (null != this.cacheDataFile) {
+			retrofitClient.cache(new Cache(this.cacheDataFile, this.cacheSize));
 		}
 
 		OkHttpClient httpClient = retrofitClient
-				.certificatePinner(
-						new CertificatePinner.Builder()
-								.add("login.eveonline.com", "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=")
-								.add("login.eveonline.com", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=")
-								.add("login.eveonline.com", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=")
-								.build())
-				.build();
-		return
-				new Retrofit.Builder()
-						.baseUrl(GlobalDataManager.getResourceString("R.esi.data.server.location"))
-						.addConverterFactory(GSON_CONVERTER_FACTORY)
-						.client(httpClient)
-						.build();
+				                          .certificatePinner(
+						                          new CertificatePinner.Builder()
+								                          .add("login.eveonline.com", "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=")
+								                          .add("login.eveonline.com", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=")
+								                          .add("login.eveonline.com", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=")
+								                          .build())
+				                          .build();
+		return new Retrofit.Builder()
+				       .baseUrl(this.configurationProvider.getResourceString("R.esi.data.server.location"))
+				       .addConverterFactory(GSON_CONVERTER_FACTORY)
+				       .client(httpClient)
+				       .build();
+	}
+
+	public static class Builder {
+		private NeoComRetrofitHTTP onConstruction;
+
+		public Builder( final IConfigurationProvider configurationProvider ) {
+			this.onConstruction = new NeoComRetrofitHTTP(configurationProvider);
+		}
+
+		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
+			this.onConstruction.neoComOAuth20 = neoComOAuth20;
+			return this;
+		}
+
+		public Builder withAgent( final String agent ) {
+			this.onConstruction.agent = agent;
+			return this;
+		}
+
+		public Builder withCacheDataFile( final File cacheDataFile ) {
+			this.onConstruction.cacheDataFile = cacheDataFile;
+			return this;
+		}
+
+		public Builder withCacheSize( final long cacheSize ) {
+			this.onConstruction.cacheSize = cacheSize;
+			return this;
+		}
+
+		public Builder withTimeout( final long timeout ) {
+			this.onConstruction.timeout = timeout;
+			return this;
+		}
+
+		public Retrofit build() {
+			return this.onConstruction.build();
+		}
 	}
 }
