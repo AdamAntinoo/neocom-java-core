@@ -13,6 +13,8 @@ import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 
+import org.jetbrains.annotations.NotNull;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 
 /**
@@ -55,6 +57,11 @@ public class StandardContentManager extends AbstractContentManager {
 
 	public int getContainerCount() {
 		return containerCount;
+	}
+
+	@Override
+	public int compareTo( @NotNull final Object o ) {
+		return 0;
 	}
 }
 

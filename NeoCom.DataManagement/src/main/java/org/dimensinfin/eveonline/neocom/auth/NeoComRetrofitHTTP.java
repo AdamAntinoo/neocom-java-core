@@ -73,7 +73,7 @@ public class NeoComRetrofitHTTP {
 	}
 
 	// - F I E L D S
-	private IConfigurationProvider configurationProvider;
+	protected IConfigurationProvider configurationProvider;
 	protected NeoComOAuth20 neoComOAuth20;
 	protected String agent;
 	protected File cacheDataFile;
@@ -146,8 +146,9 @@ public class NeoComRetrofitHTTP {
 				       .build();
 	}
 
+	// - B U I L D E R
 	public static class Builder {
-		private NeoComRetrofitHTTP onConstruction;
+		protected NeoComRetrofitHTTP onConstruction;
 
 		public Builder( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction = new NeoComRetrofitHTTP(configurationProvider);

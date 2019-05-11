@@ -12,29 +12,30 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.j256.ormlite.dao.Dao;
-
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.entities.Property;
-import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.dimensinfin.eveonline.neocom.entities.Property;
+import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOkHomeLocation;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+
+import com.j256.ormlite.dao.Dao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
+public class PilotV2 extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("PilotV2");
 
@@ -52,7 +53,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	public AllianceV1 alliance = null;
 	public GetUniverseRaces200Ok race = null;
 	public GetUniverseBloodlines200Ok bloodline = null;
-	public GetUniverseAncestries ancestry = null;
+	public GetUniverseAncestries200Ok ancestry = null;
 	public double accountBalance = -1.0;
 	public EveLocation lastKnownLocation = null;
 
@@ -107,7 +108,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return bloodline;
 	}
 
-	public GetUniverseAncestries getAncestry() {
+	public GetUniverseAncestries200Ok getAncestry() {
 		return ancestry;
 	}
 
@@ -143,7 +144,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return this;
 	}
 
-	public PilotV2 setAncestry( final GetUniverseAncestries ancestry ) {
+	public PilotV2 setAncestry( final GetUniverseAncestries200Ok ancestry ) {
 		this.ancestry = ancestry;
 		return this;
 	}
@@ -177,7 +178,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 			final List<org.dimensinfin.eveonline.neocom.entities.NeoComAsset> pilotAssets;
 			try {
 				pilotAssets = accessGlobal().getNeocomDBHelper().getAssetDao()
-						.queryForEq("ownerId", this.characterId);
+						              .queryForEq("ownerId", this.characterId);
 				this.totalAssetsNumber = pilotAssets.size();
 			} catch (SQLException sqle) {
 				this.totalAssetsNumber = 0;
@@ -195,6 +196,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	/**
 	 * Use the public data to get access to more other Pilot information and to copy relevant data to the public fields. Public
 	 * data is not used on the normal instance use but the accessed data blocks from the public identifiers.
+	 *
 	 * @param publicData ESI data model with all public identifiers.
 	 */
 	public PilotV2 setPublicData( final GetCharactersCharacterIdOk publicData ) {
@@ -211,8 +213,6 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	/**
 	 * From the database list of properties for this Pilot we separate the sets and create the list of Locations Roles and the
 	 * list of Actions for Item to be used on Manufacturing activities.
-	 * @param properties
-	 * @return
 	 */
 	public PilotV2 setProperties( final List<Property> properties ) {
 		locationRoles.clear();
@@ -228,11 +228,11 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 
 	public Property addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
 		Property hit = new Property(EPropertyTypes.LOCATIONROLE)
-				.setOwnerId(getCharacterId())
-				.setTargetId(theSelectedLocation.getId())
-				.setNumericValue(theSelectedLocation.getId())
-				.setStringValue(locationrole)
-				.store();
+				               .setOwnerId(getCharacterId())
+				               .setTargetId(theSelectedLocation.getId())
+				               .setNumericValue(theSelectedLocation.getId())
+				               .setStringValue(locationrole)
+				               .store();
 		locationRoles.add(hit);
 		return hit;
 	}
@@ -246,15 +246,14 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 			sqle.printStackTrace();
 		}
 	}
+
 	/**
 	 * Removes the records that define the association of roles to the selected location. This clears all the
 	 * roles for a location and if the user only wants to clear one he/she has to activate the others again
 	 * since all get removed.
-	 *
-	 * @param theSelectedLocation
 	 */
-	public void clearLocationRoles(final EveLocation theSelectedLocation) {
-//		if (null == locationRoles) accessLocationRoles();
+	public void clearLocationRoles( final EveLocation theSelectedLocation ) {
+		//		if (null == locationRoles) accessLocationRoles();
 		for (Property role : locationRoles) {
 			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getId())) {
 				//		Property hit = locationRoles.get(theSelectedLocation.getID());
@@ -274,10 +273,10 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		Property hit = actions4Pilot.get(typeId);
 		if (null == hit) {
 			hit = new Property(EPropertyTypes.MANUFACTUREACTION)
-					.setOwnerId(getCharacterId())
-					.setNumericValue(typeId)
-					.setStringValue(taskName)
-					.store();
+					      .setOwnerId(getCharacterId())
+					      .setNumericValue(typeId)
+					      .setStringValue(taskName)
+					      .store();
 			actions4Pilot.put(typeId, hit);
 		}
 		hit.setStringValue(taskName);
@@ -302,9 +301,7 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 		return this;
 	}
 
-	// --- D E L E G A T E D   M E T H O D S
-
-
+	// - D E L E G A T E D   M E T H O D S
 	public int compareTo( final PilotV2 o ) {
 		if (o.getCharacterId() == getCharacterId()) return 0;
 		else return o.getName().compareTo(getName());
@@ -313,10 +310,10 @@ public class PilotV2 extends NeoComNode implements Comparable<PilotV2> {
 	@Override
 	public String toString() {
 		return new StringBuffer("PilotV2 [")
-				.append("[#").append(characterId).append("] ")
-				.append("]")
-				//				.append("->").append(super.toString())
-				.toString();
+				       .append("[#").append(characterId).append("] ")
+				       .append("]")
+				       //				.append("->").append(super.toString())
+				       .toString();
 	}
 }
 

@@ -111,7 +111,7 @@ dependencies {
 }
 // - N E O C O M . M O D E L
 dependencies{
-    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
+    compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
 
     implementation 'com.beimin:eveapi:6.0.6'
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"

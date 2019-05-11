@@ -29,6 +29,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
@@ -93,7 +94,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	// - M E T H O D - S E C T I O N ..........................................................................
 
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant) {
 		List<ICollaboration> results = new ArrayList<>();
 		if ( this.isDownloaded() ) {
 			if ( null != structures )

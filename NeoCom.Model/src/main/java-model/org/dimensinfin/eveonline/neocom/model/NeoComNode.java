@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
-import org.dimensinfin.core.model.AbstractPropertyChanger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -28,7 +27,8 @@ import org.dimensinfin.core.model.AbstractPropertyChanger;
 public abstract class NeoComNode extends ANeoComEntity implements ICollaboration, IJsonAngular {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 6506043294337948561L;
-	public static String capitalizeFirstLetter(String original) {
+
+	public static String capitalizeFirstLetter( String original ) {
 		if (original == null || original.length() == 0) {
 			return original;
 		}
@@ -52,14 +52,19 @@ public abstract class NeoComNode extends ANeoComEntity implements ICollaboration
 		return jsonClass;
 	}
 
-//	private void setJsonClass( final String jsonClass ) {
-//		this.jsonClass = jsonClass;
-//	}
+	//	private void setJsonClass( final String jsonClass ) {
+	//		this.jsonClass = jsonClass;
+	//	}
 
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("NeoComNode [");
 		buffer.append(" ]");
 		return buffer.toString();
+	}
+
+	@Override
+	public int compareTo( final Object target ) {
+		return 0;
 	}
 }
