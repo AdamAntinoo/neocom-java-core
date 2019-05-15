@@ -25,7 +25,6 @@ import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,7 @@ public class ESINetworkManagerZBase {
 	protected static ESINetworkManagerZBase singleton;
 
 	//	protected static final List<String> SCOPES = new ArrayList<>(2);
-	//	protected static String SCOPESTRING = "publicData";
+	protected static String SCOPESTRING = "publicData";
 	//
 	//	protected static String CLIENT_ID;
 	//	protected static String SECRET_KEY;
@@ -105,15 +104,15 @@ public class ESINetworkManagerZBase {
 				       .toString();
 	}
 
-	public static String getAuthorizationUrl( final String esiServer ) {
+	public static String getAuthorizationUrl() {
 		if (null == authorizationURL)
 			authorizationURL = singleton.getConfiguredOAuth("Tranquility").getAuthorizationUrl();
 		return authorizationURL;
 	}
 
-	//	public static String getStringScopes() {
-	//		return SCOPESTRING;
-	//	}
+	public static String getStringScopes() {
+		return SCOPESTRING;
+	}
 
 	/**
 	 * Go to the ESI api to ge the list of market prices. This method does not use other server than the Tranquility
@@ -152,7 +151,7 @@ public class ESINetworkManagerZBase {
 	//	}
 
 	// - F I E L D S
-	private IConfigurationProvider configurationProvider;
+	public IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
 
 	// - C O N S T R U C T O R S
@@ -174,7 +173,7 @@ public class ESINetworkManagerZBase {
 	private void initialise() {
 		logger.info(">> [ESIAdapter.initialize]");
 		// Read the configuration and open the ESI requests cache.
-		final String cacheFilePath = this.configurationProvider.getResourceString("R.cache.directorypath")
+		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
 				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
 		cacheDataFile = new File(this.fileSystemAdapter.accessResource4Path(cacheFilePath));
 		// Read the scoped from a resource file
@@ -231,9 +230,9 @@ public class ESINetworkManagerZBase {
 		logger.info("<< [ESIAdapter.initialize]");
 	}
 
-	public NeoComOAuth20 getConfiguredOAuth( @NotNull final String selector ) {
+	public NeoComOAuth20 getConfiguredOAuth( final String selector ) {
 		Objects.requireNonNull(selector);
-		final List<String> scopes = this.constructScopes(this.configurationProvider.getResourceString("R.esi."
+		final List<String> scopes = this.constructScopes(this.configurationProvider.getResourceString("P.esi."
 				                                                                                              + selector.toLowerCase() + ".authorization.scopes.filename"));
 		NeoComOAuth20 auth = null;
 		if ("TRANQUILITY".equalsIgnoreCase(selector)) {
@@ -249,6 +248,8 @@ public class ESINetworkManagerZBase {
 			if (CALLBACK.isEmpty())
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, scopes);
+			// TODO - When new refactoring isolates scopes remove this.
+			SCOPESTRING = this.transformScopes(scopes);
 		}
 		if ("SINGULARITY".equalsIgnoreCase(selector)) {
 			final String CLIENT_ID = this.configurationProvider.getResourceString("P.esi.authorization.singularity.clientid");
@@ -289,14 +290,20 @@ public class ESINetworkManagerZBase {
 		return SCOPES;
 	}
 
-	//	private String transformScopes( final List<String> scopeList ) {
-	//		StringBuilder scope = new StringBuilder();
-	//		for (String s : scopeList) {
-	//			scope.append(s);
-	//			scope.append(" ");
-	//		}
-	//		return StringUtils.removeEnd(scope.toString(), " ");
-	//	}
+	public void activateEsiServer( final String esiServer ) {
+		authorizationURL = null;
+		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitTranquility;
+		if ("SINGULARITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitSingularity;
+	}
+
+	private String transformScopes( final List<String> scopeList ) {
+		StringBuilder scope = new StringBuilder();
+		for (String s : scopeList) {
+			scope.append(s);
+			scope.append(" ");
+		}
+		return StringUtils.removeEnd(scope.toString(), " ");
+	}
 
 	// - B U I L D E R
 	public static class Builder {

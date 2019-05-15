@@ -1,62 +1,60 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.conf;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.MissingResourceException;
 import java.util.Properties;
+
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-
 /**
+ * Reads all the properties files found under a configurable place. The class scans for all files that end with '.properties'
+ * and reads the name/value pairs into a accessible cache.
+ *
+ * Then exports methods to read that property entries as strings. If there is a need to use other type values the caller should
+ * do the conversions.
+ *
+ * Properties are read by an external reader. This class is the data access front end and some methods should be implemented
+ * by the selected platform.
+ *
  * @author Adam Antinoo
+ * @since 0.14.0
  */
-// - CLASS IMPLEMENTATION ...................................................................................
 public abstract class GlobalConfigurationProvider implements IConfigurationProvider {
-	// - S T A T I C - S E C T I O N ..........................................................................
 	protected static Logger logger = LoggerFactory.getLogger(GlobalConfigurationProvider.class);
-	private static final String DEFAULT_PROPERTIES_FOLDER = "properties";
+
+	private static final String DEFAULT_PROPERTIES_FOLDER = "properties"; // The default initial location if not specified.
 
 	// - F I E L D - S E C T I O N ............................................................................
-	protected Properties globalConfigurationProperties = new Properties();
-	private String configuredPropertiesFolder = DEFAULT_PROPERTIES_FOLDER;
+	protected Properties configurationProperties = new Properties(); // The ist of defined properties
+	private String configuredPropertiesFolder = DEFAULT_PROPERTIES_FOLDER; // The pace where to search for properties.
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	public GlobalConfigurationProvider( final String propertiesFolder ) {
 		if (null != propertiesFolder) configuredPropertiesFolder = propertiesFolder;
-//		initialize();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - I C O N F I G U R A T I O N P R O V I D E R   I N T E R F A C E
 	public String getResourceString( final String key ) {
-		try {
-			return globalConfigurationProperties.getProperty(key);
-		} catch (MissingResourceException mre) {
-			return '!' + key + '!';
-		}
+		//		try {
+		final String value = configurationProperties.getProperty(key);
+		if (null == value) return this.generateMissing(key);
+		else return value;
+		//		} catch (MissingResourceException mre) {
+		//			return this.generateMissing(key);
+		//		}
 	}
 
 	public String getResourceString( final String key, final String defaultValue ) {
-		try {
-			return globalConfigurationProperties.getProperty(key, defaultValue);
-		} catch (MissingResourceException mre) {
-			return '!' + key + '!';
-		}
+		//		try {
+		final String value = configurationProperties.getProperty(key, defaultValue);
+		if (null == value) return this.generateMissing(key);
+		else return value;
+		//		} catch (MissingResourceException mre) {
+		//			return this.generateMissing(key);
+		//		}
 	}
 
 	/**
@@ -65,7 +63,7 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 	 * to the list of application properties. Read order will replace same ids with new data so the developer
 	 * can use a naming convention to replace older values with new values without editing the older files.
 	 */
-	public GlobalConfigurationProvider initialize() {
+	protected GlobalConfigurationProvider initialize() {
 		try {
 			readAllProperties();
 		} catch (IOException ioe) {
@@ -76,19 +74,23 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 	}
 
 	public int contentCount() {
-		return globalConfigurationProperties.size();
+		return configurationProperties.size();
 	}
 
 	protected String getResourceLocation() {
 		return configuredPropertiesFolder;
 	}
 
+	private String generateMissing( final String key ) {
+		return '!' + key + '!';
+	}
+
 	@Override
 	public String toString() {
 		return new StringBuffer("GlobalConfigurationProvider[")
-				.append("Property count: ").append(contentCount()).append(" ")
-				.append("]")
-				.toString();
+				       .append("Property count: ").append(contentCount()).append(" ")
+				       .append("]")
+				       .toString();
 	}
 
 	//--- P L A T F O R M   S P E C I F I C   S E C T I O N

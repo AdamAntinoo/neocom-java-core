@@ -88,9 +88,9 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	 * Get access to the Authorization URL from the OAuth20 interface instance.
 	 * @return the authorization URL to call.
 	 */
-	public static String getAuthorizationUrl() {
-		return ESINetworkManager.getAuthorizationUrl();
-	}
+//	public static String getAuthorizationUrl() {
+//		return ESINetworkManager.getAuthorizationUrl(esiServer);
+//	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
 	// - I N D U S T R Y

@@ -101,13 +101,6 @@ dependencies {
 //    implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
 //    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
 //    implementation 'com.annimon:stream:1.1.9'
-
-    // T E S T I N G   D E P E N D E N C I E S
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
-    testImplementation 'joda-time:joda-time:2.3'
-    testImplementation 'mysql:mysql-connector-java:5.1.45'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 // - N E O C O M . M O D E L
 dependencies{
@@ -133,4 +126,16 @@ dependencies {
     implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
     implementation 'javax.persistence:javax.persistence-api:2.2'
+}
+
+// - U N I T   T E S T I N G
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
+    testImplementation 'joda-time:joda-time:2.3'
+    testImplementation 'mysql:mysql-connector-java:5.1.45'
+    testImplementation 'org.mockito:mockito-core:2.22.0'
+//    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    testImplementation project(path: ':NeoCom.Model')
 }
