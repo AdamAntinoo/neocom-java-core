@@ -4,7 +4,13 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -13,13 +19,6 @@ import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -73,17 +72,17 @@ public class NeoComRetrofitHTTP {
 	}
 
 	// - F I E L D S
-	protected IConfigurationProvider configurationProvider;
+	//	protected IConfigurationProvider configurationProvider;
 	protected NeoComOAuth20 neoComOAuth20;
+	protected String esiDataServerLocation;
 	protected String agent;
 	protected File cacheDataFile;
 	protected long cacheSize = 1024 * 1024;
 	protected long timeout = TimeUnit.SECONDS.toMillis(60);
 
 	// - C O N S T R U C T O R - S E C T I O N
-	public NeoComRetrofitHTTP( final IConfigurationProvider configurationProvider ) {
+	protected NeoComRetrofitHTTP() {
 		super();
-		this.configurationProvider = configurationProvider;
 	}
 
 	// - M E T H O D - S E C T I O N
@@ -140,22 +139,31 @@ public class NeoComRetrofitHTTP {
 								                          .build())
 				                          .build();
 		return new Retrofit.Builder()
-				       .baseUrl(this.configurationProvider.getResourceString("R.esi.data.server.location"))
+				       .baseUrl(this.esiDataServerLocation)
 				       .addConverterFactory(GSON_CONVERTER_FACTORY)
 				       .client(httpClient)
 				       .build();
+	}
+
+	public String getAuthorizationUrl() {
+		return this.neoComOAuth20.getAuthorizationUrl();
 	}
 
 	// - B U I L D E R
 	public static class Builder {
 		protected NeoComRetrofitHTTP onConstruction;
 
-		public Builder( final IConfigurationProvider configurationProvider ) {
-			this.onConstruction = new NeoComRetrofitHTTP(configurationProvider);
+		public Builder() {
+			this.onConstruction = new NeoComRetrofitHTTP();
 		}
 
 		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
 			this.onConstruction.neoComOAuth20 = neoComOAuth20;
+			return this;
+		}
+
+		public Builder withEsiServerLocation( final String esiDataServerLocation ) {
+			this.onConstruction.esiDataServerLocation = esiDataServerLocation;
 			return this;
 		}
 

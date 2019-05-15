@@ -171,6 +171,11 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 		}
 	}
 
+	public boolean toggleExpand() {
+		this._expanded = !this._expanded;
+		return this.isExpanded();
+	}
+
 	public Colony create(final int planetId) {
 		try {
 			Dao<Colony, String> colonyDao = accessGlobal().getNeocomDBHelper().getColonyDao();

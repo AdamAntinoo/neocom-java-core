@@ -38,10 +38,8 @@ public class Region extends NeoComNode implements IExpandable {
 	/**
 	 * If the region id is -1 this means that this is probable coming from an space structure not registered on
 	 * CCP data. So we can assume that this is a User Structure in an unknown place of space.
-	 * @param regionid
-	 * @param regionName
 	 */
-	public Region(final long regionid, final String regionName) {
+	public Region( final long regionid, final String regionName ) {
 		this();
 		// If undefined update the name.
 		this.name = regionName;
@@ -58,7 +56,7 @@ public class Region extends NeoComNode implements IExpandable {
 	 * Check visibility and extension before selecting what collaborates.
 	 */
 	@Override
-	public List<ICollaboration> collaborate2Model(final String variant) {
+	public List<ICollaboration> collaborate2Model( final String variant ) {
 		ArrayList<ICollaboration> results = new ArrayList<ICollaboration>();
 		results.addAll(this.getLocations());
 		return results;
@@ -76,19 +74,14 @@ public class Region extends NeoComNode implements IExpandable {
 		return (_locations.size() > 0) ? false : true;
 	}
 
+	public boolean toggleExpand() {
+		this._expanded = !this._expanded;
+		return this.isExpanded();
+	}
+
 	public boolean isExpandable() {
 		return true;
 	}
-
-	//	@Override
-	//	public Region setDownloaded(final boolean downloadedstate) {
-	//		super.setDownloaded(downloadedstate);
-	//		return this;
-	//	}
-
-	//	public void setName (final String title) {
-	//		_title = title;
-	//	}
 
 	@Override
 	public String toString() {
@@ -113,7 +106,7 @@ public class Region extends NeoComNode implements IExpandable {
 		return _expanded;
 	}
 
-	public IExpandable setRenderWhenEmpty(final boolean renderWhenEmpty) {
+	public IExpandable setRenderWhenEmpty( final boolean renderWhenEmpty ) {
 		_renderIfEmpty = renderWhenEmpty;
 		return this;
 	}
@@ -129,27 +122,27 @@ public class Region extends NeoComNode implements IExpandable {
 		}
 	}
 
-	public void addLocation(final EveLocation target) {
+	public void addLocation( final EveLocation target ) {
 		if (null != target) {
 			_locations.add(target);
 		}
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
-	public long getRegionId () {
+	public long getRegionId() {
 		return regionId;
 	}
 
-	public String getName () {
+	public String getName() {
 		return name;
 	}
 
-	public Region setRegionId (final long regionId) {
+	public Region setRegionId( final long regionId ) {
 		this.regionId = regionId;
 		return this;
 	}
 
-	public Region setName (final String name) {
+	public Region setName( final String name ) {
 		this.name = name;
 		return this;
 	}

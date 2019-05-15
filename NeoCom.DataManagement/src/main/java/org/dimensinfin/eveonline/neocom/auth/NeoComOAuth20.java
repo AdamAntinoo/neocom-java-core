@@ -105,10 +105,11 @@ public class NeoComOAuth20 {
 		ServiceBuilder builder = new ServiceBuilder(clientID)
 				.apiKey(clientID)
 				.apiSecret(clientKey)
+										 // TODO - This can be parametrized
 				.state("NEOCOM-VERIFICATION-STATE");
 		if ( StringUtils.isNotBlank(callback) ) builder.callback(callback);
 		if ( !scopes.isEmpty() ) builder.scope(transformScopes(scopes));
-		this.oAuth20Service = builder.build(NeoComAuthApi20.instance());
+		this.oAuth20Service = builder.build(NeoComAuthApi20.getInstance());
 
 		OkHttpClient.Builder verifyClient =
 				new OkHttpClient.Builder()
@@ -139,25 +140,23 @@ public class NeoComOAuth20 {
 		return this.oAuth20Service.getAuthorizationUrl();
 	}
 
-	public TokenTranslationResponse fromAuthCode( final String authCode ) {
-		try {
-			final OAuth2AccessToken token = this.oAuth20Service.getAccessToken(authCode);
-			return save(token);
-		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
-			logger.error(e.getMessage(), e);
-			return null;
-		}
-	}
+//	public TokenTranslationResponse fromAuthCode( final String authCode ) {
+//		try {
+//			final OAuth2AccessToken token = this.oAuth20Service.getAccessToken(authCode);
+//			return save(token);
+//		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
+//			logger.error(e.getMessage(), e);
+//			return null;
+//		}
+//	}
 
 	public TokenTranslationResponse fromRefresh( final String refresh ) {
 		logger.info(">> [NeoComOAuth20.fromRefresh]");
 		try {
 			TokenTranslationResponse existing = this.store.get(refresh);
-			//			logger.info("-- [NeoComOAuth20.fromRefresh]> Token response: {}", existing.getAccessToken());
 			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
 				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
-				//				logger.info("-- [NeoComOAuth20.fromRefresh]> New token: {}", token.toString());
 				logger.info("<< [NeoComOAuth20.fromRefresh]> Saving new token.");
 				return save(token);
 			}
@@ -214,5 +213,3 @@ public class NeoComOAuth20 {
 		return buffer.toString();
 	}
 }
-// - UNUSED CODE ............................................................................................
-//[01]

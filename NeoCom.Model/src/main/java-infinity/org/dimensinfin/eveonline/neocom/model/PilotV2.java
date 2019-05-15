@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotV2 extends NeoComNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("PilotV2");
+//	private static Logger logger = LoggerFactory.getLogger("PilotV2");
 
 	public static String getUrlforAvatar( final int identifier ) {
 		return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
@@ -62,12 +62,12 @@ public class PilotV2 extends NeoComNode {
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
 	private List<Property> locationRoles = new ArrayList<>();
 	private HashMap<Integer, Property> actions4Pilot = new HashMap<>();
-	private int totalAssetsNumber = -1;
+	protected int totalAssetsNumber = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV2() {
 		super();
-		jsonClass = "Pilot";
+		this.jsonClass = "Pilot";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

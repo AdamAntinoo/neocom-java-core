@@ -185,6 +185,11 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		return _expanded;
 	}
 
+	public boolean toggleExpand() {
+		this._expanded = !this._expanded;
+		return this.isExpanded();
+	}
+
 	public boolean isExpanded () {
 		return _expanded;
 	}

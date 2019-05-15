@@ -12,14 +12,14 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ShipPre10 extends NeoComAsset implements IAssetContainer, IExpandable {
@@ -53,7 +53,7 @@ public class ShipPre10 extends NeoComAsset implements IAssetContainer, IExpandab
 		super();
 		// Ships have contents and are not available upon creation.
 		//		this.setDownloaded(false);
-//		jsonClass = "Ship";
+		//		jsonClass = "Ship";
 	}
 
 	//	/**
@@ -128,6 +128,7 @@ public class ShipPre10 extends NeoComAsset implements IAssetContainer, IExpandab
 	 * Even this object inherits from the asset structure, it is a new instance of the object and we should copy
 	 * the data from the original reference to this instance instead using delegates that will not work when
 	 * accessing directly to fields.
+	 *
 	 * @return this same instance updated with the reference data.
 	 */
 	public ShipPre10 copyFrom( final NeoComAsset asset ) {
@@ -156,7 +157,7 @@ public class ShipPre10 extends NeoComAsset implements IAssetContainer, IExpandab
 
 	public int getContentSize() {
 		return highModules.getContentSize() + medModules.getContentSize() + lowModules.getContentSize()
-				+ rigs.getContentSize() + drones.getContentSize() + cargo.getContentSize() + orecargo.getContentSize();
+				       + rigs.getContentSize() + drones.getContentSize() + cargo.getContentSize() + orecargo.getContentSize();
 	}
 
 	//	public List<NeoComAsset> getContents() {
@@ -275,6 +276,11 @@ public class ShipPre10 extends NeoComAsset implements IAssetContainer, IExpandab
 	public boolean expand() {
 		_expanded = true;
 		return _expanded;
+	}
+
+	public boolean toggleExpand() {
+		this._expanded = !this._expanded;
+		return this.isExpanded();
 	}
 
 	public boolean isEmpty() {
