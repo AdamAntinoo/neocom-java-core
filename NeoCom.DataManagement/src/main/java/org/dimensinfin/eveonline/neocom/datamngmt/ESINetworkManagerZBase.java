@@ -104,9 +104,9 @@ public class ESINetworkManagerZBase {
 				       .toString();
 	}
 
-	public static String getAuthorizationUrl() {
+	public static String getAuthorizationUrl4Server( final String server ) {
 		if (null == authorizationURL)
-			authorizationURL = singleton.getConfiguredOAuth("Tranquility").getAuthorizationUrl();
+			authorizationURL = singleton.getConfiguredOAuth(server).getAuthorizationUrl();
 		return authorizationURL;
 	}
 
@@ -239,7 +239,7 @@ public class ESINetworkManagerZBase {
 			final String CLIENT_ID = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.clientid");
 			final String SECRET_KEY = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.secretkey");
 			final String CALLBACK = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.callback");
-			final String AGENT = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.agent", "Default agent");
+			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
@@ -247,15 +247,29 @@ public class ESINetworkManagerZBase {
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
 			if (CALLBACK.isEmpty())
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
-			auth = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, scopes);
+			auth = new NeoComOAuth20.Builder()
+					       .withClientId(CLIENT_ID)
+					       .withClientKey(SECRET_KEY)
+					       .withCallback(CALLBACK)
+					       .withAgent(AGENT)
+					       .withStore(STORE)
+					       .withScopes(scopes)
+					       .withState("NEOCOM-VERIFICATION-STATE")
+					       .withBaseUrl(this.configurationProvider.getResourceString("P.esi.tranquility.authorization.server"
+							       , "https://login.eveonline.com/"))
+					       .withAccessTokenEndpoint(this.configurationProvider.getResourceString("P.esi.authorization.accesstoken.url"
+							       , "oauth/token"))
+					       .withAuthorizationBaseUrl(this.configurationProvider.getResourceString("P.esi.authorization.authorize.url"
+							       , "oauth/authorize"))
+					       .build();
 			// TODO - When new refactoring isolates scopes remove this.
 			SCOPESTRING = this.transformScopes(scopes);
 		}
 		if ("SINGULARITY".equalsIgnoreCase(selector)) {
-			final String CLIENT_ID = this.configurationProvider.getResourceString("P.esi.authorization.singularity.clientid");
-			final String SECRET_KEY = this.configurationProvider.getResourceString("P.esi.authorization.singularity.secretkey");
-			final String CALLBACK = this.configurationProvider.getResourceString("P.esi.authorization.singularity.callback");
-			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.singularity.agent", "Default agent");
+			final String CLIENT_ID = this.configurationProvider.getResourceString("P.esi.singularity.authorization.clientid");
+			final String SECRET_KEY = this.configurationProvider.getResourceString("P.esi.singularity.authorization.secretkey");
+			final String CALLBACK = this.configurationProvider.getResourceString("P.esi.singularity.authorization.callback");
+			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
@@ -263,7 +277,22 @@ public class ESINetworkManagerZBase {
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
 			if (CALLBACK.isEmpty())
 				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
-			auth = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, scopes);
+			auth = new NeoComOAuth20.Builder()
+					       .withClientId(CLIENT_ID)
+					       .withClientKey(SECRET_KEY)
+					       .withCallback(CALLBACK)
+					       .withAgent(AGENT)
+					       .withStore(STORE)
+					       .withScopes(scopes)
+					       .withState(this.configurationProvider.getResourceString("P.esi.authorization.state"
+							       , "NEOCOM-VERIFICATION-STATE"))
+					       .withBaseUrl(this.configurationProvider.getResourceString("P.esi.singularity.authorization.server"
+							       , "https://sisilogin.testeveonline.com/"))
+					       .withAccessTokenEndpoint(this.configurationProvider.getResourceString("P.esi.authorization.accesstoken.url"
+							       , "oauth/token"))
+					       .withAuthorizationBaseUrl(this.configurationProvider.getResourceString("P.esi.authorization.authorize.url"
+							       , "oauth/authorize"))
+					       .build();
 		}
 		Objects.requireNonNull(auth);
 		return auth;

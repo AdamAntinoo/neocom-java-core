@@ -1,29 +1,50 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import java.util.Objects;
 
 import com.github.scribejava.core.builder.api.DefaultApi20;
 
 public class NeoComAuthApi20 extends DefaultApi20 {
-	private static final NeoComAuthApi20 singleton = new NeoComAuthApi20();
-	public static NeoComAuthApi20 getInstance(){
-		return singleton;
-	}
+	private String accessServer;
+	private String accessTokenEndpoint;
+	private String authorizationBaseUrl;
 
 	@Override
 	public String getAccessTokenEndpoint() {
-		// Compose the endpoint from the configuration file.
-		return GlobalDataManager.getResourceString("P.esi.authorization.authorizationserver"
-				, "https://login.eveonline.com/") +
-				       GlobalDataManager.getResourceString("P.esi.authorization.authapi.accesstokenresource"
-						       , "oauth/token");
+		return this.accessServer + this.accessTokenEndpoint;
 	}
 
 	@Override
 	protected String getAuthorizationBaseUrl() {
-		return GlobalDataManager.getResourceString("P.esi.authorization.authorizationserver"
-				, "https://login.eveonline.com/") +
-				       GlobalDataManager.getResourceString("P.esi.authorization.authapi.authorizeurl"
-						       , "oauth/authorize");
+		return this.accessServer + authorizationBaseUrl;
+	}
+
+	// - B U I L D E R
+	public static class Builder {
+		private NeoComAuthApi20 onConstruction;
+
+		public Builder() {
+			this.onConstruction = new NeoComAuthApi20();
+		}
+
+		public Builder withAccessServer( final String accessServer ) {
+			this.onConstruction.accessServer = accessServer;
+			return this;
+		}
+
+		public Builder withAccessTokenEndpoint( final String accessTokenEndpoint ) {
+			this.onConstruction.accessTokenEndpoint = accessTokenEndpoint;
+			return this;
+		}
+
+		public Builder withAuthorizationBaseUrl( final String authorizationBaseUrl ) {
+			this.onConstruction.authorizationBaseUrl = authorizationBaseUrl;
+			return this;
+		}
+
+		public NeoComAuthApi20 build() {
+			Objects.requireNonNull(this.onConstruction.accessServer);
+			return this.onConstruction;
+		}
 	}
 }

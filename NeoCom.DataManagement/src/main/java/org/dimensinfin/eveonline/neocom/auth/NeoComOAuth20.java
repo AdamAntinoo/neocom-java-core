@@ -1,18 +1,3 @@
-//  PROJECT:     NeoCom.Android (NEOC.A)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Android API22.
-//  DESCRIPTION: Android Application related to the Eve Online game. The purpose is to download and organize
-//               the game data to help capsuleers organize and prioritize activities. The strong points are
-//               help at the Industry level tracking and calculating costs and benefits. Also the market
-//               information update service will help to identify best prices and locations.
-//               Planetary Interaction and Ship fittings are point under development.
-//               ESI authorization is a new addition that will give continuity and allow download game data
-//               from the new CCP data services.
-//               This is the Android application version but shares libraries and code with other application
-//               designed for Spring Boot Angular 4 platform.
-//               The model management is shown using a generic Model View Controller that allows make the
-//               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.IOException;
@@ -22,15 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.exceptions.OAuthException;
-import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.github.scribejava.core.oauth.OAuth20Service;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.scribejava.core.builder.ServiceBuilder;
+import com.github.scribejava.core.exceptions.OAuthException;
+import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
@@ -41,20 +25,15 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 
-/**
- * Created by Adam on 15/01/2018.
- */
-
-// - CLASS IMPLEMENTATION ...................................................................................
 public class NeoComOAuth20 {
+	private static Logger logger = LoggerFactory.getLogger(NeoComOAuth20.class);
+
 	public interface VerifyModelCharacter {
 		@GET("/oauth/verify")
 		Call<VerifyCharacterResponse> getVerification( @Header("Authorization") String token );
 	}
-	//[01]
 
 	public interface ESIStore {
-
 		ESIStore DEFAULT = new ESIStore() {
 			private Map<String, TokenTranslationResponse> map = new HashMap<>();
 
@@ -80,37 +59,41 @@ public class NeoComOAuth20 {
 		void delete( final String refresh );
 
 		TokenTranslationResponse get( final String refresh );
-
 	}
 
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("NeoComOAuth20");
+	// - F I E L D - S E C T I O N
+	private String clientId;
+	private String clientKey;
+	private String callback;
+	private String agent;
+	private ESIStore store;
+	private List<String> scopes;
+	private String state;
+	private String baseUrl;
+	private String accessTokenEndpoint;
+	private String authorizationBaseUrl;
 
-	// - F I E L D - S E C T I O N ............................................................................
-	private OAuth20Service oAuth20Service = null;
-	private ESIStore store = null;
+	private OAuth20Service oAuth20Service;
 	private VerifyModelCharacter verify;
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	private NeoComOAuth20() {
 		super();
 	}
 
-	public NeoComOAuth20( final String clientID, final String clientKey, final String callback,
-	                      final String agent,
-	                      final ESIStore store,
-	                      final List<String> scopes ) {
-
+	private void build() {
 		this.store = store;
-		ServiceBuilder builder = new ServiceBuilder(clientID)
-				.apiKey(clientID)
-				.apiSecret(clientKey)
-										 // TODO - This can be parametrized
-				.state("NEOCOM-VERIFICATION-STATE");
-		if ( StringUtils.isNotBlank(callback) ) builder.callback(callback);
-		if ( !scopes.isEmpty() ) builder.scope(transformScopes(scopes));
-		this.oAuth20Service = builder.build(NeoComAuthApi20.getInstance());
-
+		ServiceBuilder builder = new ServiceBuilder(this.clientId)
+				                         .apiKey(this.clientId)
+				                         .apiSecret(this.clientKey)
+				                         .state(this.state);
+		if (StringUtils.isNotBlank(this.callback)) builder.callback(this.callback);
+		if (!scopes.isEmpty()) builder.scope(transformScopes(this.scopes));
+		this.oAuth20Service = builder.build(new NeoComAuthApi20.Builder()
+				                                    .withAccessServer(this.baseUrl)
+				                                    .withAccessTokenEndpoint(this.accessTokenEndpoint)
+				                                    .withAuthorizationBaseUrl(this.authorizationBaseUrl)
+				                                    .build());
 		OkHttpClient.Builder verifyClient =
 				new OkHttpClient.Builder()
 						.protocols(Arrays.asList(Protocol.HTTP_1_1))
@@ -122,39 +105,27 @@ public class NeoComOAuth20 {
 										.build())
 						.addInterceptor(chain -> chain.proceed(
 								chain.request()
-								     .newBuilder()
-								     .addHeader("User-Agent", agent)
-								     .build()));
+										.newBuilder()
+										.addHeader("User-Agent", this.agent)
+										.build()));
 		this.verify =
 				new Retrofit.Builder()
-						// TODO - This depends on the Tranquility/Singularity definition
-						.baseUrl("https://login.eveonline.com/")
+						.baseUrl(this.baseUrl)
 						.addConverterFactory(JacksonConverterFactory.create())
 						.client(verifyClient.build())
 						.build()
 						.create(VerifyModelCharacter.class);
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public String getAuthorizationUrl() {
 		return this.oAuth20Service.getAuthorizationUrl();
 	}
-
-//	public TokenTranslationResponse fromAuthCode( final String authCode ) {
-//		try {
-//			final OAuth2AccessToken token = this.oAuth20Service.getAccessToken(authCode);
-//			return save(token);
-//		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
-//			logger.error(e.getMessage(), e);
-//			return null;
-//		}
-//	}
 
 	public TokenTranslationResponse fromRefresh( final String refresh ) {
 		logger.info(">> [NeoComOAuth20.fromRefresh]");
 		try {
 			TokenTranslationResponse existing = this.store.get(refresh);
-			if ( (null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000)) ) {
+			if ((null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000))) {
 				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
 				logger.info("<< [NeoComOAuth20.fromRefresh]> Saving new token.");
@@ -173,7 +144,7 @@ public class NeoComOAuth20 {
 		try {
 			final Response<VerifyCharacterResponse> r =
 					this.verify.getVerification("Bearer " + stored.getAccessToken()).execute();
-			if ( r.isSuccessful() ) {
+			if (r.isSuccessful()) {
 				return r.body();
 			}
 			return null;
@@ -211,5 +182,69 @@ public class NeoComOAuth20 {
 		buffer.append("]");
 		buffer.append("->").append(super.toString());
 		return buffer.toString();
+	}
+
+	// - B U I L D E R
+	public static class Builder {
+		private NeoComOAuth20 onConstruction;
+
+		public Builder() {
+			this.onConstruction = new NeoComOAuth20();
+		}
+
+		public Builder withClientId( final String clientId ) {
+			this.onConstruction.clientId = clientId;
+			return this;
+		}
+
+		public Builder withClientKey( final String clientKey ) {
+			this.onConstruction.clientKey = clientKey;
+			return this;
+		}
+
+		public Builder withCallback( final String callback ) {
+			this.onConstruction.callback = callback;
+			return this;
+		}
+
+		public Builder withAgent( final String agent ) {
+			this.onConstruction.agent = agent;
+			return this;
+		}
+
+		public Builder withStore( final ESIStore store ) {
+			this.onConstruction.store = store;
+			return this;
+		}
+
+		public Builder withScopes( final List<String> scopes ) {
+			this.onConstruction.scopes = scopes;
+			return this;
+		}
+
+		public Builder withState( final String state ) {
+			this.onConstruction.state = state;
+			return this;
+		}
+
+		public Builder withBaseUrl( final String baseUrl ) {
+			this.onConstruction.baseUrl = baseUrl;
+			return this;
+		}
+
+		public Builder withAccessTokenEndpoint( final String accessTokenEndpoint ) {
+			this.onConstruction.accessTokenEndpoint = accessTokenEndpoint;
+			return this;
+		}
+
+		public Builder withAuthorizationBaseUrl( final String authorizationBaseUrl ) {
+			this.onConstruction.authorizationBaseUrl = authorizationBaseUrl;
+			return this;
+		}
+
+		public NeoComOAuth20 build() {
+			this.onConstruction.build();
+			return this.onConstruction;
+		}
 	}
 }
