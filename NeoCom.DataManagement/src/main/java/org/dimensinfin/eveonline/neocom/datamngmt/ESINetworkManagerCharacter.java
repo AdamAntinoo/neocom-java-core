@@ -290,13 +290,22 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 			} finally {
 				logger.info("<< [ESINetworkManager.getCharactersCharacterIdIndustryJobs]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 			}
-			return null;
+			return new ArrayList<>();
 		} else {
 			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
 			return (List<GetCharactersCharacterIdIndustryJobs200Ok>) hit.body();
 		}
 	}
 
+	/**
+	 * This method encapsulates the call to the esi server to retrieve the current list of mining operations. This listing will contain the operations
+	 * for the last 30 days. It will be internally cached during 1800 seconds so we have to check the hour change less frequently.
+	 *
+	 * @param identifier the character unique identifier.
+	 * @param refreshToken the authorization refresh token to be used on this call if the current toked is expired.
+	 * @param server the esi data server to use, tranquility or singularity.
+	 * @return the list of mining actions performed during the last 30 days.
+	 */
 	public static List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining(final int identifier
 			, final String refreshToken
 			, final String server) {

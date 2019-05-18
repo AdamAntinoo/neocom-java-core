@@ -17,6 +17,7 @@ import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitMock;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
@@ -152,7 +153,7 @@ public class ESINetworkManagerZBase {
 
 	// - F I E L D S
 	public IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
+	protected IFileSystem fileSystemAdapter;
 
 	// - C O N S T R U C T O R S
 	public ESINetworkManagerZBase() {}
@@ -170,32 +171,13 @@ public class ESINetworkManagerZBase {
 	//		return fileSystemAdapter;
 	//	}
 
-	private void initialise() {
-		logger.info(">> [ESIAdapter.initialize]");
+	public void initialise() {
+		logger.info(">> [ESIGlobalAdapter.initialize]");
 		// Read the configuration and open the ESI requests cache.
 		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
 				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
 		cacheDataFile = new File(this.fileSystemAdapter.accessResource4Path(cacheFilePath));
-		// Read the scoped from a resource file
-		//		this.constructScopes();
-
-		// Initialize global constants from configuration files.
-		//		CLIENT_ID = this.configurationProvider.getResourceString("P.esi.authorization.clientid");
-		//		SECRET_KEY = this.configurationProvider.getResourceString("P.esi.authorization.secretkey");
-		//		CALLBACK = this.configurationProvider.getResourceString("P.esi.authorization.callback");
 		AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
-		//		// Verify that the constants have values. Otherwise launch exception.
-		//		if (CLIENT_ID.isEmpty())
-		//			throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
-		//		if (SECRET_KEY.isEmpty())
-		//			throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
-		//		if (CALLBACK.isEmpty())
-		//			throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
-		//		NeoComOAuth20 neocomAuth20Tranquility = this.getConfiguredOAuth("Tranquility");
-		//		neocomAuth20Singularity = this.getConfiguredOAuth("Singularity");
-		//		neocomAuth20= neocomAuth20Tranquility;
-
-		//		neocomAuth20 = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
 		// Authenticated retrofits.
 		neocomRetrofitTranquility = new NeoComRetrofitHTTP.Builder()
 				                            .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
@@ -227,7 +209,7 @@ public class ESINetworkManagerZBase {
 				                       .withCacheSize(CACHE_SIZE)
 				                       .withTimeout(TIMEOUT)
 				                       .build();
-		logger.info("<< [ESIAdapter.initialize]");
+		logger.info("<< [ESIGlobalAdapter.initialize]");
 	}
 
 	public NeoComOAuth20 getConfiguredOAuth( final String selector ) {
@@ -242,11 +224,11 @@ public class ESINetworkManagerZBase {
 			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
 			if (SECRET_KEY.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
 			if (CALLBACK.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20.Builder()
 					       .withClientId(CLIENT_ID)
 					       .withClientKey(SECRET_KEY)
@@ -272,11 +254,11 @@ public class ESINetworkManagerZBase {
 			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
 			if (SECRET_KEY.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
 			if (CALLBACK.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20.Builder()
 					       .withClientId(CLIENT_ID)
 					       .withClientKey(SECRET_KEY)
@@ -310,10 +292,10 @@ public class ESINetworkManagerZBase {
 				line = input.readLine();
 			}
 		} catch (FileNotFoundException fnfe) {
-			logger.info("EX [ESIAdapter.constructScopes]> FileNotFoundException: {}", fnfe.getMessage());
+			logger.info("EX [ESIGlobalAdapter.constructScopes]> FileNotFoundException: {}", fnfe.getMessage());
 			return SCOPES;
 		} catch (IOException ioe) {
-			logger.info("EX [ESIAdapter.constructScopes]> FileNotFoundException: {}", ioe.getMessage());
+			logger.info("EX [ESIGlobalAdapter.constructScopes]> FileNotFoundException: {}", ioe.getMessage());
 			return SCOPES;
 		}
 		return SCOPES;
@@ -332,21 +314,5 @@ public class ESINetworkManagerZBase {
 			scope.append(" ");
 		}
 		return StringUtils.removeEnd(scope.toString(), " ");
-	}
-
-	// - B U I L D E R
-	public static class Builder {
-		protected ESINetworkManagerZBase onConstruction;
-
-		public Builder( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
-			this.onConstruction = new ESINetworkManagerZBase(configurationProvider, fileSystemAdapter);
-		}
-
-		public ESINetworkManagerZBase build() {
-			// Run the initialisation code.
-			this.onConstruction.initialise();
-			singleton = this.onConstruction;
-			return this.onConstruction;
-		}
 	}
 }

@@ -16,12 +16,13 @@ import java.sql.SQLException;
 
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
  * To keep Credential unique I will not use sequence generated ids but the identifier plus the server to use for the authentication.
  * This way I can store credentials for the different eve online servers ans sill only keep one for each server using the pilot
  * unique identifier to isolate this. Using sequence will not avoid having duplicated entries for the same pilot.
+ *
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Credentials")
@@ -89,7 +91,7 @@ public class Credential extends NeoComNode {
 		this();
 		this.accountId = newAccountIdentifier;
 		// Set the default value for the datasource from the current Global configuration.
-//		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
+		//		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
 		try {
 			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
@@ -103,6 +105,8 @@ public class Credential extends NeoComNode {
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
+	// - P E R S I S T E N C Y
+
 	/**
 	 * Update the values at the database record.
 	 */
@@ -110,11 +114,22 @@ public class Credential extends NeoComNode {
 		try {
 			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
 			credentialDao.createOrUpdate(this);
-			Credential.logger.info("-- [Credential.store]> Credential data updated successfully.");
+			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "UPDATED");
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		return this;
+	}
+
+	public boolean delete() {
+		try {
+			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
+			credentialDao.delete(this);
+			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "DELETED");
+		} catch (final SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return true;
 	}
 
 	// --- G E T T E R S   &   S E T T E R S
@@ -192,9 +207,9 @@ public class Credential extends NeoComNode {
 
 	@Deprecated
 	public boolean isESICompatible() {
-		if ( accountId < 1 ) return false;
-		if ( accessToken.isEmpty() ) return false;
-		if ( refreshToken.isEmpty() ) return false;
+		if (accountId < 1) return false;
+		if (accessToken.isEmpty()) return false;
+		if (refreshToken.isEmpty()) return false;
 		return true;
 	}
 

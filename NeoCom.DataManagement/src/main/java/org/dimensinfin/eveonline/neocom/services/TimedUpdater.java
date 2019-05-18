@@ -41,7 +41,7 @@ public class TimedUpdater {
 	public void timeTick() {
 		logger.info(">> [TimedUpdater.timeTick]");
 		// Check Credentials for pending data to update.
-		final List<Credential> credentialList = GlobalDataManager.accessAllCredentials();
+		final List<Credential> credentialList = GlobalDataManager.accessAllCredentials("TRANQUILITY");
 		logger.info("-- [TimedUpdater.timeTick]> Accessing credentials. Credentials found: {}"
 				, credentialList.size());
 		for (Credential cred : credentialList) {
