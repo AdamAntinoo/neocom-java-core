@@ -162,7 +162,7 @@ public class Credential extends NeoComNode {
 	}
 
 	public String getDataSource() {
-		return dataSource;
+		return dataSource.toLowerCase();
 	}
 
 	private Credential setAccountId( final int accountId ) {
