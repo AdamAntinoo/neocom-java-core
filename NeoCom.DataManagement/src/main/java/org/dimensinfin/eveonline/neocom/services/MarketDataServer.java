@@ -90,7 +90,7 @@ public class MarketDataServer {
 		try {
 			readMarketDataCacheFromStorage();
 			// Read the configured list of preferential marked data hubs from the assets store.
-			final String stationsFileName = GlobalDataManager.getResourceString("R.cache.marketdata.markethubs.configuration.path");
+			final String stationsFileName = GlobalDataManager.getResourceString("P.cache.marketdata.markethubs.configuration.path");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(GlobalDataManager.openAsset4Input(stationsFileName)));
 			String line = null;
 			try {
@@ -144,8 +144,8 @@ public class MarketDataServer {
 
 	public synchronized void readMarketDataCacheFromStorage() {
 		logger.info(">> [MarketDataServer.readMarketDataCacheFromStorage]");
-		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
-				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename");
+		final String cacheFileName = GlobalDataManager.getResourceString("P.cache.directory.path")
+				+ GlobalDataManager.getResourceString("P.cache.marketdata.cachename");
 		logger.info("-- [MarketDataServer.readMarketDataCacheFromStorage]> Opening cache file: {}", cacheFileName);
 		try {
 			// Open the file on the Application storage area.
@@ -185,8 +185,8 @@ public class MarketDataServer {
 	}
 
 	public synchronized void writeMarketDataCacheToStorage() {
-		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
-				+ GlobalDataManager.getResourceString("R.cache.marketdata.cachename");
+		final String cacheFileName = GlobalDataManager.getResourceString("P.cache.directory.path")
+				+ GlobalDataManager.getResourceString("P.cache.marketdata.cachename");
 		try {
 			final BufferedOutputStream buffer = new BufferedOutputStream(
 					GlobalDataManager.openResource4Output(cacheFileName)
@@ -409,15 +409,15 @@ public class MarketDataServer {
 			// Preference is: eve-market-data/eve-central/esi-marketdata
 			try {
 				if ( marketEntries.size() < 1 ) {
-					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEMD", true) )
+					if ( GlobalDataManager.getResourceBoolean("P.cache.marketdata.provider.activateEMD", true) )
 						marketEntries = parseMarketDataEMD(item.getName(), side);
 				}
 				if ( marketEntries.size() < 1 ) {
-					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateEC", false) )
+					if ( GlobalDataManager.getResourceBoolean("P.cache.marketdata.provider.activateEC", false) )
 						marketEntries = parseMarketDataEC(localizer, side);
 				}
 				if ( marketEntries.size() < 1 ) {
-					if ( GlobalDataManager.getResourceBoolean("R.cache.marketdata.provider.activateESI", false) )
+					if ( GlobalDataManager.getResourceBoolean("P.cache.marketdata.provider.activateESI", false) )
 						marketEntries = parseMarketDataESI(localizer, side);
 				}
 				List<MarketDataEntry> hubData = extractMarketData(marketEntries);

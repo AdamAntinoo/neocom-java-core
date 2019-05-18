@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
+import org.dimensinfin.eveonline.neocom.entities.MiningExtraction;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,8 +16,8 @@ import org.dimensinfin.core.interfaces.IJsonAngular;
  * common methods and implement the default behavior for nodes.
  */
 public abstract class NeoComNode extends ANeoComEntity implements ICollaboration, IJsonAngular {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static final long serialVersionUID = 6506043294337948561L;
+	protected static Logger logger = LoggerFactory.getLogger(NeoComNode.class);
+	protected static final long serialVersionUID = 6506043294337948561L;
 
 	public static String capitalizeFirstLetter( String original ) {
 		if (original == null || original.length() == 0) {

@@ -172,6 +172,11 @@ public class ESINetworkManagerZBase {
 
 	public void initialise() {
 		logger.info(">> [ESIGlobalAdapter.initialize]");
+		this.retrofitInitilisation();
+		logger.info("<< [ESIGlobalAdapter.initialize]");
+	}
+
+	private void retrofitInitilisation() {
 		// Read the configuration and open the ESI requests cache.
 		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
 				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");

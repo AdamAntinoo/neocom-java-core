@@ -10,8 +10,6 @@ import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
@@ -21,13 +19,12 @@ import java.util.concurrent.ExecutionException;
  */
 @DatabaseTable(tableName = "MiningExtractions")
 public class MiningExtraction extends NeoComNode {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("MiningExtraction");
+//	private static Logger logger = LoggerFactory.getLogger("MiningExtraction");
 
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
-	 * the current date we should not chage any data on the database since we understand that old data is not being modified. But it can
-	 * happen that old data is the first time the it is added to the database. So we set the hout of day to the number 24.
+	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can
+	 * happen that old data is the first time the it is added to the database. So we set the hour of day to the number 24.
 	 * @param date
 	 * @param typeId
 	 * @param systemId
@@ -65,22 +62,6 @@ public class MiningExtraction extends NeoComNode {
 				.append(ownerId)
 				.toString();
 	}
-
-	//	public static String generateExtractionDateName( final LocalDate date ) {
-	//		// Check the date.
-	//		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
-	//		final String targetDate = date.toString("YYYY/MM/dd");
-	//		if ( todayDate.equalsIgnoreCase(targetDate) )
-	//			return new StringBuffer()
-	//					.append(date.toString("YYYY/MM/dd")).append(":")
-	//					.append(DateTime.now().getHourOfDay())
-	//					.toString();
-	//		else
-	//			return new StringBuffer()
-	//					.append(date.toString("YYYY/MM/dd")).append(":")
-	//					.append(24)
-	//					.toString();
-	//	}
 
 	// - F I E L D - S E C T I O N
 	@DatabaseField(id = true)

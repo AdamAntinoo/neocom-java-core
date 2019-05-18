@@ -198,5 +198,3 @@ public class Resource extends NeoComNode {
 		return buffer.toString();
 	}
 }
-
-// - UNUSED CODE ............................................................................................

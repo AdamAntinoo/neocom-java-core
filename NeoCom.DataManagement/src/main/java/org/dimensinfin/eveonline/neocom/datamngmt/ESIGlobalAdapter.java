@@ -1,35 +1,28 @@
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+
 public class ESIGlobalAdapter extends ESINetworkManager {
-	//	protected static ESIGlobalAdapter singleton;
+	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	// - F I E L D S
-	//	public IConfigurationProvider configurationProvider;
-	//	private IFileSystem fileSystemAdapter;
+	protected void downloadItemPrices() {
+		// Initialize and process the list of market process form the ESI full market data.
+		final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(GlobalDataManager.TRANQUILITY_DATASOURCE);
+		logger.info(">> [ESIGlobalAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size());
+		for (GetMarketsPrices200Ok price : marketPrices) {
+			marketDefaultPrices.put(price.getTypeId(), price);
+		}
+	}
 
-	// - C O N S T R U C T O R S
-	//	public ESINetworkManagerZBase() {}
+	public void initialise() {
+		super.initialise();
+		this.cacheInitialisation();
+	}
 
-	//	protected ESIGlobalAdapter( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
-	//		this.configurationProvider = configurationProvider;
-	//		this.fileSystemAdapter = fileSystemAdapter;
-	//	}
-	//
-	//	// - B U I L D E R
-	//	public static class Builder {
-	//		protected ESIGlobalAdapter onConstruction;
-	//
-	//		public Builder( @NotNull final IConfigurationProvider configurationProvider, @NotNull final IFileSystem fileSystemAdapter ) {
-	//			Objects.requireNonNull(configurationProvider);
-	//			Objects.requireNonNull(fileSystemAdapter);
-	//			this.onConstruction = new ESIGlobalAdapter(configurationProvider, fileSystemAdapter);
-	//		}
-	//
-	//		public ESIGlobalAdapter build() {
-	//			// Run the initialisation code.
-	//			this.onConstruction.initialise();
-	//			singleton = this.onConstruction;
-	//			return this.onConstruction;
-	//		}
-	//	}
+	private void cacheInitialisation() {
+		this.downloadItemPrices();
+	}
 }

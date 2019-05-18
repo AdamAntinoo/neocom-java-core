@@ -12,14 +12,11 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.RoutesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+
 import retrofit2.Response;
 
 /**
@@ -28,6 +25,7 @@ import retrofit2.Response;
  * unexpected situation.
  * The results should be stored on last access so if the network is down we can return last accessed data and not result into an
  * exception.
+ *
  * @author Adam Antinoo
  */
 public class ESINetworkManager extends ESINetworkManagerCharacter {
@@ -42,12 +40,12 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		final Chrono accessFullTime = new Chrono();
 		try {
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetStatusOk> statusApiResponse = neocomRetrofit
-					.create(StatusApi.class)
-					.getStatus(datasource, null).execute();
-			if ( statusApiResponse.isSuccessful() ) {
+					                                                .create(StatusApi.class)
+					                                                .getStatus(datasource, null).execute();
+			if (statusApiResponse.isSuccessful()) {
 				// Store results on the cache.
 				okResponseCache.put(reference, statusApiResponse);
 				return statusApiResponse.body();
@@ -55,7 +53,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 				// Use the cached data is available.
 				return (GetStatusOk) okResponseCache.get(reference).body();
 			}
-		} catch ( IOException ioe ) {
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
 			logger.info("<< [ESINetworkManager.getStatus]> [TIMING] Full elapsed: {}"
@@ -66,6 +64,116 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - U N I V E R S E   A P I
 	// - U N I V E R S E
+	public static GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
+		return getUniverseTypeById(server, typeId);
+	}
+
+	@Deprecated
+	public static GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
+		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
+		final DateTime startTimePoint = DateTime.now();
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseTypesTypeIdOk> itemListResponse = neocomRetrofitNoAuth
+					                                                            .create(UniverseApi.class)
+					                                                            .getUniverseTypesTypeId(typeId
+							                                                            , "en-us"
+							                                                            , server
+							                                                            , null
+							                                                            , null)
+					                                                            .execute();
+			if (!itemListResponse.isSuccessful()) {
+				return null;
+			} else return itemListResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException runtime) {
+			runtime.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}"
+					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+		}
+		return null;
+	}
+
+	public static List<GetUniverseAncestries200Ok> getUniverseAncestries( final String server ) {
+		logger.info(">> [ESINetworkManagerMock.getUniverseAncestries]");
+		final DateTime startTimePoint = DateTime.now();
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<List<GetUniverseAncestries200Ok>> ancestriesResponse = neocomRetrofitNoAuth
+					                                                                      .create(UniverseApi.class)
+					                                                                      .getUniverseAncestries("en-us"
+							                                                                      , server
+							                                                                      , null
+							                                                                      , null)
+					                                                                      .execute();
+			if (!ancestriesResponse.isSuccessful()) {
+				return null;
+			} else return ancestriesResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException runtime) {
+			runtime.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getUniverseAncestries]> [TIMING] Full elapsed: {}"
+					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+		}
+		return null;
+	}
+
+	public static List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String server ) {
+		logger.info(">> [ESINetworkManagerMock.getUniverseBloodlines]");
+		final DateTime startTimePoint = DateTime.now();
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<List<GetUniverseBloodlines200Ok>> bloodlinesResponse = neocomRetrofitNoAuth
+					                                                                      .create(UniverseApi.class)
+					                                                                      .getUniverseBloodlines("en-us"
+							                                                                      , server
+							                                                                      , null
+							                                                                      , null)
+					                                                                      .execute();
+			if (!bloodlinesResponse.isSuccessful()) {
+				return null;
+			} else return bloodlinesResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException runtime) {
+			runtime.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getUniverseBloodlines]> [TIMING] Full elapsed: {}"
+					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+		}
+		return null;
+	}
+
+	public static List<GetUniverseRaces200Ok> getUniverseRaces( final String server ) {
+		logger.info(">> [ESINetworkManagerMock.getUniverseRaces]");
+		final DateTime startTimePoint = DateTime.now();
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<List<GetUniverseRaces200Ok>> racesResponse = neocomRetrofitNoAuth
+					                                                            .create(UniverseApi.class)
+					                                                            .getUniverseRaces("en-us"
+							                                                            , server
+							                                                            , null
+							                                                            , null)
+					                                                            .execute();
+			if (!racesResponse.isSuccessful()) {
+				return null;
+			} else return racesResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException runtime) {
+			runtime.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getUniverseRaces]> [TIMING] Full elapsed: {}"
+					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+		}
+		return null;
+	}
+
 	public static GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
 		final Chrono accessFullTime = new Chrono();
@@ -73,16 +181,16 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofit
-					.create(UniverseApi.class)
-					.getUniversePlanetsPlanetId(identifier, datasource, null).execute();
-			if ( !universeApiResponse.isSuccessful() ) {
+					                                                                   .create(UniverseApi.class)
+					                                                                   .getUniversePlanetsPlanetId(identifier, datasource, null).execute();
+			if (!universeApiResponse.isSuccessful()) {
 				return null;
 			} else return universeApiResponse.body();
-		} catch ( IOException e ) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -98,11 +206,11 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		final List<Integer> idList = new ArrayList<>();
 		try {
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			Response<List<PostUniverseNames200Ok>> universeApiResponse = neocomRetrofit.create(UniverseApi.class)
-					.postUniverseNames(idList, datasource).execute();
-			if ( universeApiResponse.isSuccessful() ) {
+					                                                             .postUniverseNames(idList, datasource).execute();
+			if (universeApiResponse.isSuccessful()) {
 				// Store results on the cache.
 				okResponseCache.put(reference, universeApiResponse);
 				return universeApiResponse.body();
@@ -110,7 +218,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 				// Use the cached data is available.
 				return (List<PostUniverseNames200Ok>) okResponseCache.get(reference).body();
 			}
-		} catch ( IOException ioe ) {
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			return null;
 		} finally {
@@ -126,16 +234,16 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<Integer>> routeApiResponse = neocomRetrofit
-					.create(RoutesApi.class)
-					.getRouteOriginDestination(destination, origin, null, null
-							, datasource, "shortest", null).execute();
-			if ( !routeApiResponse.isSuccessful() ) {
+					                                                 .create(RoutesApi.class)
+					                                                 .getRouteOriginDestination(destination, origin, null, null
+							                                                 , datasource, "shortest", null).execute();
+			if (!routeApiResponse.isSuccessful()) {
 				return new ArrayList<>();
 			} else return routeApiResponse.body();
-		} catch ( IOException ioe ) {
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			return null;
 		} finally {
@@ -153,14 +261,14 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			// Use server parameter to override configuration server to use.
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCorporationsCorporationIdOk> corporationResponse = neocomRetrofit
-					.create(CorporationApi.class)
-					.getCorporationsCorporationId(identifier, datasource, null).execute();
-			if ( corporationResponse.isSuccessful() )
+					                                                                     .create(CorporationApi.class)
+					                                                                     .getCorporationsCorporationId(identifier, datasource, null).execute();
+			if (corporationResponse.isSuccessful())
 				return corporationResponse.body();
-		} catch ( IOException ioe ) {
+		} catch (IOException ioe) {
 			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
 		} finally {
@@ -178,14 +286,14 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			// Use server parameter to override configuration server to use.
-			if ( null != server ) datasource = server;
+			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetAlliancesAllianceIdOk> allianceResponse = neocomRetrofit
-					.create(AllianceApi.class)
-					.getAlliancesAllianceId(identifier, datasource, null).execute();
-			if ( allianceResponse.isSuccessful() )
+					                                                            .create(AllianceApi.class)
+					                                                            .getAlliancesAllianceId(identifier, datasource, null).execute();
+			if (allianceResponse.isSuccessful())
 				return allianceResponse.body();
-		} catch ( IOException ioe ) {
+		} catch (IOException ioe) {
 			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
 		} finally {
