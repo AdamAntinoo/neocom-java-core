@@ -233,7 +233,7 @@ public class DownloadManager {
 	public void downloadPilotJobsESI() {
 		DownloadManager.logger.info(">> [DownloadManager.downloadPilotJobsESI]");
 		try {
-			List<Job> jobsList = GlobalDataManager.downloadIndustryJobs4Credential(credential);
+			List<Job> jobsList = GlobalDataManager.getSingleton().downloadIndustryJobs4Credential(credential);
 		} finally {
 			DownloadManager.logger.info("<< [DownloadManager.downloadPilotJobsESI]");
 		}

@@ -307,6 +307,9 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	}
 
 	// - C O N S T R U C T O R
+
+	protected GlobalDataManager() { }
+
 	private GlobalDataManager( final IConfigurationProvider configurationProvider
 			, final IFileSystem fileSystemAdapter
 			, final ESIGlobalAdapter esiAdapter ) {

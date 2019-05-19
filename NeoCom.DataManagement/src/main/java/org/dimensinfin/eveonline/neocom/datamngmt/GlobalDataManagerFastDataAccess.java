@@ -75,7 +75,7 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 						GlobalDataManager.submitJob2ui(() -> {
 							final PilotV2 instance;
 							try {
-								instance = GlobalDataManager.requestPilotV2(credential);
+								instance = GlobalDataManager.getSingleton().requestPilotV2(credential);
 								store(EModelDataTypes.PILOTV2
 										, instance
 										, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))
@@ -91,7 +91,7 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 					// The object is not cached. Get it from the network and wait until the Future completes.
 					final Future<PilotV2> fut = modelUpdaterExecutor.submit(() -> {
 						try {
-							final PilotV2 instance = GlobalDataManager.requestPilotV2(credential);
+							final PilotV2 instance = GlobalDataManager.getSingleton().requestPilotV2(credential);
 							store(EModelDataTypes.PILOTV2
 									, instance
 									, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))

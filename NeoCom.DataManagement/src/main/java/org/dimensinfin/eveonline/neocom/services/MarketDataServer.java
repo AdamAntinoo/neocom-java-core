@@ -400,7 +400,7 @@ public class MarketDataServer {
 			final int localizer = typeId;
 			logger.info(">> [MarketDataJobDownloadManager.doMarketDataRequest]> Processing type {}", localizer);
 			// Download the market data and return it to store the new data into the cache.
-			final EveItem item = new GlobalDataManager().searchItem4Id(localizer);
+			final EveItem item = GlobalDataManager.getSingleton().searchItem4Id(localizer);
 			MarketDataSet reference = new MarketDataSet(localizer, side);
 			//			try {
 			logger.info(">> [MarketDataJobDownloadManager.launchDownloadJob.submit]> Processing {}", side.name());

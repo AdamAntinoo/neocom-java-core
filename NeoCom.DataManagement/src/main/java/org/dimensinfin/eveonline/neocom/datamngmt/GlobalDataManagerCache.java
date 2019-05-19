@@ -73,14 +73,14 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	private static MarketDataServer marketDataService = null;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public static void connectMarketDataManager( final MarketDataServer manager ) {
+	public void connectMarketDataManager( final MarketDataServer manager ) {
 		logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]");
 		marketDataService = manager;
 		// At this point we should have been initialized.
 		// The next section should be executed out of the main thread to be compatible con Android.
 		GlobalDataManager.submitJob2ui(() -> {
 			// Initialize and process the list of market process form the ESI full market data.
-			final List<GetMarketsPrices200Ok> marketPrices = ESINetworkManager.getMarketsPrices(GlobalDataManager.TRANQUILITY_DATASOURCE);
+			final List<GetMarketsPrices200Ok> marketPrices = this.esiAdapter.getMarketsPrices(GlobalDataManager.TRANQUILITY_DATASOURCE);
 			logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]> Process all market prices: {} items", marketPrices.size());
 			for (GetMarketsPrices200Ok price : marketPrices) {
 				marketDefaultPrices.put(price.getTypeId(), price);

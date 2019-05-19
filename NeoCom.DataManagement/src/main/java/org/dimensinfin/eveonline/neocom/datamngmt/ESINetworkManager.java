@@ -64,10 +64,11 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - U N I V E R S E   A P I
 	// - U N I V E R S E
-	//	public static GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
-	//		return getUniverseTypeById(server, typeId);
-	//	}
+	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
+		return getUniverseTypeById(server, typeId);
+	}
 
+	@Deprecated
 	public GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
 		final DateTime startTimePoint = DateTime.now();

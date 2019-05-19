@@ -200,7 +200,7 @@ public class FittingProcessor {
 			final HashMap<String, Object> queryParams = new HashMap<>();
 			queryParams.put("ownerId", credential.getAccountId());
 			queryParams.put("propertyType", EPropertyTypes.MANUFACTUREACTION.name());
-			final List<Property> actionList = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
+			final List<Property> actionList = GlobalDataManager.getSingleton().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
 			// Process the returned list and store in the character.
 			for (Property property : actionList) {
 				// The type selected for the action is stored as the property key.
@@ -666,7 +666,7 @@ final class AssetsManager {
 				final HashMap<String, Object> filterParameters = new HashMap();
 				filterParameters.put("ownerId", currentPilotCredential.getAccountId());
 				filterParameters.put("typeId", typeId);
-				hit = new GlobalDataManager().getNeocomDBHelper().getAssetDao().queryForFieldValues(filterParameters);
+				hit = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao().queryForFieldValues(filterParameters);
 				// Cache the new list of assets for the specified type.
 				asset4TypeCache.put(Integer.valueOf(typeId), hit);
 			}
