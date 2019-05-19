@@ -232,7 +232,7 @@ public abstract class SDEDatabaseManager {
 		List<EveLocation> locationList = null;
 		// Search for the location at the application private database. Citadels and Outposts.
 		try {
-			locationList = new GlobalDataManager().getNeocomDBHelper().getLocationDao().queryForEq("id", locationID);
+			locationList = GlobalDataManager.getSingleton().getNeocomDBHelper().getLocationDao().queryForEq("id", locationID);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 			return new EveLocation(locationID);
@@ -304,7 +304,7 @@ public abstract class SDEDatabaseManager {
 			while (cursor.moveToNext()) {
 				int locationID = cursor.getInt(LOCATIONBYSYSTEM_SOLARSYSTEMID_COLINDEX);
 				cursor.close();
-				return new GlobalDataManager().searchLocation4Id(locationID);
+				return GlobalDataManager.getSingleton().searchLocation4Id(locationID);
 			}
 		} catch (final Exception ex) {
 			logger.warn("W [SDEDatabaseManager.searchLocationBySystem]> Location <" + name + "> not found.");

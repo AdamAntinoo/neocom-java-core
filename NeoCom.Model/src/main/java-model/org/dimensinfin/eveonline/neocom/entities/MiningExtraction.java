@@ -121,7 +121,7 @@ public class MiningExtraction extends NeoComNode {
 		return this;
 	}
 
-	// ---  G E T T E R S   &   S E T T E R S
+	// -  G E T T E R S   &   S E T T E R S
 	public int getTypeId() {
 		return typeId;
 	}

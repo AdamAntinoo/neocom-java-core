@@ -42,7 +42,7 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerFastDataAccess");
+//	public static Logger logger = LoggerFactory.getLogger("GlobalDataManagerFastDataAccess");
 	private static ModelTimedCache modelcache = new ModelTimedCache();
 
 	private static final ExecutorService modelUpdaterExecutor = Executors.newSingleThreadExecutor();

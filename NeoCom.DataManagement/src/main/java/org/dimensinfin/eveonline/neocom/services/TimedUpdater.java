@@ -83,7 +83,7 @@ public class TimedUpdater {
 				try {
 					final String reference = ServiceJob.constructReference(jobName, cred.getAccountId());
 					// Search for the TS and check the expiration time.
-					final TimeStamp ts = new GlobalDataManager().getNeocomDBHelper().getTimeStampDao().queryForId(reference);
+					final TimeStamp ts = GlobalDataManager.getSingleton().getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 					if (null == ts) {
 						logger.info("-- [TimedUpdater.timeTick]> Generating job request for {}.", reference);
 						final TimeStamp newts = new TimeStamp(reference, Instant.now())

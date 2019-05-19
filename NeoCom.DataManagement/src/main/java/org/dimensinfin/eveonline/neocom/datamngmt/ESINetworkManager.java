@@ -33,7 +33,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
 	// - S E R V E R
-	public static GetStatusOk getStatus( final String server ) {
+	public GetStatusOk getStatus( final String server ) {
 		logger.info(">> [ESINetworkManager.getStatus]");
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
@@ -64,12 +64,11 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - U N I V E R S E   A P I
 	// - U N I V E R S E
-	public static GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
-		return getUniverseTypeById(server, typeId);
-	}
+	//	public static GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
+	//		return getUniverseTypeById(server, typeId);
+	//	}
 
-	@Deprecated
-	public static GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
+	public GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
@@ -96,7 +95,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		return null;
 	}
 
-	public static List<GetUniverseAncestries200Ok> getUniverseAncestries( final String server ) {
+	public List<GetUniverseAncestries200Ok> getUniverseAncestries( final String server ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseAncestries]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
@@ -122,7 +121,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		return null;
 	}
 
-	public static List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String server ) {
+	public List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String server ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseBloodlines]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
@@ -148,7 +147,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		return null;
 	}
 
-	public static List<GetUniverseRaces200Ok> getUniverseRaces( final String server ) {
+	public List<GetUniverseRaces200Ok> getUniverseRaces( final String server ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseRaces]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
@@ -253,7 +252,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C O R P O R A T I O N   A P I
 	// --- C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
-	public static GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
+	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
 		final Chrono accessFullTime = new Chrono();
 		try {
@@ -278,7 +277,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	}
 
 	// --- A L L I A N C E   P U B L I C   I N F O R M A T I O N
-	public static GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier, final String refreshToken, final String server ) {
+	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
 		final Chrono accessFullTime = new Chrono();
 		try {

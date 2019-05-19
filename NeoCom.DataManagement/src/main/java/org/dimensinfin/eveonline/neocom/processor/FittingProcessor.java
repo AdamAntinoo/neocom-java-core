@@ -119,7 +119,7 @@ public class FittingProcessor {
 			final HashMap<String, Object> queryParams = new HashMap<>();
 			queryParams.put("ownerId", credential.getAccountId());
 			queryParams.put("propertyType", EPropertyTypes.LOCATIONROLE.name());
-			roles = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
+			roles = GlobalDataManager.getSingleton().getNeocomDBHelper().getPropertyDao().queryForFieldValues(queryParams);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		}
@@ -608,11 +608,11 @@ public class FittingProcessor {
 		for (Property prop : roles) {
 			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)
 				if (prop.getStringValue().equalsIgnoreCase("MANUFACTURE"))
-					return new GlobalDataManager().searchLocation4Id(Double.valueOf(prop.getNumericValue()).intValue());
+					return GlobalDataManager.getSingleton().searchLocation4Id(Double.valueOf(prop.getNumericValue()).intValue());
 		}
 		// Reaching this point means we have not a location selected.
 		// TODO Use a mock place. This is the Singularity selected place to test.
-		return new GlobalDataManager().searchLocation4Id(60006526);
+		return GlobalDataManager.getSingleton().searchLocation4Id(60006526);
 	}
 
 	private AssetsManager getAssetsManager() {

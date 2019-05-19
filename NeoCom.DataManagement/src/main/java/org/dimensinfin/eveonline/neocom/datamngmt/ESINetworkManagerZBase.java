@@ -118,12 +118,12 @@ public class ESINetworkManagerZBase {
 	 * Go to the ESI api to ge the list of market prices. This method does not use other server than the Tranquility
 	 * because probably there is not valid market price information at other servers.
 	 */
-	public static List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
+	public List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
 		logger.info(">> [ESINetworkManager.getMarketsPrices]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			// Create the request to be returned so it can be called.
-			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofit.create(MarketApi.class)
+			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofitNoAuth.create(MarketApi.class)
 					                                                                .getMarketsPrices("tranquility", null)
 					                                                                .execute();
 			if (!marketApiResponse.isSuccessful()) {
@@ -155,7 +155,7 @@ public class ESINetworkManagerZBase {
 	protected IFileSystem fileSystemAdapter;
 
 	// - C O N S T R U C T O R S
-	public ESINetworkManagerZBase() {}
+	protected ESINetworkManagerZBase() {}
 
 	protected ESINetworkManagerZBase( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
 		this.configurationProvider = configurationProvider;
@@ -172,11 +172,11 @@ public class ESINetworkManagerZBase {
 
 	public void initialise() {
 		logger.info(">> [ESIGlobalAdapter.initialize]");
-		this.retrofitInitilisation();
+		this.retrofitInitialisation();
 		logger.info("<< [ESIGlobalAdapter.initialize]");
 	}
 
-	private void retrofitInitilisation() {
+	private void retrofitInitialisation() {
 		// Read the configuration and open the ESI requests cache.
 		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
 				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");

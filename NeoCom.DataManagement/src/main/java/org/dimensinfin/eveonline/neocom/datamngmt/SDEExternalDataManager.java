@@ -27,6 +27,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries20
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.model.GetUniverseAncestries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +49,13 @@ import java.util.List;
  *
  * @author Adam Antinoo
  */
-
-// - CLASS IMPLEMENTATION ...................................................................................
 public class SDEExternalDataManager {
-	// - S T A T I C - S E C T I O N ..........................................................................
 	protected static Logger logger = LoggerFactory.getLogger("GlobalDataManager");
+
+	// - C O M P O N E N T S
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected ESIGlobalAdapter esiAdapter;
 
 	public static void initialize () {
 		// Load SDE data files and create the caches.
@@ -76,11 +80,11 @@ public class SDEExternalDataManager {
 		}
 
 		// JSON Ancestries
-		readAncestries();
-		// JSON Bloodlines
-		readBloodLines();
-		// JSON Races
-		readRaces();
+//		readAncestries();
+//		// JSON Bloodlines
+//		readBloodLines();
+//		// JSON Races
+//		readRaces();
 	}
 
 	// - Y A M L - L O C A T I O N   F L A G S
@@ -149,80 +153,80 @@ public class SDEExternalDataManager {
 		//		jsonMapper.registerModule(neocomSerializerModule);
 	}
 
-	public static void readAncestries () {
-		logger.info(">> [SDEExternalDataManager.readAncestries]");
-		try {
-			// Get the file location to process.
-			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
-					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.ancestries");
-			final List<GetUniverseAncestries200Ok> ancestries = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
-					, new TypeReference<List<GetUniverseAncestries200Ok>>() {
-					});
-			ancestriesCache.clear();
-			for (GetUniverseAncestries200Ok line : ancestries) {
-				ancestriesCache.put(line.getId(), line);
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-		logger.info("<< [SDEExternalDataManager.readAncestries]");
-	}
-
-	public static GetUniverseAncestries200Ok searchSDEAncestry (final int identifier) {
-		GetUniverseAncestries200Ok hit = ancestriesCache.get(identifier);
-		if ( null == hit ) hit = new GetUniverseAncestries200Ok();
-		return hit;
-	}
+//	public static void readAncestries () {
+//		logger.info(">> [SDEExternalDataManager.readAncestries]");
+//		try {
+//			// Get the file location to process.
+//			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
+//					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.ancestries");
+//			final List<GetUniverseAncestries200Ok> ancestries = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
+//					, new TypeReference<List<GetUniverseAncestries200Ok>>() {
+//					});
+//			ancestriesCache.clear();
+//			for (GetUniverseAncestries200Ok line : ancestries) {
+//				ancestriesCache.put(line.getId(), line);
+//			}
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		}
+//		logger.info("<< [SDEExternalDataManager.readAncestries]");
+//	}
+//
+//	public static GetUniverseAncestries200Ok searchSDEAncestry (final int identifier) {
+//		GetUniverseAncestries200Ok hit = ancestriesCache.get(identifier);
+//		if ( null == hit ) hit = new GetUniverseAncestries200Ok();
+//		return hit;
+//	}
 
 	//--- J S O N - B L O O D L I N E S
-	public static void readBloodLines () {
-		logger.info(">> [SDEExternalDataManager.readBloodLines]");
-		try {
-			// Get the file location to process.
-			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
-					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.bloodlines");
-			final List<GetUniverseBloodlines200Ok> bloodLines = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
-					, new TypeReference<List<GetUniverseBloodlines200Ok>>() {
-					});
-			bloodLinesCache.clear();
-			for (GetUniverseBloodlines200Ok line : bloodLines) {
-				bloodLinesCache.put(line.getBloodlineId(), line);
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-		logger.info("<< [SDEExternalDataManager.readBloodLines]");
-	}
-
-	public static GetUniverseBloodlines200Ok searchSDEBloodline (final int identifier) {
-		GetUniverseBloodlines200Ok hit = bloodLinesCache.get(identifier);
-		if ( null == hit ) hit = new GetUniverseBloodlines200Ok();
-		return hit;
-	}
+//	public static void readBloodLines () {
+//		logger.info(">> [SDEExternalDataManager.readBloodLines]");
+//		try {
+//			// Get the file location to process.
+//			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
+//					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.bloodlines");
+//			final List<GetUniverseBloodlines200Ok> bloodLines = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
+//					, new TypeReference<List<GetUniverseBloodlines200Ok>>() {
+//					});
+//			bloodLinesCache.clear();
+//			for (GetUniverseBloodlines200Ok line : bloodLines) {
+//				bloodLinesCache.put(line.getBloodlineId(), line);
+//			}
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		}
+//		logger.info("<< [SDEExternalDataManager.readBloodLines]");
+//	}
+//
+//	public static GetUniverseBloodlines200Ok searchSDEBloodline (final int identifier) {
+//		GetUniverseBloodlines200Ok hit = bloodLinesCache.get(identifier);
+//		if ( null == hit ) hit = new GetUniverseBloodlines200Ok();
+//		return hit;
+//	}
 
 	//--- J S O N - R A C E S
-	public static void readRaces () {
-		logger.info(">> [SDEExternalDataManager.readRaces]");
-		try {
-			// Get the file location to process.
-			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
-					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.races");
-			final List<GetUniverseRaces200Ok> races = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
-					, new TypeReference<List<GetUniverseRaces200Ok>>() {
-					});
-			racesCache.clear();
-			for (GetUniverseRaces200Ok line : races) {
-				racesCache.put(line.getRaceId(), line);
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-		logger.info("<< [SDEExternalDataManager.readRaces]");
-	}
-
-	public static GetUniverseRaces200Ok searchSDERace (final int identifier) {
-		GetUniverseRaces200Ok hit = racesCache.get(identifier);
-		if ( null == hit ) hit = new GetUniverseRaces200Ok();
-		return hit;
-	}
+//	public static void readRaces () {
+//		logger.info(">> [SDEExternalDataManager.readRaces]");
+//		try {
+//			// Get the file location to process.
+//			final String source = GlobalDataManager.getResourceString("R.sde.external.json.locationpath")
+//					+ GlobalDataManager.getResourceString("R.sde.external.json.universe.races");
+//			final List<GetUniverseRaces200Ok> races = jsonMapper.readValue(GlobalDataManager.openAsset4Input(source)
+//					, new TypeReference<List<GetUniverseRaces200Ok>>() {
+//					});
+//			racesCache.clear();
+//			for (GetUniverseRaces200Ok line : races) {
+//				racesCache.put(line.getRaceId(), line);
+//			}
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		}
+//		logger.info("<< [SDEExternalDataManager.readRaces]");
+//	}
+//
+//	public static GetUniverseRaces200Ok searchSDERace (final int identifier) {
+//		GetUniverseRaces200Ok hit = racesCache.get(identifier);
+//		if ( null == hit ) hit = new GetUniverseRaces200Ok();
+//		return hit;
+//	}
 }

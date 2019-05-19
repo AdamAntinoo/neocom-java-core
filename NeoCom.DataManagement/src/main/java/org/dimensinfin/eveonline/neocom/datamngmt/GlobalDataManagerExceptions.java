@@ -25,7 +25,7 @@ public class GlobalDataManagerExceptions extends GlobalDataManagerDataAccess {
 	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerExceptions");
+//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerExceptions");
 
 	// --- E X C E P T I O N   L O G G I N G   S E C T I O N
 	private static final List<ExceptionRecord> exceptionsIntercepted = new ArrayList();

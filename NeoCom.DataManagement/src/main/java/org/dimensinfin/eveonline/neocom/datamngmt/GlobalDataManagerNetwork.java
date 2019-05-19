@@ -94,12 +94,12 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
 	// - I N D U S T R Y
-	public static List<Job> downloadIndustryJobs4Credential( final Credential credential ) {
+	public List<Job> downloadIndustryJobs4Credential( final Credential credential ) {
 		logger.info(">> [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
 		List<Job> results = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
-			final List<GetCharactersCharacterIdIndustryJobs200Ok> industryJobs = ESINetworkManager.getCharactersCharacterIdIndustryJobs(credential.getAccountId()
+			final List<GetCharactersCharacterIdIndustryJobs200Ok> industryJobs = this.esiAdapter.getCharactersCharacterIdIndustryJobs(credential.getAccountId()
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			if (null != industryJobs) {
@@ -200,7 +200,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		}
 	}
 
-	public static List<Colony> downloadColonies4Credential( final Credential credential ) {
+	public List<Colony> downloadColonies4Credential( final Credential credential ) {
 		// Optimize the access to the Colony data.
 		//		if(colonies.size()<1) {
 		final Chrono accessFullTime = new Chrono();
@@ -208,7 +208,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		try {
 			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
 			final int identifier = credential.getAccountId();
-			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = ESINetworkManager.getCharactersCharacterIdPlanets(identifier
+			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = this.esiAdapter.getCharactersCharacterIdPlanets(identifier
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			// Transform the received OK instance into a NeoCom compatible model instance.
@@ -225,7 +225,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 					try {
 						// During this first phase download all the rest of the information.
 						// Get to the Network and download the data from the ESI api.
-						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
+						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = this.esiAdapter.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
 								, col.getPlanetId()
 								, credential.getRefreshToken()
 								, credential.getDataSource());
@@ -375,12 +375,12 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 	}
 
 	// - S E R V E R
-	public static GetStatusOk serverStatus() {
+	public GetStatusOk serverStatus() {
 		//		logger.info(">> [GlobalDataManager.downloadSkillQueue4Credential]> Credential: {}", credential.getAccountId());
 		//		List<SkillInTraining> skillList = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
-			GetStatusOk status = ESINetworkManager.getStatus(TRANQUILITY_DATASOURCE);
+			GetStatusOk status = this.esiAdapter.getStatus(TRANQUILITY_DATASOURCE);
 			if (null != status) {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				//				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {

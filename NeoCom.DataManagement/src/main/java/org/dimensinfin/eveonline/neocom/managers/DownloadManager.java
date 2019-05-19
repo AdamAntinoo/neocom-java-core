@@ -74,7 +74,7 @@ public class DownloadManager {
 		DownloadManager.logger.info(">> [AssetsManager.downloadPilotAssetsESI]");
 		//		try {
 		// Clear any previous record with owner -1 from database.
-		new GlobalDataManager().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
+		GlobalDataManager.getSingleton().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
 		// Download the list of assets.
 		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiAdapter.getCharactersCharacterIdAssets(
 				credential.getAccountId(), credential.getRefreshToken(), null
@@ -103,13 +103,13 @@ public class DownloadManager {
 				// Mark the asset owner to the work in progress value.
 				myasset.setOwnerId(credential.getAccountId() * -1);
 				// With assets separate the update from the creation because they use a generated unique key.
-				new GlobalDataManager().getNeocomDBHelper().getAssetDao().create(myasset);
+				GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao().create(myasset);
 				DownloadManager.logger.info("-- Wrote asset to database id [" + myasset.getAssetId() + "]");
 
 				//--- L O C A T I O N   P R O C E S S I N G
 				// Check the asset location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
-				EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(myasset.getLocationId());
+				EveLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(myasset.getLocationId());
 				if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 					// Add this asset to the list of items to be reprocessed.
 					this.unlocatedAssets.add(myasset);
@@ -126,7 +126,7 @@ public class DownloadManager {
 			this.validateLocation(asset);
 		}
 		// Assign the assets to the pilot.
-		new GlobalDataManager().getNeocomDBHelper().replaceAssets(credential.getAccountId());
+		GlobalDataManager.getSingleton().getNeocomDBHelper().replaceAssets(credential.getAccountId());
 		// Remove from memory the managers that contain now stale data.
 		//TODO Removed until this is checked if required.
 		//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
@@ -157,7 +157,7 @@ public class DownloadManager {
 		DownloadManager.logger.info(">> [AssetsManager.downloadPilotBlueprintsESI]");
 		//		try {
 		// Clear any previous record with owner -1 from database.
-		new GlobalDataManager().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
+		GlobalDataManager.getSingleton().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
 		// Download the list of blueprints.
 		final List<GetCharactersCharacterIdBlueprints200Ok> blueprintOkList = this.esiAdapter
 				                                                                      .getCharactersCharacterIdBlueprints(
@@ -191,13 +191,13 @@ public class DownloadManager {
 				// Mark the asset owner to the work in progress value.
 				newBlueprint.setOwnerId(this.credential.getAccountId() * -1);
 				// With blueprints separate the update from the creation because they use a generated unique key.
-				new GlobalDataManager().getNeocomDBHelper().getBlueprintDao().create(newBlueprint);
+				GlobalDataManager.getSingleton().getNeocomDBHelper().getBlueprintDao().create(newBlueprint);
 				DownloadManager.logger.info("-- Wrote blueprint to database id [" + newBlueprint.getBlueprintId() + "]");
 
 				//--- L O C A T I O N   P R O C E S S I N G
 				// Check the blueprint location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
-				EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(newBlueprint.getLocationId());
+				EveLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(newBlueprint.getLocationId());
 				if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 					// Add this blueprint to the list of items to be reprocessed.
 					this.unlocatedBlueprints.add(newBlueprint);
@@ -217,7 +217,7 @@ public class DownloadManager {
 		// Pack the blueprints and store them on the database.
 		storeBlueprints(bplist);
 		// Assign the blueprints to the pilot.
-		new GlobalDataManager().getNeocomDBHelper().replaceBlueprints(credential.getAccountId());
+		GlobalDataManager.getSingleton().getNeocomDBHelper().replaceBlueprints(credential.getAccountId());
 		// Remove from memory the managers that contain now stale data.
 		//TODO Removed until this is checked if required.
 		//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
@@ -253,7 +253,7 @@ public class DownloadManager {
 	public List<MiningExtraction> downloadPilotMiningActionsESI() throws SQLException {
 		DownloadManager.logger.info(">> [DownloadManager.downloadPilotMiningActionsESI]> Credential: []", credential.getAccountName());
 		List<MiningExtraction> oreExtractions = new ArrayList<>();
-		final Dao<MiningExtraction, String> miningDao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
+		final Dao<MiningExtraction, String> miningDao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
 		// Get to the Network and download the data from the ESI api.
 		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = this.esiAdapter.getCharactersCharacterIdMining(credential.getAccountId()
 				, credential.getRefreshToken()
@@ -266,7 +266,7 @@ public class DownloadManager {
 						, extractionOk.getSolarSystemId(), credential.getAccountId());
 				MiningExtraction recordFound = null;
 				try {
-					recordFound = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao().queryForId(recordId);
+					recordFound = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao().queryForId(recordId);
 				} catch (NeoComRuntimeException nrex) {
 					logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
 							, nrex.getMessage());
@@ -321,7 +321,7 @@ public class DownloadManager {
 				.setLocationFlag(asset200Ok.getLocationFlag())
 				.setSingleton(asset200Ok.getIsSingleton());
 		// Get access to the Item and update the copied fields.
-		final EveItem item = new GlobalDataManager().searchItem4Id(newAsset.getTypeId());
+		final EveItem item = GlobalDataManager.getSingleton().searchItem4Id(newAsset.getTypeId());
 		if (null != item) {
 			//			try {
 			newAsset.setName(item.getName());
@@ -376,11 +376,11 @@ public class DownloadManager {
 	 */
 	private ELocationType validateLocation( final ILocatableAsset locatable ) {
 		long targetLocationid = locatable.getLocationId();
-		EveLocation targetLoc = new GlobalDataManager().searchLocation4Id(targetLocationid);
+		EveLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(targetLocationid);
 		if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 			try {
 				// Need to check if asset or unreachable location. Search for asset with locationid.
-				List<NeoComAsset> targetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
+				List<NeoComAsset> targetList = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao()
 						                               .queryForEq("assetId", Long.valueOf(targetLocationid));
 				NeoComAsset target = null;
 				if (targetList.size() > 0) target = targetList.get(0);
@@ -394,7 +394,7 @@ public class DownloadManager {
 					long parentIdentifier = target.getParentContainerId();
 					while (parentIdentifier != -1) {
 						validateLocation(target);
-						targetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
+						targetList = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao()
 								             .queryForEq("assetId", Long.valueOf(parentIdentifier));
 						if (targetList.size() > 0) target = targetList.get(0);
 						parentIdentifier = target.getParentContainerId();
@@ -429,14 +429,14 @@ public class DownloadManager {
 		// Launch the download of the names block.
 		final List<Long> idList = new ArrayList<>();
 		idList.addAll(id4Names);
-		new GlobalDataManager().submitJob2ui(() -> {
+		GlobalDataManager.getSingleton().submitJob2ui(() -> {
 			// Copy yhe list of assets to local to allow parallel use.
 			final List<Long> localIdList = new ArrayList<>();
 			localIdList.addAll(idList);
 			try {
 				final List<PostCharactersCharacterIdAssetsNames200Ok> itemNames = this.esiAdapter.postCharactersCharacterIdAssetsNames(credential.getAccountId(), localIdList, credential.getRefreshToken(), null);
 				for (final PostCharactersCharacterIdAssetsNames200Ok name : itemNames) {
-					final List<NeoComAsset> assetsMatch = new GlobalDataManager().getNeocomDBHelper().getAssetDao().queryForEq("assetId",
+					final List<NeoComAsset> assetsMatch = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao().queryForEq("assetId",
 							name.getItemId());
 					for (NeoComAsset asset : assetsMatch) {
 						logger.info("-- [DownloadManager.downloadAssetEveName]> Setting UserLabel name {} for asset {}.", name
@@ -469,7 +469,7 @@ public class DownloadManager {
 		//		blueprintCache.addAll(bpStacks.values());
 		// Update the database information.
 		try {
-			final Dao<NeoComBlueprint, String> blueprintDao = new GlobalDataManager().getNeocomDBHelper().getBlueprintDao();
+			final Dao<NeoComBlueprint, String> blueprintDao = GlobalDataManager.getSingleton().getNeocomDBHelper().getBlueprintDao();
 			for (NeoComBlueprint blueprint : bpStacks.values()) {
 				try {
 					// Set new calculated values to reduce the time for blueprint part rendering.

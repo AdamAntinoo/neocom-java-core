@@ -54,12 +54,12 @@ import com.j256.ormlite.stmt.QueryBuilder;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerDataAccess");
+//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerDataAccess");
 
 	// --- M O D E L - S T O R E   I N T E R F A C E
 	//--- ALLIANCE
 	//	public static AllianceV1 reachAllianceV1( final int identifier, final SessionContext context ) {
-	public static AllianceV1 requestAllianceV1( final int allianceIdentifier, final Credential credential ) {
+	public AllianceV1 requestAllianceV1( final int allianceIdentifier, final Credential credential ) {
 		logger.info(">> [GlobalDataManager.requestAllianceV1]> Identifier: {}", credential.getAccountId());
 		try {
 			//			// Check if this request is already available on the cache.
@@ -73,7 +73,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 			// Corporation information.
 			logger.info("-- [GlobalDataManager.requestAllianceV1]> ESI Compatible. Download corporation information.");
-			final GetAlliancesAllianceIdOk publicData = ESINetworkManager.getAlliancesAllianceId(Long.valueOf(allianceIdentifier)
+			final GetAlliancesAllianceIdOk publicData = this.esiAdapter.getAlliancesAllianceId(Long.valueOf(allianceIdentifier)
 					                                                                                     .intValue()
 					, credential.getRefreshToken()
 					, credential.getDataSource());
@@ -92,7 +92,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 	//--- CORPORATION
 	//	public static CorporationV1 reachCorporationV1( final int identifier, final SessionContext context ) {
-	public static CorporationV1 requestCorporationV1( final int corpIdentifier, final Credential credential ) {
+	public CorporationV1 requestCorporationV1( final int corpIdentifier, final Credential credential ) {
 		logger.info(">> [GlobalDataManager.requestCorporationV1]> Identifier: {}", credential.getAccountId());
 		try {
 			// Check if this request is already available on the cache.
@@ -102,13 +102,13 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			final CorporationV1 newcorp = new CorporationV1();
 			// Corporation information.
 			//			logger.info("-- [GlobalDataManager.requestCorporationV1]> ESI Compatible. Download corporation information.");
-			final GetCorporationsCorporationIdOk publicData = ESINetworkManager.getCorporationsCorporationId(corpIdentifier
+			final GetCorporationsCorporationIdOk publicData = this.esiAdapter.getCorporationsCorporationId(corpIdentifier
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			newcorp.setCorporationId(corpIdentifier)
 					.setPublicData(publicData);
 			if (null != publicData.getAllianceId())
-				newcorp.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
+				newcorp.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
 
 			return newcorp;
 			//			} else {
@@ -133,7 +133,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	 * @return an instance of a PilotV2 class that has some of the required information to be shown on the ui at this
 	 * 		point.
 	 */
-	public static PilotV2 requestPilotV2( final Credential credential ) throws NeoComRegisteredException {
+	public PilotV2 requestPilotV2( final Credential credential ) throws NeoComRegisteredException {
 		logger.info(">> [GlobalDataManager.requestPilotV2]> Identifier: {}", credential.getAccountId());
 		try {
 			final PilotV2 newchar = new PilotV2();
@@ -141,7 +141,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 			// Public information.
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download public data information.");
-			final GetCharactersCharacterIdOk publicData = ESINetworkManager.getCharactersCharacterId(credential.getAccountId()
+			final GetCharactersCharacterIdOk publicData = this.esiAdapter.getCharactersCharacterId(credential.getAccountId()
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			// Public data can be null if there are problems accessing the server.
@@ -150,13 +150,13 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					.setPublicData(publicData);
 			// Process the public data and get the referenced instances for the Corporation, race, etc.
 			newchar
-					.setRace(GlobalDataManager.searchSDERace(publicData.getRaceId()))
-					.setBloodline(GlobalDataManager.searchSDEBloodline(publicData.getBloodlineId()))
-					.setAncestry(GlobalDataManager.searchSDEAncestry(publicData.getAncestryId()));
+					.setRace(this.esiAdapter.searchSDERace(publicData.getRaceId()))
+					.setBloodline(this.esiAdapter.searchSDEBloodline(publicData.getBloodlineId()))
+					.setAncestry(this.esiAdapter.searchSDEAncestry(publicData.getAncestryId()));
 			if (null != publicData.getCorporationId())
-				newchar.setCorporation(GlobalDataManager.requestCorporationV1(publicData.getCorporationId(), credential));
+				newchar.setCorporation(GlobalDataManager.getSingleton().requestCorporationV1(publicData.getCorporationId(), credential));
 			if (null != publicData.getAllianceId())
-				newchar.setAlliance(GlobalDataManager.requestAllianceV1(publicData.getAllianceId(), credential));
+				newchar.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
 			// Wallet status
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
 			final Double walletAmount = ESINetworkManager.getCharactersCharacterIdWallet(credential.getAccountId()
@@ -166,14 +166,14 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 			// Properties
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Pilot Properties.");
 			try {
-				final List<Property> properties = new GlobalDataManager().getNeocomDBHelper().getPropertyDao().queryForEq("ownerId"
+				final List<Property> properties =  GlobalDataManager.getSingleton().getNeocomDBHelper().getPropertyDao().queryForEq("ownerId"
 						, credential.getAccountId());
 				newchar.setProperties(properties);
 			} catch (SQLException sqle) {
 			}
 			// Clone data
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download clone information.");
-			final GetCharactersCharacterIdClonesOk cloneInformation = ESINetworkManager.getCharactersCharacterIdClones(credential.getAccountId()
+			final GetCharactersCharacterIdClonesOk cloneInformation = this.esiAdapter.getCharactersCharacterIdClones(credential.getAccountId()
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			if (null != cloneInformation) {
@@ -238,7 +238,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	public static List<Credential> accessAllCredentials( final String sourceServer ) {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
-			return new GlobalDataManager().getNeocomDBHelper().getCredentialDao().queryForAll();
+			return GlobalDataManager.getSingleton().getNeocomDBHelper().getCredentialDao().queryForAll();
 //					       .queryForEq("dataSource", sourceServer);
 		} catch (java.sql.SQLException sqle) {
 			sqle.printStackTrace();
@@ -248,7 +248,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	}
 
 	public static List<NeoComAsset> accessAllAssets4Credential( final Credential credential ) throws SQLException {
-		final List<NeoComAsset> assetList = new GlobalDataManager().getNeocomDBHelper().getAssetDao()
+		final List<NeoComAsset> assetList = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao()
 				                                    .queryForEq("ownerId", credential.getAccountId());
 		if (GlobalDataManager.getResourceBoolean("R.runtime.mockdata")) {
 			// Write down the credential list ot be used as mock data.
@@ -277,12 +277,12 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	}
 
 	public static List<Job> accessIndustryJobs4Credential( final Credential credential ) throws SQLException {
-		return new GlobalDataManager().getNeocomDBHelper().getJobDao()
+		return GlobalDataManager.getSingleton().getNeocomDBHelper().getJobDao()
 				       .queryForEq("ownerId", credential.getAccountId());
 	}
 
 	public static List<MarketOrder> accessMarketOrders4Credential( final Credential credential ) throws SQLException {
-		return new GlobalDataManager().getNeocomDBHelper().getMarketOrderDao()
+		return GlobalDataManager.getSingleton().getNeocomDBHelper().getMarketOrderDao()
 				       .queryForEq("ownerId", credential.getAccountId());
 	}
 
@@ -296,7 +296,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	 * expiration time so the number of days is still not predetermined.
 	 */
 	public static List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) throws SQLException {
-		final Dao<MiningExtraction, String> dao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
+		final Dao<MiningExtraction, String> dao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
 		final QueryBuilder<MiningExtraction, String> builder = dao.queryBuilder();
 		builder.where().eq("ownerId", credential.getAccountId());
 		builder.orderBy("id", false);
@@ -311,7 +311,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	 * new hour will show the new ore totals and so on hour after hour.
 	 */
 	public static List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) throws SQLException {
-		final Dao<MiningExtraction, String> dao = new GlobalDataManager().getNeocomDBHelper().getMiningExtractionDao();
+		final Dao<MiningExtraction, String> dao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
 		final QueryBuilder<MiningExtraction, String> builder = dao.queryBuilder();
 		builder.where().eq("ownerId", credential.getAccountId());
 		builder.orderBy("extractionDateName", true)
@@ -330,6 +330,3 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		return results;
 	}
 }
-
-// - UNUSED CODE ............................................................................................
-//[01]

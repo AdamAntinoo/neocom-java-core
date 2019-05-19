@@ -57,7 +57,7 @@ public class PilotV2 extends NeoComNode {
 	public double accountBalance = -1.0;
 	public EveLocation lastKnownLocation = null;
 
-	private GetCharactersCharacterIdOk publicData = null;
+	protected GetCharactersCharacterIdOk publicData = null;
 	private GetCharactersCharacterIdClonesOk cloneInformation = null;
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
 	private List<Property> locationRoles = new ArrayList<>();
