@@ -277,6 +277,7 @@ public class TimedUpdater {
 		// Check that the request is a MININGEXTRACTIONS update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			// Submit the job to the manager
+			logger.info("-- [MARKETORDERS]> Found request: {}", currentrequestReference);
 			final String transferredCurrentrequestReference = currentrequestReference;
 			final ServiceJob newJob = new ServiceJob(dataIdentifier)
 					                          .setCredentialIdentifier(credential.getAccountId())
@@ -284,6 +285,7 @@ public class TimedUpdater {
 					                          .setTask(() -> {
 						                          try {
 							                          logger.info("-- [ServiceJob.MININGEXTRACTIONS]> Downloading Mining Extractions for: [{}]", credential.getAccountName());
+							                          logger.info("-- [MARKETORDERS]> Creating new Downloader");
 							                          final DownloadManager downloader = new DownloadManager.Builder(credential)
 									                                                             .withESIAdapter(this.esiAdapter)
 									                                                             .build();
@@ -303,10 +305,11 @@ public class TimedUpdater {
 						                          // Update the timer for this download at the database.
 						                          final Instant validUntil = Instant.now()
 								                                                     .plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.INDUSTRY_MINING));
-						                          final TimeStamp ts = new TimeStamp(transferredCurrentrequestReference, validUntil)
-								                                               .setCredentialId(credential.getAccountId())
-								                                               .store();
+//						                          final TimeStamp ts = new TimeStamp(transferredCurrentrequestReference, validUntil)
+//								                                               .setCredentialId(credential.getAccountId())
+//								                                               .store();
 					                          });
+			logger.info("-- [MARKETORDERS]> New job request: {}", newJob);
 			UpdateJobManager.submit(newJob);
 			return;
 		}

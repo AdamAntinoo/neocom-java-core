@@ -255,18 +255,22 @@ public class DownloadManager {
 		List<MiningExtraction> oreExtractions = new ArrayList<>();
 		final Dao<MiningExtraction, String> miningDao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
 		// Get to the Network and download the data from the ESI api.
+		logger.info("-- [MARKETORDERS]> Starting download of data");
 		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = this.esiAdapter.getCharactersCharacterIdMining(credential.getAccountId()
 				, credential.getRefreshToken()
 				, credential.getDataSource());
 		if (null != miningActionsOk) {
+			logger.info("-- [MARKETORDERS]> Downloaded {} extractions.", miningActionsOk.size());
 			// Process the data and convert it to structures compatible with MVC.
 			for (GetCharactersCharacterIdMining200Ok extractionOk : miningActionsOk) {
 				// Before doing any store of the data, see if this is a delta. Search for an already existing record.
 				final String recordId = MiningExtraction.generateRecordId(extractionOk.getDate(), extractionOk.getTypeId()
 						, extractionOk.getSolarSystemId(), credential.getAccountId());
+				logger.info("-- [MARKETORDERS]> Generating record identifier: {}.", recordId);
 				MiningExtraction recordFound = null;
 				try {
 					recordFound = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao().queryForId(recordId);
+					logger.info("-- [MARKETORDERS]> Searching for record on database: {}.", recordFound);
 				} catch (NeoComRuntimeException nrex) {
 					logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
 							, nrex.getMessage());
@@ -274,7 +278,9 @@ public class DownloadManager {
 				// If we found and exact record then we can update the value that can have changed or not.
 				if (null != recordFound) {
 					final long currentQty = recordFound.getQuantity();
-					recordFound.setQuantity(extractionOk.getQuantity()).store();
+					recordFound.setQuantity(extractionOk.getQuantity())
+							.store();
+					logger.info("-- [MARKETORDERS]> Updating record on database: {} > Quantity: {}/{}", recordId, extractionOk.getQuantity(), currentQty);
 					logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Updating mining extraction: {} > Quantity: {}/{}"
 							, recordId, extractionOk.getQuantity(), currentQty);
 				} else {
@@ -285,6 +291,7 @@ public class DownloadManager {
 							                                       .setQuantity(extractionOk.getQuantity())
 							                                       .setOwnerId(credential.getAccountId())
 							                                       .create(recordId);
+					logger.info("-- [MARKETORDERS]> Creating new record on database: {} > Quantity: {}", recordId, extractionOk.getQuantity());
 					logger.info("-- [DownloadManager.downloadPilotMiningActionsESI]> Creating new mining extraction: {} > Quantity: {}"
 							, recordId, extractionOk.getQuantity());
 				}
@@ -429,7 +436,7 @@ public class DownloadManager {
 		// Launch the download of the names block.
 		final List<Long> idList = new ArrayList<>();
 		idList.addAll(id4Names);
-		GlobalDataManager.getSingleton().submitJob2ui(() -> {
+		GlobalDataManager.getSingleton().submitJob(() -> {
 			// Copy yhe list of assets to local to allow parallel use.
 			final List<Long> localIdList = new ArrayList<>();
 			localIdList.addAll(idList);

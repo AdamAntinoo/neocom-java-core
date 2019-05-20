@@ -20,8 +20,6 @@ import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
 import org.dimensinfin.eveonline.neocom.model.PilotV2;
 import org.joda.time.Instant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Hashtable;
 import java.util.concurrent.ExecutionException;
@@ -72,7 +70,7 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 				if (null != hit) {
 					// Check if the object has expired. If so fire a background updating event.
 					if (_timeCacheStore.get(locator).isBefore(Instant.now())) {
-						GlobalDataManager.submitJob2ui(() -> {
+						GlobalDataManager.getSingleton().submitJob(() -> {
 							final PilotV2 instance;
 							try {
 								instance = GlobalDataManager.getSingleton().requestPilotV2(credential);

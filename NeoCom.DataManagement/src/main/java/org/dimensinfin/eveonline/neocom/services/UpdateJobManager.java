@@ -54,6 +54,7 @@ public class UpdateJobManager {
 			final Future<?> hit = runningJobs.get(identifier);
 			if ( null == hit ) {
 				// New job. Launch it and store the reference.
+				logger.info("-- [MARKETORDERS]> Launching job {}", newJob.getReference());
 				logger.info("-- [UpdateJobManager.submit]> Launching job {}", newJob.getReference());
 				final Future<?> future = newJob.submit();
 				runningJobs.put(identifier, future);

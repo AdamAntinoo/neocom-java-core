@@ -199,8 +199,8 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	//		return downloadExecutor.submit(task);
 	//	}
 
-	public static Future<?> submitJob2ui( final Runnable task ) {
-		return uiDataExecutor.submit(task);
+	public Future<?> submitJob( final Runnable task ) {
+		return backgroundExecutor.submit(task);
 	}
 
 	// --- D A T A B A S E   A R E A

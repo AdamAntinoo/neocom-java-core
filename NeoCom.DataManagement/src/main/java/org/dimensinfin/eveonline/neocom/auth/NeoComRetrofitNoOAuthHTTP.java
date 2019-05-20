@@ -1,6 +1,9 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
+
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -65,40 +68,45 @@ public class NeoComRetrofitNoOAuthHTTP extends NeoComRetrofitHTTP {
 	}
 
 	// - B U I L D E R
-	//	public static class Builder {
-	//		protected NeoComRetrofitNoOAuthHTTP onConstruction;
-	//
-	//		public Builder( final IConfigurationProvider configurationProvider ) {
-	//			this.onConstruction = new NeoComRetrofitNoOAuthHTTP(configurationProvider);
-	//		}
-	//
-	//		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
-	//			this.onConstruction.neoComOAuth20 = neoComOAuth20;
-	//			return this;
-	//		}
-	//
-	//		public Builder withAgent( final String agent ) {
-	//			this.onConstruction.agent = agent;
-	//			return this;
-	//		}
-	//
-	//		public Builder withCacheDataFile( final File cacheDataFile ) {
-	//			this.onConstruction.cacheDataFile = cacheDataFile;
-	//			return this;
-	//		}
-	//
-	//		public Builder withCacheSize( final long cacheSize ) {
-	//			this.onConstruction.cacheSize = cacheSize;
-	//			return this;
-	//		}
-	//
-	//		public Builder withTimeout( final long timeout ) {
-	//			this.onConstruction.timeout = timeout;
-	//			return this;
-	//		}
-	//
-	//		public Retrofit build() {
-	//			return this.onConstruction.build();
-	//		}
-	//	}
+	public static class Builder {
+		protected NeoComRetrofitNoOAuthHTTP onConstruction;
+
+		public Builder() {
+			this.onConstruction = new NeoComRetrofitNoOAuthHTTP();
+		}
+
+		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
+			this.onConstruction.neoComOAuth20 = neoComOAuth20;
+			return this;
+		}
+
+		public Builder withEsiServerLocation( final String esiDataServerLocation ) {
+			this.onConstruction.esiDataServerLocation = esiDataServerLocation;
+			return this;
+		}
+
+		public Builder withAgent( final String agent ) {
+			this.onConstruction.agent = agent;
+			return this;
+		}
+
+		public Builder withCacheDataFile( final File cacheDataFile ) {
+			this.onConstruction.cacheDataFile = cacheDataFile;
+			return this;
+		}
+
+		public Builder withCacheSize( final long cacheSize ) {
+			this.onConstruction.cacheSize = cacheSize;
+			return this;
+		}
+
+		public Builder withTimeout( final long timeout ) {
+			this.onConstruction.timeout = timeout;
+			return this;
+		}
+
+		public Retrofit build() {
+			return this.onConstruction.build();
+		}
+	}
 }

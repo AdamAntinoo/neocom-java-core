@@ -86,7 +86,7 @@ public class NeoComRetrofitHTTP {
 	}
 
 	// - M E T H O D - S E C T I O N
-	private Retrofit build() {
+	protected Retrofit build() {
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
 						.addInterceptor(chain -> {
