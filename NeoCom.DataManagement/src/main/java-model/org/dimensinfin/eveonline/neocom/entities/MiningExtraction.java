@@ -3,13 +3,11 @@ package org.dimensinfin.eveonline.neocom.entities;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.MiningExtractionV0;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.dimensinfin.eveonline.neocom.mining.MiningExtractionV0;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
