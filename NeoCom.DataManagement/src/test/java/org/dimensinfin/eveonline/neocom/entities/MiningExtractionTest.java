@@ -1,5 +1,6 @@
 package org.dimensinfin.eveonline.neocom.entities;
 
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 
 import org.junit.Assert;

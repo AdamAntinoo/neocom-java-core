@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
-import org.dimensinfin.eveonline.neocom.entities.MiningExtraction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

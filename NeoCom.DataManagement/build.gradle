@@ -23,9 +23,13 @@ repositories {
 
 sourceSets {
     main.java {
+        srcDirs += 'src/main/java-domain'
+        srcDirs += 'src/main/java-database'
+        srcDirs += 'src/main/java-model'
         srcDirs += 'src/main/java-mining'
         srcDirs += 'src/main/java-planetary'
-        srcDirs += 'src/main/java-model'
+        srcDirs += 'src/main/java-market'
+        srcDirs += 'src/main/java-industry'
     }
 //    main.res {
 //        srcDirs += 'src/main/res-planetary'

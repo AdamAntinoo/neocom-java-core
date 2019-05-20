@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.entities;
+package org.dimensinfin.eveonline.neocom.database.entities;
 
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
