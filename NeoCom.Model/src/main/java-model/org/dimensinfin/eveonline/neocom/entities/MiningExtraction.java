@@ -1,35 +1,32 @@
 package org.dimensinfin.eveonline.neocom.entities;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.MiningExtractionV0;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.sql.SQLException;
-import java.util.concurrent.ExecutionException;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends NeoComNode {
-//	private static Logger logger = LoggerFactory.getLogger("MiningExtraction");
-
+public class MiningExtraction extends MiningExtractionV0 implements IAggregableItem {
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
 	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can
 	 * happen that old data is the first time the it is added to the database. So we set the hour of day to the number 24.
-	 * @param date
-	 * @param typeId
-	 * @param systemId
-	 * @param ownerId
-	 * @return
 	 */
 	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
 		// Check the date.
@@ -37,30 +34,30 @@ public class MiningExtraction extends NeoComNode {
 		final String targetDate = date.toString("YYYY/MM/dd");
 		if (todayDate.equalsIgnoreCase(targetDate))
 			return new StringBuffer()
-					.append(date.toString("YYYY/MM/dd")).append(":")
-					.append(DateTime.now().getHourOfDay()).append("-")
-					.append(systemId).append("-")
-					.append(typeId).append("-")
-					.append(ownerId)
-					.toString();
+					       .append(date.toString("YYYY/MM/dd")).append(":")
+					       .append(DateTime.now().getHourOfDay()).append("-")
+					       .append(systemId).append("-")
+					       .append(typeId).append("-")
+					       .append(ownerId)
+					       .toString();
 		else
 			return new StringBuffer()
-					.append(date.toString("YYYY/MM/dd")).append(":")
-					.append(24).append("-")
-					.append(systemId).append("-")
-					.append(typeId).append("-")
-					.append(ownerId)
-					.toString();
+					       .append(date.toString("YYYY/MM/dd")).append(":")
+					       .append(24).append("-")
+					       .append(systemId).append("-")
+					       .append(typeId).append("-")
+					       .append(ownerId)
+					       .toString();
 	}
 
 	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
 		return new StringBuffer()
-				.append(date).append(":")
-				.append(hour).append("-")
-				.append(systemId).append("-")
-				.append(typeId).append("-")
-				.append(ownerId)
-				.toString();
+				       .append(date).append(":")
+				       .append(hour).append("-")
+				       .append(systemId).append("-")
+				       .append(typeId).append("-")
+				       .append(ownerId)
+				       .toString();
 	}
 
 	// - F I E L D - S E C T I O N
@@ -85,8 +82,7 @@ public class MiningExtraction extends NeoComNode {
 	private transient EveLocation systemCache = null;
 
 	// - C O N S T R U C T O R S
-	public
-	MiningExtraction() {
+	public MiningExtraction() {
 		super();
 	}
 
@@ -162,12 +158,14 @@ public class MiningExtraction extends NeoComNode {
 		return ownerId;
 	}
 
+	@Deprecated
 	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
 		if (null == this.resourceCache)
 			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
 		return resourceCache.getLowestSellerPrice();
 	}
 
+	@Deprecated
 	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
 		if (null == this.resourceCache)
 			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
@@ -179,7 +177,8 @@ public class MiningExtraction extends NeoComNode {
 	}
 
 	public double getPrice() {
-		return resourceCache.getPrice();
+//		return this.getResource().getPrice();
+		return 0.0;
 	}
 
 	public MiningExtraction setTypeId( final int typeId ) {
@@ -219,6 +218,11 @@ public class MiningExtraction extends NeoComNode {
 		return this;
 	}
 
+//	private GetUniverseTypesTypeIdOk getResource() {
+//
+//	}
+
+	// - C O R E
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("MiningExtraction [ ");
@@ -229,5 +233,3 @@ public class MiningExtraction extends NeoComNode {
 		return buffer.toString();
 	}
 }
-// - UNUSED CODE ............................................................................................
-//[01]

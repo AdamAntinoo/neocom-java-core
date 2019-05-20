@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.exception.NeoComError;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
@@ -200,6 +202,9 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	//	}
 
 	public Future<?> submitJob( final Runnable task ) {
+		return backgroundExecutor.submit(task);
+	}
+	public Future<?> submitCall( final Callable<List<NeoComError>> task ) {
 		return backgroundExecutor.submit(task);
 	}
 

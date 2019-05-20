@@ -114,9 +114,13 @@ dependencies{
 }
 
 // - T E S T I N G   D E P E N D E N C I E S
+// - U N I T   T E S T I N G
 dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.slf4j:slf4j-simple:1.7.25'
     testImplementation 'joda-time:joda-time:2.3'
+    testImplementation 'mysql:mysql-connector-java:5.1.45'
+    testImplementation 'org.mockito:mockito-core:2.22.0'
+
     testCompile 'org.dimensinfin:CoreBase.core:3.0.1'
 }
