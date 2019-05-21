@@ -29,7 +29,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-import org.dimensinfin.eveonline.neocom.model.GetUniverseAncestries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,7 +15,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
  * @author Adam Antinoo
  */
 public class EveItemProvider {
-	private static final GetUniverseTypesTypeIdOk DUMMY_ITEM = new GetUniverseTypesTypeIdOk();
+	private static final GetUniverseTypesTypeIdOk DUMMY_ITEM = null;
 	private static Map<Integer, GetUniverseTypesTypeIdOk> itemCache = new HashMap<>(100);
 
 	private ESIGlobalAdapter esiAdapter;

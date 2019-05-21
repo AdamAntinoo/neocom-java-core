@@ -94,7 +94,7 @@ dependencies {
     compileOnly project(path: ':ESI.SwaggerApi')
 
     // L O C A L    L I B R A R I E S
-//    implementation files('libs/jeveassets.3.1.2.jar')
+    compileOnly files('libs/jeveassets.3.1.2.jar')
 
     // M O D U L E    D E P E N D E N C I E S
     // C O R E    D E P E N D E N C I E S
@@ -144,10 +144,15 @@ dependencies {
 
 // - U N I T   T E S T I N G
 dependencies {
+    testImplementation project(path: ':ESI.SwaggerApi')
+    testImplementation files('libs/jeveassets.3.1.2.jar')
+    testImplementation 'org.dimensinfin:CoreBase.core:3.0.1'
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.slf4j:slf4j-simple:1.7.25'
     testImplementation 'joda-time:joda-time:2.3'
-    testImplementation 'mysql:mysql-connector-java:5.1.45'
+    testImplementation 'com.openpojo:openpojo:0.8.12'
+//    testImplementation 'mysql:mysql-connector-java:5.1.45'
     testImplementation 'org.mockito:mockito-core:2.22.0'
 
 //    testImplementation project(path: ':NeoCom.Model')

@@ -1,13 +1,14 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutionException;
 
+import org.dimensinfin.eveonline.neocom.core.EEvents;
+import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.mining.MiningExtractionV0;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -20,7 +21,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends MiningExtractionV0 implements IAggregableItem {
+public class MiningExtraction extends NeoComNode implements IAggregableItem, PropertyChangeListener {
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
 	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can
@@ -76,8 +77,10 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 	@DatabaseField(index = true)
 	private long ownerId = -1;
 
-	private transient EveItem resourceCache = null;
+	@Deprecated
+	//	private transient EveItem resourceCache = null;
 	private transient EveLocation systemCache = null;
+	private transient EsiItemV2 resourceItem;
 
 	// - C O N S T R U C T O R S
 	public MiningExtraction() {
@@ -85,10 +88,6 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public String getRecordId() {
-		return this.id;
-	}
-
 	public MiningExtraction store() {
 		// Update the extraction time.
 		try {
@@ -120,6 +119,26 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 		return typeId;
 	}
 
+	public String getRecordId() {
+		return this.id;
+	}
+
+	public String getResourceName() {
+		if (null == this.resourceItem) {
+			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem.addPropertyChangeListener(this);
+		}
+		return this.resourceItem.getName();
+	}
+
+	public double getVolume() {
+		if (null == this.resourceItem) {
+			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem.addPropertyChangeListener(this);
+		}
+		return this.resourceItem.getVolume();
+	}
+
 	public int getSolarSystemId() {
 		return solarSystemId;
 	}
@@ -138,11 +157,11 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 		return systemCache.getSystem();
 	}
 
-	public String getResourceName() {
-		if (null == this.resourceCache)
-			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
-		return this.resourceCache.getName();
-	}
+	//	public String getResourceName() {
+	//		if (null == this.resourceCache)
+	//			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
+	//		return this.resourceCache.getName();
+	//	}
 
 	public String getExtractionDate() {
 		return this.extractionDateName;
@@ -156,26 +175,23 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 		return ownerId;
 	}
 
-	@Deprecated
-	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
-		if (null == this.resourceCache)
-			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
-		return resourceCache.getLowestSellerPrice();
-	}
+	//	@Deprecated
+	//	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
+	//		if (null == this.resourceCache)
+	//			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
+	//		return resourceCache.getLowestSellerPrice();
+	//	}
+	//
+	//	@Deprecated
+	//	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
+	//		if (null == this.resourceCache)
+	//			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
+	//		return resourceCache.getHighestBuyerPrice();
+	//	}
 
-	@Deprecated
-	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
-		if (null == this.resourceCache)
-			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
-		return resourceCache.getHighestBuyerPrice();
-	}
-
-	public double getVolume() {
-		return resourceCache.getVolume();
-	}
 
 	public double getPrice() {
-//		return this.getResource().getPrice();
+		//		return this.getResource().getPrice();
 		return 0.0;
 	}
 
@@ -216,9 +232,9 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 		return this;
 	}
 
-//	private GetUniverseTypesTypeIdOk getResource() {
-//
-//	}
+	//	private GetUniverseTypesTypeIdOk getResource() {
+	//
+	//	}
 
 	// - C O R E
 	@Override
@@ -229,5 +245,12 @@ public class MiningExtraction extends MiningExtractionV0 implements IAggregableI
 		buffer.append("@").append(solarSystemId).append("-").append(getSystemName()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
+	}
+
+	@Override
+	public void propertyChange( final PropertyChangeEvent event ) {
+		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name())) {
+			this.firePropertyChange(event);
+		}
 	}
 }
