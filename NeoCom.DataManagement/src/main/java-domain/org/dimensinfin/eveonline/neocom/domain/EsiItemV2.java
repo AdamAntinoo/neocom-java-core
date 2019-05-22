@@ -27,6 +27,7 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 	private int typeId = -1;
 	private GetUniverseTypesTypeIdOk item;
 	private EventEmitter emitter = new EventEmitter();
+	private double price = -1.0;
 
 	// - C O N S T R U C T O R S
 	public EsiItemV2( final int typeId ) {
@@ -49,6 +50,13 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 		return item.getVolume();
 	}
 
+	public double getPrice() {
+		if (this.price < 0.0) {
+			this.downloaderService.accessItemPrice(this, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
+		}
+		return this.price;
+	}
+
 	// - D E L E G A T E   E M I T T E R
 	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
 		emitter.addPropertyChangeListener(listener);
@@ -69,6 +77,12 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 		switch (section) {
 			case ESIITEM_DATA:
 				this.item = ((GetUniverseTypesTypeIdOk) completedData);
+				this.emitter.sendChangeEvent(new PropertyChangeEvent(this
+						, EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name()
+						, null, completedData));
+				break;
+			case ESIITEM_PRICE:
+				this.price = ((Double) completedData);
 				this.emitter.sendChangeEvent(new PropertyChangeEvent(this
 						, EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name()
 						, null, completedData));

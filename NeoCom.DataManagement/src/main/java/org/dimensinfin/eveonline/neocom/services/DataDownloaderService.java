@@ -48,6 +48,13 @@ public class DataDownloaderService {
 		} else callbackDestination.signalCompletion(section, item);
 	}
 
+	public void accessItemPrice( final IEsiItemDownloadCallback callbackDestination, final EsiItemSections section ) {
+		logger.info("-- [DataDownloaderService.accessEveItem]> Posting request: {}", section.name());
+		final double price = this.esiAdapter.searchSDEMarketPrice(callbackDestination.getTypeId());
+		callbackDestination.signalCompletion(section, new Double(price));
+	}
+
+
 	// - B U I L D E R
 	public static class Builder {
 		private DataDownloaderService onConstruction;

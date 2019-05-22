@@ -65,6 +65,20 @@ public class DataDownloaderServiceTest {
 	}
 
 	@Test
+	public void accessItemPrice_found() {
+		final IEsiItemDownloadCallback destination = Mockito.mock(IEsiItemDownloadCallback.class);
+		final DataDownloaderService service = new DataDownloaderService.Builder(adapter)
+				                                      .withEsiAdapter(adapter)
+				                                      .withEveItemProvider(eveItemProvider)
+				                                      .build();
+		Mockito.when(destination.getTypeId()).thenReturn(34);
+		Mockito.when(adapter.searchSDEMarketPrice(any(Integer.class))).thenReturn(100.0);
+		service.accessItemPrice(destination, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
+		Mockito.verify(destination, times(1)).signalCompletion(DataDownloaderService.EsiItemSections.ESIITEM_PRICE
+				, adapter.searchSDEMarketPrice(34));
+	}
+
+	@Test
 	public void accessPilotPublicData() throws InterruptedException {
 		final ESIGlobalAdapter adapter = Mockito.mock(ESIGlobalAdapter.class);
 		final GetCharactersCharacterIdOk publicData = Mockito.mock(GetCharactersCharacterIdOk.class);

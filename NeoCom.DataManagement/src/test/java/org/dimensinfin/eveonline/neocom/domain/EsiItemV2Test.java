@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
+import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.provider.EveItemProvider;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
@@ -14,15 +15,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 public class EsiItemV2Test {
 	private static EveItemProvider eveItemProvider;
+	private static ESIGlobalAdapter esiAdapter;
 	private static DataDownloaderService downloaderService;
 
 	@Before
 	public void setUp() throws Exception {
 		eveItemProvider = Mockito.mock(EveItemProvider.class);
+		esiAdapter = Mockito.mock(ESIGlobalAdapter.class);
 		downloaderService = Mockito.mock(DataDownloaderService.class);
 	}
 
@@ -87,7 +91,26 @@ public class EsiItemV2Test {
 	}
 
 	@Test
-	public void signalCompletion() {
+	public void getPrice() throws InterruptedException {
+		EsiItemV2.injectDownloaderService(downloaderService);
+		final EsiItemV2 item = new EsiItemV2(34);
+		final double expected = 100.0;
+		Mockito.doAnswer(( call ) -> {
+			final IEsiItemDownloadCallback callback = call.getArgument(0);
+			Assert.assertNotNull(callback);
+			return null;
+		}).when(downloaderService).accessItemPrice(item, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
+		Mockito.when(esiAdapter.searchSDEMarketPrice(any(Integer.class))).thenReturn(100.0);
+		double obtained = item.getPrice();
+		Assert.assertEquals("Price expected before any initialization of the price.", -1.0, obtained, 0.01);
+		item.signalCompletion(DataDownloaderService.EsiItemSections.ESIITEM_PRICE, Double.valueOf(100.0));
+		obtained = item.getPrice();
+		Assert.assertEquals("Price expected after updatdd by the downloader.", expected, obtained, 0.01);
+		Mockito.verify(downloaderService, times(1)).accessItemPrice(item, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
+	}
+
+	@Test
+	public void signalCompletion_itemData() {
 		final EventEmitter emitter = Mockito.mock(EventEmitter.class);
 		final GetUniverseTypesTypeIdOk universeItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
 		final EsiItemV2 item = new EsiItemV2(34);

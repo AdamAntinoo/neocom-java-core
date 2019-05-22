@@ -23,6 +23,7 @@ public class TimedUpdater {
 	private static Logger logger = LoggerFactory.getLogger(TimedUpdater.class);
 
 	private ESIGlobalAdapter esiAdapter;
+	private ESIDataPersistenceService persistenceService;
 
 	public void timeTick() {
 		logger.info(">> [TimedUpdater.timeTick]");
@@ -163,10 +164,10 @@ public class TimedUpdater {
 							                          final DownloadManager downloader = new DownloadManager(credential);
 							                          allWentOk = downloader.downloadPilotAssetsESI();
 						                          } catch (SQLException sqle) {
-							                          logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> SQLExceptions writing data to repository: {}"
+							                          logger.info("EX [DownloadManager.persistMiningActionsESI]> SQLExceptions writing data to repository: {}"
 									                          , sqle.getMessage());
 						                          } catch (RuntimeException ntex) {
-							                          logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Runtime exception {}"
+							                          logger.info("EX [DownloadManager.persistMiningActionsESI]> Runtime exception {}"
 									                          , ntex.getMessage());
 						                          }
 
@@ -200,10 +201,10 @@ public class TimedUpdater {
 							                          final DownloadManager downloader = new DownloadManager(credential);
 							                          allWentOk = downloader.downloadPilotBlueprintsESI();
 						                          } catch (SQLException sqle) {
-							                          logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> SQLExceptions writing data to repository: {}"
+							                          logger.info("EX [DownloadManager.persistMiningActionsESI]> SQLExceptions writing data to repository: {}"
 									                          , sqle.getMessage());
 						                          } catch (RuntimeException ntex) {
-							                          logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Runtime exception {}"
+							                          logger.info("EX [DownloadManager.persistMiningActionsESI]> Runtime exception {}"
 									                          , ntex.getMessage());
 						                          }
 
@@ -271,46 +272,11 @@ public class TimedUpdater {
 			UpdateJobManager.submit(newJob);
 			return;
 		}
-		// Search for MININGEXTRACTIONS job request.
-		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS
-				, credential.getAccountId());
+		// - M I N I N G E X T R A C T I O N S
+		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS, credential.getAccountId());
 		// Check that the request is a MININGEXTRACTIONS update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
-			// Submit the job to the manager
-			logger.info("-- [MARKETORDERS]> Found request: {}", currentrequestReference);
-			final String transferredCurrentrequestReference = currentrequestReference;
-			final ServiceJob newJob = new ServiceJob(dataIdentifier)
-					                          .setCredentialIdentifier(credential.getAccountId())
-					                          .setJobClass(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS)
-					                          .setTask(() -> {
-						                          try {
-							                          logger.info("-- [ServiceJob.MININGEXTRACTIONS]> Downloading Mining Extractions for: [{}]", credential.getAccountName());
-							                          logger.info("-- [MARKETORDERS]> Creating new Downloader");
-							                          final DownloadManager downloader = new DownloadManager.Builder(credential)
-									                                                             .withESIAdapter(this.esiAdapter)
-									                                                             .build();
-							                          downloader.downloadPilotMiningActionsESI();
-							                          // If we reach this point we can fire the fragment update.
-							                          // TODO - There is no connection to the Activity/Fragment.
-						                          } catch (SQLException sqle) {
-							                          logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> SQLExceptions writing data to repository: {}"
-									                          , sqle.getMessage());
-							                          //						} catch (NeoComRuntimeException nrex) {
-							                          //							logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Credential not found in the list. Exception: {}"
-							                          //									, nrex.getMessage());
-						                          } catch (RuntimeException ntex) {
-							                          logger.info("EX [DownloadManager.downloadPilotMiningActionsESI]> Runtime exception {}"
-									                          , ntex.getMessage());
-						                          }
-						                          // Update the timer for this download at the database.
-						                          final Instant validUntil = Instant.now()
-								                                                     .plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.INDUSTRY_MINING));
-//						                          final TimeStamp ts = new TimeStamp(transferredCurrentrequestReference, validUntil)
-//								                                               .setCredentialId(credential.getAccountId())
-//								                                               .store();
-					                          });
-			logger.info("-- [MARKETORDERS]> New job request: {}", newJob);
-			UpdateJobManager.submit(newJob);
+			this.miningExtractionJob(currentrequestReference, dataIdentifier, credential);
 			return;
 		}
 		//		// Search for COLONYDATA job request.
@@ -344,6 +310,23 @@ public class TimedUpdater {
 
 	}
 
+	private void miningExtractionJob( final String currentrequestReference, final TimeStamp dataIdentifier, final Credential credential ) {
+		final ServiceJob newJob = new ServiceJob(dataIdentifier)
+				                          .setCredentialIdentifier(credential.getAccountId())
+				                          .setJobClass(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS)
+				                          .setTask(() -> {
+					                          logger.info("-- [ServiceJob.MININGEXTRACTIONS]> Downloading Mining Extractions for: [{}]", credential.getAccountName());
+					                          this.persistenceService.persistMiningActionsESI(credential);
+					                          // Update the timer for this download at the database.
+					                          final Instant validUntil = Instant.now()
+							                                                     .plus(GlobalDataManager.getCacheTime4Type(GlobalDataManager.ECacheTimes.INDUSTRY_MINING));
+					                          final TimeStamp ts = new TimeStamp(currentrequestReference, validUntil)
+							                                               .setCredentialId(credential.getAccountId())
+							                                               .store();
+				                          });
+		UpdateJobManager.submit(newJob);
+	}
+
 	// -  B U I L D E R
 	public static class Builder {
 		private TimedUpdater onConstruction;
@@ -357,8 +340,14 @@ public class TimedUpdater {
 			return this;
 		}
 
+		public Builder withESIDataPersistenceService( final ESIDataPersistenceService persistenceService ) {
+			this.onConstruction.persistenceService = persistenceService;
+			return this;
+		}
+
 		public TimedUpdater build() {
 			Objects.requireNonNull(this.onConstruction.esiAdapter);
+			Objects.requireNonNull(this.onConstruction.persistenceService);
 			return this.onConstruction;
 		}
 	}
