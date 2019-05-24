@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
+import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
@@ -23,12 +25,15 @@ public class TimedUpdater {
 	private static Logger logger = LoggerFactory.getLogger(TimedUpdater.class);
 
 	private ESIGlobalAdapter esiAdapter;
+	private IGlobalPreferencesManager preferencesProvider;
 	private ESIDataPersistenceService persistenceService;
+	private CredentialRepository credentialRepository;
 
 	public void timeTick() {
 		logger.info(">> [TimedUpdater.timeTick]");
 		// Check Credentials for pending data to update.
-		final List<Credential> credentialList = GlobalDataManager.accessAllCredentials("TRANQUILITY");
+		final String server = this.preferencesProvider.getStringPreference("prefkey_dataSourceList", "Tranquility");
+		final List<Credential> credentialList = this.credentialRepository.accessAllCredentials();
 		logger.info("-- [TimedUpdater.timeTick]> Accessing credentials. Credentials found: {}"
 				, credentialList.size());
 		for (Credential cred : credentialList) {
@@ -340,14 +345,26 @@ public class TimedUpdater {
 			return this;
 		}
 
+		public Builder withPreferencesProvider( final IGlobalPreferencesManager preferencesManager ) {
+			this.onConstruction.preferencesProvider = preferencesManager;
+			return this;
+		}
+
 		public Builder withESIDataPersistenceService( final ESIDataPersistenceService persistenceService ) {
 			this.onConstruction.persistenceService = persistenceService;
 			return this;
 		}
 
+		public Builder withCredentialRepository( final CredentialRepository credentialRepository ) {
+			this.onConstruction.credentialRepository = credentialRepository;
+			return this;
+		}
+
 		public TimedUpdater build() {
 			Objects.requireNonNull(this.onConstruction.esiAdapter);
+			Objects.requireNonNull(this.onConstruction.preferencesProvider);
 			Objects.requireNonNull(this.onConstruction.persistenceService);
+			Objects.requireNonNull(this.onConstruction.credentialRepository);
 			return this.onConstruction;
 		}
 	}

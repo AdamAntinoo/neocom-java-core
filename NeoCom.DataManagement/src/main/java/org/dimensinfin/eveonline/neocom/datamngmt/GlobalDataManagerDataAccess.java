@@ -302,29 +302,29 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 		return dao.query(preparedQuery);
 	}
 
-	/**
-	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
-	 * that today records are aggregated by hour instead of by day. So we will have a record for one ore/system since the hour we did the
-	 * extractions until the 23 hours. The first extraction will add to the hour until the next hour starts. Then the accounting for this
-	 * new hour will show the new ore totals and so on hour after hour.
-	 */
-	public static List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) throws SQLException {
-		final Dao<MiningExtraction, String> dao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
-		final QueryBuilder<MiningExtraction, String> builder = dao.queryBuilder();
-		builder.where().eq("ownerId", credential.getAccountId());
-		builder.orderBy("extractionDateName", true)
-				.orderBy("extractionHour", true)
-				.orderBy("solarSystemId", true)
-				.orderBy("typeId", true);
-		final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
-		final List<MiningExtraction> dataList = dao.query(preparedQuery);
-		List<MiningExtraction> results = new ArrayList<>();
-		final String filterDate = DateTime.now().toString("YYYY/MM/dd");
-		// Filter out all records not belonging to today.
-		for (MiningExtraction extraction : dataList) {
-			final String date = extraction.getExtractionDate().split(":")[0];
-			if (date.equalsIgnoreCase(filterDate)) results.add(extraction);
-		}
-		return results;
-	}
+//	/**
+//	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
+//	 * that today records are aggregated by hour instead of by day. So we will have a record for one ore/system since the hour we did the
+//	 * extractions until the 23 hours. The first extraction will add to the hour until the next hour starts. Then the accounting for this
+//	 * new hour will show the new ore totals and so on hour after hour.
+//	 */
+//	public static List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) throws SQLException {
+//		final Dao<MiningExtraction, String> dao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
+//		final QueryBuilder<MiningExtraction, String> builder = dao.queryBuilder();
+//		builder.where().eq("ownerId", credential.getAccountId());
+//		builder.orderBy("extractionDateName", true)
+//				.orderBy("extractionHour", true)
+//				.orderBy("solarSystemId", true)
+//				.orderBy("typeId", true);
+//		final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
+//		final List<MiningExtraction> dataList = dao.query(preparedQuery);
+//		List<MiningExtraction> results = new ArrayList<>();
+//		final String filterDate = DateTime.now().toString("YYYY/MM/dd");
+//		// Filter out all records not belonging to today.
+//		for (MiningExtraction extraction : dataList) {
+//			final String date = extraction.getExtractionDateName().split(":")[0];
+//			if (date.equalsIgnoreCase(filterDate)) results.add(extraction);
+//		}
+//		return results;
+//	}
 }
