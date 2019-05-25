@@ -11,6 +11,8 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -95,40 +97,11 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 		super();
 	}
 
-	//	private MiningExtraction( final MiningRepository miningRepository ) {
-	//		super();
-	//		this.miningRepository = miningRepository;
-	//	}
-
-	// - P E R S I S T E N C E
-	//	public MiningExtraction store() {
-	//		// Update the extraction time.
-	//		try {
-	//			Dao<MiningExtraction, String> miningExtractionDao = accessGlobal().getNeocomDBHelper().getMiningExtractionDao();
-	//			// Store should only update already created records. Tables with generated id should use create() for creation.
-	//			miningExtractionDao.update(this);
-	//		} catch (final SQLException sqle) {
-	//			logger.info("WR [MiningExtraction.<constructor>]> Exception Updating values. {}"
-	//					, sqle.getMessage());
-	//		}
-	//		return this;
-	//	}
-	//
-	//	public MiningExtraction create( final String recordId ) {
-	//		this.id = recordId;
-	//		//		try {
-	//		// TODO - reactivate this after the mock is completed.
-	//		//			Dao<MiningExtraction, String> miningExtractionDao = accessGlobal().getNeocomDBHelper().getMiningExtractionDao();
-	//		// Tables with generated id should use create() for creation.
-	//		//			miningExtractionDao.create(this);
-	//		//		} catch (final SQLException sqle) {
-	//		//			logger.info("WR [MiningExtraction.<constructor>]> Exception creating new record: {} - {}"
-	//		//					, this.id, sqle.getMessage());
-	//		//		}
-	//		return this;
-	//	}
-
 	// -  G E T T E R S   &   S E T T E R S
+	public String getId() {
+		return id;
+	}
+
 	public int getTypeId() {
 		return typeId;
 	}
@@ -141,7 +114,6 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 		return this.resourceItem.getName();
 	}
 
-
 	public String getSystemName() {
 		if (null == this.systemCache) {
 			this.systemCache = new EsiLocation(this.solarSystemId);
@@ -149,9 +121,42 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 		return this.systemCache.getSystemName();
 	}
 
+	public String getExtractionDateName() {
+		return this.extractionDateName;
+	}
+
+	public int getExtractionHour() {
+		return extractionHour;
+	}
+
+	public int getSolarSystemId() {
+		return solarSystemId;
+	}
+
+	public long getDelta() {
+		return delta;
+	}
+
+	public long getOwnerId() {
+		return ownerId;
+	}
+
 	public MiningExtraction setQuantity( final long quantity ) {
 		this.quantity = quantity;
 		return this;
+	}
+
+	public MiningExtraction setDelta( final long delta ) {
+		this.delta = delta;
+		return this;
+	}
+
+	public String getURLForItem() {
+		if (null == this.resourceItem) {
+			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem.addPropertyChangeListener(this);
+		}
+		return this.resourceItem.getURLForItem();
 	}
 
 	// - I A G G R E G A B L E I T E M
@@ -173,10 +178,6 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getPrice();
-	}
-
-	public String getExtractionDateName() {
-		return this.extractionDateName;
 	}
 
 	@Override
@@ -231,9 +232,21 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 			return this;
 		}
 
+		/**
+		 * The unique and special extraction identifier is created at this point and using the current extraction time. This will exclude proper
+		 * testing so there is special code to create special identifier when the <code>onConstruction.extractionHour</code> is set.
+		 */
 		public MiningExtraction build() {
-			this.onConstruction.id = MiningExtraction.generateRecordId(
-					new LocalDate(this.onConstruction.extractionDateName)
+			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy/MM/dd");
+			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);
+			if (this.onConstruction.extractionHour == 24) this.onConstruction.id = MiningExtraction.generateRecordId(
+					dt
+					, this.onConstruction.typeId
+					, this.onConstruction.solarSystemId
+					, this.onConstruction.ownerId);
+			else this.onConstruction.id = MiningExtraction.generateRecordId(
+					this.onConstruction.extractionDateName
+					, this.onConstruction.extractionHour
 					, this.onConstruction.typeId
 					, this.onConstruction.solarSystemId
 					, this.onConstruction.ownerId);

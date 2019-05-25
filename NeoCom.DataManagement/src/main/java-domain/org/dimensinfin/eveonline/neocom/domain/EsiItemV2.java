@@ -57,6 +57,10 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 		return this.price;
 	}
 
+	public String getURLForItem() {
+		return "http://image.eveonline.com/Type/" + this.typeId + "_64.png";
+	}
+
 	// - D E L E G A T E   E M I T T E R
 	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
 		emitter.addPropertyChangeListener(listener);

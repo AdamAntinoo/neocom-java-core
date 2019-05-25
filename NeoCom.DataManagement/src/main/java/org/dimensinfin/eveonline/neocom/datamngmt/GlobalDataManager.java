@@ -57,6 +57,10 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	@Deprecated
 	private static final ExecutorService uiDataExecutor = Executors.newSingleThreadExecutor();
 
+	public static ExecutorService getBackgroundExecutor() {
+		return backgroundExecutor;
+	}
+
 	// - N E T W O R K   S T A T U S
 	public static boolean getNetworkStatus() {
 		return true;
@@ -204,6 +208,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	public Future<?> submitJob( final Runnable task ) {
 		return backgroundExecutor.submit(task);
 	}
+
 	public Future<?> submitCall( final Callable<List<NeoComError>> task ) {
 		return backgroundExecutor.submit(task);
 	}

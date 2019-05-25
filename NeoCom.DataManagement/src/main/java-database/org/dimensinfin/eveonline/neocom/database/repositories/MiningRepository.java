@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
 
 import org.joda.time.DateTime;
@@ -15,18 +14,10 @@ import org.joda.time.LocalDate;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
 public class MiningRepository {
-	private static MiningRepository singleton;
-
-	static MiningRepository getInstance() {
-		return singleton;
-	}
-
-	private Dao<MiningExtraction, String> miningExtractionDao;
-
-	private MiningRepository() { }
-
+	protected Dao<MiningExtraction, String> miningExtractionDao;
 	/**
 	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
 	 * that today records are aggregated by hour instead of by day. So we will have a record for one ore/system since the hour we did the
@@ -34,6 +25,8 @@ public class MiningRepository {
 	 * new hour will show the new ore totals and so on hour after hour.
 	 */
 	private List<MiningExtraction> extractions4Test = new ArrayList<>();
+
+	protected MiningRepository() { }
 
 	public List<MiningExtraction> accessTodayMiningExtractions4PilotMock( final Credential credential ) throws SQLException {
 		this.generateExtractionsT1();
@@ -59,6 +52,7 @@ public class MiningRepository {
 					                     .withQuantity(quantity + i * 100)
 					                     .withOwnerId(92223647)
 					                     .withExtractionDate(new LocalDate())
+					                     .withExtractionHour(20 - i)
 					                     .build());
 		}
 		return todayExtractions;
@@ -66,11 +60,12 @@ public class MiningRepository {
 
 	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) throws SQLException {
 		final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
-		builder.where().eq("ownerId", credential.getAccountId());
-		builder.orderBy("extractionDateName", true)
-				.orderBy("extractionHour", true)
-				.orderBy("solarSystemId", true)
-				.orderBy("typeId", true);
+		final Where<MiningExtraction, String> where = builder.where();
+		where.eq("ownerId", credential.getAccountId());
+		builder.orderBy("extractionDateName", true);
+		builder.orderBy("extractionHour", true);
+		builder.orderBy("solarSystemId", true);
+		builder.orderBy("typeId", true);
 		final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
 		final List<MiningExtraction> dataList = miningExtractionDao.query(preparedQuery);
 		List<MiningExtraction> results = new ArrayList<>();
@@ -88,7 +83,7 @@ public class MiningRepository {
 	}
 
 	public void persist( final MiningExtraction record ) throws SQLException {
-		this.miningExtractionDao.update(record);
+		this.miningExtractionDao.createOrUpdate(record);
 	}
 
 	/**
@@ -98,13 +93,13 @@ public class MiningRepository {
 	 * and for different ores. So for a single day we can have around 6-8 records. The mining ledger information at the neocom database has
 	 * to expiration time so the number of days is still not predetermined.
 	 */
-	public static List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) throws SQLException {
-		final Dao<MiningExtraction, String> dao = GlobalDataManager.getSingleton().getNeocomDBHelper().getMiningExtractionDao();
-		final QueryBuilder<MiningExtraction, String> builder = dao.queryBuilder();
-		builder.where().eq("ownerId", credential.getAccountId());
+	public List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) throws SQLException {
+		final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
+		final Where<MiningExtraction, String> where = builder.where();
+		where.eq("ownerId", credential.getAccountId());
 		builder.orderBy("id", false);
 		final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
-		return dao.query(preparedQuery);
+		return this.miningExtractionDao.query(preparedQuery);
 	}
 
 
@@ -123,8 +118,8 @@ public class MiningRepository {
 
 		public MiningRepository build() {
 			Objects.requireNonNull(this.onConstruction.miningExtractionDao);
-			singleton = this.onConstruction;
-			return singleton;
+			//			singleton = this.onConstruction;
+			return this.onConstruction;
 		}
 	}
 }
