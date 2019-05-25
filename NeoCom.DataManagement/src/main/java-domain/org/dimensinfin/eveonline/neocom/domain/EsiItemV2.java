@@ -7,17 +7,16 @@ import java.util.Objects;
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.provider.EveItemProvider;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
 
 public class EsiItemV2 implements IEsiItemDownloadCallback {
-	private static EveItemProvider eveItemProvider;
+//	private static EveItemProvider eveItemProvider;
 	private static DataDownloaderService downloaderService;
 
-	public static void injectEveItemProvider( final EveItemProvider newEveItemProvider ) {
-		Objects.requireNonNull(newEveItemProvider);
-		eveItemProvider = newEveItemProvider;
-	}
+//	public static void injectEveItemProvider( final EveItemProvider newEveItemProvider ) {
+//		Objects.requireNonNull(newEveItemProvider);
+//		eveItemProvider = newEveItemProvider;
+//	}
 
 	public static void injectDownloaderService( final DataDownloaderService newDownloaderService ) {
 		Objects.requireNonNull(newDownloaderService);

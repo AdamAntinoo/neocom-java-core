@@ -10,7 +10,6 @@ import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.provider.EveItemProvider;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,19 +20,19 @@ import static org.mockito.Mockito.times;
 
 public class DataDownloaderServiceTest {
 	private ESIGlobalAdapter adapter;
-	private EveItemProvider eveItemProvider;
+//	private EveItemProvider eveItemProvider;
 
 	@Before
 	public void setUp() throws Exception {
 		adapter = Mockito.mock(ESIGlobalAdapter.class);
-		eveItemProvider = Mockito.mock(EveItemProvider.class);
+//		eveItemProvider = Mockito.mock(EveItemProvider.class);
 	}
 
 	@Test
 	public void dataDownloaderBuilder() {
 		final DataDownloaderService service = new DataDownloaderService.Builder(adapter)
 				                                      .withEsiAdapter(adapter)
-				                                      .withEveItemProvider(eveItemProvider)
+//				                                      .withEveItemProvider(eveItemProvider)
 				                                      .build();
 	}
 
@@ -56,10 +55,10 @@ public class DataDownloaderServiceTest {
 		final GetUniverseTypesTypeIdOk item = Mockito.mock(GetUniverseTypesTypeIdOk.class);
 		final DataDownloaderService service = new DataDownloaderService.Builder(adapter)
 				                                      .withEsiAdapter(adapter)
-				                                      .withEveItemProvider(eveItemProvider)
+//				                                      .withEveItemProvider(eveItemProvider)
 				                                      .build();
 		Mockito.when(destination.getTypeId()).thenReturn(34);
-		Mockito.when(eveItemProvider.search(34)).thenReturn(item);
+		Mockito.when(adapter.getUniverseTypeById(34)).thenReturn(item);
 		service.accessEveItem(destination, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
 		Mockito.verify(destination, times(1)).signalCompletion(DataDownloaderService.EsiItemSections.ESIITEM_DATA, item);
 	}
@@ -69,7 +68,7 @@ public class DataDownloaderServiceTest {
 		final IEsiItemDownloadCallback destination = Mockito.mock(IEsiItemDownloadCallback.class);
 		final DataDownloaderService service = new DataDownloaderService.Builder(adapter)
 				                                      .withEsiAdapter(adapter)
-				                                      .withEveItemProvider(eveItemProvider)
+//				                                      .withEveItemProvider(eveItemProvider)
 				                                      .build();
 		Mockito.when(destination.getTypeId()).thenReturn(34);
 		Mockito.when(adapter.searchSDEMarketPrice(any(Integer.class))).thenReturn(100.0);

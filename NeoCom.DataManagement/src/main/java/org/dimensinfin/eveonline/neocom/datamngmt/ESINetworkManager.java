@@ -2,7 +2,9 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChronoOptions;
@@ -64,16 +66,24 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - U N I V E R S E   A P I
 	// - U N I V E R S E
+	private static Map<Integer, GetUniverseTypesTypeIdOk> itemCache = new HashMap<>(100);
+
+	/**
+	 * Search for the item on the current downloaded items cache. If not found then go for it to the network.
+	 * @param typeId
+	 * @return
+	 */
 	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId ) {
-		return getUniverseTypeById("tranquility", typeId);
+		return this.search(typeId);
+		//		return getUniverseTypeById("tranquility", typeId);
 	}
-	@Deprecated
-	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
+
+	private GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
 		return getUniverseTypeById(server, typeId);
 	}
 
 	@Deprecated
-	public GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
+	private GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
@@ -99,6 +109,34 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		}
 		return null;
 	}
+
+	/**
+	 * Get the Universe ESI data for a Eve item type. If the type is not found or there is a network problem then return a dummy item.
+	 *
+	 * @param typeId the unique eve identifier for a eve item type.
+	 * @return a ESI data block with the item data or a dummy item if not found or network error.
+	 */
+	private GetUniverseTypesTypeIdOk search( final Integer typeId ) {
+		try {
+			if (itemCache.containsKey(typeId)) return itemCache.get(typeId);
+			else {
+				final GetUniverseTypesTypeIdOk item = this.getUniverseTypeById(typeId, "tranquility");
+				if (null != item) {
+					itemCache.put(typeId, item);
+					return item;
+				} else return null;
+			}
+		} catch (RuntimeException rtex) {
+			return null;
+		} catch (Exception ex) {
+			return null;
+		}
+	}
+
+	public GetUniverseTypesTypeIdOk delete( final Integer typeId ) {
+		return itemCache.remove(typeId);
+	}
+
 
 	public List<GetUniverseAncestries200Ok> getUniverseAncestries( final String server ) {
 		logger.info(">> [ESINetworkManagerMock.getUniverseAncestries]");

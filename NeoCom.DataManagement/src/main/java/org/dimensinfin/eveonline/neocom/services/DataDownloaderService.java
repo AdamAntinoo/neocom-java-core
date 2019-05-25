@@ -11,7 +11,6 @@ import org.dimensinfin.eveonline.neocom.domain.PilotDataSections;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.provider.EveItemProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class DataDownloaderService {
 		ESIITEM_DATA, ESIITEM_PRICE;
 	}
 
-	private static EveItemProvider eveItemProvider;
+//	private static EveItemProvider eveItemProvider;
 	private ESIGlobalAdapter esiAdapter;
 
 	private DataDownloaderService( final ESIGlobalAdapter esiAdapter ) {
@@ -33,7 +32,7 @@ public class DataDownloaderService {
 
 	public void accessEveItem( final IEsiItemDownloadCallback callbackDestination, final EsiItemSections section ) {
 		logger.info("-- [DataDownloaderService.accessEveItem]> Posting request: {}", section.name());
-		final GetUniverseTypesTypeIdOk item = this.eveItemProvider.search(callbackDestination.getTypeId());
+		final GetUniverseTypesTypeIdOk item = this.esiAdapter.getUniverseTypeById(callbackDestination.getTypeId());
 		if (null == item) {
 			downloadExecutor.submit(() -> {
 				logger.info("-- [DataDownloaderService.accessEveItem]> Downloading item data information...");
@@ -68,10 +67,10 @@ public class DataDownloaderService {
 			return this;
 		}
 
-		public Builder withEveItemProvider( final EveItemProvider eveItemProvider ) {
-			this.onConstruction.eveItemProvider = eveItemProvider;
-			return this;
-		}
+//		public Builder withEveItemProvider( final EveItemProvider eveItemProvider ) {
+//			this.onConstruction.eveItemProvider = eveItemProvider;
+//			return this;
+//		}
 
 		public DataDownloaderService build() {
 			Objects.requireNonNull(this.onConstruction.esiAdapter);
