@@ -187,6 +187,17 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 		}
 	}
 
+	// - C O R E
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer("MiningExtraction [ ");
+		buffer.append("#").append(typeId).append("-").append(this.getResourceName()).append(" ");
+		buffer.append("x").append(quantity).append(" ");
+		buffer.append("@").append(solarSystemId).append("-").append(this.getSystemName()).append(" ");
+		buffer.append("]");
+		return buffer.toString();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private MiningExtraction onConstruction;
@@ -253,114 +264,4 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 			return this.onConstruction;
 		}
 	}
-
-
-	//
-	//	public String getRecordId() {
-	//		return this.id;
-	//	}
-
-	//	public double getExtractionValue() {
-	//		if (null == this.resourceItem) {
-	//			this.resourceItem = new EsiItemV2(this.getTypeId());
-	//			this.resourceItem.addPropertyChangeListener(this);
-	//		}
-	//		return this.resourceItem.getPrice() * this.getQuantity();
-	//	}
-
-	//	public int getSolarSystemId() {
-	//		return solarSystemId;
-	//	}
-	//
-	//
-	//	public long getDelta() {
-	//		return delta;
-	//	}
-
-
-	//	public String getResourceName() {
-	//		if (null == this.resourceCache)
-	//			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
-	//		return this.resourceCache.getName();
-	//	}
-
-	//	public String getExtractionDate() {
-	//		return this.extractionDateName;
-	//	}
-	//
-	//	public int getExtractionHour() {
-	//		return this.extractionHour;
-	//	}
-	//
-	//	public long getOwnerId() {
-	//		return ownerId;
-	//	}
-
-	//	@Deprecated
-	//	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
-	//		if (null == this.resourceCache)
-	//			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
-	//		return resourceCache.getLowestSellerPrice();
-	//	}
-	//
-	//	@Deprecated
-	//	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
-	//		if (null == this.resourceCache)
-	//			this.resourceCache = accessGlobal().searchItem4Id(this.typeId);
-	//		return resourceCache.getHighestBuyerPrice();
-	//	}
-
-
-	//
-	//	public MiningExtraction setTypeId( final int typeId ) {
-	//		this.typeId = typeId;
-	//		return this;
-	//	}
-	//
-	//	public MiningExtraction setSolarSystemId( final int solarSystemId ) {
-	//		this.solarSystemId = solarSystemId;
-	//		return this;
-	//	}
-	//
-	//	public MiningExtraction setQuantity( final long quantity ) {
-	//		this.quantity = quantity;
-	//		return this;
-	//	}
-	//
-	//	public MiningExtraction setDelta( long delta ) {
-	//		this.delta = delta;
-	//		return this;
-	//	}
-	//
-	//	public MiningExtraction setOwnerId( final long ownerId ) {
-	//		this.ownerId = ownerId;
-	//		return this;
-	//	}
-	//
-	//	public MiningExtraction setExtractionDate( final LocalDate extractionDate ) {
-	//		// Update the extractions date string.
-	//		this.extractionDateName = extractionDate.toString("YYYY/MM/dd");
-	//		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
-	//		final String targetDate = extractionDate.toString("YYYY/MM/dd");
-	//		if (todayDate.equalsIgnoreCase(targetDate))
-	//			this.extractionHour = DateTime.now().getHourOfDay();
-	//		else
-	//			this.extractionHour = 24;
-	//		return this;
-	//	}
-
-	//	private GetUniverseTypesTypeIdOk getResource() {
-	//
-	//	}
-
-	// - C O R E
-	//	@Override
-	//	public String toString() {
-	//		StringBuffer buffer = new StringBuffer("MiningExtraction [ ");
-	//		buffer.append("#").append(typeId).append("-").append(getResourceName()).append(" ");
-	//		buffer.append("x").append(quantity).append(" ");
-	//		buffer.append("@").append(solarSystemId).append("-").append(getSystemName()).append(" ");
-	//		buffer.append("]");
-	//		return buffer.toString();
-	//	}
 }

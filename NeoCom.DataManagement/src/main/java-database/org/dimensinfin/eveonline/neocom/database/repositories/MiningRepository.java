@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -49,7 +49,7 @@ public class MiningRepository {
 			todayExtractions.add(new MiningExtraction.Builder()
 					                     .withTypeId(typeId)
 					                     .withSolarSystemId(30001647)
-					                     .withQuantity(quantity + i * 100)
+					                     .withQuantity(quantity + (20 - i) * 100)
 					                     .withOwnerId(92223647)
 					                     .withExtractionDate(new LocalDate())
 					                     .withExtractionHour(20 - i)

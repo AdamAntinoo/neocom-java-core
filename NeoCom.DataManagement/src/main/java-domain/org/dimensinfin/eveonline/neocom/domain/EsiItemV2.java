@@ -10,13 +10,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
 
 public class EsiItemV2 implements IEsiItemDownloadCallback {
-//	private static EveItemProvider eveItemProvider;
 	private static DataDownloaderService downloaderService;
-
-//	public static void injectEveItemProvider( final EveItemProvider newEveItemProvider ) {
-//		Objects.requireNonNull(newEveItemProvider);
-//		eveItemProvider = newEveItemProvider;
-//	}
 
 	public static void injectDownloaderService( final DataDownloaderService newDownloaderService ) {
 		Objects.requireNonNull(newDownloaderService);
@@ -58,6 +52,10 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 
 	public String getURLForItem() {
 		return "http://image.eveonline.com/Type/" + this.typeId + "_64.png";
+	}
+
+	public Integer getGroupId() {
+		return item.getGroupId();
 	}
 
 	// - D E L E G A T E   E M I T T E R

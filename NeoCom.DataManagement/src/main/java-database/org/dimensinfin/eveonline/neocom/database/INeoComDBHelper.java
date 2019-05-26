@@ -17,7 +17,7 @@ import com.j256.ormlite.support.ConnectionSource;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.entities.Colony;
-import org.dimensinfin.eveonline.neocom.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.entities.FittingRequest;
 import org.dimensinfin.eveonline.neocom.entities.Job;

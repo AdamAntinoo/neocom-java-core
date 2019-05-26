@@ -3,11 +3,11 @@ package org.dimensinfin.eveonline.neocom.entities;
 import java.sql.SQLException;
 
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 
 import org.junit.Assert;
-import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.j256.ormlite.dao.Dao;
@@ -23,7 +23,7 @@ public class CredentialTest {
 		final INeoComDBHelper helper = Mockito.mock(INeoComDBHelper.class);
 		final Dao dao = Mockito.mock(Dao.class);
 		ANeoComEntity.connectGlobal(global);
-		final Credential credential = new Credential(123)
+		final org.dimensinfin.eveonline.neocom.database.entities.Credential credential = new Credential(123)
 				                              .setDataSource("Tranquility");
 		Mockito.when(ANeoComEntity.accessGlobal()).thenReturn(global);
 		Mockito.when(global.getNeocomDBHelper()).thenReturn(helper);

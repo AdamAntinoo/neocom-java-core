@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
-import org.dimensinfin.eveonline.neocom.entities.*;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 
@@ -45,7 +45,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	@Deprecated
-	public ExtendedLocation (final Credential credential, final EveLocation delegate) {
+	public ExtendedLocation ( final Credential credential, final EveLocation delegate) {
 		this(delegate);
 		_characterIdentifier = credential.getAccountId();
 	}

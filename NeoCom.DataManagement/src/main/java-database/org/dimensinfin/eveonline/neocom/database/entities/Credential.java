@@ -10,16 +10,10 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.entities;
-
-import java.sql.SQLException;
+package org.dimensinfin.eveonline.neocom.database.entities;
 
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -50,17 +44,14 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = "Credentials")
 public class Credential extends NeoComNode {
-	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -4248173464157148843L;
-	private static Logger logger = LoggerFactory.getLogger("Credential");
 
 	public static String createUniqueIdentifier( final String server, final int identifier ) {
 		return server.toUpperCase() + "/" + identifier;
 	}
 
-	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true, index = true)
-	protected String uniqueCredential = "tranquility/-1";
+	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility", -1);
 	@DatabaseField
 	protected int accountId = -2;
 	@DatabaseField
@@ -82,57 +73,54 @@ public class Credential extends NeoComNode {
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	private String refreshToken = "-TOKEN-";
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	public Credential() {
 		super();
 	}
 
-	public Credential( final int newAccountIdentifier ) {
+	private Credential( final int newAccountIdentifier ) {
 		this();
 		this.accountId = newAccountIdentifier;
 		// Set the default value for the datasource from the current Global configuration.
 		//		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
-		try {
-			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-			// Try to create the key. It fails then  it was already created.
-			credentialDao.create(this);
-		} catch (final SQLException sqle) {
-			Credential.logger.warn("WR [Credential.<constructor>]> Credential exists. Update values.");
-			this.store();
-		}
+		//		try {
+		//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
+		//			// Try to create the key. It fails then  it was already created.
+		//			credentialDao.create(this);
+		//		} catch (final SQLException sqle) {
+		//			Credential.logger.warn("WR [Credential.<constructor>]> Credential exists. Update values.");
+		//			this.store();
+		//		}
 	}
+	//	// - P E R S I S T E N C Y
+	//
+	//	/**
+	//	 * Update the values at the database record.
+	//	 */
+	//	public Credential store() {
+	//		try {
+	//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
+	//			credentialDao.createOrUpdate(this);
+	//			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "UPDATED");
+	//		} catch (final SQLException sqle) {
+	//			sqle.printStackTrace();
+	//		}
+	//		return this;
+	//	}
+	//
+	//	public boolean delete() {
+	//		try {
+	//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
+	//			credentialDao.delete(this);
+	//			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "DELETED");
+	//		} catch (final SQLException sqle) {
+	//			sqle.printStackTrace();
+	//		}
+	//		return true;
+	//	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-
-	// - P E R S I S T E N C Y
-
-	/**
-	 * Update the values at the database record.
-	 */
-	public Credential store() {
-		try {
-			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-			credentialDao.createOrUpdate(this);
-			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "UPDATED");
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return this;
-	}
-
-	public boolean delete() {
-		try {
-			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-			credentialDao.delete(this);
-			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "DELETED");
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return true;
-	}
-
-	// --- G E T T E R S   &   S E T T E R S
+	// - G E T T E R S   &   S E T T E R S
 	public int getAccountId() {
 		return accountId;
 	}
@@ -213,7 +201,7 @@ public class Credential extends NeoComNode {
 		return true;
 	}
 
-	// --- D E L E G A T E D   M E T H O D S
+	// - C O R E
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer("Credential [");
@@ -222,5 +210,17 @@ public class Credential extends NeoComNode {
 		buffer.append("]");
 		return buffer.toString();
 	}
+
+	// - B U I L D E R
+	public static class Builder {
+		private Credential onConstruction;
+
+		public Builder( final int account ) {
+			this.onConstruction = new Credential(account);
+		}
+
+		public Credential build() {
+			return this.onConstruction;
+		}
+	}
 }
-// - UNUSED CODE ............................................................................................

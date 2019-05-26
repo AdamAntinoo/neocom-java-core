@@ -1,10 +1,11 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 
 import com.j256.ormlite.dao.Dao;
 
@@ -22,6 +23,10 @@ public class CredentialRepository {
 		}
 		return credentialList;
 
+	}
+
+	public void persist( final Credential record ) throws SQLException {
+		this.credentialDao.createOrUpdate(record);
 	}
 
 	// - B U I L D E R
