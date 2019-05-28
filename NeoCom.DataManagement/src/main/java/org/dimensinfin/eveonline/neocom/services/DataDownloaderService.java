@@ -23,7 +23,7 @@ public class DataDownloaderService {
 		ESIITEM_DATA, ESIITEM_PRICE;
 	}
 
-//	private static EveItemProvider eveItemProvider;
+	//	private static EveItemProvider eveItemProvider;
 	private ESIGlobalAdapter esiAdapter;
 
 	private DataDownloaderService( final ESIGlobalAdapter esiAdapter ) {
@@ -32,19 +32,19 @@ public class DataDownloaderService {
 
 	public void accessEveItem( final IEsiItemDownloadCallback callbackDestination, final EsiItemSections section ) {
 		logger.info("-- [DataDownloaderService.accessEveItem]> Posting request: {}", section.name());
-		final GetUniverseTypesTypeIdOk item = this.esiAdapter.getUniverseTypeById(callbackDestination.getTypeId());
-		if (null == item) {
-			downloadExecutor.submit(() -> {
-				logger.info("-- [DataDownloaderService.accessEveItem]> Downloading item data information...");
-				final GetUniverseTypesTypeIdOk itemData = this.esiAdapter.getUniverseTypeById(
-						callbackDestination.getTypeId());
-				// Callback the pilot instance with the data.
-				logger.info("-- [DataDownloaderService.accessEveItem]> Completed item data download. Sending data to callback.");
-				if (null != itemData) callbackDestination.signalCompletion(section, itemData);
-				else
-					logger.info("-- [DataDownloaderService.accessEveItem]> Failed public data download. Null contents.");
-			});
-		} else callbackDestination.signalCompletion(section, item);
+		//		final GetUniverseTypesTypeIdOk item = this.esiAdapter.getUniverseTypeById(callbackDestination.getTypeId());
+		//		if (null == item) {
+		downloadExecutor.submit(() -> {
+			logger.info("-- [DataDownloaderService.accessEveItem]> Downloading item data information...");
+			final GetUniverseTypesTypeIdOk itemData = this.esiAdapter.getUniverseTypeById(
+					callbackDestination.getTypeId());
+			// Callback the pilot instance with the data.
+			logger.info("-- [DataDownloaderService.accessEveItem]> Completed item data download. Sending data to callback.");
+			if (null != itemData) callbackDestination.signalCompletion(section, itemData);
+			else
+				logger.info("-- [DataDownloaderService.accessEveItem]> Failed public data download. Null contents.");
+		});
+		//		} else callbackDestination.signalCompletion(section, item);
 	}
 
 	public void accessItemPrice( final IEsiItemDownloadCallback callbackDestination, final EsiItemSections section ) {
@@ -67,10 +67,10 @@ public class DataDownloaderService {
 			return this;
 		}
 
-//		public Builder withEveItemProvider( final EveItemProvider eveItemProvider ) {
-//			this.onConstruction.eveItemProvider = eveItemProvider;
-//			return this;
-//		}
+		//		public Builder withEveItemProvider( final EveItemProvider eveItemProvider ) {
+		//			this.onConstruction.eveItemProvider = eveItemProvider;
+		//			return this;
+		//		}
 
 		public DataDownloaderService build() {
 			Objects.requireNonNull(this.onConstruction.esiAdapter);

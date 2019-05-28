@@ -47,8 +47,8 @@ import retrofit2.Retrofit;
  */
 public class ESINetworkManagerZBase {
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
-	protected static final long CACHE_SIZE = 10 * 1024 * 1024;
-	protected static final long TIMEOUT = TimeUnit.SECONDS.toMillis(60);
+	public static final long CACHE_SIZE = 10 * 1024 * 1024;
+	public static final long TIMEOUT = TimeUnit.SECONDS.toMillis(60);
 	protected static final ESIStore STORE = ESIStore.DEFAULT;
 
 	protected static ESINetworkManagerZBase singleton;
@@ -74,6 +74,7 @@ public class ESINetworkManagerZBase {
 	protected static Retrofit neocomRetrofitSingularity;
 	protected static Retrofit neocomRetrofit;
 	protected static Retrofit neocomRetrofitNoAuth;
+	protected static Retrofit neocomRetrofitMountebank;
 	private static String authorizationURL;
 
 	/**
@@ -112,6 +113,14 @@ public class ESINetworkManagerZBase {
 
 	public static String getStringScopes() {
 		return SCOPESTRING;
+	}
+
+	/**
+	 * Return the configured retrofit for the requested endpoint. This way the endpoints can be changed to use another retrofit during
+	 * testing or even during production by overriding this method.
+	 */
+	public Retrofit getESIRetrofit() {
+		return neocomRetrofit;
 	}
 
 	/**
@@ -213,6 +222,14 @@ public class ESINetworkManagerZBase {
 				                       .withCacheSize(CACHE_SIZE)
 				                       .withTimeout(TIMEOUT)
 				                       .build();
+		neocomRetrofitMountebank = new NeoComRetrofitNoOAuthHTTP.Builder()
+				                           .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
+				                           .withEsiServerLocation("https://localhost:8448/")
+				                           .withAgent(AGENT)
+				                           .withCacheDataFile(cacheDataFile)
+				                           .withCacheSize(CACHE_SIZE)
+				                           .withTimeout(TIMEOUT)
+				                           .build();
 		logger.info("<< [ESIGlobalAdapter.initialize]");
 	}
 

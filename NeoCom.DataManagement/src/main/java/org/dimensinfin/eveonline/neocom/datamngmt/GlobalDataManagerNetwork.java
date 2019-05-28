@@ -200,77 +200,77 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		}
 	}
 
-	public List<Colony> downloadColonies4Credential( final Credential credential ) {
-		// Optimize the access to the Colony data.
-		//		if(colonies.size()<1) {
-		final Chrono accessFullTime = new Chrono();
-		List<Colony> colonies = new ArrayList<>();
-		try {
-			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
-			final int identifier = credential.getAccountId();
-			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = this.esiAdapter.getCharactersCharacterIdPlanets(identifier
-					, credential.getRefreshToken()
-					, credential.getDataSource());
-			// Transform the received OK instance into a NeoCom compatible model instance.
-			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
-				try {
-					Colony col = modelMapper.map(colonyOK, Colony.class);
-					// Block to add additional data not downloaded on this call.
-					// To set more information about this particular planet we should call the Universe database.
-					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId()
-							, credential.getRefreshToken()
-							, credential.getDataSource());
-					if (null != planetData) col.setPlanetData(planetData);
-
-					try {
-						// During this first phase download all the rest of the information.
-						// Get to the Network and download the data from the ESI api.
-						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = this.esiAdapter.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
-								, col.getPlanetId()
-								, credential.getRefreshToken()
-								, credential.getDataSource());
-						if (null != colonyStructures) {
-							// Add the original data to the colony if we need some more information later.
-							col.setStructuresData(colonyStructures);
-							List<ColonyStructure> results = new ArrayList<>();
-
-							// Process the structures converting the pin to the Colony structures compatible with MVC.
-							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
-								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-								try {
-									final String serialized = jsonMapper.writeValueAsString(newstruct);
-									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId()
-											, col.getPlanetId());
-									// TODO Removed until the compilation is complete. This is something we should review before adding
-									// it back.
-									//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-									//											.setPlanetIdentifier(storageIdentifier)
-									//											.setColonySerialization(serialized)
-									//											.store();
-								} catch (JsonProcessingException jpe) {
-									jpe.printStackTrace();
-								}
-								// missing code
-								results.add(newstruct);
-							}
-							col.setStructures(results);
-						}
-					} catch (RuntimeException rtex) {
-						rtex.printStackTrace();
-					}
-					col.store();
-					colonies.add(col);
-				} catch (RuntimeException rtex) {
-					rtex.printStackTrace();
-				}
-			}
-		} catch (RuntimeException rtex) {
-			rtex.printStackTrace();
-		}
-		return colonies;
-	}
+//	public List<Colony> downloadColonies4Credential( final Credential credential ) {
+//		// Optimize the access to the Colony data.
+//		//		if(colonies.size()<1) {
+//		final Chrono accessFullTime = new Chrono();
+//		List<Colony> colonies = new ArrayList<>();
+//		try {
+//			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
+//			final int identifier = credential.getAccountId();
+//			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = this.esiAdapter.getCharactersCharacterIdPlanets(identifier
+//					, credential.getRefreshToken()
+//					, credential.getDataSource());
+//			// Transform the received OK instance into a NeoCom compatible model instance.
+//			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
+//				try {
+//					Colony col = modelMapper.map(colonyOK, Colony.class);
+//					// Block to add additional data not downloaded on this call.
+//					// To set more information about this particular planet we should call the Universe database.
+//					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId()
+//							, credential.getRefreshToken()
+//							, credential.getDataSource());
+//					if (null != planetData) col.setPlanetData(planetData);
+//
+//					try {
+//						// During this first phase download all the rest of the information.
+//						// Get to the Network and download the data from the ESI api.
+//						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = this.esiAdapter.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
+//								, col.getPlanetId()
+//								, credential.getRefreshToken()
+//								, credential.getDataSource());
+//						if (null != colonyStructures) {
+//							// Add the original data to the colony if we need some more information later.
+//							col.setStructuresData(colonyStructures);
+//							List<ColonyStructure> results = new ArrayList<>();
+//
+//							// Process the structures converting the pin to the Colony structures compatible with MVC.
+//							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+//							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+//								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
+//								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+//								try {
+//									final String serialized = jsonMapper.writeValueAsString(newstruct);
+//									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId()
+//											, col.getPlanetId());
+//									// TODO Removed until the compilation is complete. This is something we should review before adding
+//									// it back.
+//									//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+//									//											.setPlanetIdentifier(storageIdentifier)
+//									//											.setColonySerialization(serialized)
+//									//											.store();
+//								} catch (JsonProcessingException jpe) {
+//									jpe.printStackTrace();
+//								}
+//								// missing code
+//								results.add(newstruct);
+//							}
+//							col.setStructures(results);
+//						}
+//					} catch (RuntimeException rtex) {
+//						rtex.printStackTrace();
+//					}
+//					col.store();
+//					colonies.add(col);
+//				} catch (RuntimeException rtex) {
+//					rtex.printStackTrace();
+//				}
+//			}
+//		} catch (RuntimeException rtex) {
+//			rtex.printStackTrace();
+//		}
+//		return colonies;
+//	}
 
 	// TODO Review with the use of session
 	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {

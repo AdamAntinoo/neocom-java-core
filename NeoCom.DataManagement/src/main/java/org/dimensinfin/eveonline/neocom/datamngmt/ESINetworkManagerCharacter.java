@@ -10,16 +10,7 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.*;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.*;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import com.google.gson.GsonBuilder;
-import okhttp3.CertificatePinner;
-import okhttp3.OkHttpClient;
-import retrofit2.Converter;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * This class download the OK data classes from the ESI api using the ESI authorization. It will then simply return the
@@ -43,7 +34,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C H A R A C T E R   A P I
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
-	public  GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
+	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterId]");
 		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
@@ -93,57 +84,57 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		else return null;
 	}
 
-//	private static Response<GetCharactersCharacterIdOk> processCharacterNotAuthenticated( final String datasource, final int identifier
-//	) {
-//		OkHttpClient.Builder verifyClient =
-//				new OkHttpClient.Builder()
-//						.certificatePinner(
-//								new CertificatePinner.Builder()
-//										.add("login.eveonline.com", "sha256/5UeWOuDyX7IUmcKnsVdx+vLMkxEGAtzfaOUQT/caUBE=")
-//										.add("login.eveonline.com", "sha256/980Ionqp3wkYtN9SZVgMzuWQzJta1nfxNPwTem1X0uc=")
-//										.add("login.eveonline.com", "sha256/du6FkDdMcVQ3u8prumAo6t3i3G27uMP2EOhR8R0at/U=")
-//										.build())
-//						.addInterceptor(chain -> chain.proceed(
-//								chain.request()
-//										.newBuilder()
-//										.addHeader("User-Agent", "org.dimensinfin")
-//										.build()));
-//		// Verify the character authenticated and create the Credential.
-//		logger.info("-- [AuthorizationFlowActivity.registerInBackground]> Creating character verification.");
-//		final Converter.Factory GSON_CONVERTER_FACTORY =
-//				GsonConverterFactory.create(
-//						new GsonBuilder()
-//								.registerTypeAdapter(DateTime.class, new NeoComRetrofitHTTP.GSONDateTimeDeserializer())
-//								.registerTypeAdapter(LocalDate.class, new NeoComRetrofitHTTP.GSONLocalDateDeserializer())
-//								.create());
-//		try {
-//			final Response<GetCharactersCharacterIdOk> characterResponse = new Retrofit.Builder()
-//					                                                               .baseUrl("https://esi.tech.ccp.is/latest/")
-//					                                                               .addConverterFactory(GSON_CONVERTER_FACTORY)
-//					                                                               .client(verifyClient.build())
-//					                                                               .build()
-//					                                                               .create(CharacterApi.class).getCharactersCharacterId(identifier
-//							, datasource, null).execute();
-//			return characterResponse;
-//		} catch (IOException ioe) {
-//			logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
-//			ioe.printStackTrace();
-//			// Return cached response if available
-//			//			if ( null != okResponseCache.get(reference) ) return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-//			//			else
-//			return null;
-//		} catch (RuntimeException rte) {
-//			logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
-//			rte.printStackTrace();
-//			// Return cached response if available
-//			//			if ( null != okResponseCache.get(reference) ) return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-//			//			else
-//			return null;
-//		}
-//	}
+	//	private static Response<GetCharactersCharacterIdOk> processCharacterNotAuthenticated( final String datasource, final int identifier
+	//	) {
+	//		OkHttpClient.Builder verifyClient =
+	//				new OkHttpClient.Builder()
+	//						.certificatePinner(
+	//								new CertificatePinner.Builder()
+	//										.add("login.eveonline.com", "sha256/5UeWOuDyX7IUmcKnsVdx+vLMkxEGAtzfaOUQT/caUBE=")
+	//										.add("login.eveonline.com", "sha256/980Ionqp3wkYtN9SZVgMzuWQzJta1nfxNPwTem1X0uc=")
+	//										.add("login.eveonline.com", "sha256/du6FkDdMcVQ3u8prumAo6t3i3G27uMP2EOhR8R0at/U=")
+	//										.build())
+	//						.addInterceptor(chain -> chain.proceed(
+	//								chain.request()
+	//										.newBuilder()
+	//										.addHeader("User-Agent", "org.dimensinfin")
+	//										.build()));
+	//		// Verify the character authenticated and create the Credential.
+	//		logger.info("-- [AuthorizationFlowActivity.registerInBackground]> Creating character verification.");
+	//		final Converter.Factory GSON_CONVERTER_FACTORY =
+	//				GsonConverterFactory.create(
+	//						new GsonBuilder()
+	//								.registerTypeAdapter(DateTime.class, new NeoComRetrofitHTTP.GSONDateTimeDeserializer())
+	//								.registerTypeAdapter(LocalDate.class, new NeoComRetrofitHTTP.GSONLocalDateDeserializer())
+	//								.create());
+	//		try {
+	//			final Response<GetCharactersCharacterIdOk> characterResponse = new Retrofit.Builder()
+	//					                                                               .baseUrl("https://esi.tech.ccp.is/latest/")
+	//					                                                               .addConverterFactory(GSON_CONVERTER_FACTORY)
+	//					                                                               .client(verifyClient.build())
+	//					                                                               .build()
+	//					                                                               .create(CharacterApi.class).getCharactersCharacterId(identifier
+	//							, datasource, null).execute();
+	//			return characterResponse;
+	//		} catch (IOException ioe) {
+	//			logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
+	//			ioe.printStackTrace();
+	//			// Return cached response if available
+	//			//			if ( null != okResponseCache.get(reference) ) return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
+	//			//			else
+	//			return null;
+	//		} catch (RuntimeException rte) {
+	//			logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
+	//			rte.printStackTrace();
+	//			// Return cached response if available
+	//			//			if ( null != okResponseCache.get(reference) ) return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
+	//			//			else
+	//			return null;
+	//		}
+	//	}
 
 	// --- C L O N E S
-	public  GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier
+	public GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
 		final Chrono accessFullTime = new Chrono();
@@ -183,7 +174,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	}
 
 	// - P L A N E T A R Y   I N T E R A C T I O N
-	public  List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier
+	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		final Chrono accessFullTime = new Chrono();
@@ -197,7 +188,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = neocomRetrofit
+			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.getESIRetrofit()
 					                                                                                  .create(PlanetaryInteractionApi.class)
 					                                                                                  .getCharactersCharacterIdPlanets(identifier, datasource, null, null).execute();
 			if (planetaryApiResponse.isSuccessful()) {
@@ -222,7 +213,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		//		} else return (List<GetCharactersCharacterIdPlanets200Ok>) okResponseCache.get(reference).body();
 	}
 
-	public  GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier
+	public GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier
 			, final int planetid, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
 		final Chrono accessFullTime = new Chrono();
@@ -262,7 +253,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	}
 
 	// - I N D U S T R Y
-	public  List<GetCharactersCharacterIdIndustryJobs200Ok> getCharactersCharacterIdIndustryJobs( final int identifier
+	public List<GetCharactersCharacterIdIndustryJobs200Ok> getCharactersCharacterIdIndustryJobs( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdIndustryJobs]");
 		// Check if this response already available at cache.
@@ -321,7 +312,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 			boolean morePages = true;
 			int pageCounter = 1;
 			while (morePages) {
-				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = neocomRetrofit
+				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = neocomRetrofitMountebank
 						                                                                                .create(IndustryApi.class)
 						                                                                                .getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
 				if (!industryApiResponse.isSuccessful()) {

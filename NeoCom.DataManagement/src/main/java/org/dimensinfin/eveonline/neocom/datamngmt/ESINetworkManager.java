@@ -216,7 +216,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		return null;
 	}
 
-	public static GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
+	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
 		final Chrono accessFullTime = new Chrono();
 		try {
@@ -226,7 +226,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
-			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofit
+			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofitNoAuth
 					                                                                   .create(UniverseApi.class)
 					                                                                   .getUniversePlanetsPlanetId(identifier, datasource, null).execute();
 			if (!universeApiResponse.isSuccessful()) {
