@@ -30,10 +30,8 @@ public class CredentialRepository {
 		List<Credential> credentialList = new ArrayList<>();
 		try {
 			return this.credentialDao.queryForAll();
-			//					       .queryForEq("dataSource", sourceServer);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-			//			logger.warn("W [GlobalDataManagerDataAccess.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
 		}
 		return credentialList;
 

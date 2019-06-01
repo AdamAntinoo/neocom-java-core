@@ -41,7 +41,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "locations")
-public class EveLocation extends NeoComNode {
+public class EveLocation extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1522765618286937377L;
 

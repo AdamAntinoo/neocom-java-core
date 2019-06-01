@@ -1,10 +1,15 @@
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
+import org.dimensinfin.eveonline.neocom.core.EventEmitter;
+import org.dimensinfin.eveonline.neocom.core.IEventEmitter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComNode extends ANeoComEntity implements ICollaboration, IJsonAngular {
+public abstract class NeoComNode implements Serializable, ICollaboration, IJsonAngular, IEventEmitter {
 	protected static Logger logger = LoggerFactory.getLogger(NeoComNode.class);
 	protected static final long serialVersionUID = 6506043294337948561L;
 
@@ -25,32 +30,41 @@ public abstract class NeoComNode extends ANeoComEntity implements ICollaboration
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
 
-	// - F I E L D - S E C T I O N ............................................................................
-	protected String jsonClass = "NeoComNode";
+	protected String jsonClass;
+	private EventEmitter eventEmitter = new EventEmitter();
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	public NeoComNode() {
 		jsonClass = this.getClass().getSimpleName();
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
+	// - I E V E N T E M I T T E R   D E L E G A T E
+	@Override
+	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
+		this.eventEmitter.addPropertyChangeListener(listener);
+	}
+
+	@Override
+	public void removePropertyChangeListener( final PropertyChangeListener listener ) {
+		this.eventEmitter.removePropertyChangeListener(listener);
+	}
+
+	@Override
+	public boolean sendChangeEvent( final String eventName ) {
+		return this.eventEmitter.sendChangeEvent(eventName);
+	}
+
+	public boolean sendChangeEvent( final PropertyChangeEvent event ) {
+		return this.eventEmitter.sendChangeEvent(event);
+	}
+
+	// - I C O L L A B O R A T I O N   I N T E R F A C E
 	public List<ICollaboration> collaborate2Model( final String variant ) {
 		return new ArrayList<>();
 	}
 
 	public String getJsonClass() {
-		return jsonClass;
-	}
-
-	//	private void setJsonClass( final String jsonClass ) {
-	//		this.jsonClass = jsonClass;
-	//	}
-
-	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("NeoComNode [");
-		buffer.append(" ]");
-		return buffer.toString();
+		return this.jsonClass;
 	}
 
 	@Override

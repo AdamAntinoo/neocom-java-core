@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
  *
  * @author Adam Antinoo
  */
-public abstract class ANeoComEntity extends AbstractPropertyChanger implements IDatabaseEntity {
+public abstract class ANeoComEntity extends NeoComNode implements IDatabaseEntity {
 	@Deprecated
 	private static ISDEDBHelper SDEHelper;
 	@Deprecated
