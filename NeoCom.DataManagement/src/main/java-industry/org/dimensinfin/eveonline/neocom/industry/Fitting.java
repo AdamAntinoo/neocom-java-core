@@ -15,6 +15,7 @@ package org.dimensinfin.eveonline.neocom.industry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class Fitting extends NeoComNode {
+public class Fitting extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("Fitting");
 

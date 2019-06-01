@@ -21,7 +21,7 @@ import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dimensinfin.eveonline.neocom.entities.Colony;
+
 import org.dimensinfin.eveonline.neocom.entities.ColonyStorage;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;

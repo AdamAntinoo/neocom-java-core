@@ -11,7 +11,6 @@ package org.dimensinfin.eveonline.neocom.manager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.dimensinfin.eveonline.neocom.entities.Colony;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;

@@ -22,6 +22,7 @@ import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 /**
@@ -29,7 +30,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  */
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "FittingRequests")
-public class FittingRequest extends NeoComNode {
+public class FittingRequest extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("FittingRequest");
 

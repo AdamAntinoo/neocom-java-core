@@ -12,6 +12,29 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.entities.Job;
+import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillsOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.industry.Fitting;
+import org.dimensinfin.eveonline.neocom.model.SkillInTraining;
+import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
+
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -20,34 +43,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.entities.Colony;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.entities.Job;
-import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillsOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.PostUniverseNames200Ok;
-import org.dimensinfin.eveonline.neocom.industry.Fitting;
-import org.dimensinfin.eveonline.neocom.model.SkillInTraining;
-import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Adam Antinoo
@@ -86,11 +81,12 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 
 	/**
 	 * Get access to the Authorization URL from the OAuth20 interface instance.
+	 *
 	 * @return the authorization URL to call.
 	 */
-//	public static String getAuthorizationUrl() {
-//		return ESINetworkManager.getAuthorizationUrl(esiServer);
-//	}
+	//	public static String getAuthorizationUrl() {
+	//		return ESINetworkManager.getAuthorizationUrl(esiServer);
+	//	}
 
 	// --- N E T W O R K    D O W N L O A D   I N T E R F A C E
 	// - I N D U S T R Y
@@ -114,11 +110,11 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			return results;
 		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadIndustryJobs4Credential]> Credential not found in the list. Exception: {}", nrex
-					.getMessage());
+					                                                                                                                       .getMessage());
 			return new ArrayList<>();
 		} catch (RuntimeException ntex) {
 			logger.info("EX [GlobalDataManager.downloadIndustryJobs4Credential]> Mapping error - {}", ntex
-					.getMessage());
+					                                                                                          .getMessage());
 			return new ArrayList<>();
 		} finally {
 			logger.info("<< [GlobalDataManagerNetwork.downloadIndustryJobs4Credential]");
@@ -132,9 +128,9 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		try {
 			// Get to the Network and download the data from the ESI api.
 			final List<GetCharactersCharacterIdOrders200Ok> marketOrders = ESINetworkManager.getCharactersCharacterIdOrders
-					(credential.getAccountId()
-							, credential.getRefreshToken()
-							, credential.getDataSource());
+					                                                                                 (credential.getAccountId()
+							                                                                                 , credential.getRefreshToken()
+							                                                                                 , credential.getDataSource());
 			if (null != marketOrders) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrders200Ok order : marketOrders) {
@@ -149,11 +145,11 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			return results;
 		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadMarketOrders4Credential]> Credential not found in the list. Exception: {}", nrex
-					.getMessage());
+					                                                                                                                       .getMessage());
 			return new ArrayList<>();
 		} catch (RuntimeException ntex) {
 			logger.info("EX [GlobalDataManager.downloadMarketOrders4Credential]> Mapping error - {}", ntex
-					.getMessage());
+					                                                                                          .getMessage());
 			return new ArrayList<>();
 		} finally {
 			logger.info("<< [GlobalDataManagerNetwork.downloadMarketOrders4Credential]");
@@ -166,9 +162,9 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		try {
 			// Get to the Network and download the data from the ESI api.
 			final List<GetCharactersCharacterIdOrdersHistory200Ok> marketOrders = ESINetworkManager.getCharactersCharacterIdOrdersHistory
-					(credential.getAccountId()
-							, credential.getRefreshToken()
-							, credential.getDataSource());
+					                                                                                        (credential.getAccountId()
+							                                                                                        , credential.getRefreshToken()
+							                                                                                        , credential.getDataSource());
 			if (null != marketOrders) {
 				// Process the data and convert it to structures compatible with MVC.
 				for (GetCharactersCharacterIdOrdersHistory200Ok order : marketOrders) {
@@ -189,88 +185,88 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			return results;
 		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadMarketOrdersHistory4Credential]> Credential not found in the list. Exception: {}", nrex
-					.getMessage());
+					                                                                                                                              .getMessage());
 			return new ArrayList<>();
 		} catch (RuntimeException ntex) {
 			logger.info("EX [GlobalDataManager.downloadMarketOrdersHistory4Credential]> Mapping error - {}", ntex
-					.getMessage());
+					                                                                                                 .getMessage());
 			return new ArrayList<>();
 		} finally {
 			logger.info("<< [GlobalDataManagerNetwork.downloadMarketOrdersHistory4Credential]");
 		}
 	}
 
-//	public List<Colony> downloadColonies4Credential( final Credential credential ) {
-//		// Optimize the access to the Colony data.
-//		//		if(colonies.size()<1) {
-//		final Chrono accessFullTime = new Chrono();
-//		List<Colony> colonies = new ArrayList<>();
-//		try {
-//			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
-//			final int identifier = credential.getAccountId();
-//			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = this.esiAdapter.getCharactersCharacterIdPlanets(identifier
-//					, credential.getRefreshToken()
-//					, credential.getDataSource());
-//			// Transform the received OK instance into a NeoCom compatible model instance.
-//			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
-//				try {
-//					Colony col = modelMapper.map(colonyOK, Colony.class);
-//					// Block to add additional data not downloaded on this call.
-//					// To set more information about this particular planet we should call the Universe database.
-//					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId()
-//							, credential.getRefreshToken()
-//							, credential.getDataSource());
-//					if (null != planetData) col.setPlanetData(planetData);
-//
-//					try {
-//						// During this first phase download all the rest of the information.
-//						// Get to the Network and download the data from the ESI api.
-//						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = this.esiAdapter.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
-//								, col.getPlanetId()
-//								, credential.getRefreshToken()
-//								, credential.getDataSource());
-//						if (null != colonyStructures) {
-//							// Add the original data to the colony if we need some more information later.
-//							col.setStructuresData(colonyStructures);
-//							List<ColonyStructure> results = new ArrayList<>();
-//
-//							// Process the structures converting the pin to the Colony structures compatible with MVC.
-//							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
-//							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
-//								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
-//								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
-//								try {
-//									final String serialized = jsonMapper.writeValueAsString(newstruct);
-//									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId()
-//											, col.getPlanetId());
-//									// TODO Removed until the compilation is complete. This is something we should review before adding
-//									// it back.
-//									//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
-//									//											.setPlanetIdentifier(storageIdentifier)
-//									//											.setColonySerialization(serialized)
-//									//											.store();
-//								} catch (JsonProcessingException jpe) {
-//									jpe.printStackTrace();
-//								}
-//								// missing code
-//								results.add(newstruct);
-//							}
-//							col.setStructures(results);
-//						}
-//					} catch (RuntimeException rtex) {
-//						rtex.printStackTrace();
-//					}
-//					col.store();
-//					colonies.add(col);
-//				} catch (RuntimeException rtex) {
-//					rtex.printStackTrace();
-//				}
-//			}
-//		} catch (RuntimeException rtex) {
-//			rtex.printStackTrace();
-//		}
-//		return colonies;
-//	}
+	//	public List<Colony> downloadColonies4Credential( final Credential credential ) {
+	//		// Optimize the access to the Colony data.
+	//		//		if(colonies.size()<1) {
+	//		final Chrono accessFullTime = new Chrono();
+	//		List<Colony> colonies = new ArrayList<>();
+	//		try {
+	//			// Create a request to the ESI api downloader to get the list of Planets of the current Character.
+	//			final int identifier = credential.getAccountId();
+	//			final List<GetCharactersCharacterIdPlanets200Ok> colonyInstances = this.esiAdapter.getCharactersCharacterIdPlanets(identifier
+	//					, credential.getRefreshToken()
+	//					, credential.getDataSource());
+	//			// Transform the received OK instance into a NeoCom compatible model instance.
+	//			for (GetCharactersCharacterIdPlanets200Ok colonyOK : colonyInstances) {
+	//				try {
+	//					Colony col = modelMapper.map(colonyOK, Colony.class);
+	//					// Block to add additional data not downloaded on this call.
+	//					// To set more information about this particular planet we should call the Universe database.
+	//					final GetUniversePlanetsPlanetIdOk planetData = ESINetworkManager.getUniversePlanetsPlanetId(col.getPlanetId()
+	//							, credential.getRefreshToken()
+	//							, credential.getDataSource());
+	//					if (null != planetData) col.setPlanetData(planetData);
+	//
+	//					try {
+	//						// During this first phase download all the rest of the information.
+	//						// Get to the Network and download the data from the ESI api.
+	//						final GetCharactersCharacterIdPlanetsPlanetIdOk colonyStructures = this.esiAdapter.getCharactersCharacterIdPlanetsPlanetId(credential.getAccountId()
+	//								, col.getPlanetId()
+	//								, credential.getRefreshToken()
+	//								, credential.getDataSource());
+	//						if (null != colonyStructures) {
+	//							// Add the original data to the colony if we need some more information later.
+	//							col.setStructuresData(colonyStructures);
+	//							List<ColonyStructure> results = new ArrayList<>();
+	//
+	//							// Process the structures converting the pin to the Colony structures compatible with MVC.
+	//							final List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pinList = colonyStructures.getPins();
+	//							for (GetCharactersCharacterIdPlanetsPlanetIdOkPins structureOK : pinList) {
+	//								ColonyStructure newstruct = modelMapper.map(structureOK, ColonyStructure.class);
+	//								// TODO Convert the structure to a serialized Json string and store it into the database for fast access.
+	//								try {
+	//									final String serialized = jsonMapper.writeValueAsString(newstruct);
+	//									final String storageIdentifier = constructPlanetStorageIdentifier(credential.getAccountId()
+	//											, col.getPlanetId());
+	//									// TODO Removed until the compilation is complete. This is something we should review before adding
+	//									// it back.
+	//									//									final ColonyStorage storage = new ColonyStorage(newstruct.getPinId())
+	//									//											.setPlanetIdentifier(storageIdentifier)
+	//									//											.setColonySerialization(serialized)
+	//									//											.store();
+	//								} catch (JsonProcessingException jpe) {
+	//									jpe.printStackTrace();
+	//								}
+	//								// missing code
+	//								results.add(newstruct);
+	//							}
+	//							col.setStructures(results);
+	//						}
+	//					} catch (RuntimeException rtex) {
+	//						rtex.printStackTrace();
+	//					}
+	//					col.store();
+	//					colonies.add(col);
+	//				} catch (RuntimeException rtex) {
+	//					rtex.printStackTrace();
+	//				}
+	//			}
+	//		} catch (RuntimeException rtex) {
+	//			rtex.printStackTrace();
+	//		}
+	//		return colonies;
+	//	}
 
 	// TODO Review with the use of session
 	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid ) {
@@ -319,9 +315,9 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		try {
 			// Get to the Network and download the data from the ESI api.
 			final List<GetCharactersCharacterIdFittings200Ok> fittings = ESINetworkManager.getCharactersCharacterIdFittings
-					(credential.getAccountId()
-							, credential.getRefreshToken()
-							, credential.getDataSource());
+					                                                                               (credential.getAccountId()
+							                                                                               , credential.getRefreshToken()
+							                                                                               , credential.getDataSource());
 			if (null != fittings) {
 				// Process the fittings processing them and converting the data to structures compatible with MVC.
 				for (GetCharactersCharacterIdFittings200Ok fit : fittings) {
@@ -332,11 +328,11 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			return results;
 		} catch (NeoComRuntimeException nrex) {
 			logger.info("EX [GlobalDataManager.downloadFittings4Credential]> Credential not found in the list. Exception: {}", nrex
-					.getMessage());
+					                                                                                                                   .getMessage());
 			return new ArrayList<>();
 		} catch (RuntimeException ntex) {
 			logger.info("EX [GlobalDataManager.downloadFittings4Credential]> Mapping error - {}", ntex
-					.getMessage());
+					                                                                                      .getMessage());
 			return new ArrayList<>();
 		} finally {
 			logger.info("<< [GlobalDataManager.downloadFittings4Credential]");

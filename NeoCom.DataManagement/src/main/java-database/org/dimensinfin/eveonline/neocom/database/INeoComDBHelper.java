@@ -16,7 +16,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.entities.Colony;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.entities.FittingRequest;
@@ -83,7 +82,7 @@ public interface INeoComDBHelper {
 
 	public void replaceBlueprints( final long pilotid );
 
-	public Dao<Colony, String> getColonyDao() throws SQLException;
+//	public Dao<Colony, String> getColonyDao() throws SQLException;
 
 	//	@Deprecated
 	//	public Dao<ColonyStorage, String> getColonyStorageDao() throws SQLException;

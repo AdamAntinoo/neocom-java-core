@@ -21,6 +21,7 @@ import java.util.Vector;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
@@ -35,7 +36,7 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
  * total time to perfrom the transformation.
  * @author Adam Antinoo
  */
-public class ProcessingAction extends NeoComNode {
+public class ProcessingAction extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 3885877535917258089L;
 

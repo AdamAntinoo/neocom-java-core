@@ -19,6 +19,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
@@ -36,7 +37,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  * blueprint from where the resource was extracted.
  * @author Adam Antinoo
  */
-public class Resource extends NeoComNode {
+public class Resource extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 921961484632479376L;
 

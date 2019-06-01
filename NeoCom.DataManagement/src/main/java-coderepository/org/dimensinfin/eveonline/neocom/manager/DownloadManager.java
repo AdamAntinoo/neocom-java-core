@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.entities.Colony;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.ESINetworkManager;

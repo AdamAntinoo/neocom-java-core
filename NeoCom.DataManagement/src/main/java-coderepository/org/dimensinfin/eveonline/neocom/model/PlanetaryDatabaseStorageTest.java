@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dimensinfin.eveonline.neocom.connector.ModelAppConnector;
 import org.dimensinfin.eveonline.neocom.manager.PlanetaryManager;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
-import org.dimensinfin.eveonline.neocom.entities.Colony;
 import org.dimensinfin.eveonline.neocom.storage.DataManagementModelStore;
 import org.junit.Before;
 import org.junit.Test;
