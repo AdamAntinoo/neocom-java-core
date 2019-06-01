@@ -85,11 +85,11 @@ public class ColonyStructure extends NeoComExpandableNode {
 		public void setProductTypeId( final Integer productTypeId ) {
 			this.productTypeId = productTypeId;
 			// Update the production type with the Item data from the SDE.
-			try {
-				item = accessGlobal().searchItem4Id(productTypeId);
-			} catch (NeoComRuntimeException neoe) {
-				item = new EveItem();
-			}
+//			try {
+//				item = accessGlobal().searchItem4Id(productTypeId);
+//			} catch (NeoComRuntimeException neoe) {
+//				item = new EveItem();
+//			}
 		}
 
 		public void setQtyPerCycle( final Integer qtyPerCycle ) {
@@ -98,14 +98,14 @@ public class ColonyStructure extends NeoComExpandableNode {
 
 		// --- D E L E G A T E D   M E T H O D S
 //		@JsonIgnore
-		public String getProductTypeName() {
-			try {
-				if (null == item) item = accessGlobal().searchItem4Id(productTypeId);
-			} catch (NeoComRuntimeException neoe) {
-				item = new EveItem();
-			}
-			return item.getName();
-		}
+//		public String getProductTypeName() {
+//			try {
+//				if (null == item) item = accessGlobal().searchItem4Id(productTypeId);
+//			} catch (NeoComRuntimeException neoe) {
+//				item = new EveItem();
+//			}
+//			return item.getName();
+//		}
 	}
 
 	public static class ColonyExtractorHead {
@@ -168,11 +168,11 @@ public class ColonyStructure extends NeoComExpandableNode {
 		@JsonIgnore
 		public EveItem getItem() {
 			// Check if the item is loaded. If not try to get it from the SDE.
-			try {
-				if (null == item) item = accessGlobal().searchItem4Id(typeId);
-			} catch (NeoComRuntimeException neoe) {
-				item = new EveItem();
-			}
+//			try {
+//				if (null == item) item = accessGlobal().searchItem4Id(typeId);
+//			} catch (NeoComRuntimeException neoe) {
+//				item = new EveItem();
+//			}
 			return item;
 		}
 
@@ -183,11 +183,11 @@ public class ColonyStructure extends NeoComExpandableNode {
 		public void setTypeId( final Integer typeId ) {
 			this.typeId = typeId;
 			// Get the Eve item data from the SDE so we can perform calculations.
-			try {
-				item = accessGlobal().searchItem4Id(typeId);
-			} catch (NeoComRuntimeException neoe) {
-				item = new EveItem();
-			}
+//			try {
+//				item = accessGlobal().searchItem4Id(typeId);
+//			} catch (NeoComRuntimeException neoe) {
+//				item = new EveItem();
+//			}
 		}
 
 		@JsonIgnore

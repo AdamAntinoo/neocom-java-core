@@ -33,7 +33,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends NeoComNode implements IAggregableItem, PropertyChangeListener {
+public class MiningExtraction extends NeoComNode implements IAggregableItem, PropertyChangeListener /*, IEventReceiver */ {
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
 	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can
@@ -183,7 +183,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	@Override
 	public void propertyChange( final PropertyChangeEvent event ) {
 		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name())) {
-			this.firePropertyChange(event);
+			this.sendChangeEvent(event);
 		}
 	}
 

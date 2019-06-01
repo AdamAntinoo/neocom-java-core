@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComNode implements Serializable, ICollaboration, IJsonAngular, IEventEmitter {
+public abstract class NeoComNode implements ICollaboration, IJsonAngular, IEventEmitter {
 	protected static Logger logger = LoggerFactory.getLogger(NeoComNode.class);
 	protected static final long serialVersionUID = 6506043294337948561L;
 
@@ -31,7 +30,7 @@ public abstract class NeoComNode implements Serializable, ICollaboration, IJsonA
 	}
 
 	protected String jsonClass;
-	private EventEmitter eventEmitter = new EventEmitter();
+	protected EventEmitter eventEmitter = new EventEmitter();
 
 	// - C O N S T R U C T O R S
 	public NeoComNode() {
