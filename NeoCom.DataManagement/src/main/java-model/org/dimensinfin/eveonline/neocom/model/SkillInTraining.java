@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class SkillInTraining extends NeoComNode {
+public class SkillInTraining extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 8494419560386675752L;
 	private static Logger logger = LoggerFactory.getLogger("SkillInTraining");

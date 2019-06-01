@@ -25,13 +25,14 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "MarketOrders")
-public class MarketOrder extends NeoComNode {
+public class MarketOrder extends ANeoComEntity {
 	public enum EOrderStates {
 		OPEN, CLOSED, EXPIRED, CANCELLED, PENDING, SCHEDULED
 	}

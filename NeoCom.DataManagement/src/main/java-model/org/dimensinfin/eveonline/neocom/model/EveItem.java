@@ -25,7 +25,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class EveItem extends NeoComNode {
+public class EveItem extends ANeoComEntity {
 	public enum ItemTechnology {
 		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
 

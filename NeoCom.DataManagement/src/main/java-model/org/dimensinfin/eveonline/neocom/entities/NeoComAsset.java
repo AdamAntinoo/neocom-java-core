@@ -41,6 +41,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -61,7 +62,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  */
 
 @DatabaseTable(tableName = "Assets")
-public class NeoComAsset extends NeoComNode implements ILocatableAsset {
+public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2662145568311324496L;
 	private static Logger logger = LoggerFactory.getLogger("NeoComAsset");

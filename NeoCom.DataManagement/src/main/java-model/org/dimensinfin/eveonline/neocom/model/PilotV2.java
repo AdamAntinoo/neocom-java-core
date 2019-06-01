@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class PilotV2 extends NeoComNode {
+public class PilotV2 extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 //	private static Logger logger = LoggerFactory.getLogger("PilotV2");
 

@@ -24,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ManufactureResourcesRequest extends NeoComNode {
+public class ManufactureResourcesRequest extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("ManufactureResourcesRequest");
 

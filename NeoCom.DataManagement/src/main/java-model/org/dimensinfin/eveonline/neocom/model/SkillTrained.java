@@ -13,7 +13,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class SkillTrained extends NeoComNode {
+public class SkillTrained extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	//	private static final long serialVersionUID = 8494419560386675752L;
 	//	private static Logger logger = LoggerFactory.getLogger("SkillInTraining");

@@ -27,6 +27,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -40,7 +41,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  */
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Blueprints")
-public class NeoComBlueprint extends NeoComNode implements ILocatableAsset {
+public class NeoComBlueprint extends ANeoComEntity implements ILocatableAsset {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -1284879453130050089L;
 	private static Logger logger = LoggerFactory.getLogger("NeoComBlueprint");

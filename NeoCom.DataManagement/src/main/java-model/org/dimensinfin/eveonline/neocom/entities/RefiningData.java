@@ -21,6 +21,7 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
 
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "RefiningData")
-public class RefiningData extends NeoComNode {
+public class RefiningData extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("RefiningData");
 
