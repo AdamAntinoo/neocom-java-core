@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
@@ -128,8 +126,8 @@ public class ESINetworkManagerZBase {
 	 * because probably there is not valid market price information at other servers.
 	 */
 	public List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
-		logger.info(">> [ESINetworkManager.getMarketsPrices]");
-		final Chrono accessFullTime = new Chrono();
+		//		logger.info(">> [ESINetworkManager.getMarketsPrices]");
+		//		final Chrono accessFullTime = new Chrono();
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = neocomRetrofitNoAuth.create(MarketApi.class)
@@ -138,12 +136,13 @@ public class ESINetworkManagerZBase {
 			if (!marketApiResponse.isSuccessful()) {
 				return new ArrayList<>();
 			} else return marketApiResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		} catch (IOException ioe) {
+			return new ArrayList<>();
 		}
-		return null;
+		//		} finally {
+		////			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		//		}
+		//		return null;
 	}
 
 	//	private static Retrofit createNeoComRetrofit( final IConfigurationProvider configurationProvider ) {

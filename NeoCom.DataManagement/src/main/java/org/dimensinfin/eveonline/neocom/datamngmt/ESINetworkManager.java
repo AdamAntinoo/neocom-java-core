@@ -70,8 +70,6 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	/**
 	 * Search for the item on the current downloaded items cache. If not found then go for it to the network.
-	 * @param typeId
-	 * @return
 	 */
 	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId ) {
 		return this.search(typeId);
@@ -84,7 +82,7 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 
 	@Deprecated
 	private GetUniverseTypesTypeIdOk getUniverseTypeById( final String server, final int typeId ) {
-		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
+		//		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
 			// Create the request to be returned so it can be called.
@@ -98,14 +96,19 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 					                                                            .execute();
 			if (!itemListResponse.isSuccessful()) {
 				return null;
-			} else return itemListResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
+			} else {
+				logger.info("-- [ESINetworkManager.getUniverseTypeById]> Downloading: {}-{}"
+						, itemListResponse.body().getTypeId()
+						, itemListResponse.body().getName());
+				return itemListResponse.body();
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		} catch (RuntimeException runtime) {
 			runtime.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}"
-					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+			//			logger.info("<< [ESINetworkManager.getUniverseTypeById]> [TIMING] Full elapsed: {}"
+			//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
 		}
 		return null;
 	}
@@ -117,9 +120,15 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	 * @return a ESI data block with the item data or a dummy item if not found or network error.
 	 */
 	private GetUniverseTypesTypeIdOk search( final Integer typeId ) {
+		// TODO - Remove this call and simplify all the access to the ESI type data.
 		try {
-			if (itemCache.containsKey(typeId)) return itemCache.get(typeId);
-			else {
+			if (itemCache.containsKey(typeId)) {
+				final GetUniverseTypesTypeIdOk item = itemCache.get(typeId);
+				logger.info("-- [ESINetworkManager.getUniverseTypeById]> Downloading: {}-{}"
+						, item.getTypeId()
+						, item.getName());
+				return item;
+			} else {
 				final GetUniverseTypesTypeIdOk item = this.getUniverseTypeById(typeId, "tranquility");
 				if (null != item) {
 					itemCache.put(typeId, item);

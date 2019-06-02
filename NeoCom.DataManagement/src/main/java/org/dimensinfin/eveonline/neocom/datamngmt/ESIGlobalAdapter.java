@@ -34,17 +34,17 @@ public class ESIGlobalAdapter extends ESINetworkManager {
 	public void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getRaces(GlobalDataManager.TRANQUILITY_DATASOURCE);
-		logger.info(">> [ESIGlobalAdapter.downloadItemPrices]> Download race: {} items", racesList.size());
+		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size());
 		for (GetUniverseRaces200Ok race : racesList) {
 			racesCache.put(race.getRaceId(), race);
 		}
 		final List<GetUniverseAncestries200Ok> ancestriesList = this.getAncestries(GlobalDataManager.TRANQUILITY_DATASOURCE);
-		logger.info(">> [ESIGlobalAdapter.downloadItemPrices]> Download ancestries: {} items", racesList.size());
+		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download ancestries: {} items", racesList.size());
 		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
 			ancestriesCache.put(ancestry.getId(), ancestry);
 		}
 		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getBloodlines(GlobalDataManager.TRANQUILITY_DATASOURCE);
-		logger.info(">> [ESIGlobalAdapter.downloadItemPrices]> Download blood lines: {} items", racesList.size());
+		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download blood lines: {} items", racesList.size());
 		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
 			bloodLinesCache.put(bloodLine.getBloodlineId(), bloodLine);
 		}
