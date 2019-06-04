@@ -12,10 +12,12 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "PlanetaryResource")
@@ -87,55 +89,25 @@ public class PlanetaryResource extends Resource {
 			if (getItem().getGroupName().equalsIgnoreCase( "Advanced Commodities")) tier = "TIER4";
 		}
 	}
-//	public int getId() {
-//		return id;
-//	}
-//
-//	public String getName() {
-//		return name;
-//	}
-//
-//	public ResourceList getOwnerListid() {
-//		return ownerList;
-//	}
-//
-//	public double getQuantity() {
-//		return quantity;
-//	}
-//
-//	public int getTypeId() {
-//		return typeId;
-//	}
-//
-//	public void setId(final int id) {
-//		this.id = id;
-//	}
-//
-//	public void setName(final String newname) {
-//		name = newname;
-//	}
-//
-//	public void setOwnerList(final ResourceList list) {
-//		ownerList = list;
-//	}
-//
-//	public void setQuantity(final double newq) {
-//		quantity = newq;
-//	}
-//
-//	public void setTypeId( final int typeId ) {
-//		this.typeId = typeId;
-//	}
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("PlanetaryResource [");
-		buffer.append("Tier: ").append(getTier()).append(" ");
-//		buffer.append("name:").append(name);
-//		buffer.append(" [").append(quantity).append("]");
-		buffer.append("]");
-		buffer.append("->").append(super.toString());
-		return buffer.toString();
+		return new ToStringBuilder(this)
+				       .append("id", id)
+				       .append("tier", tier)
+				       .append("typeId", typeId)
+				       .append("baseQty", baseQty)
+				       .toString();
 	}
+	//	@Override
+//	public String toString() {
+//		StringBuffer buffer = new StringBuffer("PlanetaryResource [");
+//		buffer.append("Tier: ").append(getTier()).append(" ");
+////		buffer.append("name:").append(name);
+////		buffer.append(" [").append(quantity).append("]");
+//		buffer.append("]");
+//		buffer.append("->").append(super.toString());
+//		return buffer.toString();
+//	}
 }
 // - UNUSED CODE ............................................................................................

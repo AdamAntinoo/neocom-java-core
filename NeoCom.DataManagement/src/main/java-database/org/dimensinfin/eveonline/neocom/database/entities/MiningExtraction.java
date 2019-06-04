@@ -79,7 +79,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	@DatabaseField
 	private int solarSystemId = -2;
 	@DatabaseField
-	private long quantity = 0;
+	private int quantity = 0;
 	@DatabaseField
 	private long delta = 0;
 	@DatabaseField
@@ -141,7 +141,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 		return ownerId;
 	}
 
-	public MiningExtraction setQuantity( final long quantity ) {
+	public MiningExtraction setQuantity( final int quantity ) {
 		this.quantity = quantity;
 		return this;
 	}
@@ -160,7 +160,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	}
 
 	// - I A G G R E G A B L E I T E M
-	public long getQuantity() {
+	public int getQuantity() {
 		return quantity;
 	}
 
@@ -216,7 +216,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 			return this;
 		}
 
-		public Builder withQuantity( final long quantity ) {
+		public Builder withQuantity( final int quantity ) {
 			this.onConstruction.quantity = quantity;
 			return this;
 		}

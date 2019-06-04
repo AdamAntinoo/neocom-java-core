@@ -58,7 +58,7 @@ public class ESIDataPersistenceService {
 			final MiningExtraction recordFound = this.miningRepository.accessMiningExtractionFindById(recordId);
 			if (null != recordFound) {
 				final long currentQty = recordFound.getQuantity();
-				recordFound.setQuantity(extractionOk.getQuantity());
+				recordFound.setQuantity(extractionOk.getQuantity().intValue());
 				this.miningRepository.persist(recordFound);
 				logger.info("-- [persistMiningActionsESI]> Updating mining extraction: {} > Quantity: {}/{}"
 						, recordId, extractionOk.getQuantity(), currentQty);
@@ -76,7 +76,7 @@ public class ESIDataPersistenceService {
 		final MiningExtraction newExtraction = new MiningExtraction.Builder()
 				                                       .withTypeId(extractionOk.getTypeId())
 				                                       .withSolarSystemId(extractionOk.getSolarSystemId())
-				                                       .withQuantity(extractionOk.getQuantity())
+				                                       .withQuantity(extractionOk.getQuantity().intValue())
 				                                       .withOwnerId(credential.getAccountId())
 				                                       .withExtractionDate(extractionOk.getDate())
 				                                       .build();

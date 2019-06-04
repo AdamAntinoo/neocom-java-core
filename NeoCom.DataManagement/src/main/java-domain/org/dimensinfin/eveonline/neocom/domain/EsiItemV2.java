@@ -2,14 +2,16 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
 
-public class EsiItemV2 implements IEsiItemDownloadCallback {
+public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet {
 	private static DataDownloaderService downloaderService;
 
 	public static void injectDownloaderService( final DataDownloaderService newDownloaderService ) {
@@ -17,7 +19,7 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 		downloaderService = newDownloaderService;
 	}
 
-	private int typeId = -1;
+	private final int typeId;
 	private GetUniverseTypesTypeIdOk item;
 	private EventEmitter emitter = new EventEmitter();
 	private double price = -1.0;
@@ -27,9 +29,14 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 		this.typeId = typeId;
 	}
 
+	public EsiItemV2( final GetUniverseTypesTypeIdOk item ) {
+		this.item = item;
+		this.typeId = this.item.getTypeId();
+	}
+
 	public String getName() {
 		if (null == this.item) {
-			this.downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
+			downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
 			return "-";
 		}
 		return item.getName();
@@ -37,7 +44,7 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 
 	public double getVolume() {
 		if (null == this.item) {
-			this.downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
+			downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
 			return 0.0;
 		}
 		return item.getVolume();
@@ -45,7 +52,7 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 
 	public double getPrice() {
 		if (this.price < 0.0) {
-			this.downloaderService.accessItemPrice(this, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
+			downloaderService.accessItemPrice(this, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
 		}
 		return this.price;
 	}
@@ -55,17 +62,25 @@ public class EsiItemV2 implements IEsiItemDownloadCallback {
 	}
 
 	public Integer getGroupId() {
-		return item.getGroupId();
+		return this.item.getGroupId();
+	}
+
+	public List<GetUniverseTypesTypeIdOkDogmaAttributes> getDogmaAttributes() {
+		return this.item.getDogmaAttributes();
+	}
+
+	public Float getCapacity() {
+		return item.getCapacity();
 	}
 
 	// - D E L E G A T E   E M I T T E R
 	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
-		emitter.addPropertyChangeListener(listener);
+		this.emitter.addPropertyChangeListener(listener);
 	}
 
-	public void removePropertyChangeListener( final PropertyChangeListener listener ) {
-		emitter.removePropertyChangeListener(listener);
-	}
+	//	public void removePropertyChangeListener( final PropertyChangeListener listener ) {
+	//		this.emitter.removePropertyChangeListener(listener);
+	//	}
 
 	// - I E S I I T E M D O W N L O A D C A L L B A C K
 	@Override

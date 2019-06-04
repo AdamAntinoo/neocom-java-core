@@ -39,14 +39,14 @@ public class DatabaseVersion extends ANeoComEntity {
 	public DatabaseVersion(final int newVersion) {
 		this();
 		versionNumber = newVersion;
-		try {
-			Dao<DatabaseVersion, String> versionDao = accessGlobal().getNeocomDBHelper().getVersionDao();
-			// Try to create the key. It fails then  it was already created.
-			versionDao.create(this);
-		} catch ( final SQLException sqle ) {
-			DatabaseVersion.logger.info("WR [DatabaseVersion.<constructor>]> DatabaseVersion exists. Update valueto {}.", versionNumber);
-			this.store();
-		}
+//		try {
+//			Dao<DatabaseVersion, String> versionDao = accessGlobal().getNeocomDBHelper().getVersionDao();
+//			// Try to create the key. It fails then  it was already created.
+//			versionDao.create(this);
+//		} catch ( final SQLException sqle ) {
+//			DatabaseVersion.logger.info("WR [DatabaseVersion.<constructor>]> DatabaseVersion exists. Update valueto {}.", versionNumber);
+//			this.store();
+//		}
 	}
 
 	public DatabaseVersion(final String newVersion) {
@@ -63,16 +63,16 @@ public class DatabaseVersion extends ANeoComEntity {
 		return this;
 	}
 
-	public DatabaseVersion store() {
-		try {
-			Dao<DatabaseVersion, String> versionDao = accessGlobal().getNeocomDBHelper().getVersionDao();
-			versionDao.update(this);
-		} catch ( final SQLException sqle ) {
-			DatabaseVersion.logger.error("WR [DatabaseVersion.store]> Exceptions saving Version: {}.", sqle.getMessage());
-			sqle.printStackTrace();
-		}
-		return this;
-	}
+//	public DatabaseVersion store() {
+//		try {
+//			Dao<DatabaseVersion, String> versionDao = accessGlobal().getNeocomDBHelper().getVersionDao();
+//			versionDao.update(this);
+//		} catch ( final SQLException sqle ) {
+//			DatabaseVersion.logger.error("WR [DatabaseVersion.store]> Exceptions saving Version: {}.", sqle.getMessage());
+//			sqle.printStackTrace();
+//		}
+//		return this;
+//	}
 }
 
 // - UNUSED CODE ............................................................................................
