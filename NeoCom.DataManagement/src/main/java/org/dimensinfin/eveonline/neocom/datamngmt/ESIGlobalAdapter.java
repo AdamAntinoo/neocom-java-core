@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
@@ -12,6 +13,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 
 import retrofit2.Response;
 
@@ -20,6 +23,12 @@ public class ESIGlobalAdapter extends ESINetworkManager {
 	private static Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
+
+	// - C O N S T R U C T O R S
+	protected ESIGlobalAdapter( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
+		this.configurationProvider = configurationProvider;
+		this.fileSystemAdapter = fileSystemAdapter;
+	}
 
 	// - D O W N L O A D   S T A R T E R S
 	public void downloadItemPrices() {
@@ -107,23 +116,23 @@ public class ESIGlobalAdapter extends ESINetworkManager {
 	}
 
 	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
-//		GetUniverseRaces200Ok hit = racesCache.get(identifier);
-//		if (null == hit) hit = new GetUniverseRaces200Ok();
-//		return hit;
+		//		GetUniverseRaces200Ok hit = racesCache.get(identifier);
+		//		if (null == hit) hit = new GetUniverseRaces200Ok();
+		//		return hit;
 		return racesCache.get(identifier);
 	}
 
 	public GetUniverseAncestries200Ok searchSDEAncestry( final int identifier ) {
-//		GetUniverseAncestries200Ok hit = ancestriesCache.get(identifier);
-//		if (null == hit) hit = new GetUniverseAncestries200Ok();
-//		return hit;
+		//		GetUniverseAncestries200Ok hit = ancestriesCache.get(identifier);
+		//		if (null == hit) hit = new GetUniverseAncestries200Ok();
+		//		return hit;
 		return ancestriesCache.get(identifier);
 	}
 
 	public GetUniverseBloodlines200Ok searchSDEBloodline( final int identifier ) {
-//		GetUniverseBloodlines200Ok hit = bloodLinesCache.get(identifier);
-//		if (null == hit) hit = new GetUniverseBloodlines200Ok();
-//		return hit;
+		//		GetUniverseBloodlines200Ok hit = bloodLinesCache.get(identifier);
+		//		if (null == hit) hit = new GetUniverseBloodlines200Ok();
+		//		return hit;
 		return bloodLinesCache.get(identifier);
 	}
 
@@ -134,5 +143,23 @@ public class ESIGlobalAdapter extends ESINetworkManager {
 
 	private void cacheInitialisation() {
 		this.downloadItemPrices();
+	}
+
+	// - B U I L D E R
+	public static class Builder {
+		protected ESIGlobalAdapter onConstruction;
+
+		public Builder( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
+			Objects.requireNonNull(configurationProvider);
+			Objects.requireNonNull(fileSystemAdapter);
+			this.onConstruction = new ESIGlobalAdapter(configurationProvider, fileSystemAdapter);
+		}
+
+		public ESIGlobalAdapter build() {
+			// Run the initialisation code.
+			this.onConstruction.initialise();
+			singleton = this.onConstruction;
+			return this.onConstruction;
+		}
 	}
 }
