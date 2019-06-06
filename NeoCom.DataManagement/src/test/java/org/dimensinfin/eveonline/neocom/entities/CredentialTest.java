@@ -23,7 +23,7 @@ public class CredentialTest {
 		final INeoComDBHelper helper = Mockito.mock(INeoComDBHelper.class);
 		final Dao dao = Mockito.mock(Dao.class);
 		ANeoComEntity.connectGlobal(global);
-		final org.dimensinfin.eveonline.neocom.database.entities.Credential credential = new Credential(123)
+		final org.dimensinfin.eveonline.neocom.database.entities.Credential credential = new Credential.Builder(123).build()
 				                              .setDataSource("Tranquility");
 		Mockito.when(ANeoComEntity.accessGlobal()).thenReturn(global);
 		Mockito.when(global.getNeocomDBHelper()).thenReturn(helper);
