@@ -16,16 +16,16 @@ import io.reactivex.Single;
 public class ESIDataAdapterTest {
 	@Test
 	public void builder_complete() throws IOException {
-		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("testProperties").build();
-		final TestFileSystem fileSystemAdapter = new TestFileSystem("testOutputDirectory");
+		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("testproperties").build();
+		final TestFileSystem fileSystemAdapter = new TestFileSystem("./src/test/resources/Test.NeoCom.Infinity");
 		final ESIDataAdapter adapter = new ESIDataAdapter.Builder(configurationProvider, fileSystemAdapter).build();
 		Assert.assertNotNull(adapter);
 	}
 
 	@Test
 	public void fetchItem_notcached() throws IOException, InterruptedException {
-		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("testProperties").build();
-		final TestFileSystem fileSystemAdapter = new TestFileSystem("testOutputDirectory");
+		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("testproperties").build();
+		final TestFileSystem fileSystemAdapter = new TestFileSystem("./src/test/resources/Test.NeoCom.Infinity");
 		final ESIDataAdapter adapter = new ESIDataAdapter.Builder(configurationProvider, fileSystemAdapter).build();
 
 		final Single<EsiItemV2> itemSingle = adapter.getEsiItem4Id(34);

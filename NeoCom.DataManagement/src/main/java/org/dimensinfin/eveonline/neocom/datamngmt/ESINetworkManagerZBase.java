@@ -46,7 +46,7 @@ import retrofit2.Retrofit;
 public class ESINetworkManagerZBase {
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	public static final long CACHE_SIZE = 10 * 1024 * 1024;
-	public static final long TIMEOUT = TimeUnit.SECONDS.toMillis(60);
+	public static long TIMEOUT = TimeUnit.SECONDS.toMillis(60);
 	protected static final ESIStore STORE = ESIStore.DEFAULT;
 
 	protected static ESINetworkManagerZBase singleton;

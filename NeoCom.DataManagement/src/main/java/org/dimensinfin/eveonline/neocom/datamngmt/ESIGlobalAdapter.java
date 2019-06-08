@@ -110,10 +110,10 @@ public class ESIGlobalAdapter extends ESINetworkManager {
 		return new ArrayList<>();
 	}
 
-	public double searchSDEMarketPrice( final int typeId ) {
-		if (marketDefaultPrices.containsKey(typeId)) return marketDefaultPrices.get(typeId).getAdjustedPrice();
-		else return -1.0;
-	}
+//	public double searchSDEMarketPrice( final int typeId ) {
+//		if (marketDefaultPrices.containsKey(typeId)) return marketDefaultPrices.get(typeId).getAdjustedPrice();
+//		else return -1.0;
+//	}
 
 	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
 		//		GetUniverseRaces200Ok hit = racesCache.get(identifier);

@@ -12,19 +12,18 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import java.sql.SQLException;
+
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
 import net.nikr.eve.jeveasset.data.Citadel;
-
-import java.sql.SQLException;
-
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -38,12 +37,30 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
  * by Citadels. I have a reference to get the list of Citadels until that API entry point is available on the
  * new CCP api. <br>
  * Once we know the type then we check if on the database cache and add or update as needed.
+ *
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "locations")
 public class EveLocation extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = 1522765618286937377L;
+	private static final EveLocation jita = new EveLocation();
+
+	static {
+		jita.setId(60003760)
+				.setRegionId(10000002).setRegion("The Forge")
+				.setConstellationId(20000020).setConstellation("Kimotoro")
+				.setSystemId(30000142).setSystem("Jita")
+				.setStationId(60003760).setStation("Jita IV - Moon 4 - Caldari Navy Assembly Plant")
+				.setSecurity("0.945913116664839").setSecurityValue(0.945913116664839)
+				.setTypeId(ELocationType.CCPLOCATION)
+				.setUrlLocationIcon("http://image.eveonline.com/Render/1529_64.png")
+				.setName("Jita - Jita IV - Moon 4 - Caldari Navy Assembly Plant");
+	}
+
+	public static EveLocation getJitaLocation() {
+		return jita;
+	}
 
 	// - F I E L D - S E C T I O N ............................................................................
 	@DatabaseField(id = true, index = true)
@@ -94,7 +111,7 @@ public class EveLocation extends ANeoComEntity {
 			typeId = ELocationType.CITADEL;
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
-		} catch ( final SQLException sqle ) {
+		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			this.store();
 		}
@@ -112,7 +129,7 @@ public class EveLocation extends ANeoComEntity {
 			this.setStation(station.getStationName());
 			// Try to create the pair. It fails then  it was already created.
 			locationDao.createOrUpdate(this);
-		} catch ( final SQLException sqle ) {
+		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 			this.store();
 		}
@@ -123,7 +140,7 @@ public class EveLocation extends ANeoComEntity {
 		try {
 			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
 			locationDao.createOrUpdate(this);
-		} catch ( final SQLException sqle ) {
+		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
 		}
 		return this;
@@ -237,26 +254,26 @@ public class EveLocation extends ANeoComEntity {
 	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
 	 */
 	public String getUrlLocationIcon() {
-		if ( null == urlLocationIcon ) {
-//			if (id == -2) {
-//				urlLocationIcon = new StringBuffer()
-//						.append("http://image.eveonline.com/Render/")
-//						.append(id)
-//						.append("_64.png")
-//						.toString();
-//			} else
+		if (null == urlLocationIcon) {
+			//			if (id == -2) {
+			//				urlLocationIcon = new StringBuffer()
+			//						.append("http://image.eveonline.com/Render/")
+			//						.append(id)
+			//						.append("_64.png")
+			//						.toString();
+			//			} else
 			try {
 				urlLocationIcon = new StringBuffer()
-						.append("http://image.eveonline.com/Render/")
-						.append(accessGlobal().searchStationType(stationId))
-						.append("_64.png")
-						.toString();
-			} catch ( NeoComRuntimeException neoe ) {
+						                  .append("http://image.eveonline.com/Render/")
+						                  .append(accessGlobal().searchStationType(stationId))
+						                  .append("_64.png")
+						                  .toString();
+			} catch (NeoComRuntimeException neoe) {
 				urlLocationIcon = new StringBuffer()
-						.append("http://image.eveonline.com/Render/")
-						.append(stationId)
-						.append("_64.png")
-						.toString();
+						                  .append("http://image.eveonline.com/Render/")
+						                  .append(stationId)
+						                  .append("_64.png")
+						                  .toString();
 			}
 		}
 		return urlLocationIcon;
@@ -270,7 +287,7 @@ public class EveLocation extends ANeoComEntity {
 	//--- V I R T U A L   A C C E S S O R S
 	@JsonIgnore
 	public final boolean isCitadel() {
-		if ( this.getTypeId() == ELocationType.CITADEL ) return true;
+		if (this.getTypeId() == ELocationType.CITADEL) return true;
 		return false;
 	}
 
@@ -297,7 +314,6 @@ public class EveLocation extends ANeoComEntity {
 	/**
 	 * This return some understandable location name. This is not valid for most locations that are not
 	 * stations.
-	 * @return
 	 */
 	public String getName() {
 		return system + " - " + station;
@@ -310,7 +326,7 @@ public class EveLocation extends ANeoComEntity {
 	public double getSecurityValue() {
 		try {
 			return Double.parseDouble(security);
-		} catch ( final RuntimeException rtex ) {
+		} catch (final RuntimeException rtex) {
 		}
 		return 0.0;
 	}
@@ -332,10 +348,10 @@ public class EveLocation extends ANeoComEntity {
 		buffer.append("#").append(this.getId()).append(" ");
 		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
 		buffer.append("[").append(this.getRegion()).append("] ");
-		if ( null != system ) {
+		if (null != system) {
 			buffer.append("system: ").append(system).append(" ");
 		}
-		if ( null != station ) {
+		if (null != station) {
 			buffer.append("station: ").append(station).append(" ");
 		}
 		buffer.append("]");
@@ -356,7 +372,7 @@ public class EveLocation extends ANeoComEntity {
 		EveLocation systemLocation;
 		try {
 			systemLocation = accessGlobal().searchLocation4Id(newid);
-		} catch ( NeoComRuntimeException newe ) {
+		} catch (NeoComRuntimeException newe) {
 			systemLocation = new EveLocation();
 		}
 		systemId = systemLocation.getSystemId();
@@ -370,22 +386,22 @@ public class EveLocation extends ANeoComEntity {
 
 	/**
 	 * Two Locations are equal if they have the same locations codes.
+	 *
 	 * @param obj the target EveLocation to compare.
-	 * @return
 	 */
 	@Override
 	public boolean equals( final Object obj ) {
-		if ( stationId != ((EveLocation) obj).getStationId() ) return false;
-		if ( systemId != ((EveLocation) obj).getSystemId() ) return false;
-		if ( constellationId != ((EveLocation) obj).getConstellationId() ) return false;
-		if ( regionId != ((EveLocation) obj).getRegionId() ) return false;
+		if (stationId != ((EveLocation) obj).getStationId()) return false;
+		if (systemId != ((EveLocation) obj).getSystemId()) return false;
+		if (constellationId != ((EveLocation) obj).getConstellationId()) return false;
+		if (regionId != ((EveLocation) obj).getRegionId()) return false;
 		return true;
 	}
 
 	public boolean equals( final EveLocation obj ) {
-		if ( !this.getRegion().equalsIgnoreCase(obj.getRegion()) ) return false;
-		if ( !this.getSystem().equalsIgnoreCase(obj.getSystem()) ) return false;
-		if ( !this.getStation().equalsIgnoreCase(obj.getStation()) ) return false;
+		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
+		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
+		if (!this.getStation().equalsIgnoreCase(obj.getStation())) return false;
 		return true;
 	}
 
