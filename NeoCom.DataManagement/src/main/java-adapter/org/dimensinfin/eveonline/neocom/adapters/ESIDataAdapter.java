@@ -13,10 +13,11 @@ import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import retrofit2.Response;
  */
 public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
+	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	private static ESIDataAdapter singleton;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
@@ -79,25 +81,14 @@ public class ESIDataAdapter {
 		else return -1.0;
 	}
 
-	public ItemGroup searchItemGroup4Id( final int targetGroupId ) {
-		logger.info(">> [ESIDataAdapter.searchItemGroup4Id]> targetGroupId: {}", targetGroupId);
-		return this.cacheManager.
-		ItemGroup target = new ItemGroup();
-		try {
-			final RawStatement cursor = constructStatement(SELECT_ITEMGROUP, new String[]{Integer.valueOf(targetGroupId).toString()});
-			while (cursor.moveToNext()) {
-				target.setGroupId(cursor.getInt(ITEMGROUP_GROUPID_COLINDEX));
-				target.setCategoryId(cursor.getInt(ITEMGROUP_CATEGORYID_COLINDEX));
-				target.setGroupName(cursor.getString(ITEMGROUP_GROUPNAME_COLINDEX));
-				target.setIconLinkName(cursor.getString(ITEMGROUP_ICONLINKNAME_COLINDEX));
-			}
-			cursor.close();
-		} catch (final Exception ex) {
-			logger.error("E [SDEDatabaseManager.searchItemGroup4Id]> Exception processing statement: {}" + ex.getMessage());
-		} finally {
-			logger.info("<< [SDEDatabaseManager.searchItemGroup4Id]> GroupName: {}", target.getGroupName());
-			return target;
-		}
+	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
+		logger.info("-- [ESIDataAdapter.searchItemGroup4Id]> targetGroupId: {}", groupId);
+		return this.cacheManager.accessGroup(groupId).blockingGet();
+	}
+
+	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
+		logger.info("-- [ESIDataAdapter.searchItemCategory4Id]> targetGroupId: {}", categoryId);
+		return this.cacheManager.accessCategory(categoryId).blockingGet();
 	}
 
 	// - U N I V E R S E
@@ -107,7 +98,7 @@ public class ESIDataAdapter {
 	 * because probably there is not valid market price information at other servers.
 	 * To access the public data it will use the current unauthorized retrofit connection.
 	 */
-	public List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
+	public List<GetMarketsPrices200Ok> getMarketsPrices() {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = retrofitFactory.accessNoAuthRetrofit().create(MarketApi.class)
@@ -120,6 +111,39 @@ public class ESIDataAdapter {
 			return new ArrayList<>();
 		}
 	}
+
+	public GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
+					                                                           .getUniverseGroupsGroupId(groupId
+							                                                           , DEFAULT_ACCEPT_LANGUAGE
+							                                                           , DEFAULT_ESI_SERVER, null, null)
+					                                                           .execute();
+			if (!groupResponse.isSuccessful()) {
+				return null;
+			} else return groupResponse.body();
+		} catch (IOException ioe) {
+			return null;
+		}
+	}
+
+	public GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) {
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
+					                                                                  .getUniverseCategoriesCategoryId(categoryId
+							                                                                  , DEFAULT_ACCEPT_LANGUAGE
+							                                                                  , DEFAULT_ESI_SERVER, null, null)
+					                                                                  .execute();
+			if (!groupResponse.isSuccessful()) {
+				return null;
+			} else return groupResponse.body();
+		} catch (IOException ioe) {
+			return null;
+		}
+	}
+
 
 	//	private void createStore() throws IOException {
 	//		// Create persistence store area

@@ -9,6 +9,8 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
@@ -58,8 +60,8 @@ public class EveItem extends NeoComNode {
 	private String name = "<NAME>";
 	private int groupId = -1;
 	private int categoryId = -1;
-	private ItemGroup group = null;
-	private ItemCategory category = null;
+	private GetUniverseGroupsGroupIdOk group = null;
+	private GetUniverseCategoriesCategoryIdOk category = null;
 	/**
 	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
 	 * methods to get any other price set from the market data.
