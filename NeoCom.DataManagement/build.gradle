@@ -5,7 +5,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'project-report'
 
 // - P R O J E C T   D E F I N I T I O N
-group ='org.dimensinfin'
+group = 'org.dimensinfin'
 version = '0.14.4'
 archivesBaseName = 'NeoCom.DataManagement'
 description = 'Data management and processes that are common to all developments. Based on the core NeoCom.Model. Swagger version 2.0 .0 in use.'
@@ -24,10 +24,12 @@ repositories {
 sourceSets {
     main.java {
         srcDirs += 'src/main/java-domain'
+        srcDirs += 'src/main/java-adapter'
+        srcDirs += 'src/main/java-planetary'
+
         srcDirs += 'src/main/java-database'
         srcDirs += 'src/main/java-model'
         srcDirs += 'src/main/java-mining'
-        srcDirs += 'src/main/java-planetary'
         srcDirs += 'src/main/java-market'
         srcDirs += 'src/main/java-industry'
     }
@@ -86,60 +88,54 @@ ext {
     jacksonVersion = '2.9.4'
     ormliteVersion = '4.48'
     retrofitVersion = '2.3.0'
+    cacheVersion = '3.1.1'
 }
 
+// - N E O C O M   L I B R A R I E S
 dependencies {
-    // P R O J E C T    D E P E N D E N C I E S
-//    compileOnly project(path: ':NeoCom.Model')
-    compileOnly project(path: ':ESI.SwaggerApi')
-
-    // L O C A L    L I B R A R I E S
+    compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
+//    compileOnly project(path: ':ESI.SwaggerApi')
+    compileOnly 'org.dimensinfin:ESI.SwaggerApi:4.0.0'
     compileOnly files('libs/jeveassets.3.1.2.jar')
+}
 
-    // M O D U L E    D E P E N D E N C I E S
-    // C O R E    D E P E N D E N C I E S
+// - C O R E
+dependencies {
     compileOnly 'org.slf4j:slf4j-api:1.7.25'
     compileOnly 'joda-time:joda-time:2.3'
-//    compileOnly 'org.dimensinfin:CoreBase.core:2.2.0'
-//    compileOnly 'org.dimensinfin:ESI.SwaggerApi:3.0.0'
-
-
-    // N E O C O M . M O D E L
-//    implementation 'com.beimin:eveapi:6.0.6'
-//    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-//    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-//    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
-//    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-//    implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
-//    implementation 'org.modelmapper:modelmapper:1.1.0'
-//    implementation 'com.squareup.retrofit2:converter-jackson:2.5.0'
-//    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
-//    implementation 'com.annimon:stream:1.1.9'
 }
-// - N E O C O M . M O D E L
-dependencies{
-    compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
+// - C A C H E
+dependencies {
+    implementation "com.nytimes.android:store3:$cacheVersion" // Cache and store
+    implementation "com.nytimes.android:cache3:$cacheVersion"
+    implementation "com.nytimes.android:middleware3:$cacheVersion"
+    implementation "com.nytimes.android:filesystem3:$cacheVersion"
+    compile 'io.reactivex.rxjava2:rxjava:2.2.9'
+    compile 'com.squareup.okio:okio:2.2.2' // Extended file io
+}
+// - N E O C O M
+dependencies {
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'com.annimon:stream:1.1.9' // Android compatible streams
 
-    implementation 'com.beimin:eveapi:6.0.6'
-    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion" // JSON converter
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
-    implementation 'org.modelmapper:modelmapper:1.1.0'
-    implementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion" // HTTP encapsulation and swagger support
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-    implementation 'com.annimon:stream:1.1.9'
-}
-// - N E O C O M . D A T A M A N A G E M E N T
-dependencies {
     implementation 'org.htmlparser:htmlparser:2.1'
     implementation 'com.github.scribejava:scribejava-core:5.4.0'
-    implementation 'org.apache.commons:commons-lang3:3.7'
     // D A T A B A S E
     implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
     implementation 'javax.persistence:javax.persistence-api:2.2'
+}
+// - D E P R E C A T E D
+dependencies {
+    implementation 'org.modelmapper:modelmapper:1.1.0' // Model conversion from one model to another
+    implementation 'com.beimin:eveapi:6.0.6'
 }
 
 // - U N I T   T E S T I N G
@@ -152,8 +148,5 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-simple:1.7.25'
     testImplementation 'joda-time:joda-time:2.3'
     testImplementation 'com.openpojo:openpojo:0.8.12'
-//    testImplementation 'mysql:mysql-connector-java:5.1.45'
     testImplementation 'org.mockito:mockito-core:2.22.0'
-
-//    testImplementation project(path: ':NeoCom.Model')
 }

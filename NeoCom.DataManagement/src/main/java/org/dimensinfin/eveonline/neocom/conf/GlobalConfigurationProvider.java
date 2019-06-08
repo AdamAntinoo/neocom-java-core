@@ -27,34 +27,29 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 
 	private static final String DEFAULT_PROPERTIES_FOLDER = "properties"; // The default initial location if not specified.
 
-	// - F I E L D - S E C T I O N ............................................................................
+	// - F I E L D - S E C T I O N
 	protected Properties configurationProperties = new Properties(); // The ist of defined properties
-	private String configuredPropertiesFolder = DEFAULT_PROPERTIES_FOLDER; // The pace where to search for properties.
+	private String configuredPropertiesDirectory = DEFAULT_PROPERTIES_FOLDER; // The pace where to search for properties.
 
 	// - C O N S T R U C T O R S
 	public GlobalConfigurationProvider( final String propertiesFolder ) {
-		if (null != propertiesFolder) configuredPropertiesFolder = propertiesFolder;
+		if (null != propertiesFolder) configuredPropertiesDirectory = propertiesFolder;
 	}
 
 	// - I C O N F I G U R A T I O N P R O V I D E R   I N T E R F A C E
+	public String getPropertiesDirectory(){
+		return this.configuredPropertiesDirectory;
+	}
 	public String getResourceString( final String key ) {
-		//		try {
 		final String value = configurationProperties.getProperty(key);
 		if (null == value) return this.generateMissing(key);
 		else return value;
-		//		} catch (MissingResourceException mre) {
-		//			return this.generateMissing(key);
-		//		}
 	}
 
 	public String getResourceString( final String key, final String defaultValue ) {
-		//		try {
 		final String value = configurationProperties.getProperty(key, defaultValue);
 		if (null == value) return this.generateMissing(key);
 		else return value;
-		//		} catch (MissingResourceException mre) {
-		//			return this.generateMissing(key);
-		//		}
 	}
 
 	/**
@@ -78,7 +73,7 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 	}
 
 	protected String getResourceLocation() {
-		return configuredPropertiesFolder;
+		return configuredPropertiesDirectory;
 	}
 
 	private String generateMissing( final String key ) {
@@ -93,7 +88,7 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 				       .toString();
 	}
 
-	//--- P L A T F O R M   S P E C I F I C   S E C T I O N
+	// - P L A T F O R M   S P E C I F I C   S E C T I O N
 	protected abstract void readAllProperties() throws IOException;
 
 	protected abstract List<String> getResourceFiles( String path ) throws IOException;

@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +12,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
 
-public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet {
+public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet, Serializable {
+	private static final long serialVersionUID = 9062458781449599566L;
 	private static DataDownloaderService downloaderService;
 
 	public static void injectDownloaderService( final DataDownloaderService newDownloaderService ) {

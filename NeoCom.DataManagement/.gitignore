@@ -29,3 +29,4 @@ nbdist/
 /classes/
 /target/
 /production
+testOutputDirectory/

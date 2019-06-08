@@ -28,21 +28,19 @@ public class PlanetaryResource extends Resource {
 	@DatabaseField(generatedId = true)
 	private int id = -1;
 	public String tier = "OTHER";
-//	@DatabaseField
-//	private int typeId;
-//	@DatabaseField
-//	private double				quantity;
-//	@DatabaseField
-//	private String				name		= "<NAME>";
-//	@DatabaseField(foreign = true)
-//	private ResourceList	ownerList;
+	//	@DatabaseField
+	//	private int typeId;
+	//	@DatabaseField
+	//	private double				quantity;
+	//	@DatabaseField
+	//	private String				name		= "<NAME>";
+	//	@DatabaseField(foreign = true)
+	//	private ResourceList	ownerList;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
 	/**
 	 * Builds a new resource of quantity 1.
-	 *
-	 * @param typeId
 	 */
 	public PlanetaryResource( final int typeId ) {
 		super(typeId);
@@ -85,8 +83,8 @@ public class PlanetaryResource extends Resource {
 		else {
 			if (getItem().getGroupName().equalsIgnoreCase("Basic Commodities")) tier = "TIER1";
 			if (getItem().getGroupName().equalsIgnoreCase("Refined Commodities")) tier = "TIER2";
-			if (getItem().getGroupName().equalsIgnoreCase( "Specialized Commodities")) tier = "TIER3";
-			if (getItem().getGroupName().equalsIgnoreCase( "Advanced Commodities")) tier = "TIER4";
+			if (getItem().getGroupName().equalsIgnoreCase("Specialized Commodities")) tier = "TIER3";
+			if (getItem().getGroupName().equalsIgnoreCase("Advanced Commodities")) tier = "TIER4";
 		}
 	}
 
@@ -99,15 +97,4 @@ public class PlanetaryResource extends Resource {
 				       .append("baseQty", baseQty)
 				       .toString();
 	}
-	//	@Override
-//	public String toString() {
-//		StringBuffer buffer = new StringBuffer("PlanetaryResource [");
-//		buffer.append("Tier: ").append(getTier()).append(" ");
-////		buffer.append("name:").append(name);
-////		buffer.append(" [").append(quantity).append("]");
-//		buffer.append("]");
-//		buffer.append("->").append(super.toString());
-//		return buffer.toString();
-//	}
 }
-// - UNUSED CODE ............................................................................................

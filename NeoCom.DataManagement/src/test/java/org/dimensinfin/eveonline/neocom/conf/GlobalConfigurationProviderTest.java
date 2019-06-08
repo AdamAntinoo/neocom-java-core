@@ -93,5 +93,10 @@ public class GlobalConfigurationProviderTest {
 		protected List<String> getResourceFiles( final String path ) throws IOException {
 			return null;
 		}
+
+		@Override
+		public Integer getResourceInteger( final String key ) {
+			return new Integer(2);
+		}
 	}
 }
