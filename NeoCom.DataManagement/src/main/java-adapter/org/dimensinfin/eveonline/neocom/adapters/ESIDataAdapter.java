@@ -16,20 +16,15 @@ import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.*;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,17 +43,13 @@ public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
-	private static ESIDataAdapter singleton;
+
 	// - C A C H E S
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
 	private static Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
 
-	//	private static File storeDataFile;
-	//	private static Gson gson = new Gson();
-	//	private static Retrofit neocomRetrofitNoAuth;
-	//	private static Store<EsiItemV2, Integer> esiItemStore;
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
@@ -70,7 +61,7 @@ public class ESIDataAdapter {
 			, final IFileSystem newFileSystemAdapter ) {
 		configurationProvider = newConfigurationProvider;
 		fileSystemAdapter = newFileSystemAdapter;
-//		cacheManager = newCacheManager;
+		//		cacheManager = newCacheManager;
 	}
 
 	// - D O W N L O A D   S T A R T E R S
@@ -85,17 +76,17 @@ public class ESIDataAdapter {
 
 	public void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
-		final List<GetUniverseRaces200Ok> racesList = this.getRaces(GlobalDataManager.TRANQUILITY_DATASOURCE);
+		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces(GlobalDataManager.TRANQUILITY_DATASOURCE);
 		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size());
 		for (GetUniverseRaces200Ok race : racesList) {
 			racesCache.put(race.getRaceId(), race);
 		}
-		final List<GetUniverseAncestries200Ok> ancestriesList = this.getAncestries(GlobalDataManager.TRANQUILITY_DATASOURCE);
+		final List<GetUniverseAncestries200Ok> ancestriesList = this.getUniverseAncestries(GlobalDataManager.TRANQUILITY_DATASOURCE);
 		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download ancestries: {} items", racesList.size());
 		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
 			ancestriesCache.put(ancestry.getId(), ancestry);
 		}
-		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getBloodlines(GlobalDataManager.TRANQUILITY_DATASOURCE);
+		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getUniverseBloodlines(GlobalDataManager.TRANQUILITY_DATASOURCE);
 		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download blood lines: {} items", racesList.size());
 		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
 			bloodLinesCache.put(bloodLine.getBloodlineId(), bloodLine);
@@ -144,7 +135,7 @@ public class ESIDataAdapter {
 	 * because probably there is not valid market price information at other servers.
 	 * To access the public data it will use the current unauthorized retrofit connection.
 	 */
-	public List<GetMarketsPrices200Ok> getMarketsPrices() {
+	private List<GetMarketsPrices200Ok> getMarketsPrices() {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = retrofitFactory.accessNoAuthRetrofit().create(MarketApi.class)
@@ -158,7 +149,7 @@ public class ESIDataAdapter {
 		}
 	}
 
-	public GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
+	protected GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -174,7 +165,7 @@ public class ESIDataAdapter {
 		}
 	}
 
-	public GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) {
+	protected GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -190,8 +181,8 @@ public class ESIDataAdapter {
 		}
 	}
 
-	private List<GetUniverseRaces200Ok> getRaces( final String datasource ) {
-		logger.info(">> [ESIGlobalAdapter.getRaces]");
+	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
+		logger.info(">> [ESIGlobalAdapter.getUniverseRaces]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -202,13 +193,13 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getRaces]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getUniverseRaces]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
-	private List<GetUniverseAncestries200Ok> getAncestries( final String datasource ) {
-		logger.info(">> [ESIGlobalAdapter.getAncestries]");
+	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
+		logger.info(">> [ESIGlobalAdapter.getUniverseAncestries]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -219,13 +210,13 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getAncestries]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getUniverseAncestries]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
-	private List<GetUniverseBloodlines200Ok> getBloodlines( final String datasource ) {
-		logger.info(">> [ESIGlobalAdapter.getBloodlines]");
+	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
+		logger.info(">> [ESIGlobalAdapter.getUniverseBloodlines]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -236,7 +227,7 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getBloodlines]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getUniverseBloodlines]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
@@ -294,6 +285,32 @@ public class ESIDataAdapter {
 		//		else return null;
 	}
 
+	// - P L A N E T A R Y   I N T E R A C T I O N   P U B L I C   I N F O R M A T I O N
+	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
+		logger.info(">> [ESINetworkManagerMock.getUniversePlanetarySchematicsById]");
+		final DateTime startTimePoint = DateTime.now();
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.retrofitFactory.accessNoAuthRetrofit()
+					                                                                          .create(PlanetaryInteractionApi.class)
+					                                                                          .getUniverseSchematicsSchematicId(schematicId
+							                                                                          , "en-us"
+							                                                                          , null)
+					                                                                          .execute();
+			if (!schematicistResponse.isSuccessful()) {
+				return null;
+			} else return schematicistResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException runtime) {
+			runtime.printStackTrace();
+		} finally {
+			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}"
+					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+		}
+		return null;
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private ESIDataAdapter onConstruction;
@@ -311,9 +328,8 @@ public class ESIDataAdapter {
 
 		public ESIDataAdapter build() {
 			this.onConstruction.cacheManager = new StoreCacheManager.Builder().withEsiDataAdapter(this.onConstruction).build();
-			//			retrofitFactory = new NeoComRetrofitFactory.Builder(configurationProvider, fileSystemAdapter).build();
-			singleton = this.onConstruction;
-			//			this.onConstruction.createStore(); // Run the initialisation code.
+			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
+					, this.onConstruction.fileSystemAdapter).build();
 			return this.onConstruction;
 		}
 	}

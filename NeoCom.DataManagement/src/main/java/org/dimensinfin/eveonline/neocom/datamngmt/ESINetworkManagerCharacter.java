@@ -176,31 +176,31 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		} else return (GetCharactersCharacterIdClonesOk) okResponseCache.get(reference).body();
 	}
 
-	// - P L A N E T A R Y   I N T E R A C T I O N
-	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
-		logger.info(">> [ESINetworkManagerMock.getUniversePlanetarySchematicsById]");
-		final DateTime startTimePoint = DateTime.now();
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = neocomRetrofitNoAuth
-					                                                                          .create(PlanetaryInteractionApi.class)
-					                                                                          .getUniverseSchematicsSchematicId(schematicId
-							                                                                          , "en-us"
-							                                                                          , null)
-					                                                                          .execute();
-			if (!schematicistResponse.isSuccessful()) {
-				return null;
-			} else return schematicistResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RuntimeException runtime) {
-			runtime.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}"
-					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
-		}
-		return null;
-	}
+//	// - P L A N E T A R Y   I N T E R A C T I O N
+//	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
+//		logger.info(">> [ESINetworkManagerMock.getUniversePlanetarySchematicsById]");
+//		final DateTime startTimePoint = DateTime.now();
+//		try {
+//			// Create the request to be returned so it can be called.
+//			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = neocomRetrofitNoAuth
+//					                                                                          .create(PlanetaryInteractionApi.class)
+//					                                                                          .getUniverseSchematicsSchematicId(schematicId
+//							                                                                          , "en-us"
+//							                                                                          , null)
+//					                                                                          .execute();
+//			if (!schematicistResponse.isSuccessful()) {
+//				return null;
+//			} else return schematicistResponse.body();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (RuntimeException runtime) {
+//			runtime.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}"
+//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+//		}
+//		return null;
+//	}
 
 	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier
 			, final String refreshToken, final String server ) {

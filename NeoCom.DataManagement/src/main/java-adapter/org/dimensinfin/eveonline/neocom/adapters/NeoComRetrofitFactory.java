@@ -1,7 +1,6 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -21,8 +20,8 @@ public class NeoComRetrofitFactory {
 	public static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
 
 	// - C O M P O N E N T S
-	private static IConfigurationProvider configurationProvider;
-	private static IFileSystem fileSystemAdapter;
+	private IConfigurationProvider configurationProvider;
+	private IFileSystem fileSystemAdapter;
 
 	private Retrofit neocomRetrofitNoAuth;
 	private Retrofit neocomRetrofitESIAuthorization;
@@ -41,14 +40,14 @@ public class NeoComRetrofitFactory {
 	}
 
 	private Retrofit generateNoAuthRetrofit() {
-		final String cacheFilePath = configurationProvider.getResourceString("P.cache.directory.path")
-				                             + configurationProvider.getResourceString("P.cache.esinetwork.filename");
+		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
+				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
 		final File cacheDataFile = new File(fileSystemAdapter.accessResource4Path(cacheFilePath));
-		final String agent = configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
-		final long timeout = TimeUnit.SECONDS.toMillis(configurationProvider.getResourceInteger("P.cache.esiitem.time"));
+		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
+		final long timeout = TimeUnit.SECONDS.toMillis(this.configurationProvider.getResourceInteger("P.cache.esiitem.timeout"));
 		return new NeoComRetrofitNoOAuthHTTP.Builder()
 				       //				                                      .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
-				       .withEsiServerLocation(configurationProvider.getResourceString("P.esi.data.server.location"
+				       .withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
 						       , "https://esi.evetech.net/latest/"))
 				       .withAgent(agent)
 				       .withCacheDataFile(cacheDataFile)
@@ -72,14 +71,12 @@ public class NeoComRetrofitFactory {
 		public Builder( final IConfigurationProvider newConfigurationProvider, final IFileSystem newFileSystemAdapter ) {
 			Objects.requireNonNull(newConfigurationProvider);
 			Objects.requireNonNull(newFileSystemAdapter);
-			configurationProvider = newConfigurationProvider;
-			fileSystemAdapter = newFileSystemAdapter;
+			this.onConstruction.configurationProvider = newConfigurationProvider;
+			this.onConstruction.fileSystemAdapter = newFileSystemAdapter;
 			this.onConstruction = new NeoComRetrofitFactory(/*configurationProvider, fileSystemAdapter*/);
 		}
 
-		public NeoComRetrofitFactory build() throws IOException {
-			//			this.onConstruction.createStore(); // Run the initialisation code.
-			//			singleton = this.onConstruction;
+		public NeoComRetrofitFactory build() {
 			return this.onConstruction;
 		}
 	}

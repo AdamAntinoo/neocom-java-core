@@ -11,7 +11,6 @@ import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
@@ -189,10 +188,11 @@ public class EveItem extends NeoComNode {
 	 *
 	 * @param typeId the eve game unique type identifier.
 	 */
-	public void setTypeId( final int typeId ) {
+	public EveItem setTypeId( final int typeId ) {
 		id = typeId;
 		futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.BUYER);
 		futureSellerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
+		return this;
 	}
 
 	public void setName( final String name ) {
@@ -276,19 +276,19 @@ public class EveItem extends NeoComNode {
 		return this.group;
 	}
 
-//	public EveItem setGroup( final ItemGroup group ) {
-//		this.group = group;
-//		return this;
-//	}
+	//	public EveItem setGroup( final ItemGroup group ) {
+	//		this.group = group;
+	//		return this;
+	//	}
 
 	public GetUniverseCategoriesCategoryIdOk getCategory() {
 		return this.category;
 	}
 
-//	public EveItem setCategory( final ItemCategory category ) {
-//		this.category = category;
-//		return this;
-//	}
+	//	public EveItem setCategory( final ItemCategory category ) {
+	//		this.category = category;
+	//		return this;
+	//	}
 
 	/**
 	 * Try to get the best price for this element. There are two sets of prices, those for selling an item
@@ -317,13 +317,13 @@ public class EveItem extends NeoComNode {
 	}
 
 	public String getCategoryName() {
-//		if (null == category) {
-//			try {
-//				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-//			} catch (NeoComRuntimeException neoe) {
-//				category = new ItemCategory();
-//			}
-//		}
+		if (null == category) {
+			//			try {
+			category = esiDataAdapter.searchItemCategory4Id(categoryId);
+			//			} catch (NeoComRuntimeException neoe) {
+			//				category = new ItemCategory();
+			//			}
+		}
 		return category.getName();
 	}
 
@@ -332,13 +332,13 @@ public class EveItem extends NeoComNode {
 	}
 
 	public String getGroupName() {
-//		if (null == group) {
-//			try {
-//				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
-//			} catch (NeoComRuntimeException neoe) {
-//				group = new ItemGroup();
-//			}
-//		}
+		if (null == group) {
+			//			try {
+			group = esiDataAdapter.searchItemGroup4Id(groupId);
+			//			} catch (NeoComRuntimeException neoe) {
+			//				group = new ItemGroup();
+			//			}
+		}
 		return group.getName();
 	}
 

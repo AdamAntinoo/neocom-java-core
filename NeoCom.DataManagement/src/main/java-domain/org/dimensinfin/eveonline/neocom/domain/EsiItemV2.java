@@ -10,15 +10,16 @@ import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
 
-public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet, Serializable {
+public class EsiItemV2 extends EveItem implements IEsiItemDownloadCallback, IItemFacet, Serializable {
 	private static final long serialVersionUID = 9062458781449599566L;
-	private static DataDownloaderService downloaderService;
+//	private static DataDownloaderService downloaderService;
 
 	public static void injectDownloaderService( final DataDownloaderService newDownloaderService ) {
 		Objects.requireNonNull(newDownloaderService);
-		downloaderService = newDownloaderService;
+//		downloaderService = newDownloaderService;
 	}
 
 	private int typeId;
@@ -39,36 +40,36 @@ public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet, Serializ
 		}
 	}
 
-	public String getName() {
-		if (null == this.item) {
-			downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
-			return "-";
-		}
-		return item.getName();
-	}
+//	public String getName() {
+//		if (null == this.item) {
+//			downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
+//			return "-";
+//		}
+//		return item.getName();
+//	}
 
-	public double getVolume() {
-		if (null == this.item) {
-			downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
-			return 0.0;
-		}
-		return item.getVolume();
-	}
+//	public double getVolume() {
+//		if (null == this.item) {
+//			downloaderService.accessEveItem(this, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
+//			return 0.0;
+//		}
+//		return item.getVolume();
+//	}
 
-	public double getPrice() {
-		if (this.price < 0.0) {
-			downloaderService.accessItemPrice(this, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
-		}
-		return this.price;
-	}
+//	public double getPrice() {
+//		if (this.price < 0.0) {
+//			downloaderService.accessItemPrice(this, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
+//		}
+//		return this.price;
+//	}
 
 	public String getURLForItem() {
 		return "http://image.eveonline.com/Type/" + this.typeId + "_64.png";
 	}
 
-	public Integer getGroupId() {
-		return this.item.getGroupId();
-	}
+//	public Integer getGroupId() {
+//		return this.item.getGroupId();
+//	}
 
 	public List<GetUniverseTypesTypeIdOkDogmaAttributes> getDogmaAttributes() {
 		return this.item.getDogmaAttributes();
@@ -79,9 +80,9 @@ public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet, Serializ
 	}
 
 	// - D E L E G A T E   E M I T T E R
-	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
-		this.emitter.addPropertyChangeListener(listener);
-	}
+//	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
+//		this.emitter.addPropertyChangeListener(listener);
+//	}
 
 	//	public void removePropertyChangeListener( final PropertyChangeListener listener ) {
 	//		this.emitter.removePropertyChangeListener(listener);

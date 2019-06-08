@@ -28,7 +28,7 @@ public class TestConfigurationProvider extends GlobalConfigurationProvider {
 		this.addProperty("P.cache.directory.path", "NeoComCache");
 		this.addProperty("P.cache.esinetwork.filename", "ESINetworkManager.cache.store");
 		this.addProperty("P.cache.store.filename", "ESIData.cache.store");
-		this.addProperty("P.cache.esiitem.time", "86400");
+		this.addProperty("P.cache.esiitem.timeout", "86400");
 	}
 
 	protected List<String> getResourceFiles( String path ) throws IOException {

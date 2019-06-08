@@ -37,9 +37,10 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 	}
 
 	// - I C O N F I G U R A T I O N P R O V I D E R   I N T E R F A C E
-	public String getPropertiesDirectory(){
+	public String getPropertiesDirectory() {
 		return this.configuredPropertiesDirectory;
 	}
+
 	public String getResourceString( final String key ) {
 		final String value = configurationProperties.getProperty(key);
 		if (null == value) return this.generateMissing(key);
@@ -50,6 +51,12 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 		final String value = configurationProperties.getProperty(key, defaultValue);
 		if (null == value) return this.generateMissing(key);
 		else return value;
+	}
+
+	public Integer getResourceInteger( final String key ) {
+		final String value = configurationProperties.getProperty(key);
+		if (null == value) return 0;
+		else return Integer.valueOf(value);
 	}
 
 	/**

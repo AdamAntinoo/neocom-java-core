@@ -5,9 +5,10 @@ import java.util.List;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -25,7 +26,7 @@ import org.joda.time.DateTimeZone;
  *
  * @author Adam Antinoo
  */
-public class Resource extends ANeoComEntity implements IAggregableItem {
+public class Resource extends NeoComNode implements IAggregableItem {
 	private static final long serialVersionUID = 921961484632479376L;
 
 	public int typeId = -1;
@@ -33,31 +34,36 @@ public class Resource extends ANeoComEntity implements IAggregableItem {
 	protected int stackSize = 1;
 	protected double damage = 1.0;
 
-	private transient EveItem item = new EveItem();
+	protected transient EveItem item;
 	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
 
 	// - C O N S T R U C T O R S
+	protected Resource() { }
 
 	/**
 	 * Builds a new resource of quantity 1.
 	 */
+	@Deprecated
 	public Resource( final int typeId ) {
 		super();
 		this.typeId = typeId;
-		item = accessGlobal().searchItem4Id(typeId);
+		//		item = accessGlobal().searchItem4Id(typeId);
 		this.baseQty = 0;
 		jsonClass = "Resource";
 	}
 
+	@Deprecated
 	public Resource( final int typeId, final int newQty ) {
 		this(typeId);
 		this.baseQty = newQty;
 	}
 
+	@Deprecated
 	public Resource( final int typeId, final int newQty, final int stackSize ) {
 		this(typeId, newQty);
 		this.stackSize = stackSize;
 	}
+
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	public void add( final int count ) {
@@ -107,7 +113,7 @@ public class Resource extends ANeoComEntity implements IAggregableItem {
 	}
 
 	public EveItem getItem() {
-		if (null == item) item = accessGlobal().searchItem4Id(typeId);
+		//		if (null == item) item = accessGlobal().searchItem4Id(typeId);
 		return item;
 	}
 
@@ -194,5 +200,47 @@ public class Resource extends ANeoComEntity implements IAggregableItem {
 		buffer.append("#").append(this.getTypeId()).append(" ");
 		buffer.append("]");
 		return buffer.toString();
+	}
+
+	// - B U I L D E R
+	public static class Builder extends NeoComNode.Builder<Resource, Resource.Builder> {
+		//		protected T actualClass;
+		//		//		protected B actualClassBuilder;
+		//				private Resource onConstruction;
+
+		protected Resource getActual() {
+			return new Resource();
+		}
+
+		protected Resource.Builder getActualBuilder() {
+			return this;
+		}
+
+		//		public Builder( final int quantity ) {
+		//			this.actualClass = Class < T >.
+		//			//			this.actualClassBuilder = getActualBuilder();
+		//
+		//			this.onConstruction = new Resource();
+		//			this.onConstruction.setQuantity(quantity);
+		//		}
+
+		public Builder withQuantity( final int quantity ) {
+			this.getActual().baseQty = quantity;
+			return this;
+		}
+
+		public Builder withEveItem( final EsiItemV2 eveItem ) {
+			this.getActual().item = eveItem;
+			return this;
+		}
+
+		public Builder withEveItem( final EveItem eveItem ) {
+			this.getActual().item = eveItem;
+			return this;
+		}
+
+		public Resource build() {
+			return super.build();
+		}
 	}
 }

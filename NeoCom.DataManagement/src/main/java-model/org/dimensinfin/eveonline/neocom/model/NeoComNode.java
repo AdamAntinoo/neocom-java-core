@@ -70,4 +70,24 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular, IEvent
 	public int compareTo( final Object target ) {
 		return 0;
 	}
+
+	// - B U I L D E R
+	public static abstract class Builder<T, B extends Builder> {
+		protected T actualClass;
+		protected B actualClassBuilder;
+
+		protected abstract T getActual();
+
+		protected abstract B getActualBuilder();
+
+		public Builder() {
+			this.actualClass = this.getActual();
+			this.actualClassBuilder = this.getActualBuilder();
+		}
+
+		public T build() {
+			return this.actualClass;
+		}
+	}
+
 }
