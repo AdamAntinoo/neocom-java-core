@@ -1,15 +1,3 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.HashMap;
@@ -17,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
@@ -24,8 +13,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
-// - CLASS IMPLEMENTATION ...................................................................................
-public class EveItem extends ANeoComEntity {
+public class EveItem extends NeoComNode {
 	public enum ItemTechnology {
 		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
 
@@ -49,28 +37,23 @@ public class EveItem extends ANeoComEntity {
 		private static final Map<String, ItemTechnology> lookup = new HashMap<>();
 
 		static {
-			for ( ItemTechnology env : ItemTechnology.values() ) {
+			for (ItemTechnology env : ItemTechnology.values()) {
 				lookup.put(env.getName(), env);
 			}
 		}
 	}
 
-	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -2548296399305221197L;
-	private static EveItem defaultItem = null;
-	private static final int DEFAULT_TYPE_ID = 34;
+	// TODO - Connect temporarily the class to the esi adapter to get access to default market prices.
+	private static ESIDataAdapter esiDataAdapter;
 
-	//	public static EveItem getDefaultItem()  {
-	//		if (null == EveItem.defaultItem) {
-	//			EveItem.defaultItem = accessSDEDBHelper().searchItem4Id(EveItem.DEFAULT_TYPE_ID);
-	////			EveItem.defaultItem.setDefaultPrice(GlobalDataManager.searchMarketPrice(EveItem.DEFAULT_TYPE_ID));
-	////			EveItem.defaultItem.futureBuyerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.BUYER);
-	////			EveItem.defaultItem.futureSellerData = new MarketDataSet(EveItem.DEFAULT_TYPE_ID, EMarketSide.SELLER);
-	//		}
-	//		return EveItem.defaultItem;
-	//	}
+	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
+		esiDataAdapter = newEsiDataAdapter;
+	}
 
-	// - F I E L D - S E C T I O N ............................................................................
+	//	private static EveItem defaultItem = null;
+	//	private static final int DEFAULT_TYPE_ID = 34;
+
 	private int id = 34;
 	private String name = "<NAME>";
 	private int groupId = -1;
@@ -105,7 +88,7 @@ public class EveItem extends ANeoComEntity {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveItem() {
 		super();
-//		jsonClass = "EveItem";
+		//		jsonClass = "EveItem";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -128,10 +111,10 @@ public class EveItem extends ANeoComEntity {
 	}
 
 	public int getGroupId() {
-		if ( null == group ) {
+		if (null == group) {
 			try {
-				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
-			} catch ( NeoComRuntimeException neoe ) {
+				group = esiDataAdapter.searchItemGroup4Id(groupId);
+			} catch (NeoComRuntimeException neoe) {
 				group = new ItemGroup();
 			}
 		}
@@ -139,10 +122,10 @@ public class EveItem extends ANeoComEntity {
 	}
 
 	public int getCategoryId() {
-		if ( null == category ) {
+		if (null == category) {
 			try {
-				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-			} catch ( NeoComRuntimeException neoe ) {
+				category = esiDataAdapter.searchItemCategory4Id(categoryId);
+			} catch (NeoComRuntimeException neoe) {
 				category = new ItemCategory();
 			}
 		}
@@ -162,7 +145,7 @@ public class EveItem extends ANeoComEntity {
 	}
 
 	public boolean isBlueprint() {
-		if ( this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint) )
+		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
 			return true;
 		else
 			return false;
@@ -171,22 +154,21 @@ public class EveItem extends ANeoComEntity {
 	/**
 	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
 	 * not using now.
-	 * @return
 	 */
 	public double getPrice() {
-		if ( price < 0.0 ) {
+		if (price < 0.0) {
 			try {
 				price = accessGlobal().searchMarketPrice(getTypeId()).getAdjustedPrice();
-			} catch ( NeoComRuntimeException neoe ) {
+			} catch (NeoComRuntimeException neoe) {
 				price = -1.0;
 			}
-			if ( price < 1.0 ) price = baseprice;
+			if (price < 1.0) price = baseprice;
 		}
 		return price;
 	}
 
 	public EIndustryGroup getIndustryGroup() {
-		if ( industryGroup == EIndustryGroup.UNDEFINED ) {
+		if (industryGroup == EIndustryGroup.UNDEFINED) {
 			this.classifyIndustryGroup();
 		}
 		return industryGroup;
@@ -196,6 +178,7 @@ public class EveItem extends ANeoComEntity {
 	 * This is the key method used when instantiating an EveItem to set the eve item identifier of the game objectt that is
 	 * represented. During the setting for this value we instantiate the market data futures to be posted on a worker thread with
 	 * the hope to be resolved before the user requirement for the market data real values.
+	 *
 	 * @param typeId the eve game unique type identifier.
 	 */
 	public void setTypeId( final int typeId ) {
@@ -212,7 +195,7 @@ public class EveItem extends ANeoComEntity {
 		this.groupId = groupid;
 		try {
 			group = accessSDEDBHelper().searchItemGroup4Id(groupid);
-		} catch ( NeoComRuntimeException neoe ) {
+		} catch (NeoComRuntimeException neoe) {
 			group = new ItemGroup();
 		}
 	}
@@ -221,7 +204,7 @@ public class EveItem extends ANeoComEntity {
 		this.categoryId = categoryid;
 		try {
 			category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-		} catch ( NeoComRuntimeException neoe ) {
+		} catch (NeoComRuntimeException neoe) {
 			category = new ItemCategory();
 		}
 	}
@@ -248,31 +231,31 @@ public class EveItem extends ANeoComEntity {
 
 	//--- V I R T U A L   A C C E S S O R S
 	public String getHullGroup() {
-		if ( getIndustryGroup() == EIndustryGroup.HULL ) {
-			if ( getGroupName().equalsIgnoreCase("Assault Frigate") ) return "frigate";
-			if ( getGroupName().equalsIgnoreCase("Attack Battlecruiser") ) return "battlecruiser";
-			if ( getGroupName().equalsIgnoreCase("Battleship") ) return "battleship";
-			if ( getGroupName().equalsIgnoreCase("Blockade Runner") ) return "battlecruiser";
-			if ( getGroupName().equalsIgnoreCase("Combat Battlecruiser") ) return "battlecruiser";
-			if ( getGroupName().equalsIgnoreCase("Combat Recon Ship") ) return "battleship";
-			if ( getGroupName().equalsIgnoreCase("Command Destroyer") ) return "destroyer";
-			if ( getGroupName().equalsIgnoreCase("Corvette") ) return "shuttle";
-			if ( getGroupName().equalsIgnoreCase("Cruiser") ) return "cruiser";
-			if ( getGroupName().equalsIgnoreCase("Deep Space Transport") ) return "industrial";
-			if ( getGroupName().equalsIgnoreCase("Destroyer") ) return "destroyer";
-			if ( getGroupName().equalsIgnoreCase("Exhumer") ) return "miningBarge";
-			if ( getGroupName().equalsIgnoreCase("Frigate") ) return "frigate";
-			if ( getGroupName().equalsIgnoreCase("Heavy Assault Cruiser") ) return "cruiser";
-			if ( getGroupName().equalsIgnoreCase("Industrial") ) return "industrial";
-			if ( getGroupName().equalsIgnoreCase("Industrial Command Ship") ) return "industrial";
-			if ( getGroupName().equalsIgnoreCase("Interceptor") ) return "frigate";
-			if ( getGroupName().equalsIgnoreCase("Interdictor") ) return "frigate";
-			if ( getGroupName().equalsIgnoreCase("Logistics") ) return "cruiser";
-			if ( getGroupName().equalsIgnoreCase("Mining Barge") ) return "miningBarge";
-			if ( getGroupName().equalsIgnoreCase("Shuttle") ) return "shuttle";
-			if ( getGroupName().equalsIgnoreCase("Stealth Bomber") ) return "cruiser";
-			if ( getGroupName().equalsIgnoreCase("Strategic Cruiser") ) return "cruiser";
-			if ( getGroupName().equalsIgnoreCase("Tactical Destroyer") ) return "destroyer";
+		if (getIndustryGroup() == EIndustryGroup.HULL) {
+			if (getGroupName().equalsIgnoreCase("Assault Frigate")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Attack Battlecruiser")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Battleship")) return "battleship";
+			if (getGroupName().equalsIgnoreCase("Blockade Runner")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Combat Battlecruiser")) return "battlecruiser";
+			if (getGroupName().equalsIgnoreCase("Combat Recon Ship")) return "battleship";
+			if (getGroupName().equalsIgnoreCase("Command Destroyer")) return "destroyer";
+			if (getGroupName().equalsIgnoreCase("Corvette")) return "shuttle";
+			if (getGroupName().equalsIgnoreCase("Cruiser")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Deep Space Transport")) return "industrial";
+			if (getGroupName().equalsIgnoreCase("Destroyer")) return "destroyer";
+			if (getGroupName().equalsIgnoreCase("Exhumer")) return "miningBarge";
+			if (getGroupName().equalsIgnoreCase("Frigate")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Heavy Assault Cruiser")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Industrial")) return "industrial";
+			if (getGroupName().equalsIgnoreCase("Industrial Command Ship")) return "industrial";
+			if (getGroupName().equalsIgnoreCase("Interceptor")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Interdictor")) return "frigate";
+			if (getGroupName().equalsIgnoreCase("Logistics")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Mining Barge")) return "miningBarge";
+			if (getGroupName().equalsIgnoreCase("Shuttle")) return "shuttle";
+			if (getGroupName().equalsIgnoreCase("Stealth Bomber")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Strategic Cruiser")) return "cruiser";
+			if (getGroupName().equalsIgnoreCase("Tactical Destroyer")) return "destroyer";
 		}
 		return "not-applies";
 	}
@@ -326,10 +309,10 @@ public class EveItem extends ANeoComEntity {
 	}
 
 	public String getCategoryName() {
-		if ( null == category ) {
+		if (null == category) {
 			try {
 				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-			} catch ( NeoComRuntimeException neoe ) {
+			} catch (NeoComRuntimeException neoe) {
 				category = new ItemCategory();
 			}
 		}
@@ -341,10 +324,10 @@ public class EveItem extends ANeoComEntity {
 	}
 
 	public String getGroupName() {
-		if ( null == group ) {
+		if (null == group) {
 			try {
 				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
-			} catch ( NeoComRuntimeException neoe ) {
+			} catch (NeoComRuntimeException neoe) {
 				group = new ItemGroup();
 			}
 		}
@@ -369,49 +352,49 @@ public class EveItem extends ANeoComEntity {
 
 	//--- P R I V A T E   S E C T I O N
 	protected void classifyIndustryGroup() {
-		if ( (this.getGroupName().equalsIgnoreCase("Composite")) && (this.getCategoryName().equalsIgnoreCase("Material")) ) {
+		if ((this.getGroupName().equalsIgnoreCase("Composite")) && (this.getCategoryName().equalsIgnoreCase("Material"))) {
 			industryGroup = EIndustryGroup.REACTIONMATERIALS;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Asteroid") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Asteroid")) {
 			industryGroup = EIndustryGroup.OREMATERIALS;
 		}
-		if ( (this.getGroupName().equalsIgnoreCase("Mining Crystal")) && (this.getCategoryName().equalsIgnoreCase("Charge")) ) {
+		if ((this.getGroupName().equalsIgnoreCase("Mining Crystal")) && (this.getCategoryName().equalsIgnoreCase("Charge"))) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Charge") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Charge")) {
 			industryGroup = EIndustryGroup.CHARGE;
 		}
-		if ( this.getGroupName().equalsIgnoreCase("Tool") ) {
+		if (this.getGroupName().equalsIgnoreCase("Tool")) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Commodity") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Commodity")) {
 			industryGroup = EIndustryGroup.COMMODITY;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint) ) {
+		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			industryGroup = EIndustryGroup.BLUEPRINT;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill) ) {
+		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 			industryGroup = EIndustryGroup.SKILL;
 		}
-		if ( this.getGroupName().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral) ) {
+		if (this.getGroupName().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
 			industryGroup = EIndustryGroup.REFINEDMATERIAL;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Module") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Module")) {
 			industryGroup = EIndustryGroup.COMPONENTS;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Drone") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Drone")) {
 			industryGroup = EIndustryGroup.ITEMS;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Planetary Commodities") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Planetary Commodities")) {
 			industryGroup = EIndustryGroup.PLANETARYMATERIALS;
 		}
-		if ( this.getGroupName().equalsIgnoreCase("Datacores") ) {
+		if (this.getGroupName().equalsIgnoreCase("Datacores")) {
 			industryGroup = EIndustryGroup.DATACORES;
 		}
-		if ( this.getGroupName().equalsIgnoreCase("Salvaged Materials") ) {
+		if (this.getGroupName().equalsIgnoreCase("Salvaged Materials")) {
 			industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
 		}
-		if ( this.getCategoryName().equalsIgnoreCase("Ship") ) {
+		if (this.getCategoryName().equalsIgnoreCase("Ship")) {
 			industryGroup = EIndustryGroup.HULL;
 		}
 	}
@@ -420,6 +403,7 @@ public class EveItem extends ANeoComEntity {
 	 * Submits a <code>Callable</code> request to the background threads to retrieve the data into the <code>Future</code>. In
 	 * the case the market data is accessed and the Future was not completed the thread should wait until the market data access
 	 * completes. Most of the calls will execute fast because the data being cached continuously py the scheduled submitted jobs.
+	 *
 	 * @param itemId the items id to search market data.
 	 * @param side   if we should search buy orders or sell orders.
 	 * @return a <code>Future</code> with the whole market data values.
@@ -437,7 +421,7 @@ public class EveItem extends ANeoComEntity {
 	 * information from other sources like the default price information.
 	 */
 	public MarketDataSet getBuyerMarketData() throws ExecutionException, InterruptedException {
-		if ( null == futureBuyerData ) {
+		if (null == futureBuyerData) {
 			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.BUYER);
 		}
 		return futureBuyerData.get();
@@ -452,7 +436,7 @@ public class EveItem extends ANeoComEntity {
 	 * information from other sources like the default price information.
 	 */
 	public MarketDataSet getSellerMarketData() throws ExecutionException, InterruptedException {
-		if ( null == futureBuyerData ) {
+		if (null == futureBuyerData) {
 			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
 		}
 		return futureBuyerData.get();

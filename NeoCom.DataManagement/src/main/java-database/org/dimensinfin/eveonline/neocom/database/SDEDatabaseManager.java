@@ -316,25 +316,25 @@ public abstract class SDEDatabaseManager {
 	 * Search on the sde.sqlite database for the item group information. This new select is used to get access to
 	 * the icon information that should be stored to be correlated to the resource list.
 	 */
-	public ItemGroup searchItemGroup4Id( final int targetGroupId ) {
-		logger.info(">> [SDEDatabaseManager.searchItemGroup4Id]> targetGroupId: {}", targetGroupId);
-		ItemGroup target = new ItemGroup();
-		try {
-			final RawStatement cursor = constructStatement(SELECT_ITEMGROUP, new String[]{Integer.valueOf(targetGroupId).toString()});
-			while (cursor.moveToNext()) {
-				target.setGroupId(cursor.getInt(ITEMGROUP_GROUPID_COLINDEX));
-				target.setCategoryId(cursor.getInt(ITEMGROUP_CATEGORYID_COLINDEX));
-				target.setGroupName(cursor.getString(ITEMGROUP_GROUPNAME_COLINDEX));
-				target.setIconLinkName(cursor.getString(ITEMGROUP_ICONLINKNAME_COLINDEX));
-			}
-			cursor.close();
-		} catch (final Exception ex) {
-			logger.error("E [SDEDatabaseManager.searchItemGroup4Id]> Exception processing statement: {}" + ex.getMessage());
-		} finally {
-			logger.info("<< [SDEDatabaseManager.searchItemGroup4Id]> GroupName: {}", target.getGroupName());
-			return target;
-		}
-	}
+//	public ItemGroup searchItemGroup4Id( final int targetGroupId ) {
+//		logger.info(">> [SDEDatabaseManager.searchItemGroup4Id]> targetGroupId: {}", targetGroupId);
+//		ItemGroup target = new ItemGroup();
+//		try {
+//			final RawStatement cursor = constructStatement(SELECT_ITEMGROUP, new String[]{Integer.valueOf(targetGroupId).toString()});
+//			while (cursor.moveToNext()) {
+//				target.setGroupId(cursor.getInt(ITEMGROUP_GROUPID_COLINDEX));
+//				target.setCategoryId(cursor.getInt(ITEMGROUP_CATEGORYID_COLINDEX));
+//				target.setGroupName(cursor.getString(ITEMGROUP_GROUPNAME_COLINDEX));
+//				target.setIconLinkName(cursor.getString(ITEMGROUP_ICONLINKNAME_COLINDEX));
+//			}
+//			cursor.close();
+//		} catch (final Exception ex) {
+//			logger.error("E [SDEDatabaseManager.searchItemGroup4Id]> Exception processing statement: {}" + ex.getMessage());
+//		} finally {
+//			logger.info("<< [SDEDatabaseManager.searchItemGroup4Id]> GroupName: {}", target.getGroupName());
+//			return target;
+//		}
+//	}
 
 	/**
 	 * Search on the sde.sqlite database for the item category information. This new select is used to get access to

@@ -2,33 +2,29 @@ package org.dimensinfin.eveonline.neocom.adapters;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
-import com.nytimes.android.external.fs3.FileSystemPersister;
-import com.nytimes.android.external.fs3.PathResolver;
-import com.nytimes.android.external.fs3.filesystem.FileSystemFactory;
-import com.nytimes.android.external.store3.base.Fetcher;
-import com.nytimes.android.external.store3.base.Parser;
-import com.nytimes.android.external.store3.base.impl.Store;
-import com.nytimes.android.external.store3.base.impl.StoreBuilder;
-import com.nytimes.android.external.store3.middleware.GsonParserFactory;
-import com.nytimes.android.external.store3.util.ParserException;
 import io.reactivex.Single;
-import okio.BufferedSource;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 /**
  * This class will be the base to access most of the non authenticated SDE data available though the ESI data service.
@@ -38,45 +34,111 @@ import retrofit2.Retrofit;
  *
  * This class will also use other components to be able to store downloaded SDE data into caches, be them temporal in memory or persisted on disk.
  */
-public class ESIDataAdapter implements Fetcher<EsiItemV2, Integer> {
+public class ESIDataAdapter {
+	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	private static ESIDataAdapter singleton;
+	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
+
 	private static File storeDataFile;
 	private static Gson gson = new Gson();
-	private static Retrofit neocomRetrofitNoAuth;
-	private static Store<EsiItemV2, Integer> esiItemStore;
+	//	private static Retrofit neocomRetrofitNoAuth;
+	//	private static Store<EsiItemV2, Integer> esiItemStore;
 	// - C O M P O N E N T S
-	private static IConfigurationProvider configurationProvider;
-	private static IFileSystem fileSystemAdapter;
-	private static NeoComRetrofitFactory retrofitFactory;
+	private IConfigurationProvider configurationProvider;
+	private IFileSystem fileSystemAdapter;
+	private NeoComRetrofitFactory retrofitFactory;
+	private StoreCacheManager cacheManager;
 
-	private ESIDataAdapter( final IConfigurationProvider newConfigurationProvider, final IFileSystem newFileSystemAdapter ) {
+	// - C O N S T R U C T O R S
+	private ESIDataAdapter( final IConfigurationProvider newConfigurationProvider
+			, final IFileSystem newFileSystemAdapter
+			, final StoreCacheManager newCacheManager ) {
 		configurationProvider = newConfigurationProvider;
 		fileSystemAdapter = newFileSystemAdapter;
-	}
-
-	private void createStore() throws IOException {
-		// Create persistence store area
-		final String storeFilePath = configurationProvider.getResourceString("P.cache.directory.path")
-				                             + "/"
-				                             + configurationProvider.getResourceString("P.cache.store.filename");
-		storeDataFile = new File(fileSystemAdapter.accessResource4Path(storeFilePath));
-		final NeoComParser parser = new NeoComParser();
-		;
-
-		// Create store
-		esiItemStore = StoreBuilder.<Integer, BufferedSource, EsiItemV2>parsedWithKey()
-				               .fetcher((Fetcher) this)  // OkHttp responseBody.source()
-				               .persister(FileSystemPersister.create(FileSystemFactory.create(storeDataFile), new NeoComPathResolver()))
-				               .parser(GsonParserFactory.createSourceParser(gson, String.class))
-				               .open();
-		// Create retrofit
-		if (null == neocomRetrofitNoAuth) neocomRetrofitNoAuth = retrofitFactory.generateNoAuthRetrofit();
+		cacheManager = newCacheManager;
 	}
 
 	public Single<EsiItemV2> getEsiItem4Id( final Integer itemId ) {
 		return esiItemStore.fetch(itemId);
 	}
+
+	// - D O W N L O A D   S T A R T E R S
+	public void downloadItemPrices() {
+		// Initialize and process the list of market process form the ESI full market data.
+		final List<GetMarketsPrices200Ok> marketPrices = this.getMarketsPrices(GlobalDataManager.TRANQUILITY_DATASOURCE);
+		logger.info(">> [ESIDataAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size());
+		for (GetMarketsPrices200Ok price : marketPrices) {
+			marketDefaultPrices.put(price.getTypeId(), price);
+		}
+	}
+
+	// - S D E   D A T A
+	public double searchSDEMarketPrice( final int typeId ) {
+		if (marketDefaultPrices.containsKey(typeId)) return marketDefaultPrices.get(typeId).getAdjustedPrice();
+		else return -1.0;
+	}
+
+	public ItemGroup searchItemGroup4Id( final int targetGroupId ) {
+		logger.info(">> [ESIDataAdapter.searchItemGroup4Id]> targetGroupId: {}", targetGroupId);
+		return this.cacheManager.
+		ItemGroup target = new ItemGroup();
+		try {
+			final RawStatement cursor = constructStatement(SELECT_ITEMGROUP, new String[]{Integer.valueOf(targetGroupId).toString()});
+			while (cursor.moveToNext()) {
+				target.setGroupId(cursor.getInt(ITEMGROUP_GROUPID_COLINDEX));
+				target.setCategoryId(cursor.getInt(ITEMGROUP_CATEGORYID_COLINDEX));
+				target.setGroupName(cursor.getString(ITEMGROUP_GROUPNAME_COLINDEX));
+				target.setIconLinkName(cursor.getString(ITEMGROUP_ICONLINKNAME_COLINDEX));
+			}
+			cursor.close();
+		} catch (final Exception ex) {
+			logger.error("E [SDEDatabaseManager.searchItemGroup4Id]> Exception processing statement: {}" + ex.getMessage());
+		} finally {
+			logger.info("<< [SDEDatabaseManager.searchItemGroup4Id]> GroupName: {}", target.getGroupName());
+			return target;
+		}
+	}
+
+	// - U N I V E R S E
+
+	/**
+	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
+	 * because probably there is not valid market price information at other servers.
+	 * To access the public data it will use the current unauthorized retrofit connection.
+	 */
+	public List<GetMarketsPrices200Ok> getMarketsPrices( final String server ) {
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = retrofitFactory.accessNoAuthRetrofit().create(MarketApi.class)
+					                                                                .getMarketsPrices(DEFAULT_ESI_SERVER.toLowerCase(), null)
+					                                                                .execute();
+			if (!marketApiResponse.isSuccessful()) {
+				return new ArrayList<>();
+			} else return marketApiResponse.body();
+		} catch (IOException ioe) {
+			return new ArrayList<>();
+		}
+	}
+
+	//	private void createStore() throws IOException {
+	//		// Create persistence store area
+	//		final String storeFilePath = configurationProvider.getResourceString("P.cache.directory.path")
+	//				                             + "/"
+	//				                             + configurationProvider.getResourceString("P.cache.store.filename");
+	//		storeDataFile = new File(fileSystemAdapter.accessResource4Path(storeFilePath));
+	//		final NeoComParser parser = new NeoComParser();
+	//		;
+	//
+	//		// Create store
+	//		esiItemStore = StoreBuilder.<Integer, BufferedSource, EsiItemV2>parsedWithKey()
+	//				               .fetcher((Fetcher) this)  // OkHttp responseBody.source()
+	//				               .persister(FileSystemPersister.create(FileSystemFactory.create(storeDataFile), new NeoComPathResolver()))
+	//				               .parser(GsonParserFactory.createSourceParser(gson, String.class))
+	//				               .open();
+	//		// Create retrofit
+	//		//		if (null == neocomRetrofitNoAuth) neocomRetrofitNoAuth = retrofitFactory.generateNoAuthRetrofit();
+	//	}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -85,24 +147,21 @@ public class ESIDataAdapter implements Fetcher<EsiItemV2, Integer> {
 		/**
 		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as possible.
 		 */
-		public Builder( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
+		public Builder( final IConfigurationProvider configurationProvider
+				, final IFileSystem fileSystemAdapter
+				, final StoreCacheManager cacheManager ) {
 			Objects.requireNonNull(configurationProvider);
 			Objects.requireNonNull(fileSystemAdapter);
-			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
+			Objects.requireNonNull(cacheManager);
+			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter, cacheManager);
 		}
 
 		public ESIDataAdapter build() throws IOException {
-			retrofitFactory = new NeoComRetrofitFactory.Builder(configurationProvider, fileSystemAdapter).build();
+			//			retrofitFactory = new NeoComRetrofitFactory.Builder(configurationProvider, fileSystemAdapter).build();
 			singleton = this.onConstruction;
-			this.onConstruction.createStore(); // Run the initialisation code.
+			//			this.onConstruction.createStore(); // Run the initialisation code.
 			return this.onConstruction;
 		}
-	}
-
-	// - F E T C H E R
-	@Override
-	public Single<EsiItemV2> fetch( final Integer typeId ) {
-		return Single.just(new EsiItemV2(this.getUniverseTypeById(typeId)));
 	}
 
 	/**
@@ -120,7 +179,7 @@ public class ESIDataAdapter implements Fetcher<EsiItemV2, Integer> {
 		final DateTime startTimePoint = DateTime.now();
 		try {
 			// Create the request to be returned so it can be called.
-			final Response<GetUniverseTypesTypeIdOk> itemListResponse = neocomRetrofitNoAuth
+			final Response<GetUniverseTypesTypeIdOk> itemListResponse = retrofitFactory.accessNoAuthRetrofit()
 					                                                            .create(UniverseApi.class)
 					                                                            .getUniverseTypesTypeId(typeId
 							                                                            , "en-us"
@@ -145,24 +204,5 @@ public class ESIDataAdapter implements Fetcher<EsiItemV2, Integer> {
 			//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
 		}
 		return null;
-	}
-}
-
-final class NeoComPathResolver implements PathResolver<EsiItemV2> {
-	@Override
-	public String resolve( final EsiItemV2 key ) {
-		return Integer.valueOf(key.getTypeId()).toString();
-	}
-}
-
-final class NeoComParser implements Parser<String, EsiItemV2> {
-	private static Gson gson = new Gson();
-
-	@Override
-	public EsiItemV2 apply( final String data ) throws ParserException {
-		final Parser<String, EsiItemV2> parser = GsonParserFactory.createStringParser(gson, EsiItemV2.class);
-		final EsiItemV2 result = parser.apply(data);
-
-		return result;
 	}
 }

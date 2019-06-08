@@ -17,38 +17,44 @@ import retrofit2.Retrofit;
 
 public class NeoComRetrofitFactory {
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
+	public static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
+	//	public static long TIMEOUT;
+	//	protected static File cacheDataFile;
+	//	protected static String AGENT;
+	private static Retrofit neocomRetrofitNoAuth;
+
+	// - C O M P O N E N T S
 	private static IConfigurationProvider configurationProvider;
 	private static IFileSystem fileSystemAdapter;
-	public static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
-	public static long TIMEOUT;
-	protected static File cacheDataFile;
-	protected static String AGENT;
 
 	//	private NeoComRetrofitFactory( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
 	//		configurationProvider = configurationProvider;
 	//		fileSystemAdapter = fileSystemAdapter;
 	//	}
 
-	private NeoComRetrofitFactory() {
+	private NeoComRetrofitFactory() { }
+
+	public Retrofit accessNoAuthRetrofit() {
+		if (null == neocomRetrofitNoAuth) neocomRetrofitNoAuth = this.generateNoAuthRetrofit();
+		return neocomRetrofitNoAuth;
 	}
 
-	public static Retrofit generateNoAuthRetrofit() {
-		// Read the configuration and open the ESI requests cache.
+	private Retrofit generateNoAuthRetrofit() {
 		final String cacheFilePath = configurationProvider.getResourceString("P.cache.directory.path")
 				                             + configurationProvider.getResourceString("P.cache.esinetwork.filename");
-		cacheDataFile = new File(fileSystemAdapter.accessResource4Path(cacheFilePath));
-		AGENT = configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
-		TIMEOUT = TimeUnit.SECONDS.toMillis(configurationProvider.getResourceInteger("P.cache.esiitem.time"));
-		final Retrofit neocomRetrofitNoAuth = new NeoComRetrofitNoOAuthHTTP.Builder()
+		final File cacheDataFile = new File(fileSystemAdapter.accessResource4Path(cacheFilePath));
+		final String agent = configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
+		final long timeout = TimeUnit.SECONDS.toMillis(configurationProvider.getResourceInteger("P.cache.esiitem.time"));
+		return new NeoComRetrofitNoOAuthHTTP.Builder()
 				                                      //				                                      .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
 				                                      .withEsiServerLocation(configurationProvider.getResourceString("P.esi.data.server.location"
 						                                      , "https://esi.evetech.net/latest/"))
-				                                      .withAgent(AGENT)
+				                                      .withAgent(agent)
 				                                      .withCacheDataFile(cacheDataFile)
 				                                      .withCacheSize(CACHE_SIZE)
-				                                      .withTimeout(TIMEOUT)
+				                                      .withTimeout(timeout)
 				                                      .build();
-		return neocomRetrofitNoAuth;
+//		return neocomRetrofitNoAuth;
 	}
 
 	// - B U I L D E R
