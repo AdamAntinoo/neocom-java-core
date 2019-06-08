@@ -18,6 +18,7 @@ public class ESIDataAdapterTest {
 	public void builder_complete() throws IOException {
 		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("testproperties").build();
 		final TestFileSystem fileSystemAdapter = new TestFileSystem("./src/test/resources/Test.NeoCom.Infinity");
+//		final StoreCacheManager cacheManager = new StoreCacheManager.Builder().withEsiDataAdapter(esiDataAdapter).build();
 		final ESIDataAdapter adapter = new ESIDataAdapter.Builder(configurationProvider, fileSystemAdapter).build();
 		Assert.assertNotNull(adapter);
 	}
@@ -28,9 +29,9 @@ public class ESIDataAdapterTest {
 		final TestFileSystem fileSystemAdapter = new TestFileSystem("./src/test/resources/Test.NeoCom.Infinity");
 		final ESIDataAdapter adapter = new ESIDataAdapter.Builder(configurationProvider, fileSystemAdapter).build();
 
-		final Single<EsiItemV2> itemSingle = adapter.getEsiItem4Id(34);
-		Thread.sleep(TimeUnit.SECONDS.toMillis(1));
-		final EsiItemV2 item = itemSingle.blockingGet();
+		final EsiItemV2 item = adapter.searchEsiItem4Id(34);
+//		Thread.sleep(TimeUnit.SECONDS.toMillis(1));
+//		final EsiItemV2 item = itemSingle.blockingGet();
 		Assert.assertNotNull(item);
 	}
 }

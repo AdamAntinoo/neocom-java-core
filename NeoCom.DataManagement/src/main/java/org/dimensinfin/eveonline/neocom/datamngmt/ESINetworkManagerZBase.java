@@ -68,7 +68,7 @@ public class ESINetworkManagerZBase {
 	//	protected static NeoComOAuth20 neocomAuth20Singularity;
 	//	protected static NeoComOAuth20 neocomAuth20;
 	// TODO The refresh can be striped from the creation because it is only used at runtime when executing the callbacks.
-	protected static Retrofit neocomRetrofitTranquility;
+	public static Retrofit neocomRetrofitTranquility;
 	protected static Retrofit neocomRetrofitSingularity;
 	protected static Retrofit neocomRetrofit;
 	protected static Retrofit neocomRetrofitNoAuth;

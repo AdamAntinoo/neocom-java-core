@@ -12,6 +12,8 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SkillTrained extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
@@ -67,7 +69,7 @@ public class SkillTrained extends ANeoComEntity {
 		return this.skillItem.getGroupName();
 	}
 
-	public ItemGroup getGroupInstance() {
+	public GetUniverseGroupsGroupIdOk getGroupInstance() {
 		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
 		return this.skillItem.getGroup();
 	}

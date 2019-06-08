@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
+import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
@@ -18,25 +19,25 @@ import retrofit2.Retrofit;
 public class NeoComRetrofitFactory {
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	public static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
-	//	public static long TIMEOUT;
-	//	protected static File cacheDataFile;
-	//	protected static String AGENT;
-	private static Retrofit neocomRetrofitNoAuth;
 
 	// - C O M P O N E N T S
 	private static IConfigurationProvider configurationProvider;
 	private static IFileSystem fileSystemAdapter;
 
-	//	private NeoComRetrofitFactory( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
-	//		configurationProvider = configurationProvider;
-	//		fileSystemAdapter = fileSystemAdapter;
-	//	}
+	private Retrofit neocomRetrofitNoAuth;
+	private Retrofit neocomRetrofitESIAuthorization;
 
 	private NeoComRetrofitFactory() { }
 
 	public Retrofit accessNoAuthRetrofit() {
-		if (null == neocomRetrofitNoAuth) neocomRetrofitNoAuth = this.generateNoAuthRetrofit();
-		return neocomRetrofitNoAuth;
+		if (null == this.neocomRetrofitNoAuth) this.neocomRetrofitNoAuth = this.generateNoAuthRetrofit();
+		return this.neocomRetrofitNoAuth;
+	}
+
+	public Retrofit accessESIAuthRetrofit() {
+		if (null == this.neocomRetrofitESIAuthorization)
+			this.neocomRetrofitESIAuthorization = this.generateESIAuthRetrofit();
+		return this.neocomRetrofitESIAuthorization;
 	}
 
 	private Retrofit generateNoAuthRetrofit() {
@@ -46,15 +47,19 @@ public class NeoComRetrofitFactory {
 		final String agent = configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 		final long timeout = TimeUnit.SECONDS.toMillis(configurationProvider.getResourceInteger("P.cache.esiitem.time"));
 		return new NeoComRetrofitNoOAuthHTTP.Builder()
-				                                      //				                                      .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
-				                                      .withEsiServerLocation(configurationProvider.getResourceString("P.esi.data.server.location"
-						                                      , "https://esi.evetech.net/latest/"))
-				                                      .withAgent(agent)
-				                                      .withCacheDataFile(cacheDataFile)
-				                                      .withCacheSize(CACHE_SIZE)
-				                                      .withTimeout(timeout)
-				                                      .build();
-//		return neocomRetrofitNoAuth;
+				       //				                                      .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
+				       .withEsiServerLocation(configurationProvider.getResourceString("P.esi.data.server.location"
+						       , "https://esi.evetech.net/latest/"))
+				       .withAgent(agent)
+				       .withCacheDataFile(cacheDataFile)
+				       .withCacheSize(CACHE_SIZE)
+				       .withTimeout(timeout)
+				       .build();
+	}
+
+	private Retrofit generateESIAuthRetrofit() {
+		// TODO - This should be replaced by the code to generate a new authorized retrofit.
+		return ESIGlobalAdapter.neocomRetrofitTranquility;
 	}
 
 	// - B U I L D E R

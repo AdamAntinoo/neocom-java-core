@@ -21,7 +21,7 @@ public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet, Serializ
 		downloaderService = newDownloaderService;
 	}
 
-	private final int typeId;
+	private int typeId;
 	private GetUniverseTypesTypeIdOk item;
 	private EventEmitter emitter = new EventEmitter();
 	private double price = -1.0;
@@ -32,8 +32,11 @@ public class EsiItemV2 implements IEsiItemDownloadCallback, IItemFacet, Serializ
 	}
 
 	public EsiItemV2( final GetUniverseTypesTypeIdOk item ) {
-		this.item = item;
-		this.typeId = this.item.getTypeId();
+		if (null != item) {
+			this.item = item;
+			if (null != this.item.getTypeId())
+				this.typeId = this.item.getTypeId();
+		}
 	}
 
 	public String getName() {

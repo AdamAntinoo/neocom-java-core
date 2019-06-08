@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.exception.NeoComError;
@@ -341,9 +342,13 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 			this.onConstruction = new GlobalDataManager(configurationProvider, fileSystemAdapter, esiAdapter);
 		}
 
+		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
+			this.onConstruction.esiDataAdapter = esiDataAdapter;
+			return this;
+		}
+
 		public GlobalDataManager build() {
-			// Run the initialisation code.
-			//			this.onConstruction.initialise();
+			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
 			singleton = this.onConstruction;
 			return this.onConstruction;
 		}

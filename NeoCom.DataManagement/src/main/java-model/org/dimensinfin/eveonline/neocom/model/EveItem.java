@@ -19,7 +19,6 @@ public class EveItem extends NeoComNode {
 	public enum ItemTechnology {
 		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
 
-		// --- E N U M   I M P L E M E N T A T I O N
 		private String label;
 
 		ItemTechnology( String newlabel ) {
@@ -35,7 +34,7 @@ public class EveItem extends NeoComNode {
 			return lookup.get(label);
 		}
 
-		// --- I N V E R S E   L O O K U P   T A B L E
+		// - I N V E R S E   L O O K U P   T A B L E
 		private static final Map<String, ItemTechnology> lookup = new HashMap<>();
 
 		static {
@@ -113,26 +112,33 @@ public class EveItem extends NeoComNode {
 	}
 
 	public int getGroupId() {
-		if (null == group) {
-			try {
-				group = esiDataAdapter.searchItemGroup4Id(groupId);
-			} catch (NeoComRuntimeException neoe) {
-				group = new ItemGroup();
-			}
-		}
-		return group.getGroupId();
+		return this.groupId;
 	}
 
 	public int getCategoryId() {
-		if (null == category) {
-			try {
-				category = esiDataAdapter.searchItemCategory4Id(categoryId);
-			} catch (NeoComRuntimeException neoe) {
-				category = new ItemCategory();
-			}
-		}
-		return category.getCategoryId();
+		return this.categoryId;
 	}
+	//	public int getGroupId() {
+	//		if (null == group) {
+	//			try {
+	//				group = esiDataAdapter.searchItemGroup4Id(groupId);
+	//			} catch (NeoComRuntimeException neoe) {
+	//				group = new ItemGroup();
+	//			}
+	//		}
+	//		return group.getGroupId();
+	//	}
+	//
+	//	public int getCategoryId() {
+	//		if (null == category) {
+	//			try {
+	//				category = esiDataAdapter.searchItemCategory4Id(categoryId);
+	//			} catch (NeoComRuntimeException neoe) {
+	//				category = new ItemCategory();
+	//			}
+	//		}
+	//		return category.getCategoryId();
+	//	}
 
 	/**
 	 * Some items have tech while others don't. Tech information has to be calculated for some items when I
@@ -159,11 +165,11 @@ public class EveItem extends NeoComNode {
 	 */
 	public double getPrice() {
 		if (price < 0.0) {
-			try {
-				price = accessGlobal().searchMarketPrice(getTypeId()).getAdjustedPrice();
-			} catch (NeoComRuntimeException neoe) {
-				price = -1.0;
-			}
+			//			try {
+			price = esiDataAdapter.searchSDEMarketPrice(getTypeId());
+			//			} catch (NeoComRuntimeException neoe) {
+			//				price = -1.0;
+			//			}
 			if (price < 1.0) price = baseprice;
 		}
 		return price;
@@ -195,20 +201,20 @@ public class EveItem extends NeoComNode {
 
 	public void setGroupId( final int groupid ) {
 		this.groupId = groupid;
-		try {
-			group = accessSDEDBHelper().searchItemGroup4Id(groupid);
-		} catch (NeoComRuntimeException neoe) {
-			group = new ItemGroup();
-		}
+		//		try {
+		group = esiDataAdapter.searchItemGroup4Id(groupid);
+		//		} catch (NeoComRuntimeException neoe) {
+		//			group = new ItemGroup();
+		//		}
 	}
 
 	public void setCategoryId( final int categoryid ) {
 		this.categoryId = categoryid;
-		try {
-			category = accessSDEDBHelper().searchItemCategory4Id(categoryid);
-		} catch (NeoComRuntimeException neoe) {
-			category = new ItemCategory();
-		}
+		//		try {
+		category = esiDataAdapter.searchItemCategory4Id(categoryid);
+		//		} catch (NeoComRuntimeException neoe) {
+		//			category = new ItemCategory();
+		//		}
 	}
 
 	public void setBasePrice( final double price ) {
@@ -266,23 +272,23 @@ public class EveItem extends NeoComNode {
 		return this;
 	}
 
-	public ItemGroup getGroup() {
+	public GetUniverseGroupsGroupIdOk getGroup() {
 		return this.group;
 	}
 
-	public EveItem setGroup( final ItemGroup group ) {
-		this.group = group;
-		return this;
-	}
+//	public EveItem setGroup( final ItemGroup group ) {
+//		this.group = group;
+//		return this;
+//	}
 
-	public ItemCategory getCategory() {
+	public GetUniverseCategoriesCategoryIdOk getCategory() {
 		return this.category;
 	}
 
-	public EveItem setCategory( final ItemCategory category ) {
-		this.category = category;
-		return this;
-	}
+//	public EveItem setCategory( final ItemCategory category ) {
+//		this.category = category;
+//		return this;
+//	}
 
 	/**
 	 * Try to get the best price for this element. There are two sets of prices, those for selling an item
@@ -311,14 +317,14 @@ public class EveItem extends NeoComNode {
 	}
 
 	public String getCategoryName() {
-		if (null == category) {
-			try {
-				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
-			} catch (NeoComRuntimeException neoe) {
-				category = new ItemCategory();
-			}
-		}
-		return category.getCategoryName();
+//		if (null == category) {
+//			try {
+//				category = accessSDEDBHelper().searchItemCategory4Id(categoryId);
+//			} catch (NeoComRuntimeException neoe) {
+//				category = new ItemCategory();
+//			}
+//		}
+		return category.getName();
 	}
 
 	public EveItem setCategoryName( final String dummy ) {
@@ -326,14 +332,14 @@ public class EveItem extends NeoComNode {
 	}
 
 	public String getGroupName() {
-		if (null == group) {
-			try {
-				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
-			} catch (NeoComRuntimeException neoe) {
-				group = new ItemGroup();
-			}
-		}
-		return group.getGroupName();
+//		if (null == group) {
+//			try {
+//				group = accessSDEDBHelper().searchItemGroup4Id(groupId);
+//			} catch (NeoComRuntimeException neoe) {
+//				group = new ItemGroup();
+//			}
+//		}
+		return group.getName();
 	}
 
 	public EveItem setGroupName( final String dummy ) {
@@ -411,7 +417,7 @@ public class EveItem extends NeoComNode {
 	 * @return a <code>Future</code> with the whole market data values.
 	 */
 	private Future<MarketDataSet> retrieveMarketData( final int itemId, final EMarketSide side ) {
-		return accessGlobal().searchMarketData(itemId, side);
+		return esiDataAdapter.searchMarketData(itemId, side);
 	}
 
 	/**

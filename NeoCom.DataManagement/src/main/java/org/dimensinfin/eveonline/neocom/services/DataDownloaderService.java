@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.domain.IEsiItemDownloadCallback;
 import org.dimensinfin.eveonline.neocom.domain.IPilotDataDownloadCallback;
 import org.dimensinfin.eveonline.neocom.domain.PilotDataSections;
@@ -23,20 +23,19 @@ public class DataDownloaderService {
 		ESIITEM_DATA, ESIITEM_PRICE;
 	}
 
-	//	private static EveItemProvider eveItemProvider;
-	private ESIGlobalAdapter esiAdapter;
+	private ESIDataAdapter esiDataAdapter;
 
-	private DataDownloaderService( final ESIGlobalAdapter esiAdapter ) {
-		this.esiAdapter = esiAdapter;
+	private DataDownloaderService( final ESIDataAdapter esiDataAdapter ) {
+		this.esiDataAdapter = esiDataAdapter;
 	}
 
 	public void accessEveItem( final IEsiItemDownloadCallback callbackDestination, final EsiItemSections section ) {
 		logger.info("-- [DataDownloaderService.accessEveItem]> Posting request: {}", section.name());
-		//		final GetUniverseTypesTypeIdOk item = this.esiAdapter.getUniverseTypeById(callbackDestination.getTypeId());
+		//		final GetUniverseTypesTypeIdOk item = this.esiDataAdapter.getUniverseTypeById(callbackDestination.getTypeId());
 		//		if (null == item) {
 		downloadExecutor.submit(() -> {
 			logger.info("-- [DataDownloaderService.accessEveItem]> Downloading item data information...");
-			final GetUniverseTypesTypeIdOk itemData = this.esiAdapter.getUniverseTypeById(
+			final GetUniverseTypesTypeIdOk itemData = this.esiDataAdapter.getUniverseTypeById(
 					callbackDestination.getTypeId());
 			// Callback the pilot instance with the data.
 			logger.info("-- [DataDownloaderService.accessEveItem]> Completed item data download. Sending data to callback.");
@@ -49,7 +48,7 @@ public class DataDownloaderService {
 
 	public void accessItemPrice( final IEsiItemDownloadCallback callbackDestination, final EsiItemSections section ) {
 		logger.info("-- [DataDownloaderService.accessEveItem]> Posting request: {}", section.name());
-		final double price = this.esiAdapter.searchSDEMarketPrice(callbackDestination.getTypeId());
+		final double price = this.esiDataAdapter.searchSDEMarketPrice(callbackDestination.getTypeId());
 		callbackDestination.signalCompletion(section, new Double(price));
 	}
 
@@ -58,22 +57,17 @@ public class DataDownloaderService {
 	public static class Builder {
 		private DataDownloaderService onConstruction;
 
-		public Builder( final ESIGlobalAdapter esiAdapter ) {
-			this.onConstruction = new DataDownloaderService(esiAdapter);
+		public Builder( final ESIDataAdapter esiDataAdapter ) {
+			this.onConstruction = new DataDownloaderService(esiDataAdapter);
 		}
 
-		public Builder withEsiAdapter( final ESIGlobalAdapter esiAdapter ) {
-			this.onConstruction.esiAdapter = esiAdapter;
+		public Builder withEsiAdapter( final ESIDataAdapter esiDataAdapter ) {
+			this.onConstruction.esiDataAdapter = esiDataAdapter;
 			return this;
 		}
 
-		//		public Builder withEveItemProvider( final EveItemProvider eveItemProvider ) {
-		//			this.onConstruction.eveItemProvider = eveItemProvider;
-		//			return this;
-		//		}
-
 		public DataDownloaderService build() {
-			Objects.requireNonNull(this.onConstruction.esiAdapter);
+			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
 			return this.onConstruction;
 		}
 	}
@@ -83,7 +77,7 @@ public class DataDownloaderService {
 		logger.info("-- [DataDownloaderService.accessPilotPublicData]> Posting request: {}", section.name());
 		downloadExecutor.submit(() -> {
 			logger.info("-- [DataDownloaderService.accessPilotPublicData]> Downloading public data information...");
-			final GetCharactersCharacterIdOk publicData = this.esiAdapter.getCharactersCharacterId(
+			final GetCharactersCharacterIdOk publicData = this.esiDataAdapter.getCharactersCharacterId(
 					callbackDestination.getCredential().getAccountId()
 					, callbackDestination.getCredential().getRefreshToken()
 					, callbackDestination.getCredential().getDataSource());
@@ -105,7 +99,7 @@ public class DataDownloaderService {
 	public void accessPilotRace( final IPilotDataDownloadCallback callbackDestination, final PilotDataSections section ) {
 		logger.info("-- [DataDownloaderService.accessPilotRace]> Searching data: {}", section.name());
 		downloadExecutor.submit(() -> {
-			final GetUniverseRaces200Ok race = this.esiAdapter.searchSDERace(callbackDestination.getRaceId());
+			final GetUniverseRaces200Ok race = this.esiDataAdapter.searchSDERace(callbackDestination.getRaceId());
 			if (null != race) callbackDestination.signalCompletion(section, race);
 			else
 				logger.info("-- [DataDownloaderService.accessPilotRace]> Failed race data assign. Null contents.");

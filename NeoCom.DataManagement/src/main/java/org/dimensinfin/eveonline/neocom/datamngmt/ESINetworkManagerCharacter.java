@@ -36,56 +36,56 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C H A R A C T E R   A P I
-	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
-	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.getCharactersCharacterId]");
-		final Chrono accessFullTime = new Chrono();
-		// Store the response at the cache or if there is a network failure return the last access if available
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_PUBLIC, identifier);
-		// Check if network is available and we have configured allowed access to download data.
-		if (allowDownloadPass()) {
-			try {
-				// Set the refresh to be used during the request.
-				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-				String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-				// Use server parameter to override configuration server to use.
-				if (null != server) datasource = server;
-				// Create the request to be returned so it can be called.
-				//				final NeoComOAuth20 auth = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
-				//				final Retrofit retro = NeoComRetrofitHTTP.build(auth, AGENT, cacheDataFile, cacheSize, timeout);
-				final Response<GetCharactersCharacterIdOk> characterResponse = neocomRetrofit
-						                                                               .create(CharacterApi.class)
-						                                                               .getCharactersCharacterId(identifier
-								                                                               , datasource, null).execute();
-				// TODO - Replace by a new request not authenticated and direct.
-				//				final Response<GetCharactersCharacterIdOk> characterResponse = processCharacterNotAuthenticated(datasource, identifier);
-				if (characterResponse.isSuccessful()) {
-					// Store results on the cache.
-					okResponseCache.put(reference, characterResponse);
-					return characterResponse.body();
-				} else return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-			} catch (IOException ioe) {
-				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
-				ioe.printStackTrace();
-				// Return cached response if available
-				if (null != okResponseCache.get(reference))
-					return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-				else return null;
-			} catch (RuntimeException rte) {
-				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
-				rte.printStackTrace();
-				// Return cached response if available
-				if (null != okResponseCache.get(reference))
-					return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-				else return null;
-			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterId]> [TIMING] Full elapsed: {}"
-						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-			}
-		} else if (null != okResponseCache.get(reference))
-			return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-		else return null;
-	}
+//	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
+//	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCharactersCharacterId]");
+//		final Chrono accessFullTime = new Chrono();
+//		// Store the response at the cache or if there is a network failure return the last access if available
+//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_PUBLIC, identifier);
+//		// Check if network is available and we have configured allowed access to download data.
+//		if (allowDownloadPass()) {
+//			try {
+//				// Set the refresh to be used during the request.
+//				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//				String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//				// Use server parameter to override configuration server to use.
+//				if (null != server) datasource = server;
+//				// Create the request to be returned so it can be called.
+//				//				final NeoComOAuth20 auth = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
+//				//				final Retrofit retro = NeoComRetrofitHTTP.build(auth, AGENT, cacheDataFile, cacheSize, timeout);
+//				final Response<GetCharactersCharacterIdOk> characterResponse = neocomRetrofit
+//						                                                               .create(CharacterApi.class)
+//						                                                               .getCharactersCharacterId(identifier
+//								                                                               , datasource, null).execute();
+//				// TODO - Replace by a new request not authenticated and direct.
+//				//				final Response<GetCharactersCharacterIdOk> characterResponse = processCharacterNotAuthenticated(datasource, identifier);
+//				if (characterResponse.isSuccessful()) {
+//					// Store results on the cache.
+//					okResponseCache.put(reference, characterResponse);
+//					return characterResponse.body();
+//				} else return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
+//			} catch (IOException ioe) {
+//				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
+//				ioe.printStackTrace();
+//				// Return cached response if available
+//				if (null != okResponseCache.get(reference))
+//					return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
+//				else return null;
+//			} catch (RuntimeException rte) {
+//				logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
+//				rte.printStackTrace();
+//				// Return cached response if available
+//				if (null != okResponseCache.get(reference))
+//					return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
+//				else return null;
+//			} finally {
+//				logger.info("<< [ESINetworkManager.getCharactersCharacterId]> [TIMING] Full elapsed: {}"
+//						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//			}
+//		} else if (null != okResponseCache.get(reference))
+//			return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
+//		else return null;
+//	}
 
 	//	private static Response<GetCharactersCharacterIdOk> processCharacterNotAuthenticated( final String datasource, final int identifier
 	//	) {

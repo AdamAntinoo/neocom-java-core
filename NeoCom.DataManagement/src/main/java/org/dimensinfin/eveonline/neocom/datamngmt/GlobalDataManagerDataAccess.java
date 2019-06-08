@@ -137,7 +137,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 
 			// Public information.
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download public data information.");
-			final GetCharactersCharacterIdOk publicData = this.esiAdapter.getCharactersCharacterId(credential.getAccountId()
+			final GetCharactersCharacterIdOk publicData = this.esiDataAdapter.getCharactersCharacterId(credential.getAccountId()
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			// Public data can be null if there are problems accessing the server.
@@ -146,9 +146,9 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					.setPublicData(publicData);
 			// Process the public data and get the referenced instances for the Corporation, race, etc.
 			newchar
-					.setRace(this.esiAdapter.searchSDERace(publicData.getRaceId()))
-					.setBloodline(this.esiAdapter.searchSDEBloodline(publicData.getBloodlineId()))
-					.setAncestry(this.esiAdapter.searchSDEAncestry(publicData.getAncestryId()));
+					.setRace(this.esiDataAdapter.searchSDERace(publicData.getRaceId()))
+					.setBloodline(this.esiDataAdapter.searchSDEBloodline(publicData.getBloodlineId()))
+					.setAncestry(this.esiDataAdapter.searchSDEAncestry(publicData.getAncestryId()));
 			if (null != publicData.getCorporationId())
 				newchar.setCorporation(GlobalDataManager.getSingleton().requestCorporationV1(publicData.getCorporationId(), credential));
 			if (null != publicData.getAllianceId())
