@@ -26,7 +26,7 @@ public class SkillTrained extends ANeoComEntity {
 	private int trainedSkillLevel = 0;
 	private int activeSkillLevel = 0;
 
-	private transient EveItem skillItem = null;
+	private transient EveItem skillItem ;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 
@@ -69,10 +69,10 @@ public class SkillTrained extends ANeoComEntity {
 		return this.skillItem.getGroupName();
 	}
 
-	public GetUniverseGroupsGroupIdOk getGroupInstance() {
-		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
-		return this.skillItem.getGroup();
-	}
+//	public GetUniverseGroupsGroupIdOk getGroupInstance() {
+//		if (null == skillItem) this.skillItem = accessGlobal().searchItem4Id(this.skillId);
+//		return this.skillItem.getGroup();
+//	}
 
 	public SkillTrained setSkillpointsInSkill( final long skillpointsInSkill ) {
 		this.skillpointsInSkill = skillpointsInSkill;

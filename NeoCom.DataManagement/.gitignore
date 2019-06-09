@@ -30,3 +30,5 @@ nbdist/
 /target/
 /production
 testOutputDirectory/
+src/test/resources/testStorage/
+src/test/resources/Test.NeoCom.Infinity/

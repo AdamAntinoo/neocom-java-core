@@ -1,8 +1,6 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -21,10 +19,13 @@ public class PlanetaryResource extends Resource {
 	//	private ResourceList	ownerList;
 
 	// - C O N S T R U C T O R S
-	protected PlanetaryResource() {super(); }
+	public PlanetaryResource( final int typeId ) {
+		super(typeId);
+	}
 
-	//	private PlanetaryResource( final int typeId ) {
-	//		super(typeId);
+	public PlanetaryResource( final int typeId, final int qty ) {
+		super(typeId, qty);
+	}
 	//		jsonClass = "PlanetaryResource";
 	//		// Set the tier type depending on the type id lookup list.
 	//		if (getItem().getCategoryName() == "Planetary Resources") tier = "RAW";
@@ -35,17 +36,17 @@ public class PlanetaryResource extends Resource {
 	//			if (getItem().getGroupName() == "Advanced Commodities") tier = "TIER4";
 	//		}
 	//	}
-	@Deprecated
-	public PlanetaryResource( final int typeId, final int newQty ) {
-		super(typeId, newQty);
-		//		this.baseQty = newQty;
-	}
-
-	@Deprecated
-	public PlanetaryResource( final int typeId, final int newQty, final int stackSize ) {
-		this(typeId, newQty);
-		this.stackSize = stackSize;
-	}
+	//	@Deprecated
+	//	public PlanetaryResource( final int typeId, final int newQty ) {
+	//		super(typeId, newQty);
+	//		//		this.baseQty = newQty;
+	//	}
+	//
+	//	@Deprecated
+	//	public PlanetaryResource( final int typeId, final int newQty, final int stackSize ) {
+	//		this(typeId, newQty);
+	//		this.stackSize = stackSize;
+	//	}
 
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -77,32 +78,33 @@ public class PlanetaryResource extends Resource {
 				       //				       .append("id", id)
 				       .append("tier", tier)
 				       .append("typeId", typeId)
-				       .append("baseQty", baseQty)
+				       //				       .append("baseQty", baseQty)
+				       .append(super.toString())
 				       .toString();
 	}
 
-	// - B U I L D E R
-	public static class Builder extends NeoComNode.Builder<PlanetaryResource, PlanetaryResource.Builder> {
-		protected PlanetaryResource getActual() {
-			return new PlanetaryResource();
-		}
-
-		protected PlanetaryResource.Builder getActualBuilder() {
-			return this;
-		}
-
-		public PlanetaryResource.Builder withEveItem( final EveItem eveItem ) {
-			this.getActual().item = eveItem;
-			return this;
-		}
-
-		public PlanetaryResource.Builder withQuantity( final int quantity ) {
-			this.getActual().baseQty = quantity;
-			return this;
-		}
-
-		public PlanetaryResource build() {
-			return super.build();
-		}
-	}
+	//	// - B U I L D E R
+	//	public static class Builder extends NeoComNode.Builder<PlanetaryResource, PlanetaryResource.Builder> {
+	//		protected PlanetaryResource getActual() {
+	//			return new PlanetaryResource();
+	//		}
+	//
+	//		protected PlanetaryResource.Builder getActualBuilder() {
+	//			return this;
+	//		}
+	//
+	//		public PlanetaryResource.Builder withEveItem( final EveItem eveItem ) {
+	//			this.getActual().item = eveItem;
+	//			return this;
+	//		}
+	//
+	//		public PlanetaryResource.Builder withQuantity( final int quantity ) {
+	//			this.getActual().baseQty = quantity;
+	//			return this;
+	//		}
+	//
+	//		public PlanetaryResource build() {
+	//			return super.build();
+	//		}
+	//	}
 }

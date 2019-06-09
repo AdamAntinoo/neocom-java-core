@@ -155,8 +155,7 @@ public class PlanetaryProcessorV2 extends PlanetaryProcessor {
 		final List<Schematics> schematics = accessSDEDBHelper().searchSchematics4Output(outputIdentifier);
 		for (final Schematics sche : schematics) {
 			if (sche.getDirection() == Schematics.ESchematicDirection.INPUT) {
-				// TODO - replace by an injector component-
-				productionResources.add(new PlanetaryResource.Builder().withEveItem(this.esiDataAdapter.searchEsiItem4Id(sche.getTypeId())).build());
+				productionResources.add(new PlanetaryResource(sche.getTypeId()));
 			}
 			//		if (sche.getDirection() == Schematics.ESchematicDirection.OUTPUT) {
 			//			productionResources.add(sche);
@@ -165,68 +164,11 @@ public class PlanetaryProcessorV2 extends PlanetaryProcessor {
 		return productionResources;
 	}
 
-	//	/**
-	//	 * Run the processing actions to the reduced set of resources that are the list of production resources required to produce
-	//	 * some Tier target. Suppose we want a Tier 4 and we have collected all the resources for Tier 4, Tier 3 and Tier 2
-	//	 * resources, this method will generate the production actions starting by the lower tiers going up to the top tier.
-	//	 * @param target the resource identifier that is the final target for this production set.
-	//	 * @param productionResources the list of available resources resting on the scenario to produce this target and the other
-	//	 *                             resources involved on it from the lower tiers.
-	//	 */
-	//	protected void generateProductionSequence( final int target, final List<Resource> productionResources ) {
-	//		// Start generating the production actions from the lower tiers to the top tiers.
-	//
-	//		ProcessingAction action = new ProcessingAction(target);
-	//		// Get the input resources from the Scenery if available.
-	//		for (Schematics input : action.getInputs()) {
-	//			action.addResource(searcResource(input.getTypeId(), productionResources));
-	//		}
-	//		int cycles = action.getPossibleCycles();
-	//		logger.info("-- [PlanetaryProcessorV2.generateProductionSequence]> Action: {} - cycles: {}"
-	//				,action,cycles);
-	//
-	//
-	//		List<Resource> new2Resources = this.processActions(next2Sequence, scenery.getResources());
-	//
-	//
-	//		// Check if last sequence reached.
-	////			if (this.hasSequence()) {
-	////				position++;
-	//		// Get the bits conversion of the position number;
-	//		BitSet bits = Bits.convert(position);
-	//		// Compose the sequence from the active bits.
-	//		List<ProcessingAction> sequence = new Vector<ProcessingAction>();
-	//		for (int i = bits.nextSetBit(0); i >= 0; i = bits.nextSetBit(i + 1)) {
-	//			sequence.add(optimizedSequencer.get(i));
-	//		}
-	//		return sequence;
-	//
-	//
-	//		for (int target : sequencer.keySet()) {
-	//			BitSequencer.logger.info("-- [BitSequencer.setResources]> Searching: " + sequencer.get(target));
-	//			ProcessingAction action = new ProcessingAction(target);
-	//			// Get the input resources from the Scenery if available.
-	//			for (Schematics input : action.getInputs()) {
-	//				action.addResource(this.getResource(input.getTypeId()));
-	//			}
-	//			BitSequencer.logger.info("-- [BitSequencer.setResources]> Action: " + action);
-	//			// Validate if the action is successful, if it can deliver output resources.
-	//			int cycles = action.getPossibleCycles();
-	//			// If this is > 0 then we have to set this planetary resource as a possible combination.
-	//			if (cycles > 0) {
-	//				optimizedSequencer.add(action);
-	//			}
-	//		}
-	//
-	//
-	//	}
-
 	protected Resource searchResource( final int targetIdentifier, final List<Resource> availableResources ) {
 		for (Resource res : availableResources) {
 			if (targetIdentifier == res.getTypeId()) return res;
 		}
-		// Resource not found. Return a stack with ZERO quantity.
-		return new PlanetaryResource.Builder().withEveItem(this.esiDataAdapter.searchEsiItem4Id(targetIdentifier)).build();
+		return new PlanetaryResource(targetIdentifier); // Resource not found. Return a stack with ZERO quantity.
 	}
 
 	protected boolean checkDuplicate( final int typeId, final List<Resource> targetList ) {
@@ -236,16 +178,4 @@ public class PlanetaryProcessorV2 extends PlanetaryProcessor {
 		}
 		return false;
 	}
-	// --- D E L E G A T E D   M E T H O D S
-	//	@Override
-	//	public String toString() {
-	//		return new StringBuffer("PlanetaryProcessorV2 [")
-	//				.append("field:").append().append(" ")
-	//				.append("]")
-	//				.append("->").append(super.toString())
-	//				.toString();
-	//	}
 }
-
-// - UNUSED CODE ............................................................................................
-//[01]

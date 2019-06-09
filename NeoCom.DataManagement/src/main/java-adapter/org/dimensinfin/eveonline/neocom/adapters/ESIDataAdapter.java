@@ -94,11 +94,12 @@ public class ESIDataAdapter {
 
 	// - S D E   D A T A
 	public double searchSDEMarketPrice( final int typeId ) {
+		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
 		if (marketDefaultPrices.containsKey(typeId)) return marketDefaultPrices.get(typeId).getAdjustedPrice();
 		else return -1.0;
 	}
 
-	public EveItem searchEsiItem4Id( final int itemId ) {
+	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
 		return this.cacheManager.accessItem(itemId).blockingGet();
 	}
 

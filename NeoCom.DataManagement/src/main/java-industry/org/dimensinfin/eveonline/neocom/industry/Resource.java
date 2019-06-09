@@ -1,10 +1,5 @@
 package org.dimensinfin.eveonline.neocom.industry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
@@ -34,38 +29,31 @@ public class Resource extends NeoComNode implements IAggregableItem {
 	protected int stackSize = 1;
 	protected double damage = 1.0;
 
-	protected transient EveItem item;
+	protected transient EveItem esiItem;
 	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
 
 	// - C O N S T R U C T O R S
-	protected Resource() { }
-
-	/**
-	 * Builds a new resource of quantity 1.
-	 */
-	@Deprecated
 	public Resource( final int typeId ) {
 		super();
 		this.typeId = typeId;
+		this.esiItem = new EveItem(typeId);
 		//		item = accessGlobal().searchItem4Id(typeId);
 		this.baseQty = 0;
 		jsonClass = "Resource";
 	}
 
-	@Deprecated
+	//	@Deprecated
 	public Resource( final int typeId, final int newQty ) {
 		this(typeId);
 		this.baseQty = newQty;
 	}
 
-	@Deprecated
+	//	@Deprecated
 	public Resource( final int typeId, final int newQty, final int stackSize ) {
 		this(typeId, newQty);
 		this.stackSize = stackSize;
 	}
 
-
-	// - M E T H O D - S E C T I O N ..........................................................................
 	public void add( final int count ) {
 		baseQty += count;
 	}
@@ -82,21 +70,22 @@ public class Resource extends NeoComNode implements IAggregableItem {
 		stackSize = 1;
 	}
 
-	/**
-	 * Generate the model elements that want to be represented at the UI.
-	 */
-	public List<ICollaboration> collaborate2Model() {
-		final ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
-		result.add(this);
-		return result;
-	}
+	//	/**
+	//	 * Generate the model elements that want to be represented at the UI.
+	//	 */
+	//	public List<ICollaboration> collaborate2Model() {
+	////		final ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
+	////		result.add(this);
+	////		return result;
+	//		return new Arra
+	//	}
 
 	public int getBaseQuantity() {
 		return baseQty;
 	}
 
 	public String getCategory() {
-		return getItem().getCategoryName();
+		return this.getItem().getCategoryName();
 	}
 
 	public double getDamage() {
@@ -113,27 +102,27 @@ public class Resource extends NeoComNode implements IAggregableItem {
 	}
 
 	public EveItem getItem() {
-		//		if (null == item) item = accessGlobal().searchItem4Id(typeId);
-		return item;
+		if (null == this.esiItem) this.esiItem = new EveItem(this.typeId);
+		return this.esiItem;
 	}
 
 	public String getName() {
-		return getItem().getName();
+		return this.getItem().getName();
 	}
 
-	public DateTime getRegistrationDate() {
-		if (null == registrationDate) {
-			registrationDate = new DateTime(DateTimeZone.UTC);
-		}
-		return registrationDate;
-	}
+	//	public DateTime getRegistrationDate() {
+	//		if (null == registrationDate) {
+	//			registrationDate = new DateTime(DateTimeZone.UTC);
+	//		}
+	//		return registrationDate;
+	//	}
 
-	public void setRegistrationDate( final DateTime registrationDate ) {
-		this.registrationDate = registrationDate;
-	}
+	//	public void setRegistrationDate( final DateTime registrationDate ) {
+	//		this.registrationDate = registrationDate;
+	//	}
 
 	public int getStackSize() {
-		return stackSize;
+		return this.stackSize;
 	}
 
 	public Resource setStackSize( final int stackSize ) {
@@ -142,23 +131,23 @@ public class Resource extends NeoComNode implements IAggregableItem {
 	}
 
 	public int getTypeId() {
-		return getItem().getTypeId();
+		return this.getItem().getTypeId();
 	}
 
 	public void setAdaptiveStackSize( final int size ) {
 		this.setStackSize(size);
-		getItem();
-		if (item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
+		//		getItem();
+		if (this.getItem().getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
+			if (this.getItem().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 				final double stack = Math.ceil(size / 10d);
 				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
-			if (item.getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
+			if (this.getItem().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
 				final double stack = Math.ceil(size / 300d);
 				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
 			}
 		}
-		if (item.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
+		if (this.getItem().getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
 			this.setStackSize(1);
 		}
 	}
@@ -181,12 +170,12 @@ public class Resource extends NeoComNode implements IAggregableItem {
 
 	@Override
 	public double getVolume() {
-		return item.getVolume();
+		return this.getItem().getVolume();
 	}
 
 	@Override
 	public double getPrice() {
-		return item.getPrice();
+		return this.getItem().getPrice();
 	}
 
 	// - C O R E
@@ -201,37 +190,37 @@ public class Resource extends NeoComNode implements IAggregableItem {
 		buffer.append("]");
 		return buffer.toString();
 	}
-
-	// - B U I L D E R
-	public static class Builder extends NeoComNode.Builder<Resource, Resource.Builder> {
-		private Resource onConstruction;
-
-		public Builder() {
-			super();
-			this.onConstruction = new Resource();
-		}
-
-		protected Resource getActual() {
-			return this.onConstruction;
-		}
-
-		protected Resource.Builder getActualBuilder() {
-			return this;
-		}
-
-		public Builder withQuantity( final int quantity ) {
-			this.getActual().baseQty = quantity;
-			return this;
-		}
-
-		public Builder withEveItem( final EveItem eveItem ) {
-			this.getActual().item = eveItem;
-			return this;
-		}
-
-		public Resource build() {
-			Objects.requireNonNull(this.getActual().item);
-			return super.build();
-		}
-	}
+	//
+	//	// - B U I L D E R
+	//	public static class Builder extends NeoComNode.Builder<Resource, Resource.Builder> {
+	//		private Resource onConstruction;
+	//
+	//		public Builder() {
+	//			super();
+	//			this.onConstruction = new Resource();
+	//		}
+	//
+	//		protected Resource getActual() {
+	//			return this.onConstruction;
+	//		}
+	//
+	//		protected Resource.Builder getActualBuilder() {
+	//			return this;
+	//		}
+	//
+	//		public Builder withQuantity( final int quantity ) {
+	//			this.getActual().baseQty = quantity;
+	//			return this;
+	//		}
+	//
+	//		public Builder withEveItem( final EveItem eveItem ) {
+	//			this.getActual().item = eveItem;
+	//			return this;
+	//		}
+	//
+	//		public Resource build() {
+	//			Objects.requireNonNull(this.getActual().item);
+	//			return super.build();
+	//		}
+	//	}
 }

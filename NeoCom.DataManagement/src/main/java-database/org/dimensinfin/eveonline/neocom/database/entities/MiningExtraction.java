@@ -93,7 +93,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	private transient EsiLocation systemCache;
 
 	// - C O N S T R U C T O R S
-	public MiningExtraction() {
+	private MiningExtraction() {
 		super();
 	}
 
@@ -208,6 +208,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 
 		public Builder withTypeId( final int typeId ) {
 			this.onConstruction.typeId = typeId;
+			this.onConstruction.resourceItem = new EveItem(typeId);
 			return this;
 		}
 

@@ -181,11 +181,11 @@ public abstract class SDEDatabaseManager {
 			while (cursor.moveToNext()) {
 				found = true;
 				hit.setTypeId(cursor.getInt(ITEM_BYID_TYPEID_COLINDEX));
-				hit.setName(cursor.getString(ITEM_BYID_TYPENAME_COLINDEX));
-				hit.setGroupId(cursor.getInt(ITEM_BYID_GROUPID_COLINDEX));
-				hit.setCategoryId(cursor.getInt(ITEM_BYID_CATEGORYID_COLINDEX));
-				hit.setBasePrice(cursor.getDouble(ITEM_BYID_BASEPRICE_COLINDEX));
-				hit.setVolume(cursor.getDouble(ITEM_BYID_VOLUME_COLINDEX));
+//				hit.setName(cursor.getString(ITEM_BYID_TYPENAME_COLINDEX));
+//				hit.setGroupId(cursor.getInt(ITEM_BYID_GROUPID_COLINDEX));
+//				hit.setCategoryId(cursor.getInt(ITEM_BYID_CATEGORYID_COLINDEX));
+//				hit.setBasePrice(cursor.getDouble(ITEM_BYID_BASEPRICE_COLINDEX));
+//				hit.setVolume(cursor.getDouble(ITEM_BYID_VOLUME_COLINDEX));
 				// Process the Tech field. The query marks blueprints
 				String tech = cursor.getString(ITEM_BYID_TECH_COLINDEX);
 				if ( tech.equalsIgnoreCase("NOTECH") ) {

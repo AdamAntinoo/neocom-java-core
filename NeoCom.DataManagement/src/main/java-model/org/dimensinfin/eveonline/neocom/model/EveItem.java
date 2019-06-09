@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -56,11 +57,11 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	//	private static EveItem defaultItem = null;
 	//	private static final int DEFAULT_TYPE_ID = 34;
 
-	private int id = 34;
-	private String name = "<NAME>";
-	private int groupId = -1;
-	private int categoryId = -1;
-	private GetUniverseTypesTypeIdOk item ;
+	private int id = -1;
+	//	private String name = "<NAME>";
+	//	private int groupId = -1;
+	//	private int categoryId = -1;
+	private GetUniverseTypesTypeIdOk item;
 	private GetUniverseGroupsGroupIdOk group;
 	private GetUniverseCategoriesCategoryIdOk category;
 	/**
@@ -74,7 +75,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	 */
 	public double price = -1.0;
 	private String tech = ModelWideConstants.eveglobal.TechI;
-	private double volume = 0.0;
+//	private double volume = 0.0;
 
 	// - A D D I T I O N A L   F I E L D S
 	private transient EIndustryGroup industryGroup = EIndustryGroup.UNDEFINED;
@@ -94,9 +95,29 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		super();
 	}
 
+	@Deprecated
 	public EveItem( final GetUniverseTypesTypeIdOk sdeItem ) {
 		super();
 		this.item = sdeItem;
+	}
+
+	public EveItem( final int typeId ) {
+		this.id = typeId;
+		this.loadup();
+	}
+
+	private void loadup() {
+		try {
+			this.item = esiDataAdapter.searchEsiItem4Id(this.id);
+			Objects.requireNonNull(this.item);
+			this.group = esiDataAdapter.searchItemGroup4Id(this.item.getGroupId());
+			Objects.requireNonNull(this.group);
+			this.category = esiDataAdapter.searchItemCategory4Id(this.group.getCategoryId());
+			Objects.requireNonNull(this.category);
+		} catch (RuntimeException rtex) {
+			logger.info("RT [Eveitem.loadup]> Error downloading the EveItem data. not able to complete the instantiation.");
+			logger.info("RT [Eveitem.loadup]> Message: {}", rtex.getMessage());
+		}
 	}
 
 	// - G E T T E R S   &   S E T T E R S
@@ -110,43 +131,35 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	public String getName() {
-		return name;
+		if (null == this.item) this.loadup();
+		return this.item.getName();
 	}
 
 	@Deprecated
 	public double getBaseprice() {
-		return baseprice;
+		return this.getPrice();
+	}
+	/**
+	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
+	 * not using now.
+	 */
+	public double getPrice() {
+		if (price < 0.0) {
+			price = esiDataAdapter.searchSDEMarketPrice(this.getTypeId());
+			if (price < 0.0) price = baseprice;
+		}
+		return price;
 	}
 
 	public int getGroupId() {
-		return this.groupId;
+		if (null == this.group) this.loadup();
+		return this.group.getGroupId();
 	}
 
 	public int getCategoryId() {
-		return this.categoryId;
+		if (null == this.category) this.loadup();
+		return this.category.getCategoryId();
 	}
-	//	public int getGroupId() {
-	//		if (null == group) {
-	//			try {
-	//				group = esiDataAdapter.searchItemGroup4Id(groupId);
-	//			} catch (NeoComRuntimeException neoe) {
-	//				group = new ItemGroup();
-	//			}
-	//		}
-	//		return group.getGroupId();
-	//	}
-	//
-	//	public int getCategoryId() {
-	//		if (null == category) {
-	//			try {
-	//				category = esiDataAdapter.searchItemCategory4Id(categoryId);
-	//			} catch (NeoComRuntimeException neoe) {
-	//				category = new ItemCategory();
-	//			}
-	//		}
-	//		return category.getCategoryId();
-	//	}
-
 	/**
 	 * Some items have tech while others don't. Tech information has to be calculated for some items when I
 	 * download them as assets or blueprints. Set it to a default value that by now I can consider valid.
@@ -156,7 +169,8 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	public double getVolume() {
-		return volume;
+		if (null == this.item) this.loadup();
+		return this.item.getVolume();
 	}
 
 	public boolean isBlueprint() {
@@ -165,23 +179,6 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		else
 			return false;
 	}
-
-	/**
-	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
-	 * not using now.
-	 */
-	public double getPrice() {
-		if (price < 0.0) {
-			//			try {
-			price = esiDataAdapter.searchSDEMarketPrice(getTypeId());
-			//			} catch (NeoComRuntimeException neoe) {
-			//				price = -1.0;
-			//			}
-			if (price < 1.0) price = baseprice;
-		}
-		return price;
-	}
-
 	public EIndustryGroup getIndustryGroup() {
 		if (industryGroup == EIndustryGroup.UNDEFINED) {
 			this.classifyIndustryGroup();
@@ -190,40 +187,42 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	/**
-	 * This is the key method used when instantiating an EveItem to set the eve item identifier of the game objectt that is
-	 * represented. During the setting for this value we instantiate the market data futures to be posted on a worker thread with
-	 * the hope to be resolved before the user requirement for the market data real values.
+	 * This is the key method used when instantiating an EveItem to set the eve item identifier for the esi underlying object. After setting this
+	 * value we can post the download or caches access to the delegated esi data.
+	 * Also we later will used this entry point to locate the extended market information to be used when calculating prices. This price
+	 * data will be located inside a new delegete instance.
 	 *
 	 * @param typeId the eve game unique type identifier.
 	 */
 	public EveItem setTypeId( final int typeId ) {
-		id = typeId;
+		this.id = typeId;
+		this.loadup();
 		futureBuyerData = this.retrieveMarketData(getTypeId(), EMarketSide.BUYER);
 		futureSellerData = this.retrieveMarketData(getTypeId(), EMarketSide.SELLER);
 		return this;
 	}
 
-	public void setName( final String name ) {
-		this.name = name;
-	}
+//	public void setName( final String name ) {
+//		this.name = name;
+//	}
 
-	public void setGroupId( final int groupid ) {
-		this.groupId = groupid;
-		//		try {
-		group = esiDataAdapter.searchItemGroup4Id(groupid);
-		//		} catch (NeoComRuntimeException neoe) {
-		//			group = new ItemGroup();
-		//		}
-	}
+//	public void setGroupId( final int groupid ) {
+//		this.groupId = groupid;
+//		//		try {
+//		group = esiDataAdapter.searchItemGroup4Id(groupid);
+//		//		} catch (NeoComRuntimeException neoe) {
+//		//			group = new ItemGroup();
+//		//		}
+//	}
 
-	public void setCategoryId( final int categoryid ) {
-		this.categoryId = categoryid;
-		//		try {
-		category = esiDataAdapter.searchItemCategory4Id(categoryid);
-		//		} catch (NeoComRuntimeException neoe) {
-		//			category = new ItemCategory();
-		//		}
-	}
+//	public void setCategoryId( final int categoryid ) {
+//		this.categoryId = categoryid;
+//		//		try {
+//		category = esiDataAdapter.searchItemCategory4Id(categoryid);
+//		//		} catch (NeoComRuntimeException neoe) {
+//		//			category = new ItemCategory();
+//		//		}
+//	}
 
 	public void setBasePrice( final double price ) {
 		baseprice = price;
@@ -237,13 +236,13 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		this.tech = tech;
 	}
 
-	public void setVolume( final double volume ) {
-		this.volume = volume;
-	}
+//	public void setVolume( final double volume ) {
+//		this.volume = volume;
+//	}
 
-	public void setIndustryGroup( final EIndustryGroup group ) {
-		this.industryGroup = group;
-	}
+//	public void setIndustryGroup( final EIndustryGroup group ) {
+//		this.industryGroup = group;
+//	}
 
 	// - V I R T U A L   A C C E S S O R S
 	public String getHullGroup() {
@@ -280,18 +279,18 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this;
 	}
 
-	public GetUniverseGroupsGroupIdOk getGroup() {
-		return this.group;
-	}
+//	public GetUniverseGroupsGroupIdOk getGroup() {
+//		return this.group;
+//	}
 
 	//	public EveItem setGroup( final ItemGroup group ) {
 	//		this.group = group;
 	//		return this;
 	//	}
 
-	public GetUniverseCategoriesCategoryIdOk getCategory() {
-		return this.category;
-	}
+//	public GetUniverseCategoriesCategoryIdOk getCategory() {
+//		return this.category;
+//	}
 
 	//	public EveItem setCategory( final ItemCategory category ) {
 	//		this.category = category;
@@ -325,13 +324,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	public String getCategoryName() {
-		if (null == category) {
-			//			try {
-			category = esiDataAdapter.searchItemCategory4Id(categoryId);
-			//			} catch (NeoComRuntimeException neoe) {
-			//				category = new ItemCategory();
-			//			}
-		}
+		if (null == this.category) this.loadup();
 		return category.getName();
 	}
 
@@ -340,13 +333,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	public String getGroupName() {
-		if (null == group) {
-			//			try {
-			group = esiDataAdapter.searchItemGroup4Id(groupId);
-			//			} catch (NeoComRuntimeException neoe) {
-			//				group = new ItemGroup();
-			//			}
-		}
+		if (null == this.group) this.loadup();
 		return group.getName();
 	}
 
@@ -364,15 +351,13 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveItem [");
 		buffer.append("#").append(this.getItemId()).append(" - ").append(this.getName()).append(" ");
-		buffer.append(this.getGroupName()).append("/").append(this.getCategory()).append(" [").append(" ");
+		buffer.append(this.getGroupName()).append("/").append(this.getCategoryName()).append(" [").append(" ");
 		buffer.append("IC:").append(industryGroup).append(" ");
 		buffer.append("]");
 		return buffer.toString();
 	}
 
-	//--- N O N   E X P O R T A B L E   F I E L D S
-
-	//--- P R I V A T E   S E C T I O N
+	// - P R I V A T E   S E C T I O N
 	protected void classifyIndustryGroup() {
 		if ((this.getGroupName().equalsIgnoreCase("Composite")) && (this.getCategoryName().equalsIgnoreCase("Material"))) {
 			industryGroup = EIndustryGroup.REACTIONMATERIALS;
