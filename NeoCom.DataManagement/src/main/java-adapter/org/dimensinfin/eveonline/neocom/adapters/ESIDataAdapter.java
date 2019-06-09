@@ -12,7 +12,6 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
@@ -99,7 +98,7 @@ public class ESIDataAdapter {
 		else return -1.0;
 	}
 
-	public EsiItemV2 searchEsiItem4Id( final int itemId ) {
+	public EveItem searchEsiItem4Id( final int itemId ) {
 		return this.cacheManager.accessItem(itemId).blockingGet();
 	}
 

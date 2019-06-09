@@ -4,9 +4,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import org.dimensinfin.eveonline.neocom.core.EEvents;
-import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.joda.time.DateTime;
@@ -89,7 +89,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	@DatabaseField(index = true)
 	private long ownerId = -1;
 
-	private transient EsiItemV2 resourceItem;
+	private transient EveItem resourceItem;
 	private transient EsiLocation systemCache;
 
 	// - C O N S T R U C T O R S
@@ -108,7 +108,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 
 	public String getResourceName() {
 		if (null == this.resourceItem) {
-			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem = new EveItem(this.getTypeId());
 			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getName();
@@ -153,7 +153,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 
 	public String getURLForItem() {
 		if (null == this.resourceItem) {
-			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem = new EveItem(this.getTypeId());
 			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getURLForItem();
@@ -166,7 +166,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 
 	public double getVolume() {
 		if (null == this.resourceItem) {
-			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem = new EveItem(this.getTypeId());
 			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getVolume();
@@ -174,7 +174,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 
 	public double getPrice() {
 		if (null == this.resourceItem) {
-			this.resourceItem = new EsiItemV2(this.getTypeId());
+			this.resourceItem = new EveItem(this.getTypeId());
 			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getPrice();

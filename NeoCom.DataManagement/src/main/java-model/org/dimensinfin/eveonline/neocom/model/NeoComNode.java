@@ -86,7 +86,7 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular, IEvent
 		}
 
 		public T build() {
-			return this.actualClass;
+			return this.getActual();
 		}
 	}
 

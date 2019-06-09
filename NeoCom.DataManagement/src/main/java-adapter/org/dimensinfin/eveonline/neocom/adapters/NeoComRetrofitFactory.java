@@ -68,12 +68,12 @@ public class NeoComRetrofitFactory {
 		/**
 		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as possible.
 		 */
-		public Builder( final IConfigurationProvider newConfigurationProvider, final IFileSystem newFileSystemAdapter ) {
-			Objects.requireNonNull(newConfigurationProvider);
-			Objects.requireNonNull(newFileSystemAdapter);
-			this.onConstruction.configurationProvider = newConfigurationProvider;
-			this.onConstruction.fileSystemAdapter = newFileSystemAdapter;
-			this.onConstruction = new NeoComRetrofitFactory(/*configurationProvider, fileSystemAdapter*/);
+		public Builder( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
+			Objects.requireNonNull(configurationProvider);
+			Objects.requireNonNull(fileSystemAdapter);
+			this.onConstruction= new NeoComRetrofitFactory();
+			this.onConstruction.configurationProvider = configurationProvider;
+			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
 		}
 
 		public NeoComRetrofitFactory build() {

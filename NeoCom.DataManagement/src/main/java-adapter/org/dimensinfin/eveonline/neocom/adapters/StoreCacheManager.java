@@ -2,9 +2,9 @@ package org.dimensinfin.eveonline.neocom.adapters;
 
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 
 import com.nytimes.android.external.store3.base.Fetcher;
 import com.nytimes.android.external.store3.base.impl.Store;
@@ -17,7 +17,7 @@ public class StoreCacheManager {
 	private ESIDataAdapter esiDataAdapter;
 
 	// - C A C H E S
-	private Store<EsiItemV2, Integer> esiItemStore;
+	private Store<EveItem, Integer> esiItemStore;
 	private Store<GetUniverseGroupsGroupIdOk, Integer> itemGroupStore;
 	private Store<GetUniverseCategoriesCategoryIdOk, Integer> categoryStore;
 
@@ -31,7 +31,7 @@ public class StoreCacheManager {
 	}
 
 	private void createEsiItemStore() {
-		this.esiItemStore = StoreBuilder.<Integer, BufferedSource, EsiItemV2>parsedWithKey()
+		this.esiItemStore = StoreBuilder.<Integer, BufferedSource, EveItem>parsedWithKey()
 				                    .fetcher((Fetcher) new EveItemFetcher(this.esiDataAdapter))
 				                    .open();
 	}
@@ -49,7 +49,7 @@ public class StoreCacheManager {
 	}
 
 	// - C A C H E   E X P O R T E D   A P I
-	public Single<EsiItemV2> accessItem( final Integer itemId ) {
+	public Single<EveItem> accessItem( final Integer itemId ) {
 		return this.esiItemStore.get(itemId);
 	}
 
@@ -85,7 +85,7 @@ public class StoreCacheManager {
 	}
 
 	// - E V E I T E M F E T C H E R
-	public static class EveItemFetcher implements Fetcher<EsiItemV2, Integer> {
+	public static class EveItemFetcher implements Fetcher<EveItem, Integer> {
 		private ESIDataAdapter esiDataAdapter;
 
 		public EveItemFetcher( final ESIDataAdapter esiDataAdapter ) {
@@ -93,8 +93,8 @@ public class StoreCacheManager {
 		}
 
 		@Override
-		public Single<EsiItemV2> fetch( final Integer typeId ) {
-			return Single.just(new EsiItemV2(this.esiDataAdapter.getUniverseTypeById(typeId)));
+		public Single<EveItem> fetch( final Integer typeId ) {
+			return Single.just(new EveItem(this.esiDataAdapter.getUniverseTypeById(typeId)));
 		}
 	}
 

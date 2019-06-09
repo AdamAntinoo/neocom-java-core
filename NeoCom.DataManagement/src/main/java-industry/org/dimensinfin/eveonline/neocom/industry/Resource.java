@@ -2,10 +2,10 @@ package org.dimensinfin.eveonline.neocom.industry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.domain.EsiItemV2;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -204,33 +204,23 @@ public class Resource extends NeoComNode implements IAggregableItem {
 
 	// - B U I L D E R
 	public static class Builder extends NeoComNode.Builder<Resource, Resource.Builder> {
-		//		protected T actualClass;
-		//		//		protected B actualClassBuilder;
-		//				private Resource onConstruction;
+		private Resource onConstruction;
+
+		public Builder() {
+			super();
+			this.onConstruction = new Resource();
+		}
 
 		protected Resource getActual() {
-			return new Resource();
+			return this.onConstruction;
 		}
 
 		protected Resource.Builder getActualBuilder() {
 			return this;
 		}
 
-		//		public Builder( final int quantity ) {
-		//			this.actualClass = Class < T >.
-		//			//			this.actualClassBuilder = getActualBuilder();
-		//
-		//			this.onConstruction = new Resource();
-		//			this.onConstruction.setQuantity(quantity);
-		//		}
-
 		public Builder withQuantity( final int quantity ) {
 			this.getActual().baseQty = quantity;
-			return this;
-		}
-
-		public Builder withEveItem( final EsiItemV2 eveItem ) {
-			this.getActual().item = eveItem;
 			return this;
 		}
 
@@ -240,6 +230,7 @@ public class Resource extends NeoComNode implements IAggregableItem {
 		}
 
 		public Resource build() {
+			Objects.requireNonNull(this.getActual().item);
 			return super.build();
 		}
 	}

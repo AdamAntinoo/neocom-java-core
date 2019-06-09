@@ -7,14 +7,16 @@ import java.util.concurrent.Future;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 
-public class EveItem extends NeoComNode {
+public class EveItem extends NeoComNode implements IItemFacet {
 	public enum ItemTechnology {
 		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
 
@@ -58,8 +60,9 @@ public class EveItem extends NeoComNode {
 	private String name = "<NAME>";
 	private int groupId = -1;
 	private int categoryId = -1;
-	private GetUniverseGroupsGroupIdOk group = null;
-	private GetUniverseCategoriesCategoryIdOk category = null;
+	private GetUniverseTypesTypeIdOk item ;
+	private GetUniverseGroupsGroupIdOk group;
+	private GetUniverseCategoriesCategoryIdOk category;
 	/**
 	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
 	 * methods to get any other price set from the market data.
@@ -79,20 +82,24 @@ public class EveItem extends NeoComNode {
 	 * This represents the market data for the BUY market orders present at different selected systems. This element and the
 	 * next are lazy evaluated as futures and should enqueue market requests for background threads.
 	 */
-	private transient Future<MarketDataSet> futureBuyerData = null;
+	private transient Future<MarketDataSet> futureBuyerData;
 	/**
 	 * The same but for SELLER orders present at the market.
 	 */
-	private transient Future<MarketDataSet> futureSellerData = null;
+	private transient Future<MarketDataSet> futureSellerData;
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
+	@Deprecated
 	public EveItem() {
 		super();
-		//		jsonClass = "EveItem";
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	//--- G E T T E R S   &   S E T T E R S
+	public EveItem( final GetUniverseTypesTypeIdOk sdeItem ) {
+		super();
+		this.item = sdeItem;
+	}
+
+	// - G E T T E R S   &   S E T T E R S
 	@Deprecated
 	public int getItemId() {
 		return id;
@@ -106,6 +113,7 @@ public class EveItem extends NeoComNode {
 		return name;
 	}
 
+	@Deprecated
 	public double getBaseprice() {
 		return baseprice;
 	}
@@ -190,8 +198,8 @@ public class EveItem extends NeoComNode {
 	 */
 	public EveItem setTypeId( final int typeId ) {
 		id = typeId;
-		futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.BUYER);
-		futureSellerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
+		futureBuyerData = this.retrieveMarketData(getTypeId(), EMarketSide.BUYER);
+		futureSellerData = this.retrieveMarketData(getTypeId(), EMarketSide.SELLER);
 		return this;
 	}
 
@@ -237,7 +245,7 @@ public class EveItem extends NeoComNode {
 		this.industryGroup = group;
 	}
 
-	//--- V I R T U A L   A C C E S S O R S
+	// - V I R T U A L   A C C E S S O R S
 	public String getHullGroup() {
 		if (getIndustryGroup() == EIndustryGroup.HULL) {
 			if (getGroupName().equalsIgnoreCase("Assault Frigate")) return "frigate";
@@ -346,6 +354,12 @@ public class EveItem extends NeoComNode {
 		return this;
 	}
 
+	// - I I T E M F A C E T
+	public String getURLForItem() {
+		return "http://image.eveonline.com/Type/" + this.getTypeId() + "_64.png";
+	}
+
+	// - C O R E
 	@Override
 	public String toString() {
 		final StringBuffer buffer = new StringBuffer("EveItem [");
@@ -450,4 +464,3 @@ public class EveItem extends NeoComNode {
 		return futureBuyerData.get();
 	}
 }
-// - UNUSED CODE ............................................................................................
