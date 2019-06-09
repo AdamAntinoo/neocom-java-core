@@ -625,7 +625,7 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 			jgen.writeStringField("categoryName", value.getCategoryName());
 			jgen.writeNumberField("groupId", value.getGroupId());
 			jgen.writeStringField("groupName", value.getGroupName());
-			jgen.writeNumberField("baseprice", value.getBaseprice());
+//			jgen.writeNumberField("baseprice", value.getPrice());
 			jgen.writeNumberField("price", value.getPrice());
 			jgen.writeStringField("tech", value.getTech());
 			jgen.writeNumberField("volume", value.getVolume());

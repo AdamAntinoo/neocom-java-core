@@ -155,7 +155,7 @@ public class ESIDataAdapter {
 			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
 					                                                           .getUniverseGroupsGroupId(groupId
 							                                                           , DEFAULT_ACCEPT_LANGUAGE
-							                                                           , DEFAULT_ESI_SERVER, null, null)
+							                                                           , DEFAULT_ESI_SERVER.toLowerCase(), null, null)
 					                                                           .execute();
 			if (!groupResponse.isSuccessful()) {
 				return null;
@@ -171,7 +171,7 @@ public class ESIDataAdapter {
 			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
 					                                                                  .getUniverseCategoriesCategoryId(categoryId
 							                                                                  , DEFAULT_ACCEPT_LANGUAGE
-							                                                                  , DEFAULT_ESI_SERVER, null, null)
+							                                                                  , DEFAULT_ESI_SERVER.toLowerCase(), null, null)
 					                                                                  .execute();
 			if (!groupResponse.isSuccessful()) {
 				return null;

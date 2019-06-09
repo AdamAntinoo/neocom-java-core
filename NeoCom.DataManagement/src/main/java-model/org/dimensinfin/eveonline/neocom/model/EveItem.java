@@ -135,10 +135,10 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this.item.getName();
 	}
 
-	@Deprecated
-	public double getBaseprice() {
-		return this.getPrice();
-	}
+//	@Deprecated
+//	public double getBaseprice() {
+//		return this.getPrice();
+//	}
 	/**
 	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
 	 * not using now.
@@ -146,7 +146,6 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	public double getPrice() {
 		if (price < 0.0) {
 			price = esiDataAdapter.searchSDEMarketPrice(this.getTypeId());
-			if (price < 0.0) price = baseprice;
 		}
 		return price;
 	}
@@ -325,7 +324,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 
 	public String getCategoryName() {
 		if (null == this.category) this.loadup();
-		return category.getName();
+		return this.category.getName();
 	}
 
 	public EveItem setCategoryName( final String dummy ) {
@@ -334,7 +333,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 
 	public String getGroupName() {
 		if (null == this.group) this.loadup();
-		return group.getName();
+		return this.group.getName();
 	}
 
 	public EveItem setGroupName( final String dummy ) {

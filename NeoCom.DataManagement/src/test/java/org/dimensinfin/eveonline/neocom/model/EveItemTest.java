@@ -7,9 +7,9 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
@@ -23,14 +23,11 @@ import org.mockito.Mockito;
 
 public class EveItemTest extends TestAdapterReadyUp {
 	private static ESIDataAdapter esiDataAdapter;
-	//	private static DataDownloaderService downloaderService;
 
 	@Before
 	public void setUp() {
 		esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		//
-		//		downloaderService = Mockito.mock(DataDownloaderService.class);
 	}
 
 	@Test
@@ -45,44 +42,14 @@ public class EveItemTest extends TestAdapterReadyUp {
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final EveItem item = new EveItem(34);
 		final String expected = "Tritanium";
-		//		Mockito.doAnswer(( call ) -> {
-		//			final IEsiItemDownloadCallback callback = call.getArgument(0);
-		//			Assert.assertNotNull(callback);
-		//			return null;
-		//		}).when(downloaderService).accessEveItem(item, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
 		final String obtained = item.getName();
 		Assert.assertNotNull(item);
 		Assert.assertEquals(expected, obtained);
-		//		Mockito.verify(downloaderService, times(1)).accessEveItem(item, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
 	}
-
-	//	@Test
-	//	public void getName_afterDownload() throws InterruptedException {
-	//		//		EsiItemV2.injectEveItemProvider(eveItemProvider);
-	//		//		EveItem.injectDownloaderService(downloaderService);
-	//		final GetUniverseTypesTypeIdOk universeItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
-	//		final EveItem item = new EveItem(34);
-	//		final String expected = "Test Data";
-	//		Mockito.doAnswer(( call ) -> {
-	//			final IEsiItemDownloadCallback callback = call.getArgument(0);
-	//			Assert.assertNotNull(callback);
-	//			return null;
-	//		}).when(downloaderService).accessEveItem(item, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
-	//		Mockito.when(universeItem.getName()).thenReturn("Test Data");
-	//		//		item.signalCompletion(DataDownloaderService.EsiItemSections.ESIITEM_DATA, universeItem);
-	//		final String obtained = item.getName();
-	//		Assert.assertEquals(expected, obtained);
-	//		Mockito.verify(downloaderService, times(0)).accessEveItem(item, DataDownloaderService.EsiItemSections.ESIITEM_DATA);
-	//	}
-
 	@Test
 	public void getTypeId() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		//		final IConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("properties").build();
-		//		final TestFileSystem fileSystemAdapter = new TestFileSystem("./src/test/resources/Test.NeoCom.Infinity");
-		//		final ESIDataAdapter esiDataAdapter = new ESIDataAdapter.Builder(configurationProvider, fileSystemAdapter).build();
-		//		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final EveItem item = new EveItem().setTypeId(34);
 		final int obtained = item.getTypeId();
@@ -92,9 +59,7 @@ public class EveItemTest extends TestAdapterReadyUp {
 
 	@Test
 	public void getGroupId() throws IOException {
-		final IConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("properties").build();
-		final TestFileSystem fileSystemAdapter = new TestFileSystem("./src/test/resources/Test.NeoCom.Infinity");
-		final ESIDataAdapter esiDataAdapter = new ESIDataAdapter.Builder(configurationProvider, fileSystemAdapter).build();
+		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final EveItem item = new EveItem().setTypeId(34);
@@ -102,15 +67,29 @@ public class EveItemTest extends TestAdapterReadyUp {
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The group should be valid.", 18, obtained);
 	}
+	@Test
+	public void getCategoryId() throws IOException {
+		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
+		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
+		final EveItem item = new EveItem().setTypeId(34);
+		final int obtained = item.getCategoryId();
+		Assert.assertNotNull(item);
+		Assert.assertEquals("The category should be valid.", 4, obtained);
+	}
 
 	@Test
 	public void isBlueprint_false() {
 		final ESIDataAdapter esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
+		final GetUniverseTypesTypeIdOk eveItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
+		final GetUniverseGroupsGroupIdOk group = Mockito.mock(GetUniverseGroupsGroupIdOk.class);
 		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock(GetUniverseCategoriesCategoryIdOk.class);
+		Mockito.when(esiDataAdapter.searchEsiItem4Id(Mockito.anyInt())).thenReturn(eveItem);
+		Mockito.when(esiDataAdapter.searchItemGroup4Id(Mockito.anyInt())).thenReturn(group);
 		Mockito.when(esiDataAdapter.searchItemCategory4Id(Mockito.anyInt())).thenReturn(category);
 		Mockito.when(category.getName()).thenReturn("Capsuleer Bases");
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(34);
+		final EveItem item = new EveItem(34);
 		Assert.assertNotNull(item);
 		Assert.assertFalse(item.isBlueprint());
 	}
@@ -118,11 +97,15 @@ public class EveItemTest extends TestAdapterReadyUp {
 	@Test
 	public void isBlueprint_true() {
 		final ESIDataAdapter esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
+		final GetUniverseTypesTypeIdOk eveItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
+		final GetUniverseGroupsGroupIdOk group = Mockito.mock(GetUniverseGroupsGroupIdOk.class);
 		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock(GetUniverseCategoriesCategoryIdOk.class);
+		Mockito.when(esiDataAdapter.searchEsiItem4Id(Mockito.anyInt())).thenReturn(eveItem);
+		Mockito.when(esiDataAdapter.searchItemGroup4Id(Mockito.anyInt())).thenReturn(group);
 		Mockito.when(esiDataAdapter.searchItemCategory4Id(Mockito.anyInt())).thenReturn(category);
 		Mockito.when(category.getName()).thenReturn("Energy Neutralizer Blueprint");
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(15799);
+		final EveItem item = new EveItem(15799);
 		Assert.assertNotNull(item);
 		Assert.assertFalse(item.isBlueprint());
 	}
@@ -133,19 +116,8 @@ public class EveItemTest extends TestAdapterReadyUp {
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final EveItem item = new EveItem(34);
-		final double expected = 100.0;
-		//		Mockito.doAnswer(( call ) -> {
-		//			final IEsiItemDownloadCallback callback = call.getArgument(0);
-		//			Assert.assertNotNull(callback);
-		//			return null;
-		//		}).when(downloaderService).accessItemPrice(item, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
-		//		Mockito.when(esiDataAdapter.searchSDEMarketPrice(any(Integer.class))).thenReturn(100.0);
 		double obtained = item.getPrice();
-		//		Assert.assertEquals("Price expected before any initialization of the price.", -1.0, obtained, 0.01);
-		//		item.signalCompletion(DataDownloaderService.EsiItemSections.ESIITEM_PRICE, Double.valueOf(100.0));
-		//		obtained = item.getPrice();
 		Assert.assertTrue("Price expected to be positive value.", obtained > 3.0);
-		//		Mockito.verify(downloaderService, times(1)).accessItemPrice(item, DataDownloaderService.EsiItemSections.ESIITEM_PRICE);
 	}
 
 	@Test
