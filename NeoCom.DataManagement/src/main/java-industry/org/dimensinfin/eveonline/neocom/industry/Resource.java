@@ -5,9 +5,6 @@ import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
  * type items and differentiated from the asset in that it has no specified Location not owner. Includes the
@@ -30,32 +27,30 @@ public class Resource extends NeoComNode implements IAggregableItem {
 	protected double damage = 1.0;
 
 	protected transient EveItem esiItem;
-	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
+	//	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
 
 	// - C O N S T R U C T O R S
 	public Resource( final int typeId ) {
 		super();
 		this.typeId = typeId;
 		this.esiItem = new EveItem(typeId);
-		//		item = accessGlobal().searchItem4Id(typeId);
 		this.baseQty = 0;
 		jsonClass = "Resource";
 	}
 
-	//	@Deprecated
 	public Resource( final int typeId, final int newQty ) {
 		this(typeId);
 		this.baseQty = newQty;
 	}
 
-	//	@Deprecated
 	public Resource( final int typeId, final int newQty, final int stackSize ) {
 		this(typeId, newQty);
 		this.stackSize = stackSize;
 	}
 
-	public void add( final int count ) {
-		baseQty += count;
+	public int add( final int count ) {
+		this.baseQty += count;
+		return this.baseQty;
 	}
 
 	/**
@@ -63,22 +58,13 @@ public class Resource extends NeoComNode implements IAggregableItem {
 	 * stack values and the equivalent quantity is calculated before adding the new quantity calculated exactly
 	 * on the same way. The final result is the total quantity but with a stack size of one.
 	 */
-	public void addition( final Resource newResource ) {
+	public int addition( final Resource newResource ) {
 		int newqty = this.getBaseQuantity() * this.getStackSize();
 		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
-		baseQty = newqty;
-		stackSize = 1;
+		this.baseQty = newqty;
+		this.stackSize = 1;
+		return this.baseQty;
 	}
-
-	//	/**
-	//	 * Generate the model elements that want to be represented at the UI.
-	//	 */
-	//	public List<ICollaboration> collaborate2Model() {
-	////		final ArrayList<ICollaboration> result = new ArrayList<ICollaboration>();
-	////		result.add(this);
-	////		return result;
-	//		return new Arra
-	//	}
 
 	public int getBaseQuantity() {
 		return baseQty;
@@ -110,17 +96,6 @@ public class Resource extends NeoComNode implements IAggregableItem {
 		return this.getItem().getName();
 	}
 
-	//	public DateTime getRegistrationDate() {
-	//		if (null == registrationDate) {
-	//			registrationDate = new DateTime(DateTimeZone.UTC);
-	//		}
-	//		return registrationDate;
-	//	}
-
-	//	public void setRegistrationDate( final DateTime registrationDate ) {
-	//		this.registrationDate = registrationDate;
-	//	}
-
 	public int getStackSize() {
 		return this.stackSize;
 	}
@@ -131,12 +106,11 @@ public class Resource extends NeoComNode implements IAggregableItem {
 	}
 
 	public int getTypeId() {
-		return this.getItem().getTypeId();
+		return this.typeId;
 	}
 
 	public void setAdaptiveStackSize( final int size ) {
 		this.setStackSize(size);
-		//		getItem();
 		if (this.getItem().getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
 			if (this.getItem().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
 				final double stack = Math.ceil(size / 10d);
@@ -190,37 +164,4 @@ public class Resource extends NeoComNode implements IAggregableItem {
 		buffer.append("]");
 		return buffer.toString();
 	}
-	//
-	//	// - B U I L D E R
-	//	public static class Builder extends NeoComNode.Builder<Resource, Resource.Builder> {
-	//		private Resource onConstruction;
-	//
-	//		public Builder() {
-	//			super();
-	//			this.onConstruction = new Resource();
-	//		}
-	//
-	//		protected Resource getActual() {
-	//			return this.onConstruction;
-	//		}
-	//
-	//		protected Resource.Builder getActualBuilder() {
-	//			return this;
-	//		}
-	//
-	//		public Builder withQuantity( final int quantity ) {
-	//			this.getActual().baseQty = quantity;
-	//			return this;
-	//		}
-	//
-	//		public Builder withEveItem( final EveItem eveItem ) {
-	//			this.getActual().item = eveItem;
-	//			return this;
-	//		}
-	//
-	//		public Resource build() {
-	//			Objects.requireNonNull(this.getActual().item);
-	//			return super.build();
-	//		}
-	//	}
 }

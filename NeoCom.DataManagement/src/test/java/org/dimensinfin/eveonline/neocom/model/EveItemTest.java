@@ -6,15 +6,13 @@ import java.io.IOException;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-import org.dimensinfin.eveonline.neocom.support.TestConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.support.TestFileSystem;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,6 +44,7 @@ public class EveItemTest extends TestAdapterReadyUp {
 		Assert.assertNotNull(item);
 		Assert.assertEquals(expected, obtained);
 	}
+
 	@Test
 	public void getTypeId() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
@@ -67,6 +66,7 @@ public class EveItemTest extends TestAdapterReadyUp {
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The group should be valid.", 18, obtained);
 	}
+
 	@Test
 	public void getCategoryId() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
@@ -76,6 +76,28 @@ public class EveItemTest extends TestAdapterReadyUp {
 		final int obtained = item.getCategoryId();
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The category should be valid.", 4, obtained);
+	}
+
+	@Test
+	public void getVolume() throws IOException {
+		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
+		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
+		final EveItem item = new EveItem().setTypeId(34);
+		final double obtained = item.getVolume();
+		Assert.assertNotNull(item);
+		Assert.assertEquals("The volume should match.", 0.01, obtained, 0.001);
+	}
+
+	@Test
+	public void getIndustryGroup() throws IOException {
+		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
+		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
+		final EveItem item = new EveItem().setTypeId(34);
+		final EIndustryGroup obtained = item.getIndustryGroup();
+		Assert.assertNotNull(item);
+		Assert.assertEquals("The volume should match.", EIndustryGroup.REFINEDMATERIAL, obtained);
 	}
 
 	@Test

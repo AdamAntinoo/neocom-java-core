@@ -52,7 +52,7 @@ public interface ISDEDBHelper {
 
 	public EveLocation searchLocationBySystem( final String name );
 
-	public ItemGroup searchItemGroup4Id( final int targetGroupId );
+//	public ItemGroup searchItemGroup4Id( final int targetGroupId );
 
 	public ItemCategory searchItemCategory4Id( final int targetCategoryId );
 

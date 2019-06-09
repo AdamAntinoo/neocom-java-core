@@ -4,19 +4,8 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-//@DatabaseTable(tableName = "PlanetaryResource")
 public class PlanetaryResource extends Resource {
-	//	@DatabaseField(generatedId = true)
-	//	private int id = -1;
 	public String tier = "OTHER";
-	//	@DatabaseField
-	//	private int typeId;
-	//	@DatabaseField
-	//	private double				quantity;
-	//	@DatabaseField
-	//	private String				name		= "<NAME>";
-	//	@DatabaseField(foreign = true)
-	//	private ResourceList	ownerList;
 
 	// - C O N S T R U C T O R S
 	public PlanetaryResource( final int typeId ) {
@@ -26,33 +15,9 @@ public class PlanetaryResource extends Resource {
 	public PlanetaryResource( final int typeId, final int qty ) {
 		super(typeId, qty);
 	}
-	//		jsonClass = "PlanetaryResource";
-	//		// Set the tier type depending on the type id lookup list.
-	//		if (getItem().getCategoryName() == "Planetary Resources") tier = "RAW";
-	//		else {
-	//			if (getItem().getGroupName() == "Basic Commodities") tier = "TIER1";
-	//			if (getItem().getGroupName() == "Refined Commodities") tier = "TIER2";
-	//			if (getItem().getGroupName() == "Specialized Commodities") tier = "TIER3";
-	//			if (getItem().getGroupName() == "Advanced Commodities") tier = "TIER4";
-	//		}
-	//	}
-	//	@Deprecated
-	//	public PlanetaryResource( final int typeId, final int newQty ) {
-	//		super(typeId, newQty);
-	//		//		this.baseQty = newQty;
-	//	}
-	//
-	//	@Deprecated
-	//	public PlanetaryResource( final int typeId, final int newQty, final int stackSize ) {
-	//		this(typeId, newQty);
-	//		this.stackSize = stackSize;
-	//	}
-
-
-	// - M E T H O D - S E C T I O N ..........................................................................
 
 	public String getTier() {
-		evaluateTier();
+		this.evaluateTier();
 		return this.tier;
 	}
 
@@ -63,13 +28,12 @@ public class PlanetaryResource extends Resource {
 
 	protected void evaluateTier() {
 		// Set the tier type depending on the type id lookup list.
-		if (getItem().getCategoryName().equalsIgnoreCase("Planetary Resources")) tier = "RAW";
-		else {
-			if (getItem().getGroupName().equalsIgnoreCase("Basic Commodities")) tier = "TIER1";
-			if (getItem().getGroupName().equalsIgnoreCase("Refined Commodities")) tier = "TIER2";
-			if (getItem().getGroupName().equalsIgnoreCase("Specialized Commodities")) tier = "TIER3";
-			if (getItem().getGroupName().equalsIgnoreCase("Advanced Commodities")) tier = "TIER4";
-		}
+		if (this.getItem().getCategoryName().equalsIgnoreCase("Planetary Resources")) tier = "RAW";
+		if (this.getItem().getCategoryName().equalsIgnoreCase("Planetary Commodities")) tier = "RAW";
+		if (this.getItem().getGroupName().equalsIgnoreCase("Basic Commodities - Tier 1")) tier = "TIER1";
+		if (this.getItem().getGroupName().equalsIgnoreCase("Refined Commodities - Tier 2")) tier = "TIER2";
+		if (this.getItem().getGroupName().equalsIgnoreCase("Specialized Commodities- Tier 3")) tier = "TIER3";
+		if (this.getItem().getGroupName().equalsIgnoreCase("Advanced Commodities - Tier 4")) tier = "TIER4";
 	}
 
 	@Override
@@ -82,29 +46,4 @@ public class PlanetaryResource extends Resource {
 				       .append(super.toString())
 				       .toString();
 	}
-
-	//	// - B U I L D E R
-	//	public static class Builder extends NeoComNode.Builder<PlanetaryResource, PlanetaryResource.Builder> {
-	//		protected PlanetaryResource getActual() {
-	//			return new PlanetaryResource();
-	//		}
-	//
-	//		protected PlanetaryResource.Builder getActualBuilder() {
-	//			return this;
-	//		}
-	//
-	//		public PlanetaryResource.Builder withEveItem( final EveItem eveItem ) {
-	//			this.getActual().item = eveItem;
-	//			return this;
-	//		}
-	//
-	//		public PlanetaryResource.Builder withQuantity( final int quantity ) {
-	//			this.getActual().baseQty = quantity;
-	//			return this;
-	//		}
-	//
-	//		public PlanetaryResource build() {
-	//			return super.build();
-	//		}
-	//	}
 }

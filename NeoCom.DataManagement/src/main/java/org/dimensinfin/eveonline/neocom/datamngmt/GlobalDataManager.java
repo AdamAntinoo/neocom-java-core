@@ -269,15 +269,15 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		return GlobalDataManager.getSingleton().getSDEDBHelper().searchLocationBySystem(name);
 	}
 
-	public static ItemGroup searchItemGroup4Id( final int targetGroupId ) {
-		if (itemGroupCache.containsKey(targetGroupId)) return itemGroupCache.get(targetGroupId);
-		else {
-			final ItemGroup hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchItemGroup4Id(targetGroupId);
-			// Add the hit to the cache.
-			itemGroupCache.put(targetGroupId, hit);
-			return hit;
-		}
-	}
+//	public static ItemGroup searchItemGroup4Id( final int targetGroupId ) {
+//		if (itemGroupCache.containsKey(targetGroupId)) return itemGroupCache.get(targetGroupId);
+//		else {
+//			final ItemGroup hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchItemGroup4Id(targetGroupId);
+//			// Add the hit to the cache.
+//			itemGroupCache.put(targetGroupId, hit);
+//			return hit;
+//		}
+//	}
 
 	public static ItemCategory searchItemCategory4Id( final int targetCategoryId ) {
 		if (itemCategoryCache.containsKey(targetCategoryId)) return itemCategoryCache.get(targetCategoryId);
