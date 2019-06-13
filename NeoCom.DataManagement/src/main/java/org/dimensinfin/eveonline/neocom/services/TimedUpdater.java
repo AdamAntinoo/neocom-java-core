@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
@@ -24,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class TimedUpdater {
 	private static Logger logger = LoggerFactory.getLogger(TimedUpdater.class);
 
-	private ESIGlobalAdapter esiAdapter;
+	private ESIDataAdapter esiAdapter;
 	private IGlobalPreferencesManager preferencesProvider;
 	private ESIDataPersistenceService persistenceService;
 	private CredentialRepository credentialRepository;
@@ -340,7 +341,7 @@ public class TimedUpdater {
 			this.onConstruction = new TimedUpdater();
 		}
 
-		public Builder withESIAdapter( final ESIGlobalAdapter esiAdapter ) {
+		public Builder withESIAdapter( final ESIDataAdapter esiAdapter ) {
 			this.onConstruction.esiAdapter = esiAdapter;
 			return this;
 		}

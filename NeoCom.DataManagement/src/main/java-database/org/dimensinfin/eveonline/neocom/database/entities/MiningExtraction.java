@@ -83,7 +83,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	@DatabaseField
 	private long delta = 0;
 	@DatabaseField
-	private String extractionDateName = "YYYY/MM/DD";
+	private String extractionDateName;
 	@DatabaseField
 	private int extractionHour = 24;
 	@DatabaseField(index = true)
@@ -250,6 +250,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 		 */
 		public MiningExtraction build() {
 			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy/MM/dd");
+			if (null == this.onConstruction.extractionDateName) this.withExtractionDate(LocalDate.now());
 			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);
 			if (this.onConstruction.extractionHour == 24) this.onConstruction.id = MiningExtraction.generateRecordId(
 					dt
