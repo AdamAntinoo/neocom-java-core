@@ -25,6 +25,7 @@ sourceSets {
     main.java {
         srcDirs += 'src/main/java-domain'
         srcDirs += 'src/main/java-adapter'
+        srcDirs += 'src/main/java-annotation'
         srcDirs += 'src/main/java-planetary'
 
         srcDirs += 'src/main/java-database'
@@ -136,6 +137,7 @@ dependencies {
 dependencies {
     implementation 'org.modelmapper:modelmapper:1.1.0' // Model conversion from one model to another
     implementation 'com.beimin:eveapi:6.0.6'
+    compileOnly 'org.aspectj:aspectjrt:1.9.4'
 }
 
 // - U N I T   T E S T I N G
