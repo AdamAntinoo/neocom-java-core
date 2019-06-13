@@ -5,7 +5,7 @@ import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PlanetaryResource extends Resource {
-	public String tier = "OTHER";
+	public PlanetaryResourceTier tier = PlanetaryResourceTier.RAW;
 
 	// - C O N S T R U C T O R S
 	public PlanetaryResource( final int typeId ) {
@@ -16,24 +16,19 @@ public class PlanetaryResource extends Resource {
 		super(typeId, qty);
 	}
 
-	public String getTier() {
+	public PlanetaryResourceTier getTier() {
 		this.evaluateTier();
 		return this.tier;
 	}
 
-	public PlanetaryResource setTier( final String tier ) {
-		this.tier = tier;
-		return this;
-	}
-
 	protected void evaluateTier() {
 		// Set the tier type depending on the type id lookup list.
-		if (this.getItem().getCategoryName().equalsIgnoreCase("Planetary Resources")) tier = "RAW";
-		if (this.getItem().getCategoryName().equalsIgnoreCase("Planetary Commodities")) tier = "RAW";
-		if (this.getItem().getGroupName().equalsIgnoreCase("Basic Commodities - Tier 1")) tier = "TIER1";
-		if (this.getItem().getGroupName().equalsIgnoreCase("Refined Commodities - Tier 2")) tier = "TIER2";
-		if (this.getItem().getGroupName().equalsIgnoreCase("Specialized Commodities- Tier 3")) tier = "TIER3";
-		if (this.getItem().getGroupName().equalsIgnoreCase("Advanced Commodities - Tier 4")) tier = "TIER4";
+		if (this.getItem().getCategoryName().equalsIgnoreCase("Planetary Resources")) tier = PlanetaryResourceTier.RAW;
+		if (this.getItem().getCategoryName().equalsIgnoreCase("Planetary Commodities")) tier = PlanetaryResourceTier.RAW;
+		if (this.getItem().getGroupName().equalsIgnoreCase("Basic Commodities - Tier 1")) tier = PlanetaryResourceTier.TIER1;
+		if (this.getItem().getGroupName().equalsIgnoreCase("Refined Commodities - Tier 2")) tier = PlanetaryResourceTier.TIER2;
+		if (this.getItem().getGroupName().equalsIgnoreCase("Specialized Commodities- Tier 3")) tier = PlanetaryResourceTier.TIER3;
+		if (this.getItem().getGroupName().equalsIgnoreCase("Advanced Commodities - Tier 4")) tier = PlanetaryResourceTier.TIER4;
 	}
 
 	@Override

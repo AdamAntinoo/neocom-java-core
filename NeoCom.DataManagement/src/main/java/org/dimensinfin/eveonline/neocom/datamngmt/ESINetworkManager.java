@@ -34,35 +34,35 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	// - S T A T I C - S E C T I O N
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - P U B L I C   A P I
-	// - S E R V E R
-	public GetStatusOk getStatus( final String server ) {
-		logger.info(">> [ESINetworkManager.getStatus]");
-		// Store the response at the cache or if there is a network failure return the last access if available
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
-		final Chrono accessFullTime = new Chrono();
-		try {
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetStatusOk> statusApiResponse = neocomRetrofit
-					                                                .create(StatusApi.class)
-					                                                .getStatus(datasource, null).execute();
-			if (statusApiResponse.isSuccessful()) {
-				// Store results on the cache.
-				okResponseCache.put(reference, statusApiResponse);
-				return statusApiResponse.body();
-			} else {
-				// Use the cached data is available.
-				return (GetStatusOk) okResponseCache.get(reference).body();
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.getStatus]> [TIMING] Full elapsed: {}"
-					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
+//	// - S E R V E R
+//	public GetStatusOk getUniverseStatus( final String server ) {
+//		logger.info(">> [ESINetworkManager.getUniverseStatus]");
+//		// Store the response at the cache or if there is a network failure return the last access if available
+//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
+//		final Chrono accessFullTime = new Chrono();
+//		try {
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			if (null != server) datasource = server;
+//			// Create the request to be returned so it can be called.
+//			final Response<GetStatusOk> statusApiResponse = neocomRetrofit
+//					                                                .create(StatusApi.class)
+//					                                                .getUniverseStatus(datasource, null).execute();
+//			if (statusApiResponse.isSuccessful()) {
+//				// Store results on the cache.
+//				okResponseCache.put(reference, statusApiResponse);
+//				return statusApiResponse.body();
+//			} else {
+//				// Use the cached data is available.
+//				return (GetStatusOk) okResponseCache.get(reference).body();
+//			}
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getUniverseStatus]> [TIMING] Full elapsed: {}"
+//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return null;
+//	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - U N I V E R S E   A P I
 	// - U N I V E R S E
@@ -225,29 +225,29 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 		return null;
 	}
 
-	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
-		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
-			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofitNoAuth
-					                                                                   .create(UniverseApi.class)
-					                                                                   .getUniversePlanetsPlanetId(identifier, datasource, null).execute();
-			if (!universeApiResponse.isSuccessful()) {
-				return null;
-			} else return universeApiResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		} finally {
-			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-	}
+//	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier, final String refreshToken, final String server ) {
+//		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
+//		final Chrono accessFullTime = new Chrono();
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			if (null != server) datasource = server;
+//			// Create the request to be returned so it can be called.
+//			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
+//			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = neocomRetrofitNoAuth
+//					                                                                   .create(UniverseApi.class)
+//					                                                                   .getUniversePlanetsPlanetId(identifier, datasource, null).execute();
+//			if (!universeApiResponse.isSuccessful()) {
+//				return null;
+//			} else return universeApiResponse.body();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			return null;
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//	}
 
 	public static List<PostUniverseNames200Ok> postUserLabelNameDownload( final List<Integer> sourceidList, final String server ) {
 		logger.info(">> [ESINetworkManager.postUserLabelNameDownload]");

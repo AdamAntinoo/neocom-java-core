@@ -32,11 +32,12 @@ public class NeoComError {
 			this.onConstruction = new NeoComError(rtex);
 		}
 
-		public Builder withErrorInfo( final ErroInfo errorInfo) {
+		public Builder withErrorInfo( final ErroInfo errorInfo ) {
 			this.onConstruction.type = errorInfo.type;
-			this.onConstruction.code=errorInfo.errorCode;
+			this.onConstruction.code = errorInfo.errorCode;
 			return this;
 		}
+
 		public Builder withType( final EErrorType type ) {
 			this.onConstruction.type = type;
 			return this;

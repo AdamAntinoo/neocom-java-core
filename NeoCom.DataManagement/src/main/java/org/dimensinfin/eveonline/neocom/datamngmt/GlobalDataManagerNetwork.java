@@ -376,7 +376,7 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 		//		List<SkillInTraining> skillList = new ArrayList<>();
 		try {
 			// Get to the Network and download the data from the ESI api.
-			GetStatusOk status = this.esiAdapter.getStatus(TRANQUILITY_DATASOURCE);
+			GetStatusOk status = this.esiDataAdapter.getUniverseStatus(TRANQUILITY_DATASOURCE);
 			if (null != status) {
 				// Process the skills processing them and converting the data to structures compatible with MVC.
 				//				for (GetCharactersCharacterIdSkillqueue200Ok skill : skills) {

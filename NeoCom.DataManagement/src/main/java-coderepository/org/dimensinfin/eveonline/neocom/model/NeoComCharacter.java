@@ -630,7 +630,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 	//			newJob.setCost(evejob.getCost());
 	//			newJob.setLicensedRuns(evejob.getLicensedRuns());
 	//			newJob.setProductTypeID(evejob.getProductTypeID());
-	//			newJob.setStatus(evejob.getStatus());
+	//			newJob.setStatus(evejob.getUniverseStatus());
 	//			newJob.setTimeInSeconds(evejob.getTimeInSeconds());
 	//			newJob.setStartDate(evejob.getStartDate());
 	//			newJob.setEndDate(evejob.getEndDate());

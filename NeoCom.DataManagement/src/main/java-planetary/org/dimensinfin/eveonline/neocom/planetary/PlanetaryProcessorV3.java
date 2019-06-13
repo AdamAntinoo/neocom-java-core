@@ -570,7 +570,7 @@ public class PlanetaryProcessorV3 extends PlanetaryProcessorV2 {
 		}
 
 		public String getTier() {
-			return requirement.getTier();
+			return requirement.getTier().name();
 		}
 
 		//		public void addTargetAvailable( final int quantity ) {

@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.concurrent.Future;
 
 import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
@@ -16,6 +17,7 @@ import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.*;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -60,13 +62,12 @@ public class ESIDataAdapter {
 			, final IFileSystem newFileSystemAdapter ) {
 		configurationProvider = newConfigurationProvider;
 		fileSystemAdapter = newFileSystemAdapter;
-		//		cacheManager = newCacheManager;
 	}
 
 	// - D O W N L O A D   S T A R T E R S
 	public void downloadItemPrices() {
 		// Initialize and process the list of market process form the ESI full market data.
-		final List<GetMarketsPrices200Ok> marketPrices = this.getMarketsPrices();
+		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
 		logger.info(">> [ESIDataAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size());
 		for (GetMarketsPrices200Ok price : marketPrices) {
 			marketDefaultPrices.put(price.getTypeId(), price);
@@ -76,17 +77,17 @@ public class ESIDataAdapter {
 	public void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces(GlobalDataManager.TRANQUILITY_DATASOURCE);
-		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size());
+		logger.info(">> [ESIDataAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size());
 		for (GetUniverseRaces200Ok race : racesList) {
 			racesCache.put(race.getRaceId(), race);
 		}
 		final List<GetUniverseAncestries200Ok> ancestriesList = this.getUniverseAncestries(GlobalDataManager.TRANQUILITY_DATASOURCE);
-		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download ancestries: {} items", racesList.size());
+		logger.info(">> [ESIDataAdapter.downloadPilotFamilyData]> Download ancestries: {} items", racesList.size());
 		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
 			ancestriesCache.put(ancestry.getId(), ancestry);
 		}
 		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getUniverseBloodlines(GlobalDataManager.TRANQUILITY_DATASOURCE);
-		logger.info(">> [ESIGlobalAdapter.downloadPilotFamilyData]> Download blood lines: {} items", racesList.size());
+		logger.info(">> [ESIDataAdapter.downloadPilotFamilyData]> Download blood lines: {} items", racesList.size());
 		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
 			bloodLinesCache.put(bloodLine.getBloodlineId(), bloodLine);
 		}
@@ -94,6 +95,7 @@ public class ESIDataAdapter {
 
 	// - S D E   D A T A
 	public double searchSDEMarketPrice( final int typeId ) {
+		logger.info("-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId);
 		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
 		if (marketDefaultPrices.containsKey(typeId)) return marketDefaultPrices.get(typeId).getAdjustedPrice();
 		else return -1.0;
@@ -128,14 +130,44 @@ public class ESIDataAdapter {
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 		return Futures.immediateFuture(new MarketDataSet(itemId, side));
 	}
+
 	// - U N I V E R S E
+	@TimeElapsed
+	public GetStatusOk getUniverseStatus( final String server ) {
+		//		logger.info(">> [ESIDataAdapter.getUniverseStatus]");
+		// Store the response at the cache or if there is a network failure return the last access if available
+		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
+		//		final Chrono accessFullTime = new Chrono();
+		try {
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetStatusOk> statusApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
+					                                                .create(StatusApi.class)
+					                                                .getStatus(datasource, null).execute();
+			if (statusApiResponse.isSuccessful()) {
+				// Store results on the cache.
+				//				okResponseCache.put(reference, statusApiResponse);
+				return statusApiResponse.body();
+			} else {
+				// Use the cached data is available.
+				return null;
+			}
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			//		} finally {
+			//			logger.info("<< [ESIDataAdapter.getUniverseStatus]> [TIMING] Full elapsed: {}"
+			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
 
 	/**
 	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
 	 * because probably there is not valid market price information at other servers.
 	 * To access the public data it will use the current unauthorized retrofit connection.
 	 */
-	private List<GetMarketsPrices200Ok> getMarketsPrices() {
+	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = retrofitFactory.accessNoAuthRetrofit().create(MarketApi.class)
@@ -182,7 +214,7 @@ public class ESIDataAdapter {
 	}
 
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
-		logger.info(">> [ESIGlobalAdapter.getUniverseRaces]");
+		logger.info(">> [ESIDataAdapter.getUniverseRaces]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -193,13 +225,13 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getUniverseRaces]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESIDataAdapter.getUniverseRaces]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
 	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
-		logger.info(">> [ESIGlobalAdapter.getUniverseAncestries]");
+		logger.info(">> [ESIDataAdapter.getUniverseAncestries]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -210,13 +242,13 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getUniverseAncestries]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESIDataAdapter.getUniverseAncestries]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
 	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
-		logger.info(">> [ESIGlobalAdapter.getUniverseBloodlines]");
+		logger.info(">> [ESIDataAdapter.getUniverseBloodlines]");
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
@@ -227,14 +259,40 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getUniverseBloodlines]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESIDataAdapter.getUniverseBloodlines]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
+	@TimeElapsed
+	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier/*, final String refreshToken, final String server */ ) {
+		//		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
+		//		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			//			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
+			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
+					                                                                   .create(UniverseApi.class)
+					                                                                   .getUniversePlanetsPlanetId(identifier
+							                                                                   , DEFAULT_ESI_SERVER.toLowerCase(), null).execute();
+			if (!universeApiResponse.isSuccessful()) {
+				return null;
+			} else return universeApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+			//		} finally {
+			//			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+	}
+
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
 	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
-		logger.info("-- [ESIDataAdapter.getCharactersCharacterId]> Charcter identifier: {}", identifier);
+		logger.info("-- [ESIDataAdapter.getCharactersCharacterId]> Character identifier: {}", identifier);
 		//		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
 		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_PUBLIC, identifier);
@@ -261,7 +319,7 @@ public class ESIDataAdapter {
 				return characterResponse.body();
 			} else return null;
 		} catch (IOException ioe) {
-			logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
+			logger.error("EX [ESIDataAdapter.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
 			// Return cached response if available
 			//				if (null != okResponseCache.get(reference))
@@ -269,7 +327,7 @@ public class ESIDataAdapter {
 			//				else
 			return null;
 		} catch (RuntimeException rte) {
-			logger.error("EX [ESINetworkManager.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
+			logger.error("EX [ESIDataAdapter.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
 			rte.printStackTrace();
 			// Return cached response if available
 			//				if (null != okResponseCache.get(reference))
@@ -285,9 +343,90 @@ public class ESIDataAdapter {
 		//		else return null;
 	}
 
+	@TimeElapsed
+	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier
+			, final String refreshToken, final String server ) {
+		//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
+		//		final Chrono accessFullTime = new Chrono();
+		// Store the response at the cache or if there is a network failure return the last access if available
+		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_COLONIES, identifier);
+		// Check if network is available and we have configured allowed access to download data.
+		//		if ( allowDownloadPass() ) {
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+					                                                                                  .create(PlanetaryInteractionApi.class)
+					                                                                                  .getCharactersCharacterIdPlanets(identifier, datasource, null, null).execute();
+			if (planetaryApiResponse.isSuccessful()) {
+				// Store results on the cache.
+				//				okResponseCache.put(reference, planetaryApiResponse);
+				return planetaryApiResponse.body();
+			} else return new ArrayList<>();
+		} catch (IOException ioe) {
+			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
+			ioe.printStackTrace();
+			// Return cached response if available
+			return new ArrayList<>();
+		} catch (RuntimeException rte) {
+			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
+			rte.printStackTrace();
+			// Return cached response if available
+			return new ArrayList<>();
+			//		} finally {
+			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanets]> [TIMING] Full elapsed: {}"
+			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		//		} else return (List<GetCharactersCharacterIdPlanets200Ok>) okResponseCache.get(reference).body();
+	}
+
+	@TimeElapsed
+	public GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier
+			, final int planetid, final String refreshToken, final String server ) {
+		//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
+		//		final Chrono accessFullTime = new Chrono();
+		// Store the response at the cache or if there is a network failure return the last access if available
+		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier);
+		// Check if network is available and we have configured allowed access to download data.
+		//		if (allowDownloadPass()) {
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+					                                                                                 .create(PlanetaryInteractionApi.class)
+					                                                                                 .getCharactersCharacterIdPlanetsPlanetId(identifier, planetid, datasource, null, null).execute();
+			if (planetaryApiResponse.isSuccessful()) {
+				// Store results on the cache.
+				//				okResponseCache.put(reference, planetaryApiResponse);
+				return planetaryApiResponse.body();
+			} else return null;
+		} catch (IOException ioe) {
+			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
+			ioe.printStackTrace();
+			// Return cached response if available
+			return null;
+		} catch (RuntimeException rte) {
+			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
+			rte.printStackTrace();
+			// Return cached response if available
+			return null;
+			//		} finally {
+			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}"
+			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		//		} else return (GetCharactersCharacterIdPlanetsPlanetIdOk) okResponseCache.get(reference).body();
+	}
+
 	// - P L A N E T A R Y   I N T E R A C T I O N   P U B L I C   I N F O R M A T I O N
+	@TimeElapsed
 	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
-		logger.info(">> [ESINetworkManagerMock.getUniversePlanetarySchematicsById]");
+		logger.info(">> [ESIDataAdapter.getUniversePlanetarySchematicsById]");
 		final DateTime startTimePoint = DateTime.now();
 		try {
 			// Create the request to be returned so it can be called.
@@ -305,7 +444,7 @@ public class ESIDataAdapter {
 		} catch (RuntimeException runtime) {
 			runtime.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getMarketsPrices]> [TIMING] Full elapsed: {}"
+			logger.info("<< [ESIDataAdapter.getUniverseMarketsPrices]> [TIMING] Full elapsed: {}"
 					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
 		}
 		return null;
