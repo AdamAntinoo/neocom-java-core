@@ -316,58 +316,58 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		}
 	}
 
-	/**
-	 * This method encapsulates the call to the esi server to retrieve the current list of mining operations. This listing will contain the operations
-	 * for the last 30 days. It will be internally cached during 1800 seconds so we have to check the hour change less frequently.
-	 *
-	 * @param identifier   the character unique identifier.
-	 * @param refreshToken the authorization refresh token to be used on this call if the current toked is expired.
-	 * @param server       the esi data server to use, tranquility or singularity.
-	 * @return the list of mining actions performed during the last 30 days.
-	 */
-	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
-			, final String refreshToken
-			, final String server ) {
-		logger.info(">> [ESINetworkManager.getCharactersCharacterIdMining]");
-		final Chrono accessFullTime = new Chrono();
-		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>(1000);
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if (null != server) datasource = server;
-			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
-			boolean morePages = true;
-			int pageCounter = 1;
-			while (morePages) {
-				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = neocomRetrofitMountebank
-						                                                                                .create(IndustryApi.class)
-						                                                                                .getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
-				if (!industryApiResponse.isSuccessful()) {
-					// Or error or we have reached the end of the list.
-					return returnMiningList;
-				} else {
-					// Copy the assets to the result list.
-					returnMiningList.addAll(industryApiResponse.body());
-					pageCounter++;
-					// Check for out of page running.
-					if (industryApiResponse.body().size() < 1) morePages = false;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RuntimeException rtex) {
-			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
-				// Recreate the retrofit.
-				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
-				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
-			}
-		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdMining]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return returnMiningList;
-	}
+//	/**
+//	 * This method encapsulates the call to the esi server to retrieve the current list of mining operations. This listing will contain the operations
+//	 * for the last 30 days. It will be internally cached during 1800 seconds so we have to check the hour change less frequently.
+//	 *
+//	 * @param identifier   the character unique identifier.
+//	 * @param refreshToken the authorization refresh token to be used on this call if the current toked is expired.
+//	 * @param server       the esi data server to use, tranquility or singularity.
+//	 * @return the list of mining actions performed during the last 30 days.
+//	 */
+//	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
+//			, final String refreshToken
+//			, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdMining]");
+//		final Chrono accessFullTime = new Chrono();
+//		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>(1000);
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			if (null != server) datasource = server;
+//			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+//			boolean morePages = true;
+//			int pageCounter = 1;
+//			while (morePages) {
+//				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = neocomRetrofitMountebank
+//						                                                                                .create(IndustryApi.class)
+//						                                                                                .getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
+//				if (!industryApiResponse.isSuccessful()) {
+//					// Or error or we have reached the end of the list.
+//					return returnMiningList;
+//				} else {
+//					// Copy the assets to the result list.
+//					returnMiningList.addAll(industryApiResponse.body());
+//					pageCounter++;
+//					// Check for out of page running.
+//					if (industryApiResponse.body().size() < 1) morePages = false;
+//				}
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (RuntimeException rtex) {
+//			// Check if the problem is a connection reset.
+//			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+//				// Recreate the retrofit.
+//				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+//				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+//			}
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdMining]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return returnMiningList;
+//	}
 
 	// --- M A R K E T   O R D E R S
 	public static List<GetCharactersCharacterIdOrders200Ok> getCharactersCharacterIdOrders( final int identifier

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
@@ -18,7 +19,7 @@ public class ESIDataPersistenceService {
 	private static Logger logger = LoggerFactory.getLogger(ESIDataPersistenceService.class);
 
 	private MiningRepository miningRepository;
-	private ESIGlobalAdapter esiAdapter;
+	private ESIDataAdapter esiAdapter;
 
 	private ESIDataPersistenceService() {
 	}
@@ -93,7 +94,7 @@ public class ESIDataPersistenceService {
 			this.onConstruction = new ESIDataPersistenceService();
 		}
 
-		public Builder withEsiAdapter( final ESIGlobalAdapter esiAdapter ) {
+		public Builder withEsiAdapter( final ESIDataAdapter esiAdapter ) {
 			this.onConstruction.esiAdapter = esiAdapter;
 			return this;
 		}
