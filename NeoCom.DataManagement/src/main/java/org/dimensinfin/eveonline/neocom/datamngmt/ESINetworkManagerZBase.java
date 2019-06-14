@@ -321,11 +321,11 @@ public class ESINetworkManagerZBase {
 		return SCOPES;
 	}
 
-	public void activateEsiServer( final String esiServer ) {
-		authorizationURL = null;
-		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitTranquility;
-		if ("SINGULARITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitSingularity;
-	}
+//	public void activateEsiServer( final String esiServer ) {
+//		authorizationURL = null;
+//		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitTranquility;
+//		if ("SINGULARITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitSingularity;
+//	}
 
 	private String transformScopes( final List<String> scopeList ) {
 		StringBuilder scope = new StringBuilder();

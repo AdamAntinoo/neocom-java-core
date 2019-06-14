@@ -15,6 +15,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
@@ -44,6 +45,7 @@ public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
+	private static String authorizationURL;
 
 	// - C A C H E S
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
@@ -62,6 +64,11 @@ public class ESIDataAdapter {
 			, final IFileSystem newFileSystemAdapter ) {
 		configurationProvider = newConfigurationProvider;
 		fileSystemAdapter = newFileSystemAdapter;
+	}
+	public void activateEsiServer( final String esiServer ) {
+		authorizationURL = null;
+		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitTranquility;
+		if ("SINGULARITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitSingularity;
 	}
 
 	// - D O W N L O A D   S T A R T E R S
@@ -367,12 +374,12 @@ public class ESIDataAdapter {
 				return planetaryApiResponse.body();
 			} else return new ArrayList<>();
 		} catch (IOException ioe) {
-			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
+			logger.error("EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
 			// Return cached response if available
 			return new ArrayList<>();
 		} catch (RuntimeException rte) {
-			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
+			logger.error("EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
 			rte.printStackTrace();
 			// Return cached response if available
 			return new ArrayList<>();
@@ -407,12 +414,12 @@ public class ESIDataAdapter {
 				return planetaryApiResponse.body();
 			} else return null;
 		} catch (IOException ioe) {
-			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
+			logger.error("EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
 			// Return cached response if available
 			return null;
 		} catch (RuntimeException rte) {
-			logger.error("EX [ESINetworkManager.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
+			logger.error("EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage());
 			rte.printStackTrace();
 			// Return cached response if available
 			return null;
@@ -448,6 +455,61 @@ public class ESIDataAdapter {
 					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
 		}
 		return null;
+	}
+
+	// - M I N I N G
+
+	/**
+	 * This method encapsulates the call to the esi server to retrieve the current list of mining operations. This listing will contain the operations
+	 * for the last 30 days. It will be internally cached during 1800 seconds so we have to check the hour change less frequently.
+	 *
+	 * @param identifier   the character unique identifier.
+	 * @param refreshToken the authorization refresh token to be used on this call if the current toked is expired.
+	 * @param server       the esi data server to use, tranquility or singularity.
+	 * @return the list of mining actions performed during the last 30 days.
+	 */
+	@TimeElapsed
+	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
+			, final String refreshToken , final String server ) {
+		logger.info(">> [ESIDataAdapter.getCharactersCharacterIdMining]");
+//		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>(1000);
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			if (null != server) datasource = server;
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+						                                                                                .create(IndustryApi.class)
+						                                                                                .getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
+				if (!industryApiResponse.isSuccessful()) {
+					// Or error or we have reached the end of the list.
+					return returnMiningList;
+				} else {
+					// Copy the assets to the result list.
+					returnMiningList.addAll(industryApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if (industryApiResponse.body().size() < 1) morePages = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			// Check if the problem is a connection reset.
+			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				// Recreate the retrofit.
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+			}
+		} finally {
+			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdMining]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return returnMiningList;
 	}
 
 	// - B U I L D E R
@@ -499,7 +561,7 @@ public class ESIDataAdapter {
 			if (!itemListResponse.isSuccessful()) {
 				return null;
 			} else {
-				logger.info("-- [ESINetworkManager.getUniverseTypeById]> Downloading: {}-{}"
+				logger.info("-- [ESIDataAdapter.getUniverseTypeById]> Downloading: {}-{}"
 						, itemListResponse.body().getTypeId()
 						, itemListResponse.body().getName());
 				return itemListResponse.body();

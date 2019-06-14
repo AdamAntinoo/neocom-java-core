@@ -1,6 +1,8 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +20,7 @@ import retrofit2.Retrofit;
 public class NeoComRetrofitFactory {
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	public static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
+	private static final List<String> mockList = new ArrayList<>();
 
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
@@ -25,6 +28,7 @@ public class NeoComRetrofitFactory {
 
 	private Retrofit neocomRetrofitNoAuth;
 	private Retrofit neocomRetrofitESIAuthorization;
+	private Retrofit neocomRetrofitMountebank;
 
 	private NeoComRetrofitFactory() { }
 
@@ -33,10 +37,38 @@ public class NeoComRetrofitFactory {
 		return this.neocomRetrofitNoAuth;
 	}
 
+	/**
+	 * This is the point where I should check the table of requests to be mocked up. Get the caller method name from the
+	 * stack trace and search for it on the mock table. If found then use the mock retrofit instead of the authenticated retrofit.
+	 *
+	 * @return the selected retrofit depending on the mock status.
+	 */
 	public Retrofit accessESIAuthRetrofit() {
-		if (null == this.neocomRetrofitESIAuthorization)
-			this.neocomRetrofitESIAuthorization = this.generateESIAuthRetrofit();
-		return this.neocomRetrofitESIAuthorization;
+		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		StackTraceElement stelement = stacktrace[0];//maybe this number needs to be corrected
+		final String methodName = stelement.getMethodName();
+		if (this.mockList.contains(methodName)) {
+			if (null == this.neocomRetrofitMountebank)
+				this.neocomRetrofitMountebank = this.generateMountebankRetrofit();
+			return this.neocomRetrofitMountebank;
+		} else {
+			if (null == this.neocomRetrofitESIAuthorization)
+				this.neocomRetrofitESIAuthorization = this.generateESIAuthRetrofit();
+			return this.neocomRetrofitESIAuthorization;
+		}
+	}
+
+	private Retrofit generateMountebankRetrofit() {
+		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
+		return new NeoComRetrofitNoOAuthHTTP.Builder()
+				       //			                           .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
+				       .withEsiServerLocation("https://localhost:8448/")
+				       .withAgent(agent)
+				       //			                           .withCacheDataFile(cacheDataFile)
+				       //			                           .withCacheSize(CACHE_SIZE)
+				       //			                           .withTimeout(TIMEOUT)
+				       .build();
+
 	}
 
 	private Retrofit generateNoAuthRetrofit() {
@@ -71,7 +103,7 @@ public class NeoComRetrofitFactory {
 		public Builder( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
 			Objects.requireNonNull(configurationProvider);
 			Objects.requireNonNull(fileSystemAdapter);
-			this.onConstruction= new NeoComRetrofitFactory();
+			this.onConstruction = new NeoComRetrofitFactory();
 			this.onConstruction.configurationProvider = configurationProvider;
 			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
 		}
