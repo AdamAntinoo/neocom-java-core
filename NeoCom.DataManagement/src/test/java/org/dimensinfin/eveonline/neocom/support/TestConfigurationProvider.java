@@ -24,10 +24,10 @@ public class TestConfigurationProvider extends GlobalConfigurationProvider {
 	}
 
 	// - P L A T F O R M   S P E C I F I C   S E C T I O N
-	protected void readAllProperties() throws IOException {
+	protected void readAllProperties() {
+		this.addProperty("P.cache.root.storage.name", "src/test/NeoCom.UnitTest");
 		this.addProperty("P.cache.directory.path", "NeoComCache");
-		this.addProperty("P.cache.esinetwork.filename", "ESINetworkManager.cache.store");
-		this.addProperty("P.cache.store.filename", "ESIData.cache.store");
+		this.addProperty("P.cache.directory.store.esiitem", "ESIData.cache.store");
 		this.addProperty("P.cache.esiitem.timeout", "86400");
 	}
 
@@ -47,7 +47,7 @@ public class TestConfigurationProvider extends GlobalConfigurationProvider {
 			this.onConstruction = new TestConfigurationProvider(propertiesDirectory);
 		}
 
-		public TestConfigurationProvider build() throws IOException {
+		public TestConfigurationProvider build() {
 			Objects.requireNonNull(this.onConstruction.getPropertiesDirectory());
 			this.onConstruction.readAllProperties();
 			return this.onConstruction;

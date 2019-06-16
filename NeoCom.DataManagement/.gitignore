@@ -33,3 +33,4 @@ testOutputDirectory/
 src/test/resources/testStorage/
 src/test/resources/Test.NeoCom.Infinity/
 src/test/resources/NeoComCacheESINetworkManager.cache.store/
+src/test/NeoCom.UnitTest/

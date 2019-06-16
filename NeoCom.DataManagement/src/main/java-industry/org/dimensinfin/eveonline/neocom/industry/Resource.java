@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.industry;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -18,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  *
  * @author Adam Antinoo
  */
-public class Resource extends NeoComNode implements IAggregableItem {
+public class Resource extends NeoComNode implements IAggregableItem, IItemFacet {
 	private static final long serialVersionUID = 921961484632479376L;
 
 	public int typeId = -1;
@@ -94,6 +95,11 @@ public class Resource extends NeoComNode implements IAggregableItem {
 
 	public String getName() {
 		return this.getItem().getName();
+	}
+
+	@Override
+	public String getURLForItem() {
+		return this.getItem().getURLForItem();
 	}
 
 	public int getStackSize() {

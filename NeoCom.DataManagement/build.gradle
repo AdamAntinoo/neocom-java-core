@@ -112,6 +112,8 @@ dependencies {
     implementation "com.nytimes.android:filesystem3:$cacheVersion"
     compile 'io.reactivex.rxjava2:rxjava:2.2.9'
     compile 'com.squareup.okio:okio:2.2.2' // Extended file io
+    implementation 'com.jakewharton:disklrucache:2.0.2'
+    implementation 'commons-io:commons-io:2.6'
 }
 // - N E O C O M
 dependencies {

@@ -45,7 +45,6 @@ public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
-	private static String authorizationURL;
 
 	// - C A C H E S
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
@@ -65,10 +64,17 @@ public class ESIDataAdapter {
 		configurationProvider = newConfigurationProvider;
 		fileSystemAdapter = newFileSystemAdapter;
 	}
+
 	public void activateEsiServer( final String esiServer ) {
-		authorizationURL = null;
-		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitTranquility;
-		if ("SINGULARITY".equalsIgnoreCase(esiServer)) neocomRetrofit = neocomRetrofitSingularity;
+		this.retrofitFactory.activateEsiServer(esiServer);
+	}
+
+	public String getAuthorizationUrl4Server( final String server ) {
+		return this.retrofitFactory.getAuthorizationUrl4Server(server);
+	}
+
+	public String getStringScopes() {
+		return this.retrofitFactory.SCOPESTRING;
 	}
 
 	// - D O W N L O A D   S T A R T E R S
@@ -470,9 +476,9 @@ public class ESIDataAdapter {
 	 */
 	@TimeElapsed
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
-			, final String refreshToken , final String server ) {
+			, final String refreshToken, final String server ) {
 		logger.info(">> [ESIDataAdapter.getCharactersCharacterIdMining]");
-//		final Chrono accessFullTime = new Chrono();
+		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>(1000);
 		try {
 			// Set the refresh to be used during the request.
@@ -504,9 +510,10 @@ public class ESIDataAdapter {
 			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
 				// Recreate the retrofit.
 				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				this.retrofitFactory.reset();
 				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
-		} finally {
+			//		} finally {
 			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdMining]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return returnMiningList;
@@ -528,7 +535,10 @@ public class ESIDataAdapter {
 		}
 
 		public ESIDataAdapter build() {
-			this.onConstruction.cacheManager = new StoreCacheManager.Builder().withEsiDataAdapter(this.onConstruction).build();
+			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
+					                                   .withEsiDataAdapter(this.onConstruction)
+													   .withConfigurationProvider(this.onConstruction.configurationProvider)
+					                                   .build();
 			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
 					, this.onConstruction.fileSystemAdapter).build();
 			return this.onConstruction;
