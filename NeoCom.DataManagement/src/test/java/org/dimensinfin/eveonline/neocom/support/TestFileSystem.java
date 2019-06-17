@@ -21,9 +21,11 @@ public class TestFileSystem implements IFileSystem {
 	private static ClassLoader classLoader = null;
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private String applicationFolder = "./src/test/resources/Test.NeoCom.Infinity";
+	private String applicationFolder = "./src/test/NeoCom.UnitTest";
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	public TestFileSystem() {}
+
 	public TestFileSystem( final String applicationStoreDirectory ) {
 		logger.info(">< [FileSystemSBImplementation.constructor]> applicationStoreDirectory: {}", applicationStoreDirectory);
 		if (null != applicationStoreDirectory)

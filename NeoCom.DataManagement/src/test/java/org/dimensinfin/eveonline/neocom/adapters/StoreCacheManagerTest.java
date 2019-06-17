@@ -5,37 +5,48 @@ import java.util.concurrent.TimeUnit;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.support.TestConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.TestFileSystem;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import io.reactivex.Single;
 
 public class StoreCacheManagerTest {
+	private static final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("test-properties").build();
+	private static final IFileSystem fileSystem = new TestFileSystem();
+	private static ESIDataAdapter esiDataAdapter;
+	private static StoreCacheManager cacheManager;
+
+	@Before
+	public void setUp() throws Exception {
+		esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
+		cacheManager = new StoreCacheManager.Builder()
+				               .withEsiDataAdapter(esiDataAdapter)
+				               .withConfigurationProvider(configurationProvider)
+				               .withFileSystem(fileSystem)
+				               .build();
+	}
+
 	@Test
 	public void builder_alldependencies() {
-		final ESIDataAdapter esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
-		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("test-properties").build();
 		final StoreCacheManager cacheManager = new StoreCacheManager.Builder()
 				                                       .withEsiDataAdapter(esiDataAdapter)
 				                                       .withConfigurationProvider(configurationProvider)
+				                                       .withFileSystem(fileSystem)
 				                                       .build();
 		Assert.assertNotNull(cacheManager);
 	}
 
 	@Test
 	public void accessItem() {
-		final ESIDataAdapter esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
 		final GetUniverseTypesTypeIdOk item = new GetUniverseTypesTypeIdOk();
 		Mockito.when(esiDataAdapter.getUniverseTypeById(Mockito.anyInt())).thenReturn(item);
-		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("test-properties").build();
-		final StoreCacheManager cacheManager = new StoreCacheManager.Builder()
-				                                       .withEsiDataAdapter(esiDataAdapter)
-				                                       .withConfigurationProvider(configurationProvider)
-				                                       .build();
+
 		final Single<GetUniverseTypesTypeIdOk> itemRestored = cacheManager.accessItem(34);
 		Assert.assertNotNull(itemRestored);
 		final GetUniverseTypesTypeIdOk itemCached = cacheManager.accessItem(34).blockingGet();
@@ -44,18 +55,12 @@ public class StoreCacheManagerTest {
 
 	@Test
 	public void accessGroup() throws InterruptedException {
-		final ESIDataAdapter esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
 		final GetUniverseGroupsGroupIdOk group = Mockito.mock(GetUniverseGroupsGroupIdOk.class);
 		Mockito.when(esiDataAdapter.getUniverseGroupById(Mockito.anyInt())).thenReturn(group);
 		Mockito.when(group.getName()).thenReturn("Capsuleer Bases");
-		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("test-properties").build();
-		final StoreCacheManager cacheManager = new StoreCacheManager.Builder()
-				                                       .withEsiDataAdapter(esiDataAdapter)
-				                                       .withConfigurationProvider(configurationProvider)
-				                                       .build();
 
 		final Single<GetUniverseGroupsGroupIdOk> groupSingle = cacheManager.accessGroup(1082);
-//		Thread.sleep(TimeUnit.SECONDS.toMillis(1));
+		//		Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 		Assert.assertNotNull(groupSingle);
 		GetUniverseGroupsGroupIdOk obtained = groupSingle.blockingGet();
 		Assert.assertNotNull(obtained);
@@ -72,12 +77,6 @@ public class StoreCacheManagerTest {
 
 	@Test
 	public void accessCategory() throws InterruptedException {
-		final ESIDataAdapter esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
-		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("test-properties").build();
-		final StoreCacheManager cacheManager = new StoreCacheManager.Builder()
-				                                       .withEsiDataAdapter(esiDataAdapter)
-				                                       .withConfigurationProvider(configurationProvider)
-				                                       .build();
 		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock(GetUniverseCategoriesCategoryIdOk.class);
 		Mockito.when(esiDataAdapter.getUniverseCategoryById(Mockito.anyInt())).thenReturn(category);
 		Mockito.when(category.getName()).thenReturn("Planetary Interaction");

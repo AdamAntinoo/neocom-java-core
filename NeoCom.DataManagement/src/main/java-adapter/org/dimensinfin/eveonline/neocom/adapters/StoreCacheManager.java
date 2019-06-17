@@ -8,7 +8,9 @@ import java.util.concurrent.TimeUnit;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 
 import org.joda.time.DateTime;
 
@@ -32,6 +34,7 @@ public class StoreCacheManager {
 	private static final int CACHE_COUNTER = 2;
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
+	private IFileSystem fileSystem;
 	private ESIDataAdapter esiDataAdapter;
 
 	// - C A C H E S
@@ -45,11 +48,6 @@ public class StoreCacheManager {
 	static {
 		jsonMapper.enable(SerializationFeature.INDENT_OUTPUT);
 		jsonMapper.registerModule(new JodaModule());
-		// Add our own serializers.
-		//		SimpleModule neocomSerializerModule = new SimpleModule();
-		//		//		neocomSerializerModule.addSerializer(Ship.class, new ShipSerializer());
-		//		neocomSerializerModule.addSerializer(Credential.class, new CredentialSerializer());
-		//		jsonMapper.registerModule(neocomSerializerModule);
 	}
 
 	// - C O N S T R U C T O R S
@@ -63,18 +61,18 @@ public class StoreCacheManager {
 
 	private void createEsiItemStore() {
 		try {
-			final File cachedir = new File(this.configurationProvider.getResourceString("P.cache.root.storage.name")
-					                               + "/" + this.configurationProvider.getResourceString("P.cache.directory.path")
-					                               + "/" + this.configurationProvider.getResourceString("P.cache.directory.store.esiitem"));
+			final File cachedir = new File(this.fileSystem.accessResource4Path(this.configurationProvider.getResourceString("P.cache.directory.path")
+					                                                                   + "/" + this.configurationProvider.getResourceString("P.cache.directory.store.esiitem")));
 			this.esiItemPersistentStore = DiskLruCache.open(cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * Units.GIGABYTES);
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
 					                    .fetcher(typeId -> Single.just(this.esiDataAdapter.getUniverseTypeById(typeId)))
-//										.fetcher(new UniverseTypeFetcher(esiDataAdapter))
+					                    //										.fetcher(new UniverseTypeFetcher(esiDataAdapter))
 					                    .persister(new EseItemPersistent(esiItemPersistentStore))
 					                    .networkBeforeStale()
 					                    .open();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
+			throw new NeoComRuntimeException("Unable to create the item cache store.");
 		}
 	}
 
@@ -124,9 +122,15 @@ public class StoreCacheManager {
 			return this;
 		}
 
+		public Builder withFileSystem( final IFileSystem fileSystem ) {
+			this.onConstruction.fileSystem = fileSystem;
+			return this;
+		}
+
 		public StoreCacheManager build() {
 			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
 			Objects.requireNonNull(this.onConstruction.configurationProvider);
+			Objects.requireNonNull(this.onConstruction.fileSystem);
 			this.onConstruction.createStores(); // Run the initialisation code.
 			return this.onConstruction;
 		}
@@ -187,7 +191,7 @@ public class StoreCacheManager {
 		@Override
 		public RecordState getRecordState( final Integer key ) {
 			final Long timeStamp = this.accessRecordTimeStamp(key); // Get the cache record for the timestamp.
-			if (null == timeStamp) return RecordState.STALE;
+			if (null == timeStamp) return RecordState.MISSING;
 			if (timeStamp + ITEM_CACHE_TIME < DateTime.now().getMillis()) return RecordState.FRESH;
 			return RecordState.STALE;
 		}

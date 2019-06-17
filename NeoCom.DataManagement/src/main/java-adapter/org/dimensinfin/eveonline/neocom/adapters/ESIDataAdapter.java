@@ -538,6 +538,7 @@ public class ESIDataAdapter {
 			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
 					                                   .withEsiDataAdapter(this.onConstruction)
 													   .withConfigurationProvider(this.onConstruction.configurationProvider)
+													   .withFileSystem(this.onConstruction.fileSystemAdapter)
 					                                   .build();
 			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
 					, this.onConstruction.fileSystemAdapter).build();
