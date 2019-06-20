@@ -151,5 +151,5 @@ dependencies {
     testImplementation 'org.slf4j:slf4j-simple:1.7.25'
     testImplementation 'joda-time:joda-time:2.3'
     testImplementation 'com.openpojo:openpojo:0.8.12'
-    testImplementation 'org.mockito:mockito-core:2.22.0'
+    testImplementation 'org.mockito:mockito-core:2.23.4'
 }
