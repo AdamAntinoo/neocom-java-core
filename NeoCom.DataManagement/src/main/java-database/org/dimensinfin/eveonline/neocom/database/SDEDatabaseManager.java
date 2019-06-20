@@ -32,31 +32,31 @@ import java.util.Vector;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public abstract class SDEDatabaseManager {
-	public abstract static class RawStatement {
-		public abstract boolean moveToFirst();
-
-		public abstract boolean moveToLast();
-
-		public abstract boolean moveToNext();
-
-		public abstract boolean isFirst();
-
-		public abstract boolean isLast();
-
-		public abstract String getString( final int i );
-
-		public abstract short getShort( final int i );
-
-		public abstract int getInt( final int i );
-
-		public abstract long getLong( final int i );
-
-		public abstract float getFloat( final int i );
-
-		public abstract double getDouble( final int i );
-
-		public abstract void close();
-	}
+//	public abstract static class RawStatement {
+//		public abstract boolean moveToFirst();
+//
+//		public abstract boolean moveToLast();
+//
+//		public abstract boolean moveToNext();
+//
+//		public abstract boolean isFirst();
+//
+//		public abstract boolean isLast();
+//
+//		public abstract String getString( final int i );
+//
+//		public abstract short getShort( final int i );
+//
+//		public abstract int getInt( final int i );
+//
+//		public abstract long getLong( final int i );
+//
+//		public abstract float getFloat( final int i );
+//
+//		public abstract double getDouble( final int i );
+//
+//		public abstract void close();
+//	}
 
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger("SDEDatabaseManager");
