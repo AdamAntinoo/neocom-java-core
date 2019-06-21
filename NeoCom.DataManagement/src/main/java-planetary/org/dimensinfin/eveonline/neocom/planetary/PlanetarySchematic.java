@@ -1,20 +1,27 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
-import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import org.dimensinfin.eveonline.neocom.database.repositories.PlanetaryRepository;
 
 /**
  * Defines all the data related to a planetary transformation schematic. On creation generates and accesses the resource for the inputs and outputs.
  * Adds method to operate with the schematic.
  */
 public class PlanetarySchematic {
-	private ISDEDatabaseAdapter sdeDatabaseAdapter;
-
+	private PlanetaryRepository planetaryRepository;
 	private int schematicId;
-	private int cycleTime = 3600;
-	private String schematicName = "N/A";
+	protected final List<Schematics> inputList = new ArrayList<>();
+	protected Schematics output;
 
 	public PlanetarySchematic( final Integer schematicId ) {
 		this.schematicId = schematicId;
+	}
+
+	public int getSchematicId() {
+		return this.schematicId;
 	}
 
 	// - B U I L D E R
@@ -25,12 +32,19 @@ public class PlanetarySchematic {
 			this.onConstruction = new PlanetarySchematic(schematicId);
 		}
 
-		public Builder withSDEDatabaseAdapter( final ISDEDatabaseAdapter sdeDatabaseAdapter ) {
-			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
+		public Builder withPlanetaryRepository( final PlanetaryRepository planetaryRepository ) {
+			this.onConstruction.planetaryRepository = planetaryRepository;
 			return this;
 		}
 
 		public PlanetarySchematic build() {
+			Objects.requireNonNull(this.onConstruction.planetaryRepository);
+			// Read from the SDE the schematic data.
+			final List<Schematics> schematics = this.onConstruction.planetaryRepository.searchSchematics4Id(this.onConstruction.schematicId);
+			for (Schematics schematic : schematics) {
+				if (schematic.getDirection() == SchematicDirection.INPUT) this.onConstruction.inputList.add(schematic);
+				else this.onConstruction.output = schematic;
+			}
 			return this.onConstruction;
 		}
 	}

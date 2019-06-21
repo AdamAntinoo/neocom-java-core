@@ -1,15 +1,3 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.planetary;
 
 import java.util.ArrayList;
@@ -19,14 +7,12 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.database.repositories.PlanetaryRepository;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection;
-
-// - CLASS IMPLEMENTATION ...................................................................................
 
 /**
  * Stores the data to transform a set of resources into a new set where some of them are processed from a Tier
@@ -36,19 +22,18 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics.ESchematicDirection
  * total time to perfrom the transformation.
  * @author Adam Antinoo
  */
-public class ProcessingAction extends ANeoComEntity {
-	// - S T A T I C - S E C T I O N ..........................................................................
+public class ProcessingAction extends NeoComNode {
 	private static final long serialVersionUID = 3885877535917258089L;
 
-	// - F I E L D - S E C T I O N ............................................................................
-	public int targetId = 0;
-	public EveItem targetItem = null;
-	protected List<Schematics> schematics = new Vector<Schematics>();
+	private PlanetaryRepository planetaryRepository;
+	private int targetId = 0;
+	private EveItem targetItem = null;
+	private List<Schematics> schematics = new Vector<Schematics>();
 	protected final List<Schematics> inputList = new Vector<Schematics>();
 	protected Schematics output = null;
-	protected final Map<Integer, Resource> actionResources = new HashMap<Integer, Resource>();
+	private final Map<Integer, Resource> actionResources = new HashMap<Integer, Resource>();
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 
 	/**
 	 * Instance a new <code>ProcessingAction</code> and set the target product id to be produced by this action.
@@ -59,19 +44,20 @@ public class ProcessingAction extends ANeoComEntity {
 	public ProcessingAction( final int targetId ) {
 		this.targetId = targetId;
 		// Get the item for the target id to be identified on the Json serialization.
-		try {
-			targetItem = accessGlobal().searchItem4Id(targetId);
-		} catch (NeoComRuntimeException neoe) {
-			targetItem = new EveItem();
-		}
+//		try {
+			targetItem =  new EveItem(targetId);
+//		} catch (NeoComRuntimeException neoe) {
+//			targetItem = new EveItem();
+//		}
 		// Get the schematics information.
-		schematics = accessSDEDBHelper().searchSchematics4Output(targetId);
+		// TODO - Connect a valid sde repository
+		schematics = this.planetaryRepository.searchSchematics4Output(targetId);
 		// Store the inputs into another list.
 		for (final Schematics sche : schematics) {
-			if (sche.getDirection() == ESchematicDirection.INPUT) {
+			if (sche.getDirection() == SchematicDirection.INPUT) {
 				inputList.add(sche);
 			}
-			if (sche.getDirection() == ESchematicDirection.OUTPUT) {
+			if (sche.getDirection() == SchematicDirection.OUTPUT) {
 				output = sche;
 			}
 		}
@@ -100,7 +86,7 @@ public class ProcessingAction extends ANeoComEntity {
 				results.add(this.processResource(sche, cycles));
 			}
 			// Add the output
-			results.add(new Resource(output.getTypeId(), output.getQty() * cycles));
+			results.add(new Resource(output.getTypeId(), output.getQuantity() * cycles));
 		}
 		return results;
 	}
@@ -126,7 +112,7 @@ public class ProcessingAction extends ANeoComEntity {
 			if (null == resource)
 				return 0;
 			else {
-				cycles = Math.min(cycles, resource.getQuantity() / schematics.getQty());
+				cycles = Math.min(cycles, resource.getQuantity() / schematics.getQuantity());
 			}
 		}
 		return cycles;
@@ -154,7 +140,7 @@ public class ProcessingAction extends ANeoComEntity {
 		// Get the resource from the list of available resources.
 		final Resource res = actionResources.get(sche.getTypeId());
 		if (null != res)
-			return new Resource(sche.getTypeId(), res.getQuantity() - (sche.getQty() * cycles));
+			return new Resource(sche.getTypeId(), res.getQuantity() - (sche.getQuantity() * cycles));
 		else
 			return null;
 	}
@@ -202,5 +188,3 @@ public class ProcessingAction extends ANeoComEntity {
 		return clone;
 	}
 }
-
-// - UNUSED CODE ............................................................................................

@@ -79,6 +79,10 @@ public class TestFileSystem implements IFileSystem {
 		return applicationFolder + "/" + filePath;
 	}
 
+	@Override
+	public void copyFromAssets( final String sourceFileName, final String destinationDirectory ) {
+	}
+
 	//	@Override
 	//	public String accessAppStorage4Path( final String filePath ) {
 	//		return accessResource4Path(filePath);

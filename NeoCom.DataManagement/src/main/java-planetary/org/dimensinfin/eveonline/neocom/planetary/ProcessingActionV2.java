@@ -59,19 +59,19 @@ public class ProcessingActionV2 extends ProcessingAction {
 	public List<Resource> getLimitedActionResults() {
 		// Calculate the number of cycles from the current target quantity. If not defined then use all resources.
 		if (quantity < 0) return getActionResults();
-		final int cycleOutput = output.getQty();
+		final int cycleOutput = output.getQuantity();
 		int cycles = Double.valueOf(Math.ceil(1.0 * quantity / cycleOutput)).intValue();
 
 		final List<Resource> results = new Vector<Resource>();
 		if (cycles > 0) {
 			for (final Schematics sche : inputList) {
 				// Replace the calculated quantity by a negative subtraction quantity.
-				final Resource res = new Resource(sche.getTypeId(), -1 * sche.getQty() * cycles);
+				final Resource res = new Resource(sche.getTypeId(), -1 * sche.getQuantity() * cycles);
 //				res.setQuantity(res.getQuantity() * -1);
 				results.add(res);
 			}
 			// Add the output
-			results.add(new Resource(output.getTypeId(), output.getQty() * cycles));
+			results.add(new Resource(output.getTypeId(), output.getQuantity() * cycles));
 		}
 		return results;
 	}

@@ -278,16 +278,8 @@ public class ESIDataAdapter {
 	}
 
 	@TimeElapsed
-	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier/*, final String refreshToken, final String server */ ) {
-		//		logger.info(">> [ESINetworkManager.getUniversePlanetsPlanetId]");
-		//		final Chrono accessFullTime = new Chrono();
+	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier) {
 		try {
-			// Set the refresh to be used during the request.
-			//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			//			final UniverseApi universeApiRetrofit = neocomRetrofit.create(UniverseApi.class);
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
 					                                                                   .create(UniverseApi.class)
 					                                                                   .getUniversePlanetsPlanetId(identifier
@@ -295,11 +287,9 @@ public class ESIDataAdapter {
 			if (!universeApiResponse.isSuccessful()) {
 				return null;
 			} else return universeApiResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 			return null;
-			//		} finally {
-			//			logger.info("<< [ESINetworkManager.getUniversePlanetsPlanetId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 	}
 

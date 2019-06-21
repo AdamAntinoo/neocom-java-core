@@ -23,7 +23,7 @@ public class MiningExtractionTest {
 	@Test
 	public void getPrice() throws IOException {
 		final TestConfigurationProvider configurationProvider = new TestConfigurationProvider.Builder("properties").build();
-		final TestFileSystem fileSystem = new TestFileSystem("src/test/resources");
+		final TestFileSystem fileSystem = new TestFileSystem();
 		EveItem.injectEsiDataAdapter(new ESIDataAdapter.Builder(configurationProvider, fileSystem).build());
 		final EveItem item = Mockito.mock(EveItem.class);
 		final MiningExtraction miningExtraction = new MiningExtraction.Builder()

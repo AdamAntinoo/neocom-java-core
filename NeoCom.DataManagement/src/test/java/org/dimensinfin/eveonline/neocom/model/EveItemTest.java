@@ -29,7 +29,9 @@ public class EveItemTest extends TestAdapterReadyUp {
 	}
 
 	@Test
-	public void accessorContract() {
+	public void accessorContract() throws IOException {
+		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
+		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		PojoTestUtils.validateAccessors(EveItem.class);
 	}
 

@@ -1,81 +1,81 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.planetary;
 
-import java.util.logging.Logger;
+import java.util.Objects;
 
-// - CLASS IMPLEMENTATION ...................................................................................
+/**
+ * This schematic will define a input or a output for a planetary interaction transformation process delivered by a factory. To simplify
+ * instance structure each of the components of the transformation have the whole data related to the schematic, both the name and cycle data
+ * joined with the specific resource for the transformation interaction.
+ */
 public class Schematics {
-	public enum ESchematicDirection {
-		INPUT, OUTPUT
+	private Integer schematicId;
+	private String schematicName;
+	private int cycleTime;
+	private PlanetaryResource resource;
+	private SchematicDirection direction = SchematicDirection.INPUT;
+
+	private Schematics() {}
+
+	public int getTypeId() {
+		return this.resource.getTypeId();
 	}
 
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = Logger.getLogger("Schematics");
-
-	// - F I E L D - S E C T I O N ............................................................................
-	private int typeId = -1;
-	private int qty = 0;
-	private ESchematicDirection direction = ESchematicDirection.INPUT;
-
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
-
-	// - M E T H O D - S E C T I O N ..........................................................................
-
-	/**
-	 * Add the schematics data for one of the schematics components. Components have an id and a required
-	 * quantity and can be of Input type or of Output type.
-	 * @param typeId   the item type id
-	 * @param quantity the quantity required or produced
-	 * @param input    input direction of true
-	 */
-	public Schematics addData( final int typeId, final int quantity, final boolean input ) {
-		this.typeId = typeId;
-		qty = quantity;
-		if (!input) {
-			direction = ESchematicDirection.OUTPUT;
-		}
-		return this;
+	public String getName() {
+		return this.resource.getName();
 	}
 
-	public ESchematicDirection getDirection() {
+	public int getQuantity() {
+		return this.resource.getQuantity();
+	}
+
+	public SchematicDirection getDirection() {
 		return direction;
 	}
 
-	public int getQty() {
-		return qty;
-	}
+	// - B U I L D E R
+	public static class Builder {
+		private Schematics onConstruction;
+		private int quantity = 0;
 
-	public int getTypeId() {
-		return typeId;
-	}
+		public Builder() {
+			this.onConstruction = new Schematics();
+		}
 
-	public void setQty( final int qty ) {
-		this.qty = qty;
-	}
+		public Builder withSchematicId( final Integer schematicId ) {
+			this.onConstruction.schematicId = schematicId;
+			return this;
+		}
 
-	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("Schematics [");
-		buffer.append(direction.name()).append(" #").append(this.getTypeId()).append("x").append(this.getQty());
-		//		buffer.append("#").append(this.getTypeId()).append(" ");
-		//		buffer.append("qty: ").append(this.getQty()).append(" ");
-		//		buffer.append("direction: ").append(direction.name()).append(" ");
-		buffer.append("]");
-		//		buffer.append("->").append(super.toString());
-		return buffer.toString();
-	}
+		public Builder withSchematicName( final String schematicName ) {
+			this.onConstruction.schematicName = schematicName;
+			return this;
+		}
 
+		public Builder withCycleTime( final int cycleTime ) {
+			this.onConstruction.cycleTime = cycleTime;
+			return this;
+		}
+
+		public Builder withResourceTypeId( final int resourceType ) {
+			this.onConstruction.resource = new PlanetaryResource(resourceType);
+			return this;
+		}
+
+		public Builder withQuantity( final int quantity ) {
+			this.quantity = quantity;
+			return this;
+		}
+
+		public Builder withDirection( final boolean direction ) {
+			if (direction) this.onConstruction.direction = SchematicDirection.INPUT;
+			else this.onConstruction.direction = SchematicDirection.OUTPUT;
+			return this;
+		}
+
+		public Schematics build() {
+			Objects.requireNonNull(this.onConstruction.resource);
+			this.onConstruction.resource.setQuantity(this.quantity);
+			return this.onConstruction;
+		}
+	}
 }
-
-// - UNUSED CODE ............................................................................................

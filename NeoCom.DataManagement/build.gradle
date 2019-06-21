@@ -34,6 +34,10 @@ sourceSets {
         srcDirs += 'src/main/java-market'
         srcDirs += 'src/main/java-industry'
     }
+    test.java{
+        srcDirs += 'src/test/java'
+        srcDirs += 'src/test/java-support'
+    }
 //    main.res {
 //        srcDirs += 'src/main/res-planetary'
 //    }

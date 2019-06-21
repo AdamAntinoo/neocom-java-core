@@ -154,7 +154,7 @@ public class PlanetaryProcessorV2 extends PlanetaryProcessor {
 		List<Resource> productionResources = new Vector();
 		final List<Schematics> schematics = accessSDEDBHelper().searchSchematics4Output(outputIdentifier);
 		for (final Schematics sche : schematics) {
-			if (sche.getDirection() == Schematics.ESchematicDirection.INPUT) {
+			if (sche.getDirection() == SchematicDirection.INPUT) {
 				productionResources.add(new PlanetaryResource(sche.getTypeId()));
 			}
 			//		if (sche.getDirection() == Schematics.ESchematicDirection.OUTPUT) {
