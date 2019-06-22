@@ -73,4 +73,10 @@ public class SchematicsTest extends TestAdapterReadyUp {
 		final int obtained = schematic4fields.getQuantity();
 		Assert.assertEquals("Verify the value for the quantity.", 1000, obtained);
 	}
+
+	@Test
+	public void getGroupName() {
+		final String obtained = schematic4fields.getGroupName();
+		Assert.assertEquals("Verify the value for the group name.", "Basic Commodities - Tier 1", obtained);
+	}
 }

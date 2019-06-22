@@ -17,9 +17,9 @@ public class PlanetaryResourceTest extends TestAdapterReadyUp {
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final PlanetaryResource resource = new PlanetaryResource(2307, 1000);
-		final PlanetaryResourceTier obtained = resource.getTier();
+		final PlanetaryResourceTierType obtained = resource.getTier();
 		Assert.assertNotNull(resource);
-		Assert.assertEquals("The tier should be RAW.", PlanetaryResourceTier.RAW, obtained);
+		Assert.assertEquals("The tier should be RAW.", PlanetaryResourceTierType.RAW, obtained);
 	}
 
 	@Test
@@ -28,9 +28,9 @@ public class PlanetaryResourceTest extends TestAdapterReadyUp {
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final PlanetaryResource resource = new PlanetaryResource(2393, 1000);
-		final PlanetaryResourceTier obtained = resource.getTier();
+		final PlanetaryResourceTierType obtained = resource.getTier();
 		Assert.assertNotNull(resource);
-		Assert.assertEquals("The tier should be TIER1.", PlanetaryResourceTier.TIER1, obtained);
+		Assert.assertEquals("The tier should be TIER1.", PlanetaryResourceTierType.TIER1, obtained);
 	}
 
 	@Test
@@ -39,9 +39,8 @@ public class PlanetaryResourceTest extends TestAdapterReadyUp {
 		EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final PlanetaryResource resource = new PlanetaryResource(9832, 1000);
-		final PlanetaryResourceTier obtained = resource.getTier();
+		final PlanetaryResourceTierType obtained = resource.getTier();
 		Assert.assertNotNull(resource);
-		Assert.assertEquals("The tier should be TIER2.", PlanetaryResourceTier.TIER2, obtained);
+		Assert.assertEquals("The tier should be TIER2.", PlanetaryResourceTierType.TIER2, obtained);
 	}
-
 }

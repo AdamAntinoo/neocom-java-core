@@ -24,6 +24,14 @@ public class PlanetarySchematic {
 		return this.schematicId;
 	}
 
+	public Schematics getOutput() {
+		return this.output;
+	}
+
+	public String getGroupName() {
+		return this.output.getGroupName();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private PlanetarySchematic onConstruction;

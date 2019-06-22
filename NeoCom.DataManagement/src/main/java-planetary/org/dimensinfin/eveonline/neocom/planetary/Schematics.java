@@ -29,7 +29,11 @@ public class Schematics {
 	}
 
 	public SchematicDirection getDirection() {
-		return direction;
+		return this.direction;
+	}
+
+	public String getGroupName() {
+		return this.resource.getGroupName();
 	}
 
 	// - B U I L D E R
