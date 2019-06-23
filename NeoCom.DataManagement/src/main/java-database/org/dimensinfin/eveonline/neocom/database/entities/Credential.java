@@ -47,11 +47,11 @@ public class Credential extends NeoComNode {
 	private static final long serialVersionUID = -4248173464157148843L;
 
 	public static String createUniqueIdentifier( final String server, final int identifier ) {
-		return server.toUpperCase() + "/" + identifier;
+		return server.toLowerCase() + "/" + identifier;
 	}
 
 	@DatabaseField(id = true, index = true)
-	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility", -1);
+	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
 	@DatabaseField
 	protected int accountId = -2;
 	@DatabaseField
@@ -61,15 +61,15 @@ public class Credential extends NeoComNode {
 	@DatabaseField
 	public String tokenType = "Bearer";
 	@DatabaseField
-	public String dataSource = "tranquility";
+	public String dataSource = "Tranquility".toLowerCase();
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	public String scope = "publicData";
-	/**
-	 * Future expiration Instant time in milliseconds. This field is not required to be stored because the library
-	 * will take care of the refresh token expiration times.
-	 */
-	@DatabaseField
-	public long expires = 0;
+	//	/**
+	//	 * Future expiration Instant time in milliseconds. This field is not required to be stored because the library
+	//	 * will take care of the refresh token expiration times.
+	//	 */
+	//	@DatabaseField
+	//	public long expires = 0;
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	private String refreshToken = "-TOKEN-";
 
@@ -141,9 +141,9 @@ public class Credential extends NeoComNode {
 		return tokenType;
 	}
 
-	public long getExpires() {
-		return expires;
-	}
+	//	public long getExpires() {
+	//		return expires;
+	//	}
 
 	public String getRefreshToken() {
 		return refreshToken;
@@ -158,10 +158,10 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-	public Credential setAccountName( final String accountName ) {
-		this.accountName = accountName;
-		return this;
-	}
+//	public Credential setAccountName( final String accountName ) {
+//		this.accountName = accountName;
+//		return this;
+//	}
 
 	public Credential setAccessToken( final String accessToken ) {
 		this.accessToken = accessToken;
@@ -178,10 +178,10 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-	public Credential setExpires( final long expires ) {
-		this.expires = expires;
-		return this;
-	}
+//	public Credential setExpires( final long expires ) {
+//		this.expires = expires;
+//		return this;
+//	}
 
 	public Credential setRefreshToken( final String refreshToken ) {
 		this.refreshToken = refreshToken;
@@ -217,6 +217,11 @@ public class Credential extends NeoComNode {
 
 		public Builder( final int account ) {
 			this.onConstruction = new Credential(account);
+		}
+
+		public Builder withCharacterName( final String characterName ) {
+			this.onConstruction.accountName = characterName;
+			return this;
 		}
 
 		public Credential build() {
