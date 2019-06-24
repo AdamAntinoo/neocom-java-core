@@ -32,6 +32,10 @@ public class PlanetarySchematic {
 		return this.output.getGroupName();
 	}
 
+	public int getCycleTime() {
+		return this.output.getCycleTime();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private PlanetarySchematic onConstruction;

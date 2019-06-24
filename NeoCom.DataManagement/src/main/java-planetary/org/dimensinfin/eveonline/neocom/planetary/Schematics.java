@@ -36,6 +36,10 @@ public class Schematics {
 		return this.resource.getGroupName();
 	}
 
+	public int getCycleTime() {
+		return this.cycleTime;
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private Schematics onConstruction;

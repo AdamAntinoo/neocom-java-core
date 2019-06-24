@@ -12,6 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.services;
 
+import org.dimensinfin.eveonline.neocom.domain.ServiceJob;
 import org.dimensinfin.eveonline.neocom.exception.NeoComException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

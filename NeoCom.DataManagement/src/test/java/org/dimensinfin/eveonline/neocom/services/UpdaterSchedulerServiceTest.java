@@ -9,7 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class TimedUpdaterTest {
+public class UpdaterSchedulerServiceTest {
 
 	@Test
 	public void builder_complete() {
@@ -17,7 +17,7 @@ public class TimedUpdaterTest {
 		final IGlobalPreferencesManager preferencesProvider = Mockito.mock(IGlobalPreferencesManager.class);
 		final ESIDataPersistenceService esiDataPersistenceService = Mockito.mock(ESIDataPersistenceService.class);
 		final CredentialRepository credentialRepository = Mockito.mock(CredentialRepository.class);
-		final TimedUpdater obtained = new TimedUpdater.Builder()
+		final UpdaterSchedulerService obtained = new UpdaterSchedulerService.Builder()
 				                              .withESIAdapter(adapter)
 											  .withPreferencesProvider(preferencesProvider)
 											  .withESIDataPersistenceService(esiDataPersistenceService)
@@ -29,7 +29,7 @@ public class TimedUpdaterTest {
 	@Test(expected = NullPointerException.class)
 	public void builder_null() {
 		final ESIGlobalAdapter adapter = Mockito.mock(ESIGlobalAdapter.class);
-		final TimedUpdater obtained = new TimedUpdater.Builder()
+		final UpdaterSchedulerService obtained = new UpdaterSchedulerService.Builder()
 				                              .withESIAdapter(null)
 				                              .build();
 		Assert.assertNotNull(obtained);

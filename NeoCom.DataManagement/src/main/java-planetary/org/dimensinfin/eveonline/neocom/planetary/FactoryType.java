@@ -35,11 +35,11 @@ public enum FactoryType {
 		//		this.cycleDuration = duration;
 	}
 
-	public long getCapacity() {
+	public Long getCapacity() {
 		return this.capacity;
 	}
 
-	public long getOutput() {
+	public Long getOutput() {
 		return this.output;
 	}
 

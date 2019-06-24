@@ -10,7 +10,7 @@
 //               implementation that reduces dependencies and allows separate use of the modules. Still
 //               there should be some initialization/configuration code to connect the new library to the
 //               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.services;
+package org.dimensinfin.eveonline.neocom.domain;
 
 import java.util.concurrent.Future;
 
@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.exception.NeoComException;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.services.UpdateJobManager;
 
 /**
  * @author Adam Antinoo
