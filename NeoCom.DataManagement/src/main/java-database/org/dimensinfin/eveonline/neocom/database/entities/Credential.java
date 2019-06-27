@@ -1,15 +1,3 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database.entities;
 
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
@@ -17,8 +5,6 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
-// - CLASS IMPLEMENTATION ...................................................................................
 
 /**
  * Credentials are the block of data that stores the new authorization data for the ESI access to Eve Online data servers. The
@@ -53,10 +39,6 @@ public class Credential extends NeoComNode {
 	@DatabaseField(id = true, index = true)
 	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
 	@DatabaseField
-	protected int accountId = -2;
-	@DatabaseField
-	private String accountName = "-NAME-";
-	@DatabaseField
 	public String accessToken = "";
 	@DatabaseField
 	public String tokenType = "Bearer";
@@ -64,14 +46,19 @@ public class Credential extends NeoComNode {
 	public String dataSource = "Tranquility".toLowerCase();
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	public String scope = "publicData";
-	//	/**
-	//	 * Future expiration Instant time in milliseconds. This field is not required to be stored because the library
-	//	 * will take care of the refresh token expiration times.
-	//	 */
-	//	@DatabaseField
-	//	public long expires = 0;
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	private String refreshToken = "-TOKEN-";
+
+	@DatabaseField
+	protected int accountId = -2;
+	@DatabaseField
+	private String accountName = "-NAME-";
+	@DatabaseField
+	protected Double walletBalance = 0.0;
+	@DatabaseField
+	protected int assetsCount = 0;
+	@DatabaseField
+	private String raceName;
 
 	// - C O N S T R U C T O R S
 	public Credential() {
@@ -81,44 +68,8 @@ public class Credential extends NeoComNode {
 	private Credential( final int newAccountIdentifier ) {
 		this();
 		this.accountId = newAccountIdentifier;
-		// Set the default value for the datasource from the current Global configuration.
-		//		this.dataSource = accessGlobal().getEveOnlineServerDatasource();
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
-		//		try {
-		//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-		//			// Try to create the key. It fails then  it was already created.
-		//			credentialDao.create(this);
-		//		} catch (final SQLException sqle) {
-		//			Credential.logger.warn("WR [Credential.<constructor>]> Credential exists. Update values.");
-		//			this.store();
-		//		}
 	}
-	//	// - P E R S I S T E N C Y
-	//
-	//	/**
-	//	 * Update the values at the database record.
-	//	 */
-	//	public Credential store() {
-	//		try {
-	//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-	//			credentialDao.createOrUpdate(this);
-	//			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "UPDATED");
-	//		} catch (final SQLException sqle) {
-	//			sqle.printStackTrace();
-	//		}
-	//		return this;
-	//	}
-	//
-	//	public boolean delete() {
-	//		try {
-	//			final Dao<Credential, String> credentialDao = accessGlobal().getNeocomDBHelper().getCredentialDao();
-	//			credentialDao.delete(this);
-	//			Credential.logger.info("-- [Credential.store]> Credential data {} successfully.", "DELETED");
-	//		} catch (final SQLException sqle) {
-	//			sqle.printStackTrace();
-	//		}
-	//		return true;
-	//	}
 
 	// - G E T T E R S   &   S E T T E R S
 	public int getAccountId() {
@@ -133,18 +84,6 @@ public class Credential extends NeoComNode {
 		return accountName;
 	}
 
-	public String getAccessToken() {
-		return accessToken;
-	}
-
-	public String getTokenType() {
-		return tokenType;
-	}
-
-	//	public long getExpires() {
-	//		return expires;
-	//	}
-
 	public String getRefreshToken() {
 		return refreshToken;
 	}
@@ -153,15 +92,42 @@ public class Credential extends NeoComNode {
 		return dataSource.toLowerCase();
 	}
 
+	public Double getWalletBalance() {
+		return walletBalance;
+	}
+
+	public Credential setWalletBalance( final Double walletBalance ) {
+		this.walletBalance = walletBalance;
+		return this;
+	}
+
+	public int getAssetsCount() {
+		return assetsCount;
+	}
+
+	public Credential setAssetsCount( final int assetsCount ) {
+		this.assetsCount = assetsCount;
+		return this;
+	}
+
+	public String getRaceName() {
+		return this.raceName;
+	}
+
+	public Credential setRaceName( final String raceName ) {
+		this.raceName = raceName;
+		return this;
+	}
+
 	public Credential setAccountId( final int accountId ) {
 		this.accountId = accountId;
 		return this;
 	}
 
-//	public Credential setAccountName( final String accountName ) {
-//		this.accountName = accountName;
-//		return this;
-//	}
+	//	public Credential setAccountName( final String accountName ) {
+	//		this.accountName = accountName;
+	//		return this;
+	//	}
 
 	public Credential setAccessToken( final String accessToken ) {
 		this.accessToken = accessToken;
@@ -178,10 +144,10 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-//	public Credential setExpires( final long expires ) {
-//		this.expires = expires;
-//		return this;
-//	}
+	//	public Credential setExpires( final long expires ) {
+	//		this.expires = expires;
+	//		return this;
+	//	}
 
 	public Credential setRefreshToken( final String refreshToken ) {
 		this.refreshToken = refreshToken;
@@ -191,14 +157,6 @@ public class Credential extends NeoComNode {
 	public Credential setScope( final String scope ) {
 		this.scope = scope;
 		return this;
-	}
-
-	@Deprecated
-	public boolean isESICompatible() {
-		if (accountId < 1) return false;
-		if (accessToken.isEmpty()) return false;
-		if (refreshToken.isEmpty()) return false;
-		return true;
 	}
 
 	// - C O R E

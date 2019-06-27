@@ -123,6 +123,7 @@ public class ESIDataAdapter {
 		return this.cacheManager.accessGroup(groupId).blockingGet();
 	}
 
+	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
 		logger.info("-- [ESIDataAdapter.searchItemCategory4Id]> targetGroupId: {}", categoryId);
 		return this.cacheManager.accessCategory(categoryId).blockingGet();
@@ -180,6 +181,7 @@ public class ESIDataAdapter {
 	 * because probably there is not valid market price information at other servers.
 	 * To access the public data it will use the current unauthorized retrofit connection.
 	 */
+	@TimeElapsed
 	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
 		try {
 			// Create the request to be returned so it can be called.
@@ -294,6 +296,7 @@ public class ESIDataAdapter {
 	}
 
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
+	@TimeElapsed
 	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
 		logger.info("-- [ESIDataAdapter.getCharactersCharacterId]> Character identifier: {}", identifier);
 		//		final Chrono accessFullTime = new Chrono();

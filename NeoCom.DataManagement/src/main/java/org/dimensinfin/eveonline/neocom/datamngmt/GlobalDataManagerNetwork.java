@@ -416,8 +416,8 @@ public class GlobalDataManagerNetwork extends GlobalDataManagerCache {
 			jgen.writeStringField("jsonClass", value.getJsonClass());
 			jgen.writeNumberField("accountId", value.getAccountId());
 			jgen.writeStringField("accountName", value.getAccountName());
-			jgen.writeStringField("tokenType", value.getTokenType());
-			jgen.writeBooleanField("isESI", value.isESICompatible());
+//			jgen.writeStringField("tokenType", value.getTokenType());
+//			jgen.writeBooleanField("isESI", value.isESICompatible());
 			jgen.writeEndObject();
 		}
 	}

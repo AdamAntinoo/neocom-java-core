@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 @Aspect
 public class LogTimeElapsed {
-	//	@Component
-	//	public class Logger
-	//	{
 	private static Logger logger = LoggerFactory.getLogger(Logger.class);
 
 	@Around("execution(* *(..)) && @annotation(org.dimensinfin.eveonline.neocom.annotations.TimeElapsed)")
