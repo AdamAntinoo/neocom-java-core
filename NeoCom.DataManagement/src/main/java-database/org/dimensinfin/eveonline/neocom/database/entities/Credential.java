@@ -59,6 +59,9 @@ public class Credential extends NeoComNode {
 	protected int assetsCount = 0;
 	@DatabaseField
 	private String raceName;
+	@DatabaseField
+	private String timestampReference;
+
 
 	// - C O N S T R U C T O R S
 	public Credential() {
@@ -124,11 +127,6 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-	//	public Credential setAccountName( final String accountName ) {
-	//		this.accountName = accountName;
-	//		return this;
-	//	}
-
 	public Credential setAccessToken( final String accessToken ) {
 		this.accessToken = accessToken;
 		return this;
@@ -144,11 +142,6 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-	//	public Credential setExpires( final long expires ) {
-	//		this.expires = expires;
-	//		return this;
-	//	}
-
 	public Credential setRefreshToken( final String refreshToken ) {
 		this.refreshToken = refreshToken;
 		return this;
@@ -157,6 +150,10 @@ public class Credential extends NeoComNode {
 	public Credential setScope( final String scope ) {
 		this.scope = scope;
 		return this;
+	}
+
+	public String getTimestampReference() {
+		return this.timestampReference;
 	}
 
 	// - C O R E
