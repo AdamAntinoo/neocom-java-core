@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
+import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -149,7 +150,7 @@ public class UpdaterSchedulerService {
 		//								.setCredentialId(credential.getAccountId())
 		//								.store();
 		//					});
-		//			UpdateJobManager.submit(newJob);
+		//			UpdaterJobManager.submit(newJob);
 		//			return;
 		//		}
 
@@ -160,7 +161,7 @@ public class UpdaterSchedulerService {
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			// Submit the job to the manager
 			final String transferredCurrentrequestReference = currentrequestReference;
-			final org.dimensinfin.eveonline.neocom.domain.ServiceJob newJob = new org.dimensinfin.eveonline.neocom.domain.ServiceJob(dataIdentifier)
+			final ServiceJob newJob = new ServiceJob(dataIdentifier)
 					                          .setCredentialIdentifier(credential.getAccountId())
 					                          .setJobClass(GlobalDataManager.EDataUpdateJobs.ASSETDATA)
 					                          .setTask(() -> {
@@ -186,7 +187,7 @@ public class UpdaterSchedulerService {
 									                                               .store();
 						                          }
 					                          });
-			UpdateJobManager.submit(newJob);
+			UpdaterJobManager.submit(newJob);
 			return;
 		}
 
@@ -223,7 +224,7 @@ public class UpdaterSchedulerService {
 									                                               .store();
 						                          }
 					                          });
-			UpdateJobManager.submit(newJob);
+			UpdaterJobManager.submit(newJob);
 			return;
 		}
 
@@ -249,7 +250,7 @@ public class UpdaterSchedulerService {
 								                                               .setCredentialId(credential.getAccountId())
 								                                               .store();
 					                          });
-			UpdateJobManager.submit(newJob);
+			UpdaterJobManager.submit(newJob);
 			return;
 		}
 
@@ -275,7 +276,7 @@ public class UpdaterSchedulerService {
 								                                               .setCredentialId(credential.getAccountId())
 								                                               .store();
 					                          });
-			UpdateJobManager.submit(newJob);
+			UpdaterJobManager.submit(newJob);
 			return;
 		}
 		// - M I N I N G E X T R A C T I O N S
@@ -310,7 +311,7 @@ public class UpdaterSchedulerService {
 		//							rtex.printStackTrace();
 		//						}
 		//					});
-		//			UpdateJobManager.submit(newJob);
+		//			UpdaterJobManager.submit(newJob);
 		//			return;
 		//		}
 
@@ -330,7 +331,7 @@ public class UpdaterSchedulerService {
 							                                               .setCredentialId(credential.getAccountId())
 							                                               .store();
 				                          });
-		UpdateJobManager.submit(newJob);
+		UpdaterJobManager.submit(newJob);
 	}
 
 	// -  B U I L D E R

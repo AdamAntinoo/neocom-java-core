@@ -1,7 +1,5 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -29,7 +27,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "Credentials")
-public class Credential extends NeoComNode {
+public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;
 
 	public static String createUniqueIdentifier( final String server, final int identifier ) {
@@ -59,7 +57,6 @@ public class Credential extends NeoComNode {
 	protected int assetsCount = 0;
 	@DatabaseField
 	private String raceName;
-	@DatabaseField
 	private String timestampReference;
 
 
@@ -152,9 +149,14 @@ public class Credential extends NeoComNode {
 		return this;
 	}
 
-	public String getTimestampReference() {
-		return this.timestampReference;
-	}
+//	public String getTimestampReference() {
+//		return this.timestampReference;
+//	}
+//
+//	public DateTime getTimestamp() {
+//		if ( null == this.timestamp)this.timestamp = DateTime.now();
+//		return this.timestamp;
+//	}
 
 	// - C O R E
 	@Override

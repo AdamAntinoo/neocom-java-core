@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.exception.NeoComException;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.services.UpdateJobManager;
+import org.dimensinfin.eveonline.neocom.services.UpdaterJobManager;
 
 /**
  * @author Adam Antinoo
@@ -77,7 +77,7 @@ public class ServiceJob {
 			throw new NeoComException("[Job]> Credential not identified.. Cannot run job on unidentified target.");
 
 		// Launch job and read back the future to control the execution
-		return UpdateJobManager.updaterExecutor.submit(task);
+		return UpdaterJobManager.updaterExecutor.submit(task);
 	}
 
 	// --- D E L E G A T E D   M E T H O D S

@@ -340,7 +340,7 @@ public class TimedUpdater {
 				final Future<?> hit = runningJobs.get(identifier);
 				if (null == hit) {
 					// New job. Launch it and store the reference.
-					logger.info("-- [UpdateJobManager.submit]> Launching job {}", newJob.getReference());
+					logger.info("-- [UpdaterJobManager.submit]> Launching job {}", newJob.getReference());
 					final Future<?> future = newJob.submit();
 					runningJobs.put(identifier, future);
 				} else {

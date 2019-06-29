@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapters;
+package org.dimensinfin.eveonline.neocom.core;
 
 public class Units {
 	public static long MEGABYTES = 1024 * 1024;

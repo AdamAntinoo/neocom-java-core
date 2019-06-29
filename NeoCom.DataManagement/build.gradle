@@ -23,6 +23,7 @@ repositories {
 
 sourceSets {
     main.java {
+        srcDirs += 'src/main/java-core'
         srcDirs += 'src/main/java-domain'
         srcDirs += 'src/main/java-adapter'
         srcDirs += 'src/main/java-annotation'

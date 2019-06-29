@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" group="neocom-datamanagement/ESI.SwaggerApi" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom-neocom-datamanagement.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom-neocom-datamanagement.iml" group="neocom-datamanagement" />
       <module fileurl="file://$PROJECT_DIR$/NeoCom.DataManagement/NeoCom.DataManagement.iml" filepath="$PROJECT_DIR$/NeoCom.DataManagement/NeoCom.DataManagement.iml" group="neocom-datamanagement/NeoCom.DataManagement" />
-      <module fileurl="file://$PROJECT_DIR$/neocom-datamanagement.iml" filepath="$PROJECT_DIR$/neocom-datamanagement.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.dimensinfin.neocom.datamanagement.acceptancetest.iml" filepath="$PROJECT_DIR$/.idea/modules/org.dimensinfin.neocom.datamanagement.acceptancetest.iml" group="neocom-datamanagement/org.dimensinfin.neocom.datamanagement.acceptancetest" />
     </modules>
   </component>
