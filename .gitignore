@@ -3,9 +3,10 @@
 *.db
 
 .gradle
-/gradle
-/build
+#/gradle
+#/build
 
+# - COMPILATION
 ESI.SwaggerApi/out/
 NeoCom.Model/out/
 NeoCom.DataManagement/out/

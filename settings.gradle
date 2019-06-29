@@ -1,3 +1,2 @@
 include ':ESI.SwaggerApi'
-include ':NeoCom.Model'
 include ':NeoCom.DataManagement'

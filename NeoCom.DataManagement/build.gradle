@@ -1,6 +1,6 @@
 // - P L U G I N S
 apply plugin: 'java-library'
-apply plugin: 'kotlin'
+//apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 apply plugin: 'project-report'
 
