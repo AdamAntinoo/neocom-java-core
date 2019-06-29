@@ -1,2 +1,5 @@
 include ':ESI.SwaggerApi'
 include ':NeoCom.DataManagement'
+include 'NeoCom.DataManagement.AcceptanceTests'
+findProject(':NeoCom.DataManagement.AcceptanceTests')?.name = 'org.dimensinfin.neocom.datamanagement.acceptancetest'
+

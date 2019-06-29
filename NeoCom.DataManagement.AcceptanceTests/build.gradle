@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+plugins {
+    id "com.commercehub.cucumber-jvm" version "0.11"
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+addCucumberSuite 'cucumberTest'
+
+dependencies {
+     cucumberTestCompile 'info.cukes:cucumber-java:1.2.5'
+
+}
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // https://mvnrepository.com/artifact/io.cucumber/cucumber-junit
+    testCompile group: 'io.cucumber', name: 'cucumber-junit', version: '4.4.0'
+// https://mvnrepository.com/artifact/io.cucumber/cucumber-java
+//    compile group: 'io.cucumber', name: 'cucumber-java', version: '4.4.0'
+// https://mvnrepository.com/artifact/io.cucumber/cucumber-java8
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '4.4.0'
+// https://mvnrepository.com/artifact/io.cucumber/gherkin
+//    compile group: 'io.cucumber', name: 'gherkin', version: '6.0.17'
+
+}
