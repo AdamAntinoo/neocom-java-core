@@ -12,11 +12,12 @@ public abstract class UpdatableEntity extends NeoComNode {
 	@DatabaseField
 	private DateTime lastUpdateTime;
 
-	public DateTime getCreationTime() {
-		return creationTime;
-	}
+//	public DateTime getCreationTime() {
+//		return this.creationTime;
+//	}
 
 	public DateTime getLastUpdateTime() {
-		return lastUpdateTime;
+		if (null == this.lastUpdateTime) this.lastUpdateTime = new DateTime(0);
+		return this.lastUpdateTime;
 	}
 }

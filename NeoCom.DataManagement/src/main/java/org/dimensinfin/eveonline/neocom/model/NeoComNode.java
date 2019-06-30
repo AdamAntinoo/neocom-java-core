@@ -8,7 +8,6 @@ import java.util.List;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
-import org.dimensinfin.eveonline.neocom.core.IEventEmitter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComNode implements ICollaboration, IJsonAngular, IEventEmitter {
+public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 	protected static Logger logger = LoggerFactory.getLogger(NeoComNode.class);
 	protected static final long serialVersionUID = 6506043294337948561L;
 
@@ -38,17 +37,17 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular, IEvent
 	}
 
 	// - I E V E N T E M I T T E R   D E L E G A T E
-	@Override
+//	@Override
 	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
 		this.eventEmitter.addPropertyChangeListener(listener);
 	}
 
-	@Override
+//	@Override
 	public void removePropertyChangeListener( final PropertyChangeListener listener ) {
 		this.eventEmitter.removePropertyChangeListener(listener);
 	}
 
-	@Override
+//	@Override
 	public boolean sendChangeEvent( final String eventName ) {
 		return this.eventEmitter.sendChangeEvent(eventName);
 	}

@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,15 +12,19 @@ import java.util.concurrent.Future;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.WalletApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.*;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
@@ -44,14 +49,13 @@ import retrofit2.Response;
 public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
-	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
-
 	// - C A C H E S
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
+	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	private static Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
-
+	private transient final List<Long> id4Names = new ArrayList<>();
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
@@ -280,7 +284,7 @@ public class ESIDataAdapter {
 	}
 
 	@TimeElapsed
-	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier) {
+	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier ) {
 		try {
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
 					                                                                   .create(UniverseApi.class)
@@ -512,31 +516,135 @@ public class ESIDataAdapter {
 		return returnMiningList;
 	}
 
-	// - B U I L D E R
-	public static class Builder {
-		private ESIDataAdapter onConstruction;
-
-		/**
-		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as possible.
-		 */
-		public Builder( final IConfigurationProvider configurationProvider
-				, final IFileSystem fileSystemAdapter ) {
-			Objects.requireNonNull(configurationProvider);
-			Objects.requireNonNull(fileSystemAdapter);
-			//			Objects.requireNonNull(cacheManager);
-			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
+	// - C H A R A C T E R
+	public Double getCharactersCharacterIdWallet( final int identifier
+			, final String refreshToken, final String server ) {
+		logger.info(">> [ESIDataAdapter.getCharactersCharacterIdWallet]");
+		// Check if this response already available at cache.
+		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.WALLET, identifier);
+		//		final Response<?> hit = okResponseCache.get(reference);
+		//		final Chrono accessFullTime = new Chrono();
+		//		if (null == hit) {
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<Double> walletApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+					                                           .create(WalletApi.class)
+					                                           .getCharactersCharacterIdWallet(identifier
+							                                           , datasource.toLowerCase(), null, null).execute();
+			if (walletApiResponse.isSuccessful()) {
+				// Store results on the cache.
+				//					okResponseCache.put(reference, walletApiResponse);
+				return walletApiResponse.body();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				this.retrofitFactory.reset();
+			}
 		}
+		return -1.0;
+		//		} else {
+		//			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
+		//			return (Double) hit.body();
+		//		}
+	}
 
-		public ESIDataAdapter build() {
-			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
-					                                   .withEsiDataAdapter(this.onConstruction)
-													   .withConfigurationProvider(this.onConstruction.configurationProvider)
-													   .withFileSystem(this.onConstruction.fileSystemAdapter)
-					                                   .build();
-			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
-					, this.onConstruction.fileSystemAdapter).build();
-			return this.onConstruction;
+	@TimeElapsed
+	public List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier
+			, final String refreshToken
+			, final String server ) {
+		logger.info(">> [ESIDataAdapter.getCharactersCharacterIdAssets]");
+		//		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			if (null != server) datasource = server;
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+						                                                                              .create(AssetsApi.class)
+						                                                                              .getCharactersCharacterIdAssets(identifier
+								                                                                              , datasource.toLowerCase()
+								                                                                              , null, pageCounter, null).execute();
+				if (!assetsApiResponse.isSuccessful()) {
+					// Or error or we have reached the end of the list.
+					return returnAssetList;
+				} else {
+					// Copy the assets to the result list.
+					returnAssetList.addAll(assetsApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if (assetsApiResponse.body().size() < 1) morePages = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			// Check if the problem is a connection reset.
+			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				this.retrofitFactory.reset();
+				// Recreate the retrofit.
+				//				logger.info("EX [ESIdataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+			}
+			//		} finally {
+			//			logger.info("<< [ESIdataAdapter.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
+		return returnAssetList;
+	}
+
+	public List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final int identifier
+			, final String refreshToken
+			, final String server ) {
+		logger.info(">> [ESIDataAdapter.getCharactersCharacterIdBlueprints]");
+		//		final Chrono accessFullTime = new Chrono();
+		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>(1000);
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			if (null != server) datasource = server;
+			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+			boolean morePages = true;
+			int pageCounter = 1;
+			while (morePages) {
+				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+						                                                                                     .create(CharacterApi.class)
+						                                                                                     .getCharactersCharacterIdBlueprints(identifier, datasource, null, pageCounter, null).execute();
+				if (!characterApiResponse.isSuccessful()) {
+					// Or error or we have reached the end of the list.
+					return returnBlueprintList;
+				} else {
+					// Copy the assets to the result list.
+					returnBlueprintList.addAll(characterApiResponse.body());
+					pageCounter++;
+					// Check for out of page running.
+					if (characterApiResponse.body().size() < 1) morePages = false;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (RuntimeException rtex) {
+			// Check if the problem is a connection reset.
+			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				// Recreate the retrofit.
+				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+			}
+			//		} finally {
+			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdBlueprints]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return returnBlueprintList;
 	}
 
 	/**
@@ -579,5 +687,92 @@ public class ESIDataAdapter {
 			//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
 		}
 		return null;
+	}
+
+	public List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {
+		logger.info(">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]");
+		//		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+					                                                                                    .create(AssetsApi.class)
+					                                                                                    .postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource.toLowerCase(), null).execute();
+			if (!assetsApiResponse.isSuccessful()) {
+				return null;
+			} else return assetsApiResponse.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+			//		} finally {
+			//			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
+	/**
+	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
+	 */
+	private void downloadAssetEveName( final long assetId, final Credential credential ) {
+		this.id4Names.add(assetId);
+		if (this.id4Names.size() > 9) {
+			postUserLabelNameDownload(credential);
+			this.id4Names.clear();
+		}
+	}
+
+	private void postUserLabelNameDownload( final Credential credential ) {
+		// Launch the download of the names block.
+		final List<Long> idList = new ArrayList<>();
+		idList.addAll(id4Names);
+		GlobalDataManager.getSingleton().submitJob(() -> {
+			// Copy yhe list of assets to local to allow parallel use.
+			final List<Long> localIdList = new ArrayList<>();
+			localIdList.addAll(idList);
+			try {
+				final List<PostCharactersCharacterIdAssetsNames200Ok> itemNames = this.postCharactersCharacterIdAssetsNames(credential.getAccountId(), localIdList, credential.getRefreshToken(), null);
+				for (final PostCharactersCharacterIdAssetsNames200Ok name : itemNames) {
+					final List<NeoComAsset> assetsMatch = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao().queryForEq("assetId",
+							name.getItemId());
+					for (NeoComAsset asset : assetsMatch) {
+						logger.info("-- [DownloadManager.downloadAssetEveName]> Setting UserLabel name {} for asset {}.", name
+								                                                                                                  .getName(), name.getItemId());
+						asset.setUserLabel(name.getName())
+								.store();
+					}
+				}
+			} catch (SQLException sqle) {
+				sqle.printStackTrace();
+			}
+		});
+	}
+
+	// - B U I L D E R
+	public static class Builder {
+		private ESIDataAdapter onConstruction;
+
+		/**
+		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as possible.
+		 */
+		public Builder( final IConfigurationProvider configurationProvider
+				, final IFileSystem fileSystemAdapter ) {
+			Objects.requireNonNull(configurationProvider);
+			Objects.requireNonNull(fileSystemAdapter);
+			//			Objects.requireNonNull(cacheManager);
+			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
+		}
+
+		public ESIDataAdapter build() {
+			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
+					                                   .withEsiDataAdapter(this.onConstruction)
+					                                   .withConfigurationProvider(this.onConstruction.configurationProvider)
+					                                   .withFileSystem(this.onConstruction.fileSystemAdapter)
+					                                   .build();
+			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
+					, this.onConstruction.fileSystemAdapter).build();
+			return this.onConstruction;
+		}
 	}
 }

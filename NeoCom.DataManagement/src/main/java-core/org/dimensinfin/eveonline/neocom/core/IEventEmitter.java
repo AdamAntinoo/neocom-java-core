@@ -7,7 +7,15 @@ import java.beans.PropertyChangeListener;
  * emission of a typed event that can be intercepted by the listeners connected to emitters.
  */
 public interface IEventEmitter {
+	void addEventListener( final IEventReceiver listener );
+
+	@Deprecated
 	void addPropertyChangeListener( final PropertyChangeListener listener );
+
+	void removeEventListener( final IEventReceiver listener );
+
+	@Deprecated
 	void removePropertyChangeListener( final PropertyChangeListener listener );
+
 	boolean sendChangeEvent( final String eventName );
 }

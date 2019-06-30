@@ -7,11 +7,18 @@ import java.util.List;
 import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.*;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.*;
-
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.SkillsApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillsOk;
 
 import retrofit2.Response;
 
@@ -440,117 +447,117 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		return returnOrderList;
 	}
 
-	// --- A S S E T S
-	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier
-			, final String refreshToken
-			, final String server ) {
-		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");
-		final Chrono accessFullTime = new Chrono();
-		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if (null != server) datasource = server;
-			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
-			boolean morePages = true;
-			int pageCounter = 1;
-			while (morePages) {
-				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
-						                                                                              .create(AssetsApi.class)
-						                                                                              .getCharactersCharacterIdAssets(identifier, datasource, null, pageCounter, null).execute();
-				if (!assetsApiResponse.isSuccessful()) {
-					// Or error or we have reached the end of the list.
-					return returnAssetList;
-				} else {
-					// Copy the assets to the result list.
-					returnAssetList.addAll(assetsApiResponse.body());
-					pageCounter++;
-					// Check for out of page running.
-					if (assetsApiResponse.body().size() < 1) morePages = false;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RuntimeException rtex) {
-			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
-				// Recreate the retrofit.
-				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
-				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
-			}
-		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return returnAssetList;
-	}
+//	// --- A S S E T S
+//	public static List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier
+//			, final String refreshToken
+//			, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdAssets]");
+//		final Chrono accessFullTime = new Chrono();
+//		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			if (null != server) datasource = server;
+//			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+//			boolean morePages = true;
+//			int pageCounter = 1;
+//			while (morePages) {
+//				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = neocomRetrofit
+//						                                                                              .create(AssetsApi.class)
+//						                                                                              .getCharactersCharacterIdAssets(identifier, datasource, null, pageCounter, null).execute();
+//				if (!assetsApiResponse.isSuccessful()) {
+//					// Or error or we have reached the end of the list.
+//					return returnAssetList;
+//				} else {
+//					// Copy the assets to the result list.
+//					returnAssetList.addAll(assetsApiResponse.body());
+//					pageCounter++;
+//					// Check for out of page running.
+//					if (assetsApiResponse.body().size() < 1) morePages = false;
+//				}
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (RuntimeException rtex) {
+//			// Check if the problem is a connection reset.
+//			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+//				// Recreate the retrofit.
+//				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+//				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+//			}
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return returnAssetList;
+//	}
 
-	public static List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final int identifier
-			, final String refreshToken
-			, final String server ) {
-		logger.info(">> [ESINetworkManager.getCharactersCharacterIdBlueprints]");
-		final Chrono accessFullTime = new Chrono();
-		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>(1000);
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if (null != server) datasource = server;
-			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
-			boolean morePages = true;
-			int pageCounter = 1;
-			while (morePages) {
-				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = neocomRetrofit
-						                                                                                     .create(CharacterApi.class)
-						                                                                                     .getCharactersCharacterIdBlueprints(identifier, datasource, null, pageCounter, null).execute();
-				if (!characterApiResponse.isSuccessful()) {
-					// Or error or we have reached the end of the list.
-					return returnBlueprintList;
-				} else {
-					// Copy the assets to the result list.
-					returnBlueprintList.addAll(characterApiResponse.body());
-					pageCounter++;
-					// Check for out of page running.
-					if (characterApiResponse.body().size() < 1) morePages = false;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RuntimeException rtex) {
-			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
-				// Recreate the retrofit.
-				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
-				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
-			}
-		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdBlueprints]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return returnBlueprintList;
-	}
+//	public static List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final int identifier
+//			, final String refreshToken
+//			, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdBlueprints]");
+//		final Chrono accessFullTime = new Chrono();
+//		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>(1000);
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			if (null != server) datasource = server;
+//			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
+//			boolean morePages = true;
+//			int pageCounter = 1;
+//			while (morePages) {
+//				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = neocomRetrofit
+//						                                                                                     .create(CharacterApi.class)
+//						                                                                                     .getCharactersCharacterIdBlueprints(identifier, datasource, null, pageCounter, null).execute();
+//				if (!characterApiResponse.isSuccessful()) {
+//					// Or error or we have reached the end of the list.
+//					return returnBlueprintList;
+//				} else {
+//					// Copy the assets to the result list.
+//					returnBlueprintList.addAll(characterApiResponse.body());
+//					pageCounter++;
+//					// Check for out of page running.
+//					if (characterApiResponse.body().size() < 1) morePages = false;
+//				}
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} catch (RuntimeException rtex) {
+//			// Check if the problem is a connection reset.
+//			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+//				// Recreate the retrofit.
+//				logger.info("EX [ESINetworkManager.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+//				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
+//			}
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdBlueprints]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return returnBlueprintList;
+//	}
 
-	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]");
-		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
-					                                                                                    .create(AssetsApi.class)
-					                                                                                    .postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource, null).execute();
-			if (!assetsApiResponse.isSuccessful()) {
-				return null;
-			} else return assetsApiResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
+//	public static List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {
+//		logger.info(">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]");
+//		final Chrono accessFullTime = new Chrono();
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			if (null != server) datasource = server;
+//			// Create the request to be returned so it can be called.
+//			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = neocomRetrofit
+//					                                                                                    .create(AssetsApi.class)
+//					                                                                                    .postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource, null).execute();
+//			if (!assetsApiResponse.isSuccessful()) {
+//				return null;
+//			} else return assetsApiResponse.body();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return null;
+//	}
 
 	// --- F I T T I N G   S E C T I O N
 	public static List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings( final int identifier, final String refreshToken, final String server ) {
@@ -578,40 +585,40 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		return null;
 	}
 
-	// --- W A L L E T   S E C T I O N
-	public static Double getCharactersCharacterIdWallet( final int identifier
-			, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.getCharactersCharacterIdWallet]");
-		// Check if this response already available at cache.
-		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.WALLET, identifier);
-		final Response<?> hit = okResponseCache.get(reference);
-		final Chrono accessFullTime = new Chrono();
-		if (null == hit) {
-			try {
-				// Set the refresh to be used during the request.
-				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-				String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-				if (null != server) datasource = server;
-				// Create the request to be returned so it can be called.
-				final Response<Double> walletApiResponse = neocomRetrofit
-						                                           .create(WalletApi.class)
-						                                           .getCharactersCharacterIdWallet(identifier, datasource, null, null).execute();
-				if (walletApiResponse.isSuccessful()) {
-					// Store results on the cache.
-					okResponseCache.put(reference, walletApiResponse);
-					return walletApiResponse.body();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdWallet]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-			}
-			return 0.0;
-		} else {
-			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
-			return (Double) hit.body();
-		}
-	}
+//	// --- W A L L E T   S E C T I O N
+//	public static Double getCharactersCharacterIdWallet( final int identifier
+//			, final String refreshToken, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdWallet]");
+//		// Check if this response already available at cache.
+//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.WALLET, identifier);
+//		final Response<?> hit = okResponseCache.get(reference);
+//		final Chrono accessFullTime = new Chrono();
+//		if (null == hit) {
+//			try {
+//				// Set the refresh to be used during the request.
+//				NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//				String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//				if (null != server) datasource = server;
+//				// Create the request to be returned so it can be called.
+//				final Response<Double> walletApiResponse = neocomRetrofit
+//						                                           .create(WalletApi.class)
+//						                                           .getCharactersCharacterIdWallet(identifier, datasource, null, null).execute();
+//				if (walletApiResponse.isSuccessful()) {
+//					// Store results on the cache.
+//					okResponseCache.put(reference, walletApiResponse);
+//					return walletApiResponse.body();
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} finally {
+//				logger.info("<< [ESINetworkManager.getCharactersCharacterIdWallet]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//			}
+//			return 0.0;
+//		} else {
+//			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
+//			return (Double) hit.body();
+//		}
+//	}
 
 	// --- S K I L L S   S E C T I O N
 	public static List<GetCharactersCharacterIdSkillqueue200Ok> getCharactersCharacterIdSkillqueue( final int identifier

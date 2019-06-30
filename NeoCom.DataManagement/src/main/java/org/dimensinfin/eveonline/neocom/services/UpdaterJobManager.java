@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.domain.ServiceJob;
-import org.dimensinfin.eveonline.neocom.domain.UpdaterJob;
 import org.dimensinfin.eveonline.neocom.exception.NeoComException;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
@@ -48,7 +47,7 @@ public class UpdaterJobManager {
 		final String identifier = updater.getIdentifier();
 		if (alreadyScheduled(identifier)) return;
 		logger.info("-- [UpdaterJobManager.submit]> Scheduling job {}", updater.getIdentifier());
-		updater.setStatus(UpdaterJob.JobStatus.SCHEDULED);
+		updater.setStatus(NeoComUpdater.JobStatus.SCHEDULED);
 		try {
 			final JobRecord record = new JobRecord(updater);
 			final Future<NeoComUpdater> future = updaterExecutor.submit(record);
@@ -105,8 +104,8 @@ public class UpdaterJobManager {
 	protected static boolean alreadyScheduled( final String jobIdentifier ) {
 		final JobRecord target = runningJobs.get(jobIdentifier);
 		if (null == target) return false;
-		if (target.getJob().getStatus() == UpdaterJob.JobStatus.COMPLETED) return false;
-		if (target.getJob().getStatus() == UpdaterJob.JobStatus.EXCEPTION) return false;
+		if (target.getJob().getStatus() == NeoComUpdater.JobStatus.COMPLETED) return false;
+		if (target.getJob().getStatus() == NeoComUpdater.JobStatus.EXCEPTION) return false;
 		return true;
 	}
 
@@ -169,8 +168,8 @@ public class UpdaterJobManager {
 		}
 
 		public boolean isDone() {
-			if (this.job.getStatus() == UpdaterJob.JobStatus.COMPLETED) return true;
-			if (this.job.getStatus() == UpdaterJob.JobStatus.EXCEPTION) return true;
+			if (this.job.getStatus() == NeoComUpdater.JobStatus.COMPLETED) return true;
+			if (this.job.getStatus() == NeoComUpdater.JobStatus.EXCEPTION) return true;
 			return false;
 		}
 	}

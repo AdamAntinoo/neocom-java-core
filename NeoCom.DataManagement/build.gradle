@@ -153,8 +153,10 @@ dependencies {
     testImplementation files('libs/jeveassets.3.1.2.jar')
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
-    testImplementation 'joda-time:joda-time:2.3'
-    testImplementation 'com.openpojo:openpojo:0.8.12'
+    testImplementation 'joda-time:joda-time:2.9.9'
+    testImplementation 'org.apache.commons:commons-lang3:3.7'
     testImplementation 'org.mockito:mockito-core:2.23.4'
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.2'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
+    testImplementation 'com.openpojo:openpojo:0.8.12'
 }

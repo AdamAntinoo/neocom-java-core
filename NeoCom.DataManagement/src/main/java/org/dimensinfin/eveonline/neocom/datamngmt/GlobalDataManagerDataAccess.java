@@ -155,7 +155,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 				newchar.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
 			// Wallet status
 			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
-			final Double walletAmount = ESINetworkManager.getCharactersCharacterIdWallet(credential.getAccountId()
+			final Double walletAmount = this.esiDataAdapter.getCharactersCharacterIdWallet(credential.getAccountId()
 					, credential.getRefreshToken()
 					, credential.getDataSource());
 			newchar.setAccountBalance(walletAmount);

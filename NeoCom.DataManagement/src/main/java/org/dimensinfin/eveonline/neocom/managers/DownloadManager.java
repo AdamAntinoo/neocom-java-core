@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.Job;
 import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
@@ -40,7 +41,7 @@ public class DownloadManager {
 	private static Logger logger = LoggerFactory.getLogger(DownloadManager.class);
 
 	private transient Credential credential;
-	private ESIGlobalAdapter esiAdapter;
+	private ESIDataAdapter esiAdapter;
 
 	// - I N T E R N A L   W O R K   F I E L D S
 	private final List<NeoComAsset> unlocatedAssets = new ArrayList<>();
@@ -559,7 +560,7 @@ public class DownloadManager {
 			this.onConstruction = new DownloadManager(  credential);
 		}
 
-		public Builder withESIAdapter( final ESIGlobalAdapter esiAdapter ) {
+		public Builder withESIAdapter( final ESIDataAdapter esiAdapter ) {
 			this.onConstruction.esiAdapter = esiAdapter;
 			return this;
 		}
