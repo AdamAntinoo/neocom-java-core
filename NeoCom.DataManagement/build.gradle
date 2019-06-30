@@ -152,6 +152,7 @@ dependencies {
     testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
     testImplementation files('libs/jeveassets.3.1.2.jar')
 
+    testImplementation 'org.slf4j:slf4j-simple:1.7.25'
     testImplementation 'junit:junit:4.12'
     testImplementation 'joda-time:joda-time:2.9.9'
     testImplementation 'org.apache.commons:commons-lang3:3.7'

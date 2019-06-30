@@ -72,7 +72,7 @@ public class UpdaterJobManager {
 				logger.info("-- [MARKETORDERS]> Launching job {}", newJob.getReference());
 				logger.info("-- [UpdaterJobManager.submit]> Launching job {}", newJob.getReference());
 				final Future<?> future = newJob.submit();
-//				runningJobs.put(identifier, future);
+				//				runningJobs.put(identifier, future);
 			} else {
 				// Check for job completed.
 				if (hit.isDone()) {
@@ -109,33 +109,6 @@ public class UpdaterJobManager {
 		return true;
 	}
 
-	//	public JobReport getJobreport() {
-	//		return new JobReport(runningJobs);
-	//	}
-
-	//	protected void updateJobCounterField() {
-	//
-	//	}
-
-//	@Override
-//	public String toString() {
-//		return new StringBuffer("UpdaterJobManager [ ")
-//				       .append("jobs: ").append(updateJobCounter).append(" ")
-//				       .append("]")
-//				       .toString();
-//	}
-
-	// - J O B R E P O R T
-	//	public static class JobReport {
-	////		private int jobCount;
-	//		private int jobsPending;
-	//		public JobReport( final Hashtable<String, JobRecord> runningJobs ) {
-	//
-	//		}
-	//
-	//		public static
-	//	}
-
 	// - J O B R E C O R D
 	public static class JobRecord implements Callable<NeoComUpdater> {
 		private Future<NeoComUpdater> future;
@@ -145,10 +118,10 @@ public class UpdaterJobManager {
 			this.job = job;
 		}
 
-//		public JobRecord( final Future<NeoComUpdater> future, final NeoComUpdater job ) {
-//			this.future = future;
-//			this.job = job;
-//		}
+		//		public JobRecord( final Future<NeoComUpdater> future, final NeoComUpdater job ) {
+		//			this.future = future;
+		//			this.job = job;
+		//		}
 
 		public Future<NeoComUpdater> getFuture() {
 			return future;
@@ -164,7 +137,14 @@ public class UpdaterJobManager {
 
 		@Override
 		public NeoComUpdater call() throws Exception {
-			return this.job.run();
+			try {
+				this.job.onPrepare();
+				this.job.onRun();
+				this.job.onComplete();
+			} catch (RuntimeException rte) {
+				this.job.onException(rte);
+			}
+			return this.job;
 		}
 
 		public boolean isDone() {
