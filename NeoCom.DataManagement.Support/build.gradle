@@ -1,0 +1,39 @@
+// - P L U G I N S
+apply plugin: 'java-library'
+//apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
+apply plugin: 'project-report'
+
+// - P R O J E C T   D E F I N I T I O N
+group = 'org.dimensinfin'
+version = '0.14.6'
+archivesBaseName = 'NeoCom.DataManagement.Support'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url 'https://jitpack.io' }
+}
+
+// - P R O D U C T   V E R S I O N S
+ext {
+    jacksonVersion = '2.9.4'
+    ormliteVersion = '4.48'
+    retrofitVersion = '2.3.0'
+    cacheVersion = '3.1.1'
+}
+
+// - N E O C O M   L I B R A R I E S
+// - C O R E
+dependencies {
+    compileOnly 'org.slf4j:slf4j-api:1.7.25'
+    compileOnly 'joda-time:joda-time:2.3'
+}
+dependencies {
+    compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
+}

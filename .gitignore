@@ -1,23 +1,17 @@
+# - Android Studio configuration
 *.iml
 *.ppm
 *.db
 
 .gradle
-#/gradle
-#/build
+.idea/caches
+.idea/libraries
+.idea/workspace.xml
 
-# - COMPILATION
+# - Compilation
 ESI.SwaggerApi/out/
 NeoCom.Model/out/
 NeoCom.DataManagement/out/
+NeoCom.DataManagement.Support/out/
 
-/.idea/libraries
-/.idea/workspace.xml
-#.DS_Store
-#/captures
-#.externalNativeBuild
-#/local.properties
-#NeoCom.Model/src/main/resources/properties/esiauthorization.properties
-#NeoCom.DataManagement/src/main/resources/cache/
-#NeoCom.DataManagement/libs/
-#NeoCom.Model/libs/
+

@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" group="neocom-datamanagement/ESI.SwaggerApi" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom-neocom-datamanagement.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom-neocom-datamanagement.iml" group="neocom-datamanagement" />
-      <module fileurl="file://$PROJECT_DIR$/NeoCom.DataManagement/NeoCom.DataManagement.iml" filepath="$PROJECT_DIR$/NeoCom.DataManagement/NeoCom.DataManagement.iml" group="neocom-datamanagement/NeoCom.DataManagement" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.dimensinfin.neocom.datamanagement.acceptancetest.iml" filepath="$PROJECT_DIR$/.idea/modules/org.dimensinfin.neocom.datamanagement.acceptancetest.iml" group="neocom-datamanagement/org.dimensinfin.neocom.datamanagement.acceptancetest" />
+      <module fileurl="file://$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" filepath="$PROJECT_DIR$/ESI.SwaggerApi/ESI.SwaggerApi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NeoCom.DataManagement/NeoCom.DataManagement.iml" filepath="$PROJECT_DIR$/NeoCom.DataManagement/NeoCom.DataManagement.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement.AcceptanceTests/NeoCom.DataManagement.AcceptanceTests.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement.AcceptanceTests/NeoCom.DataManagement.AcceptanceTests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement.Support/NeoCom.DataManagement.Support.iml" filepath="$PROJECT_DIR$/.idea/modules/NeoCom.DataManagement.Support/NeoCom.DataManagement.Support.iml" />
+      <module fileurl="file://$PROJECT_DIR$/neocom-datamanagement.iml" filepath="$PROJECT_DIR$/neocom-datamanagement.iml" />
     </modules>
   </component>
 </project>
