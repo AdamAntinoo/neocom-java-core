@@ -1,8 +1,9 @@
 package org.dimensinfin.eveonline.neocom.services;
 
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdaterJobManager {
 	public static final ExecutorService updaterExecutor = Executors.newSingleThreadExecutor();
-	private static final Hashtable<String, JobRecord> runningJobs = new Hashtable();
+	private static final Map<String, JobRecord> runningJobs = new ConcurrentHashMap<>();
 	//	public static int updateJobCounter = 0;
 	private static Logger logger = LoggerFactory.getLogger(UpdaterJobManager.class);
 
@@ -57,7 +58,6 @@ public class UpdaterJobManager {
 			logger.info("RT [UpdaterJobManager.submit]> Runtime exception: {}", neoe.getMessage());
 			neoe.printStackTrace();
 		}
-		//		updateJobCounterField(); // Count the running or pending jobs to update the ActionBar counter.
 	}
 
 	@Deprecated
@@ -117,11 +117,6 @@ public class UpdaterJobManager {
 		public JobRecord( final NeoComUpdater job ) {
 			this.job = job;
 		}
-
-		//		public JobRecord( final Future<NeoComUpdater> future, final NeoComUpdater job ) {
-		//			this.future = future;
-		//			this.job = job;
-		//		}
 
 		public Future<NeoComUpdater> getFuture() {
 			return future;

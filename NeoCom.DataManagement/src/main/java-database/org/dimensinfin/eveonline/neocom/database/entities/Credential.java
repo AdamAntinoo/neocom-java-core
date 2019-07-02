@@ -57,7 +57,7 @@ public class Credential extends UpdatableEntity {
 	protected int assetsCount = 0;
 	@DatabaseField
 	private String raceName;
-	private String timestampReference;
+//	private String timestampReference;
 
 
 	// - C O N S T R U C T O R S

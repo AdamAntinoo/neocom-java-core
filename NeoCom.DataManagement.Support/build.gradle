@@ -36,4 +36,5 @@ dependencies {
 }
 dependencies {
     compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
+    implementation project( ':NeoCom.DataManagement')
 }

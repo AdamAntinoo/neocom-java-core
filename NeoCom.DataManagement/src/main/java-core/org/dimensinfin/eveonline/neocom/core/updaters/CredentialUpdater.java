@@ -39,7 +39,6 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 
 	@Override
 	public boolean needsRefresh() {
-		if (null == this.getModel().getLastUpdateTime()) return true;
 		if (this.getModel().getLastUpdateTime().plus(CREDENTIAL_CACHE_TIME).isBefore(DateTime.now()))
 			return true;
 		return false;
