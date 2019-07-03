@@ -5,11 +5,10 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.neocom.support.adapters.FileSystemSBImplementation;
-import org.dimensinfin.neocom.support.adapters.GlobalSBConfigurationProvider;
+import org.dimensinfin.neocom.support.adapters.SBConfigurationProvider;
 import org.dimensinfin.neocom.support.adapters.NeoComSupportDBAdapter;
 
 import org.slf4j.Logger;
@@ -33,8 +32,7 @@ public class NeoComComponentFactory {
 	private CredentialRepository credentialRepository;
 
 	public static NeoComComponentFactory getSingleton() {
-		if (null == singleton)
-			throw new NeoComRuntimeException("NeoCom global singleton is not instantiated. Please complete initialisation.");
+		if (null == singleton) singleton = new NeoComComponentFactory();
 		return singleton;
 	}
 
@@ -55,16 +53,23 @@ public class NeoComComponentFactory {
 
 	public NeoComSupportDBAdapter getNeoComDBAdapter() {
 		if (null == this.neocomDBAdapter) {
-//			try {
-				final String databaseType = this.getConfigurationProvider().getResourceString("P.database.neocom.databasetype");
-				if (databaseType.equalsIgnoreCase("postgres")) {
-					// Postgres means Heroku and then configuration for connection from environment
-				final String 	localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
+			//			try {
+			final String databaseType = this.getConfigurationProvider().getResourceString("P.database.neocom.databasetype","sqlite");
+			if (databaseType.equalsIgnoreCase("postgres")) {
+				// Postgres means Heroku and then configuration for connection from environment
+				final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
 				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
-						                 .withDatabaseConnection(localConnectionDescriptor)
-						                 .build();
-				}
-//			} catch (SQLException sqle) {
+						                  .withDatabaseConnection(localConnectionDescriptor)
+						                  .build();
+			}
+			if (databaseType.equalsIgnoreCase("sqlite")) {
+				// Postgres means Heroku and then configuration for connection from environment
+				final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
+				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
+						                  .withDatabaseConnection(localConnectionDescriptor)
+						                  .build();
+			}
+			//			} catch (SQLException sqle) {
 			//				neocomDBAdapter = null;
 			//				Objects.requireNonNull(neocomDBAdapter);
 			//			}
@@ -81,60 +86,60 @@ public class NeoComComponentFactory {
 	public IFileSystem getFileSystemAdapter() {
 		if (null == this.fileSystemAdapter) {
 			fileSystemAdapter = new FileSystemSBImplementation.Builder()
-										.withRootDirectory("Support")
+					                    .withRootDirectory("Support")
 					                    .build();
 		}
 		return this.fileSystemAdapter;
 	}
 
-//	public Application getApplication() {
-//		if (null == application)
-//			throw new NeoComRuntimeException("NeoCom global singleton is not instantiated. Please complete initialisation.");
-//		return application;
-//	}
+	//	public Application getApplication() {
+	//		if (null == application)
+	//			throw new NeoComRuntimeException("NeoCom global singleton is not instantiated. Please complete initialisation.");
+	//		return application;
+	//	}
 
 	public IConfigurationProvider getConfigurationProvider() {
 		if (null == this.configurationProvider) {
-			this.configurationProvider = new GlobalSBConfigurationProvider("properties");
+			this.configurationProvider = new SBConfigurationProvider.Builder("properties").build();
 		}
 		return this.configurationProvider;
 	}
 
-//	@Deprecated
-//	public IGlobalPreferencesManager getPreferencesProvider() {
-//		if (null == this.preferencesProvider) {
-//			preferencesProvider = new GlobalAndroidPreferencesProvider.Builder()
-//					                      .withApplication(this.getApplication())
-//					                      .build();
-//		}
-//		return this.preferencesProvider;
-//	}
-//
-//
-//	@Deprecated
-//	public ESIGlobalAdapter getEsiAdapter() {
-//		if (null == this.esiAdapter) {
-//			esiAdapter = new ESIGlobalAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
-//					             .build();
-//		}
-//		return this.esiAdapter;
-//	}
+	//	@Deprecated
+	//	public IGlobalPreferencesManager getPreferencesProvider() {
+	//		if (null == this.preferencesProvider) {
+	//			preferencesProvider = new GlobalAndroidPreferencesProvider.Builder()
+	//					                      .withApplication(this.getApplication())
+	//					                      .build();
+	//		}
+	//		return this.preferencesProvider;
+	//	}
+	//
+	//
+	//	@Deprecated
+	//	public ESIGlobalAdapter getEsiAdapter() {
+	//		if (null == this.esiAdapter) {
+	//			esiAdapter = new ESIGlobalAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
+	//					             .build();
+	//		}
+	//		return this.esiAdapter;
+	//	}
 
-//	public ESIDataAdapter getEsiDataAdapter() {
-//		if (null == this.esiDataAdapter)
-//			esiDataAdapter = new ESIDataAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
-//					                 .build();
-//		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
-//		return this.esiDataAdapter;
-//	}
-//
-//	public DataDownloaderService getDownloaderService() {
-//		if (null == this.downloaderService) {
-//			downloaderService = new DataDownloaderService.Builder(this.getEsiDataAdapter())
-//					                    .build();
-//		}
-//		return this.downloaderService;
-//	}
+	//	public ESIDataAdapter getEsiDataAdapter() {
+	//		if (null == this.esiDataAdapter)
+	//			esiDataAdapter = new ESIDataAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
+	//					                 .build();
+	//		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
+	//		return this.esiDataAdapter;
+	//	}
+	//
+	//	public DataDownloaderService getDownloaderService() {
+	//		if (null == this.downloaderService) {
+	//			downloaderService = new DataDownloaderService.Builder(this.getEsiDataAdapter())
+	//					                    .build();
+	//		}
+	//		return this.downloaderService;
+	//	}
 
 
 	//	public MiningRepository getMiningRepository() {
@@ -152,21 +157,21 @@ public class NeoComComponentFactory {
 	//	}
 
 
-//	public ISDEDatabaseAdapter getSDEDatabaseAdapter() {
-//		if (null == this.sdeDatabaseAdapter) {
-//			this.sdeDatabaseAdapter = new SDEAndroidDBHelper.Builder()
-//					                          .withFileSystemAdapter(this.getFileSystemAdapter())
-//					                          .build();
-//		}
-//		return this.sdeDatabaseAdapter;
-//	}
-//
-//	public PlanetaryRepository getPlanetaryRepository() {
-//		if (null == this.planetaryRepository) {
-//			this.planetaryRepository = new PlanetaryRepository.Builder()
-//					                           .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
-//					                           .build();
-//		}
-//		return this.planetaryRepository;
-//	}
+	//	public ISDEDatabaseAdapter getSDEDatabaseAdapter() {
+	//		if (null == this.sdeDatabaseAdapter) {
+	//			this.sdeDatabaseAdapter = new SDEAndroidDBHelper.Builder()
+	//					                          .withFileSystemAdapter(this.getFileSystemAdapter())
+	//					                          .build();
+	//		}
+	//		return this.sdeDatabaseAdapter;
+	//	}
+	//
+	//	public PlanetaryRepository getPlanetaryRepository() {
+	//		if (null == this.planetaryRepository) {
+	//			this.planetaryRepository = new PlanetaryRepository.Builder()
+	//					                           .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
+	//					                           .build();
+	//		}
+	//		return this.planetaryRepository;
+	//	}
 }

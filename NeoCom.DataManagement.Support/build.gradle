@@ -31,10 +31,17 @@ ext {
 // - N E O C O M   L I B R A R I E S
 // - C O R E
 dependencies {
-    compileOnly 'org.slf4j:slf4j-api:1.7.25'
-    compileOnly 'joda-time:joda-time:2.3'
+    implementation 'org.slf4j:slf4j-simple:1.7.25'
+    implementation 'joda-time:joda-time:2.9.9'
+    implementation 'com.annimon:stream:1.1.9'
+    // D A T A B A S E
+    implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
+    implementation 'org.xerial:sqlite-jdbc:3.25.2'
+//    implementation 'mysql:mysql-connector-java:5.1.45'
+//    implementation 'javax.persistence:javax.persistence-api:2.2'
+//    implementation "org.postgresql:postgresql:42.2.2"
 }
 dependencies {
-    compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
+    implementation 'org.dimensinfin:CoreBase.core:3.0.1'
     implementation project( ':NeoCom.DataManagement')
 }

@@ -67,7 +67,7 @@ public abstract class GlobalConfigurationProvider implements IConfigurationProvi
 	 */
 	protected GlobalConfigurationProvider initialize() {
 		try {
-			readAllProperties();
+			this.readAllProperties();
 		} catch (IOException ioe) {
 			logger.error("E [GlobalConfigurationProvider.initialize]> Unprocessed exception: {}", ioe.getMessage());
 			ioe.printStackTrace();
