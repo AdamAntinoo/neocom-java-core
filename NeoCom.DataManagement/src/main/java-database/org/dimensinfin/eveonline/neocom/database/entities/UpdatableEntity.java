@@ -12,12 +12,19 @@ public abstract class UpdatableEntity extends NeoComNode {
 	@DatabaseField
 	private DateTime lastUpdateTime;
 
-//	public DateTime getCreationTime() {
-//		return this.creationTime;
-//	}
+	protected UpdatableEntity() {
+		if (null == this.creationTime) this.creationTime = DateTime.now();
+	}
 
 	public DateTime getLastUpdateTime() {
 		if (null == this.lastUpdateTime) this.lastUpdateTime = new DateTime(0);
 		return this.lastUpdateTime;
+	}
+
+	/**
+	 * Update the last time stamp to the current time. This should be called before any persistence update.
+	 */
+	public void timeStamp() {
+		this.lastUpdateTime = DateTime.now();
 	}
 }

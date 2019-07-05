@@ -1,0 +1,6 @@
+# - Android Studio
+*.iml
+
+build/
+out/
+target/

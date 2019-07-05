@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.j256.ormlite.dao.Dao;
 
+//@Component
 public class CredentialRepository {
 	private static Logger logger = LoggerFactory.getLogger(CredentialRepository.class);
 
@@ -38,9 +39,12 @@ public class CredentialRepository {
 	}
 
 	public void persist( final Credential record ) throws SQLException {
-		this.credentialDao.createOrUpdate(record);
+		if (null != record) this.credentialDao.createOrUpdate(record);
 	}
 
+	public Credential findCredentialById( final String credentialId ) throws SQLException {
+		return this.credentialDao.queryForId(credentialId);
+	}
 
 	// - B U I L D E R
 	public static class Builder {

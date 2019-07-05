@@ -16,18 +16,61 @@ repositories {
 addCucumberSuite 'cucumberTest'
 
 dependencies {
-     cucumberTestCompile 'info.cukes:cucumber-java:1.2.5'
+    cucumberTestCompile 'info.cukes:cucumber-java:1.2.5'
 
 }
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    // https://mvnrepository.com/artifact/io.cucumber/cucumber-junit
-    testCompile group: 'io.cucumber', name: 'cucumber-junit', version: '4.4.0'
-// https://mvnrepository.com/artifact/io.cucumber/cucumber-java
-//    compile group: 'io.cucumber', name: 'cucumber-java', version: '4.4.0'
-// https://mvnrepository.com/artifact/io.cucumber/cucumber-java8
-    implementation group: 'io.cucumber', name: 'cucumber-java', version: '4.4.0'
-// https://mvnrepository.com/artifact/io.cucumber/gherkin
-//    compile group: 'io.cucumber', name: 'gherkin', version: '6.0.17'
 
+// - P R O D U C T   V E R S I O N S
+ext {
+    jacksonVersion = '2.9.4'
+    ormliteVersion = '4.48'
+    retrofitVersion = '2.3.0'
+    cacheVersion = '3.1.1'
+    SpringBootRelease = '2.1.6.RELEASE'
+    cucumberVersion = '4.5.2'
+}
+dependencies {
+//    implementation "org.springframework.boot:spring-boot-autoconfigure:$SpringBootRelease"
+    implementation group: 'io.cucumber', name: 'cucumber-java', version: '4.4.0'
+    implementation project(':NeoCom.DataManagement')
+}
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.springframework.boot:spring-boot-starter-test:$SpringBootRelease"
+    testImplementation "org.springframework:org.springframework.core:3.2.2.RELEASE"
+
+    testImplementation('org.dimensinfin:CoreBase.core:3.0.1')
+    testImplementation project(':NeoCom.DataManagement')
+}
+dependencies {
+    testImplementation "io.cucumber:cucumber-core:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-java:$cucumberVersion"
+    testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
+// https://mvnrepository.com/artifact/io.cucumber/cucumber-picocontainer
+    testCompile group: 'io.cucumber', name: 'cucumber-picocontainer', version: '4.5.2'
+
+//    testImplementation 'info.cukes:cucumber-java:1.2.5'
+//    testImplementation 'info.cukes:cucumber-core:1.2.5'
+//    testImplementation 'info.cukes:cucumber-junit:1.2.5'
+}
+// - N E O C O M
+dependencies {
+    testImplementation 'org.apache.commons:commons-lang3:3.7'
+    testImplementation 'com.annimon:stream:1.1.9' // Android compatible streams
+
+    testImplementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion" // JSON converter
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
+    testImplementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion" // HTTP encapsulation and swagger support
+    testImplementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    testImplementation 'org.htmlparser:htmlparser:2.1'
+    testImplementation 'com.github.scribejava:scribejava-core:5.4.0'
+// https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit-converters
+    compile group: 'com.squareup.retrofit2', name: 'retrofit-converters', version: '2.6.0', ext: 'pom'
+    // D A T A B A S E
+    testImplementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
+    testImplementation 'org.xerial:sqlite-jdbc:3.25.2'
+    testImplementation 'javax.persistence:javax.persistence-api:2.2'
 }

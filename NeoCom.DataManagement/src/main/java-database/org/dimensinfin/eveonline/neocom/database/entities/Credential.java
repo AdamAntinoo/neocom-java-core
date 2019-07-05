@@ -1,5 +1,8 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -29,13 +32,6 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "Credentials")
 public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;
-
-	public static String createUniqueIdentifier( final String server, final int identifier ) {
-		return server.toLowerCase() + "/" + identifier;
-	}
-
-	@DatabaseField(id = true, index = true)
-	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
 	@DatabaseField
 	public String accessToken = "";
 	@DatabaseField
@@ -44,21 +40,20 @@ public class Credential extends UpdatableEntity {
 	public String dataSource = "Tranquility".toLowerCase();
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	public String scope = "publicData";
-	@DatabaseField(dataType = DataType.LONG_STRING)
-	private String refreshToken = "-TOKEN-";
-
+	@DatabaseField(id = true, index = true)
+	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
 	@DatabaseField
 	protected int accountId = -2;
-	@DatabaseField
-	private String accountName = "-NAME-";
 	@DatabaseField
 	protected Double walletBalance = 0.0;
 	@DatabaseField
 	protected int assetsCount = 0;
+	@DatabaseField(dataType = DataType.LONG_STRING)
+	private String refreshToken = "-TOKEN-";
+	@DatabaseField
+	private String accountName;
 	@DatabaseField
 	private String raceName;
-//	private String timestampReference;
-
 
 	// - C O N S T R U C T O R S
 	public Credential() {
@@ -66,9 +61,13 @@ public class Credential extends UpdatableEntity {
 	}
 
 	private Credential( final int newAccountIdentifier ) {
-		this();
+		super();
 		this.accountId = newAccountIdentifier;
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
+	}
+
+	public static String createUniqueIdentifier( final String server, final int identifier ) {
+		return server.toLowerCase() + "/" + identifier;
 	}
 
 	// - G E T T E R S   &   S E T T E R S
@@ -82,6 +81,10 @@ public class Credential extends UpdatableEntity {
 
 	public String getName() {
 		return accountName;
+	}
+
+	public String getAccessToken() {
+		return this.accessToken;
 	}
 
 	public String getRefreshToken() {
@@ -99,6 +102,10 @@ public class Credential extends UpdatableEntity {
 	public Credential setWalletBalance( final Double walletBalance ) {
 		this.walletBalance = walletBalance;
 		return this;
+	}
+
+	public String getScope() {
+		return scope;
 	}
 
 	public int getAssetsCount() {
@@ -119,44 +126,35 @@ public class Credential extends UpdatableEntity {
 		return this;
 	}
 
-	public Credential setAccountId( final int accountId ) {
-		this.accountId = accountId;
-		return this;
-	}
-
-	public Credential setAccessToken( final String accessToken ) {
-		this.accessToken = accessToken;
-		return this;
-	}
-
-	public Credential setTokenType( final String tokenType ) {
-		this.tokenType = tokenType;
-		return this;
-	}
-
-	public Credential setDataSource( final String dataSource ) {
-		this.dataSource = dataSource;
-		return this;
-	}
-
-	public Credential setRefreshToken( final String refreshToken ) {
-		this.refreshToken = refreshToken;
-		return this;
-	}
-
-	public Credential setScope( final String scope ) {
-		this.scope = scope;
-		return this;
-	}
-
-//	public String getTimestampReference() {
-//		return this.timestampReference;
-//	}
-//
-//	public DateTime getTimestamp() {
-//		if ( null == this.timestamp)this.timestamp = DateTime.now();
-//		return this.timestamp;
-//	}
+	//	public Credential setAccountId( final int accountId ) {
+	//		this.accountId = accountId;
+	//		return this;
+	//	}
+	//
+	//	public Credential setAccessToken( final String accessToken ) {
+	//		this.accessToken = accessToken;
+	//		return this;
+	//	}
+	//
+	//	public Credential setTokenType( final String tokenType ) {
+	//		this.tokenType = tokenType;
+	//		return this;
+	//	}
+	//
+	//	public Credential setDataSource( final String dataSource ) {
+	//		this.dataSource = dataSource;
+	//		return this;
+	//	}
+	//
+	//	public Credential setRefreshToken( final String refreshToken ) {
+	//		this.refreshToken = refreshToken;
+	//		return this;
+	//	}
+	//
+	//	public Credential setScope( final String scope ) {
+	//		this.scope = scope;
+	//		return this;
+	//	}
 
 	// - C O R E
 	@Override
@@ -168,6 +166,43 @@ public class Credential extends UpdatableEntity {
 		return buffer.toString();
 	}
 
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final Credential that = (Credential) o;
+		return new EqualsBuilder()
+				       .append(accountId, that.accountId)
+				       .append(assetsCount, that.assetsCount)
+				       .append(accessToken, that.accessToken)
+				       .append(tokenType, that.tokenType)
+				       .append(dataSource, that.dataSource)
+				       .append(scope, that.scope)
+				       .append(uniqueCredential, that.uniqueCredential)
+				       .append(walletBalance, that.walletBalance)
+				       .append(refreshToken, that.refreshToken)
+				       .append(accountName, that.accountName)
+				       .append(raceName, that.raceName)
+				       .isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				       .append(accessToken)
+				       .append(tokenType)
+				       .append(dataSource)
+				       .append(scope)
+				       .append(uniqueCredential)
+				       .append(accountId)
+				       .append(walletBalance)
+				       .append(assetsCount)
+				       .append(refreshToken)
+				       .append(accountName)
+				       .append(raceName)
+				       .toHashCode();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private Credential onConstruction;
@@ -176,8 +211,48 @@ public class Credential extends UpdatableEntity {
 			this.onConstruction = new Credential(account);
 		}
 
-		public Builder withCharacterName( final String characterName ) {
-			this.onConstruction.accountName = characterName;
+		public Builder withAccountId( final Integer accountId ) {
+			if (null != accountId) this.onConstruction.accountId = accountId;
+			return this;
+		}
+
+		public Builder withAccountName( final String accountName ) {
+			if (null != accountName) this.onConstruction.accountName = accountName;
+			return this;
+		}
+
+		public Builder withDataSource( final String dataSource ) {
+			if (null != dataSource) this.onConstruction.dataSource = dataSource;
+			return this;
+		}
+
+		public Builder withAccessToken( final String accessToken ) {
+			if (null != accessToken) this.onConstruction.accessToken = accessToken;
+			return this;
+		}
+
+		public Builder withRefreshToken( final String refreshToken ) {
+			if (null != refreshToken) this.onConstruction.refreshToken = refreshToken;
+			return this;
+		}
+
+		public Builder withScope( final String scope ) {
+			if (null != scope) this.onConstruction.scope = scope;
+			return this;
+		}
+
+		public Builder withWalletBalance( final Double walletBalance ) {
+			if (null != walletBalance) this.onConstruction.walletBalance = walletBalance;
+			return this;
+		}
+
+		public Builder withAssetsCount( final Integer assetsCount ) {
+			if (null != assetsCount) this.onConstruction.assetsCount = assetsCount;
+			return this;
+		}
+
+		public Builder withRaceName( final String raceName ) {
+			if (null != raceName) this.onConstruction.raceName = raceName;
 			return this;
 		}
 
