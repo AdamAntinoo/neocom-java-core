@@ -517,14 +517,8 @@ public class ESIDataAdapter {
 	}
 
 	// - C H A R A C T E R
-	public Double getCharactersCharacterIdWallet( final int identifier
-			, final String refreshToken, final String server ) {
+	public Double getCharactersCharacterIdWallet( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESIDataAdapter.getCharactersCharacterIdWallet]");
-		// Check if this response already available at cache.
-		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.WALLET, identifier);
-		//		final Response<?> hit = okResponseCache.get(reference);
-		//		final Chrono accessFullTime = new Chrono();
-		//		if (null == hit) {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
@@ -535,13 +529,9 @@ public class ESIDataAdapter {
 					                                           .create(WalletApi.class)
 					                                           .getCharactersCharacterIdWallet(identifier
 							                                           , datasource.toLowerCase(), null, null).execute();
-			if (walletApiResponse.isSuccessful()) {
-				// Store results on the cache.
-				//					okResponseCache.put(reference, walletApiResponse);
-				return walletApiResponse.body();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+			if (walletApiResponse.isSuccessful()) return walletApiResponse.body();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		} catch (RuntimeException rtex) {
 			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
 				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
@@ -549,10 +539,6 @@ public class ESIDataAdapter {
 			}
 		}
 		return -1.0;
-		//		} else {
-		//			// TODO Needs checking and verification. Also the code need to check for expirations. And be moved to the Global.
-		//			return (Double) hit.body();
-		//		}
 	}
 
 	@TimeElapsed

@@ -15,10 +15,10 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.eveonline.neocom.industry.Resource;
 
 /**
  * @author Adam Antinoo
@@ -39,7 +39,7 @@ public class ManufactureResourcesRequest extends ANeoComEntity {
 		super();
 		this.jobBlueprintId = bpid;
 		jobBlueprint = accessGlobal().searchItem4Id(bpid);
-		jsonClass="ManufactureResourcesRequest";
+//		jsonClass="ManufactureResourcesRequest";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

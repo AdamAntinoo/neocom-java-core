@@ -9,7 +9,9 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
@@ -18,9 +20,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ExtendedLocation extends EveLocation implements IExpandable, IDownloadable {
@@ -41,7 +41,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	public ExtendedLocation () {
 		super();
 		this.setRenderWhenEmpty(false);
-		jsonClass = "ExtendedLocation";
+//		jsonClass = "ExtendedLocation";
 	}
 
 	@Deprecated
@@ -65,7 +65,7 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		stationId = delegate.getStationId();
 		constellationId = Long.valueOf(delegate.getConstellationId()).intValue();
 		regionId = Long.valueOf(delegate.getRegionId()).intValue();
-		jsonClass = "ExtendedLocation";
+//		jsonClass = "ExtendedLocation";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

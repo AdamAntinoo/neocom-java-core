@@ -8,9 +8,7 @@ import java.util.Vector;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.database.repositories.PlanetaryRepository;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
@@ -64,7 +62,7 @@ public class ProcessingAction extends NeoComNode {
 		// Do some completion checks. If the Item ot the output are null then there is some error during the initialization.
 		if ((null == targetItem) || (null == output))
 			throw new RuntimeException("Some key element not found on database while initializing the Action.");
-		jsonClass = "ProcessingAction";
+//		jsonClass = "ProcessingAction";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

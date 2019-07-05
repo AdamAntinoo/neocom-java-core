@@ -10,7 +10,6 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.core.interfaces.IDownloadable;
-import org.dimensinfin.core.interfaces.IExpandable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -29,7 +28,7 @@ public abstract class NeoComDownloadableNode extends NeoComExpandableNode implem
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public NeoComDownloadableNode () {
 		super();
-		jsonClass = "NeoComDownloadableNode";
+//		jsonClass = "NeoComDownloadableNode";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................

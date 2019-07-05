@@ -22,12 +22,9 @@ import com.annimon.stream.Stream;
  * @author Adam Antinoo
  */
 public class SBConfigurationProvider extends GlobalConfigurationProvider {
-	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger logger = LoggerFactory.getLogger(SBConfigurationProvider.class);
 
-	// - F I E L D - S E C T I O N ............................................................................
-
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	private SBConfigurationProvider( final String propertiesFolder ) {
 		super(propertiesFolder);
 	}
@@ -66,10 +63,8 @@ public class SBConfigurationProvider extends GlobalConfigurationProvider {
 		try (InputStream in = this.getResourceAsStream(path);
 		     BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
 			String resource;
-
-			while ((resource = br.readLine()) != null) {
+			while ((resource = br.readLine()) != null)
 				filenames.add(resource);
-			}
 		}
 		return filenames;
 	}

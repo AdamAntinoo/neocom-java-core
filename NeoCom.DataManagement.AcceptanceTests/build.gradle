@@ -29,29 +29,31 @@ ext {
     SpringBootRelease = '2.1.6.RELEASE'
     cucumberVersion = '4.5.2'
 }
+// - C U C U M B E R
 dependencies {
-//    implementation "org.springframework.boot:spring-boot-autoconfigure:$SpringBootRelease"
-    implementation group: 'io.cucumber', name: 'cucumber-java', version: '4.4.0'
-    implementation project(':NeoCom.DataManagement')
+    implementation "io.cucumber:cucumber-core:$cucumberVersion"
+    implementation "io.cucumber:cucumber-java:$cucumberVersion"
+    implementation "io.cucumber:cucumber-junit:$cucumberVersion"
+    implementation "io.cucumber:cucumber-picocontainer:$cucumberVersion"
 }
+
+// - T E S T I N G
 dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation "org.springframework.boot:spring-boot-starter-test:$SpringBootRelease"
     testImplementation "org.springframework:org.springframework.core:3.2.2.RELEASE"
 
+    testImplementation 'org.awaitility:awaitility:3.1.6'
+
     testImplementation('org.dimensinfin:CoreBase.core:3.0.1')
     testImplementation project(':NeoCom.DataManagement')
 }
+// - C U C U M B E R
 dependencies {
     testImplementation "io.cucumber:cucumber-core:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-java:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
-// https://mvnrepository.com/artifact/io.cucumber/cucumber-picocontainer
-    testCompile group: 'io.cucumber', name: 'cucumber-picocontainer', version: '4.5.2'
-
-//    testImplementation 'info.cukes:cucumber-java:1.2.5'
-//    testImplementation 'info.cukes:cucumber-core:1.2.5'
-//    testImplementation 'info.cukes:cucumber-junit:1.2.5'
+    testImplementation "io.cucumber:cucumber-picocontainer:$cucumberVersion"
 }
 // - N E O C O M
 dependencies {
@@ -63,12 +65,11 @@ dependencies {
     testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
     testImplementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
     testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
-    testImplementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion" // HTTP encapsulation and swagger support
+    testImplementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion"
+    // HTTP encapsulation and swagger support
     testImplementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     testImplementation 'org.htmlparser:htmlparser:2.1'
     testImplementation 'com.github.scribejava:scribejava-core:5.4.0'
-// https://mvnrepository.com/artifact/com.squareup.retrofit2/retrofit-converters
-    compile group: 'com.squareup.retrofit2', name: 'retrofit-converters', version: '2.6.0', ext: 'pom'
     // D A T A B A S E
     testImplementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
     testImplementation 'org.xerial:sqlite-jdbc:3.25.2'

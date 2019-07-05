@@ -12,17 +12,19 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Fitting extends ANeoComEntity {
@@ -39,7 +41,7 @@ public class Fitting extends ANeoComEntity {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Fitting() {
-		jsonClass = "Fitting";
+//		jsonClass = "Fitting";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -133,7 +135,7 @@ public class Fitting extends ANeoComEntity {
 
 		// - C O N S T R U C T O R - S E C T I O N ................................................................
 		public FittingItem( final Integer typeId ) {
-			jsonClass = "FittingItem";
+//			jsonClass = "FittingItem";
 			this.typeId = typeId;
 			try {
 				itemDetails = accessGlobal().searchItem4Id(typeId);

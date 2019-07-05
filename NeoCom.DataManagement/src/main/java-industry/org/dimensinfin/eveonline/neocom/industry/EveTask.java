@@ -39,7 +39,7 @@ public class EveTask extends NeoComNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveTask( final Action.ETaskType newType, final Resource newresource ) {
 		super();
-		jsonClass = "EveTask";
+//		jsonClass = "EveTask";
 		type = newType;
 		this.setResource(newresource);
 	}

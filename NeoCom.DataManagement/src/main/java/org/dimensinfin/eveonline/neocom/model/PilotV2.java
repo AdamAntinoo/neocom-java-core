@@ -28,8 +28,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 import com.j256.ormlite.dao.Dao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Adam Antinoo
@@ -37,7 +35,7 @@ import org.slf4j.LoggerFactory;
 // - CLASS IMPLEMENTATION ...................................................................................
 public class PilotV2 extends ANeoComEntity {
 	// - S T A T I C - S E C T I O N ..........................................................................
-//	private static Logger logger = LoggerFactory.getLogger("PilotV2");
+	//	private static Logger logger = LoggerFactory.getLogger("PilotV2");
 
 	public static String getUrlforAvatar( final int identifier ) {
 		return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
@@ -58,22 +56,26 @@ public class PilotV2 extends ANeoComEntity {
 	public EveLocation lastKnownLocation = null;
 
 	protected GetCharactersCharacterIdOk publicData = null;
+	protected int totalAssetsNumber = -1;
 	private GetCharactersCharacterIdClonesOk cloneInformation = null;
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation = null;
 	private List<Property> locationRoles = new ArrayList<>();
 	private HashMap<Integer, Property> actions4Pilot = new HashMap<>();
-	protected int totalAssetsNumber = -1;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV2() {
 		super();
-		this.jsonClass = "Pilot";
+		//		this.jsonClass = "Pilot";
 	}
 
-	// - M E T H O D - S E C T I O N ..........................................................................
-	//--- G E T T E R S   &   S E T T E R S
+	// - G E T T E R S   &   S E T T E R S
 	public int getCharacterId() {
 		return characterId;
+	}
+
+	public PilotV2 setCharacterId( final int characterIdentifier ) {
+		this.characterId = characterIdentifier;
+		return this;
 	}
 
 	public String getName() {
@@ -96,24 +98,54 @@ public class PilotV2 extends ANeoComEntity {
 		return corporation;
 	}
 
+	public PilotV2 setCorporation( final CorporationV1 corporation ) {
+		this.corporation = corporation;
+		return this;
+	}
+
 	public AllianceV1 getAlliance() {
 		return alliance;
+	}
+
+	public PilotV2 setAlliance( final AllianceV1 alliance ) {
+		this.alliance = alliance;
+		return this;
 	}
 
 	public GetUniverseRaces200Ok getRace() {
 		return race;
 	}
 
+	public PilotV2 setRace( final GetUniverseRaces200Ok race ) {
+		this.race = race;
+		return this;
+	}
+
 	public GetUniverseBloodlines200Ok getBloodline() {
 		return bloodline;
+	}
+
+	public PilotV2 setBloodline( final GetUniverseBloodlines200Ok bloodline ) {
+		this.bloodline = bloodline;
+		return this;
 	}
 
 	public GetUniverseAncestries200Ok getAncestry() {
 		return ancestry;
 	}
 
+	public PilotV2 setAncestry( final GetUniverseAncestries200Ok ancestry ) {
+		this.ancestry = ancestry;
+		return this;
+	}
+
 	public double getAccountBalance() {
 		return accountBalance;
+	}
+
+	public PilotV2 setAccountBalance( final double accountBalance ) {
+		this.accountBalance = accountBalance;
+		return this;
 	}
 
 	public List<Property> getLocationRoles() {
@@ -124,39 +156,8 @@ public class PilotV2 extends ANeoComEntity {
 		return actions4Pilot;
 	}
 
-	public PilotV2 setCorporation( final CorporationV1 corporation ) {
-		this.corporation = corporation;
-		return this;
-	}
-
-	public PilotV2 setAlliance( final AllianceV1 alliance ) {
-		this.alliance = alliance;
-		return this;
-	}
-
-	public PilotV2 setRace( final GetUniverseRaces200Ok race ) {
-		this.race = race;
-		return this;
-	}
-
-	public PilotV2 setBloodline( final GetUniverseBloodlines200Ok bloodline ) {
-		this.bloodline = bloodline;
-		return this;
-	}
-
-	public PilotV2 setAncestry( final GetUniverseAncestries200Ok ancestry ) {
-		this.ancestry = ancestry;
-		return this;
-	}
-
-	public PilotV2 setCharacterId( final int characterIdentifier ) {
-		this.characterId = characterIdentifier;
-		return this;
-	}
-
-	public PilotV2 setAccountBalance( final double accountBalance ) {
-		this.accountBalance = accountBalance;
-		return this;
+	public String getJsonClass() {
+		return "Pilot";
 	}
 
 	//--- D E R I V E D   G E T T E R S

@@ -91,7 +91,7 @@ public class EveLocation extends ANeoComEntity {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public EveLocation() {
 		super();
-		jsonClass = "EveLocation";
+//		jsonClass = "EveLocation";
 	}
 
 	public EveLocation( final long locationId ) {

@@ -14,23 +14,23 @@ package org.dimensinfin.eveonline.neocom.entities;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "Jobs")
@@ -101,7 +101,7 @@ public class Job extends ANeoComEntity {
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Job() {
-		jsonClass = "Job";
+//		jsonClass = "Job";
 	}
 
 	public Job( final int newJobId ) {

@@ -1,11 +1,17 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
  * Credentials are the block of data that stores the new authorization data for the ESI access to Eve Online data servers. The
@@ -29,11 +35,18 @@ import com.j256.ormlite.table.DatabaseTable;
  *
  * @author Adam Antinoo
  */
+@Immutable
+@Entity(name = "Credentials")
 @DatabaseTable(tableName = "Credentials")
 public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;
+
+	public static String createUniqueIdentifier( final String server, final int identifier ) {
+		return server.toLowerCase() + "/" + identifier;
+	}
+
 	@DatabaseField
-	public String accessToken = "";
+	public String accessToken;
 	@DatabaseField
 	public String tokenType = "Bearer";
 	@DatabaseField
@@ -49,7 +62,7 @@ public class Credential extends UpdatableEntity {
 	@DatabaseField
 	protected int assetsCount = 0;
 	@DatabaseField(dataType = DataType.LONG_STRING)
-	private String refreshToken = "-TOKEN-";
+	private String refreshToken;
 	@DatabaseField
 	private String accountName;
 	@DatabaseField
@@ -66,13 +79,15 @@ public class Credential extends UpdatableEntity {
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
 	}
 
-	public static String createUniqueIdentifier( final String server, final int identifier ) {
-		return server.toLowerCase() + "/" + identifier;
-	}
-
 	// - G E T T E R S   &   S E T T E R S
 	public int getAccountId() {
 		return accountId;
+	}
+
+	public Credential setAccountId( final int accountId ) {
+		this.accountId = accountId;
+		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
+		return this;
 	}
 
 	public String getAccountName() {
@@ -80,7 +95,7 @@ public class Credential extends UpdatableEntity {
 	}
 
 	public String getName() {
-		return accountName;
+		return this.accountName;
 	}
 
 	public String getAccessToken() {
@@ -93,6 +108,10 @@ public class Credential extends UpdatableEntity {
 
 	public String getDataSource() {
 		return dataSource.toLowerCase();
+	}
+
+	public void setDataSource( final String dataSource ) {
+		if (null != dataSource) this.dataSource = dataSource.toLowerCase();
 	}
 
 	public Double getWalletBalance() {
@@ -126,11 +145,6 @@ public class Credential extends UpdatableEntity {
 		return this;
 	}
 
-	//	public Credential setAccountId( final int accountId ) {
-	//		this.accountId = accountId;
-	//		return this;
-	//	}
-	//
 	//	public Credential setAccessToken( final String accessToken ) {
 	//		this.accessToken = accessToken;
 	//		return this;
@@ -156,22 +170,13 @@ public class Credential extends UpdatableEntity {
 	//		return this;
 	//	}
 
-	// - C O R E
-	@Override
-	public String toString() {
-		StringBuffer buffer = new StringBuffer("Credential [");
-		buffer.append("[").append(getAccountId()).append("] ");
-		buffer.append(" ").append(getAccountName()).append(" ");
-		buffer.append("]");
-		return buffer.toString();
-	}
-
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		final Credential that = (Credential) o;
 		return new EqualsBuilder()
+				       .appendSuper(super.equals(o))
 				       .append(accountId, that.accountId)
 				       .append(assetsCount, that.assetsCount)
 				       .append(accessToken, that.accessToken)
@@ -186,9 +191,11 @@ public class Credential extends UpdatableEntity {
 				       .isEquals();
 	}
 
+	// - C O R E
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
+				       .appendSuper(super.hashCode())
 				       .append(accessToken)
 				       .append(tokenType)
 				       .append(dataSource)
@@ -203,6 +210,18 @@ public class Credential extends UpdatableEntity {
 				       .toHashCode();
 	}
 
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				       .append("jsonClass", this.getJsonClass())
+				       .append("uniqueCredential", uniqueCredential)
+				       .append("walletBalance", walletBalance)
+				       .append("assetsCount", assetsCount)
+				       .append("accountName", accountName)
+				       .append("raceName", raceName)
+				       .toString();
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private Credential onConstruction;
@@ -212,7 +231,7 @@ public class Credential extends UpdatableEntity {
 		}
 
 		public Builder withAccountId( final Integer accountId ) {
-			if (null != accountId) this.onConstruction.accountId = accountId;
+			if (null != accountId) this.onConstruction.setAccountId(accountId);
 			return this;
 		}
 
@@ -257,6 +276,7 @@ public class Credential extends UpdatableEntity {
 		}
 
 		public Credential build() {
+			Objects.requireNonNull(this.onConstruction.accountName);
 			return this.onConstruction;
 		}
 	}

@@ -36,7 +36,7 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 		this.typeId = typeId;
 		this.esiItem = new EveItem(typeId);
 		this.baseQty = 0;
-		jsonClass = "Resource";
+//		jsonClass = "Resource";
 	}
 
 	public Resource( final int typeId, final int newQty ) {

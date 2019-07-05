@@ -12,21 +12,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import io.cucumber.java.en.Then;
 
-public class ThenIGetAValidCredential {
+public class ThenIGetAUpdatedCredential {
 	private CredentialWorld credentialWorld;
 	private CucumberTableConverter<Credential> date2CredentialConverter;
 
 	@Autowired
-	public ThenIGetAValidCredential( final CredentialWorld credentialWorld,
+	public ThenIGetAUpdatedCredential( final CredentialWorld credentialWorld,
 	                                 final CucumberTableConverter<Credential> date2CredentialConverter ) {
 		this.credentialWorld = credentialWorld;
 		this.date2CredentialConverter = date2CredentialConverter;
 	}
-
-	@Then("I get a valid credential with the next valid data")
-	public void i_get_a_valid_credential_with_the_next_valid_data( final List<Map<String, String>> cucumberTable ) {
+	@Then("I get a updated Credential with the next valid data")
+	public void i_get_a_updated_Credential_with_the_next_valid_data(final List<Map<String, String>> cucumberTable) {
 		final Credential testData = this.date2CredentialConverter.convert(cucumberTable.get(0));
-		final boolean result = testData.equals(this.credentialWorld.getCredentialUnderTest());
+		final boolean result = testData.equals(this.credentialWorld.getCredentialRead());
 		Assert.assertTrue("The two credentials should match in all fields after being stored and retrieved.", result);
 	}
 }

@@ -1,7 +1,5 @@
 package org.dimensinfin.eveonline.neocom.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.dimensinfin.core.interfaces.IExpandable;
 
 /**
@@ -17,7 +15,7 @@ public abstract class NeoComExpandableNode extends NeoComNode implements IExpand
 	// - C O N S T R U C T O R S
 	public NeoComExpandableNode () {
 		super();
-		jsonClass = "NeoComExpandableNode";
+//		jsonClass = "NeoComExpandableNode";
 	}
 
 	// - I E X P A N D A B L E   I N T E R F A C E

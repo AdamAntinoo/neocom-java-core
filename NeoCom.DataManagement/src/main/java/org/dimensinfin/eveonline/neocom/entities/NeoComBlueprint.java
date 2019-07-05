@@ -14,23 +14,22 @@ package org.dimensinfin.eveonline.neocom.entities;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Blueprints can be obtained separately from the Assets in a new CREST API call. Use that to speed up access
@@ -131,7 +130,7 @@ public class NeoComBlueprint extends ANeoComEntity implements ILocatableAsset {
 	 */
 	public NeoComBlueprint( final int blueprintType ) {
 		super();
-		this.jsonClass = "NeoComBlueprint";
+//		this.jsonClass = "NeoComBlueprint";
 		this.typeId = blueprintType;
 		this.blueprintItem = accessGlobal().searchItem4Id(blueprintType);
 		this.typeName = this.blueprintItem.getName();

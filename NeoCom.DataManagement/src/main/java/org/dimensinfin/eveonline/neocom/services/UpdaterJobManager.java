@@ -46,7 +46,13 @@ public class UpdaterJobManager {
 	 */
 	public synchronized static void submit( final NeoComUpdater updater ) {
 		final String identifier = updater.getIdentifier();
-		if (alreadyScheduled(identifier)) return;
+		if (alreadyScheduled(identifier)) {
+			final JobRecord target = runningJobs.get(identifier);
+			logger.info("-- [UpdaterJobManager.submit]> Job {} already on state: {}"
+					, updater.getIdentifier()
+					, target.getJob().getStatus().name());
+			return;
+		}
 		logger.info("-- [UpdaterJobManager.submit]> Scheduling job {}", updater.getIdentifier());
 		updater.setStatus(NeoComUpdater.JobStatus.SCHEDULED);
 		try {
@@ -90,6 +96,22 @@ public class UpdaterJobManager {
 		//			if (!future.isDone()) counter++;
 		//		}
 		//		updateJobCounter = counter;
+	}
+
+	/**
+	 * Clean up all the jobs that are already completed.
+	 *
+	 * @return the number of jobs still pending execution or running.
+	 */
+	public synchronized static int clearJobs() {
+		for (Map.Entry<String, JobRecord> entry : runningJobs.entrySet()) {
+			if (entry.getValue().getFuture().isDone()) runningJobs.remove(entry.getKey());
+			if (entry.getValue().getJob().getStatus() == NeoComUpdater.JobStatus.COMPLETED)
+				runningJobs.remove(entry.getKey());
+			if (entry.getValue().getJob().getStatus() == NeoComUpdater.JobStatus.EXCEPTION)
+				runningJobs.remove(entry.getKey());
+		}
+		return runningJobs.size();
 	}
 
 	public synchronized static int getPendingJobsCount() {

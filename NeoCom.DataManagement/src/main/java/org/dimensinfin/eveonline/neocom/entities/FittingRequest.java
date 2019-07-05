@@ -14,16 +14,15 @@ package org.dimensinfin.eveonline.neocom.entities;
 
 import java.sql.SQLException;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * @author Adam Antinoo
@@ -57,7 +56,7 @@ public class FittingRequest extends ANeoComEntity {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public FittingRequest() {
 		super();
-		jsonClass = "FittingRequest";
+//		jsonClass = "FittingRequest";
 //		registrationDate= Instant.now().getMillis();
 	}
 

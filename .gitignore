@@ -8,10 +8,3 @@
 .idea/libraries
 .idea/workspace.xml
 
-# - Compilation
-ESI.SwaggerApi/out/
-NeoCom.Model/out/
-NeoCom.DataManagement/out/
-NeoCom.DataManagement.Support/out/
-NeoCom.DataManagement.Support/build/
-

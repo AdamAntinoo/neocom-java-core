@@ -18,13 +18,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
+import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
-import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -61,7 +61,7 @@ public class Action extends NeoComExpandableNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public Action( final Resource res ) {
 		super();
-		jsonClass="Action";
+//		jsonClass="Action";
 		resource = res;
 		requestQty = resource.getQuantity();
 		// Default expand state on initialization is collapsed.

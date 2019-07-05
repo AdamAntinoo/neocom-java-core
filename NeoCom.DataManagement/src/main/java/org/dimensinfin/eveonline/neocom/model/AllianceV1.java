@@ -12,10 +12,10 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 
@@ -39,7 +39,7 @@ public class AllianceV1 extends NeoComNode {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public AllianceV1() {
 		super();
-		jsonClass = "Alliance";
+//		jsonClass = "Alliance";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -54,6 +54,9 @@ public class AllianceV1 extends NeoComNode {
 
 	public String getTicker() {
 		return ticker;
+	}
+	public String getJsonClass() {
+		return "Alliance";
 	}
 
 	public long getDateFounded() {

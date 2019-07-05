@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import org.dimensinfin.eveonline.neocom.core.Units;
+import org.dimensinfin.eveonline.neocom.core.StorageUnits;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
@@ -64,7 +64,7 @@ public class StoreCacheManager {
 		try {
 			final File cachedir = new File(this.fileSystem.accessResource4Path(this.configurationProvider.getResourceString("P.cache.directory.path")
 					                                                                   + "/" + this.configurationProvider.getResourceString("P.cache.directory.store.esiitem")));
-			this.esiItemPersistentStore = DiskLruCache.open(cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * Units.GIGABYTES);
+			this.esiItemPersistentStore = DiskLruCache.open(cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES);
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
 					                    .fetcher(typeId -> Single.just(this.esiDataAdapter.getUniverseTypeById(typeId)))
 					                    //										.fetcher(new UniverseTypeFetcher(esiDataAdapter))

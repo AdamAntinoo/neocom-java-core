@@ -109,7 +109,8 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	public String getResourceName() {
 		if (null == this.resourceItem) {
 			this.resourceItem = new EveItem(this.getTypeId());
-			this.resourceItem.addPropertyChangeListener(this);
+			// TODO - Reconnect the event listeners with the new implementation
+//			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getName();
 	}
@@ -154,7 +155,8 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	public String getURLForItem() {
 		if (null == this.resourceItem) {
 			this.resourceItem = new EveItem(this.getTypeId());
-			this.resourceItem.addPropertyChangeListener(this);
+			// TODO - Reconnect the event listeners with the new implementation
+//			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getURLForItem();
 	}
@@ -167,7 +169,8 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	public double getVolume() {
 		if (null == this.resourceItem) {
 			this.resourceItem = new EveItem(this.getTypeId());
-			this.resourceItem.addPropertyChangeListener(this);
+			// TODO - Reconnect the event listeners with the new implementation
+//			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getVolume();
 	}
@@ -175,7 +178,8 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	public double getPrice() {
 		if (null == this.resourceItem) {
 			this.resourceItem = new EveItem(this.getTypeId());
-			this.resourceItem.addPropertyChangeListener(this);
+			// TODO - Reconnect the event listeners with the new implementation
+//			this.resourceItem.addPropertyChangeListener(this);
 		}
 		return this.resourceItem.getPrice();
 	}
@@ -183,7 +187,8 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	@Override
 	public void propertyChange( final PropertyChangeEvent event ) {
 		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name())) {
-			this.sendChangeEvent(event);
+			// TODO - Reconnect the event listeners with the new implementation
+//			this.sendChangeEvent(event);
 		}
 	}
 

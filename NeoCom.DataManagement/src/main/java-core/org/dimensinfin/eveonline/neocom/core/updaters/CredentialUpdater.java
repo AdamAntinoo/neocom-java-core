@@ -16,27 +16,6 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 	}
 
 	// - N E O C O M U P D A T E R
-	/**
-	 * Execute the specific tasks that need to be completed to update the Credential additional information.
-	 * There are two tasks: one to update the number of assets and another to get the wallet amount.
-	 *
-	 * @return the updater instance with any fields updated.
-	 */
-	@Override
-	public void onRun() {
-		if (null != this.esiDataAdapter) {
-			// Count the number of assets.
-			final List<GetCharactersCharacterIdAssets200Ok> assetList = this.esiDataAdapter.getCharactersCharacterIdAssets(this.getModel().getAccountId()
-					, this.getModel().getRefreshToken(), this.getModel().getDataSource());
-			this.getModel().setAssetsCount(assetList.size());
-
-			// Get the wallet balance.
-			final Double walletBalance = this.esiDataAdapter.getCharactersCharacterIdWallet(this.getModel().getAccountId()
-					, this.getModel().getRefreshToken(), this.getModel().getDataSource());
-			if (walletBalance > 0.0) this.getModel().setWalletBalance(walletBalance);
-		}
-	}
-
 	@Override
 	public boolean needsRefresh() {
 		if (this.getModel().getLastUpdateTime().plus(CREDENTIAL_CACHE_TIME).isBefore(DateTime.now()))
@@ -46,6 +25,25 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 
 	@Override
 	public String getIdentifier() {
-		return "CRD:" + this.getModel().getAccountId();
+		return this.getModel().getJsonClass().toUpperCase() + ":" + this.getModel().getAccountId();
+	}
+
+	/**
+	 * Execute the specific tasks that need to be completed to update the Credential additional information.
+	 * There are two tasks: one to update the number of assets and another to get the wallet amount.
+	 */
+	@Override
+	public void onRun() {
+		if (null != esiDataAdapter) {
+			// Count the number of assets.
+			final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataAdapter.getCharactersCharacterIdAssets(this.getModel().getAccountId()
+					, this.getModel().getRefreshToken(), this.getModel().getDataSource());
+			this.getModel().setAssetsCount(assetList.size());
+
+			// Get the wallet balance.
+			final Double walletBalance = esiDataAdapter.getCharactersCharacterIdWallet(this.getModel().getAccountId()
+					, this.getModel().getRefreshToken(), this.getModel().getDataSource());
+			if (walletBalance > 0.0) this.getModel().setWalletBalance(walletBalance);
+		}
 	}
 }

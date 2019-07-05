@@ -85,7 +85,7 @@ public class PlanetaryProcessor extends ANeoComEntity {
 		PlanetaryProcessor.t3ProductList.put(2352, "Nuclear Reactors");
 		PlanetaryProcessor.t3ProductList.put(9846, "Planetary Vehicles");
 		PlanetaryProcessor.t3ProductList.put(9848, "Robotics");
-		PlanetaryProcessor.t3ProductList.put(2351, "Smartfab Units");
+		PlanetaryProcessor.t3ProductList.put(2351, "Smartfab StorageUnits");
 		PlanetaryProcessor.t3ProductList.put(2349, "Supercomputers");
 		PlanetaryProcessor.t3ProductList.put(2346, "Synthetic Synapses");
 		PlanetaryProcessor.t3ProductList.put(12836, "Transcranial Microcontrollers");

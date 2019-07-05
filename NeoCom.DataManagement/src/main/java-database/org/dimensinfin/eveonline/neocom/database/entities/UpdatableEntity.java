@@ -2,6 +2,8 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.joda.time.DateTime;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -26,5 +28,27 @@ public abstract class UpdatableEntity extends NeoComNode {
 	 */
 	public void timeStamp() {
 		this.lastUpdateTime = DateTime.now();
+	}
+
+	// - C O R E
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final UpdatableEntity that = (UpdatableEntity) o;
+		return new EqualsBuilder()
+				       .appendSuper(super.equals(o))
+//				       .append(creationTime, that.creationTime)
+				       .append(lastUpdateTime, that.lastUpdateTime)
+				       .isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				       .appendSuper(super.hashCode())
+				       .append(creationTime)
+				       .append(lastUpdateTime)
+				       .toHashCode();
 	}
 }

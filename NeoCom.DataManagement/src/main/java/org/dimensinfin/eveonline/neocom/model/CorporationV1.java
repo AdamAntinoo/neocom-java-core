@@ -12,9 +12,10 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 
 /**
  * Implements the MVC adaptation for the Corporation data. Its contents depend on multiple ESI calls even most of them are
@@ -43,7 +44,7 @@ public class CorporationV1 extends ANeoComEntity {
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public CorporationV1() {
 		super();
-		jsonClass = "Corporation";
+//		jsonClass = "Corporation";
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
@@ -88,6 +89,9 @@ public class CorporationV1 extends ANeoComEntity {
 	public CorporationV1 setCorporationId( final int corporationId ) {
 		this.corporationId = corporationId;
 		return this;
+	}
+	public String getJsonClass() {
+		return "Corporation";
 	}
 
 	//--- D A T A   T R A N S F O R M A T I O N
