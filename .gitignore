@@ -7,4 +7,6 @@
 .idea/caches
 .idea/libraries
 .idea/workspace.xml
+.idea/gradle.xml
+.idea/modules.xml
 

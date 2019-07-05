@@ -8,11 +8,8 @@ import io.cucumber.junit.CucumberOptions;
 @RunWith(Cucumber.class)
 @CucumberOptions(
 		features = {"src/test/resources/features"},
+		plugin = {"pretty", "json:target/cucumber_report.json"},
 		tags = {"not @skip_scenario", "not @front", "not @duplication"}
 )
 public class RunAcceptanceTests {
-	// Prepare components that need injection.
-//	CredentialUpdater. .  .injectsEsiDataAdapter( NeoComComponentFactory.getSi )
-
-//	new CredentialUpdater()
 }
