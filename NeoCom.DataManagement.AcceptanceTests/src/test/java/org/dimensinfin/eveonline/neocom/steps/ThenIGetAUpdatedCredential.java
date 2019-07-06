@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cucumber.java.en.Then;
+import cucumber.api.java.en.Then;
 
 public class ThenIGetAUpdatedCredential {
 	private CredentialWorld credentialWorld;
@@ -25,7 +25,14 @@ public class ThenIGetAUpdatedCredential {
 	@Then("I get a updated Credential with the next valid data")
 	public void i_get_a_updated_Credential_with_the_next_valid_data(final List<Map<String, String>> cucumberTable) {
 		final Credential testData = this.date2CredentialConverter.convert(cucumberTable.get(0));
-		final boolean result = testData.equals(this.credentialWorld.getCredentialRead());
-		Assert.assertTrue("The two credentials should match in all fields after being stored and retrieved.", result);
+		final Credential target = this.credentialWorld.getCredentialUnderTest();
+		Assert.assertEquals("The two credentials should match in updated fields.",
+				testData.getAccountName(), target.getAccountName());
+		Assert.assertEquals("The two credentials should match in updated fields.",
+				testData.getWalletBalance(), target.getWalletBalance(), 0.1);
+		Assert.assertEquals("The two credentials should match in updated fields.",
+				testData.getAssetsCount(), target.getAssetsCount());
+		Assert.assertEquals("The two credentials should match in updated fields.",
+				testData.getRaceName(), target.getRaceName());
 	}
 }

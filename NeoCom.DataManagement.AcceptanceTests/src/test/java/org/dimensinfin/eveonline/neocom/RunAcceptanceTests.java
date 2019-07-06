@@ -2,14 +2,14 @@ package org.dimensinfin.eveonline.neocom;
 
 import org.junit.runner.RunWith;
 
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
+import cucumber.api.CucumberOptions;
+import cucumber.api.junit.Cucumber;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
 		features = {"src/test/resources/features"},
+		glue = {"org.dimensinfin.eveonline.neocom.steps"},
 		plugin = {"pretty", "json:target/cucumber_report.json"},
-		tags = {"not @skip_scenario", "not @front", "not @duplication"}
-)
+		tags = {"not @skip_scenario", "not @front", "not @duplication"})
 public class RunAcceptanceTests {
 }

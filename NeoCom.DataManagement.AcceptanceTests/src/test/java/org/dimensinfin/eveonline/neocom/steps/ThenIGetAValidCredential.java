@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cucumber.java.en.Then;
+import cucumber.api.java.en.Then;
 
 public class ThenIGetAValidCredential {
 	private CredentialWorld credentialWorld;

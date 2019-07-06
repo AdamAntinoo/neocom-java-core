@@ -80,6 +80,10 @@ public class Credential extends UpdatableEntity {
 	}
 
 	// - G E T T E R S   &   S E T T E R S
+	public String getUniqueId() {
+		return this.uniqueCredential;
+	}
+
 	public int getAccountId() {
 		return accountId;
 	}
@@ -144,32 +148,6 @@ public class Credential extends UpdatableEntity {
 		this.raceName = raceName;
 		return this;
 	}
-
-	//	public Credential setAccessToken( final String accessToken ) {
-	//		this.accessToken = accessToken;
-	//		return this;
-	//	}
-	//
-	//	public Credential setTokenType( final String tokenType ) {
-	//		this.tokenType = tokenType;
-	//		return this;
-	//	}
-	//
-	//	public Credential setDataSource( final String dataSource ) {
-	//		this.dataSource = dataSource;
-	//		return this;
-	//	}
-	//
-	//	public Credential setRefreshToken( final String refreshToken ) {
-	//		this.refreshToken = refreshToken;
-	//		return this;
-	//	}
-	//
-	//	public Credential setScope( final String scope ) {
-	//		this.scope = scope;
-	//		return this;
-	//	}
-
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;

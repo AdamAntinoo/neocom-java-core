@@ -25,6 +25,6 @@ public class ThenIRetrieveTheNewCredential {
 
 	@Then("I retrieve the new credential with id {string}")
 	public void i_retrieve_the_new_credential_with_id(final String credentialId) throws SQLException {
-		this.credentialWorld.setCredentialRead(this.credentialRepository.findCredentialById(credentialId));
+		this.credentialWorld.setCredentialUnderTest(this.credentialRepository.findCredentialById(credentialId));
 	}
 }

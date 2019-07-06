@@ -16,7 +16,7 @@ import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cucumber.java.en.When;
+import cucumber.api.java.en.When;
 
 public class WhenICheckCredentialUpdateState implements IEventReceiver {
 	private CredentialWorld credentialWorld;
@@ -30,13 +30,13 @@ public class WhenICheckCredentialUpdateState implements IEventReceiver {
 
 	@When("I check Credential update state")
 	public void i_check_Credential_update_state() {
-		final Credential model = this.credentialWorld.getCredentialRead();
+		final Credential model = this.credentialWorld.getCredentialUnderTest();
 		final NeoComUpdater updater = NeoComUpdaterFactory.buildUpdater(model); // Create the updater for this model.
 		updater.addEventListener(this);
 		updater.refresh(); // Start the refresh process if required before leaving this thread.
 		Awaitility.await().atMost(100, TimeUnit.SECONDS).until(() -> {
 					Thread.sleep(TimeUnit.SECONDS.toMillis(10));
-					final Credential credential = this.credentialWorld.getCredentialRead();
+					final Credential credential = this.credentialWorld.getCredentialUnderTest();
 					Assert.assertTrue(credential.getAssetsCount() > 0);
 					return true;
 				}

@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.steps;
+package org.dimensinfin.eveonline.neocom.stepsout;
 
 import java.sql.SQLException;
 import java.util.Objects;
@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import io.cucumber.java.en.Given;
+import cucumber.api.java.en.Given;
 
 public class GivenAStaleCredentialWithId {
 	private CredentialWorld credentialWorld;
@@ -27,6 +27,6 @@ public class GivenAStaleCredentialWithId {
 	@Given("a stale Credential with id {string}")
 	public void a_stale_Credential_with_id( String credentialId ) throws SQLException {
 		final Credential credential = this.credentialRepository.findCredentialById(credentialId);
-		this.credentialWorld.setCredentialRead(credential);
+		this.credentialWorld.setCredentialUnderTest(credential);
 	}
 }

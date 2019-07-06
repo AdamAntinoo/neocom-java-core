@@ -56,6 +56,7 @@ public class NeoComComponentFactory {
 		if (null == this.neocomDBAdapter) {
 			//			try {
 			final String databaseType = this.getConfigurationProvider().getResourceString("P.database.neocom.databasetype", "sqlite");
+			final String runtimePlatform = this.getConfigurationProvider().getResourceString("P.runtime.platform", "Java");
 			if (databaseType.equalsIgnoreCase("postgres")) {
 				// Postgres means Heroku and then configuration for connection from environment
 				final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
@@ -63,13 +64,23 @@ public class NeoComComponentFactory {
 						                  .withDatabaseConnection(localConnectionDescriptor)
 						                  .build();
 			}
-			if (databaseType.equalsIgnoreCase("sqlite")) {
-				// Postgres means Heroku and then configuration for connection from environment
-				final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
-				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
-						                  .withDatabaseConnection(localConnectionDescriptor)
-						                  .build();
+			if (runtimePlatform.equalsIgnoreCase("java")) {
+				if (databaseType.equalsIgnoreCase("sqlite")) {
+					// Postgres means Heroku and then configuration for connection from environment
+					final String localConnectionDescriptor = this.getConfigurationProvider().getResourceString("P.database.neocom.database.sqlite.connection");
+					neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
+							                  .withDatabaseConnection(localConnectionDescriptor)
+							                  .build();
+				}
 			}
+			if (runtimePlatform.equalsIgnoreCase("heroku"))
+				if (databaseType.equalsIgnoreCase("sqlite")) {
+					// Postgres means Heroku and then configuration for connection from environment
+					final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
+					neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
+							                  .withDatabaseConnection(localConnectionDescriptor)
+							                  .build();
+				}
 			//			} catch (SQLException sqle) {
 			//				neocomDBAdapter = null;
 			//				Objects.requireNonNull(neocomDBAdapter);

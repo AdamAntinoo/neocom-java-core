@@ -4,9 +4,11 @@
 *.db
 
 .gradle
-.idea/caches
-.idea/libraries
+.idea/caches/
+.idea/libraries/
+.idea/sonarlint/
 .idea/workspace.xml
 .idea/gradle.xml
 .idea/modules.xml
+AcceptanceTests/
 

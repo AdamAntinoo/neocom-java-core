@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class CredentialWorld {
 	private List<Map<String, String>> authorisationData;
 	private Credential credentialUnderTest;
-	private Credential credentialRead;
+//	private Credential credentialRead;
 
 	public List<Map<String, String>> getAuthorisationData() {
 		Objects.requireNonNull(this.authorisationData);
@@ -33,15 +33,15 @@ public class CredentialWorld {
 		this.credentialUnderTest = credentialUnderTest;
 	}
 
-	public Credential getCredentialRead() {
-		return credentialRead;
-	}
+//	public Credential getCredentialRead() {
+//		return credentialRead;
+//	}
 
-	public void setCredentialRead( final Credential credentialRead ) {
-		this.credentialRead = credentialRead;
-	}
+//	public void setCredentialRead( final Credential credentialRead ) {
+//		this.credentialRead = credentialRead;
+//	}
 
-	public int getCredentialId() {
-		return this.credentialUnderTest.getAccountId();
+	public String getCredentialId() {
+		return this.credentialUnderTest.getUniqueId();
 	}
 }
