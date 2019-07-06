@@ -537,6 +537,10 @@ public class ESIDataAdapter {
 				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
 				this.retrofitFactory.reset();
 			}
+			if (rtex.getMessage().toLowerCase().contains("response body is incorrect")) {
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				this.retrofitFactory.reset();
+			}
 		}
 		return -1.0;
 	}
@@ -578,13 +582,13 @@ public class ESIDataAdapter {
 		} catch (RuntimeException rtex) {
 			// Check if the problem is a connection reset.
 			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage());
 				this.retrofitFactory.reset();
-				// Recreate the retrofit.
-				//				logger.info("EX [ESIdataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
-				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
-			//		} finally {
-			//			logger.info("<< [ESIdataAdapter.getCharactersCharacterIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			if (rtex.getMessage().toLowerCase().contains("response body is incorrect")) {
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage());
+				this.retrofitFactory.reset();
+			}
 		}
 		return returnAssetList;
 	}

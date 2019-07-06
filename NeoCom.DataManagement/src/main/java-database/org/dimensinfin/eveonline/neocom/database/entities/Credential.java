@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 import java.util.Objects;
 import javax.persistence.Entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -45,26 +46,26 @@ public class Credential extends UpdatableEntity {
 		return server.toLowerCase() + "/" + identifier;
 	}
 
-	@DatabaseField
-	public String accessToken;
-	@DatabaseField
-	public String tokenType = "Bearer";
-	@DatabaseField
-	public String dataSource = "Tranquility".toLowerCase();
-	@DatabaseField(dataType = DataType.LONG_STRING)
-	public String scope = "publicData";
 	@DatabaseField(id = true, index = true)
-	protected String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
+	private String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
 	@DatabaseField
-	protected int accountId = -2;
+	private int accountId = -2;
 	@DatabaseField
-	protected Double walletBalance = 0.0;
+	private String accountName;
 	@DatabaseField
-	protected int assetsCount = 0;
+	private String dataSource = "Tranquility".toLowerCase();
+	@DatabaseField
+	private String accessToken;
+	@DatabaseField
+	private String tokenType = "Bearer";
+	@DatabaseField(dataType = DataType.LONG_STRING)
+	private String scope = "publicData";
 	@DatabaseField(dataType = DataType.LONG_STRING)
 	private String refreshToken;
 	@DatabaseField
-	private String accountName;
+	private int assetsCount = 0;
+	@DatabaseField
+	private Double walletBalance = 0.0;
 	@DatabaseField
 	private String raceName;
 
@@ -80,6 +81,13 @@ public class Credential extends UpdatableEntity {
 	}
 
 	// - G E T T E R S   &   S E T T E R S
+	public boolean isValid() {
+		if (StringUtils.isEmpty(this.dataSource)) return false;
+		if (StringUtils.isEmpty(this.accessToken)) return false;
+		if (StringUtils.isEmpty(this.refreshToken)) return false;
+		return true;
+	}
+
 	public String getUniqueId() {
 		return this.uniqueCredential;
 	}
@@ -148,6 +156,7 @@ public class Credential extends UpdatableEntity {
 		this.raceName = raceName;
 		return this;
 	}
+
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
@@ -220,6 +229,11 @@ public class Credential extends UpdatableEntity {
 
 		public Builder withDataSource( final String dataSource ) {
 			if (null != dataSource) this.onConstruction.dataSource = dataSource;
+			return this;
+		}
+
+		public Builder withTokenType( final String tokenType ) {
+			if (null != tokenType) this.onConstruction.tokenType = tokenType;
 			return this;
 		}
 

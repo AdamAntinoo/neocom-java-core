@@ -159,11 +159,11 @@ public class NeoComRetrofitFactory {
 			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			if (SECRET_KEY.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			if (CALLBACK.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20.Builder()
 					       .withClientId(CLIENT_ID)
 					       .withClientKey(SECRET_KEY)
@@ -189,11 +189,11 @@ public class NeoComRetrofitFactory {
 			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			if (SECRET_KEY.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			if (CALLBACK.isEmpty())
-				throw new NeoComRuntimeException("RT [ESIGlobalAdapter.initialize]> ESI configuration property is empty.");
+				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20.Builder()
 					       .withClientId(CLIENT_ID)
 					       .withClientKey(SECRET_KEY)
@@ -227,10 +227,10 @@ public class NeoComRetrofitFactory {
 				line = input.readLine();
 			}
 		} catch (FileNotFoundException fnfe) {
-			logger.info("EX [ESIGlobalAdapter.constructScopes]> FileNotFoundException: {}", fnfe.getMessage());
+			logger.info("EX [NeoComRetrofitFactory.constructScopes]> FileNotFoundException: {}", fnfe.getMessage());
 			return SCOPES;
 		} catch (IOException ioe) {
-			logger.info("EX [ESIGlobalAdapter.constructScopes]> FileNotFoundException: {}", ioe.getMessage());
+			logger.info("EX [NeoComRetrofitFactory.constructScopes]> FileNotFoundException: {}", ioe.getMessage());
 			return SCOPES;
 		}
 		return SCOPES;

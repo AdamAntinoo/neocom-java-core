@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.support;
+package org.dimensinfin.neocom.support.adapters;
 
 import java.sql.SQLException;
 import java.util.Objects;
@@ -7,9 +7,6 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-import org.dimensinfin.neocom.support.adapters.FileSystemSBImplementation;
-import org.dimensinfin.neocom.support.adapters.SBConfigurationProvider;
-import org.dimensinfin.neocom.support.adapters.NeoComSupportDBAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
