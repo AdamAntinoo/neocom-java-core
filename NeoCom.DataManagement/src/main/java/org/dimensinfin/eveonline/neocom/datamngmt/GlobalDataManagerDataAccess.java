@@ -25,9 +25,10 @@ import java.util.List;
 
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.domain.PilotV2;
 import org.dimensinfin.eveonline.neocom.entities.Job;
 import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.entities.Property;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
@@ -38,7 +39,6 @@ import org.dimensinfin.eveonline.neocom.exception.NEOE;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
 import org.dimensinfin.eveonline.neocom.model.AllianceV1;
 import org.dimensinfin.eveonline.neocom.model.CorporationV1;
-import org.dimensinfin.eveonline.neocom.model.PilotV2;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
@@ -174,7 +174,7 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 					, credential.getDataSource());
 			if (null != cloneInformation) {
 				newchar.setCloneInformation(cloneInformation);
-				newchar.setHomeLocation(cloneInformation.getHomeLocation());
+//				newchar.setHomeLocation(cloneInformation.getHomeLocation());
 			}
 			//
 			//					// Register instance into the cache. Expiration time is about 3600 seconds.

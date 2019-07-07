@@ -37,9 +37,6 @@ dependencies {
     // D A T A B A S E
     implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
-//    implementation 'mysql:mysql-connector-java:5.1.45'
-//    implementation 'javax.persistence:javax.persistence-api:2.2'
-//    implementation "org.postgresql:postgresql:42.2.2"
 }
 dependencies {
     implementation 'org.dimensinfin:CoreBase.core:3.0.1'

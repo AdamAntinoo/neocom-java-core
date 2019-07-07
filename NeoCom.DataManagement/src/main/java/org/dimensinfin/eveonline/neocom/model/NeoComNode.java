@@ -27,33 +27,10 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
 
-	//	protected String jsonClass;
-//	protected transient EventEmitter eventEmitter = new EventEmitter();
-
 	// - C O N S T R U C T O R S
 	public NeoComNode() { }
 
-//	// - I E V E N T E M I T T E R   D E L E G A T E
-//	//	@Override
-//	public void addPropertyChangeListener( final PropertyChangeListener listener ) {
-//		this.eventEmitter.addPropertyChangeListener(listener);
-//	}
-//
-//	//	@Override
-//	public void removePropertyChangeListener( final PropertyChangeListener listener ) {
-//		this.eventEmitter.removePropertyChangeListener(listener);
-//	}
-
-	//	@Override
-//	public boolean sendChangeEvent( final String eventName ) {
-//		return this.eventEmitter.sendChangeEvent(eventName);
-//	}
-//
-//	public boolean sendChangeEvent( final PropertyChangeEvent event ) {
-//		return this.eventEmitter.sendChangeEvent(event);
-//	}
-
-	// - I C O L L A B O R A T I O N   I N T E R F A C E
+	// - I C O L L A B O R A T I O N
 	public List<ICollaboration> collaborate2Model( final String variant ) {
 		return new ArrayList<>();
 	}
@@ -67,6 +44,7 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 		return 0;
 	}
 
+	// - C O R E
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
@@ -74,7 +52,6 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 				       .toHashCode();
 	}
 
-	// - C O R E
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
@@ -103,5 +80,4 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 			return this.getActual();
 		}
 	}
-
 }

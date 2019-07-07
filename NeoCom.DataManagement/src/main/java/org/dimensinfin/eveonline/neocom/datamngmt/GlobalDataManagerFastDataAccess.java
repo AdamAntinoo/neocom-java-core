@@ -18,7 +18,7 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
-import org.dimensinfin.eveonline.neocom.model.PilotV2;
+import org.dimensinfin.eveonline.neocom.domain.PilotV2;
 import org.joda.time.Instant;
 
 import java.util.Hashtable;

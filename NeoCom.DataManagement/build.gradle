@@ -30,8 +30,6 @@ sourceSets {
         srcDirs += 'src/main/java-planetary'
 
         srcDirs += 'src/main/java-database'
-//        srcDirs += 'src/main/java-model'
-//        srcDirs += 'src/main/java-mining'
         srcDirs += 'src/main/java-market'
         srcDirs += 'src/main/java-industry'
     }
@@ -43,10 +41,6 @@ sourceSets {
 //        srcDirs += 'src/main/res-planetary'
 //    }
 }
-//compileOptions {
-//    sourceCompatibility = '1.8'
-//    targetCompatibility = '1.8'
-//}
 
 // - T A S K S
 task sourcesJar(type: Jar, dependsOn: classes) {

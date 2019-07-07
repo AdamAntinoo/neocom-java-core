@@ -38,7 +38,6 @@ public abstract class UpdatableEntity extends NeoComNode {
 		final UpdatableEntity that = (UpdatableEntity) o;
 		return new EqualsBuilder()
 				       .appendSuper(super.equals(o))
-//				       .append(creationTime, that.creationTime)
 				       .append(lastUpdateTime, that.lastUpdateTime)
 				       .isEquals();
 	}

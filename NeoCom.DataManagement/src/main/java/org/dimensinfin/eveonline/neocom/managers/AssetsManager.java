@@ -18,7 +18,7 @@ import com.j256.ormlite.dao.Dao;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.model.PilotV2;
+import org.dimensinfin.eveonline.neocom.domain.PilotV2;
 
 import java.io.Serializable;
 import java.sql.SQLException;

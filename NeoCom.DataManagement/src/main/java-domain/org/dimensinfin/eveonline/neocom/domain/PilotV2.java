@@ -1,22 +1,10 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.domain;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 import org.dimensinfin.eveonline.neocom.entities.Property;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
@@ -25,23 +13,14 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-
-import com.j256.ormlite.dao.Dao;
+import org.dimensinfin.eveonline.neocom.model.AllianceV1;
+import org.dimensinfin.eveonline.neocom.model.CorporationV1;
+import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 /**
  * @author Adam Antinoo
  */
-// - CLASS IMPLEMENTATION ...................................................................................
-public class PilotV2 extends ANeoComEntity {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	//	private static Logger logger = LoggerFactory.getLogger("PilotV2");
-
-	public static String getUrlforAvatar( final int identifier ) {
-		return "http://image.eveonline.com/character/" + identifier + "_256.jpg";
-	}
-
-	// - F I E L D - S E C T I O N ............................................................................
+public class PilotV2 extends UpdatableEntity {
 	public int characterId = -1;
 	public String name = "-NOT-KNOWN-";
 	public long birthday = 0;
@@ -63,10 +42,10 @@ public class PilotV2 extends ANeoComEntity {
 	private HashMap<Integer, Property> actions4Pilot = new HashMap<>();
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public PilotV2() {
-		super();
-		//		this.jsonClass = "Pilot";
-	}
+//	public PilotV2() {
+//		super();
+//		//		this.jsonClass = "Pilot";
+//	}
 
 	// - G E T T E R S   &   S E T T E R S
 	public int getCharacterId() {
@@ -78,17 +57,17 @@ public class PilotV2 extends ANeoComEntity {
 		return this;
 	}
 
-	public String getName() {
-		return name;
-	}
+//	public String getName() {
+//		return name;
+//	}
 
 	public long getBirthday() {
 		return birthday;
 	}
 
-	public String getGender() {
-		return gender;
-	}
+//	public String getGender() {
+//		return gender;
+//	}
 
 	public double getSecurityStatus() {
 		return securityStatus;
@@ -161,36 +140,36 @@ public class PilotV2 extends ANeoComEntity {
 	}
 
 	//--- D E R I V E D   G E T T E R S
-	public EveLocation getLastKnownLocation() {
-		if (null != lastKnownLocation) return lastKnownLocation;
-		else if (null == homeLocation) return new EveLocation();
-		else {
-			try {
-				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
-			} catch (NeoComRuntimeException neoe) {
-				lastKnownLocation = new EveLocation();
-			}
-			return lastKnownLocation;
-		}
-	}
+//	public EveLocation getLastKnownLocation() {
+//		if (null != lastKnownLocation) return lastKnownLocation;
+//		else if (null == homeLocation) return new EveLocation();
+//		else {
+//			try {
+//				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
+//			} catch (NeoComRuntimeException neoe) {
+//				lastKnownLocation = new EveLocation();
+//			}
+//			return lastKnownLocation;
+//		}
+//	}
+//
+//	public long getTotalAssetsNumber() {
+//		if (this.totalAssetsNumber < 0) {
+//			final List<org.dimensinfin.eveonline.neocom.entities.NeoComAsset> pilotAssets;
+//			try {
+//				pilotAssets = accessGlobal().getNeocomDBHelper().getAssetDao()
+//						              .queryForEq("ownerId", this.characterId);
+//				this.totalAssetsNumber = pilotAssets.size();
+//			} catch (SQLException sqle) {
+//				this.totalAssetsNumber = 0;
+//			}
+//		}
+//		return totalAssetsNumber;
+//	}
 
-	public long getTotalAssetsNumber() {
-		if (this.totalAssetsNumber < 0) {
-			final List<org.dimensinfin.eveonline.neocom.entities.NeoComAsset> pilotAssets;
-			try {
-				pilotAssets = accessGlobal().getNeocomDBHelper().getAssetDao()
-						              .queryForEq("ownerId", this.characterId);
-				this.totalAssetsNumber = pilotAssets.size();
-			} catch (SQLException sqle) {
-				this.totalAssetsNumber = 0;
-			}
-		}
-		return totalAssetsNumber;
-	}
-
-	public String getUrlforAvatar() {
-		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
-	}
+//	public String getUrlforAvatar() {
+//		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
+//	}
 
 	//--- D A T A   T R A N S F O R M A T I O N
 
@@ -238,37 +217,37 @@ public class PilotV2 extends ANeoComEntity {
 		return hit;
 	}
 
-	public void deleteRole( final Property target ) {
-		try {
-			final Dao<Property, String> dao = accessGlobal().getNeocomDBHelper().getPropertyDao();
-			dao.deleteById(Long.valueOf(target.getId()).toString());
-			locationRoles.remove(target);
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		}
-	}
+//	public void deleteRole( final Property target ) {
+//		try {
+//			final Dao<Property, String> dao = accessGlobal().getNeocomDBHelper().getPropertyDao();
+//			dao.deleteById(Long.valueOf(target.getId()).toString());
+//			locationRoles.remove(target);
+//		} catch (SQLException sqle) {
+//			sqle.printStackTrace();
+//		}
+//	}
 
-	/**
-	 * Removes the records that define the association of roles to the selected location. This clears all the
-	 * roles for a location and if the user only wants to clear one he/she has to activate the others again
-	 * since all get removed.
-	 */
-	public void clearLocationRoles( final EveLocation theSelectedLocation ) {
-		//		if (null == locationRoles) accessLocationRoles();
-		for (Property role : locationRoles) {
-			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getId())) {
-				//		Property hit = locationRoles.get(theSelectedLocation.getID());
-				//		if (null != hit) {
-				try {
-					Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
-					propertyDao.delete(role);
-					locationRoles.remove(role);
-				} catch (final SQLException sqle) {
-					sqle.printStackTrace();
-				}
-			}
-		}
-	}
+//	/**
+//	 * Removes the records that define the association of roles to the selected location. This clears all the
+//	 * roles for a location and if the user only wants to clear one he/she has to activate the others again
+//	 * since all get removed.
+//	 */
+//	public void clearLocationRoles( final EveLocation theSelectedLocation ) {
+//		//		if (null == locationRoles) accessLocationRoles();
+//		for (Property role : locationRoles) {
+//			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getId())) {
+//				//		Property hit = locationRoles.get(theSelectedLocation.getID());
+//				//		if (null != hit) {
+//				try {
+//					Dao<Property, String> propertyDao = accessGlobal().getNeocomDBHelper().getPropertyDao();
+//					propertyDao.delete(role);
+//					locationRoles.remove(role);
+//				} catch (final SQLException sqle) {
+//					sqle.printStackTrace();
+//				}
+//			}
+//		}
+//	}
 
 	public void addAction4Item( final int typeId, final String taskName ) {
 		Property hit = actions4Pilot.get(typeId);
@@ -285,16 +264,16 @@ public class PilotV2 extends ANeoComEntity {
 
 
 	//-------------------------------------------------------------------------------------------
-	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
-		this.homeLocation = homeLocation;
-		// Convert this location pointer to a NeoCom location.
-		try {
-			lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
-		} catch (NeoComRuntimeException neoe) {
-			lastKnownLocation = new EveLocation();
-		}
-		return this;
-	}
+//	public PilotV2 setHomeLocation( final GetCharactersCharacterIdClonesOkHomeLocation homeLocation ) {
+//		this.homeLocation = homeLocation;
+//		// Convert this location pointer to a NeoCom location.
+//		try {
+//			lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
+//		} catch (NeoComRuntimeException neoe) {
+//			lastKnownLocation = new EveLocation();
+//		}
+//		return this;
+//	}
 
 
 	public PilotV2 setCloneInformation( final GetCharactersCharacterIdClonesOk cloneInformation ) {
@@ -304,8 +283,9 @@ public class PilotV2 extends ANeoComEntity {
 
 	// - D E L E G A T E D   M E T H O D S
 	public int compareTo( final PilotV2 o ) {
-		if (o.getCharacterId() == getCharacterId()) return 0;
-		else return o.getName().compareTo(getName());
+//		if (o.getCharacterId() == getCharacterId()) return 0;
+//		else return o.getName().compareTo(getName());
+		return 0;
 	}
 
 	@Override
