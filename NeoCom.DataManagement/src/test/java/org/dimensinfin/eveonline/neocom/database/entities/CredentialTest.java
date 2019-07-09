@@ -32,7 +32,7 @@ public class CredentialTest {
 				                              .withRaceName("TEST RACE")
 				                              .build();
 		Assert.assertNotNull(credential);
-		Assert.assertEquals("Verify some credential fields. uniqueId", "tranquility/234567", credential.uniqueCredential);
+		Assert.assertEquals("Verify some credential fields. uniqueId", "tranquility/234567", credential.getUniqueId());
 		Assert.assertEquals("Verify some credential fields. wallet balance", new Double(876567.54), credential.getWalletBalance());
 	}
 

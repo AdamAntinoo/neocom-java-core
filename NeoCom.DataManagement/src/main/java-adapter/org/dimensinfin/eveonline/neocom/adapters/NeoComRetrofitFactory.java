@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
+import org.dimensinfin.eveonline.neocom.auth.mock.NeoComRetrofitMock;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -26,16 +27,29 @@ import org.slf4j.LoggerFactory;
 import retrofit2.Retrofit;
 
 public class NeoComRetrofitFactory {
-	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
-	public static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
+	private static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
 	private static final List<String> mockList = new ArrayList<>();
+	private static final NeoComOAuth20.ESIStore STORE = NeoComOAuth20.ESIStore.DEFAULT;
+	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	private static String activatedServer;
 	private static String authorizationURL;
-	protected static final NeoComOAuth20.ESIStore STORE = NeoComOAuth20.ESIStore.DEFAULT;
-	public static String SCOPESTRING = "publicData";
+	private static String SCOPESTRING = "publicData";
 
 	static {
 		mockList.add("getCharactersCharacterIdMining");
+	}
+
+	// - M O C K   L I S T
+	public static void add2MockList( final String methodName ) {
+		mockList.add(methodName);
+	}
+
+	public static void remove4MockList( final String methodName ) {
+		mockList.remove(methodName);
+	}
+
+	public static void clearMockList() {
+		mockList.clear();
 	}
 
 	// - C O M P O N E N T S
@@ -65,6 +79,10 @@ public class NeoComRetrofitFactory {
 		return this.neocomRetrofitNoAuth;
 	}
 
+	public String getScopes() {
+		return SCOPESTRING;
+	}
+
 	/**
 	 * This is the point where I should check the table of requests to be mocked up. Get the caller method name from the
 	 * stack trace and search for it on the mock table. If found then use the mock retrofit instead of the authenticated retrofit.
@@ -88,15 +106,10 @@ public class NeoComRetrofitFactory {
 
 	private Retrofit generateMountebankRetrofit() {
 		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
-		return new NeoComRetrofitNoOAuthHTTP.Builder()
-				       //			                           .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
-				       .withEsiServerLocation("https://localhost:8448/")
+		return new NeoComRetrofitMock.Builder()
+				       .withEsiServerLocation("http://localhost:8448/")
 				       .withAgent(agent)
-				       //			                           .withCacheDataFile(cacheDataFile)
-				       //			                           .withCacheSize(CACHE_SIZE)
-				       //			                           .withTimeout(TIMEOUT)
 				       .build();
-
 	}
 
 	private Retrofit generateNoAuthRetrofit() {

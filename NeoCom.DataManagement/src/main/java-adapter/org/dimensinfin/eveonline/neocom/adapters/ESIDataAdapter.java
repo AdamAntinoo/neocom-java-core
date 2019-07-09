@@ -50,12 +50,12 @@ public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	// - C A C H E S
-	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(100);
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
+	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>(100);
 	private static Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
-	private transient final List<Long> id4Names = new ArrayList<>();
+	private static final List<Long> id4Names = new ArrayList<>();
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
@@ -78,7 +78,7 @@ public class ESIDataAdapter {
 	}
 
 	public String getStringScopes() {
-		return this.retrofitFactory.SCOPESTRING;
+		return this.retrofitFactory.getScopes();
 	}
 
 	// - D O W N L O A D   S T A R T E R S
@@ -134,7 +134,8 @@ public class ESIDataAdapter {
 	}
 
 	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
-		return this.racesCache.get(identifier);
+		this.prepareRaces();
+		return racesCache.get(identifier);
 	}
 
 	public GetUniverseAncestries200Ok searchSDEAncestry( final int identifier ) {
@@ -147,6 +148,17 @@ public class ESIDataAdapter {
 
 	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 		return Futures.immediateFuture(new MarketDataSet(itemId, side));
+	}
+
+	protected void prepareRaces() {
+		if (racesCache.size() < 1) {
+			// Download race, bloodline and other pilot data.
+			final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces(GlobalDataManager.TRANQUILITY_DATASOURCE);
+			logger.info(">> [ESIDataAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size());
+			for (GetUniverseRaces200Ok race : racesList) {
+				racesCache.put(race.getRaceId(), race);
+			}
+		}
 	}
 
 	// - U N I V E R S E
@@ -311,7 +323,7 @@ public class ESIDataAdapter {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			String datasource = DEFAULT_ESI_SERVER;
 			// Use server parameter to override configuration server to use.
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.

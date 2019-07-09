@@ -10,11 +10,7 @@ import com.annimon.stream.Objects;
 public class Pilot extends PilotV3 {
 	private Integer pilotIdentifier;
 	private GetCharactersCharacterIdOk characterPublicData;
-	private GetUniverseRaces200Ok race;
-	//	public Pilot() {
-	//		super(0);
-	//	}
-
+	private GetUniverseRaces200Ok raceData;
 	public int getPilotIdentifier() {
 		return pilotIdentifier;
 	}
@@ -81,6 +77,11 @@ public class Pilot extends PilotV3 {
 		public Pilot.Builder withCharacterPublicData( final GetCharactersCharacterIdOk characterPublicData ) {
 			if (null != characterPublicData)
 				this.onConstruction.characterPublicData = characterPublicData;
+			return this;
+		}
+		public Pilot.Builder withRaceData( final GetUniverseRaces200Ok raceData ) {
+			if (null != raceData)
+				this.onConstruction.raceData = raceData;
 			return this;
 		}
 	}
