@@ -1,5 +1,9 @@
 package org.dimensinfin.eveonline.neocom.support;
 
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -10,20 +14,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class TestFileSystem implements IFileSystem {
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("FileSystemSBImplementation");
+	private static Logger logger = LoggerFactory.getLogger(TestFileSystem.class);
 	private static ClassLoader classLoader = null;
 
-	// - F I E L D - S E C T I O N ............................................................................
 	private String applicationFolder = "./src/test/NeoCom.UnitTest";
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	public TestFileSystem() {}
 
 	public TestFileSystem( final String applicationStoreDirectory ) {

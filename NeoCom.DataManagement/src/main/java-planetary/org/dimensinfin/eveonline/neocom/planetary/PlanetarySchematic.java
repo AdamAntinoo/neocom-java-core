@@ -1,10 +1,10 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
+import org.dimensinfin.eveonline.neocom.database.repositories.PlanetaryRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.dimensinfin.eveonline.neocom.database.repositories.PlanetaryRepository;
 
 /**
  * Defines all the data related to a planetary transformation schematic. On creation generates and accesses the resource for the inputs and outputs.
@@ -34,6 +34,10 @@ public class PlanetarySchematic {
 
 	public int getCycleTime() {
 		return this.output.getCycleTime();
+	}
+
+	public int getInputRequiredQuantity() {
+		return this.inputList.get(0).getQuantity();
 	}
 
 	// - B U I L D E R

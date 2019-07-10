@@ -134,7 +134,7 @@ public class NeoComRetrofitFactory {
 				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
 		final File cacheDataFile = new File(this.fileSystemAdapter.accessResource4Path(cacheFilePath));
 		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
-		final long timeout = TimeUnit.SECONDS.toMillis(this.configurationProvider.getResourceInteger("P.cache.esiitem.timeout"));
+		final long timeout = TimeUnit.SECONDS.toMillis(this.configurationProvider.getResourceInteger("P.cache.esinetwork.timeout"));
 		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) {
 			return new NeoComRetrofitHTTP.Builder()
 					       .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))

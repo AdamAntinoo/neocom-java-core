@@ -1,15 +1,3 @@
-//  PROJECT:     NeoCom.DataManagement(NEOC.DTM)
-//  AUTHORS:     Adam Antinoo - adamantinoo.git@gmail.com
-//  COPYRIGHT:   (c) 2013-2018 by Dimensinfin Industries, all rights reserved.
-//  ENVIRONMENT: Java 1.8 Library.
-//  DESCRIPTION: NeoCom project library that comes from the old Models package but that includes much more
-//               functionality than the model definitions for the Eve Online NeoCom application.
-//               If now defines the pure java code for all the repositories, caches and managers that do
-//               not have an specific Android implementation serving as a code base for generic platform
-//               development. The architecture model has also changed to a better singleton/static
-//               implementation that reduces dependencies and allows separate use of the modules. Still
-//               there should be some initialization/configuration code to connect the new library to the
-//               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
 import java.sql.SQLException;
@@ -29,40 +17,8 @@ import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-// - CLASS IMPLEMENTATION ...................................................................................
 public abstract class SDEDatabaseManager {
-	//	public abstract static class RawStatement {
-	//		public abstract boolean moveToFirst();
-	//
-	//		public abstract boolean moveToLast();
-	//
-	//		public abstract boolean moveToNext();
-	//
-	//		public abstract boolean isFirst();
-	//
-	//		public abstract boolean isLast();
-	//
-	//		public abstract String getString( final int i );
-	//
-	//		public abstract short getShort( final int i );
-	//
-	//		public abstract int getInt( final int i );
-	//
-	//		public abstract long getLong( final int i );
-	//
-	//		public abstract float getFloat( final int i );
-	//
-	//		public abstract double getDouble( final int i );
-	//
-	//		public abstract void close();
-	//	}
-
-	// - S T A T I C - S E C T I O N ..........................................................................
-	private static Logger logger = LoggerFactory.getLogger("SDEDatabaseManager");
-
-	// --- S Q L   S T A T E M E N T S   S E C T I O N
-
+	protected static Logger logger = LoggerFactory.getLogger(SDEDatabaseManager.class);
 	// - L O C A T I O N B Y I D
 	private static int LOCATIONBYID_SYSTEMID_COLINDEX = 5;
 	private static int LOCATIONBYID_SYSTEM_COLINDEX = 6;
