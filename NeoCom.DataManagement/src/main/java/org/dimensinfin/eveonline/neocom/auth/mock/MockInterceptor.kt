@@ -1,10 +1,6 @@
 package org.dimensinfin.eveonline.neocom.auth.mock
 
-import okhttp3.Interceptor
-import okhttp3.MediaType
-import okhttp3.Protocol
-import okhttp3.Response
-import okhttp3.ResponseBody
+import okhttp3.*
 
 /**
  * This will help us to test our networking code while a particular API is not implemented
@@ -30,7 +26,6 @@ class MockInterceptor : Interceptor {
 		return when {
 			matches(uri, "characters", "planets","40237824") -> getMockPlanetAdvancedFactories
 			matches(uri, "characters", "planets") -> getMockPlanets
-//			uri.contains("40237774") -> getMockPlanetStuctures
 			uri.contains("2561") -> getType2561
 			uri.contains("2483") -> getType2483
 			else -> {
@@ -189,123 +184,6 @@ const val getMockPlanets = """
 """
 const val getMockPlanetAdvancedFactories_fulldata = """
 {
-  "links": [
-    {
-      "destination_pin_id": 1022847372299,
-      "link_level": 0,
-      "source_pin_id": 1022847338707
-    },
-    {
-      "destination_pin_id": 1024910917364,
-      "link_level": 0,
-      "source_pin_id": 1019442390434
-    },
-    {
-      "destination_pin_id": 1024910917364,
-      "link_level": 0,
-      "source_pin_id": 1022847372292
-    },
-    {
-      "destination_pin_id": 1022847351300,
-      "link_level": 0,
-      "source_pin_id": 1022847333660
-    },
-    {
-      "destination_pin_id": 1022847372295,
-      "link_level": 0,
-      "source_pin_id": 1022847333673
-    },
-    {
-      "destination_pin_id": 1022847372311,
-      "link_level": 0,
-      "source_pin_id": 1022847372301
-    },
-    {
-      "destination_pin_id": 1022847372305,
-      "link_level": 0,
-      "source_pin_id": 1022847372301
-    },
-    {
-      "destination_pin_id": 1024967744081,
-      "link_level": 0,
-      "source_pin_id": 1022847311749
-    },
-    {
-      "destination_pin_id": 1022847372317,
-      "link_level": 0,
-      "source_pin_id": 1022847372299
-    },
-    {
-      "destination_pin_id": 1022847333660,
-      "link_level": 0,
-      "source_pin_id": 1022847311747
-    },
-    {
-      "destination_pin_id": 1022847311749,
-      "link_level": 0,
-      "source_pin_id": 1019442390434
-    },
-    {
-      "destination_pin_id": 1024910917365,
-      "link_level": 0,
-      "source_pin_id": 1022847372301
-    },
-    {
-      "destination_pin_id": 1022847372316,
-      "link_level": 0,
-      "source_pin_id": 1022847372292
-    },
-    {
-      "destination_pin_id": 1022847372303,
-      "link_level": 0,
-      "source_pin_id": 1022847338705
-    },
-    {
-      "destination_pin_id": 1022847338705,
-      "link_level": 0,
-      "source_pin_id": 1022847311747
-    },
-    {
-      "destination_pin_id": 1022847333673,
-      "link_level": 0,
-      "source_pin_id": 1022847311749
-    },
-    {
-      "destination_pin_id": 1022847333669,
-      "link_level": 0,
-      "source_pin_id": 1022847311749
-    },
-    {
-      "destination_pin_id": 1024910917365,
-      "link_level": 0,
-      "source_pin_id": 1019442390434
-    },
-    {
-      "destination_pin_id": 1022847338707,
-      "link_level": 0,
-      "source_pin_id": 1022847311747
-    },
-    {
-      "destination_pin_id": 1022847372312,
-      "link_level": 0,
-      "source_pin_id": 1022847372301
-    },
-    {
-      "destination_pin_id": 1024967449015,
-      "link_level": 0,
-      "source_pin_id": 1019442390434
-    },
-    {
-      "destination_pin_id": 1022847333661,
-      "link_level": 0,
-      "source_pin_id": 1022847311749
-    },
-    {
-      "destination_pin_id": 1022847311747,
-      "link_level": 0,
-      "source_pin_id": 1019442390434
-    }
-  ],
   "pins": [
     {
       "contents": [
@@ -1416,8 +1294,70 @@ const val getMockPlanetAdvancedFactories = """
       "last_cycle_start": "2017-07-21T08:26:50Z",
       "latitude": 2.27239886788,
       "longitude": 1.97163458582,
+      "pin_id": 1022847372296,
+      "schematic_id": 89,
+      "type_id": 2474
+    },
+    {
+      "contents": [
+        {
+          "amount": 5,
+          "type_id": 3691
+        },
+        {
+          "amount": 10,
+          "type_id": 9838
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:26:50Z",
+      "latitude": 2.29180471798,
+      "longitude": 2.04183697006,
       "pin_id": 1022847372295,
       "schematic_id": 89,
+      "type_id": 2474
+    },
+    {
+      "contents": [
+        {
+          "amount": 10,
+          "type_id": 2328
+        },
+        {
+          "amount": 8,
+          "type_id": 9832
+        },
+        {
+          "amount": 5,
+          "type_id": 9836
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:35:20Z",
+      "latitude": 2.2852027294,
+      "longitude": 1.99976467424,
+      "pin_id": 1022847333660,
+      "schematic_id": 96,
+      "type_id": 2474
+    },
+    {
+      "contents": [
+        {
+          "amount": 10,
+          "type_id": 2328
+        },
+        {
+          "amount": 10,
+          "type_id": 9832
+        },
+        {
+          "amount": 10,
+          "type_id": 9836
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:35:20Z",
+      "latitude": 2.30938039038,
+      "longitude": 1.99885095517,
+      "pin_id": 1022847333660,
+      "schematic_id": 96,
       "type_id": 2474
     },
     {
