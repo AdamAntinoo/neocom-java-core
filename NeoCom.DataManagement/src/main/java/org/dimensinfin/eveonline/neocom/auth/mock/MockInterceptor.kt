@@ -188,77 +188,6 @@ const val getMockPlanetAdvancedFactories_fulldata = """
     {
       "contents": [
         {
-          "amount": 3000,
-          "type_id": 2073
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:46:36Z",
-      "latitude": 2.27947373989,
-      "longitude": 2.04222191406,
-      "pin_id": 1022847372311,
-      "schematic_id": 131,
-      "type_id": 2473
-    },
-    {
-      "contents": [
-        {
-          "amount": 3000,
-          "type_id": 2073
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:46:36Z",
-      "latitude": 2.29180471798,
-      "longitude": 2.04183697006,
-      "pin_id": 1022847372312,
-      "schematic_id": 131,
-      "type_id": 2473
-    },
-    {
-      "contents": [
-        {
-          "amount": 10,
-          "type_id": 2328
-        },
-        {
-          "amount": 10,
-          "type_id": 9832
-        },
-        {
-          "amount": 10,
-          "type_id": 9836
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:35:20Z",
-      "latitude": 2.30938039038,
-      "longitude": 1.99885095517,
-      "pin_id": 1022847333660,
-      "schematic_id": 96,
-      "type_id": 2474
-    },
-    {
-      "contents": [
-        {
-          "amount": 3000,
-          "type_id": 2286
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:20:05Z",
-      "latitude": 2.29157649507,
-      "longitude": 1.95576508454,
-      "pin_id": 1022847372317,
-      "schematic_id": 132,
-      "type_id": 2473
-    },
-    {
-      "last_cycle_start": "2017-01-15T12:08:55Z",
-      "latitude": 2.2852027294,
-      "longitude": 1.99976467424,
-      "pin_id": 1019442390434,
-      "type_id": 2524
-    },
-    {
-      "contents": [
-        {
           "amount": 40,
           "type_id": 2393
         },
@@ -291,20 +220,6 @@ const val getMockPlanetAdvancedFactories_fulldata = """
       "pin_id": 1022847333673,
       "schematic_id": 98,
       "type_id": 2474
-    },
-    {
-      "contents": [
-        {
-          "amount": 3000,
-          "type_id": 2306
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:22:36Z",
-      "latitude": 2.27903719767,
-      "longitude": 2.01406248364,
-      "pin_id": 1024967449015,
-      "schematic_id": 129,
-      "type_id": 2473
     },
     {
       "contents": [
@@ -1283,6 +1198,34 @@ const val getMockPlanetAdvancedFactories = """
     {
       "contents": [
         {
+          "amount": 3000,
+          "type_id": 2306
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:22:36Z",
+      "latitude": 2.27903719767,
+      "longitude": 2.01406248364,
+      "pin_id": 1024967449015,
+      "schematic_id": 129,
+      "type_id": 2473
+    },
+    {
+      "contents": [
+        {
+          "amount": 2000,
+          "type_id": 2306
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:22:36Z",
+      "latitude": 2.32178261051,
+      "longitude": 1.99824191983,
+      "pin_id": 1024967449015,
+      "schematic_id": 129,
+      "type_id": 2473
+    },
+    {
+      "contents": [
+        {
           "amount": 10,
           "type_id": 3691
         },
@@ -1310,8 +1253,8 @@ const val getMockPlanetAdvancedFactories = """
         }
       ],
       "last_cycle_start": "2017-07-21T08:26:50Z",
-      "latitude": 2.29180471798,
-      "longitude": 2.04183697006,
+      "latitude": 2.27947373989,
+      "longitude": 2.04222191406,
       "pin_id": 1022847372295,
       "schematic_id": 89,
       "type_id": 2474
@@ -1332,8 +1275,8 @@ const val getMockPlanetAdvancedFactories = """
         }
       ],
       "last_cycle_start": "2017-07-21T08:35:20Z",
-      "latitude": 2.2852027294,
-      "longitude": 1.99976467424,
+      "latitude": 2.26701029532,
+      "longitude": 2.01422239033,
       "pin_id": 1022847333660,
       "schematic_id": 96,
       "type_id": 2474

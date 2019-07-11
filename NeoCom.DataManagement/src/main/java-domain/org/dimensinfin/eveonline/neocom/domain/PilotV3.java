@@ -2,9 +2,7 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
-
 import org.joda.time.LocalDateTime;
 
 public class PilotV3 extends PilotV2  {
@@ -42,10 +40,10 @@ public class PilotV3 extends PilotV2  {
 //		else return 0;
 //	}
 
-	public String getRaceName() {
-		if (null == this.race) return null;
-		else return this.race.getName();
-	}
+//	public String getRaceName() {
+//		if (null == this.race) return null;
+//		else return this.race.getName();
+//	}
 
 	/**
 	 * A pilot instance is a set of multiple blocks of data, some of then obtained form the CCP data services and other from the local
@@ -115,12 +113,12 @@ public class PilotV3 extends PilotV2  {
 //						, EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name()
 //						, null, completedData));
 				break;
-			case PILOT_RACE:
-				this.setRace((GetUniverseRaces200Ok) completedData);
-//				this.sendChangeEvent(new PropertyChangeEvent(this
-//						, EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name()
-//						, null, completedData));
-				break;
+//			case PILOT_RACE:
+//				this.setRace((GetUniverseRaces200Ok) completedData);
+////				this.sendChangeEvent(new PropertyChangeEvent(this
+////						, EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name()
+////						, null, completedData));
+//				break;
 		}
 	}
 

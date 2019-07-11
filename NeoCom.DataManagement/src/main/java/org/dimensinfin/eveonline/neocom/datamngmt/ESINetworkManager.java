@@ -303,53 +303,53 @@ public class ESINetworkManager extends ESINetworkManagerCharacter {
 	}
 
 	// - S T A T I C   S W A G G E R   I N T E R F A C E - C O R P O R A T I O N   A P I
-	// --- C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
-	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
-		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			// Use server parameter to override configuration server to use.
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetCorporationsCorporationIdOk> corporationResponse = neocomRetrofit
-					                                                                     .create(CorporationApi.class)
-					                                                                     .getCorporationsCorporationId(identifier, datasource, null).execute();
-			if (corporationResponse.isSuccessful())
-				return corporationResponse.body();
-		} catch (IOException ioe) {
-			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
-			ioe.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
-
-	// --- A L L I A N C E   P U B L I C   I N F O R M A T I O N
-	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier, final String refreshToken, final String server ) {
-		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
-		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
-			// Use server parameter to override configuration server to use.
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetAlliancesAllianceIdOk> allianceResponse = neocomRetrofit
-					                                                            .create(AllianceApi.class)
-					                                                            .getAlliancesAllianceId(identifier, datasource, null).execute();
-			if (allianceResponse.isSuccessful())
-				return allianceResponse.body();
-		} catch (IOException ioe) {
-			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
-			ioe.printStackTrace();
-		} finally {
-			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
+//	// --- C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
+//	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier, final String refreshToken, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
+//		final Chrono accessFullTime = new Chrono();
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			// Use server parameter to override configuration server to use.
+//			if (null != server) datasource = server;
+//			// Create the request to be returned so it can be called.
+//			final Response<GetCorporationsCorporationIdOk> corporationResponse = neocomRetrofit
+//					                                                                     .create(CorporationApi.class)
+//					                                                                     .getCorporationsCorporationId(identifier, datasource, null).execute();
+//			if (corporationResponse.isSuccessful())
+//				return corporationResponse.body();
+//		} catch (IOException ioe) {
+//			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
+//			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return null;
+//	}
+//
+//	// --- A L L I A N C E   P U B L I C   I N F O R M A T I O N
+//	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier, final String refreshToken, final String server ) {
+//		logger.info(">> [ESINetworkManager.getCorporationsCorporationId]");
+//		final Chrono accessFullTime = new Chrono();
+//		try {
+//			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+//			// Use server parameter to override configuration server to use.
+//			if (null != server) datasource = server;
+//			// Create the request to be returned so it can be called.
+//			final Response<GetAlliancesAllianceIdOk> allianceResponse = neocomRetrofit
+//					                                                            .create(AllianceApi.class)
+//					                                                            .getAlliancesAllianceId(identifier, datasource, null).execute();
+//			if (allianceResponse.isSuccessful())
+//				return allianceResponse.body();
+//		} catch (IOException ioe) {
+//			logger.error("EX [ESINetworkManager.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage());
+//			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return null;
+//	}
 }

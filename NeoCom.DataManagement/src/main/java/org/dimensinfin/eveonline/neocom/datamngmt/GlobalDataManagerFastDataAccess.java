@@ -17,15 +17,13 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
 import org.dimensinfin.eveonline.neocom.domain.PilotV2;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
 import org.joda.time.Instant;
 
 import java.util.Hashtable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Implements a model cache for fast data access. Updates will be done on background on the Future mechanics and probably there will be
@@ -72,42 +70,43 @@ public class GlobalDataManagerFastDataAccess extends GlobalDataManagerExceptions
 					if (_timeCacheStore.get(locator).isBefore(Instant.now())) {
 						GlobalDataManager.getSingleton().submitJob(() -> {
 							final PilotV2 instance;
-							try {
-								instance = GlobalDataManager.getSingleton().requestPilotV2(credential);
-								store(EModelDataTypes.PILOTV2
-										, instance
-										, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))
-										, credential.getAccountId());
-							} catch (NeoComRegisteredException neoe) {
-								neoe.printStackTrace();
-							}
+//							try {
+//								instance = GlobalDataManager.getSingleton().requestPilotV2(credential);
+//								store(EModelDataTypes.PILOTV2
+//										, instance
+//										, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))
+//										, credential.getAccountId());
+//							} catch (NeoComRegisteredException neoe) {
+//								neoe.printStackTrace();
+//							}
 						});
 						return hit;
 					} else
 						return hit;
-				} else {
-					// The object is not cached. Get it from the network and wait until the Future completes.
-					final Future<PilotV2> fut = modelUpdaterExecutor.submit(() -> {
-						try {
-							final PilotV2 instance = GlobalDataManager.getSingleton().requestPilotV2(credential);
-							store(EModelDataTypes.PILOTV2
-									, instance
-									, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))
-									, credential.getAccountId());
-							return instance;
-						} catch (NeoComRegisteredException neoe) {
-							return null;
-						}
-					});
-					try {
-						return fut.get();
-					} catch (InterruptedException ie) {
-						return null;
-					} catch (ExecutionException ee) {
-						ee.printStackTrace();
-						return null;
-					}
 				}
+//				else {
+//					// The object is not cached. Get it from the network and wait until the Future completes.
+////					final Future<PilotV2> fut = modelUpdaterExecutor.submit(() -> {
+//////						try {
+//////							final PilotV2 instance = GlobalDataManager.getSingleton().requestPilotV2(credential);
+//////							store(EModelDataTypes.PILOTV2
+//////									, instance
+//////									, Instant.now().plus(ESICacheTimes.get(ECacheTimes.CHARACTER_PUBLIC))
+//////									, credential.getAccountId());
+//////							return instance;
+//////						} catch (NeoComRegisteredException neoe) {
+//////							return null;
+//////						}
+////					});
+//					try {
+//						return fut.get();
+//					} catch (InterruptedException ie) {
+//						return null;
+//					} catch (ExecutionException ee) {
+//						ee.printStackTrace();
+//						return null;
+//					}
+//				}
 			}
 			return null;
 		}

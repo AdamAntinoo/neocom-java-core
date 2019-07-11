@@ -1,9 +1,5 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 import org.dimensinfin.eveonline.neocom.entities.Property;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
@@ -12,10 +8,13 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.model.AllianceV1;
 import org.dimensinfin.eveonline.neocom.model.CorporationV1;
 import org.dimensinfin.eveonline.neocom.model.EveLocation;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Adam Antinoo
@@ -28,7 +27,7 @@ public class PilotV2 extends UpdatableEntity {
 	public double securityStatus = 0.0;
 	public CorporationV1 corporation = null;
 	public AllianceV1 alliance = null;
-	public GetUniverseRaces200Ok race = null;
+//	public GetUniverseRaces200Ok race = null;
 	public GetUniverseBloodlines200Ok bloodline = null;
 	public GetUniverseAncestries200Ok ancestry = null;
 	public double accountBalance = -1.0;
@@ -91,14 +90,14 @@ public class PilotV2 extends UpdatableEntity {
 		return this;
 	}
 
-	public GetUniverseRaces200Ok getRace() {
-		return race;
-	}
+//	public GetUniverseRaces200Ok getRace() {
+//		return race;
+//	}
 
-	public PilotV2 setRace( final GetUniverseRaces200Ok race ) {
-		this.race = race;
-		return this;
-	}
+//	public PilotV2 setRace( final GetUniverseRaces200Ok race ) {
+//		this.race = race;
+//		return this;
+//	}
 
 	public GetUniverseBloodlines200Ok getBloodline() {
 		return bloodline;

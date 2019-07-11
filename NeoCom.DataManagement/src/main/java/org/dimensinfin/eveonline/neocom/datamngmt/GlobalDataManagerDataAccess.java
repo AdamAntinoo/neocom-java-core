@@ -12,6 +12,17 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+
+import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.entities.Job;
+import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,27 +33,6 @@ import java.io.ObjectOutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.domain.PilotV2;
-import org.dimensinfin.eveonline.neocom.entities.Job;
-import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
-import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.entities.Property;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
-import org.dimensinfin.eveonline.neocom.exception.NEOE;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRegisteredException;
-import org.dimensinfin.eveonline.neocom.model.AllianceV1;
-import org.dimensinfin.eveonline.neocom.model.CorporationV1;
-
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 /**
  * @author Adam Antinoo
@@ -55,66 +45,66 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	// --- M O D E L - S T O R E   I N T E R F A C E
 	//--- ALLIANCE
 	//	public static AllianceV1 reachAllianceV1( final int identifier, final SessionContext context ) {
-	public AllianceV1 requestAllianceV1( final int allianceIdentifier, final Credential credential ) {
-		logger.info(">> [GlobalDataManager.requestAllianceV1]> Identifier: {}", credential.getAccountId());
-		try {
-			//			// Check if this request is already available on the cache.
-			//			final ICollaboration hit = modelCache.access(EModelVariants.ALLIANCEV1, identifier);
-			//			if (null == hit) {
-			//				logger.info("-- [GlobalDataManager.reachAllianceV1]> Instance not found at cache. Downloading Alliance <{}> info.",
-			//						identifier);
-			final AllianceV1 newalliance = new AllianceV1();
-			// Get the credential from the Store.
-			//				final Credential credential = context.getCredential();
-
-			// Corporation information.
-			logger.info("-- [GlobalDataManager.requestAllianceV1]> ESI Compatible. Download corporation information.");
-			final GetAlliancesAllianceIdOk publicData = this.esiAdapter.getAlliancesAllianceId(Long.valueOf(allianceIdentifier)
-					                                                                                     .intValue()
-					, credential.getRefreshToken()
-					, credential.getDataSource());
-			newalliance.setAllianceId(allianceIdentifier)
-					.setPublicData(publicData);
-			//					.setExecutorCorporation(GlobalDataManager.requestCorporationV1(publicData.getExecutorCorporationId(), credential));
-			return newalliance;
-			//			} else {
-			//				logger.info("-- [GlobalDataManager.requestAllianceV1]> Alliance <{}> found at cache.", identifier);
-			//				return (AllianceV1) hit;
-			//			}
-		} finally {
-			logger.info("<< [GlobalDataManager.requestAllianceV1]");
-		}
-	}
+//	public AllianceV1 requestAllianceV1( final int allianceIdentifier, final Credential credential ) {
+//		logger.info(">> [GlobalDataManager.requestAllianceV1]> Identifier: {}", credential.getAccountId());
+//		try {
+//			//			// Check if this request is already available on the cache.
+//			//			final ICollaboration hit = modelCache.access(EModelVariants.ALLIANCEV1, identifier);
+//			//			if (null == hit) {
+//			//				logger.info("-- [GlobalDataManager.reachAllianceV1]> Instance not found at cache. Downloading Alliance <{}> info.",
+//			//						identifier);
+//			final AllianceV1 newalliance = new AllianceV1();
+//			// Get the credential from the Store.
+//			//				final Credential credential = context.getCredential();
+//
+//			// Corporation information.
+//			logger.info("-- [GlobalDataManager.requestAllianceV1]> ESI Compatible. Download corporation information.");
+//			final GetAlliancesAllianceIdOk publicData = this.esiAdapter.getAlliancesAllianceId(Long.valueOf(allianceIdentifier)
+//					                                                                                     .intValue()
+//					, credential.getRefreshToken()
+//					, credential.getDataSource());
+//			newalliance.setAllianceId(allianceIdentifier)
+//					.setPublicData(publicData);
+//			//					.setExecutorCorporation(GlobalDataManager.requestCorporationV1(publicData.getExecutorCorporationId(), credential));
+//			return newalliance;
+//			//			} else {
+//			//				logger.info("-- [GlobalDataManager.requestAllianceV1]> Alliance <{}> found at cache.", identifier);
+//			//				return (AllianceV1) hit;
+//			//			}
+//		} finally {
+//			logger.info("<< [GlobalDataManager.requestAllianceV1]");
+//		}
+//	}
 
 	//--- CORPORATION
 	//	public static CorporationV1 reachCorporationV1( final int identifier, final SessionContext context ) {
-	public CorporationV1 requestCorporationV1( final int corpIdentifier, final Credential credential ) {
-		logger.info(">> [GlobalDataManager.requestCorporationV1]> Identifier: {}", credential.getAccountId());
-		try {
-			// Check if this request is already available on the cache.
-			//			final ICollaboration hit = modelCache.access(EModelVariants.CORPORATIONV1, identifier);
-			//			if (null == hit) {
-			//				logger.info("-- [GlobalDataManager.reachCorporationV1]> Instance not found at cache. Downloading Corporation <{}> info.",identifier);
-			final CorporationV1 newcorp = new CorporationV1();
-			// Corporation information.
-			//			logger.info("-- [GlobalDataManager.requestCorporationV1]> ESI Compatible. Download corporation information.");
-			final GetCorporationsCorporationIdOk publicData = this.esiAdapter.getCorporationsCorporationId(corpIdentifier
-					, credential.getRefreshToken()
-					, credential.getDataSource());
-			newcorp.setCorporationId(corpIdentifier)
-					.setPublicData(publicData);
-			if (null != publicData.getAllianceId())
-				newcorp.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
-
-			return newcorp;
-			//			} else {
-			//				logger.info("-- [GlobalDataManager.requestCorporationV1]> Corporation <{}> found at cache.", identifier);
-			//				return (CorporationV1) hit;
-			//			}
-		} finally {
-			logger.info("<< [GlobalDataManager.requestCorporationV1]");
-		}
-	}
+//	public CorporationV1 requestCorporationV1( final int corpIdentifier, final Credential credential ) {
+//		logger.info(">> [GlobalDataManager.requestCorporationV1]> Identifier: {}", credential.getAccountId());
+//		try {
+//			// Check if this request is already available on the cache.
+//			//			final ICollaboration hit = modelCache.access(EModelVariants.CORPORATIONV1, identifier);
+//			//			if (null == hit) {
+//			//				logger.info("-- [GlobalDataManager.reachCorporationV1]> Instance not found at cache. Downloading Corporation <{}> info.",identifier);
+//			final CorporationV1 newcorp = new CorporationV1();
+//			// Corporation information.
+//			//			logger.info("-- [GlobalDataManager.requestCorporationV1]> ESI Compatible. Download corporation information.");
+//			final GetCorporationsCorporationIdOk publicData = this.esiAdapter.getCorporationsCorporationId(corpIdentifier
+//					, credential.getRefreshToken()
+//					, credential.getDataSource());
+//			newcorp.setCorporationId(corpIdentifier)
+//					.setPublicData(publicData);
+//			if (null != publicData.getAllianceId())
+//				newcorp.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
+//
+//			return newcorp;
+//			//			} else {
+//			//				logger.info("-- [GlobalDataManager.requestCorporationV1]> Corporation <{}> found at cache.", identifier);
+//			//				return (CorporationV1) hit;
+//			//			}
+//		} finally {
+//			logger.info("<< [GlobalDataManager.requestCorporationV1]");
+//		}
+//	}
 
 	//--- PILOT
 
@@ -129,81 +119,81 @@ public class GlobalDataManagerDataAccess extends GlobalDataManagerNetwork {
 	 * @return an instance of a PilotV2 class that has some of the required information to be shown on the ui at this
 	 * 		point.
 	 */
-	public PilotV2 requestPilotV2( final Credential credential ) throws NeoComRegisteredException {
-		logger.info(">> [GlobalDataManager.requestPilotV2]> Identifier: {}", credential.getAccountId());
-		try {
-			final PilotV2 newchar = new PilotV2();
-			logger.info("-- [GlobalDataManager.requestPilotV2]> Processing data with Credential <{}>.", credential.getAccountName());
-
-			// Public information.
-			logger.info("-- [GlobalDataManager.requestPilotV2]> Download public data information.");
-			final GetCharactersCharacterIdOk publicData = this.esiDataAdapter.getCharactersCharacterId(credential.getAccountId()
-					, credential.getRefreshToken()
-					, credential.getDataSource());
-			// Public data can be null if there are problems accessing the server.
-			if (null == publicData) throw new NeoComRegisteredException(NEOE.ESIDATA_NULL);
-			newchar.setCharacterId(credential.getAccountId())
-					.setPublicData(publicData);
-			// Process the public data and get the referenced instances for the Corporation, race, etc.
-			newchar
-					.setRace(this.esiDataAdapter.searchSDERace(publicData.getRaceId()))
-					.setBloodline(this.esiDataAdapter.searchSDEBloodline(publicData.getBloodlineId()))
-					.setAncestry(this.esiDataAdapter.searchSDEAncestry(publicData.getAncestryId()));
-			if (null != publicData.getCorporationId())
-				newchar.setCorporation(GlobalDataManager.getSingleton().requestCorporationV1(publicData.getCorporationId(), credential));
-			if (null != publicData.getAllianceId())
-				newchar.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
-			// Wallet status
-			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
-			final Double walletAmount = this.esiDataAdapter.getCharactersCharacterIdWallet(credential.getAccountId()
-					, credential.getRefreshToken()
-					, credential.getDataSource());
-			newchar.setAccountBalance(walletAmount);
-			// Properties
-			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Pilot Properties.");
-			try {
-				final List<Property> properties =  GlobalDataManager.getSingleton().getNeocomDBHelper().getPropertyDao().queryForEq("ownerId"
-						, credential.getAccountId());
-				newchar.setProperties(properties);
-			} catch (SQLException sqle) {
-			}
-			// Clone data
-			logger.info("-- [GlobalDataManager.requestPilotV2]> Download clone information.");
-			final GetCharactersCharacterIdClonesOk cloneInformation = this.esiAdapter.getCharactersCharacterIdClones(credential.getAccountId()
-					, credential.getRefreshToken()
-					, credential.getDataSource());
-			if (null != cloneInformation) {
-				newchar.setCloneInformation(cloneInformation);
-//				newchar.setHomeLocation(cloneInformation.getHomeLocation());
-			}
-			//
-			//					// Register instance into the cache. Expiration time is about 3600 seconds.
-			//					try {
-			//						final Instant expirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
-			//						modelCache.store(EModelVariants.PILOTV2, newchar, expirationTime, identifier);
-			//						// Store this same information on the database to record the TimeStamp.
-			//						final String reference = GlobalDataManager.constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
-			//						TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
-			//						if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
-			//						logger.info("-- [GlobalDataManager.reachPilotV2]> Updating character TimeStamp {}.", reference);
-			//						timestamp.setTimeStamp(expirationTime)
-			//								.setCredentialId(credential.getAccountId())
-			//								.store();
-			//					} catch (SQLException sqle) {
-			//						sqle.printStackTrace();
-			//					}
-			// TODO End checkpoint --------------------------------------------
-			//				}
-			return newchar;
-			//			} else {
-			//				logger.info("-- [GlobalDataManager.requestPilotV2]> Pilot <{}> found at cache.", identifier);
-			//				return (PilotV2) hit;
-			//			}
-
-		} finally {
-			logger.info("<< [GlobalDataManager.requestPilotV2]");
-		}
-	}
+//	public PilotV2 requestPilotV2( final Credential credential ) throws NeoComRegisteredException {
+//		logger.info(">> [GlobalDataManager.requestPilotV2]> Identifier: {}", credential.getAccountId());
+//		try {
+//			final PilotV2 newchar = new PilotV2();
+//			logger.info("-- [GlobalDataManager.requestPilotV2]> Processing data with Credential <{}>.", credential.getAccountName());
+//
+//			// Public information.
+//			logger.info("-- [GlobalDataManager.requestPilotV2]> Download public data information.");
+//			final GetCharactersCharacterIdOk publicData = this.esiDataAdapter.getCharactersCharacterId(credential.getAccountId()
+//					, credential.getRefreshToken()
+//					, credential.getDataSource());
+//			// Public data can be null if there are problems accessing the server.
+//			if (null == publicData) throw new NeoComRegisteredException(NEOE.ESIDATA_NULL);
+//			newchar.setCharacterId(credential.getAccountId())
+//					.setPublicData(publicData);
+//			// Process the public data and get the referenced instances for the Corporation, race, etc.
+//			newchar
+//					.setRace(this.esiDataAdapter.searchSDERace(publicData.getRaceId()))
+//					.setBloodline(this.esiDataAdapter.searchSDEBloodline(publicData.getBloodlineId()))
+//					.setAncestry(this.esiDataAdapter.searchSDEAncestry(publicData.getAncestryId()));
+//			if (null != publicData.getCorporationId())
+//				newchar.setCorporation(GlobalDataManager.getSingleton().requestCorporationV1(publicData.getCorporationId(), credential));
+//			if (null != publicData.getAllianceId())
+//				newchar.setAlliance(GlobalDataManager.getSingleton().requestAllianceV1(publicData.getAllianceId(), credential));
+//			// Wallet status
+//			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Wallet amount.");
+//			final Double walletAmount = this.esiDataAdapter.getCharactersCharacterIdWallet(credential.getAccountId()
+//					, credential.getRefreshToken()
+//					, credential.getDataSource());
+//			newchar.setAccountBalance(walletAmount);
+//			// Properties
+//			logger.info("-- [GlobalDataManager.requestPilotV2]> Download Pilot Properties.");
+//			try {
+//				final List<Property> properties =  GlobalDataManager.getSingleton().getNeocomDBHelper().getPropertyDao().queryForEq("ownerId"
+//						, credential.getAccountId());
+//				newchar.setProperties(properties);
+//			} catch (SQLException sqle) {
+//			}
+//			// Clone data
+//			logger.info("-- [GlobalDataManager.requestPilotV2]> Download clone information.");
+//			final GetCharactersCharacterIdClonesOk cloneInformation = this.esiAdapter.getCharactersCharacterIdClones(credential.getAccountId()
+//					, credential.getRefreshToken()
+//					, credential.getDataSource());
+//			if (null != cloneInformation) {
+//				newchar.setCloneInformation(cloneInformation);
+////				newchar.setHomeLocation(cloneInformation.getHomeLocation());
+//			}
+//			//
+//			//					// Register instance into the cache. Expiration time is about 3600 seconds.
+//			//					try {
+//			//						final Instant expirationTime = Instant.now().plus(TimeUnit.SECONDS.toMillis(3600));
+//			//						modelCache.store(EModelVariants.PILOTV2, newchar, expirationTime, identifier);
+//			//						// Store this same information on the database to record the TimeStamp.
+//			//						final String reference = GlobalDataManager.constructModelStoreReference(GlobalDataManager.EDataUpdateJobs.CHARACTER_CORE, credential.getAccountId());
+//			//						TimeStamp timestamp = getNeocomDBHelper().getTimeStampDao().queryForId(reference);
+//			//						if (null == timestamp) timestamp = new TimeStamp(reference, expirationTime);
+//			//						logger.info("-- [GlobalDataManager.reachPilotV2]> Updating character TimeStamp {}.", reference);
+//			//						timestamp.setTimeStamp(expirationTime)
+//			//								.setCredentialId(credential.getAccountId())
+//			//								.store();
+//			//					} catch (SQLException sqle) {
+//			//						sqle.printStackTrace();
+//			//					}
+//			// TODO End checkpoint --------------------------------------------
+//			//				}
+//			return newchar;
+//			//			} else {
+//			//				logger.info("-- [GlobalDataManager.requestPilotV2]> Pilot <{}> found at cache.", identifier);
+//			//				return (PilotV2) hit;
+//			//			}
+//
+//		} finally {
+//			logger.info("<< [GlobalDataManager.requestPilotV2]");
+//		}
+//	}
 
 	/**
 	 * Reference to the NeoCom persistence database Dao provider. This filed should be injected on startup.

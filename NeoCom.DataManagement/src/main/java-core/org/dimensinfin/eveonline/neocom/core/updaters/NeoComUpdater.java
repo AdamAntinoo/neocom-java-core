@@ -1,7 +1,5 @@
 package org.dimensinfin.eveonline.neocom.core.updaters;
 
-import java.util.Objects;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
@@ -9,10 +7,15 @@ import org.dimensinfin.eveonline.neocom.core.IEventEmitter;
 import org.dimensinfin.eveonline.neocom.core.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.core.NeoComEvent;
 import org.dimensinfin.eveonline.neocom.services.UpdaterJobManager;
-
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {
+	protected static Logger logger = LoggerFactory.getLogger(NeoComUpdater.class);
+
 	public enum JobStatus {READY, SCHEDULED, RUNNING, EXCEPTION, COMPLETED}
 
 	// - C O M P O N E N T S
