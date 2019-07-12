@@ -1,30 +1,26 @@
 package org.dimensinfin.eveonline.neocom.core.updaters;
 
-import java.io.IOException;
-
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-
+import org.dimensinfin.eveonline.neocom.support.UpdaterSupportTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class CredentialUpdaterTest extends TestAdapterReadyUp {
+import java.io.IOException;
+
+public class CredentialUpdaterTest extends UpdaterSupportTest {
 	private static Credential model;
 	private static CredentialUpdater updater;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		model = new Credential.Builder(123456).withAccountName("TEST CREDENTIAL").build();
 		updater = new CredentialUpdater(model);
 	}
 
 	@Test
 	public void CredentialUpdater_constructor() throws IOException {
-		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		NeoComUpdater.injectsEsiDataAdapter(esiDataAdapter);
 		final Credential credential = Mockito.mock(Credential.class);
 		final CredentialUpdater updater = new CredentialUpdater(credential);
 

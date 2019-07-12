@@ -1,16 +1,15 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
-import java.io.IOException;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-
+import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class PlanetaryResourceTest extends TestAdapterReadyUp {
+import java.io.IOException;
+
+public class PlanetaryResourceTest extends TestEsiAdapterReady {
 	@Test
 	public void getTier_RAW() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();

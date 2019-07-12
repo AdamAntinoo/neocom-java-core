@@ -1,17 +1,16 @@
 package org.dimensinfin.eveonline.neocom.industry;
 
-import java.io.IOException;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
-import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-
+import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ResourceTest extends TestAdapterReadyUp {
+import java.io.IOException;
+
+public class ResourceTest extends TestEsiAdapterReady {
 	@Test
 	public void accessorContract() {
 		PojoTestUtils.validateAccessors(Resource.class);

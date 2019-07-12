@@ -151,9 +151,9 @@ dependencies {
 
 // - U N I T   T E S T I N G
 dependencies {
-//    testImplementation 'org.dimensinfin:CoreBase.core:3.0.1'
-//    testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
-//    testImplementation files('libs/jeveassets.3.1.2.jar')
+    testImplementation 'org.dimensinfin:CoreBase.core:3.0.1'
+    testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
+    testImplementation files('libs/jeveassets.3.1.2.jar')
     // C O R E
     testImplementation 'org.slf4j:slf4j-simple:1.7.26'
     testImplementation 'junit:junit:4.12'

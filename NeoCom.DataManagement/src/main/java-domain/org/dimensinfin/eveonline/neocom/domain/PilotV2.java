@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
-import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
+import org.dimensinfin.eveonline.neocom.database.UpdatableNode;
 import org.dimensinfin.eveonline.neocom.entities.Property;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdClonesOk;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author Adam Antinoo
  */
-public class PilotV2 extends UpdatableEntity {
+public class PilotV2 extends UpdatableNode {
 	public int characterId = -1;
 	public String name = "-NOT-KNOWN-";
 	public long birthday = 0;

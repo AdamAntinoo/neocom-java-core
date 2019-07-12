@@ -27,13 +27,6 @@ public class TestEsiAdapterReady  {
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		planetaryRepository = new PlanetaryRepository.Builder()
 				.withSDEDatabaseAdapter(sdeDBAdapter).build();
-		//		facility = Mockito.mock(PlanetaryFacility.class);
-		//		final GetCharactersCharacterIdPlanetsPlanetIdOkContents content = Mockito.mock(GetCharactersCharacterIdPlanetsPlanetIdOkContents.class);
-		//		final List<GetCharactersCharacterIdPlanetsPlanetIdOkContents> contentsList = new ArrayList<>();
-		//		Mockito.when(content.getTypeId()).thenReturn(2329);
-		//		contentsList.add(content);
-		//		contentsList.add(content);
-		//		Mockito.when(facility.getContents()).thenReturn(contentsList);
 	}
 
 	protected ESIDataAdapter setupRealAdapter() throws IOException {

@@ -54,6 +54,7 @@ public class PilotUpdater extends NeoComUpdater<Pilot> {
 				if ( null != allianceIcons)
 					this.getModel().setAllianceIconUrl(allianceIcons.getPx256x256());
 			}
+			this.getModel().timeStamp();
 		}
 	}
 }

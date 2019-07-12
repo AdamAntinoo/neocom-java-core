@@ -1,14 +1,13 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
-import java.io.IOException;
-
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-
+import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ESIDataAdapterTest extends TestAdapterReadyUp {
+import java.io.IOException;
+
+public class ESIDataAdapterTest extends TestEsiAdapterReady {
 	@Test
 	public void builder_complete() throws IOException {
 		final ESIDataAdapter adapter = this.setupRealAdapter();

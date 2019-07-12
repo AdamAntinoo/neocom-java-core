@@ -1,20 +1,19 @@
 package org.dimensinfin.eveonline.neocom.services;
 
-import java.util.concurrent.TimeUnit;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
 import org.dimensinfin.eveonline.neocom.domain.IEsiItemDownloadCallback;
 import org.dimensinfin.eveonline.neocom.domain.IPilotDataDownloadCallback;
 import org.dimensinfin.eveonline.neocom.domain.PilotDataSections;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -88,7 +87,7 @@ public class DataDownloaderServiceTest {
 		final DataDownloaderService service = new DataDownloaderService.Builder(esiDataAdapter)
 				                                      .withEsiAdapter(esiDataAdapter)
 				                                      .build();
-		Mockito.when(esiDataAdapter.getCharactersCharacterId(any(Integer.class), any(String.class), any(String.class))).thenReturn(publicData);
+		Mockito.when(esiDataAdapter.getCharactersCharacterId(any(Integer.class))).thenReturn(publicData);
 		Mockito.when(destination.getCredential()).thenReturn(credential);
 		service.accessPilotPublicData(destination, PilotDataSections.PILOT_PUBLICDATA);
 		Thread.sleep(TimeUnit.SECONDS.toMillis(1));
@@ -105,7 +104,7 @@ public class DataDownloaderServiceTest {
 		final DataDownloaderService service = new DataDownloaderService.Builder(esiDataAdapter)
 				                                      .withEsiAdapter(esiDataAdapter)
 				                                      .build();
-		Mockito.when(esiDataAdapter.getCharactersCharacterId(any(Integer.class), any(String.class), any(String.class))).thenReturn(null);
+		Mockito.when(esiDataAdapter.getCharactersCharacterId(any(Integer.class))).thenReturn(null);
 		Mockito.when(destination.getCredential()).thenReturn(credential);
 		service.accessPilotPublicData(destination, PilotDataSections.PILOT_PUBLICDATA);
 		Thread.sleep(TimeUnit.SECONDS.toMillis(1));

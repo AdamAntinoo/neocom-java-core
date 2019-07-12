@@ -11,7 +11,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries20
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-import org.joda.time.DateTime;
 
 public class Pilot extends PilotV3 {
 	private Integer pilotIdentifier;
@@ -25,18 +24,11 @@ public class Pilot extends PilotV3 {
 	private transient GetAlliancesAllianceIdOk allianceData;
 	private String allianceIconUrl;
 
-	private DateTime lastUpdateTime;
-
 	private Pilot() {
 	}
 
 	public int getPilotIdentifier() {
 		return this.pilotIdentifier;
-	}
-
-	public DateTime getLastUpdateTime() {
-		if (null == this.lastUpdateTime) this.lastUpdateTime = new DateTime(0);
-		return this.lastUpdateTime;
 	}
 
 	public GetCorporationsCorporationIdOk getCorporationData() {

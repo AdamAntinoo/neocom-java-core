@@ -1,7 +1,5 @@
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.io.IOException;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
@@ -10,14 +8,15 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
-import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-
+import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class EveItemTest extends TestAdapterReadyUp {
+import java.io.IOException;
+
+public class EveItemTest extends TestEsiAdapterReady {
 	private static ESIDataAdapter esiDataAdapter;
 
 	@Before

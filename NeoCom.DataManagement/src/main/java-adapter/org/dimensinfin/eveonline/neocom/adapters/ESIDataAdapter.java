@@ -69,7 +69,7 @@ import retrofit2.Response;
  * This class will also use other components to be able to store downloaded SDE data into caches, be them temporal in memory or persisted on disk.
  */
 public class ESIDataAdapter {
-	public static final String DEFAULT_ESI_SERVER = "Tranquility";
+	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	// - C A C H E S
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
@@ -195,8 +195,8 @@ public class ESIDataAdapter {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetStatusOk> statusApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					                                                .create(StatusApi.class)
-					                                                .getStatus(datasource, null).execute();
+			                                                                    .create(StatusApi.class)
+			                                                                    .getStatus(datasource, null).execute();
 			if (statusApiResponse.isSuccessful()) {
 				// Store results on the cache.
 				//				okResponseCache.put(reference, statusApiResponse);
@@ -224,8 +224,8 @@ public class ESIDataAdapter {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = retrofitFactory.accessNoAuthRetrofit().create(MarketApi.class)
-					                                                                .getMarketsPrices(DEFAULT_ESI_SERVER.toLowerCase(), null)
-					                                                                .execute();
+			                                                                               .getMarketsPrices(DEFAULT_ESI_SERVER.toLowerCase(), null)
+			                                                                               .execute();
 			if (!marketApiResponse.isSuccessful()) {
 				return new ArrayList<>();
 			} else return marketApiResponse.body();
@@ -238,10 +238,10 @@ public class ESIDataAdapter {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
-					                                                           .getUniverseGroupsGroupId(groupId
-							                                                           , DEFAULT_ACCEPT_LANGUAGE
-							                                                           , DEFAULT_ESI_SERVER.toLowerCase(), null, null)
-					                                                           .execute();
+			                                                                          .getUniverseGroupsGroupId(groupId
+					                                                                          , DEFAULT_ACCEPT_LANGUAGE
+					                                                                          , DEFAULT_ESI_SERVER.toLowerCase(), null, null)
+			                                                                          .execute();
 			if (!groupResponse.isSuccessful()) {
 				return null;
 			} else return groupResponse.body();
@@ -254,10 +254,10 @@ public class ESIDataAdapter {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
-					                                                                  .getUniverseCategoriesCategoryId(categoryId
-							                                                                  , DEFAULT_ACCEPT_LANGUAGE
-							                                                                  , DEFAULT_ESI_SERVER.toLowerCase(), null, null)
-					                                                                  .execute();
+			                                                                                 .getUniverseCategoriesCategoryId(categoryId
+					                                                                                 , DEFAULT_ACCEPT_LANGUAGE
+					                                                                                 , DEFAULT_ESI_SERVER.toLowerCase(), null, null)
+			                                                                                 .execute();
 			if (!groupResponse.isSuccessful()) {
 				return null;
 			} else return groupResponse.body();
@@ -271,8 +271,8 @@ public class ESIDataAdapter {
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
-					                                                        .getUniverseRaces(DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us")
-					                                                        .execute();
+			                                                                       .getUniverseRaces(DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us")
+			                                                                       .execute();
 			if (racesList.isSuccessful()) return racesList.body();
 			else return new ArrayList<>();
 		} catch (IOException e) {
@@ -288,8 +288,8 @@ public class ESIDataAdapter {
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
-					                                                                  .getUniverseAncestries(DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us")
-					                                                                  .execute();
+			                                                                                 .getUniverseAncestries(DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us")
+			                                                                                 .execute();
 			if (ancestriesList.isSuccessful()) return ancestriesList.body();
 			else return new ArrayList<>();
 		} catch (IOException e) {
@@ -305,8 +305,8 @@ public class ESIDataAdapter {
 		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = retrofitFactory.accessNoAuthRetrofit().create(UniverseApi.class)
-					                                                                  .getUniverseBloodlines(DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us")
-					                                                                  .execute();
+			                                                                                 .getUniverseBloodlines(DEFAULT_ACCEPT_LANGUAGE, datasource, null, "en-us")
+			                                                                                 .execute();
 			if (bloodLinesList.isSuccessful()) return bloodLinesList.body();
 			else return new ArrayList<>();
 		} catch (IOException e) {
@@ -321,9 +321,9 @@ public class ESIDataAdapter {
 	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier ) {
 		try {
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					                                                                   .create(UniverseApi.class)
-					                                                                   .getUniversePlanetsPlanetId(identifier
-							                                                                   , DEFAULT_ESI_SERVER.toLowerCase(), null).execute();
+			                                                                                       .create(UniverseApi.class)
+			                                                                                       .getUniversePlanetsPlanetId(identifier
+					                                                                                       , DEFAULT_ESI_SERVER.toLowerCase(), null).execute();
 			if (!universeApiResponse.isSuccessful()) {
 				return null;
 			} else return universeApiResponse.body();
@@ -332,6 +332,7 @@ public class ESIDataAdapter {
 			return null;
 		}
 	}
+
 	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
 	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier ) {
 		logger.info(">> [ESIDataAdapter.getCorporationsCorporationId]");
@@ -344,8 +345,8 @@ public class ESIDataAdapter {
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCorporationsCorporationIdOk> corporationResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create(CorporationApi.class)
-					.getCorporationsCorporationId(identifier, datasource, null).execute();
+			                                                                                         .create(CorporationApi.class)
+			                                                                                         .getCorporationsCorporationId(identifier, datasource, null).execute();
 			if (corporationResponse.isSuccessful())
 				return corporationResponse.body();
 		} catch (IOException ioe) {
@@ -356,19 +357,20 @@ public class ESIDataAdapter {
 		}
 		return null;
 	}
+
 	public GetCorporationsCorporationIdIconsOk getCorporationsCorporationIdIcons( final int identifier ) {
 		logger.info(">> [ESIDataAdapter.getCorporationsCorporationIdIcons]");
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
 //			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = DEFAULT_ESI_SERVER;
+//			String datasource = DEFAULT_ESI_SERVER;
 			// Use server parameter to override configuration server to use.
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCorporationsCorporationIdIconsOk> corporationResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create(CorporationApi.class)
-					.getCorporationsCorporationIdIcons(identifier, datasource, null).execute();
+			                                                                                              .create(CorporationApi.class)
+			                                                                                              .getCorporationsCorporationIdIcons(identifier, DEFAULT_ESI_SERVER, null).execute();
 			if (corporationResponse.isSuccessful())
 				return corporationResponse.body();
 		} catch (IOException ioe) {
@@ -392,8 +394,8 @@ public class ESIDataAdapter {
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create(AllianceApi.class)
-					.getAlliancesAllianceId(identifier, datasource, null).execute();
+			                                                                                .create(AllianceApi.class)
+			                                                                                .getAlliancesAllianceId(identifier, datasource, null).execute();
 			if (allianceResponse.isSuccessful())
 				return allianceResponse.body();
 		} catch (IOException ioe) {
@@ -404,12 +406,13 @@ public class ESIDataAdapter {
 		}
 		return null;
 	}
+
 	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
 		logger.info(">> [ESIDataAdapter.getAlliancesAllianceIdIcons]");
 		try {
 			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create(AllianceApi.class)
-					.getAlliancesAllianceIdIcons(identifier, DEFAULT_ESI_SERVER, null).execute();
+			                                                                                     .create(AllianceApi.class)
+			                                                                                     .getAlliancesAllianceIdIcons(identifier, DEFAULT_ESI_SERVER, null).execute();
 			if (allianceResponse.isSuccessful())
 				return allianceResponse.body();
 		} catch (IOException ioe) {
@@ -421,56 +424,22 @@ public class ESIDataAdapter {
 
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
 	@TimeElapsed
-	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier, final String refreshToken, final String server ) {
+	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier ) {
 		logger.info("-- [ESIDataAdapter.getCharactersCharacterId]> Character identifier: {}", identifier);
-		//		final Chrono accessFullTime = new Chrono();
-		// Store the response at the cache or if there is a network failure return the last access if available
-		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_PUBLIC, identifier);
-		// Check if network is available and we have configured allowed access to download data.
-		//		if (allowDownloadPass()) {
 		try {
-			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = DEFAULT_ESI_SERVER;
-			// Use server parameter to override configuration server to use.
-			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			//				final NeoComOAuth20 auth = new NeoComOAuth20(CLIENT_ID, SECRET_KEY, CALLBACK, AGENT, STORE, SCOPES);
-			//				final Retrofit retro = NeoComRetrofitHTTP.build(auth, AGENT, cacheDataFile, cacheSize, timeout);
-			final Response<GetCharactersCharacterIdOk> characterResponse = this.retrofitFactory.accessESIAuthRetrofit()
-					                                                               .create(CharacterApi.class)
-					                                                               .getCharactersCharacterId(identifier
-							                                                               , datasource, null).execute();
-			// TODO - Replace by a new request not authenticated and direct.
-			//				final Response<GetCharactersCharacterIdOk> characterResponse = processCharacterNotAuthenticated(datasource, identifier);
-			if (characterResponse.isSuccessful()) {
-				// Store results on the cache.
-				//					okResponseCache.put(reference, characterResponse);
-				return characterResponse.body();
-			} else return null;
+			final Response<GetCharactersCharacterIdOk> characterResponse = this.retrofitFactory.accessNoAuthRetrofit()
+			                                                                                   .create(CharacterApi.class)
+			                                                                                   .getCharactersCharacterId(identifier
+					                                                                                   , DEFAULT_ESI_SERVER, null).execute();
+			if (characterResponse.isSuccessful()) return characterResponse.body();
 		} catch (IOException ioe) {
 			logger.error("EX [ESIDataAdapter.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage());
 			ioe.printStackTrace();
-			// Return cached response if available
-			//				if (null != okResponseCache.get(reference))
-			//					return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-			//				else
-			return null;
 		} catch (RuntimeException rte) {
 			logger.error("EX [ESIDataAdapter.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage());
 			rte.printStackTrace();
-			// Return cached response if available
-			//				if (null != okResponseCache.get(reference))
-			//					return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-			//				else
-			return null;
-			//			} finally {
-			//				logger.info("<< [ESINetworkManager.getCharactersCharacterId]> [TIMING] Full elapsed: {}"
-			//						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
-		//		} else if (null != okResponseCache.get(reference))
-		//			return (GetCharactersCharacterIdOk) okResponseCache.get(reference).body();
-		//		else return null;
+		return null;
 	}
 
 	@TimeElapsed
@@ -489,8 +458,8 @@ public class ESIDataAdapter {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-					                                                                                  .create(PlanetaryInteractionApi.class)
-					                                                                                  .getCharactersCharacterIdPlanets(identifier, datasource, null, null).execute();
+			                                                                                                      .create(PlanetaryInteractionApi.class)
+			                                                                                                      .getCharactersCharacterIdPlanets(identifier, datasource, null, null).execute();
 			if (planetaryApiResponse.isSuccessful()) {
 				// Store results on the cache.
 				//				okResponseCache.put(reference, planetaryApiResponse);
@@ -529,8 +498,8 @@ public class ESIDataAdapter {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-					                                                                                 .create(PlanetaryInteractionApi.class)
-					                                                                                 .getCharactersCharacterIdPlanetsPlanetId(identifier, planetid, datasource, null, null).execute();
+			                                                                                                     .create(PlanetaryInteractionApi.class)
+			                                                                                                     .getCharactersCharacterIdPlanetsPlanetId(identifier, planetid, datasource, null, null).execute();
 			if (planetaryApiResponse.isSuccessful()) {
 				// Store results on the cache.
 				//				okResponseCache.put(reference, planetaryApiResponse);
@@ -561,11 +530,11 @@ public class ESIDataAdapter {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					                                                                          .create(PlanetaryInteractionApi.class)
-					                                                                          .getUniverseSchematicsSchematicId(schematicId
-							                                                                          , "en-us"
-							                                                                          , null)
-					                                                                          .execute();
+			                                                                                              .create(PlanetaryInteractionApi.class)
+			                                                                                              .getUniverseSchematicsSchematicId(schematicId
+					                                                                                              , "en-us"
+					                                                                                              , null)
+			                                                                                              .execute();
 			if (!schematicistResponse.isSuccessful()) {
 				return null;
 			} else return schematicistResponse.body();
@@ -607,8 +576,8 @@ public class ESIDataAdapter {
 			int pageCounter = 1;
 			while (morePages) {
 				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-						                                                                                .create(IndustryApi.class)
-						                                                                                .getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
+				                                                                                                    .create(IndustryApi.class)
+				                                                                                                    .getCharactersCharacterIdMining(identifier, datasource, null, pageCounter, null).execute();
 				if (!industryApiResponse.isSuccessful()) {
 					// Or error or we have reached the end of the list.
 					return returnMiningList;
@@ -646,9 +615,9 @@ public class ESIDataAdapter {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<Double> walletApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-					                                           .create(WalletApi.class)
-					                                           .getCharactersCharacterIdWallet(identifier
-							                                           , datasource.toLowerCase(), null, null).execute();
+			                                                               .create(WalletApi.class)
+			                                                               .getCharactersCharacterIdWallet(identifier
+					                                                               , datasource.toLowerCase(), null, null).execute();
 			if (walletApiResponse.isSuccessful()) return walletApiResponse.body();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -682,10 +651,10 @@ public class ESIDataAdapter {
 			int pageCounter = 1;
 			while (morePages) {
 				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-						                                                                              .create(AssetsApi.class)
-						                                                                              .getCharactersCharacterIdAssets(identifier
-								                                                                              , datasource.toLowerCase()
-								                                                                              , null, pageCounter, null).execute();
+				                                                                                                  .create(AssetsApi.class)
+				                                                                                                  .getCharactersCharacterIdAssets(identifier
+						                                                                                                  , datasource.toLowerCase()
+						                                                                                                  , null, pageCounter, null).execute();
 				if (!assetsApiResponse.isSuccessful()) {
 					// Or error or we have reached the end of the list.
 					return returnAssetList;
@@ -729,8 +698,8 @@ public class ESIDataAdapter {
 			int pageCounter = 1;
 			while (morePages) {
 				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-						                                                                                     .create(CharacterApi.class)
-						                                                                                     .getCharactersCharacterIdBlueprints(identifier, datasource, null, pageCounter, null).execute();
+				                                                                                                         .create(CharacterApi.class)
+				                                                                                                         .getCharactersCharacterIdBlueprints(identifier, datasource, null, pageCounter, null).execute();
 				if (!characterApiResponse.isSuccessful()) {
 					// Or error or we have reached the end of the list.
 					return returnBlueprintList;
@@ -773,13 +742,13 @@ public class ESIDataAdapter {
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<GetUniverseTypesTypeIdOk> itemListResponse = retrofitFactory.accessNoAuthRetrofit()
-					                                                            .create(UniverseApi.class)
-					                                                            .getUniverseTypesTypeId(typeId
-							                                                            , "en-us"
-							                                                            , server
-							                                                            , null
-							                                                            , null)
-					                                                            .execute();
+			                                                                           .create(UniverseApi.class)
+			                                                                           .getUniverseTypesTypeId(typeId
+					                                                                           , "en-us"
+					                                                                           , server
+					                                                                           , null
+					                                                                           , null)
+			                                                                           .execute();
 			if (!itemListResponse.isSuccessful()) {
 				return null;
 			} else {
@@ -809,8 +778,8 @@ public class ESIDataAdapter {
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
-					                                                                                    .create(AssetsApi.class)
-					                                                                                    .postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource.toLowerCase(), null).execute();
+			                                                                                                        .create(AssetsApi.class)
+			                                                                                                        .postCharactersCharacterIdAssetsNames(identifier, listItemIds, datasource.toLowerCase(), null).execute();
 			if (!assetsApiResponse.isSuccessful()) {
 				return null;
 			} else return assetsApiResponse.body();
@@ -848,9 +817,9 @@ public class ESIDataAdapter {
 							name.getItemId());
 					for (NeoComAsset asset : assetsMatch) {
 						logger.info("-- [DownloadManager.downloadAssetEveName]> Setting UserLabel name {} for asset {}.", name
-								                                                                                                  .getName(), name.getItemId());
+								.getName(), name.getItemId());
 						asset.setUserLabel(name.getName())
-								.store();
+						     .store();
 					}
 				}
 			} catch (SQLException sqle) {
@@ -876,10 +845,10 @@ public class ESIDataAdapter {
 
 		public ESIDataAdapter build() {
 			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
-					                                   .withEsiDataAdapter(this.onConstruction)
-					                                   .withConfigurationProvider(this.onConstruction.configurationProvider)
-					                                   .withFileSystem(this.onConstruction.fileSystemAdapter)
-					                                   .build();
+					.withEsiDataAdapter(this.onConstruction)
+					.withConfigurationProvider(this.onConstruction.configurationProvider)
+					.withFileSystem(this.onConstruction.fileSystemAdapter)
+					.build();
 			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
 					, this.onConstruction.fileSystemAdapter).build();
 			return this.onConstruction;

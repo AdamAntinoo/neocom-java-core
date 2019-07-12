@@ -68,6 +68,7 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 
 	public void onException( final Exception exception ) {
 		this.lastException = exception;
+		logger.info("EX [NeoComUpdater.onException]> Message: {}", exception.getMessage());
 	}
 
 	public void onComplete() {

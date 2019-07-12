@@ -1,9 +1,5 @@
 package org.dimensinfin.eveonline.neocom.services;
 
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.domain.IEsiItemDownloadCallback;
 import org.dimensinfin.eveonline.neocom.domain.IPilotDataDownloadCallback;
@@ -11,9 +7,12 @@ import org.dimensinfin.eveonline.neocom.domain.PilotDataSections;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DataDownloaderService {
 	private static final Logger logger = LoggerFactory.getLogger(DataDownloaderService.class);
@@ -78,9 +77,7 @@ public class DataDownloaderService {
 		downloadExecutor.submit(() -> {
 			logger.info("-- [DataDownloaderService.accessPilotPublicData]> Downloading public data information...");
 			final GetCharactersCharacterIdOk publicData = this.esiDataAdapter.getCharactersCharacterId(
-					callbackDestination.getCredential().getAccountId()
-					, callbackDestination.getCredential().getRefreshToken()
-					, callbackDestination.getCredential().getDataSource());
+					callbackDestination.getCredential().getAccountId());
 			// Callback the pilot instance with the data.
 			logger.info("-- [DataDownloaderService.accessPilotPublicData]> Completed public data download. Sending data to callback.");
 			if (null != publicData) callbackDestination.signalCompletion(section, publicData);

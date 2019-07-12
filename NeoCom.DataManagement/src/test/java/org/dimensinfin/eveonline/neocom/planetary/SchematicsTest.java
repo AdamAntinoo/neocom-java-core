@@ -4,13 +4,12 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
-import org.dimensinfin.eveonline.neocom.support.TestAdapterReadyUp;
-
+import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SchematicsTest extends TestAdapterReadyUp {
+public class SchematicsTest extends TestEsiAdapterReady {
 	private Schematics schematic4fields;
 
 	@Before
