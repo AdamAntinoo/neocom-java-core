@@ -1,16 +1,15 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
+import com.j256.ormlite.dao.Dao;
+
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.j256.ormlite.dao.Dao;
 
 //@Component
 public class CredentialRepository {
@@ -22,7 +21,8 @@ public class CredentialRepository {
 		try {
 			return this.credentialDao.queryForEq("dataSource", esiServer.toUpperCase());
 		} catch (SQLException sqle) {
-			logger.warn("W [GlobalDataManagerDataAccess.accessAllCredentials]> Exception reading all Credentials. " + sqle.getMessage());
+			logger.warn("W [CredentialRepository.findAllByServer]> Exception reading all Credentials. {}",
+					sqle.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -32,7 +32,7 @@ public class CredentialRepository {
 		try {
 			return this.credentialDao.queryForAll();
 		} catch (SQLException sqle) {
-			sqle.printStackTrace();
+			logger.error("EX [CredentialRepository.findAllByServer]> SQLException: {}", sqle.getMessage());
 		}
 		return credentialList;
 

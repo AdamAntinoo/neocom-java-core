@@ -494,7 +494,7 @@ public class ESIDataAdapter {
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = GlobalDataManager.TRANQUILITY_DATASOURCE;
+			String datasource = DEFAULT_ESI_SERVER;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory.accessESIAuthRetrofit()

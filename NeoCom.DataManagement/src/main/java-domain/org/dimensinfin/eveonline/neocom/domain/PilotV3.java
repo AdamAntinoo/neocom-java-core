@@ -1,13 +1,12 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.services.DataDownloaderService;
 import org.joda.time.LocalDateTime;
 
 public class PilotV3 extends PilotV2  {
 	private transient DataDownloaderService downloaderService;
-	private Credential credential;
+//	private Credential credential;
 
 	// - C O R E   D A T A
 	private LocalDateTime publicDataAccess;
@@ -19,10 +18,10 @@ public class PilotV3 extends PilotV2  {
 //	}
 
 	// - D A T A   A C C E S S O R S
-	@Override
-	public int getCharacterId() {
-		return this.credential.getAccountId();
-	}
+//	@Override
+//	public int getCharacterId() {
+//		return this.credential.getAccountId();
+//	}
 
 	@Override
 	public double getAccountBalance() {
@@ -100,9 +99,9 @@ public class PilotV3 extends PilotV2  {
 
 	// - I N E O C O M D O W N L O A D C A L L B A C K
 //	@Override
-	public Credential getCredential() {
-		return this.credential;
-	}
+//	public Credential getCredential() {
+//		return this.credential;
+//	}
 
 //	@Override
 	public void signalCompletion( final PilotDataSections section, final Object completedData ) {

@@ -1,12 +1,13 @@
 package org.dimensinfin.eveonline.neocom.core.updaters;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.joda.time.DateTime;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class CredentialUpdater extends NeoComUpdater<Credential> {
 	private static final long CREDENTIAL_CACHE_TIME = TimeUnit.MINUTES.toMillis(15);
@@ -47,8 +48,9 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 				if (walletBalance > 0.0) this.getModel().setWalletBalance(walletBalance);
 
 				// Get the race name. This needs access to the pilot.
-				this.getModel().setRaceName("-UNDEFINED-");
-				// TODO Access the pilot data and update the race name
+				final GetCharactersCharacterIdOk pilotPublicData = esiDataAdapter.getCharactersCharacterId(this.getModel().getAccountId());
+				final GetUniverseRaces200Ok raceData = esiDataAdapter.searchSDERace(pilotPublicData.getRaceId());
+				if (null != raceData) this.getModel().setRaceName(raceData.getName());
 			}
 			this.getModel().timeStamp(); // Mark the model as updated.
 		}
