@@ -1,6 +1,10 @@
 package org.dimensinfin.eveonline.neocom.auth.mock
 
-import okhttp3.*
+import okhttp3.Interceptor
+import okhttp3.MediaType
+import okhttp3.Protocol
+import okhttp3.Response
+import okhttp3.ResponseBody
 
 /**
  * This will help us to test our networking code while a particular API is not implemented
@@ -22,9 +26,14 @@ class MockInterceptor : Interceptor {
 				.build()
 	}
 
+	/*
+	 * REMEMBER: The order should be from more restricted to less precise predicates.
+	 */
 	fun matchRequest(uri: String): String {
 		return when {
-			matches(uri, "characters", "planets","40237824") -> getMockPlanetAdvancedFactories
+			matches(uri, "characters", "93813310", "planets", "40208303") -> planetDetails40208303
+			matches(uri, "characters", "93813310", "planets") -> planetListPericoTuerto93813310
+			matches(uri, "characters", "planets", "40237824") -> getMockPlanetAdvancedFactories
 			matches(uri, "characters", "planets") -> getMockPlanets
 			uri.contains("2561") -> getType2561
 			uri.contains("2483") -> getType2483
@@ -48,7 +57,464 @@ class MockInterceptor : Interceptor {
 		if (url.contains(match1) && url.contains(match2) && url.contains(match3)) return true
 		return false
 	}
+
+	fun matches(url: String, match1: String, match2: String, match3: String, match4: String):
+			Boolean {
+		if (url.contains(match1) && url.contains(match2)
+				&& url.contains(match3) && url.contains(match4)) return true
+		return false
+	}
 }
+
+// - M O C K   D A T A
+// - Planet List Perico Tuerto : 93813310
+const val planetListPericoTuerto93813310 = """
+[
+  {
+    "last_update": "2019-04-21T00:00:54Z",
+    "num_pins": 11,
+    "owner_id": 93813310,
+    "planet_id": 40208303,
+    "planet_type": "barren",
+    "solar_system_id": 30003283,
+    "upgrade_level": 4
+  },
+  {
+    "last_update": "2019-04-21T00:01:07Z",
+    "num_pins": 11,
+    "owner_id": 93813310,
+    "planet_id": 40208304,
+    "planet_type": "plasma",
+    "solar_system_id": 30003283,
+    "upgrade_level": 4
+  },
+  {
+    "last_update": "2019-04-21T00:01:23Z",
+    "num_pins": 11,
+    "owner_id": 93813310,
+    "planet_id": 40208351,
+    "planet_type": "gas",
+    "solar_system_id": 30003283,
+    "upgrade_level": 4
+  },
+  {
+    "last_update": "2019-07-14T17:28:58Z",
+    "num_pins": 11,
+    "owner_id": 93813310,
+    "planet_id": 40208380,
+    "planet_type": "oceanic",
+    "solar_system_id": 30003283,
+    "upgrade_level": 4
+  }
+]
+"""
+
+// - Planet Details 40208303 Barren planet
+const val planetDetails40208303 = """
+{
+  "links": [
+    {
+      "destination_pin_id": 1023179687929,
+      "link_level": 0,
+      "source_pin_id": 1023179683773
+    },
+    {
+      "destination_pin_id": 1023179758278,
+      "link_level": 0,
+      "source_pin_id": 1023179721292
+    },
+    {
+      "destination_pin_id": 1023179683769,
+      "link_level": 0,
+      "source_pin_id": 1022000304230
+    },
+    {
+      "destination_pin_id": 1023179687935,
+      "link_level": 0,
+      "source_pin_id": 1023179683769
+    },
+    {
+      "destination_pin_id": 1023179721303,
+      "link_level": 0,
+      "source_pin_id": 1022000304230
+    },
+    {
+      "destination_pin_id": 1023179721292,
+      "link_level": 0,
+      "source_pin_id": 1023179683773
+    },
+    {
+      "destination_pin_id": 1023179721299,
+      "link_level": 0,
+      "source_pin_id": 1023179683773
+    },
+    {
+      "destination_pin_id": 1023179721301,
+      "link_level": 0,
+      "source_pin_id": 1022000304230
+    },
+    {
+      "destination_pin_id": 1023179758288,
+      "link_level": 0,
+      "source_pin_id": 1023179721299
+    },
+    {
+      "destination_pin_id": 1023179683773,
+      "link_level": 0,
+      "source_pin_id": 1022000304230
+    }
+  ],
+  "pins": [
+    {
+      "contents": [
+        {
+          "amount": 470,
+          "type_id": 2267
+        }
+      ],
+      "last_cycle_start": "2017-07-29T01:50:34Z",
+      "latitude": 0.819389899886,
+      "longitude": 0.672961967931,
+      "pin_id": 1023179721299,
+      "schematic_id": 126,
+      "type_id": 2473
+    },
+    {
+      "contents": [
+        {
+          "amount": 1243,
+          "type_id": 2073
+        }
+      ],
+      "last_cycle_start": "2017-07-29T01:50:34Z",
+      "latitude": 0.831400934104,
+      "longitude": 0.702053646021,
+      "pin_id": 1023179721301,
+      "schematic_id": 131,
+      "type_id": 2473
+    },
+    {
+      "last_cycle_start": "2017-07-29T01:20:34Z",
+      "latitude": 0.832326614025,
+      "longitude": 0.672718073936,
+      "pin_id": 1023179721303,
+      "schematic_id": 131,
+      "type_id": 2473
+    },
+    {
+      "expiry_time": "2019-04-29T06:00:54Z",
+      "extractor_details": {
+        "cycle_time": 7200,
+        "head_radius": 0.0337600186467,
+        "heads": [
+          {
+            "head_id": 0,
+            "latitude": 0.732570619907,
+            "longitude": 0.553850417534
+          },
+          {
+            "head_id": 1,
+            "latitude": 0.62354742142,
+            "longitude": 0.928776447241
+          },
+          {
+            "head_id": 2,
+            "latitude": 0.681819198608,
+            "longitude": 0.282388407046
+          },
+          {
+            "head_id": 3,
+            "latitude": 0.731044681702,
+            "longitude": 0.656734408405
+          },
+          {
+            "head_id": 4,
+            "latitude": 0.558015130796,
+            "longitude": 0.963479687787
+          },
+          {
+            "head_id": 5,
+            "latitude": 0.615987651659,
+            "longitude": 1.04831238507
+          }
+        ],
+        "product_type_id": 2267,
+        "qty_per_cycle": 7705
+      },
+      "install_time": "2019-04-21T00:00:54Z",
+      "last_cycle_start": "2019-04-21T00:00:54Z",
+      "latitude": 0.801152282613,
+      "longitude": 0.687703468543,
+      "pin_id": 1023179687929,
+      "type_id": 2848
+    },
+    {
+      "contents": [
+        {
+          "amount": 16600,
+          "type_id": 2393
+        }
+      ],
+      "last_cycle_start": "2017-07-20T21:51:56Z",
+      "latitude": 0.813357783,
+      "longitude": 0.687574449775,
+      "pin_id": 1023179683773,
+      "type_id": 2541
+    },
+    {
+      "expiry_time": "2019-04-29T06:00:54Z",
+      "extractor_details": {
+        "cycle_time": 7200,
+        "head_radius": 0.0337474383414,
+        "heads": [
+          {
+            "head_id": 0,
+            "latitude": 1.01458729659,
+            "longitude": 0.690531536952
+          },
+          {
+            "head_id": 1,
+            "latitude": 1.00363475069,
+            "longitude": 0.773111857952
+          },
+          {
+            "head_id": 2,
+            "latitude": 0.990843995405,
+            "longitude": 0.854122301118
+          },
+          {
+            "head_id": 3,
+            "latitude": 0.970860864652,
+            "longitude": 0.934489005998
+          }
+        ],
+        "product_type_id": 2073,
+        "qty_per_cycle": 7500
+      },
+      "install_time": "2019-04-21T00:00:54Z",
+      "last_cycle_start": "2019-04-21T00:00:54Z",
+      "latitude": 0.850120443812,
+      "longitude": 0.687222498621,
+      "pin_id": 1023179687935,
+      "type_id": 2848
+    },
+    {
+      "latitude": 0.825713878651,
+      "longitude": 0.687579014003,
+      "pin_id": 1022000304230,
+      "type_id": 2524
+    },
+    {
+      "contents": [
+        {
+          "amount": 40,
+          "type_id": 2393
+        },
+        {
+          "amount": 20,
+          "type_id": 2398
+        }
+      ],
+      "last_cycle_start": "2017-07-29T03:20:34Z",
+      "latitude": 0.82475919413,
+      "longitude": 0.716977446131,
+      "pin_id": 1023179758278,
+      "schematic_id": 78,
+      "type_id": 2474
+    },
+    {
+      "last_cycle_start": "2017-07-29T01:50:34Z",
+      "latitude": 0.81935176621,
+      "longitude": 0.702245841281,
+      "pin_id": 1023179721292,
+      "schematic_id": 126,
+      "type_id": 2473
+    },
+    {
+      "contents": [
+        {
+          "amount": 10000,
+          "type_id": 2393
+        },
+        {
+          "amount": 2130,
+          "type_id": 2463
+        }
+      ],
+      "latitude": 0.837832795749,
+      "longitude": 0.687336456923,
+      "pin_id": 1023179683769,
+      "type_id": 2544
+    },
+    {
+      "contents": [
+        {
+          "amount": 40,
+          "type_id": 2393
+        }
+      ],
+      "last_cycle_start": "2017-07-28T19:50:34Z",
+      "latitude": 0.825484237862,
+      "longitude": 0.658855361203,
+      "pin_id": 1023179758288,
+      "schematic_id": 78,
+      "type_id": 2474
+    }
+  ],
+  "routes": [
+    {
+      "content_type_id": 2267,
+      "destination_pin_id": 1023179721299,
+      "quantity": 3000,
+      "route_id": 788335680,
+      "source_pin_id": 1023179683773
+    },
+    {
+      "content_type_id": 2393,
+      "destination_pin_id": 1023179758288,
+      "quantity": 40,
+      "route_id": 788336704,
+      "source_pin_id": 1023179683773,
+      "waypoints": [
+        1023179721299
+      ]
+    },
+    {
+      "content_type_id": 2398,
+      "destination_pin_id": 1023179758288,
+      "quantity": 40,
+      "route_id": 788336706,
+      "source_pin_id": 1023179683773,
+      "waypoints": [
+        1023179721299
+      ]
+    },
+    {
+      "content_type_id": 2463,
+      "destination_pin_id": 1023179683769,
+      "quantity": 5,
+      "route_id": 788336267,
+      "source_pin_id": 1023179758288,
+      "waypoints": [
+        1023179721299,
+        1023179683773,
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2398,
+      "destination_pin_id": 1023179758278,
+      "quantity": 40,
+      "route_id": 788336705,
+      "source_pin_id": 1023179683773,
+      "waypoints": [
+        1023179721292
+      ]
+    },
+    {
+      "content_type_id": 2463,
+      "destination_pin_id": 1023179683769,
+      "quantity": 5,
+      "route_id": 788336268,
+      "source_pin_id": 1023179758278,
+      "waypoints": [
+        1023179721292,
+        1023179683773,
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2393,
+      "destination_pin_id": 1023179683773,
+      "quantity": 20,
+      "route_id": 788335819,
+      "source_pin_id": 1023179721301,
+      "waypoints": [
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2393,
+      "destination_pin_id": 1023179683773,
+      "quantity": 20,
+      "route_id": 788335820,
+      "source_pin_id": 1023179721303,
+      "waypoints": [
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2073,
+      "destination_pin_id": 1023179721301,
+      "quantity": 3000,
+      "route_id": 788335920,
+      "source_pin_id": 1023179683773,
+      "waypoints": [
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2073,
+      "destination_pin_id": 1023179721303,
+      "quantity": 3000,
+      "route_id": 788335921,
+      "source_pin_id": 1023179683773,
+      "waypoints": [
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2267,
+      "destination_pin_id": 1023179683773,
+      "quantity": 110952,
+      "route_id": 955929972,
+      "source_pin_id": 1023179687929
+    },
+    {
+      "content_type_id": 2073,
+      "destination_pin_id": 1023179683773,
+      "quantity": 108000,
+      "route_id": 955929973,
+      "source_pin_id": 1023179687935,
+      "waypoints": [
+        1023179683769,
+        1022000304230
+      ]
+    },
+    {
+      "content_type_id": 2267,
+      "destination_pin_id": 1023179721292,
+      "quantity": 3000,
+      "route_id": 788335679,
+      "source_pin_id": 1023179683773
+    },
+    {
+      "content_type_id": 2398,
+      "destination_pin_id": 1023179683773,
+      "quantity": 20,
+      "route_id": 788335677,
+      "source_pin_id": 1023179721292
+    },
+    {
+      "content_type_id": 2398,
+      "destination_pin_id": 1023179683773,
+      "quantity": 20,
+      "route_id": 788335678,
+      "source_pin_id": 1023179721299
+    },
+    {
+      "content_type_id": 2393,
+      "destination_pin_id": 1023179758278,
+      "quantity": 40,
+      "route_id": 788336703,
+      "source_pin_id": 1023179683773,
+      "waypoints": [
+        1023179721292
+      ]
+    }
+  ]
+}
+"""
 
 const val getMockCharactersCharacterIdMining = """
 [

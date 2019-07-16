@@ -1,12 +1,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
@@ -18,6 +13,13 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class EveItem extends NeoComNode implements IItemFacet {
 	public enum ItemTechnology {
@@ -201,32 +203,6 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this;
 	}
 
-	//	public void setName( final String name ) {
-	//		this.name = name;
-	//	}
-
-	//	public void setGroupId( final int groupid ) {
-	//		this.groupId = groupid;
-	//		//		try {
-	//		group = esiDataAdapter.searchItemGroup4Id(groupid);
-	//		//		} catch (NeoComRuntimeException neoe) {
-	//		//			group = new ItemGroup();
-	//		//		}
-	//	}
-
-	//	public void setCategoryId( final int categoryid ) {
-	//		this.categoryId = categoryid;
-	//		//		try {
-	//		category = esiDataAdapter.searchItemCategory4Id(categoryid);
-	//		//		} catch (NeoComRuntimeException neoe) {
-	//		//			category = new ItemCategory();
-	//		//		}
-	//	}
-
-	//	public void setBasePrice( final double price ) {
-	//		baseprice = price;
-	//	}
-
 	public void setPrice( final double price ) {
 		this.price = price;
 	}
@@ -234,14 +210,6 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	public void setTech( final String tech ) {
 		this.tech = tech;
 	}
-
-	//	public void setVolume( final double volume ) {
-	//		this.volume = volume;
-	//	}
-
-	//	public void setIndustryGroup( final EIndustryGroup group ) {
-	//		this.industryGroup = group;
-	//	}
 
 	// - V I R T U A L   A C C E S S O R S
 	public String getHullGroup() {
@@ -277,24 +245,6 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	public EveItem setHullGroup( final String dummy ) {
 		return this;
 	}
-
-	//	public GetUniverseGroupsGroupIdOk getGroup() {
-	//		return this.group;
-	//	}
-
-	//	public EveItem setGroup( final ItemGroup group ) {
-	//		this.group = group;
-	//		return this;
-	//	}
-
-	//	public GetUniverseCategoriesCategoryIdOk getCategory() {
-	//		return this.category;
-	//	}
-
-	//	public EveItem setCategory( final ItemCategory category ) {
-	//		this.category = category;
-	//		return this;
-	//	}
 
 	/**
 	 * Try to get the best price for this element. There are two sets of prices, those for selling an item
@@ -346,14 +296,27 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	// - C O R E
+//	@Override
+//	public String toString() {
+//		final StringBuffer buffer = new StringBuffer("EveItem [");
+//		buffer.append("#").append(this.getItemId()).append(" - ").append(this.getName()).append(" ");
+//		buffer.append(this.getGroupName()).append("/").append(this.getCategoryName()).append(" [").append(" ");
+//		buffer.append("IC:").append(industryGroup).append(" ");
+//		buffer.append("]");
+//		return buffer.toString();
+//	}
+
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("EveItem [");
-		buffer.append("#").append(this.getItemId()).append(" - ").append(this.getName()).append(" ");
-		buffer.append(this.getGroupName()).append("/").append(this.getCategoryName()).append(" [").append(" ");
-		buffer.append("IC:").append(industryGroup).append(" ");
-		buffer.append("]");
-		return buffer.toString();
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				.append("id", id)
+				.append("item", item)
+				.append("group", group)
+				.append("category", category)
+				.append("price", price)
+				.append("tech", tech)
+				.append("industryGroup", industryGroup)
+				.toString();
 	}
 
 	// - P R I V A T E   S E C T I O N

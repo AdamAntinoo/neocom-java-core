@@ -20,8 +20,6 @@ public class TestSDEDBAdapter implements ISDEDatabaseAdapter {
     private String databasePath;
     private String databaseName;
     private int databaseVersion = 0;
-    //	private boolean databaseValid = false;
-//	private boolean isOpen = false;
     private Connection connectionSource = null;
 
     // - C O N S T R U C T O R S
@@ -76,7 +74,7 @@ public class TestSDEDBAdapter implements ISDEDatabaseAdapter {
     /**
      * This is the specific SpringBoot implementation for the SDE database adaptation. We can create compatible
      * <code>RawStatements</code> that can isolate the generic database access code from the platform specific. This
-     * stetement uses the database connection to create a generic JDBC Java statement.
+     * statement uses the database connection to create a generic JDBC Java statement.
      */
     public RawStatement constructStatement(final String query, final String[] parameters) throws SQLException {
         return new SBRawStatement(this.getSDEConnection(), query, parameters);
