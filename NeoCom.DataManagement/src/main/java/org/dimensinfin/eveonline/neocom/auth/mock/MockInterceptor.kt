@@ -32,6 +32,7 @@ class MockInterceptor : Interceptor {
 	fun matchRequest(uri: String): String {
 		return when {
 			matches(uri, "characters", "93813310", "planets", "40208303") -> planetDetails40208303
+			matches(uri, "characters", "93813310", "planets", "40208304") -> commandCenterList
 			matches(uri, "characters", "93813310", "planets") -> planetListPericoTuerto93813310
 			matches(uri, "characters", "planets", "40237824") -> getMockPlanetAdvancedFactories
 			matches(uri, "characters", "planets") -> getMockPlanets
@@ -516,6 +517,158 @@ const val planetDetails40208303 = """
 }
 """
 
+// - List of Advances Factories
+const val getMockPlanetAdvancedFactories = """
+{
+  "pins": [
+    {
+      "contents": [
+        {
+          "amount": 3000,
+          "type_id": 2306
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:22:36Z",
+      "latitude": 2.27903719767,
+      "longitude": 2.01406248364,
+      "pin_id": 1024967449015,
+      "schematic_id": 129,
+      "type_id": 2473
+    },
+    {
+      "contents": [
+        {
+          "amount": 2000,
+          "type_id": 2306
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:22:36Z",
+      "latitude": 2.32178261051,
+      "longitude": 1.99824191983,
+      "pin_id": 1024967449015,
+      "schematic_id": 129,
+      "type_id": 2473
+    },
+    {
+      "contents": [
+        {
+          "amount": 10,
+          "type_id": 3691
+        },
+        {
+          "amount": 10,
+          "type_id": 9838
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:26:50Z",
+      "latitude": 2.27239886788,
+      "longitude": 1.97163458582,
+      "pin_id": 1022847372296,
+      "schematic_id": 89,
+      "type_id": 2474
+    },
+    {
+      "contents": [
+        {
+          "amount": 5,
+          "type_id": 3691
+        },
+        {
+          "amount": 10,
+          "type_id": 9838
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:26:50Z",
+      "latitude": 2.27947373989,
+      "longitude": 2.04222191406,
+      "pin_id": 1022847372295,
+      "schematic_id": 89,
+      "type_id": 2474
+    },
+    {
+      "contents": [
+        {
+          "amount": 10,
+          "type_id": 2328
+        },
+        {
+          "amount": 8,
+          "type_id": 9832
+        },
+        {
+          "amount": 5,
+          "type_id": 9836
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:35:20Z",
+      "latitude": 2.26701029532,
+      "longitude": 2.01422239033,
+      "pin_id": 1022847333660,
+      "schematic_id": 96,
+      "type_id": 2474
+    },
+    {
+      "contents": [
+        {
+          "amount": 10,
+          "type_id": 2328
+        },
+        {
+          "amount": 10,
+          "type_id": 9832
+        },
+        {
+          "amount": 10,
+          "type_id": 9836
+        }
+      ],
+      "last_cycle_start": "2017-07-21T08:35:20Z",
+      "latitude": 2.30938039038,
+      "longitude": 1.99885095517,
+      "pin_id": 1022847333660,
+      "schematic_id": 96,
+      "type_id": 2474
+    },
+    {
+      "last_cycle_start": "2017-01-15T12:08:55Z",
+      "latitude": 2.2852027294,
+      "longitude": 1.99976467424,
+      "pin_id": 1019442390434,
+      "type_id": 2524
+    }
+  ]
+}
+"""
+
+// - List of Command Centers facilities
+const val commandCenterList = """
+{
+  "pins": [
+    {
+      "last_cycle_start": "2017-01-15T12:08:55Z",
+      "latitude": 2.2852027294,
+      "longitude": 1.99976467424,
+      "pin_id": 1019442390434,
+      "type_id": 2551
+    },
+    {
+      "last_cycle_start": "2017-01-15T12:08:55Z",
+      "latitude": 2.30938039038,
+      "longitude": 1.99885095517,
+      "pin_id": 1022847333660,
+      "type_id": 2551
+    },
+    {
+      "last_cycle_start": "2017-01-15T12:08:55Z",
+      "latitude": 2.26701029532,
+      "longitude": 2.01422239033,
+      "pin_id": 1022847333660,
+      "type_id": 2551
+    }
+  ]
+}
+"""
+
 const val getMockCharactersCharacterIdMining = """
 [
   {
@@ -648,6 +801,101 @@ const val getMockPlanets = """
   }
 ]
 """
+
+const val getType2561 = """
+{
+  "capacity": 12000,
+  "description": "\"At some point, it all comes down to more metal.\" The designers of this storage site believed this adage above all else. The outer walls of each container are comprised of almost a meter of titanium alloy around a flexible, lightweight tritanium frame, all sealed with a few layers of active nanite coating to prevent microfractures and thermal warping. This combination allows the building to withstand nearly any environmental challenge. To prevent the tritanium supports from decaying, the interior is kept in a constant vacuum, and workers must wear fully sealed atmosphere suits at all times.",
+  "dogma_attributes": [
+    {
+      "attribute_id": 1632,
+      "value": 2017
+    },
+    {
+      "attribute_id": 161,
+      "value": 0
+    },
+    {
+      "attribute_id": 162,
+      "value": 0
+    },
+    {
+      "attribute_id": 4,
+      "value": 0
+    },
+    {
+      "attribute_id": 38,
+      "value": 12000
+    },
+    {
+      "attribute_id": 15,
+      "value": 700
+    },
+    {
+      "attribute_id": 49,
+      "value": 500
+    }
+  ],
+  "graphic_id": 4572,
+  "group_id": 1029,
+  "mass": 0,
+  "name": "Storm Storage Facility",
+  "packaged_volume": 0,
+  "portion_size": 1,
+  "published": true,
+  "radius": 1,
+  "type_id": 2561,
+  "volume": 0
+}
+"""
+const val getType2483 = """
+{
+  "capacity": 0,
+  "description": "Instead of laboring to shield the production lines of this industrial facility from the surrounding environment, designers opted instead to use the available heat, interference, and even crushing pressure to help power the planetaryFacility itself. A plant on an ice planet might have highly advanced extended heat sinks, while a factory on a plasma world might draw most, if not all of its electricity from magnetized coils specially attuned to the planet's local ion winds. Taking advantage of the indigenous features of each world helps offset the cost of building mass production infrastructure there, which usually involves protective coatings, environmental clothing, and reinforced foundations.",
+  "dogma_attributes": [
+    {
+      "attribute_id": 1632,
+      "value": 2017
+    },
+    {
+      "attribute_id": 161,
+      "value": 0
+    },
+    {
+      "attribute_id": 162,
+      "value": 0
+    },
+    {
+      "attribute_id": 4,
+      "value": 0
+    },
+    {
+      "attribute_id": 38,
+      "value": 0
+    },
+    {
+      "attribute_id": 15,
+      "value": 800
+    },
+    {
+      "attribute_id": 49,
+      "value": 200
+    }
+  ],
+  "graphic_id": 4533,
+  "group_id": 1028,
+  "mass": 0,
+  "name": "Storm Basic Industry Facility",
+  "packaged_volume": 0,
+  "portion_size": 1,
+  "published": true,
+  "radius": 1,
+  "type_id": 2483,
+  "volume": 0
+}
+"""
+
+
 const val getMockPlanetAdvancedFactories_fulldata = """
 {
   "pins": [
@@ -1655,219 +1903,5 @@ const val getMockPlanetAdvancedFactories_fulldata = """
       ]
     }
   ]
-}
-"""
-
-const val getMockPlanetAdvancedFactories = """
-{
-  "pins": [
-    {
-      "contents": [
-        {
-          "amount": 3000,
-          "type_id": 2306
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:22:36Z",
-      "latitude": 2.27903719767,
-      "longitude": 2.01406248364,
-      "pin_id": 1024967449015,
-      "schematic_id": 129,
-      "type_id": 2473
-    },
-    {
-      "contents": [
-        {
-          "amount": 2000,
-          "type_id": 2306
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:22:36Z",
-      "latitude": 2.32178261051,
-      "longitude": 1.99824191983,
-      "pin_id": 1024967449015,
-      "schematic_id": 129,
-      "type_id": 2473
-    },
-    {
-      "contents": [
-        {
-          "amount": 10,
-          "type_id": 3691
-        },
-        {
-          "amount": 10,
-          "type_id": 9838
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:26:50Z",
-      "latitude": 2.27239886788,
-      "longitude": 1.97163458582,
-      "pin_id": 1022847372296,
-      "schematic_id": 89,
-      "type_id": 2474
-    },
-    {
-      "contents": [
-        {
-          "amount": 5,
-          "type_id": 3691
-        },
-        {
-          "amount": 10,
-          "type_id": 9838
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:26:50Z",
-      "latitude": 2.27947373989,
-      "longitude": 2.04222191406,
-      "pin_id": 1022847372295,
-      "schematic_id": 89,
-      "type_id": 2474
-    },
-    {
-      "contents": [
-        {
-          "amount": 10,
-          "type_id": 2328
-        },
-        {
-          "amount": 8,
-          "type_id": 9832
-        },
-        {
-          "amount": 5,
-          "type_id": 9836
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:35:20Z",
-      "latitude": 2.26701029532,
-      "longitude": 2.01422239033,
-      "pin_id": 1022847333660,
-      "schematic_id": 96,
-      "type_id": 2474
-    },
-    {
-      "contents": [
-        {
-          "amount": 10,
-          "type_id": 2328
-        },
-        {
-          "amount": 10,
-          "type_id": 9832
-        },
-        {
-          "amount": 10,
-          "type_id": 9836
-        }
-      ],
-      "last_cycle_start": "2017-07-21T08:35:20Z",
-      "latitude": 2.30938039038,
-      "longitude": 1.99885095517,
-      "pin_id": 1022847333660,
-      "schematic_id": 96,
-      "type_id": 2474
-    },
-    {
-      "last_cycle_start": "2017-01-15T12:08:55Z",
-      "latitude": 2.2852027294,
-      "longitude": 1.99976467424,
-      "pin_id": 1019442390434,
-      "type_id": 2524
-    }
-  ]
-}
-"""
-const val getType2561 = """
-{
-  "capacity": 12000,
-  "description": "\"At some point, it all comes down to more metal.\" The designers of this storage site believed this adage above all else. The outer walls of each container are comprised of almost a meter of titanium alloy around a flexible, lightweight tritanium frame, all sealed with a few layers of active nanite coating to prevent microfractures and thermal warping. This combination allows the building to withstand nearly any environmental challenge. To prevent the tritanium supports from decaying, the interior is kept in a constant vacuum, and workers must wear fully sealed atmosphere suits at all times.",
-  "dogma_attributes": [
-    {
-      "attribute_id": 1632,
-      "value": 2017
-    },
-    {
-      "attribute_id": 161,
-      "value": 0
-    },
-    {
-      "attribute_id": 162,
-      "value": 0
-    },
-    {
-      "attribute_id": 4,
-      "value": 0
-    },
-    {
-      "attribute_id": 38,
-      "value": 12000
-    },
-    {
-      "attribute_id": 15,
-      "value": 700
-    },
-    {
-      "attribute_id": 49,
-      "value": 500
-    }
-  ],
-  "graphic_id": 4572,
-  "group_id": 1029,
-  "mass": 0,
-  "name": "Storm Storage Facility",
-  "packaged_volume": 0,
-  "portion_size": 1,
-  "published": true,
-  "radius": 1,
-  "type_id": 2561,
-  "volume": 0
-}
-"""
-const val getType2483 = """
-{
-  "capacity": 0,
-  "description": "Instead of laboring to shield the production lines of this industrial facility from the surrounding environment, designers opted instead to use the available heat, interference, and even crushing pressure to help power the planetaryFacility itself. A plant on an ice planet might have highly advanced extended heat sinks, while a factory on a plasma world might draw most, if not all of its electricity from magnetized coils specially attuned to the planet's local ion winds. Taking advantage of the indigenous features of each world helps offset the cost of building mass production infrastructure there, which usually involves protective coatings, environmental clothing, and reinforced foundations.",
-  "dogma_attributes": [
-    {
-      "attribute_id": 1632,
-      "value": 2017
-    },
-    {
-      "attribute_id": 161,
-      "value": 0
-    },
-    {
-      "attribute_id": 162,
-      "value": 0
-    },
-    {
-      "attribute_id": 4,
-      "value": 0
-    },
-    {
-      "attribute_id": 38,
-      "value": 0
-    },
-    {
-      "attribute_id": 15,
-      "value": 800
-    },
-    {
-      "attribute_id": 49,
-      "value": 200
-    }
-  ],
-  "graphic_id": 4533,
-  "group_id": 1028,
-  "mass": 0,
-  "name": "Storm Basic Industry Facility",
-  "packaged_volume": 0,
-  "portion_size": 1,
-  "published": true,
-  "radius": 1,
-  "type_id": 2483,
-  "volume": 0
 }
 """

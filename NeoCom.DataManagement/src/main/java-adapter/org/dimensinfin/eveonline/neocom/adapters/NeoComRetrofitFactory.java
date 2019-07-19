@@ -1,5 +1,17 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
+import org.apache.commons.lang3.StringUtils;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
+import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
+import org.dimensinfin.eveonline.neocom.auth.mock.NeoComRetrofitMock;
+import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,19 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
-import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
-import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
-import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
-import org.dimensinfin.eveonline.neocom.auth.mock.NeoComRetrofitMock;
-import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import retrofit2.Retrofit;
 
@@ -91,8 +90,8 @@ public class NeoComRetrofitFactory {
 	 */
 	public Retrofit accessESIAuthRetrofit() {
 		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-		StackTraceElement stelement = stacktrace[3];//maybe this number needs to be corrected
-		final String methodName = stelement.getMethodName();
+		StackTraceElement stackElement = stacktrace[3];//maybe this number needs to be corrected
+		final String methodName = stackElement.getMethodName();
 		if (mockList.contains(methodName)) {
 			if (null == this.neocomRetrofitMountebank)
 				this.neocomRetrofitMountebank = this.generateMountebankRetrofit();
