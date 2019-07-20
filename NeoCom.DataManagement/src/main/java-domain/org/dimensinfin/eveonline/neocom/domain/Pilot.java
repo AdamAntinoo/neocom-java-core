@@ -15,8 +15,13 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries20
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.joda.time.DateTime;
 
-public class Pilot extends PilotV3 {
+import java.util.concurrent.TimeUnit;
+
+public class Pilot extends PilotV2 {
+	private static final long PILOT_CACHE_TIME = TimeUnit.HOURS.toMillis(12);
+
 	private Integer pilotIdentifier;
 	private Credential credential;
 	private transient GetCharactersCharacterIdOk characterPublicData;
@@ -112,8 +117,15 @@ public class Pilot extends PilotV3 {
 		else return "-";
 	}
 
-	// - C O R E
+	// - I U P D A T A B L E
+	@Override
+	public boolean needsRefresh() {
+		if (this.getLastUpdateTime().plus(PILOT_CACHE_TIME).isBefore(DateTime.now()))
+			return true;
+		return false;
+	}
 
+	// - C O R E
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;

@@ -1,14 +1,13 @@
 package org.dimensinfin.eveonline.neocom.support;
 
+import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import org.dimensinfin.eveonline.neocom.conf.GlobalConfigurationProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TestConfigurationProvider extends GlobalConfigurationProvider {
 	protected static Logger logger = LoggerFactory.getLogger(GlobalConfigurationProvider.class);
@@ -26,7 +25,7 @@ public class TestConfigurationProvider extends GlobalConfigurationProvider {
 	// - P L A T F O R M   S P E C I F I C   S E C T I O N
 	protected void readAllProperties() {
 		this.addProperty("P.cache.root.storage.name", "src/test/NeoCom.UnitTest");
-		this.addProperty("P.cache.directory.path", "NeoComCache");
+		this.addProperty("P.cache.directory.path", "NeoComCache/");
 		this.addProperty("P.cache.directory.store.esiitem", "ESIData.cache.store");
 		this.addProperty("P.cache.esiitem.timeout", "86400");
 		this.addProperty("P.cache.esinetwork.filename", "ESINetworkManager.cache.store");

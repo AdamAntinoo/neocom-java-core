@@ -223,13 +223,18 @@ public class ESIDataAdapter {
 	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
 		try {
 			// Create the request to be returned so it can be called.
-			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = retrofitFactory.accessNoAuthRetrofit().create(MarketApi.class)
-			                                                                               .getMarketsPrices(DEFAULT_ESI_SERVER.toLowerCase(), null)
-			                                                                               .execute();
+			final Response<List<GetMarketsPrices200Ok>> marketApiResponse =
+					this.retrofitFactory.accessNoAuthRetrofit()
+					                    .create(MarketApi.class)
+					                    .getMarketsPrices(DEFAULT_ESI_SERVER.toLowerCase(), null)
+					                    .execute();
 			if (!marketApiResponse.isSuccessful()) {
 				return new ArrayList<>();
 			} else return marketApiResponse.body();
 		} catch (IOException ioe) {
+			return new ArrayList<>();
+		} catch ( RuntimeException rte){
+			rte.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
