@@ -27,7 +27,6 @@ public enum FactoryType {
 
 	private final long capacity;
 	private final long output;
-	//	private final long cycleDuration;
 
 	FactoryType( final long capacity, final long output ) {
 		this.capacity = capacity;

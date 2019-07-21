@@ -1,12 +1,22 @@
 package org.dimensinfin.eveonline.neocom.planetary;
 
 public enum PlanetaryFacilityType {
-	COMMAND_CENTER,
-	STORAGE,
-	LAUNCHPAD,
-	PLANETARY_FACTORY,
-	EXTRACTOR_HEAD,
-	EXTRACTOR_CONTROL_UNIT;
+	COMMAND_CENTER(10),
+	STORAGE(20),
+	LAUNCHPAD(22),
+	PLANETARY_FACTORY(40),
+	EXTRACTOR_HEAD(32),
+	EXTRACTOR_CONTROL_UNIT(30);
+
+	private int facilityOrderIndex;
+
+	PlanetaryFacilityType( final int facilityOrderIndex ) {
+		this.facilityOrderIndex = facilityOrderIndex;
+	}
+
+	public int getFacilityOrderIndex() {
+		return this.facilityOrderIndex;
+	}
 
 	public static PlanetaryFacilityType getTypeByStructureGroup( final int structureGroup ) {
 		if (structureGroup == 1027) return PlanetaryFacilityType.COMMAND_CENTER;

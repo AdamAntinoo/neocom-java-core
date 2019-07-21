@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import org.dimensinfin.eveonline.neocom.database.repositories.PlanetaryRepository;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,7 +11,8 @@ import java.util.Objects;
  * Defines all the data related to a planetary transformation schematic. On creation generates and accesses the resource for the inputs and outputs.
  * Adds method to operate with the schematic.
  */
-public class PlanetarySchematic {
+public class PlanetarySchematic implements Serializable {
+	private static final long serialVersionUID = 3353280246278708239L;
 	private PlanetaryRepository planetaryRepository;
 	private int schematicId;
 	protected final List<Schematics> inputList = new ArrayList<>();

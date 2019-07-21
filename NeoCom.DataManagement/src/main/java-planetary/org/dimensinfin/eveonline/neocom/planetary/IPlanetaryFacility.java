@@ -17,8 +17,6 @@ public interface IPlanetaryFacility extends ICollaboration, IItemFacet {
 
 	PlanetaryFacilityType getFacilityType();
 
-//	int getBackgroundColor();
-
 	int getIconReferenceId();
 
 	int getIconColorReference();

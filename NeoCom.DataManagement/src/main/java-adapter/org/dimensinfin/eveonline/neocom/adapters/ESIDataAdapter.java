@@ -327,8 +327,8 @@ public class ESIDataAdapter {
 		try {
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
 			                                                                                       .create(UniverseApi.class)
-			                                                                                       .getUniversePlanetsPlanetId(identifier
-					                                                                                       , DEFAULT_ESI_SERVER.toLowerCase(), null).execute();
+			                                                                                       .getUniversePlanetsPlanetId(identifier,
+					                                                                                        DEFAULT_ESI_SERVER.toLowerCase(), null).execute();
 			if (!universeApiResponse.isSuccessful()) {
 				return null;
 			} else return universeApiResponse.body();

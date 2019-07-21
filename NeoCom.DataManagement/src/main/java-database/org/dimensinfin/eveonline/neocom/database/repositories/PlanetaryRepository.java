@@ -1,23 +1,24 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
+import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
+import org.dimensinfin.eveonline.neocom.database.RawStatement;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Vector;
-
-import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
-import org.dimensinfin.eveonline.neocom.database.RawStatement;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class will interface with the local repository for SDE data (first option) and possibly on the future for the local persistence repository.
  * The functionality exposed is related to the Planetary Interaction area covering from the schematics decomposition to planet data
  * storage to process optimizations.
  */
-public class PlanetaryRepository {
+public class PlanetaryRepository implements Serializable {
+	private static final long serialVersionUID = 7406787994714386613L;
 	private static Logger logger = LoggerFactory.getLogger(PlanetaryRepository.class);
 
 	// - C O M P O N E N T S
