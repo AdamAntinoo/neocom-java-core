@@ -1,5 +1,13 @@
 package org.dimensinfin.eveonline.neocom.services;
 
+import org.dimensinfin.eveonline.neocom.core.LogMessagesExternalisedType;
+import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
+import org.dimensinfin.eveonline.neocom.domain.ServiceJob;
+import org.dimensinfin.eveonline.neocom.exception.NeoComException;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
@@ -7,15 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import org.dimensinfin.eveonline.neocom.core.LogMessagesExternalisedType;
-import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
-import org.dimensinfin.eveonline.neocom.domain.ServiceJob;
-import org.dimensinfin.eveonline.neocom.exception.NeoComException;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The main responsibility of this class is to have a unique list of update jobs. If every minute we check for
@@ -48,9 +47,9 @@ public class UpdaterJobManager {
 		final String identifier = updater.getIdentifier();
 		if (alreadyScheduled(identifier)) {
 			final JobRecord target = runningJobs.get(identifier);
-			final String jobName = target.getJob().getStatus().name();
-			logger.info("-- [UpdaterJobManager.submit]> Job {} already on state: {}"
-					, updater.getIdentifier(), jobName);
+			final NeoComUpdater.JobStatus jobStatus = target.getJob().getStatus();
+			logger.info("-- [UpdaterJobManager.submit]> Job {} already on state: {}",
+					updater.getIdentifier(), jobStatus.name());
 			return;
 		}
 		logger.info("-- [UpdaterJobManager.submit]> Scheduling job {}", updater.getIdentifier());
@@ -178,7 +177,7 @@ public class UpdaterJobManager {
 
 		public boolean isDone() {
 			return (this.job.getStatus() == NeoComUpdater.JobStatus.COMPLETED) ||
-					       (this.job.getStatus() == NeoComUpdater.JobStatus.EXCEPTION);
+					(this.job.getStatus() == NeoComUpdater.JobStatus.EXCEPTION);
 		}
 	}
 }

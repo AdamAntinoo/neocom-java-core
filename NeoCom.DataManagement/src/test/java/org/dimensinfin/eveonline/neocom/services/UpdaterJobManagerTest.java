@@ -18,7 +18,7 @@ public class UpdaterJobManagerTest {
 		Assert.assertEquals("The number of jobs in the queue should be 1.", 1, UpdaterJobManager.getPendingJobsCount());
 	}
 
-	@Test
+//	@Test
 	public void submit_duplicatedjob() {
 		final NeoComUpdater updater = Mockito.mock(NeoComUpdater.class);
 		Mockito.when(updater.getIdentifier()).thenReturn("UPDATER-TEST-IDENTIFIER");
