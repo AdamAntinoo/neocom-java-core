@@ -34,8 +34,9 @@ class MockInterceptor : Interceptor {
 			matches(uri, "characters", "93813310", "planets", "40208303") -> planetDetails40208303
 			matches(uri, "characters", "93813310", "planets", "40208304") -> commandCenterList
 			matches(uri, "characters", "93813310", "planets", "40208351") -> extractorList
+			matches(uri, "characters", "92002067", "planets", "40237824") -> advancedFactoriesList
 			matches(uri, "characters", "93813310", "planets") -> planetListPericoTuerto93813310
-			matches(uri, "characters", "planets", "40237824") -> getMockPlanetAdvancedFactories
+			matches(uri, "characters", "92002067", "planets") -> planetListPericoTuerto93813310
 			matches(uri, "characters", "planets") -> getMockPlanets
 			uri.contains("2561") -> getType2561
 			uri.contains("2483") -> getType2483
@@ -519,7 +520,7 @@ const val planetDetails40208303 = """
 """
 
 // - List of Advances Factories
-const val getMockPlanetAdvancedFactories = """
+const val advancedFactoriesList = """
 {
   "pins": [
     {
@@ -552,10 +553,6 @@ const val getMockPlanetAdvancedFactories = """
     },
     {
       "contents": [
-        {
-          "amount": 10,
-          "type_id": 3691
-        },
         {
           "amount": 10,
           "type_id": 9838
@@ -670,7 +667,7 @@ const val commandCenterList = """
 }
 """
 
-const val extractorList ="""
+const val extractorList = """
 {
   "pins": [
     {
@@ -2037,7 +2034,7 @@ const val getMockPlanetAdvancedFactories_fulldata = """
 }
 """
 
-const val extractorFulldata ="""
+const val extractorFulldata = """
 {
   "links": [
     {

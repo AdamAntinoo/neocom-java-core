@@ -40,6 +40,8 @@ public class Schematics {
 		return this.cycleTime;
 	}
 
+	public PlanetaryResourceTierType getTier() {return resource.getTier();}
+
 	// - B U I L D E R
 	public static class Builder {
 		private Schematics onConstruction;
