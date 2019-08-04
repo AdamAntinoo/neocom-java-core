@@ -628,11 +628,11 @@ public class ESIDataAdapter {
 			ioe.printStackTrace();
 		} catch (RuntimeException rtex) {
 			if (rtex.getMessage().toLowerCase().contains("connection reset")) {
-				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage());
 				this.retrofitFactory.reset();
 			}
 			if (rtex.getMessage().toLowerCase().contains("response body is incorrect")) {
-				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage());
+				logger.info("EX [ESIDataAdapter.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage());
 				this.retrofitFactory.reset();
 			}
 		}

@@ -186,7 +186,8 @@ public class NeoComRetrofitFactory {
 			final String CLIENT_ID = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.clientid");
 			final String SECRET_KEY = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.secretkey");
 			final String CALLBACK = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.callback");
-			final String AGENT = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
+			final String AGENT = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.agent",
+			                                                                  "Default agent");
 			// Verify that the constants have values. Otherwise launch exception.
 			if (CLIENT_ID.isEmpty())
 				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");

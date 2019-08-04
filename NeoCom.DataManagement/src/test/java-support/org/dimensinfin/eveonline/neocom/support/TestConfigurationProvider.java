@@ -29,7 +29,14 @@ public class TestConfigurationProvider extends GlobalConfigurationProvider {
 		this.addProperty("P.cache.directory.store.esiitem", "ESIData.cache.store");
 		this.addProperty("P.cache.esiitem.timeout", "86400");
 		this.addProperty("P.cache.esinetwork.filename", "ESINetworkManager.cache.store");
+		this.addProperty("P.esi.tranquility.authorization.server", "https://login.eveonline.com/");
+		this.addProperty("P.esi.tranquility.authorization.clientid", "dbc9c2b1d18d49d8adacd23436c5281d");
+		this.addProperty("P.esi.tranquility.authorization.secretkey", "QqnTLCqLQxZYHgHUuobkNA9g950vXVYDMg8ETTXM");
+		this.addProperty("P.esi.tranquility.authorization.callback", "eveauth-neocom://esiauthentication");
+		this.addProperty("P.esi.tranquility.authorization.agent", "org.dimensinfin.eveonline.neocom; Dimensinfin Industries; " +
+				                                                          "Data Management Unit Testing");
 		this.addProperty("P.esi.tranquility.authorization.scopes.filename", "esiconf/ESINetworkScopes.Tranquility.txt");
+
 	}
 
 	protected List<String> getResourceFiles( String path ) throws IOException {

@@ -7,7 +7,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCa
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +14,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class EveItemTest extends TestEsiAdapterReady {
 	private static ESIDataAdapter esiDataAdapter;
@@ -26,11 +27,44 @@ public class EveItemTest extends TestEsiAdapterReady {
 	}
 
 	@Test
-	public void accessorContract() throws IOException {
-		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		PojoTestUtils.validateAccessors(EveItem.class);
+	public void constructor_GetUniverseTypesTypeIdOk() {
+		final GetUniverseTypesTypeIdOk type = new GetUniverseTypesTypeIdOk();
+		type.setTypeId(34);
+		type.setGroupId(18);
+		type.setName("Tritanium");
+		type.setVolume(0.01F);
+		type.setCapacity(10.0F);
+		final EveItem item = new EveItem(type);
+		Assert.assertNotNull(item);
 	}
+	@Test
+	public void equalsContract() {
+		EqualsVerifier.forClass(EveItem.class)
+		              .usingGetClass().verify();
+	}
+
+	@Test
+	public void getterContract() {
+		final GetUniverseTypesTypeIdOk type = new GetUniverseTypesTypeIdOk();
+		type.setTypeId(34);
+		type.setGroupId(18);
+		type.setName("Tritanium");
+		type.setVolume(0.01F);
+		type.setCapacity(10.0F);
+		final EveItem item = new EveItem(type);
+		Assert.assertNotNull(item);
+		Assert.assertEquals(-1, item.getItemId());
+		Assert.assertEquals(10.0F, item.getCapacity().floatValue());
+		Assert.assertNotNull(item.getDogmaAttributes());
+		Assert.assertEquals("not-applies", item.getHullGroup());
+	}
+
+//	@Test
+//	public void accessorContract() throws IOException {
+//		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
+//		EveItem.injectEsiDataAdapter(esiDataAdapter);
+//		PojoTestUtils.validateAccessors(EveItem.class);
+//	}
 
 	@Test
 	public void getName() throws IOException {

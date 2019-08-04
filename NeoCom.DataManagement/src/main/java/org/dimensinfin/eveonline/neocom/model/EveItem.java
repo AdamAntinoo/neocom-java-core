@@ -1,5 +1,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
@@ -119,11 +121,11 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	// - G E T T E R S   &   S E T T E R S
 	@Deprecated
 	public int getItemId() {
-		return id;
+		return this.id;
 	}
 
 	public int getTypeId() {
-		return id;
+		return this.id;
 	}
 
 	public String getName() {
@@ -296,26 +298,48 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	// - C O R E
-//	@Override
-//	public String toString() {
-//		final StringBuffer buffer = new StringBuffer("EveItem [");
-//		buffer.append("#").append(this.getItemId()).append(" - ").append(this.getName()).append(" ");
-//		buffer.append(this.getGroupName()).append("/").append(this.getCategoryName()).append(" [").append(" ");
-//		buffer.append("IC:").append(industryGroup).append(" ");
-//		buffer.append("]");
-//		return buffer.toString();
-//	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final EveItem eveItem = (EveItem) o;
+		return new EqualsBuilder()
+				       .appendSuper(super.equals(o))
+				       .append(this.id, eveItem.id)
+				       .append(this.price, eveItem.price)
+				       .append(this.item, eveItem.item)
+				       .append(this.group, eveItem.group)
+				       .append(this.category, eveItem.category)
+				       .append(this.tech, eveItem.tech)
+				       .append(this.industryGroup, eveItem.industryGroup)
+				       .isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				       .appendSuper(super.hashCode())
+				       .append(this.id)
+				       .append(this.item)
+				       .append(this.group)
+				       .append(this.category)
+				       .append(this.price)
+				       .append(this.tech)
+				       .append(this.industryGroup)
+				       .toHashCode();
+	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("id", id)
-				.append("item", item)
-				.append("group", group)
-				.append("category", category)
-				.append("price", price)
-				.append("tech", tech)
-				.append("industryGroup", industryGroup)
+				.append("id", this.id)
+				.append("item", this.item)
+				.append("group", this.group)
+				.append("category", this.category)
+				.append("price", this.price)
+				.append("tech", this.tech)
+				.append("industryGroup", this.industryGroup)
 				.toString();
 	}
 
