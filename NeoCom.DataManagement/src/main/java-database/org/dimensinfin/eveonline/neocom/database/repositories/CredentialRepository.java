@@ -19,7 +19,7 @@ public class CredentialRepository {
 
 	public List<Credential> findAllByServer( final String esiServer ) {
 		try {
-			return this.credentialDao.queryForEq("dataSource", esiServer.toUpperCase());
+			return this.credentialDao.queryForEq("dataSource", esiServer.toLowerCase());
 		} catch (SQLException sqle) {
 			logger.warn("W [CredentialRepository.findAllByServer]> Exception reading all Credentials. {}",
 					sqle.getMessage());

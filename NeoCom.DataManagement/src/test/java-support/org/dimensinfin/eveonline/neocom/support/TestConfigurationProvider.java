@@ -29,7 +29,7 @@ public class TestConfigurationProvider extends GlobalConfigurationProvider {
 		this.addProperty("P.cache.directory.store.esiitem", "ESIData.cache.store");
 		this.addProperty("P.cache.esiitem.timeout", "86400");
 		this.addProperty("P.cache.esinetwork.filename", "ESINetworkManager.cache.store");
-
+		this.addProperty("P.esi.tranquility.authorization.scopes.filename", "esiconf/ESINetworkScopes.Tranquility.txt");
 	}
 
 	protected List<String> getResourceFiles( String path ) throws IOException {
