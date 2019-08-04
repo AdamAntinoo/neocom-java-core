@@ -38,6 +38,8 @@ class MockInterceptor : Interceptor {
 			matches(uri, "characters", "93813310", "planets") -> planetListPericoTuerto93813310
 			matches(uri, "characters", "92002067", "planets") -> planetListPericoTuerto93813310
 			matches(uri, "characters", "planets") -> getMockPlanets
+			matches(uri, "characters", "93813310", "assets", "page=1") -> pilotAssets93813310
+			matches(uri, "characters", "93813310", "assets", "page=2") -> emptyAssetList
 			uri.contains("2561") -> getType2561
 			uri.contains("2483") -> getType2483
 			else -> {
@@ -2332,4 +2334,61 @@ const val extractorFulldata = """
     }
   ]
 }
+"""
+
+// - Perico Tuerto test assets
+const val pilotAssets93813310 = """
+[
+  {
+    "is_singleton": false,
+    "item_id": 1017783038534,
+    "location_flag": "Cargo",
+    "location_id": 1017783038524,
+    "location_type": "other",
+    "quantity": 1,
+    "type_id": 34
+  },
+  {
+    "is_blueprint_copy": true,
+    "is_singleton": true,
+    "item_id": 1017783955158,
+    "location_flag": "AutoFit",
+    "location_id": 1015880267513,
+    "location_type": "other",
+    "quantity": 1,
+    "type_id": 12275
+  },
+  {
+    "is_blueprint_copy": true,
+    "is_singleton": true,
+    "item_id": 1017783955160,
+    "location_flag": "AutoFit",
+    "location_id": 1015880267513,
+    "location_type": "other",
+    "quantity": 1,
+    "type_id": 12275
+  },
+  {
+    "is_singleton": true,
+    "item_id": 1017824035203,
+    "location_flag": "LoSlot2",
+    "location_id": 1019123153786,
+    "location_type": "other",
+    "quantity": 1,
+    "type_id": 2605
+  },
+  {
+    "is_singleton": true,
+    "item_id": 1017933532401,
+    "location_flag": "AutoFit",
+    "location_id": 1017096452525,
+    "location_type": "other",
+    "quantity": 1,
+    "type_id": 902
+  }
+]
+"""
+
+const val emptyAssetList = """
+[]
 """

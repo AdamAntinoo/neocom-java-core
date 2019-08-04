@@ -1,20 +1,5 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import org.dimensinfin.eveonline.neocom.core.StorageUnits;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-
-import org.joda.time.DateTime;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -26,6 +11,21 @@ import com.nytimes.android.external.store3.base.RecordProvider;
 import com.nytimes.android.external.store3.base.RecordState;
 import com.nytimes.android.external.store3.base.impl.Store;
 import com.nytimes.android.external.store3.base.impl.StoreBuilder;
+
+import org.dimensinfin.eveonline.neocom.core.StorageUnits;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.joda.time.DateTime;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import okio.BufferedSource;
@@ -62,15 +62,16 @@ public class StoreCacheManager {
 
 	private void createEsiItemStore() {
 		try {
-			final File cachedir = new File(this.fileSystem.accessResource4Path(this.configurationProvider.getResourceString("P.cache.directory.path")
-					                                                                   + "/" + this.configurationProvider.getResourceString("P.cache.directory.store.esiitem")));
+			final File cachedir = new File(this.fileSystem.accessResource4Path(
+					this.configurationProvider.getResourceString("P.cache.directory.path") +
+							"/" + this.configurationProvider.getResourceString("P.cache.directory.store.esiitem")));
 			this.esiItemPersistentStore = DiskLruCache.open(cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES);
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
-					                    .fetcher(typeId -> Single.just(this.esiDataAdapter.getUniverseTypeById(typeId)))
-					                    //										.fetcher(new UniverseTypeFetcher(esiDataAdapter))
-					                    .persister(new EseItemPersistent(esiItemPersistentStore))
-					                    .networkBeforeStale()
-					                    .open();
+					.fetcher(typeId -> Single.just(this.esiDataAdapter.getUniverseTypeById(typeId)))
+					//										.fetcher(new UniverseTypeFetcher(esiDataAdapter))
+					.persister(new EseItemPersistent(esiItemPersistentStore))
+					.networkBeforeStale()
+					.open();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			throw new NeoComRuntimeException("Unable to create the item cache store.");
@@ -79,14 +80,14 @@ public class StoreCacheManager {
 
 	private void createItemGroupStore() {
 		this.itemGroupStore = StoreBuilder.<Integer, BufferedSource, GetUniverseGroupsGroupIdOk>parsedWithKey()
-				                      .fetcher((Fetcher) new ItemGroupFetcher(this.esiDataAdapter))
-				                      .open();
+				.fetcher((Fetcher) new ItemGroupFetcher(this.esiDataAdapter))
+				.open();
 	}
 
 	private void createItemCategoryStore() {
 		this.categoryStore = StoreBuilder.<Integer, BufferedSource, GetUniverseCategoriesCategoryIdOk>parsedWithKey()
-				                     .fetcher((Fetcher) new ItemCategoryFetcher(this.esiDataAdapter))
-				                     .open();
+				.fetcher((Fetcher) new ItemCategoryFetcher(this.esiDataAdapter))
+				.open();
 	}
 
 	// - C A C H E   E X P O R T E D   A P I

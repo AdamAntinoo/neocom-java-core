@@ -1,6 +1,9 @@
 package org.dimensinfin.eveonline.neocom.core.updaters;
 
+import com.annimon.stream.Stream;
+
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
@@ -38,9 +41,19 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 		if (null != esiDataAdapter) {
 			if (this.getModel().isValid()) {
 				// Count the number of assets.
-				final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataAdapter.getCharactersCharacterIdAssets(this.getModel().getAccountId()
-						, this.getModel().getRefreshToken(), this.getModel().getDataSource());
+				final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataAdapter.getCharactersCharacterIdAssets(
+						this.getModel().getAccountId(),
+						this.getModel().getRefreshToken(),
+						this.getModel().getDataSource());
 				this.getModel().setAssetsCount(assetList.size());
+
+				// Estimate the mining resources value.
+				final Double miningResourcesValue = Stream.of(assetList)
+				                                          .map(asset -> new NeoAsset.Builder().fromEsiAsset(asset))
+				                                          .filter(asset -> this.isMiningResource(asset))
+				                                          .mapToDouble(asset -> asset.getPrice() * asset.getQuantity())
+				                                          .sum();
+				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue(miningResourcesValue);
 
 				// Get the wallet balance.
 				final Double walletBalance = esiDataAdapter.getCharactersCharacterIdWallet(this.getModel().getAccountId()
@@ -54,5 +67,12 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 			}
 			this.getModel().timeStamp(); // Mark the model as updated.
 		}
+	}
+
+	private boolean isMiningResource( final NeoAsset asset2Test ) {
+		if (asset2Test.getCategoryName().equalsIgnoreCase("Asteroid")) return true;
+		if ((asset2Test.getCategoryName().equalsIgnoreCase("Material")) &&
+				(asset2Test.getGroupName().equalsIgnoreCase("Mineral"))) return true;
+		return false;
 	}
 }
