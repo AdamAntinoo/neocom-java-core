@@ -89,9 +89,10 @@ public class NeoComRetrofitFactory {
 	 * @return the selected retrofit depending on the mock status.
 	 */
 	public Retrofit accessESIAuthRetrofit() {
-		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-		StackTraceElement stackElement = stacktrace[3];//maybe this number needs to be corrected
-		final String methodName = stackElement.getMethodName();
+		final String methodName = this.getCallerMethodName();
+//		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+//		StackTraceElement stackElement = stacktrace[3];//maybe this number needs to be corrected
+//		final String methodName = stackElement.getMethodName();
 		if (mockList.contains(methodName)) {
 			if (null == this.neocomRetrofitMountebank)
 				this.neocomRetrofitMountebank = this.generateMountebankRetrofit();
@@ -103,58 +104,75 @@ public class NeoComRetrofitFactory {
 		}
 	}
 
+	/**
+	 * This method should check if running on a device because the name index for the real call changes between Dalvik and
+	 * java runs.
+	 */
+	private String getCallerMethodName() {
+		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		StackTraceElement stackElement = stacktrace[0]; // This is to check if we are using Dalvik
+		String methodName = stackElement.getMethodName();
+		if (methodName.equalsIgnoreCase("getThreadStackTrace")) {
+			stackElement = stacktrace[4]; // Using Dalvik. Get a trace one level deep
+			return stackElement.getMethodName();
+		} else {
+			stackElement = stacktrace[3]; // Using Java or testing. Get a trace at right level
+			return stackElement.getMethodName();
+		}
+	}
+
 	private Retrofit generateMountebankRetrofit() {
 		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 		return new NeoComRetrofitMock.Builder()
-				       .withEsiServerLocation("http://localhost:8448/")
-				       .withAgent(agent)
-				       .build();
+				.withEsiServerLocation("http://localhost:8448/")
+				.withAgent(agent)
+				.build();
 	}
 
 	private Retrofit generateNoAuthRetrofit() {
 		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
-				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
+				+ this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
 		final File cacheDataFile = new File(fileSystemAdapter.accessResource4Path(cacheFilePath));
 		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 		final long timeout = TimeUnit.SECONDS.toMillis(this.configurationProvider.getResourceInteger("P.cache.esiitem.timeout"));
 		return new NeoComRetrofitNoOAuthHTTP.Builder()
-				       //				                                      .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
-				       .withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
-						       , "https://esi.evetech.net/latest/"))
-				       .withAgent(agent)
-				       .withCacheDataFile(cacheDataFile)
-				       .withCacheSize(CACHE_SIZE)
-				       .withTimeout(timeout)
-				       .build();
+				//				                                      .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
+				.withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
+						, "https://esi.evetech.net/latest/"))
+				.withAgent(agent)
+				.withCacheDataFile(cacheDataFile)
+				.withCacheSize(CACHE_SIZE)
+				.withTimeout(timeout)
+				.build();
 	}
 
 	private Retrofit generateESIAuthRetrofit( final String esiServer ) {
 		final String cacheFilePath = this.configurationProvider.getResourceString("P.cache.directory.path")
-				                             + this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
+				+ this.configurationProvider.getResourceString("P.cache.esinetwork.filename");
 		final File cacheDataFile = new File(this.fileSystemAdapter.accessResource4Path(cacheFilePath));
 		final String agent = this.configurationProvider.getResourceString("P.esi.authorization.agent", "Default agent");
 		final long timeout = TimeUnit.SECONDS.toMillis(this.configurationProvider.getResourceInteger("P.cache.esinetwork.timeout"));
 		if ("TRANQUILITY".equalsIgnoreCase(esiServer)) {
 			return new NeoComRetrofitHTTP.Builder()
-					       .withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
-					       .withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
-							       , "https://esi.evetech.net/latest/"))
-					       .withAgent(agent)
-					       .withCacheDataFile(cacheDataFile)
-					       .withCacheSize(CACHE_SIZE)
-					       .withTimeout(timeout)
-					       .build();
+					.withNeoComOAuth20(this.getConfiguredOAuth("Tranquility"))
+					.withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
+							, "https://esi.evetech.net/latest/"))
+					.withAgent(agent)
+					.withCacheDataFile(cacheDataFile)
+					.withCacheSize(CACHE_SIZE)
+					.withTimeout(timeout)
+					.build();
 		}
 		if ("SINGULARITY".equalsIgnoreCase(esiServer)) {
 			return new NeoComRetrofitHTTP.Builder()
-					       .withNeoComOAuth20(this.getConfiguredOAuth("Singularity"))
-					       .withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
-							       , "https://esi.evetech.net/latest/"))
-					       .withAgent(agent)
-					       .withCacheDataFile(cacheDataFile)
-					       .withCacheSize(CACHE_SIZE)
-					       .withTimeout(timeout)
-					       .build();
+					.withNeoComOAuth20(this.getConfiguredOAuth("Singularity"))
+					.withEsiServerLocation(this.configurationProvider.getResourceString("P.esi.data.server.location"
+							, "https://esi.evetech.net/latest/"))
+					.withAgent(agent)
+					.withCacheDataFile(cacheDataFile)
+					.withCacheSize(CACHE_SIZE)
+					.withTimeout(timeout)
+					.build();
 		}
 		return this.generateESIAuthRetrofit("TRANQUILITY"); // This is in case there is no server set. Defaults to Tranquility.
 	}
@@ -162,7 +180,7 @@ public class NeoComRetrofitFactory {
 	protected NeoComOAuth20 getConfiguredOAuth( final String selector ) {
 		Objects.requireNonNull(selector);
 		final List<String> scopes = this.constructScopes(this.configurationProvider.getResourceString("P.esi."
-				                                                                                              + selector.toLowerCase() + ".authorization.scopes.filename"));
+				+ selector.toLowerCase() + ".authorization.scopes.filename"));
 		NeoComOAuth20 auth = null;
 		if ("TRANQUILITY".equalsIgnoreCase(selector)) {
 			final String CLIENT_ID = this.configurationProvider.getResourceString("P.esi.tranquility.authorization.clientid");
@@ -177,20 +195,20 @@ public class NeoComRetrofitFactory {
 			if (CALLBACK.isEmpty())
 				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20.Builder()
-					       .withClientId(CLIENT_ID)
-					       .withClientKey(SECRET_KEY)
-					       .withCallback(CALLBACK)
-					       .withAgent(AGENT)
-					       .withStore(STORE)
-					       .withScopes(scopes)
-					       .withState("NEOCOM-VERIFICATION-STATE")
-					       .withBaseUrl(this.configurationProvider.getResourceString("P.esi.tranquility.authorization.server"
-							       , "https://login.eveonline.com/"))
-					       .withAccessTokenEndpoint(this.configurationProvider.getResourceString("P.esi.authorization.accesstoken.url"
-							       , "oauth/token"))
-					       .withAuthorizationBaseUrl(this.configurationProvider.getResourceString("P.esi.authorization.authorize.url"
-							       , "oauth/authorize"))
-					       .build();
+					.withClientId(CLIENT_ID)
+					.withClientKey(SECRET_KEY)
+					.withCallback(CALLBACK)
+					.withAgent(AGENT)
+					.withStore(STORE)
+					.withScopes(scopes)
+					.withState("NEOCOM-VERIFICATION-STATE")
+					.withBaseUrl(this.configurationProvider.getResourceString("P.esi.tranquility.authorization.server"
+							, "https://login.eveonline.com/"))
+					.withAccessTokenEndpoint(this.configurationProvider.getResourceString("P.esi.authorization.accesstoken.url"
+							, "oauth/token"))
+					.withAuthorizationBaseUrl(this.configurationProvider.getResourceString("P.esi.authorization.authorize.url"
+							, "oauth/authorize"))
+					.build();
 			// TODO - When new refactoring isolates scopes remove this.
 			SCOPESTRING = this.transformScopes(scopes);
 		}
@@ -207,21 +225,21 @@ public class NeoComRetrofitFactory {
 			if (CALLBACK.isEmpty())
 				throw new NeoComRuntimeException("RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty.");
 			auth = new NeoComOAuth20.Builder()
-					       .withClientId(CLIENT_ID)
-					       .withClientKey(SECRET_KEY)
-					       .withCallback(CALLBACK)
-					       .withAgent(AGENT)
-					       .withStore(STORE)
-					       .withScopes(scopes)
-					       .withState(this.configurationProvider.getResourceString("P.esi.authorization.state"
-							       , "NEOCOM-VERIFICATION-STATE"))
-					       .withBaseUrl(this.configurationProvider.getResourceString("P.esi.singularity.authorization.server"
-							       , "https://sisilogin.testeveonline.com/"))
-					       .withAccessTokenEndpoint(this.configurationProvider.getResourceString("P.esi.authorization.accesstoken.url"
-							       , "oauth/token"))
-					       .withAuthorizationBaseUrl(this.configurationProvider.getResourceString("P.esi.authorization.authorize.url"
-							       , "oauth/authorize"))
-					       .build();
+					.withClientId(CLIENT_ID)
+					.withClientKey(SECRET_KEY)
+					.withCallback(CALLBACK)
+					.withAgent(AGENT)
+					.withStore(STORE)
+					.withScopes(scopes)
+					.withState(this.configurationProvider.getResourceString("P.esi.authorization.state"
+							, "NEOCOM-VERIFICATION-STATE"))
+					.withBaseUrl(this.configurationProvider.getResourceString("P.esi.singularity.authorization.server"
+							, "https://sisilogin.testeveonline.com/"))
+					.withAccessTokenEndpoint(this.configurationProvider.getResourceString("P.esi.authorization.accesstoken.url"
+							, "oauth/token"))
+					.withAuthorizationBaseUrl(this.configurationProvider.getResourceString("P.esi.authorization.authorize.url"
+							, "oauth/authorize"))
+					.build();
 		}
 		Objects.requireNonNull(auth);
 		return auth;

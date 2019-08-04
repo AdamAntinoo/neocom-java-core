@@ -109,7 +109,7 @@ dependencies {
 
 // - C O R E
 dependencies {
-    compileOnly 'org.slf4j:slf4j-api:1.7.25'
+    compileOnly 'org.slf4j:slf4j-api:1.7.26'
     compileOnly 'joda-time:joda-time:2.3'
 }
 // - C A C H E
@@ -155,7 +155,7 @@ dependencies {
     testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
     testImplementation files('libs/jeveassets.3.1.2.jar')
     // C O R E
-    testImplementation 'org.slf4j:slf4j-simple:1.7.26'
+//    testImplementation 'org.slf4j:slf4j-simple:1.7.26'
     testImplementation 'junit:junit:4.12'
     testImplementation 'joda-time:joda-time:2.9.9'
     testImplementation 'org.apache.commons:commons-lang3:3.7'

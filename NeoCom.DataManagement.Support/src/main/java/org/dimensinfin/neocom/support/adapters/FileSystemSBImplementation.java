@@ -1,5 +1,9 @@
 package org.dimensinfin.neocom.support.adapters;
 
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,11 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Spring boot implementation for the File System isolation interface. We can get access to the application generated data
@@ -55,7 +54,7 @@ public class FileSystemSBImplementation implements IFileSystem {
 	public InputStream openAsset4Input( final String filePath ) throws IOException {
 		URI propertyURI = null;
 		try {
-			final String executionDirectory = new java.io.File(".").getCanonicalPath() + "/build/resources/main/";
+			final String executionDirectory = new File(".").getCanonicalPath() + "/build/resources/main/";
 			//			final URL resource = getClassLoader().getResource(filePath);
 			//			if (null == resource) throw new IOException("[FileSystemSBImplementation.openAsset4Input]> Resource file " + filePath + "" +
 			//					" not found with classloader.");
