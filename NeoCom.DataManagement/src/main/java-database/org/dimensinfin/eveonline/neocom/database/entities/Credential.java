@@ -69,6 +69,8 @@ public class Credential extends UpdatableEntity {
 	@DatabaseField
 	private Double walletBalance = 0.0;
 	@DatabaseField
+	private Double miningResourcesEstimatedValue = 0.0;
+	@DatabaseField
 	private String raceName;
 
 	// - C O N S T R U C T O R S
@@ -95,7 +97,7 @@ public class Credential extends UpdatableEntity {
 	}
 
 	public int getAccountId() {
-		return accountId;
+		return this.accountId;
 	}
 
 	public Credential setAccountId( final int accountId ) {
@@ -105,7 +107,7 @@ public class Credential extends UpdatableEntity {
 	}
 
 	public String getAccountName() {
-		return accountName;
+		return this.accountName;
 	}
 
 	public String getName() {
@@ -117,11 +119,11 @@ public class Credential extends UpdatableEntity {
 	}
 
 	public String getRefreshToken() {
-		return refreshToken;
+		return this.refreshToken;
 	}
 
 	public String getDataSource() {
-		return dataSource.toLowerCase();
+		return this.dataSource.toLowerCase();
 	}
 
 	public void setDataSource( final String dataSource ) {
@@ -129,16 +131,12 @@ public class Credential extends UpdatableEntity {
 	}
 
 	public Double getWalletBalance() {
-		return walletBalance;
+		return this.walletBalance;
 	}
 
 	public Credential setWalletBalance( final Double walletBalance ) {
 		this.walletBalance = walletBalance;
 		return this;
-	}
-
-	public String getScope() {
-		return scope;
 	}
 
 	public int getAssetsCount() {
@@ -147,6 +145,15 @@ public class Credential extends UpdatableEntity {
 
 	public Credential setAssetsCount( final int assetsCount ) {
 		this.assetsCount = assetsCount;
+		return this;
+	}
+
+	public Double getMiningResourcesEstimatedValue() {
+		return this.miningResourcesEstimatedValue;
+	}
+
+	public Credential setMiningResourcesEstimatedValue( final Double miningResourcesEstimatedValue ) {
+		this.miningResourcesEstimatedValue = miningResourcesEstimatedValue;
 		return this;
 	}
 
@@ -159,56 +166,63 @@ public class Credential extends UpdatableEntity {
 		return this;
 	}
 
+	public String getScope() {
+		return scope;
+	}
+
+	// - C O R E
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		final Credential that = (Credential) o;
 		return new EqualsBuilder()
-				       .appendSuper(super.equals(o))
-				       .append(accountId, that.accountId)
-				       .append(assetsCount, that.assetsCount)
-				       .append(accessToken, that.accessToken)
-				       .append(tokenType, that.tokenType)
-				       .append(dataSource, that.dataSource)
-				       .append(scope, that.scope)
-				       .append(uniqueCredential, that.uniqueCredential)
-				       .append(walletBalance, that.walletBalance)
-				       .append(refreshToken, that.refreshToken)
-				       .append(accountName, that.accountName)
-				       .append(raceName, that.raceName)
-				       .isEquals();
+				.appendSuper(super.equals(o))
+				.append(this.accountId, that.accountId)
+				.append(this.assetsCount, that.assetsCount)
+				.append(this.accessToken, that.accessToken)
+				.append(this.tokenType, that.tokenType)
+				.append(this.dataSource, that.dataSource)
+				.append(this.scope, that.scope)
+				.append(this.uniqueCredential, that.uniqueCredential)
+				.append(this.walletBalance, that.walletBalance)
+				.append(this.refreshToken, that.refreshToken)
+				.append(this.miningResourcesEstimatedValue, that.miningResourcesEstimatedValue)
+				.append(this.accountName, that.accountName)
+				.append(this.raceName, that.raceName)
+				.isEquals();
 	}
 
-	// - C O R E
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
-				       .appendSuper(super.hashCode())
-				       .append(accessToken)
-				       .append(tokenType)
-				       .append(dataSource)
-				       .append(scope)
-				       .append(uniqueCredential)
-				       .append(accountId)
-				       .append(walletBalance)
-				       .append(assetsCount)
-				       .append(refreshToken)
-				       .append(accountName)
-				       .append(raceName)
-				       .toHashCode();
+				.appendSuper(super.hashCode())
+				.append(this.accountId)
+				.append(this.assetsCount)
+				.append(this.accessToken)
+				.append(this.tokenType)
+				.append(this.dataSource)
+				.append(this.scope)
+				.append(this.uniqueCredential)
+				.append(this.walletBalance)
+				.append(this.refreshToken)
+				.append(this.miningResourcesEstimatedValue)
+				.append(this.accountName)
+				.append(this.raceName)
+				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				       .append("jsonClass", this.getJsonClass())
-				       .append("uniqueCredential", uniqueCredential)
-				       .append("walletBalance", walletBalance)
-				       .append("assetsCount", assetsCount)
-				       .append("accountName", accountName)
-				       .append("raceName", raceName)
-				       .toString();
+				.append("jsonClass", this.getJsonClass())
+				.append("uniqueCredential", this.uniqueCredential)
+				.append("walletBalance", this.walletBalance)
+				.append("assetsCount", this.assetsCount)
+				.append("miningResourcesEstimatedValue", this.miningResourcesEstimatedValue)
+				.append("accountName", this.accountName)
+				.append("raceName", this.raceName)
+				.toString();
 	}
 
 	// - B U I L D E R
@@ -261,6 +275,11 @@ public class Credential extends UpdatableEntity {
 
 		public Builder withAssetsCount( final Integer assetsCount ) {
 			if (null != assetsCount) this.onConstruction.assetsCount = assetsCount;
+			return this;
+		}
+
+		public Builder withMiningResourcesEstimatedValue( final Double miningResourcesEstimatedValue ) {
+			if (null != miningResourcesEstimatedValue) this.onConstruction.miningResourcesEstimatedValue = miningResourcesEstimatedValue;
 			return this;
 		}
 

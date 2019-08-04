@@ -1,12 +1,11 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import com.j256.ormlite.field.DatabaseField;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
-
-import com.j256.ormlite.field.DatabaseField;
 
 public abstract class UpdatableEntity extends NeoComNode {
 	@DatabaseField
@@ -46,7 +45,6 @@ public abstract class UpdatableEntity extends NeoComNode {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
 				       .appendSuper(super.hashCode())
-				       .append(creationTime)
 				       .append(lastUpdateTime)
 				       .toHashCode();
 	}
