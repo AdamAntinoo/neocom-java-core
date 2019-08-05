@@ -1,14 +1,13 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
-import java.util.List;
-import java.util.Map;
-
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.support.CucumberTableConverter;
 import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
-
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.Map;
 
 import cucumber.api.java.en.Then;
 
@@ -28,8 +27,8 @@ public class ThenIGetAUpdatedCredential {
 		final Credential target = this.credentialWorld.getCredentialUnderTest();
 		Assert.assertEquals("The two credentials should match in updated fields.",
 				testData.getAccountName(), target.getAccountName());
-		Assert.assertEquals("The two credentials should match in updated fields.",
-				testData.getWalletBalance(), target.getWalletBalance(), 0.1);
+//		Assert.assertEquals("The two credentials should match in updated fields.",
+//				testData.getWalletBalance(), target.getWalletBalance(), 0.1);
 		Assert.assertEquals("The two credentials should match in updated fields.",
 				testData.getAssetsCount(), target.getAssetsCount());
 		Assert.assertEquals("The two credentials should match in updated fields.",

@@ -40,6 +40,8 @@ class MockInterceptor : Interceptor {
 			matches(uri, "characters", "planets") -> getMockPlanets
 			matches(uri, "characters", "93813310", "assets", "page=1") -> pilotAssets93813310
 			matches(uri, "characters", "93813310", "assets", "page=2") -> emptyAssetList
+			matches(uri, "characters", "92002067", "assets", "page=1") -> pilotAssets93813310
+			matches(uri, "characters", "92002067", "assets", "page=2") -> emptyAssetList
 			uri.contains("2561") -> getType2561
 			uri.contains("2483") -> getType2483
 			else -> {

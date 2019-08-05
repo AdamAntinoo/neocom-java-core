@@ -1,8 +1,7 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
-import java.util.concurrent.TimeUnit;
-
 import org.dimensinfin.eveonline.neocom.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.adapters.NeoComUpdaterFactory;
 import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.core.IEventReceiver;
@@ -11,8 +10,6 @@ import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
-
-import org.awaitility.Awaitility;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,17 +27,13 @@ public class WhenICheckCredentialUpdateState implements IEventReceiver {
 
 	@When("I check Credential update state")
 	public void i_check_Credential_update_state() {
+		NeoComRetrofitFactory.add2MockList("getCharactersCharacterIdAssets");
 		final Credential model = this.credentialWorld.getCredentialUnderTest();
 		final NeoComUpdater updater = NeoComUpdaterFactory.buildUpdater(model); // Create the updater for this model.
 		updater.addEventListener(this);
-		updater.refresh(); // Start the refresh process if required before leaving this thread.
-		Awaitility.await().atMost(100, TimeUnit.SECONDS).until(() -> {
-					Thread.sleep(TimeUnit.SECONDS.toMillis(10));
-					final Credential credential = this.credentialWorld.getCredentialUnderTest();
-					Assert.assertTrue(credential.getAssetsCount() > 0);
-					return true;
-				}
-		);
+		updater.onRun(); // Start the refresh process if required before leaving this thread.
+		final Credential credential = this.credentialWorld.getCredentialUnderTest();
+		Assert.assertTrue(credential.getAssetsCount() > 0);
 	}
 
 	@Override
