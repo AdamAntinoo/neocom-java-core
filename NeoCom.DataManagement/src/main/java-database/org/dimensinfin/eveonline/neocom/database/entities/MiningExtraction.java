@@ -39,11 +39,11 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem {
 	 */
 	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
 		// Check the date.
-		final String todayDate = DateTime.now().toString("YYYY/MM/dd");
+		final String todayDate = DateTime.now().toString("YYYY-MM-dd");
 		final String targetDate = date.toString("YYYY/MM/dd");
 		if (todayDate.equalsIgnoreCase(targetDate))
 			return new StringBuffer()
-					       .append(date.toString("YYYY/MM/dd")).append(":")
+					       .append(date.toString("YYYY-MM-dd")).append(":")
 					       .append(DateTime.now().getHourOfDay()).append("-")
 					       .append(systemId).append("-")
 					       .append(typeId).append("-")
@@ -51,7 +51,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem {
 					       .toString();
 		else
 			return new StringBuffer()
-					       .append(date.toString("YYYY/MM/dd")).append(":")
+					       .append(date.toString("YYYY-MM-dd")).append(":")
 					       .append(24).append("-")
 					       .append(systemId).append("-")
 					       .append(typeId).append("-")
@@ -69,7 +69,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem {
 
 	// - F I E L D - S E C T I O N
 	@DatabaseField(id = true)
-	private String id = "YYYY/MM/DD:HH-SYSTEMID-TYPEID-OWNERID";
+	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
 	@DatabaseField
 	private int typeId = -1;
 	@DatabaseField
@@ -229,9 +229,9 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem {
 
 		public Builder withExtractionDate( final LocalDate extractionDate ) {
 			// Update the extractions date string.
-			this.onConstruction.extractionDateName = extractionDate.toString("YYYY/MM/dd");
-			final String todayDate = DateTime.now().toString("YYYY/MM/dd");
-			final String targetDate = extractionDate.toString("YYYY/MM/dd");
+			this.onConstruction.extractionDateName = extractionDate.toString("YYYY-MM-dd");
+			final String todayDate = DateTime.now().toString("YYYY-MM-dd");
+			final String targetDate = extractionDate.toString("YYYY-MM-dd");
 			if (todayDate.equalsIgnoreCase(targetDate))
 				this.onConstruction.extractionHour = DateTime.now().getHourOfDay();
 			else
@@ -249,7 +249,6 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem {
 			this.withSolarSystemId(mineInstance.getSolarSystemId());
 			this.withQuantity(mineInstance.getQuantity().intValue());
 			this.withExtractionDate(mineInstance.getDate());
-
 			return this;
 		}
 		/**
@@ -258,7 +257,7 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem {
 		 */
 		public MiningExtraction build() {
 			Objects.requireNonNull(this.onConstruction.resourceItem);
-			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy/MM/dd");
+			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
 			if (null == this.onConstruction.extractionDateName) this.withExtractionDate(LocalDate.now());
 			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);
 			if (this.onConstruction.extractionHour == 24) this.onConstruction.id = MiningExtraction.generateRecordId(

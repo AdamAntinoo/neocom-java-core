@@ -39,6 +39,7 @@ sourceSets {
         srcDirs += 'src/main/java-adapter'
         srcDirs += 'src/main/java-annotation'
         srcDirs += 'src/main/java-planetary'
+        srcDirs += 'src/main/java-mining'
 
         srcDirs += 'src/main/java-database'
         srcDirs += 'src/main/java-market'
