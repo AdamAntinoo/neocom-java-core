@@ -565,6 +565,11 @@ public class ESIDataAdapter {
 	 * @param server       the esi data server to use, tranquility or singularity.
 	 * @return the list of mining actions performed during the last 30 days.
 	 */
+	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
+		return this.getCharactersCharacterIdMining(credential.getAccountId(),
+		                                           credential.getRefreshToken(),
+		                                           credential.getDataSource());
+	}
 	@TimeElapsed
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
 			, final String refreshToken, final String server ) {

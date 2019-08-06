@@ -7,7 +7,6 @@ import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -31,7 +30,7 @@ import java.util.Objects;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends NeoComNode implements IAggregableItem {
+public class MiningExtraction extends UpdatableEntity implements IAggregableItem {
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
 	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can

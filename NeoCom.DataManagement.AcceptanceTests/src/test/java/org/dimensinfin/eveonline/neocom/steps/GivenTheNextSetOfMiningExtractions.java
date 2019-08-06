@@ -1,7 +1,9 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
+import org.dimensinfin.eveonline.neocom.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.CucumberTableToGetCharactersCharacterIdMining200OkConverter;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
 import org.junit.Assert;
@@ -24,6 +26,8 @@ public class GivenTheNextSetOfMiningExtractions {
 		this.miningExtractionsWorld = miningExtractionsWorld;
 		this.cucumberTable2GetCharactersCharacterIdMining200OkConverter =
 				cucumberTable2GetCharactersCharacterIdMining200OkConverter;
+		// Connect the item to the adapter
+		EveItem.injectEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
 	}
 
 	@Given("the next set of mining extractions for pilot {string} and hour {string}")

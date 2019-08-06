@@ -1,24 +1,22 @@
 package org.dimensinfin.eveonline.neocom.services;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
-import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.ServiceJob;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.enums.PreferenceKeys;
 import org.dimensinfin.eveonline.neocom.managers.DownloadManager;
-
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Adam Antinoo
@@ -89,7 +87,7 @@ public class UpdaterSchedulerService {
 			logger.info("-- [TimedUpdater.timeTick]> Jobs in list because allowed: {}", joblist);
 			for (GlobalDataManager.EDataUpdateJobs jobName : joblist) {
 				try {
-					final String reference = org.dimensinfin.eveonline.neocom.domain.ServiceJob.constructReference(jobName, cred.getAccountId());
+					final String reference = ServiceJob.constructReference(jobName, cred.getAccountId());
 					// Search for the TS and check the expiration time.
 					final TimeStamp ts = GlobalDataManager.getSingleton().getNeocomDBHelper().getTimeStampDao().queryForId(reference);
 					if (null == ts) {
@@ -155,7 +153,7 @@ public class UpdaterSchedulerService {
 		//		}
 
 		// Search for ASSETDATA job request.
-		currentrequestReference = org.dimensinfin.eveonline.neocom.domain.ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.ASSETDATA
+		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.ASSETDATA
 				, credential.getAccountId());
 		// Check that the request is a ASSETDATA update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
@@ -192,13 +190,13 @@ public class UpdaterSchedulerService {
 		}
 
 		// Search for BLUEPRINTDATA job request.
-		currentrequestReference = org.dimensinfin.eveonline.neocom.domain.ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.BLUEPRINTDATA
+		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.BLUEPRINTDATA
 				, credential.getAccountId());
 		// Check that the request is a BLUEPRINTDATA update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			// Submit the job to the manager
 			final String transferredCurrentrequestReference = currentrequestReference;
-			final org.dimensinfin.eveonline.neocom.domain.ServiceJob newJob = new org.dimensinfin.eveonline.neocom.domain.ServiceJob(dataIdentifier)
+			final ServiceJob newJob = new ServiceJob(dataIdentifier)
 					                          .setCredentialIdentifier(credential.getAccountId())
 					                          .setJobClass(GlobalDataManager.EDataUpdateJobs.BLUEPRINTDATA)
 					                          .setTask(() -> {
@@ -229,13 +227,13 @@ public class UpdaterSchedulerService {
 		}
 
 		// Search for INDUSTRYJOBS job request.
-		currentrequestReference = org.dimensinfin.eveonline.neocom.domain.ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.INDUSTRYJOBS
+		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.INDUSTRYJOBS
 				, credential.getAccountId());
 		// Check that the request is a INDUSTRYJOBS update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			// Submit the job to the manager
 			final String transferredCurrentrequestReference = currentrequestReference;
-			final org.dimensinfin.eveonline.neocom.domain.ServiceJob newJob = new org.dimensinfin.eveonline.neocom.domain.ServiceJob(dataIdentifier)
+			final ServiceJob newJob = new ServiceJob(dataIdentifier)
 					                          .setCredentialIdentifier(credential.getAccountId())
 					                          .setJobClass(GlobalDataManager.EDataUpdateJobs.INDUSTRYJOBS)
 					                          .setTask(() -> {
@@ -255,13 +253,13 @@ public class UpdaterSchedulerService {
 		}
 
 		// Search for MARKETORDERS job request.
-		currentrequestReference = org.dimensinfin.eveonline.neocom.domain.ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.MARKETORDERS
+		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.MARKETORDERS
 				, credential.getAccountId());
 		// Check that the request is a MARKETORDERS update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			// Submit the job to the manager
 			final String transferredCurrentrequestReference = currentrequestReference;
-			final org.dimensinfin.eveonline.neocom.domain.ServiceJob newJob = new org.dimensinfin.eveonline.neocom.domain.ServiceJob(dataIdentifier)
+			final ServiceJob newJob = new ServiceJob(dataIdentifier)
 					                          .setCredentialIdentifier(credential.getAccountId())
 					                          .setJobClass(GlobalDataManager.EDataUpdateJobs.MARKETORDERS)
 					                          .setTask(() -> {
@@ -280,7 +278,7 @@ public class UpdaterSchedulerService {
 			return;
 		}
 		// - M I N I N G E X T R A C T I O N S
-		currentrequestReference = org.dimensinfin.eveonline.neocom.domain.ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS, credential.getAccountId());
+		currentrequestReference = ServiceJob.constructReference(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS, credential.getAccountId());
 		// Check that the request is a MININGEXTRACTIONS update request.
 		if (dataIdentifier.getReference().equalsIgnoreCase(currentrequestReference)) {
 			this.miningExtractionJob(currentrequestReference, dataIdentifier, credential);
@@ -318,7 +316,7 @@ public class UpdaterSchedulerService {
 	}
 
 	private void miningExtractionJob( final String currentrequestReference, final TimeStamp dataIdentifier, final Credential credential ) {
-		final org.dimensinfin.eveonline.neocom.domain.ServiceJob newJob = new ServiceJob(dataIdentifier)
+		final ServiceJob newJob = new ServiceJob(dataIdentifier)
 				                          .setCredentialIdentifier(credential.getAccountId())
 				                          .setJobClass(GlobalDataManager.EDataUpdateJobs.MININGEXTRACTIONS)
 				                          .setTask(() -> {
