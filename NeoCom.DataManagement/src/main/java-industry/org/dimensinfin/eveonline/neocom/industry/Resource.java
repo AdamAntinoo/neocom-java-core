@@ -6,6 +6,8 @@ import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
+import java.util.Objects;
+
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
  * type items and differentiated from the asset in that it has no specified Location not owner. Includes the
@@ -21,22 +23,18 @@ import org.dimensinfin.eveonline.neocom.model.NeoComNode;
  */
 public class Resource extends NeoComNode implements IAggregableItem, IItemFacet {
 	private static final long serialVersionUID = 921961484632479376L;
-
-	public int typeId = -1;
-	protected int baseQty = 0;
+	protected int baseQty;
 	protected int stackSize = 1;
 	protected double damage = 1.0;
 
 	protected transient EveItem esiItem;
-	//	private DateTime registrationDate = new DateTime(DateTimeZone.UTC);
 
 	// - C O N S T R U C T O R S
 	public Resource( final int typeId ) {
 		super();
-		this.typeId = typeId;
 		this.esiItem = new EveItem(typeId);
+		Objects.requireNonNull(this.esiItem);
 		this.baseQty = 0;
-//		jsonClass = "Resource";
 	}
 
 	public Resource( final int typeId, final int newQty ) {
@@ -89,7 +87,7 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public EveItem getItem() {
-		if (null == this.esiItem) this.esiItem = new EveItem(this.typeId);
+//		if (null == this.esiItem) this.esiItem = new EveItem(this.typeId);
 		return this.esiItem;
 	}
 
@@ -112,7 +110,8 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public int getTypeId() {
-		return this.typeId;
+		Objects.requireNonNull(this.esiItem);
+		return this.esiItem.getTypeId();
 	}
 
 	public void setAdaptiveStackSize( final int size ) {

@@ -24,7 +24,7 @@ public class PlanetaryResource extends Resource {
 	public String toString() {
 		return new ToStringBuilder(this)
 				       .append("tier", tier)
-				       .append("typeId", typeId)
+//				       .append("typeId", typeId)
 				       .append(super.toString())
 				       .toString();
 	}

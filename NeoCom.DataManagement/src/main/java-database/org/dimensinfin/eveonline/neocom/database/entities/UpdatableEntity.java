@@ -37,7 +37,6 @@ public abstract class UpdatableEntity extends NeoComNode {
 		final UpdatableEntity that = (UpdatableEntity) o;
 		return new EqualsBuilder()
 				       .appendSuper(super.equals(o))
-//				       .append(this.lastUpdateTime, that.lastUpdateTime)
 				       .isEquals();
 	}
 
@@ -45,7 +44,6 @@ public abstract class UpdatableEntity extends NeoComNode {
 	public int hashCode() {
 		return new HashCodeBuilder(17, 37)
 				       .appendSuper(super.hashCode())
-//				       .append(this.lastUpdateTime)
 				       .toHashCode();
 	}
 }

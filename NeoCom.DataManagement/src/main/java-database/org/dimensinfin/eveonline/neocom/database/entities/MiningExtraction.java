@@ -1,21 +1,19 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
-import org.dimensinfin.eveonline.neocom.core.EEvents;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
+import java.util.Objects;
 
 /**
  * This class represents the database entity to store the ESI character's mining extractions. That data are records that are kept for 30 days
@@ -33,7 +31,7 @@ import com.j256.ormlite.table.DatabaseTable;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends NeoComNode implements IAggregableItem, PropertyChangeListener /*, IEventReceiver */ {
+public class MiningExtraction extends NeoComNode implements IAggregableItem {
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
 	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can
@@ -62,13 +60,11 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	}
 
 	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
-		return new StringBuffer()
-				       .append(date).append(":")
-				       .append(hour).append("-")
-				       .append(systemId).append("-")
-				       .append(typeId).append("-")
-				       .append(ownerId)
-				       .toString();
+		return "".concat(date).concat(":")
+		         .concat(Integer.toString(hour)).concat("-")
+		         .concat(Long.toString(systemId)).concat("-")
+		         .concat(Integer.toString(typeId)).concat("-")
+		         .concat(Long.toString(ownerId));
 	}
 
 	// - F I E L D - S E C T I O N
@@ -99,19 +95,19 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 
 	// -  G E T T E R S   &   S E T T E R S
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public int getTypeId() {
-		return typeId;
+		return this.typeId;
 	}
 
 	public String getResourceName() {
-		if (null == this.resourceItem) {
-			this.resourceItem = new EveItem(this.getTypeId());
-			// TODO - Reconnect the event listeners with the new implementation
-//			this.resourceItem.addPropertyChangeListener(this);
-		}
+//		if (null == this.resourceItem) {
+//			this.resourceItem = new EveItem(this.getTypeId());
+//			// TODO - Reconnect the event listeners with the new implementation
+////			this.resourceItem.addPropertyChangeListener(this);
+//		}
 		return this.resourceItem.getName();
 	}
 
@@ -127,19 +123,19 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	}
 
 	public int getExtractionHour() {
-		return extractionHour;
+		return this.extractionHour;
 	}
 
 	public int getSolarSystemId() {
-		return solarSystemId;
+		return this.solarSystemId;
 	}
 
 	public long getDelta() {
-		return delta;
+		return this.delta;
 	}
 
 	public long getOwnerId() {
-		return ownerId;
+		return this.ownerId;
 	}
 
 	public MiningExtraction setQuantity( final int quantity ) {
@@ -153,54 +149,53 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 	}
 
 	public String getURLForItem() {
-		if (null == this.resourceItem) {
-			this.resourceItem = new EveItem(this.getTypeId());
-			// TODO - Reconnect the event listeners with the new implementation
-//			this.resourceItem.addPropertyChangeListener(this);
-		}
+//		if (null == this.resourceItem) {
+//			this.resourceItem = new EveItem(this.getTypeId());
+//			// TODO - Reconnect the event listeners with the new implementation
+////			this.resourceItem.addPropertyChangeListener(this);
+//		}
 		return this.resourceItem.getURLForItem();
 	}
 
 	// - I A G G R E G A B L E I T E M
 	public int getQuantity() {
-		return quantity;
+		return this.quantity;
 	}
 
 	public double getVolume() {
-		if (null == this.resourceItem) {
-			this.resourceItem = new EveItem(this.getTypeId());
-			// TODO - Reconnect the event listeners with the new implementation
-//			this.resourceItem.addPropertyChangeListener(this);
-		}
+//		if (null == this.resourceItem) {
+//			this.resourceItem = new EveItem(this.getTypeId());
+//			// TODO - Reconnect the event listeners with the new implementation
+////			this.resourceItem.addPropertyChangeListener(this);
+//		}
 		return this.resourceItem.getVolume();
 	}
 
 	public double getPrice() {
-		if (null == this.resourceItem) {
-			this.resourceItem = new EveItem(this.getTypeId());
-			// TODO - Reconnect the event listeners with the new implementation
-//			this.resourceItem.addPropertyChangeListener(this);
-		}
+//		if (null == this.resourceItem) {
+//			this.resourceItem = new EveItem(this.getTypeId());
+//			// TODO - Reconnect the event listeners with the new implementation
+////			this.resourceItem.addPropertyChangeListener(this);
+//		}
 		return this.resourceItem.getPrice();
 	}
 
-	@Override
-	public void propertyChange( final PropertyChangeEvent event ) {
-		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name())) {
-			// TODO - Reconnect the event listeners with the new implementation
-//			this.sendChangeEvent(event);
-		}
-	}
+//	@Override
+//	public void propertyChange( final PropertyChangeEvent event ) {
+//		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name())) {
+//			// TODO - Reconnect the event listeners with the new implementation
+////			this.sendChangeEvent(event);
+//		}
+//	}
 
 	// - C O R E
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer("MiningExtraction [ ");
-		buffer.append("#").append(typeId).append("-").append(this.getResourceName()).append(" ");
-		buffer.append("x").append(quantity).append(" ");
-		buffer.append("@").append(solarSystemId).append("-").append(this.getSystemName()).append(" ");
-		buffer.append("]");
-		return buffer.toString();
+		return new StringBuffer("MiningExtraction [ ")
+		.append("#").append(typeId).append("-").append(this.getResourceName()).append(" ")
+		.append("x").append(quantity).append(" ")
+		.append("@").append(solarSystemId).append("-").append(this.getSystemName()).append(" ")
+		.append("]").toString();
 	}
 
 	// - B U I L D E R
@@ -249,11 +244,20 @@ public class MiningExtraction extends NeoComNode implements IAggregableItem, Pro
 			return this;
 		}
 
+		public Builder fromMining ( final GetCharactersCharacterIdMining200Ok mineInstance){
+			this.withTypeId(mineInstance.getTypeId());
+			this.withSolarSystemId(mineInstance.getSolarSystemId());
+			this.withQuantity(mineInstance.getQuantity().intValue());
+			this.withExtractionDate(mineInstance.getDate());
+
+			return this;
+		}
 		/**
 		 * The unique and special extraction identifier is created at this point and using the current extraction time. This will exclude proper
 		 * testing so there is special code to create special identifier when the <code>onConstruction.extractionHour</code> is set.
 		 */
 		public MiningExtraction build() {
+			Objects.requireNonNull(this.onConstruction.resourceItem);
 			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy/MM/dd");
 			if (null == this.onConstruction.extractionDateName) this.withExtractionDate(LocalDate.now());
 			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);

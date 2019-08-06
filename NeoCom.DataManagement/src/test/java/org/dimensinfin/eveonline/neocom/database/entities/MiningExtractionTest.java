@@ -1,16 +1,14 @@
-package org.dimensinfin.eveonline.neocom.entities;
-
-import java.io.IOException;
+package org.dimensinfin.eveonline.neocom.database.entities;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.TestConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.TestFileSystem;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.io.IOException;
 
 public class MiningExtractionTest {
 	@Test
