@@ -29,8 +29,7 @@ public class WhenTheMiningDataIsProcessed {
 	@When("the mining data is processed")
 	public void theMiningDataIsProcessed() {
 		final List<MiningExtraction> extractions = this.miningExtractionsWorld.getMiningExtractionRecords();
-		final MiningExtractionUpdater updater = new MiningExtractionUpdater.Builder(extractions.get(0))
-				                                        .withCredential(this.miningExtractionsWorld.getCredential())
+		final MiningExtractionUpdater updater = new MiningExtractionUpdater.Builder(this.miningExtractionsWorld.getCredential())
 				                                        .withMiningRepository(this.miningRepository)
 				                                        .build();
 		for (MiningExtraction extraction : extractions)

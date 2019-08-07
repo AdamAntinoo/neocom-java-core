@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-public class MiningExtractionUpdater extends NeoComUpdater<MiningExtraction> {
+public class MiningExtractionUpdater extends NeoComUpdater<Credential> {
 	private static final long MINING_EXTRACTION_CACHE_TIME = TimeUnit.SECONDS.toMillis(600);
-	private Credential credential;
 	private MiningRepository miningRepository;
 
-	public MiningExtractionUpdater( final MiningExtraction model ) {
+	public MiningExtractionUpdater( final Credential model ) {
 		super(model);
 	}
 
@@ -32,7 +31,7 @@ public class MiningExtractionUpdater extends NeoComUpdater<MiningExtraction> {
 
 	@Override
 	public String getIdentifier() {
-		return this.getModel().getJsonClass().toUpperCase() + ":" + this.getModel().getId();
+		return "MININGEXTRACTIONUPDATER" + ":" + this.getModel().getAccountId();
 	}
 
 	@Override
@@ -44,9 +43,9 @@ public class MiningExtractionUpdater extends NeoComUpdater<MiningExtraction> {
 				final MiningExtraction miningExtraction = new MiningExtraction.Builder()
 						                                          .fromMining(extractionOk)
 						                                          .withExtractionHour(this.getExtractionHour())
-						                                          .withOwnerId(this.credential.getAccountId())
+						                                          .withOwnerId(this.getModel().getAccountId())
 						                                          .build();
-				this.processMiningExtraction(miningExtraction, this.credential);
+				this.processMiningExtraction(miningExtraction, this.getModel());
 			}
 		}
 	}
@@ -57,7 +56,7 @@ public class MiningExtractionUpdater extends NeoComUpdater<MiningExtraction> {
 
 	protected List<GetCharactersCharacterIdMining200Ok> getMiningActions() {
 		final List<GetCharactersCharacterIdMining200Ok> miningActionsOk = esiDataAdapter.getCharactersCharacterIdMining(
-				this.credential);
+				this.getModel());
 		if (null != miningActionsOk)
 			logger.info("-- [MiningExtractionUpdater.getMiningActions]> Downloaded {} extractions.", miningActionsOk.size());
 		return miningActionsOk;
@@ -91,21 +90,16 @@ public class MiningExtractionUpdater extends NeoComUpdater<MiningExtraction> {
 	public static class Builder {
 		private MiningExtractionUpdater onConstruction;
 
-		public Builder(final MiningExtraction miningExtraction) {
-			this.onConstruction = new MiningExtractionUpdater(miningExtraction);
+		public Builder( final Credential credential ) {
+			this.onConstruction = new MiningExtractionUpdater(credential);
 		}
 
-		public Builder withCredential( final Credential credential ) {
-			this.onConstruction.credential = credential;
-			return this;
-		}
 		public Builder withMiningRepository( final MiningRepository miningRepository ) {
 			this.onConstruction.miningRepository = miningRepository;
 			return this;
 		}
 
 		public MiningExtractionUpdater build() {
-			Objects.requireNonNull(this.onConstruction.credential);
 			Objects.requireNonNull(this.onConstruction.miningRepository);
 			return this.onConstruction;
 		}

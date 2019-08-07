@@ -35,7 +35,7 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 		this.model = model;
 	}
 
-	protected M getModel() {
+	public M getModel() {
 		return this.model;
 	}
 
