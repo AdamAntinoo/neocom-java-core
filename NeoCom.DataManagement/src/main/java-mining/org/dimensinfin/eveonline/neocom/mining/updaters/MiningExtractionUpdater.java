@@ -63,7 +63,7 @@ public class MiningExtractionUpdater extends NeoComUpdater<MiningExtraction> {
 		return miningActionsOk;
 	}
 
-	protected void processMiningExtraction( final MiningExtraction extraction, final Credential credential ) {
+	public void processMiningExtraction( final MiningExtraction extraction, final Credential credential ) {
 		// Before doing any store of the data, see if this is a delta. Search for an already existing record.
 		try {
 			final MiningExtraction recordFound = this.miningRepository.accessMiningExtractionFindById(extraction.getId());

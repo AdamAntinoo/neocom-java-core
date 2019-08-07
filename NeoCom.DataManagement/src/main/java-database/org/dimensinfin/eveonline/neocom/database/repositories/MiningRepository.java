@@ -40,7 +40,8 @@ public class MiningRepository {
 			builder.orderBy("solarSystemId", true);
 			builder.orderBy("typeId", true);
 			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
-			final List<MiningExtraction> dataList = miningExtractionDao.query(preparedQuery);
+			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}",preparedQuery.getStatement());
+			final List<MiningExtraction> dataList = this.miningExtractionDao.query(preparedQuery);
 			List<MiningExtraction> results = new ArrayList<>();
 			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
 			// Filter out all records not belonging to today.

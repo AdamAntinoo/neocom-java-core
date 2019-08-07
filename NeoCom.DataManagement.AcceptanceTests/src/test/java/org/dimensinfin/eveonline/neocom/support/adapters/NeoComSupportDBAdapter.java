@@ -1,21 +1,21 @@
 package org.dimensinfin.eveonline.neocom.support.adapters;
 
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
-import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
+import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 public class NeoComSupportDBAdapter {
 	private static Logger logger = LoggerFactory.getLogger(NeoComSupportDBAdapter.class);
@@ -24,6 +24,7 @@ public class NeoComSupportDBAdapter {
 	private JdbcPooledConnectionSource connectionSource = null;
 
 	private Dao<Credential, String> credentialDao = null;
+	private Dao<MiningExtraction, String> miningExtractionDao = null;
 
 	private NeoComSupportDBAdapter() {
 	}
@@ -39,6 +40,12 @@ public class NeoComSupportDBAdapter {
 			this.credentialDao = DaoManager.createDao(this.getConnectionSource(), Credential.class);
 		}
 		return this.credentialDao;
+	}
+	public Dao<MiningExtraction, String> getMiningExtractionDao() throws SQLException {
+		if (null == this.miningExtractionDao) {
+			this.miningExtractionDao = DaoManager.createDao(this.getConnectionSource(), MiningExtraction.class);
+		}
+		return this.miningExtractionDao;
 	}
 
 	protected void openNeoComDB() throws SQLException {
@@ -77,6 +84,11 @@ public class NeoComSupportDBAdapter {
 		}
 		try {
 			TableUtils.createTableIfNotExists(databaseConnection, Credential.class);
+		} catch (SQLException sqle) {
+			logger.warn("SQL [NeoComSupportDBAdapter.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
+		}
+		try {
+			TableUtils.createTableIfNotExists(databaseConnection, MiningExtraction.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComSupportDBAdapter.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}

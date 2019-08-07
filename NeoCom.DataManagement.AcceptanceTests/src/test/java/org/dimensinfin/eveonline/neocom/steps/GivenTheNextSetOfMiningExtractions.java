@@ -46,5 +46,7 @@ public class GivenTheNextSetOfMiningExtractions {
 		}
 		Assert.assertTrue(miningExtractionRecords.size() > 0);
 		this.miningExtractionsWorld.setMiningExtractionRecords(miningExtractionRecords);
+		this.miningExtractionsWorld.setHour(Integer.parseInt(hour));
+		this.miningExtractionsWorld.setPilotIdentifier(Integer.parseInt(pilotIdentifier));
 	}
 }

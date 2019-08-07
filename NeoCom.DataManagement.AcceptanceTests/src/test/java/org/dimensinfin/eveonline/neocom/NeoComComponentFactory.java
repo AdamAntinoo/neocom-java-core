@@ -1,19 +1,19 @@
 package org.dimensinfin.eveonline.neocom;
 
-import java.sql.SQLException;
-import java.util.Objects;
-
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
+import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.adapters.FileSystemSBImplementation;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComSupportDBAdapter;
 import org.dimensinfin.eveonline.neocom.support.adapters.SBConfigurationProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * This is a singleton with global access that will contain application component references so they can be injected to other components. The creation
@@ -36,6 +36,7 @@ public class NeoComComponentFactory {
 	private ESIDataAdapter esiDataAdapter;
 	private NeoComSupportDBAdapter neocomDBAdapter;
 	private CredentialRepository credentialRepository;
+	private MiningRepository miningRepository;
 
 	// - A C C E S S O R S
 	public CredentialRepository getCredentialRepository() {
@@ -50,6 +51,19 @@ public class NeoComComponentFactory {
 			}
 		}
 		return this.credentialRepository;
+	}
+	public MiningRepository getMiningRepository() {
+		if (null == this.miningRepository) {
+			try {
+				this.miningRepository = new MiningRepository.Builder()
+						                       .withMiningExtractionDao(this.getNeoComDBAdapter().getMiningExtractionDao())
+						                       .build();
+			} catch (SQLException sqle) {
+				this.miningRepository = null;
+				Objects.requireNonNull(this.miningRepository);
+			}
+		}
+		return this.miningRepository;
 	}
 
 	public NeoComSupportDBAdapter getNeoComDBAdapter() {
