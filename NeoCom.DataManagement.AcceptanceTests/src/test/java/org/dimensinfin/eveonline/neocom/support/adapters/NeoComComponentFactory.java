@@ -1,14 +1,10 @@
-package org.dimensinfin.eveonline.neocom;
+package org.dimensinfin.eveonline.neocom.support.adapters;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.support.adapters.FileSystemSBImplementation;
-import org.dimensinfin.eveonline.neocom.support.adapters.NeoComSupportDBAdapter;
-import org.dimensinfin.eveonline.neocom.support.adapters.SBConfigurationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +32,7 @@ public class NeoComComponentFactory {
 	private ESIDataAdapter esiDataAdapter;
 	private NeoComSupportDBAdapter neocomDBAdapter;
 	private CredentialRepository credentialRepository;
-	private MiningRepository miningRepository;
+	private SupportMiningRepository miningRepository;
 
 	// - A C C E S S O R S
 	public CredentialRepository getCredentialRepository() {
@@ -52,10 +48,10 @@ public class NeoComComponentFactory {
 		}
 		return this.credentialRepository;
 	}
-	public MiningRepository getMiningRepository() {
+	public SupportMiningRepository getMiningRepository() {
 		if (null == this.miningRepository) {
 			try {
-				this.miningRepository = new MiningRepository.Builder()
+				this.miningRepository = new SupportMiningRepository.Builder()
 						                       .withMiningExtractionDao(this.getNeoComDBAdapter().getMiningExtractionDao())
 						                       .build();
 			} catch (SQLException sqle) {

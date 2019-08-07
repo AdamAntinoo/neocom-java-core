@@ -3,7 +3,7 @@ package org.dimensinfin.eveonline.neocom.steps;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.support.CucumberTableConverter;

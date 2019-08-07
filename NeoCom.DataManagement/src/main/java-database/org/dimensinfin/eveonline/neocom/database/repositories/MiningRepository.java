@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class MiningRepository {
-	private static Logger logger = LoggerFactory.getLogger(MiningRepository.class);
-	private Dao<MiningExtraction, String> miningExtractionDao;
+	protected static Logger logger = LoggerFactory.getLogger(MiningRepository.class);
+	protected Dao<MiningExtraction, String> miningExtractionDao;
 
 	/**
 	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is

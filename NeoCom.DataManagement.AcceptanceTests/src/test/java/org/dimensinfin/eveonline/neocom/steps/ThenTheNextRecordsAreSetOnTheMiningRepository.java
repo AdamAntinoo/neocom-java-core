@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
-import org.dimensinfin.eveonline.neocom.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;

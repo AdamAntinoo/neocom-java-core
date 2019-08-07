@@ -1,12 +1,15 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
-import org.dimensinfin.eveonline.neocom.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.support.adapters.SupportMiningRepository;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.CucumberTableToGetCharactersCharacterIdMining200OkConverter;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
 import org.junit.Assert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -17,9 +20,11 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 
 public class GivenTheNextSetOfMiningExtractions {
+	private static Logger logger = LoggerFactory.getLogger(GivenTheNextSetOfMiningExtractions.class);
 	private MiningExtractionsWorld miningExtractionsWorld;
 	private CucumberTableToGetCharactersCharacterIdMining200OkConverter
 			cucumberTable2GetCharactersCharacterIdMining200OkConverter;
+	private SupportMiningRepository miningRepository;
 
 	@Autowired
 	public GivenTheNextSetOfMiningExtractions( final MiningExtractionsWorld miningExtractionsWorld,
@@ -27,19 +32,17 @@ public class GivenTheNextSetOfMiningExtractions {
 		this.miningExtractionsWorld = miningExtractionsWorld;
 		this.cucumberTable2GetCharactersCharacterIdMining200OkConverter =
 				cucumberTable2GetCharactersCharacterIdMining200OkConverter;
+		this.miningRepository = NeoComComponentFactory.getSingleton().getMiningRepository();
 		// Connect the item to the adapter
 		EveItem.injectEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
 	}
+
 	@Before
 	public void beforeAll() {
-		// Delete the database
-//		File
-//		if(!dunit) {
-//			Runtime.getRuntime().addShutdownHook(afterAllThread);
-//			// do the beforeAll stuff...
-//			dunit = true;
-//		}
+		final int recordsDeleted = this.miningRepository.deleteAll();
+		logger.info("-- [GivenTheNextSetOfMiningExtractions.beforeAll]> Records deleted: {}", recordsDeleted);
 	}
+
 	@Given("the next set of mining extractions for pilot {string} and hour {string}")
 	public void theNextSetOfMiningExtractionsForPilot( final String pilotIdentifier,
 	                                                   final String hour,
