@@ -12,8 +12,8 @@ Feature: [DM02] Download and process pilot mining extractions. Fetch a new updat
 	When the mining data is processed
 	Then the next records are set on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
-	  | 2019-08-07:10-30001735-17471-92223647 | 17471  | 30001735      | 1566     | 0     | 2019-08-07         | 10             | 92223647 |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 421      | 0     | 2019-08-07         | 10             | 92223647 |
+	  | 2019-08-07:10-30001735-17471-92223647 | 17471  | 30001735      | 1566     | 0     | 2019-08-07         | 10             | 92223647 |
 
   @DM02.02
   Scenario: [DM02][02] Download another set of extractions on the same hour and store the processed data on the repository

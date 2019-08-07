@@ -13,7 +13,7 @@ public class CucumberTableToMiningExtractionConverter extends CucumberTableConve
 	private static final String EXTRACTION_DATE_NAME = "extractionDateName";
 	private static final String QUANTITY = "quantity";
 	private static final String SOLAR_SYSTEM_ID = "solarSystemId";
-	private static final String TYPE_ID = "typeid";
+	private static final String TYPE_ID = "typeId";
 	private static final String EXTRACTION_HOUR = "extractionHour";
 	private static final String OWNER_ID = "ownerId";
 
@@ -26,6 +26,7 @@ public class CucumberTableToMiningExtractionConverter extends CucumberTableConve
 				       .withQuantity(Integer.parseInt(cucumberCardRow.get(QUANTITY)))
 				       .withExtractionDate(dtf.parseLocalDate(cucumberCardRow.get(EXTRACTION_DATE_NAME)))
 				       .withExtractionHour(Integer.parseInt(cucumberCardRow.get(EXTRACTION_HOUR)))
+				       .withOwnerId(Integer.parseInt(cucumberCardRow.get(OWNER_ID)))
 				       .build();
 	}
 }

@@ -3,6 +3,8 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
@@ -188,13 +190,27 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 //	}
 
 	// - C O R E
+//	@Override
+//	public String toString() {
+//		return new StringBuffer("MiningExtraction [ ")
+//		.append("#").append(typeId).append("-").append(this.getResourceName()).append(" ")
+//		.append("x").append(quantity).append(" ")
+//		.append("@").append(solarSystemId).append("-").append(this.getSystemName()).append(" ")
+//		.append("]").toString();
+//	}
+
 	@Override
 	public String toString() {
-		return new StringBuffer("MiningExtraction [ ")
-		.append("#").append(typeId).append("-").append(this.getResourceName()).append(" ")
-		.append("x").append(quantity).append(" ")
-		.append("@").append(solarSystemId).append("-").append(this.getSystemName()).append(" ")
-		.append("]").toString();
+		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
+				       .append("id", this.id)
+				       .append("typeId", this.typeId)
+				       .append("solarSystemId", this.solarSystemId)
+				       .append("quantity", this.quantity)
+				       .append("delta", this.delta)
+				       .append("extractionDateName", this.extractionDateName)
+				       .append("extractionHour", this.extractionHour)
+				       .append("ownerId", this.ownerId)
+				       .toString();
 	}
 
 	// - B U I L D E R

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 
 public class GivenTheNextSetOfMiningExtractions {
@@ -29,7 +30,16 @@ public class GivenTheNextSetOfMiningExtractions {
 		// Connect the item to the adapter
 		EveItem.injectEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
 	}
-
+	@Before
+	public void beforeAll() {
+		// Delete the database
+//		File
+//		if(!dunit) {
+//			Runtime.getRuntime().addShutdownHook(afterAllThread);
+//			// do the beforeAll stuff...
+//			dunit = true;
+//		}
+	}
 	@Given("the next set of mining extractions for pilot {string} and hour {string}")
 	public void theNextSetOfMiningExtractionsForPilot( final String pilotIdentifier,
 	                                                   final String hour,

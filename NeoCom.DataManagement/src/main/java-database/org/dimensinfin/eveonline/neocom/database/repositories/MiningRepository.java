@@ -26,11 +26,14 @@ public class MiningRepository {
 	 * extractions until the 23 hours. The first extraction will add to the hour until the next hour starts. Then the accounting for this
 	 * new hour will show the new ore totals and so on hour after hour.
 	 */
-	private List<MiningExtraction> extractions4Test = new ArrayList<>();
-
+//	private List<MiningExtraction> extractions4Test = new ArrayList<>();
 	protected MiningRepository() { }
 
 	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
+		return this.accessDatedMiningExtractions4Pilot(credential, DateTime.now());
+	}
+
+	public List<MiningExtraction> accessDatedMiningExtractions4Pilot( final Credential credential, final DateTime filterDate ) {
 		try {
 			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
 			final Where<MiningExtraction, String> where = builder.where();
@@ -40,17 +43,17 @@ public class MiningRepository {
 			builder.orderBy("solarSystemId", true);
 			builder.orderBy("typeId", true);
 			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
-			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}",preparedQuery.getStatement());
+			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}", preparedQuery.getStatement());
 			final List<MiningExtraction> dataList = this.miningExtractionDao.query(preparedQuery);
 			List<MiningExtraction> results = new ArrayList<>();
-			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
+//			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
 			// Filter out all records not belonging to today.
 			for (MiningExtraction extraction : dataList) {
-				final String date = extraction.getExtractionDateName().split(":")[0];
-				if (date.equalsIgnoreCase(filterDate)) results.add(extraction);
+				final String date = extraction.getExtractionDateName();
+				if (date.equalsIgnoreCase(filterDate.toString("YYYY-MM-dd"))) results.add(extraction);
 			}
 			return results;
-		}catch (SQLException sqle){
+		} catch (SQLException sqle) {
 			logger.error("");
 			return new ArrayList<>();
 		}
