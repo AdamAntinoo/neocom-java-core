@@ -16,6 +16,7 @@ public class CucumberTableToMiningExtractionConverter extends CucumberTableConve
 	private static final String TYPE_ID = "typeId";
 	private static final String EXTRACTION_HOUR = "extractionHour";
 	private static final String OWNER_ID = "ownerId";
+	private static final String DELTA = "delta";
 
 	@Override
 	public MiningExtraction convert( Map<String, String> cucumberCardRow ) {
