@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.support.miningExtractions;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class MiningExtractionsWorld {
 	private List<MiningExtraction> miningExtractionRecords;
 	private int hour;
 	private int pilotIdentifier;
+	private DateTime todayDate;
 
 	public MiningExtractionsWorld() {
 		this.credential = new Credential.Builder(92223647)
@@ -61,5 +63,14 @@ public class MiningExtractionsWorld {
 
 	public boolean validateRecord( final MiningExtraction verificationRecord, final MiningExtraction targetRecord ) {
 		return verificationRecord.toString().equals(targetRecord.toString());
+	}
+
+	public DateTime getTodayDate() {
+		return this.todayDate;
+	}
+
+	public MiningExtractionsWorld setTodayDate( final DateTime todayDate ) {
+		this.todayDate = todayDate;
+		return this;
 	}
 }

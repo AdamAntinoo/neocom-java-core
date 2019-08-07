@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
@@ -52,6 +53,36 @@ public class MiningRepository {
 				final String date = extraction.getExtractionDateName();
 				if (date.equalsIgnoreCase(filterDate.toString("YYYY-MM-dd"))) results.add(extraction);
 			}
+			return results;
+		} catch (SQLException sqle) {
+			logger.error("");
+			return new ArrayList<>();
+		}
+	}
+
+	public List<MiningExtraction> accessResources4Date( final Credential credential, final DateTime filterDate ) {
+		try {
+			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtraction, String> where = builder.where();
+			where.eq("ownerId", credential.getAccountId())
+			     .and()
+			     .eq("extractionDateName", filterDate.toString("YYYY-MM-dd"));
+			builder.selectRaw("id", "typeId", "MAX(quantity)");
+			builder.groupBy("typeId");
+//			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepareStatementString()
+//			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}", preparedQuery.getStatement());
+			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw(
+					builder.prepareStatementString());
+			List<MiningExtraction> results = new ArrayList<>();
+			for (String[] record : dataList) {
+				results.add(this.miningExtractionDao.queryForId(record[0]));
+			}
+//			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
+			// Filter out all records not belonging to today.
+//			for (MiningExtraction extraction : dataList) {
+//				final String date = extraction.getExtractionDateName();
+//				if (date.equalsIgnoreCase(filterDate.toString("YYYY-MM-dd"))) results.add(extraction);
+//			}
 			return results;
 		} catch (SQLException sqle) {
 			logger.error("");

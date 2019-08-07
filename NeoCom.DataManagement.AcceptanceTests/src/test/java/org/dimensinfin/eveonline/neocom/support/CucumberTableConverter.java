@@ -1,13 +1,13 @@
 package org.dimensinfin.eveonline.neocom.support;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.convert.converter.Converter;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.convert.converter.Converter;
 
 public abstract class CucumberTableConverter<T> implements Converter<List<Map<String, String>>, List<T>> {
 

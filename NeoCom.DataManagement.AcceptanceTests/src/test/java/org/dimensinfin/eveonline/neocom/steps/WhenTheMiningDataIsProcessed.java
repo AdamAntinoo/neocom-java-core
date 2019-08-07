@@ -1,16 +1,17 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
-import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.mining.updaters.MiningExtractionUpdater;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 
 public class WhenTheMiningDataIsProcessed {
