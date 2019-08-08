@@ -74,7 +74,7 @@ public class MiningRepository {
 			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw(
 					builder.prepareStatementString());
 			List<MiningExtraction> results = new ArrayList<>();
-			for (String[] record : dataList) {
+			for (String[] record : dataList.getResults()) {
 				results.add(this.miningExtractionDao.queryForId(record[0]));
 			}
 //			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
