@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.support.miningExtractions;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.mining.DailyExtractionResourcesContainer;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public class MiningExtractionsWorld {
 	private int hour;
 	private int pilotIdentifier;
 	private DateTime todayDate;
+	private DailyExtractionResourcesContainer resourcesContainer;
 
 	public MiningExtractionsWorld() {
 		this.credential = new Credential.Builder(92223647)
@@ -71,6 +73,15 @@ public class MiningExtractionsWorld {
 
 	public MiningExtractionsWorld setTodayDate( final DateTime todayDate ) {
 		this.todayDate = todayDate;
+		return this;
+	}
+
+	public DailyExtractionResourcesContainer getResourcesContainer() {
+		return this.resourcesContainer;
+	}
+
+	public MiningExtractionsWorld setResourcesContainer( final DailyExtractionResourcesContainer resourcesContainer ) {
+		this.resourcesContainer = resourcesContainer;
 		return this;
 	}
 }
