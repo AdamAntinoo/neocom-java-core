@@ -1,7 +1,7 @@
 package org.dimensinfin.eveonline.neocom.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.convert.converter.Converter;
+import org.dimensinfin.eveonline.neocom.support.adapters.Converter;
 
 import java.util.Arrays;
 import java.util.List;
