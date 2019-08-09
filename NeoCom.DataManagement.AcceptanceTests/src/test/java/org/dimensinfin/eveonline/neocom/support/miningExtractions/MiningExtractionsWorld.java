@@ -4,12 +4,14 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.mining.DailyExtractionResourcesContainer;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.List;
 
 public class MiningExtractionsWorld {
 	private Credential credential;
 	private List<MiningExtraction> miningExtractionRecords;
+	private LocalDate processingDate;
 	private int hour;
 	private int pilotIdentifier;
 	private DateTime todayDate;
@@ -45,6 +47,15 @@ public class MiningExtractionsWorld {
 		return this;
 	}
 
+	public LocalDate getProcessingDate() {
+		return this.processingDate;
+	}
+
+	public MiningExtractionsWorld setProcessingDate( final LocalDate processingDate ) {
+		this.processingDate = processingDate;
+		return this;
+	}
+
 	public int getHour() {
 		return this.hour;
 	}
@@ -64,7 +75,7 @@ public class MiningExtractionsWorld {
 	}
 
 	public boolean validateRecord( final MiningExtraction verificationRecord, final MiningExtraction targetRecord ) {
-		return verificationRecord.toString().equals(targetRecord.toString());
+		return verificationRecord.equals(targetRecord);
 	}
 
 	public DateTime getTodayDate() {
