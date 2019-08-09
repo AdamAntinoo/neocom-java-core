@@ -7,6 +7,7 @@ import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.sql.SQLException;
@@ -45,7 +46,7 @@ public class MiningExtractionUpdater extends NeoComUpdater<Credential> {
 						                                          .withExtractionHour(this.getExtractionHour())
 						                                          .withOwnerId(this.getModel().getAccountId())
 						                                          .build();
-				this.processMiningExtraction(miningExtraction, this.getModel());
+				this.processMiningExtraction(miningExtraction, this.getModel(), LocalDate.now());
 			}
 		}
 	}
@@ -62,26 +63,35 @@ public class MiningExtractionUpdater extends NeoComUpdater<Credential> {
 		return miningActionsOk;
 	}
 
-	public void processMiningExtraction( final MiningExtraction extraction, final Credential credential ) {
-		// Before doing any store of the data, see if this is a delta. Search for an already existing record.
+	public void processMiningExtraction( final MiningExtraction extraction, final Credential credential, final LocalDate now ) {
+		// If the extraction is from the current date then process deltas.
+//		final LocalDate today = LocalDate.now();
 		try {
-			final MiningExtraction recordFound = this.miningRepository.accessMiningExtractionFindById(extraction.getId());
-			if (null != recordFound) {
-				final long currentQty = recordFound.getQuantity();
-				recordFound.setQuantity(extraction.getQuantity());
-				this.miningRepository.persist(recordFound);
-				logger.info("-- [persistMiningActionsESI]> Updating mining extraction: {} > Quantity: {}/{}"
-						, extraction.getId(), extraction.getQuantity(), currentQty);
-			} else {
+			if (now.equals(extraction.getExtractionDate())) {
+				// Before doing any store of the data, see if this is a delta. Search for an already existing record.
+				final MiningExtraction recordFound = this.miningRepository.accessMiningExtractionFindById(extraction.getId());
+				if (null != recordFound) {
+					final long currentQty = recordFound.getQuantity();
+					recordFound.setQuantity(extraction.getQuantity());
+					this.miningRepository.persist(recordFound);
+					logger.info("-- [persistMiningActionsESI]> Updating mining extraction: {} > Quantity: {}/{}"
+							, extraction.getId(), extraction.getQuantity(), currentQty);
+				} else {
+					this.miningRepository.persist(extraction);
+					logger.info("-- [persistMiningActionsESI]> Creating new mining extraction: {} > Quantity: {}"
+							, extraction.getId(), extraction.getQuantity());
+				}
+			} else { // Create or update the EOD (hour = 24) record
+				extraction.setExtractionHour(24);
 				this.miningRepository.persist(extraction);
-				logger.info("-- [persistMiningActionsESI]> Creating new mining extraction: {} > Quantity: {}"
-						, extraction.getId(), extraction.getQuantity());
 			}
 		} catch (SQLException sqle) {
-			logger.info("EX [ESIDataPersistenceService.persistMiningActionsESI]> Credential not found in the list. Exception: {}"
+			logger.info(
+					"EX [ESIDataPersistenceService.persistMiningActionsESI]> Credential not found in the list. Exception: {}"
 					, sqle.getMessage());
 		} catch (NeoComRuntimeException nrex) {
-			logger.info("EX [ESIDataPersistenceService.persistMiningActionsESI]> Credential not found in the list. Exception: {}"
+			logger.info(
+					"EX [ESIDataPersistenceService.persistMiningActionsESI]> Credential not found in the list. Exception: {}"
 					, nrex.getMessage());
 		}
 	}

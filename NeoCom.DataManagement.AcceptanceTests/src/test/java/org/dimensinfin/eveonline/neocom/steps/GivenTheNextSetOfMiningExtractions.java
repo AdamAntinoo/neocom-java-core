@@ -43,9 +43,8 @@ public class GivenTheNextSetOfMiningExtractions {
 		logger.info("-- [GivenTheNextSetOfMiningExtractions.beforeAll]> Records deleted: {}", recordsDeleted);
 	}
 
-	@Given("the next set of mining extractions for pilot {string} and hour {string}")
+	@Given("the next set of mining extractions for pilot {string}")
 	public void theNextSetOfMiningExtractionsForPilot( final String pilotIdentifier,
-	                                                   final String hour,
 	                                                   final List<Map<String, String>> cucumberTable ) {
 		final List<MiningExtraction> miningExtractionRecords = new ArrayList<>();
 		for (Map<String, String> row : cucumberTable) {
@@ -53,13 +52,11 @@ public class GivenTheNextSetOfMiningExtractions {
 					this.cucumberTable2GetCharactersCharacterIdMining200OkConverter.convert(row);
 			miningExtractionRecords.add(new MiningExtraction.Builder()
 					                            .fromMining(esiMiningExtractionRecord)
-					                            .withExtractionHour(Integer.parseInt(hour))
 					                            .withOwnerId(Integer.parseInt(pilotIdentifier))
 					                            .build());
 		}
 		Assert.assertTrue(miningExtractionRecords.size() > 0);
 		this.miningExtractionsWorld.setMiningExtractionRecords(miningExtractionRecords);
-		this.miningExtractionsWorld.setHour(Integer.parseInt(hour));
 		this.miningExtractionsWorld.setPilotIdentifier(Integer.parseInt(pilotIdentifier));
 	}
 }

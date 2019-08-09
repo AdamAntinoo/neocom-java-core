@@ -105,13 +105,19 @@ public class MiningRepository {
 	 * and for different ores. So for a single day we can have around 6-8 records. The mining ledger information at the neocom database has
 	 * to expiration time so the number of days is still not predetermined.
 	 */
-	public List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) throws SQLException {
-		final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
-		final Where<MiningExtraction, String> where = builder.where();
-		where.eq("ownerId", credential.getAccountId());
-		builder.orderBy("id", false);
-		final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
-		return this.miningExtractionDao.query(preparedQuery);
+	public List<MiningExtraction> accessMiningExtractions4Pilot( final Credential credential ) {
+		try {
+			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
+			final Where<MiningExtraction, String> where = builder.where();
+			where.eq("ownerId", credential.getAccountId());
+			builder.orderBy("id", false);
+			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
+			logger.info("-- [MiningRepository.accessMiningExtractions4Pilot]> SELECT: {}", preparedQuery.getStatement());
+			return this.miningExtractionDao.query(preparedQuery);
+		} catch (SQLException sqle) {
+			logger.error("");
+			return new ArrayList<>();
+		}
 	}
 
 	// - B U I L D E R

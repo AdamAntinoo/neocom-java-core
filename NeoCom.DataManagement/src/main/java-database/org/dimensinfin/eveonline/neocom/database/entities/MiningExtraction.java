@@ -3,6 +3,8 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -11,8 +13,6 @@ import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Objects;
 
@@ -33,18 +33,21 @@ import java.util.Objects;
  */
 @DatabaseTable(tableName = "MiningExtractions")
 public class MiningExtraction extends UpdatableEntity implements IAggregableItem {
+	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
+
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
 	 * the current date we should not change any data on the database since we understand that old data is not being modified. But it can
 	 * happen that old data is the first time the it is added to the database. So we set the hour of day to the number 24.
 	 */
+	@Deprecated
 	public static String generateRecordId( final LocalDate date, final int typeId, final long systemId, final long ownerId ) {
 		// Check the date.
-		final String todayDate = DateTime.now().toString("YYYY-MM-dd");
-		final String targetDate = date.toString("YYYY/MM/dd");
+		final String todayDate = DateTime.now().toString(EXTRACTION_DATE_FORMAT);
+		final String targetDate = date.toString(EXTRACTION_DATE_FORMAT);
 		if (todayDate.equalsIgnoreCase(targetDate))
 			return new StringBuffer()
-					       .append(date.toString("YYYY-MM-dd")).append(":")
+					       .append(date.toString(EXTRACTION_DATE_FORMAT)).append(":")
 					       .append(DateTime.now().getHourOfDay()).append("-")
 					       .append(systemId).append("-")
 					       .append(typeId).append("-")
@@ -52,7 +55,7 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 					       .toString();
 		else
 			return new StringBuffer()
-					       .append(date.toString("YYYY-MM-dd")).append(":")
+					       .append(date.toString(EXTRACTION_DATE_FORMAT)).append(":")
 					       .append(24).append("-")
 					       .append(systemId).append("-")
 					       .append(typeId).append("-")
@@ -60,8 +63,18 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 					       .toString();
 	}
 
+	@Deprecated
 	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
 		return "".concat(date).concat(":")
+		         .concat(Integer.toString(hour)).concat("-")
+		         .concat(Long.toString(systemId)).concat("-")
+		         .concat(Integer.toString(typeId)).concat("-")
+		         .concat(Long.toString(ownerId));
+	}
+
+	public static String generateRecordId( final LocalDate date, final int hour, final int typeId,
+	                                       final long systemId, final long ownerId ) {
+		return "".concat(date.toString(EXTRACTION_DATE_FORMAT)).concat(":")
 		         .concat(Integer.toString(hour)).concat("-")
 		         .concat(Long.toString(systemId)).concat("-")
 		         .concat(Integer.toString(typeId)).concat("-")
@@ -104,11 +117,6 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	}
 
 	public String getResourceName() {
-//		if (null == this.resourceItem) {
-//			this.resourceItem = new EveItem(this.getTypeId());
-//			// TODO - Reconnect the event listeners with the new implementation
-////			this.resourceItem.addPropertyChangeListener(this);
-//		}
 		return this.resourceItem.getName();
 	}
 
@@ -119,12 +127,23 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		return this.systemCache.getSystemName();
 	}
 
+	public LocalDate getExtractionDate() {
+		return new LocalDate(this.extractionDateName);
+	}
+
 	public String getExtractionDateName() {
 		return this.extractionDateName;
 	}
 
 	public int getExtractionHour() {
 		return this.extractionHour;
+	}
+
+	public MiningExtraction setExtractionHour( final int extractionHour ) {
+		this.extractionHour = extractionHour;
+		this.id = MiningExtraction.generateRecordId(new LocalDate(this.extractionDateName),
+		                                            this.extractionHour, this.typeId, this.solarSystemId, this.ownerId);
+		return this;
 	}
 
 	public int getSolarSystemId() {
@@ -150,11 +169,6 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	}
 
 	public String getURLForItem() {
-//		if (null == this.resourceItem) {
-//			this.resourceItem = new EveItem(this.getTypeId());
-//			// TODO - Reconnect the event listeners with the new implementation
-////			this.resourceItem.addPropertyChangeListener(this);
-//		}
 		return this.resourceItem.getURLForItem();
 	}
 
@@ -164,41 +178,14 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	}
 
 	public double getVolume() {
-//		if (null == this.resourceItem) {
-//			this.resourceItem = new EveItem(this.getTypeId());
-//			// TODO - Reconnect the event listeners with the new implementation
-////			this.resourceItem.addPropertyChangeListener(this);
-//		}
 		return this.resourceItem.getVolume();
 	}
 
 	public double getPrice() {
-//		if (null == this.resourceItem) {
-//			this.resourceItem = new EveItem(this.getTypeId());
-//			// TODO - Reconnect the event listeners with the new implementation
-////			this.resourceItem.addPropertyChangeListener(this);
-//		}
 		return this.resourceItem.getPrice();
 	}
 
-//	@Override
-//	public void propertyChange( final PropertyChangeEvent event ) {
-//		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name())) {
-//			// TODO - Reconnect the event listeners with the new implementation
-////			this.sendChangeEvent(event);
-//		}
-//	}
-
 	// - C O R E
-//	@Override
-//	public String toString() {
-//		return new StringBuffer("MiningExtraction [ ")
-//		.append("#").append(typeId).append("-").append(this.getResourceName()).append(" ")
-//		.append("x").append(quantity).append(" ")
-//		.append("@").append(solarSystemId).append("-").append(this.getSystemName()).append(" ")
-//		.append("]").toString();
-//	}
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
@@ -211,6 +198,39 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 				       .append("extractionHour", this.extractionHour)
 				       .append("ownerId", this.ownerId)
 				       .toString();
+	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final MiningExtraction that = (MiningExtraction) o;
+		return new EqualsBuilder()
+				       .appendSuper(super.equals(o))
+				       .append(this.typeId, that.typeId)
+				       .append(this.solarSystemId, that.solarSystemId)
+				       .append(this.quantity, that.quantity)
+				       .append(this.delta, that.delta)
+				       .append(this.extractionHour, that.extractionHour)
+				       .append(this.ownerId, that.ownerId)
+				       .append(this.id, that.id)
+				       .append(this.extractionDateName, that.extractionDateName)
+				       .isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				       .appendSuper(super.hashCode())
+				       .append(this.id)
+				       .append(this.typeId)
+				       .append(this.solarSystemId)
+				       .append(this.quantity)
+				       .append(this.delta)
+				       .append(this.extractionDateName)
+				       .append(this.extractionHour)
+				       .append(this.ownerId)
+				       .toHashCode();
 	}
 
 	// - B U I L D E R
@@ -244,13 +264,13 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 
 		public Builder withExtractionDate( final LocalDate extractionDate ) {
 			// Update the extractions date string.
-			this.onConstruction.extractionDateName = extractionDate.toString("YYYY-MM-dd");
-			final String todayDate = DateTime.now().toString("YYYY-MM-dd");
-			final String targetDate = extractionDate.toString("YYYY-MM-dd");
-			if (todayDate.equalsIgnoreCase(targetDate))
-				this.onConstruction.extractionHour = DateTime.now().getHourOfDay();
-			else
-				this.onConstruction.extractionHour = 24;
+			this.onConstruction.extractionDateName = extractionDate.toString(EXTRACTION_DATE_FORMAT);
+//			final String todayDate = DateTime.now().toString(EXTRACTION_DATE_FORMAT);
+//			final String targetDate = extractionDate.toString(EXTRACTION_DATE_FORMAT);
+//			if (todayDate.equalsIgnoreCase(targetDate))
+//				this.onConstruction.extractionHour = DateTime.now().getHourOfDay();
+//			else
+//				this.onConstruction.extractionHour = 24;
 			return this;
 		}
 
@@ -259,28 +279,30 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 			return this;
 		}
 
-		public Builder fromMining ( final GetCharactersCharacterIdMining200Ok mineInstance){
+		public Builder fromMining( final GetCharactersCharacterIdMining200Ok mineInstance ) {
 			this.withTypeId(mineInstance.getTypeId());
 			this.withSolarSystemId(mineInstance.getSolarSystemId());
 			this.withQuantity(mineInstance.getQuantity().intValue());
 			this.withExtractionDate(mineInstance.getDate());
 			return this;
 		}
+
 		/**
 		 * The unique and special extraction identifier is created at this point and using the current extraction time. This will exclude proper
 		 * testing so there is special code to create special identifier when the <code>onConstruction.extractionHour</code> is set.
 		 */
 		public MiningExtraction build() {
 			Objects.requireNonNull(this.onConstruction.resourceItem);
-			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
-			if (null == this.onConstruction.extractionDateName) this.withExtractionDate(LocalDate.now());
-			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);
-			if (this.onConstruction.extractionHour == 24) this.onConstruction.id = MiningExtraction.generateRecordId(
-					dt
-					, this.onConstruction.typeId
-					, this.onConstruction.solarSystemId
-					, this.onConstruction.ownerId);
-			else this.onConstruction.id = MiningExtraction.generateRecordId(
+//			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
+//			if (null == this.onConstruction.extractionDateName) this.withExtractionDate(LocalDate.now());
+//			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);
+//			if (this.onConstruction.extractionHour == 24) this.onConstruction.id = MiningExtraction.generateRecordId(
+//					dt
+//					, this.onConstruction.typeId
+//					, this.onConstruction.solarSystemId
+//					, this.onConstruction.ownerId);
+//			else
+			this.onConstruction.id = MiningExtraction.generateRecordId(
 					this.onConstruction.extractionDateName
 					, this.onConstruction.extractionHour
 					, this.onConstruction.typeId
