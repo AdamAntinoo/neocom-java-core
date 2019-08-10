@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutionException;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.entities.Job;
 import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
@@ -22,7 +21,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +106,7 @@ public class DownloadManager {
 				//--- L O C A T I O N   P R O C E S S I N G
 				// Check the asset location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
-				EveLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(myasset.getLocationId());
+				EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(myasset.getLocationId());
 				if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 					// Add this asset to the list of items to be reprocessed.
 					this.unlocatedAssets.add(myasset);
@@ -195,7 +194,7 @@ public class DownloadManager {
 				//--- L O C A T I O N   P R O C E S S I N G
 				// Check the blueprint location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
-				EveLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(newBlueprint.getLocationId());
+				EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(newBlueprint.getLocationId());
 				if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 					// Add this blueprint to the list of items to be reprocessed.
 					this.unlocatedBlueprints.add(newBlueprint);
@@ -381,7 +380,7 @@ public class DownloadManager {
 	 */
 	private ELocationType validateLocation( final ILocatableAsset locatable ) {
 		long targetLocationid = locatable.getLocationId();
-		EveLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(targetLocationid);
+		EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(targetLocationid);
 		if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 			try {
 				// Need to check if asset or unreachable location. Search for asset with locationid.

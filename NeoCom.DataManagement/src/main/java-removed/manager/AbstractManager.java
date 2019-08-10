@@ -18,7 +18,7 @@ import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IJsonAngular;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
 import org.dimensinfin.eveonline.neocom.entities.Credential;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Region;
 
@@ -132,7 +132,7 @@ public abstract class AbstractManager implements ICollaboration, IJsonAngular {
 		}
 	}
 
-	protected void add2Region (final EveLocation target) {
+	protected void add2Region (final EsiLocation target) {
 		long regionid = target.getRegionID();
 		Region region = regions.get(regionid);
 		if ( null == region ) {

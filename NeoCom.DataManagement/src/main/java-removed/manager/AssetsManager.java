@@ -35,7 +35,7 @@ import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.model.Region;
@@ -328,7 +328,7 @@ public class AssetsManager extends AbstractManager {
 		return (ArrayList<NeoComAsset>) assetList;
 	}
 
-	public ArrayList<NeoComAsset> searchAsset4Location( final EveLocation location ) {
+	public ArrayList<NeoComAsset> searchAsset4Location( final EsiLocation location ) {
 		AssetsManager.logger.info(">> AssetsManager.searchAsset4Location");
 		List<NeoComAsset> assetList = new ArrayList<NeoComAsset>();
 		// Check if we have already that list on the cache.
@@ -484,7 +484,7 @@ public class AssetsManager extends AbstractManager {
 		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if (null == target) {
-			EveLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
+			EsiLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(credential, intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
@@ -538,7 +538,7 @@ public class AssetsManager extends AbstractManager {
 	//
 	//	private void add2Location(final NeoComAsset asset) {
 	//		long locid = asset.getLocationID();
-	//		EveLocation target = locations.get(locid);
+	//		EsiLocation target = locations.get(locid);
 	//		if (null == target) {
 	//			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 	//			locations.put(new Long(locid), target);
@@ -547,7 +547,7 @@ public class AssetsManager extends AbstractManager {
 	//		target.addChild(asset);
 	//	}
 	//
-	//	private void add2Region(final EveLocation target) {
+	//	private void add2Region(final EsiLocation target) {
 	//		long regionid = target.getRegionID();
 	//		Region region = regions.get(regionid);
 	//		if (null == region) {
@@ -747,10 +747,10 @@ public class AssetsManager extends AbstractManager {
 	//			sqle.printStackTrace();
 	//		}
 	//		// Be sure the regions and locations are accessible.
-	//		locationsList = new ArrayList<EveLocation>();
+	//		locationsList = new ArrayList<EsiLocation>();
 	//		regionNames = new HashSet<String>();
 	//		for (Integer lid : locationIdentifierList) {
-	//			EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(lid);
+	//			EsiLocation loc = AppConnector.getDBConnector().searchLocationbyID(lid);
 	//			locationsList.add(loc);
 	//			regionNames.add(loc.getRegion());
 	//		}
@@ -802,7 +802,7 @@ public class AssetsManager extends AbstractManager {
 		if (locations.containsKey(identifier))
 			return;
 		else {
-			EveLocation location = GlobalDataManager.searchLocation4Id(identifier);
+			EsiLocation location = GlobalDataManager.searchLocation4Id(identifier);
 			// Convert the Location to a new Extended Location with the new Contents Manager.
 			ExtendedLocation newloc = new ExtendedLocation(credential, location);
 			newloc.setContentManager(new AllLazyAssetsContentManager(newloc));

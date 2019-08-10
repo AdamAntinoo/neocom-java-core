@@ -26,7 +26,7 @@ import org.dimensinfin.eveonline.neocom.entities.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.entities.Property;
 import org.dimensinfin.eveonline.neocom.entities.RefiningData;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import java.sql.SQLException;
 
@@ -58,7 +58,7 @@ public interface INeoComDBHelper {
 
 	public Dao<Credential, String> getCredentialDao() throws SQLException;
 
-	public Dao<EveLocation, String> getLocationDao() throws SQLException;
+	public Dao<EsiLocation, String> getLocationDao() throws SQLException;
 
 	public Dao<Property, String> getPropertyDao() throws SQLException;
 

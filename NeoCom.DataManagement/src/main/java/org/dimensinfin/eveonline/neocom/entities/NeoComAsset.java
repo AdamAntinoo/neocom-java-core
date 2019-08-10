@@ -23,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * Assets are collections of <code>EveItem</code>s of the same type and characteristics that are grouped on
  * game stacks and that belong to a single <code>EveChar</code> and that are located on a
- * <code>EveLocation</code>. Most of the data for an asset can be found on those classes but is being added to
+ * <code>EsiLocation</code>. Most of the data for an asset can be found on those classes but is being added to
  * the persistence implementation to allow DAO searches and easier database interaction so the asset
  * management that is a quite memory intensive activity may be performed with the few memory possible.<br>
  * The identifier information and the key dta are downloaded from CCP data with an API call. The data is then
@@ -118,7 +118,7 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 
 	// - C A C H E D   F I E L D S
 	private transient NeoComAsset parentAssetCache = null;
-	private transient EveLocation locationCache = null;
+	private transient EsiLocation locationCache = null;
 //	private transient EveItem itemCache = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
@@ -447,13 +447,13 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 	}
 
 	@Override
-	public EveLocation getLocation() {
+	public EsiLocation getLocation() {
 		try {
 			if ( null == locationCache ) {
 				locationCache = accessGlobal().searchLocation4Id(locationId);
 			}
 		} catch ( NeoComRuntimeException neoe ) {
-			locationCache = new EveLocation();
+			locationCache = new EsiLocation();
 		}
 		return locationCache;
 	}
@@ -573,15 +573,15 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 	/**
 	 * Replaces a non reachable parent asset into an Unknown Location.
 	 */
-	private EveLocation moveAssetToUnknown( final long newlocationid ) {
-		final EveLocation newundefloc = new EveLocation();
+	private EsiLocation moveAssetToUnknown( final long newlocationid ) {
+		final EsiLocation newundefloc = new EsiLocation();
 		//		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");
 		newundefloc.setSystem("Undefined");
 		newundefloc.setStation("Station#" + newlocationid);
 		// Save this new location ot the database.
 		//		try {
-		//			Dao<EveLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
+		//			Dao<EsiLocation, String> locationDao = AppConnector.getDBConnector().getLocationDAO();
 		//			// Try to create the pair. It fails then  it was already created.
 		//			locationDao.createOrUpdate(newundefloc);
 		//		} catch (final SQLException sqle) {

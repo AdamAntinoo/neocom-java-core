@@ -15,7 +15,7 @@
 //               rendering of the model data similar on all the platforms used.
 package org.dimensinfin.eveonline.neocom.connector;
 
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class DataManagementCache {
 		return singleton;
 	}
 
-	public static EveLocation search4LocationId (final long identifier) {
+	public static EsiLocation search4LocationId (final long identifier) {
 		return singleton.search4LocationIdMethod(identifier);
 	}
 	// - F I E L D - S E C T I O N ............................................................................
@@ -44,7 +44,7 @@ public class DataManagementCache {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	private EveLocation search4LocationIdMethod (final long identifier) {
+	private EsiLocation search4LocationIdMethod (final long identifier) {
 		return null;
 	}
 

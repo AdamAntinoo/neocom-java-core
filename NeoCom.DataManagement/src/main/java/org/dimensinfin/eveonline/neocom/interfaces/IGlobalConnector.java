@@ -46,7 +46,7 @@ public interface IGlobalConnector {
 
 	public EveItem searchItem4Id( final int typeId );
 
-//	public EveLocation searchLocation4Id( final long locationId );
+//	public EsiLocation searchLocation4Id( final long locationId );
 
 	public int searchModule4Blueprint( final int bpitemId );
 

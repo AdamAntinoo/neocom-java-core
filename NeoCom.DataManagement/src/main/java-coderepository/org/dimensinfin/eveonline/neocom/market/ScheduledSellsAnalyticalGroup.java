@@ -19,7 +19,7 @@ import org.dimensinfin.core.model.IGEFNode;
 import org.dimensinfin.eveonline.neocom.core.ComparatorFactory;
 import org.dimensinfin.eveonline.neocom.enums.EComparatorField;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 //- CLASS IMPLEMENTATION ...................................................................................
 /**
@@ -72,7 +72,7 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 			if (node instanceof Resource) {
 				final Resource order = (Resource) node;
 				// Get the type and the location to classify.
-				final EveLocation location = order.getItem().getHighestBuyerPrice().getLocation();
+				final EsiLocation location = order.getItem().getHighestBuyerPrice().getLocation();
 				final int type = order.getTypeID();
 				this.classifyOrder(order, type, location);
 			}
@@ -103,7 +103,7 @@ public class ScheduledSellsAnalyticalGroup extends MarketOrderAnalyticalGroup {
 	 * @param type
 	 * @param location
 	 */
-	private void classifyOrder(final Resource order, final int type, final EveLocation location) {
+	private void classifyOrder(final Resource order, final int type, final EsiLocation location) {
 		final String locRegion = location.getRegion();
 		Separator hitRegion = regions.get(locRegion);
 		if (null == hitRegion) {

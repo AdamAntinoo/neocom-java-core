@@ -20,7 +20,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.TrackEntry;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.joda.time.Instant;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -556,7 +556,7 @@ public class MarketDataServer {
 						}
 					}
 					// Convert to standard location.
-					final EveLocation entryLocation = this.generateLocation(stationName);
+					final EsiLocation entryLocation = this.generateLocation(stationName);
 					final MarketDataEntry data = new MarketDataEntry(entryLocation);
 					data.setQty(stationQty);
 					data.setPrice(stationPrice);
@@ -607,12 +607,12 @@ public class MarketDataServer {
 		}
 
 		/**
-		 * Creates a EveLocation instance from the data retrieved from the eve-marketdata records. We can only go to the system
+		 * Creates a EsiLocation instance from the data retrieved from the eve-marketdata records. We can only go to the system
 		 * because the source data does not include the station.
 		 * @param hubName
 		 * @return
 		 */
-		protected EveLocation generateLocation( String hubName ) {
+		protected EsiLocation generateLocation( String hubName ) {
 			// Extract system name from the station information.
 			final int pos = hubName.indexOf(" ");
 			final String hubSecurity = hubName.substring(0, pos);

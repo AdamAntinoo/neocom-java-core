@@ -43,7 +43,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.services.TimedUpdater;
@@ -418,7 +418,7 @@ public class DownloadManager {
 //
 //			// Check the asset location. The location can be a known game station, a known user structure, another asset
 //			// or an unknown player structure. Check which one is this location.
-//			EveLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
+//			EsiLocation targetLoc = GlobalDataManager.searchLocation4Id(myasset.getLocationId());
 //			if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
 //				// Add this asset to the list of items to be reprocessed.
 //				unlocatedAssets.add(myasset);

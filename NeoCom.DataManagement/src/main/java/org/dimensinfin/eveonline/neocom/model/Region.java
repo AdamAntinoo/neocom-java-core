@@ -27,7 +27,7 @@ public class Region extends NeoComNode implements IExpandable {
 	private boolean _expanded = false;
 	private boolean _renderIfEmpty = true;
 	//	private String												_title						= "-DEEP SPACE-";
-	private final ArrayList<EveLocation> _locations = new ArrayList<EveLocation>();
+	private final ArrayList<EsiLocation> _locations = new ArrayList<EsiLocation>();
 
 	//- C O N S T R U C T O R - S E C T I O N ................................................................
 	public Region() {
@@ -66,7 +66,7 @@ public class Region extends NeoComNode implements IExpandable {
 		return _locations.size();
 	}
 
-	public ArrayList<EveLocation> getLocations() {
+	public ArrayList<EsiLocation> getLocations() {
 		return _locations;
 	}
 
@@ -122,7 +122,7 @@ public class Region extends NeoComNode implements IExpandable {
 		}
 	}
 
-	public void addLocation( final EveLocation target ) {
+	public void addLocation( final EsiLocation target ) {
 		if (null != target) {
 			_locations.add(target);
 		}

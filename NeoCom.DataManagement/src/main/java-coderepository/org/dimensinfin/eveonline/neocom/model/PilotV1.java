@@ -50,7 +50,7 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	 */
 	private CharacterInfoResponse characterInfo = null;
 	private GetCharactersCharacterIdClonesOkHomeLocation homeLocation=null;
-	private EveLocation lastKnownLocation = null;
+	private EsiLocation lastKnownLocation = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public PilotV1 () {
@@ -105,9 +105,9 @@ public class PilotV1 extends NeoComNode implements Comparable<PilotV1> {
 	public String getURLForAvatar () {
 		return "http://image.eveonline.com/character/" + this.getCharacterId() + "_256.jpg";
 	}
-	public EveLocation getLastKnownLocation () {
+	public EsiLocation getLastKnownLocation () {
 		if(null!=lastKnownLocation)return lastKnownLocation;
-		else return new EveLocation();
+		else return new EsiLocation();
 	}
 	public int compareTo (final PilotV1 o) {
 		if ( o.getCharacterId() == getCharacterId() ) return 0;

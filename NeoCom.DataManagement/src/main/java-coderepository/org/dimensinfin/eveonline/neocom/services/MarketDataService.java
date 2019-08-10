@@ -18,7 +18,7 @@ import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.TrackEntry;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.xml.sax.SAXException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
@@ -188,7 +188,7 @@ public class MarketDataService implements Runnable {
 					}
 				}
 				// Convert to standard location.
-				final EveLocation entryLocation = MarketDataService.generateLocation(stationName);
+				final EsiLocation entryLocation = MarketDataService.generateLocation(stationName);
 				final MarketDataEntry data = new MarketDataEntry(entryLocation);
 				data.setQty(stationQty);
 				data.setPrice(stationPrice);
@@ -209,7 +209,7 @@ public class MarketDataService implements Runnable {
 		return false;
 	}
 
-	private static EveLocation generateLocation(String hubName) {
+	private static EsiLocation generateLocation(String hubName) {
 		// Extract system name from the station information.
 		final int pos = hubName.indexOf(" ");
 		final String hubSecurity = hubName.substring(0, pos);

@@ -18,7 +18,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public class MarketOrder extends ANeoComEntity {
 	 * Derived fields that store cached data.
 	 */
 	private transient EveItem orderItem = null;
-	private transient EveLocation orderLocation = null;
+	private transient EsiLocation orderLocation = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	public MarketOrder() {
@@ -163,12 +163,12 @@ public class MarketOrder extends ANeoComEntity {
 		return orderItem;
 	}
 
-	public EveLocation getLocation() {
+	public EsiLocation getLocation() {
 		if (null == orderLocation) {
 			try {
 				orderLocation = accessGlobal().searchLocation4Id(locationId);
 			} catch (NeoComRuntimeException neoe) {
-				orderLocation = new EveLocation();
+				orderLocation = new EsiLocation();
 			}
 		}
 		return orderLocation;

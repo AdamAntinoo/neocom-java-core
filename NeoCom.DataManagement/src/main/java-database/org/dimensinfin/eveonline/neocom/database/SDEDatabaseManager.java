@@ -11,7 +11,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
@@ -183,15 +183,15 @@ public abstract class SDEDatabaseManager {
 	 * The process starts searching for locations depending on range, first at the CCP database and then at the
 	 * Locations table at the application database.
 	 */
-	public EveLocation searchLocation4Id( final long locationID ) {
+	public EsiLocation searchLocation4Id( final long locationID ) {
 		logger.info(">< [SDEDatabaseManager.searchLocation4Id]> Searching ID: " + locationID);
-		List<EveLocation> locationList = null;
+		List<EsiLocation> locationList = null;
 		// Search for the location at the application private database. Citadels and Outposts.
 		try {
 			locationList = GlobalDataManager.getSingleton().getNeocomDBHelper().getLocationDao().queryForEq("id", locationID);
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
-			return new EveLocation(locationID);
+			return new EsiLocation(locationID);
 		}
 		// Check list contents. If found we have the location, else search for a SDE game location.
 		if (locationList.size() < 1) {
@@ -202,9 +202,9 @@ public abstract class SDEDatabaseManager {
 		}
 	}
 
-	private EveLocation searchLocation4IdAtSDE( final long locationId ) {
+	private EsiLocation searchLocation4IdAtSDE( final long locationId ) {
 		logger.info(">< [SDEDatabaseManager.searchLocation4IdAtSDE]> locationId: {}", locationId);
-		EveLocation target = new EveLocation();
+		EsiLocation target = new EsiLocation();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_LOCATIONBYID, new String[]{Long.valueOf(locationId).toString()});
 			boolean detected = false;
@@ -251,8 +251,8 @@ public abstract class SDEDatabaseManager {
 	/**
 	 * Search for the location using only the system identifier.
 	 */
-	public EveLocation searchLocationBySystem( final String name ) {
-		final EveLocation newLocation = new EveLocation();
+	public EsiLocation searchLocationBySystem( final String name ) {
+		final EsiLocation newLocation = new EsiLocation();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_LOCATIONBYSYSTEM, new String[]{name});
 			while (cursor.moveToNext()) {

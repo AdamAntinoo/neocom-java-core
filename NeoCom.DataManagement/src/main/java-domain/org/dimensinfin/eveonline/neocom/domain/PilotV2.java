@@ -9,7 +9,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries20
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.model.AllianceV1;
 import org.dimensinfin.eveonline.neocom.model.CorporationV1;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +29,7 @@ public abstract class PilotV2 extends UpdatableNode {
 	public GetUniverseBloodlines200Ok bloodline = null;
 	public GetUniverseAncestries200Ok ancestry = null;
 	public double accountBalance = -1.0;
-	public EveLocation lastKnownLocation = null;
+	public EsiLocation lastKnownLocation = null;
 
 	protected GetCharactersCharacterIdOk publicData = null;
 	protected int totalAssetsNumber = -1;
@@ -138,14 +137,14 @@ public abstract class PilotV2 extends UpdatableNode {
 	}
 
 	//--- D E R I V E D   G E T T E R S
-//	public EveLocation getLastKnownLocation() {
+//	public EsiLocation getLastKnownLocation() {
 //		if (null != lastKnownLocation) return lastKnownLocation;
-//		else if (null == homeLocation) return new EveLocation();
+//		else if (null == homeLocation) return new EsiLocation();
 //		else {
 //			try {
 //				lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
 //			} catch (NeoComRuntimeException neoe) {
-//				lastKnownLocation = new EveLocation();
+//				lastKnownLocation = new EsiLocation();
 //			}
 //			return lastKnownLocation;
 //		}
@@ -204,7 +203,7 @@ public abstract class PilotV2 extends UpdatableNode {
 		return this;
 	}
 
-	public Property addLocationRole( final EveLocation theSelectedLocation, final String locationrole ) {
+	public Property addLocationRole( final EsiLocation theSelectedLocation, final String locationrole ) {
 		Property hit = new Property(EPropertyTypes.LOCATIONROLE)
 				               .setOwnerId(getCharacterId())
 				               .setTargetId(theSelectedLocation.getId())
@@ -230,7 +229,7 @@ public abstract class PilotV2 extends UpdatableNode {
 //	 * roles for a location and if the user only wants to clear one he/she has to activate the others again
 //	 * since all get removed.
 //	 */
-//	public void clearLocationRoles( final EveLocation theSelectedLocation ) {
+//	public void clearLocationRoles( final EsiLocation theSelectedLocation ) {
 //		//		if (null == locationRoles) accessLocationRoles();
 //		for (Property role : locationRoles) {
 //			if (role.getNumericValue() == Double.valueOf(theSelectedLocation.getId())) {
@@ -268,7 +267,7 @@ public abstract class PilotV2 extends UpdatableNode {
 //		try {
 //			lastKnownLocation = accessGlobal().searchLocation4Id(homeLocation.getLocationId());
 //		} catch (NeoComRuntimeException neoe) {
-//			lastKnownLocation = new EveLocation();
+//			lastKnownLocation = new EsiLocation();
 //		}
 //		return this;
 //	}

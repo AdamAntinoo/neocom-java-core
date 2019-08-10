@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
@@ -29,8 +29,8 @@ public class EveTask extends NeoComNode {
 	private Action.ETaskType type = Action.ETaskType.BUY;
 	private Resource resource = null;
 	private int qty = 0;
-	private EveLocation location = null;
-	private EveLocation destination = null;
+	private EsiLocation location = null;
+	private EsiLocation destination = null;
 	private String action = null;
 
 	private NeoComAsset assetRef = null;
@@ -49,7 +49,7 @@ public class EveTask extends NeoComNode {
 		this.action = action;
 	}
 
-	public EveLocation getDestination() {
+	public EsiLocation getDestination() {
 		return destination;
 	}
 
@@ -61,8 +61,8 @@ public class EveTask extends NeoComNode {
 		return resource.getItem().getName();
 	}
 
-	public EveLocation getLocation() {
-		if (null == location) return new EveLocation();
+	public EsiLocation getLocation() {
+		if (null == location) return new EsiLocation();
 		return location;
 	}
 
@@ -106,12 +106,12 @@ public class EveTask extends NeoComNode {
 		assetRef = targetAsset;
 	}
 
-	public EveTask setDestination( final EveLocation newLocation ) {
+	public EveTask setDestination( final EsiLocation newLocation ) {
 		destination = newLocation;
 		return this;
 	}
 
-	public EveTask setLocation( final EveLocation newLocation ) {
+	public EveTask setLocation( final EsiLocation newLocation ) {
 		location = newLocation;
 		return this;
 	}

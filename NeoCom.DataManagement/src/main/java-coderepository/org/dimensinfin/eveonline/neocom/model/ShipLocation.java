@@ -22,12 +22,12 @@ import org.dimensinfin.core.model.AbstractComplexNode;
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ShipLocation extends EveLocation implements IViewableNode {
+public class ShipLocation extends EsiLocation implements IViewableNode {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static Logger			logger						= Logger.getLogger("ShipLocation");
 	private static final long	serialVersionUID	= 28570905307514340L;
 
-	public static ShipLocation createFromLocation(final EveLocation original) {
+	public static ShipLocation createFromLocation(final EsiLocation original) {
 		ShipLocation shiploc = new ShipLocation();
 		shiploc.setId(original.getID());
 		shiploc.setStationID(original.getStationID());
@@ -63,12 +63,12 @@ public class ShipLocation extends EveLocation implements IViewableNode {
 	}
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	//	public ShipLocation(final EveLocation delegate) {
+	//	public ShipLocation(final EsiLocation delegate) {
 	//		locationDelegate = delegate;
 	//	}
 
 	// - F I E L D - S E C T I O N ............................................................................
-	//	private EveLocation		locationDelegate	= null;
+	//	private EsiLocation		locationDelegate	= null;
 }
 
 // - UNUSED CODE ............................................................................................

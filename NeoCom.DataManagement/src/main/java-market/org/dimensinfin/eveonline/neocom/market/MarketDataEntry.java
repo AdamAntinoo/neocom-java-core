@@ -2,7 +2,7 @@ package org.dimensinfin.eveonline.neocom.market;
 
 import java.io.Serializable;
 
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class MarketDataEntry implements Serializable {
 	private static final long serialVersionUID = 7263135920147527466L;
 
-	private EveLocation location = EveLocation.getJitaLocation();
+	private EsiLocation location = EsiLocation.getJitaLocation();
 	private int qty = 0;
 	private double price = 999999999999.99;
 
@@ -26,16 +26,16 @@ public class MarketDataEntry implements Serializable {
 	public MarketDataEntry() {
 	}
 
-	public MarketDataEntry( final EveLocation entryLocation ) {
+	public MarketDataEntry( final EsiLocation entryLocation ) {
 		location = entryLocation;
 	}
 
 	// - G E T T E R S   &   S E T T E R S
-	public EveLocation getLocation() {
+	public EsiLocation getLocation() {
 		return this.location;
 	}
 
-	public MarketDataEntry setLocation( final EveLocation location ) {
+	public MarketDataEntry setLocation( final EsiLocation location ) {
 		this.location = location;
 		return this;
 	}

@@ -197,7 +197,7 @@ public class NeoComDBHelper implements INeoComDBHelper {
 		//		} catch (SQLException sqle) {
 		//		}
 		//		try {
-		//			TableUtils.createTableIfNotExists(databaseConnection, EveLocation.class);
+		//			TableUtils.createTableIfNotExists(databaseConnection, EsiLocation.class);
 		//		} catch (SQLException sqle) {
 		//		}
 		logger.info("<< [NeoComDBHelper.onCreate]");

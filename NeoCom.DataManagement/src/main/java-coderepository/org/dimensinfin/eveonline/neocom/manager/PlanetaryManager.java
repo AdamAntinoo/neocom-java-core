@@ -15,7 +15,7 @@ import org.dimensinfin.eveonline.neocom.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.Ship;
@@ -194,7 +194,7 @@ public class PlanetaryManager extends AbstractManager {
 		long locid = asset.getLocationId();
 		ExtendedLocation target = locations.get(locid);
 		if ( null == target ) {
-			EveLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
+			EsiLocation intermediary = GlobalDataManager.searchLocation4Id(locid);
 			// Create another new Extended Location as a copy if this one to disconnect it from the unique cache copy.
 			ExtendedLocation newloc = new ExtendedLocation(credential.getAccountId(), intermediary);
 			newloc.setContentManager(new PlanetaryAssetsContentManager(newloc));
@@ -286,7 +286,7 @@ public class PlanetaryManager extends AbstractManager {
 	//
 	//	private void add2Location(final NeoComAsset asset) {
 	//		long locid = asset.getLocationID();
-	//		EveLocation target = locations.get(locid);
+	//		EsiLocation target = locations.get(locid);
 	//		if (null == target) {
 	//			target = ModelAppConnector.getSingleton().getCCPDBConnector().searchLocationbyID(locid);
 	//			locations.put(new Long(locid), target);
@@ -295,7 +295,7 @@ public class PlanetaryManager extends AbstractManager {
 	//		target.addChild(asset);
 	//	}
 	//
-	//	private void add2Region(final EveLocation target) {
+	//	private void add2Region(final EsiLocation target) {
 	//		long regionid = target.getRegionId();
 	//		Region region = regions.get(regionid);
 	//		if (null == region) {

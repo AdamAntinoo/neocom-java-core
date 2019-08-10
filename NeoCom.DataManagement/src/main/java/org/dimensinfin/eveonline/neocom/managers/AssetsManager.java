@@ -48,7 +48,7 @@ public class AssetsManager implements Serializable {
 	// - L O C A T I O N   M A N A G E M E N T
 	//	private int																				locationCount					= -1;
 	//	private HashSet<String>														regionNames						= null;
-	//	private ArrayList<EveLocation>										locationsList					= null;
+	//	private ArrayList<EsiLocation>										locationsList					= null;
 
 	protected int totalAssets = -1;
 	protected List<NeoComAsset> fullAssetList = new ArrayList<>();
@@ -131,7 +131,7 @@ public class AssetsManager implements Serializable {
 	//	 *
 	//	 * @return
 	//	 */
-	//	public ArrayList<EveLocation> getLocations() {
+	//	public ArrayList<EsiLocation> getLocations() {
 	//		if (null == locationsList) updateLocations();
 	//		if (locationsList.size() < 1) updateLocations();
 	//		return locationsList;
@@ -214,7 +214,7 @@ public class AssetsManager implements Serializable {
 	//		return (ArrayList<Asset>) assetList;
 	//	}
 	//
-	//	public ArrayList<Asset> searchAsset4Location(final EveLocation location) {
+	//	public ArrayList<Asset> searchAsset4Location(final EsiLocation location) {
 	//		Log.i("AssetsManager", ">> AssetsManager.searchAsset4Location");
 	//		List<Asset> assetList = new ArrayList<Asset>();
 	//		// Check if we have already that list on the cache.
@@ -514,10 +514,10 @@ public class AssetsManager implements Serializable {
 	//			sqle.printStackTrace();
 	//		}
 	//		// Be sure the regions and locations are accessible.
-	//		locationsList = new ArrayList<EveLocation>();
+	//		locationsList = new ArrayList<EsiLocation>();
 	//		regionNames = new HashSet<String>();
 	//		for (Integer lid : locationIdentifierList) {
-	//			EveLocation loc = AppConnector.getDBConnector().searchLocationbyID(lid);
+	//			EsiLocation loc = AppConnector.getDBConnector().searchLocationbyID(lid);
 	//			locationsList.add(loc);
 	//			regionNames.add(loc.getRegion());
 	//		}

@@ -15,7 +15,7 @@ package org.dimensinfin.eveonline.neocom.database;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
@@ -47,9 +47,9 @@ public interface ISDEDBHelper {
 
 	public EveItem searchItem4Id( final int typeId );
 
-//	public EveLocation searchLocation4Id( final long locationId );
+//	public EsiLocation searchLocation4Id( final long locationId );
 
-	public EveLocation searchLocationBySystem( final String name );
+	public EsiLocation searchLocationBySystem( final String name );
 
 //	public ItemGroup searchItemGroup4Id( final int targetGroupId );
 

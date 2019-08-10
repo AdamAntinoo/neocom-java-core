@@ -392,7 +392,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 //		private long identifier = -1;
 //		private long locationId = -1;
 //		private LocationTypeEnum locationType;
-//		private EveLocation location = null;
+//		private EsiLocation location = null;
 //		private List<GetCharactersCharacterIdPlanets200Ok> planetaryData;
 //
 //		public CorePilot (final GetCharactersCharacterIdClonesOk delegate) {
@@ -428,7 +428,7 @@ public class DataManagementModelStore extends AbstractModelStore /*implements IN
 //			return this;
 //		}
 //
-//		public EveLocation getLocation () {
+//		public EsiLocation getLocation () {
 //			return location;
 //		}
 //

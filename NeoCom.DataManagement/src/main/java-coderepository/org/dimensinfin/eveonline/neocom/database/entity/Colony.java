@@ -26,7 +26,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOkPins;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComExpandableNode;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 import org.joda.time.DateTime;
@@ -78,7 +78,7 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	private DateTime lastUpdate = null;
 	@DatabaseField
 	private String planetName = "Planet 0";
-	private transient EveLocation location = null;
+	private transient EsiLocation location = null;
 	//	private transient GetUniversePlanetsPlanetIdOk planetData = null;
 	private transient GetCharactersCharacterIdPlanetsPlanetIdOk structureData = null;
 	private transient List<GetCharactersCharacterIdPlanetsPlanetIdOkPins> pins = new ArrayList<GetCharactersCharacterIdPlanetsPlanetIdOkPins>();
@@ -220,13 +220,13 @@ public class Colony extends NeoComExpandableNode /*implements IDownloadable*/ {
 	}
 
 	public String getSolarSystemName () {
-		// Location is transient so we have to reload the EveLocation cache if null.
+		// Location is transient so we have to reload the EsiLocation cache if null.
 		if ( null == location ) location = GlobalDataManager.searchLocation4Id(getSolarSystemId());
 		return location.getSystem();
 	}
 
 	public double getSecurityValue () {
-		// Location is transient so we have to reload the EveLocation cache if null.
+		// Location is transient so we have to reload the EsiLocation cache if null.
 		if ( null == location ) location = GlobalDataManager.searchLocation4Id(getSolarSystemId());
 		return location.getSecurityValue();
 	}

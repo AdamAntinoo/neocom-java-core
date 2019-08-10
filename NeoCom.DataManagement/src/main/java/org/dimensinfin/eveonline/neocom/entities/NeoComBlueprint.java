@@ -21,7 +21,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +114,7 @@ public class NeoComBlueprint extends ANeoComEntity implements ILocatableAsset {
 
 	// - F I E L D - S E C T I O N ............................................................................
 	protected transient NeoComAsset parentAssetCache = null;
-	protected transient EveLocation locationCache = null;
+	protected transient EsiLocation locationCache = null;
 	protected transient EveItem blueprintItem = null;
 	protected transient EveItem moduleItem = null;
 
@@ -201,13 +201,13 @@ public class NeoComBlueprint extends ANeoComEntity implements ILocatableAsset {
 	 * location of the associated asset for normal blueprints. Check the access to null elements and cache the
 	 * result.
 	 */
-	public EveLocation getLocation() {
+	public EsiLocation getLocation() {
 		try {
 			if (null == locationCache) {
 				locationCache = accessGlobal().searchLocation4Id(locationId);
 			}
 		} catch (NeoComRuntimeException neoe) {
-			locationCache = new EveLocation();
+			locationCache = new EsiLocation();
 		}
 		return locationCache;
 	}

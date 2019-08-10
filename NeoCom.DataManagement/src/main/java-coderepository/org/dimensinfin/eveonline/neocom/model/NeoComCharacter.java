@@ -354,7 +354,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 //	 * location is valid.
 //	 */
 //	@JsonIgnore
-//	public EveLocation getDefaultLocation () {
+//	public EsiLocation getDefaultLocation () {
 //		return this.getAssetsManager().initialize().getLocations().values().iterator().next();
 //	}
 
@@ -795,7 +795,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 
 // - UNUSED CODE ............................................................................................
 // [01]
-//	public void addLocationRole(final EveLocation theSelectedLocation, final String locationrole) {
+//	public void addLocationRole(final EsiLocation theSelectedLocation, final String locationrole) {
 //		if (null == locationRoles) {
 //			this.accessLocationRoles();
 //		}
@@ -815,7 +815,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 //	 *
 //	 * @param theSelectedLocation
 //	 */
-//	public void clearLocationRoles(final EveLocation theSelectedLocation) {
+//	public void clearLocationRoles(final EsiLocation theSelectedLocation) {
 //		if (null == locationRoles) {
 //			this.accessLocationRoles();
 //		}
@@ -845,7 +845,7 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 //	 * @return
 //	 */
 //	@JsonIgnore
-//	public EveLocation getLocation4Role(final String matchingRole) {
+//	public EsiLocation getLocation4Role(final String matchingRole) {
 //		if (null == locationRoles) {
 //			this.accessLocationRoles();
 //		}
@@ -868,11 +868,11 @@ public abstract class NeoComCharacter extends NeoComNode implements Comparable<N
 //	 * @return
 //	 */
 //	@JsonIgnore
-//	public EveLocation getLocation4Role(final String matchingRole, final String region) {
-//		//		EveLocation preferredLocation = null;
+//	public EsiLocation getLocation4Role(final String matchingRole, final String region) {
+//		//		EsiLocation preferredLocation = null;
 //		for (Property role : locationRoles)
 //			if (role.getPropertyType().toString().equalsIgnoreCase(matchingRole)) {
-//				EveLocation target = ModelAppConnector.getSingleton().getCCPDBConnector()
+//				EsiLocation target = ModelAppConnector.getSingleton().getCCPDBConnector()
 //						.searchLocationbyID(Double.valueOf(role.getNumericValue()).longValue());
 //				if (target.getRegion().equalsIgnoreCase(region)) return target;
 //				//		Property currentRole = locationRoles.get(locID);

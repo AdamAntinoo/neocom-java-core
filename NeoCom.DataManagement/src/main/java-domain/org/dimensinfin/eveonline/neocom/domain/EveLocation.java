@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.domain;
 
 import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +11,7 @@ import net.nikr.eve.jeveasset.data.Citadel;
 
 import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 
 import java.sql.SQLException;
 
@@ -28,9 +29,9 @@ import java.sql.SQLException;
  * @author Adam Antinoo
  */
 @DatabaseTable(tableName = "locations")
-public class EveLocation extends ANeoComEntity {
+public class EsiLocation extends ANeoComEntity {
 	private static final long serialVersionUID = 1522765618286937377L;
-	private static final EveLocation jita = new EveLocation();
+	private static final EsiLocation jita = new EsiLocation();
 
 	static {
 		jita.setId(60003760)
@@ -44,7 +45,7 @@ public class EveLocation extends ANeoComEntity {
 				.setName(jita.getRegion() + " - " + jita.getStation());
 	}
 
-	public static EveLocation getJitaLocation() {
+	public static EsiLocation getJitaLocation() {
 		return jita;
 	}
 
@@ -75,20 +76,20 @@ public class EveLocation extends ANeoComEntity {
 	public String urlLocationIcon = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public EveLocation() {
+	public EsiLocation() {
 		super();
 	}
 
-	public EveLocation( final long locationId ) {
+	public EsiLocation( final long locationId ) {
 		this();
 		id = locationId;
 		stationId = locationId;
 	}
 
-	public EveLocation( final long citadelid, final Citadel cit ) {
+	public EsiLocation( final long citadelid, final Citadel cit ) {
 		this();
 		try {
-			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
 			// calculate the ocationID from the sure item and update the rest of the fields.
 			this.updateFromCitadel(citadelid, cit);
 			id = citadelid;
@@ -102,10 +103,10 @@ public class EveLocation extends ANeoComEntity {
 		}
 	}
 
-	public EveLocation( final Station station ) {
+	public EsiLocation( final Station station ) {
 		this();
 		try {
-			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
 			// Calculate the locationID from the source item and update the rest of the fields.
 			this.updateFromSystem(station.getSolarSystemID());
 			id = station.getStationID();
@@ -121,9 +122,9 @@ public class EveLocation extends ANeoComEntity {
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public EveLocation store() {
+	public EsiLocation store() {
 		try {
-			final Dao<EveLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
 			locationDao.createOrUpdate(this);
 		} catch (final SQLException sqle) {
 			sqle.printStackTrace();
@@ -138,7 +139,7 @@ public class EveLocation extends ANeoComEntity {
 		return newid;
 	}
 
-	public EveLocation setId( final long id ) {
+	public EsiLocation setId( final long id ) {
 		this.id = id;
 		this.stationId = id;
 		return this;
@@ -148,7 +149,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.stationId;
 	}
 
-	public EveLocation setStationId( final long stationId ) {
+	public EsiLocation setStationId( final long stationId ) {
 		this.stationId = stationId;
 		return this;
 	}
@@ -157,7 +158,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.station;
 	}
 
-	public EveLocation setStation( final String station ) {
+	public EsiLocation setStation( final String station ) {
 		this.station = station;
 		return this;
 	}
@@ -166,7 +167,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.systemId;
 	}
 
-	public EveLocation setSystemId( final int systemId ) {
+	public EsiLocation setSystemId( final int systemId ) {
 		this.systemId = systemId;
 		return this;
 	}
@@ -175,7 +176,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.system;
 	}
 
-	public EveLocation setSystem( final String system ) {
+	public EsiLocation setSystem( final String system ) {
 		this.system = system;
 		return this;
 	}
@@ -184,7 +185,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.constellationId;
 	}
 
-	public EveLocation setConstellationId( final long constellationId ) {
+	public EsiLocation setConstellationId( final long constellationId ) {
 		this.constellationId = constellationId;
 		return this;
 	}
@@ -193,7 +194,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.constellation;
 	}
 
-	public EveLocation setConstellation( final String constellation ) {
+	public EsiLocation setConstellation( final String constellation ) {
 		this.constellation = constellation;
 		return this;
 	}
@@ -202,7 +203,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.regionId;
 	}
 
-	public EveLocation setRegionId( final long regionId ) {
+	public EsiLocation setRegionId( final long regionId ) {
 		this.regionId = regionId;
 		return this;
 	}
@@ -211,7 +212,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.region;
 	}
 
-	public EveLocation setRegion( final String region ) {
+	public EsiLocation setRegion( final String region ) {
 		this.region = region;
 		return this;
 	}
@@ -220,7 +221,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.security;
 	}
 
-	public EveLocation setSecurity( final String security ) {
+	public EsiLocation setSecurity( final String security ) {
 		this.security = security;
 		return this;
 	}
@@ -229,7 +230,7 @@ public class EveLocation extends ANeoComEntity {
 		return this.typeId;
 	}
 
-	public EveLocation setTypeId( final ELocationType typeId ) {
+	public EsiLocation setTypeId( final ELocationType typeId ) {
 		this.typeId = typeId;
 		return this;
 	}
@@ -264,7 +265,7 @@ public class EveLocation extends ANeoComEntity {
 		return urlLocationIcon;
 	}
 
-	public EveLocation setUrlLocationIcon( final String urlLocationIcon ) {
+	public EsiLocation setUrlLocationIcon( final String urlLocationIcon ) {
 		this.urlLocationIcon = urlLocationIcon;
 		return this;
 	}
@@ -304,7 +305,7 @@ public class EveLocation extends ANeoComEntity {
 		return system + " - " + station;
 	}
 
-	public EveLocation setName( final String dummy ) {
+	public EsiLocation setName( final String dummy ) {
 		return this;
 	}
 
@@ -316,7 +317,7 @@ public class EveLocation extends ANeoComEntity {
 		return 0.0;
 	}
 
-	public EveLocation setSecurityValue( final double _newvalue ) {
+	public EsiLocation setSecurityValue( final double _newvalue ) {
 		this.security = Double.valueOf(_newvalue).toString();
 		return this;
 	}
@@ -354,12 +355,12 @@ public class EveLocation extends ANeoComEntity {
 
 	private void updateFromSystem( final long newid ) {
 		// Get the system information from the CCP location tables.
-		EveLocation systemLocation;
-		try {
-			systemLocation = accessGlobal().searchLocation4Id(newid);
-		} catch (NeoComRuntimeException newe) {
-			systemLocation = new EveLocation();
-		}
+		EsiLocation systemLocation;
+//		try {
+//			systemLocation = accessGlobal().searchLocation4Id(newid);
+//		} catch (NeoComRuntimeException newe) {
+			systemLocation = new EsiLocation();
+//		}
 		systemId = systemLocation.getSystemId();
 		system = systemLocation.getSystem();
 		constellationId = Long.valueOf(systemLocation.getConstellationId()).intValue();
@@ -372,18 +373,18 @@ public class EveLocation extends ANeoComEntity {
 	/**
 	 * Two Locations are equal if they have the same locations codes.
 	 *
-	 * @param obj the target EveLocation to compare.
+	 * @param obj the target EsiLocation to compare.
 	 */
 	@Override
 	public boolean equals( final Object obj ) {
-		if (stationId != ((EveLocation) obj).getStationId()) return false;
-		if (systemId != ((EveLocation) obj).getSystemId()) return false;
-		if (constellationId != ((EveLocation) obj).getConstellationId()) return false;
-		if (regionId != ((EveLocation) obj).getRegionId()) return false;
+		if (stationId != ((EsiLocation) obj).getStationId()) return false;
+		if (systemId != ((EsiLocation) obj).getSystemId()) return false;
+		if (constellationId != ((EsiLocation) obj).getConstellationId()) return false;
+		if (regionId != ((EsiLocation) obj).getRegionId()) return false;
 		return true;
 	}
 
-	public boolean equals( final EveLocation obj ) {
+	public boolean equals( final EsiLocation obj ) {
 		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
 		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
 		if (!this.getStation().equalsIgnoreCase(obj.getStation())) return false;

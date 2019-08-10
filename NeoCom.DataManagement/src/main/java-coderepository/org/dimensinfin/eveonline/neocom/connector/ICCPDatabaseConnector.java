@@ -11,7 +11,7 @@ package org.dimensinfin.eveonline.neocom.connector;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
@@ -29,9 +29,9 @@ public interface ICCPDatabaseConnector {
 
 //	public EveItem searchItembyID(int typeID);
 //
-//	public EveLocation searchLocationbyID(long locationID);
+//	public EsiLocation searchLocationbyID(long locationID);
 
-	public EveLocation searchLocationBySystem(String system);
+	public EsiLocation searchLocationBySystem(String system);
 
 	public int searchModule4Blueprint(int bpitemID);
 

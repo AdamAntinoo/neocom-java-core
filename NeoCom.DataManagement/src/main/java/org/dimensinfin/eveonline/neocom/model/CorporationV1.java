@@ -36,7 +36,7 @@ public class CorporationV1 extends ANeoComEntity {
 	public String description = "-NA-";
 	public double taxRate = 0.0;
 	public long dateFounded = 0;
-	public EveLocation homeStation = new EveLocation();
+	public EsiLocation homeStation = new EsiLocation();
 	public String url4Icon = "http://image.eveonline.com/Alliance/117383987_128.png";
 
 	private GetCorporationsCorporationIdOk publicData = null;
@@ -82,7 +82,7 @@ public class CorporationV1 extends ANeoComEntity {
 		return dateFounded;
 	}
 
-	public EveLocation getHomeStation() {
+	public EsiLocation getHomeStation() {
 		return homeStation;
 	}
 

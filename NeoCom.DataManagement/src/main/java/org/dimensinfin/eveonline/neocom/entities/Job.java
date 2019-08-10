@@ -20,7 +20,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 import org.joda.time.DateTime;
@@ -94,8 +94,8 @@ public class Job extends ANeoComEntity {
 
 	//--- DERIVED FIELDS THAT SHOULD BE RECONSTRUCTED.
 	private transient EveItem blueprintItem = null;
-	private transient EveLocation blueprintLocation = null;
-	private transient EveLocation jobLocation = null;
+	private transient EsiLocation blueprintLocation = null;
+	private transient EsiLocation jobLocation = null;
 	private transient NeoComNode jobOutputLocation = null;
 	private transient EveItem productItem = null;
 
@@ -186,13 +186,13 @@ public class Job extends ANeoComEntity {
 		return jobId;
 	}
 
-	public EveLocation getJobLocation() {
+	public EsiLocation getJobLocation() {
 		try {
 			if (null == jobLocation) {
 				jobLocation = accessGlobal().searchLocation4Id(facilityId);
 			}
 		} catch (NeoComRuntimeException neoe) {
-			jobLocation = new EveLocation();
+			jobLocation = new EsiLocation();
 		}
 		return jobLocation;
 	}
@@ -275,7 +275,7 @@ public class Job extends ANeoComEntity {
 			// Cache the location pointed bu this identifier.
 			blueprintLocation = accessGlobal().searchLocation4Id(blueprintLocationId);
 		} catch (NeoComRuntimeException neoe) {
-			blueprintLocation = new EveLocation();
+			blueprintLocation = new EsiLocation();
 		}
 		return this;
 	}
@@ -300,7 +300,7 @@ public class Job extends ANeoComEntity {
 		this.outputLocationId = outputLocationId;
 		try {
 			// Load the output location item reference.
-			final EveLocation ouputLocation = accessGlobal().searchLocation4Id(outputLocationId);
+			final EsiLocation ouputLocation = accessGlobal().searchLocation4Id(outputLocationId);
 			if (ouputLocation.getTypeId() == ELocationType.UNKNOWN) {
 				// If the output location is UNKNOWN then this should be a reachable item. Search for it.
 				jobOutputLocation = accessGlobal().getNeocomDBHelper()
@@ -309,7 +309,7 @@ public class Job extends ANeoComEntity {
 		} catch (SQLException sqle) {
 			sqle.printStackTrace();
 		} catch (NeoComRuntimeException neoe) {
-			jobOutputLocation = new EveLocation();
+			jobOutputLocation = new EsiLocation();
 		}
 		return this;
 	}

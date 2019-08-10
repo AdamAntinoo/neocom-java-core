@@ -47,7 +47,7 @@ public interface IDeprecatedDatabaseConnector {
 	//
 	//	public Dao<Job, String> getJobDAO() throws SQLException;
 	//
-	//	public Dao<EveLocation, String> getLocationDAO() throws SQLException;
+	//	public Dao<EsiLocation, String> getLocationDAO() throws SQLException;
 	//
 	//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 	//

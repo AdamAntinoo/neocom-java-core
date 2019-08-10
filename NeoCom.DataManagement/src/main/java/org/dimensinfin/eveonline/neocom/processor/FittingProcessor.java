@@ -32,7 +32,7 @@ import org.dimensinfin.eveonline.neocom.industry.Action;
 import org.dimensinfin.eveonline.neocom.industry.EveTask;
 import org.dimensinfin.eveonline.neocom.industry.Fitting;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 
 /**
@@ -54,7 +54,7 @@ public class FittingProcessor {
 	 * This is the selected location to be used when searching for resources for the Fitting processing. Setting/configuring
 	 * this place properly will change the result of the fitting processing.
 	 */
-	protected EveLocation manufactureLocation = null;
+	protected EsiLocation manufactureLocation = null;
 	protected String region = null;
 	private Credential credential = null;
 	private AssetsManager assetsManager = null;
@@ -276,7 +276,7 @@ public class FittingProcessor {
 					processMove(asset, newTask);
 					return;
 				}
-//			final EveLocation loc = asset.getLocation();
+//			final EsiLocation loc = asset.getLocation();
 //			if (loc.toString().equalsIgnoreCase(manufactureLocation.toString())) {
 //				this.processMove(asset, newTask);
 //				return;
@@ -313,7 +313,7 @@ public class FittingProcessor {
 	 */
 	protected void processMove( final NeoComAsset asset, final EveTask newTask ) {
 		// Load data to do all the checks.
-//		final EveLocation loc = asset.getLocation();
+//		final EsiLocation loc = asset.getLocation();
 		final int requestQty = newTask.getQty();
 		final int qty = asset.getQuantity();
 
@@ -391,7 +391,7 @@ public class FittingProcessor {
 //			}
 //			if (category.equalsIgnoreCase("Planetary Commodities")) // Action is limited to PRODUCE or BUY
 //				if (action.getStringValue().equalsIgnoreCase("PRODUCE")) {
-//					final EveLocation planetaryLocation = pilot.getLocation4Role("PLANETARY PROCESSING", region);
+//					final EsiLocation planetaryLocation = pilot.getLocation4Role("PLANETARY PROCESSING", region);
 //					newTask.setTaskType(ETaskType.PRODUCE);
 //					if (null != planetaryLocation) {
 //						newTask.setLocation(planetaryLocation);
@@ -409,13 +409,13 @@ public class FittingProcessor {
 //				// There can be two types. Check the corresponding action.
 //				final String tech = newTask.getItem().getTech();
 //				if (tech.equalsIgnoreCase("Tech I")) {
-//					final EveLocation copyLocation = pilot.getLocation4Role("COPY", region);
+//					final EsiLocation copyLocation = pilot.getLocation4Role("COPY", region);
 //					AbstractManufactureProcess.logger.info("-- COPY location searched at " + copyLocation);
 //					newTask.setTaskType(ETaskType.COPY);
 //					if (null != copyLocation) {
 //						newTask.setLocation(copyLocation);
 //					}
-//					final EveLocation inventLocation = pilot.getLocation4Role("INVENT", region);
+//					final EsiLocation inventLocation = pilot.getLocation4Role("INVENT", region);
 //					AbstractManufactureProcess.logger.info("-- INVENT location searched at " + inventLocation);
 //					if (null != inventLocation) {
 //						newTask.setDestination(manufactureLocation);
@@ -462,9 +462,9 @@ public class FittingProcessor {
 				try {
 					newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
 				} catch (ExecutionException ee) {
-					newTask.setLocation(new EveLocation(60003466));
+					newTask.setLocation(new EsiLocation(60003466));
 				} catch (InterruptedException ie) {
-					newTask.setLocation(new EveLocation(60003466));
+					newTask.setLocation(new EsiLocation(60003466));
 				}
 				newTask.setMarketCounterPart(marketOrder);
 				newTask.setDestination(manufactureLocation);
@@ -476,9 +476,9 @@ public class FittingProcessor {
 					try {
 						partialTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
 					} catch (ExecutionException ee) {
-						partialTask.setLocation(new EveLocation(60003466));
+						partialTask.setLocation(new EsiLocation(60003466));
 					} catch (InterruptedException ie) {
-						partialTask.setLocation(new EveLocation(60003466));
+						partialTask.setLocation(new EsiLocation(60003466));
 					}
 					partialTask.setDestination(manufactureLocation);
 					partialTask.setQty(diff);
@@ -491,9 +491,9 @@ public class FittingProcessor {
 		try {
 			newTask.setLocation(newTask.getResource().getItem().getLowestSellerPrice().getLocation());
 		} catch (ExecutionException ee) {
-			newTask.setLocation(new EveLocation(60003466));
+			newTask.setLocation(new EsiLocation(60003466));
 		} catch (InterruptedException ie) {
-			newTask.setLocation(new EveLocation(60003466));
+			newTask.setLocation(new EsiLocation(60003466));
 		}
 		newTask.setDestination(manufactureLocation);
 		this.registerTask(300, newTask);
@@ -603,7 +603,7 @@ public class FittingProcessor {
 	 * @return a location to be used as the MANUFACTURE point. Research and other industry activities can be performed at other
 	 * places.
 	 */
-	protected EveLocation searchManufactureLocation( final Credential credential ) {
+	protected EsiLocation searchManufactureLocation( final Credential credential ) {
 		logger.info(">> [FittingProcessor.searchManufactureLocation]");
 		for (Property prop : roles) {
 			if (prop.getPropertyType() == EPropertyTypes.LOCATIONROLE)

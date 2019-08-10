@@ -13,7 +13,7 @@ import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.entities.*;
 import org.dimensinfin.eveonline.neocom.enums.EPropertyTypes;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,7 +58,7 @@ public class NeoComSBDBHelper {
 	private Dao<Credential, String> credentialDao = null;
 	private Dao<Colony, String> colonyDao = null;
 	private Dao<NeoComAsset, String> assetDao = null;
-	private Dao<EveLocation, String> locationDao = null;
+	private Dao<EsiLocation, String> locationDao = null;
 	private Dao<Property, String> propertyDao = null;
 	private Dao<NeoComBlueprint, String> blueprintDao = null;
 	private Dao<Job, String> jobDao = null;
@@ -220,7 +220,7 @@ public class NeoComSBDBHelper {
 			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
 		try {
-			TableUtils.createTableIfNotExists(databaseConnection, EveLocation.class);
+			TableUtils.createTableIfNotExists(databaseConnection, EsiLocation.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComSBDBHelper.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
@@ -507,9 +507,9 @@ public class NeoComSBDBHelper {
 	//		return colonySerializedDao;
 	//	}
 
-	public Dao<EveLocation, String> getLocationDao() throws SQLException {
+	public Dao<EsiLocation, String> getLocationDao() throws SQLException {
 		if (null == locationDao) {
-			locationDao = DaoManager.createDao(this.getConnectionSource(), EveLocation.class);
+			locationDao = DaoManager.createDao(this.getConnectionSource(), EsiLocation.class);
 		}
 		return locationDao;
 	}

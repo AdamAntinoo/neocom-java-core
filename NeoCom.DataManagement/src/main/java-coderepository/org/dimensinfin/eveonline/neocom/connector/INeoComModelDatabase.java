@@ -13,7 +13,7 @@ import com.j256.ormlite.dao.Dao;
 
 import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComBlueprint;
 import org.dimensinfin.eveonline.neocom.model.Property;
@@ -40,7 +40,7 @@ public interface INeoComModelDatabase /* extends IDeprecatedDatabaseConnector */
 
 	//	public Dao<Job, String> getJobDAO() throws SQLException;
 
-	public Dao<EveLocation, String> getLocationDao () throws SQLException;
+	public Dao<EsiLocation, String> getLocationDao () throws SQLException;
 
 	//	public Dao<NeoComMarketOrder, String> getMarketOrderDAO() throws SQLException;
 

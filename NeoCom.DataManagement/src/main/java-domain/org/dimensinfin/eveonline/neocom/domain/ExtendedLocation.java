@@ -7,7 +7,7 @@
 //								This version includes the access to the latest 6.x version of eveapi libraries to
 //								download ad parse the CCP XML API data.
 //								Code integration that is not dependent on any specific platform.
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +23,13 @@ import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ExtendedLocation extends EveLocation implements IExpandable, IDownloadable {
+public class ExtendedLocation extends EsiLocation implements IExpandable, IDownloadable {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -4484922266027865406L;
 	private static Logger logger = Logger.getLogger("ExtendedLocation");
 
 	// - F I E L D - S E C T I O N ............................................................................
-	private EveLocation delegate = null;
+	private EsiLocation delegate = null;
 	private long _characterIdentifier = -1;
 	/** Set the default content manager to one that is managed manually through method calls. */
 	private IContentManager contentManager = null;
@@ -45,17 +45,17 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 	}
 
 	@Deprecated
-	public ExtendedLocation ( final Credential credential, final EveLocation delegate) {
+	public ExtendedLocation ( final Credential credential, final EsiLocation delegate) {
 		this(delegate);
 		_characterIdentifier = credential.getAccountId();
 	}
 
-	public ExtendedLocation (final long characterId, final EveLocation delegate) {
+	public ExtendedLocation (final long characterId, final EsiLocation delegate) {
 		this(delegate);
 		_characterIdentifier = characterId;
 	}
 
-	private ExtendedLocation (final EveLocation delegate) {
+	private ExtendedLocation (final EsiLocation delegate) {
 		this();
 		//		this.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
@@ -209,13 +209,13 @@ public class ExtendedLocation extends EveLocation implements IExpandable, IDownl
 		}
 	}
 	@Override
-	public EveLocation setConstellation (final String constellation) {
+	public EsiLocation setConstellation (final String constellation) {
 		delegate.setConstellation(constellation);
 		return this;
 	}
 
 //	@Override
-	public EveLocation setConstellationId (final long constellationID) {
+	public EsiLocation setConstellationId (final long constellationID) {
 		delegate.setConstellationId(constellationID);
 		return this;
 	}

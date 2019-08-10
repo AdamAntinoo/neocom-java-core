@@ -175,9 +175,9 @@ public class ESIDataAdapter {
 		return Futures.immediateFuture(new MarketDataSet(itemId, side));
 	}
 
-	public Location searchLocation4Id( final Integer locationId ) {
-		return this.locationCatalogService.searchLocation4Id(locationId);
-	}
+//	public Location searchLocation4Id( final Integer locationId ) {
+//		return this.locationCatalogService.searchLocation4Id(locationId);
+//	}
 
 	@Deprecated
 	protected void prepareRaces() {
@@ -611,9 +611,7 @@ public class ESIDataAdapter {
 	 * This method encapsulates the call to the esi server to retrieve the current list of mining operations. This listing will contain the operations
 	 * for the last 30 days. It will be internally cached during 1800 seconds so we have to check the hour change less frequently.
 	 *
-	 * @param identifier   the character unique identifier.
-	 * @param refreshToken the authorization refresh token to be used on this call if the current toked is expired.
-	 * @param server       the esi data server to use, tranquility or singularity.
+	 * @param credential   the credential to be used when composing the ESI call.
 	 * @return the list of mining actions performed during the last 30 days.
 	 */
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {

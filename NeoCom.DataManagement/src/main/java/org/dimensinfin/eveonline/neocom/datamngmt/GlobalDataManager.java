@@ -8,7 +8,7 @@ import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
@@ -68,7 +68,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 
 	// - C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
-	private static Hashtable<Long, EveLocation> locationCache = new Hashtable<Long, EveLocation>();
+	private static Hashtable<Long, EsiLocation> locationCache = new Hashtable<Long, EsiLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
 
@@ -93,7 +93,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 			final ObjectInputStream input = new ObjectInputStream(buffer);
 			try {
 				synchronized (locationCache) {
-					locationCache = (Hashtable<Long, EveLocation>) input.readObject();
+					locationCache = (Hashtable<Long, EsiLocation>) input.readObject();
 					logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
 							            + " entries.");
 				}
@@ -243,7 +243,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		}
 	}
 
-//	public EveLocation searchLocation4Id( final long locationId ) {
+//	public EsiLocation searchLocation4Id( final long locationId ) {
 //		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
 //		if (locationCache.containsKey(locationId)) {
 //			// Account for a hit on the cache.
@@ -252,7 +252,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 //			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
 //			return locationCache.get(locationId);
 //		} else {
-//			final EveLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
+//			final EsiLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
 //			// Add the hit to the cache but only when it is not UNKNOWN.
 //			if (hit.getTypeId() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
 //			// Account for a miss on the cache.
@@ -264,7 +264,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 //		}
 //	}
 
-	public static EveLocation searchLocationBySystem( final String name ) {
+	public static EsiLocation searchLocationBySystem( final String name ) {
 		return GlobalDataManager.getSingleton().getSDEDBHelper().searchLocationBySystem(name);
 	}
 
