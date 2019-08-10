@@ -9,11 +9,12 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IExpandable;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Region extends NeoComNode implements IExpandable {

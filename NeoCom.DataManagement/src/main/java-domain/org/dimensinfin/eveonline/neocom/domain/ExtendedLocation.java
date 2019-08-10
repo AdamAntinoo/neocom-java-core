@@ -17,7 +17,6 @@ import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -152,8 +151,8 @@ public class ExtendedLocation extends EsiLocation implements IExpandable, IDownl
 	}
 
 	@Override
-	public ELocationType getTypeId () {
-		return delegate.getTypeId();
+	public LocationClass getClassType() {
+		return delegate.getClassType();
 	}
 
 	@Override

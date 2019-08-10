@@ -12,7 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class SkillTrained extends ANeoComEntity {

@@ -8,6 +8,7 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
@@ -175,9 +176,9 @@ public class ESIDataAdapter {
 		return Futures.immediateFuture(new MarketDataSet(itemId, side));
 	}
 
-//	public Location searchLocation4Id( final Integer locationId ) {
-//		return this.locationCatalogService.searchLocation4Id(locationId);
-//	}
+	public EsiLocation searchLocation4Id( final Long locationId ) {
+		return this.locationCatalogService.searchLocation4Id(locationId);
+	}
 
 	@Deprecated
 	protected void prepareRaces() {
@@ -611,7 +612,7 @@ public class ESIDataAdapter {
 	 * This method encapsulates the call to the esi server to retrieve the current list of mining operations. This listing will contain the operations
 	 * for the last 30 days. It will be internally cached during 1800 seconds so we have to check the hour change less frequently.
 	 *
-	 * @param credential   the credential to be used when composing the ESI call.
+	 * @param credential the credential to be used when composing the ESI call.
 	 * @return the list of mining actions performed during the last 30 days.
 	 */
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
@@ -921,11 +922,10 @@ public class ESIDataAdapter {
 		/**
 		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as possible.
 		 */
-		public Builder( final IConfigurationProvider configurationProvider
-				, final IFileSystem fileSystemAdapter ) {
+		public Builder( final IConfigurationProvider configurationProvider,
+		                final IFileSystem fileSystemAdapter ) {
 			Objects.requireNonNull(configurationProvider);
 			Objects.requireNonNull(fileSystemAdapter);
-			//			Objects.requireNonNull(cacheManager);
 			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
 		}
 
@@ -939,7 +939,11 @@ public class ESIDataAdapter {
 			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
 					, this.onConstruction.fileSystemAdapter).build();
 			Objects.requireNonNull(this.onConstruction.retrofitFactory);
-			this.onConstruction.locationCatalogService = new LocationCatalogService.Builder().build();
+			this.onConstruction.locationCatalogService = new LocationCatalogService.Builder()
+																 .withEsiDataAdapter(this.onConstruction)
+																 .withConfigurationProvider(this.onConstruction.configurationProvider)
+																 .withFileSystem(this.onConstruction.fileSystemAdapter)
+					                                             .build();
 			Objects.requireNonNull(this.onConstruction.locationCatalogService);
 			return this.onConstruction;
 		}

@@ -1,19 +1,17 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
-import com.beimin.eveapi.model.eve.Station;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import net.nikr.eve.jeveasset.data.Citadel;
 
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
+import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 
-import java.sql.SQLException;
+import javax.persistence.Entity;
+
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
  * This class encapsulates the concept of Eve Location. There are different types of locations and the new CCP
@@ -28,9 +26,12 @@ import java.sql.SQLException;
  *
  * @author Adam Antinoo
  */
-@DatabaseTable(tableName = "locations")
-public class EsiLocation extends ANeoComEntity {
+@Immutable
+@Entity(name = "Locations")
+@DatabaseTable(tableName = "Locations")
+public class EsiLocation extends UpdatableEntity {
 	private static final long serialVersionUID = 1522765618286937377L;
+//	private static ESIDataAdapter esiDataAdapter;
 	private static final EsiLocation jita = new EsiLocation();
 
 	static {
@@ -40,8 +41,8 @@ public class EsiLocation extends ANeoComEntity {
 				.setSystemId(30000142).setSystem("Jita")
 				.setStationId(60003760).setStation("Jita IV - Moon 4 - Caldari Navy Assembly Plant")
 				.setSecurity("0.945913116664839").setSecurityValue(0.945913116664839)
-				.setTypeId(ELocationType.CCPLOCATION)
-				.setUrlLocationIcon("http://image.eveonline.com/Render/1529_64.png")
+				.setClassType(LocationClass.CCPLOCATION)
+//				.setUrlLocationIcon("http://image.eveonline.com/Render/1529_64.png")
 				.setName(jita.getRegion() + " - " + jita.getStation());
 	}
 
@@ -49,7 +50,10 @@ public class EsiLocation extends ANeoComEntity {
 		return jita;
 	}
 
-	// - F I E L D - S E C T I O N ............................................................................
+//	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
+//		esiDataAdapter = newEsiDataAdapter;
+//	}
+
 	@DatabaseField(id = true, index = true)
 	protected long id = -2;
 	@DatabaseField
@@ -71,66 +75,67 @@ public class EsiLocation extends ANeoComEntity {
 	@DatabaseField
 	private String security = "0.0";
 	@DatabaseField(dataType = DataType.ENUM_STRING)
-	protected ELocationType typeId = ELocationType.UNKNOWN;
-	@DatabaseField
-	public String urlLocationIcon = null;
+	protected LocationClass classType = LocationClass.UNKNOWN;
+//	@DatabaseField
+//	public String urlLocationIcon = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public EsiLocation() {
-		super();
-	}
+//	public EsiLocation() {
+//		super();
+//	}
+//
+//	public EsiLocation( final long locationId ) {
+////		this();
+//		this.id = locationId;
+//		this.stationId = locationId;
+//
+//	}
 
-	public EsiLocation( final long locationId ) {
-		this();
-		id = locationId;
-		stationId = locationId;
-	}
-
-	public EsiLocation( final long citadelid, final Citadel cit ) {
-		this();
-		try {
-			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
-			// calculate the ocationID from the sure item and update the rest of the fields.
-			this.updateFromCitadel(citadelid, cit);
-			id = citadelid;
-			stationId = citadelid;
-			typeId = ELocationType.CITADEL;
-			// Try to create the pair. It fails then  it was already created.
-			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			this.store();
-		}
-	}
-
-	public EsiLocation( final Station station ) {
-		this();
-		try {
-			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
-			// Calculate the locationID from the source item and update the rest of the fields.
-			this.updateFromSystem(station.getSolarSystemID());
-			id = station.getStationID();
-			stationId = station.getStationID();
-			typeId = ELocationType.OUTPOST;
-			this.setStation(station.getStationName());
-			// Try to create the pair. It fails then  it was already created.
-			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-			this.store();
-		}
-	}
+//	public EsiLocation( final long citadelid, final Citadel cit ) {
+//		this();
+//		try {
+//			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+//			// calculate the ocationID from the sure item and update the rest of the fields.
+//			this.updateFromCitadel(citadelid, cit);
+//			id = citadelid;
+//			stationId = citadelid;
+//			classType = LocationClass.CITADEL;
+//			// Try to create the pair. It fails then  it was already created.
+//			locationDao.createOrUpdate(this);
+//		} catch (final SQLException sqle) {
+//			sqle.printStackTrace();
+//			this.store();
+//		}
+//	}
+//
+//	public EsiLocation( final Station station ) {
+//		this();
+//		try {
+//			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+//			// Calculate the locationID from the source item and update the rest of the fields.
+//			this.updateFromSystem(station.getSolarSystemID());
+//			id = station.getStationID();
+//			stationId = station.getStationID();
+//			classType = LocationClass.OUTPOST;
+//			this.setStation(station.getStationName());
+//			// Try to create the pair. It fails then  it was already created.
+//			locationDao.createOrUpdate(this);
+//		} catch (final SQLException sqle) {
+//			sqle.printStackTrace();
+//			this.store();
+//		}
+//	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
-	public EsiLocation store() {
-		try {
-			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
-			locationDao.createOrUpdate(this);
-		} catch (final SQLException sqle) {
-			sqle.printStackTrace();
-		}
-		return this;
-	}
+//	public EsiLocation store() {
+//		try {
+//			final Dao<EsiLocation, String> locationDao = accessGlobal().getNeocomDBHelper().getLocationDao();
+//			locationDao.createOrUpdate(this);
+//		} catch (final SQLException sqle) {
+//			sqle.printStackTrace();
+//		}
+//		return this;
+//	}
 
 	// --- G E T T E R S   &   S E T T E R S
 	public long getId() {
@@ -173,6 +178,10 @@ public class EsiLocation extends ANeoComEntity {
 	}
 
 	public String getSystem() {
+		return this.system;
+	}
+
+	public String getSystemName() {
 		return this.system;
 	}
 
@@ -226,54 +235,54 @@ public class EsiLocation extends ANeoComEntity {
 		return this;
 	}
 
-	public ELocationType getTypeId() {
-		return this.typeId;
+	public LocationClass getClassType() {
+		return this.classType;
 	}
 
-	public EsiLocation setTypeId( final ELocationType typeId ) {
-		this.typeId = typeId;
+	public EsiLocation setClassType( final LocationClass classType ) {
+		this.classType = classType;
 		return this;
 	}
 
-	/**
-	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
-	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
-	 */
-	public String getUrlLocationIcon() {
-		if (null == urlLocationIcon) {
-			//			if (id == -2) {
-			//				urlLocationIcon = new StringBuffer()
-			//						.append("http://image.eveonline.com/Render/")
-			//						.append(id)
-			//						.append("_64.png")
-			//						.toString();
-			//			} else
-			try {
-				urlLocationIcon = new StringBuffer()
-						                  .append("http://image.eveonline.com/Render/")
-						                  .append(accessGlobal().searchStationType(stationId))
-						                  .append("_64.png")
-						                  .toString();
-			} catch (NeoComRuntimeException neoe) {
-				urlLocationIcon = new StringBuffer()
-						                  .append("http://image.eveonline.com/Render/")
-						                  .append(stationId)
-						                  .append("_64.png")
-						                  .toString();
-			}
-		}
-		return urlLocationIcon;
-	}
-
-	public EsiLocation setUrlLocationIcon( final String urlLocationIcon ) {
-		this.urlLocationIcon = urlLocationIcon;
-		return this;
-	}
+//	/**
+//	 * Downloads and caches the item icon from the CCP server. The new implementation check for special cases
+//	 * such as locations. Stations on locations have an image that can be downloaded from the same place.
+//	 */
+//	public String getUrlLocationIcon() {
+//		if (null == urlLocationIcon) {
+//			//			if (id == -2) {
+//			//				urlLocationIcon = new StringBuffer()
+//			//						.append("http://image.eveonline.com/Render/")
+//			//						.append(id)
+//			//						.append("_64.png")
+//			//						.toString();
+//			//			} else
+//			try {
+//				urlLocationIcon = new StringBuffer()
+//						                  .append("http://image.eveonline.com/Render/")
+//						                  .append(accessGlobal().searchStationType(stationId))
+//						                  .append("_64.png")
+//						                  .toString();
+//			} catch (NeoComRuntimeException neoe) {
+//				urlLocationIcon = new StringBuffer()
+//						                  .append("http://image.eveonline.com/Render/")
+//						                  .append(stationId)
+//						                  .append("_64.png")
+//						                  .toString();
+//			}
+//		}
+//		return urlLocationIcon;
+//	}
+//
+//	public EsiLocation setUrlLocationIcon( final String urlLocationIcon ) {
+//		this.urlLocationIcon = urlLocationIcon;
+//		return this;
+//	}
 
 	//--- V I R T U A L   A C C E S S O R S
 	@JsonIgnore
 	public final boolean isCitadel() {
-		if (this.getTypeId() == ELocationType.CITADEL) return true;
+		if (this.getClassType() == LocationClass.CITADEL) return true;
 		return false;
 	}
 
@@ -359,7 +368,7 @@ public class EsiLocation extends ANeoComEntity {
 //		try {
 //			systemLocation = accessGlobal().searchLocation4Id(newid);
 //		} catch (NeoComRuntimeException newe) {
-			systemLocation = new EsiLocation();
+		systemLocation = new EsiLocation();
 //		}
 		systemId = systemLocation.getSystemId();
 		system = systemLocation.getSystem();

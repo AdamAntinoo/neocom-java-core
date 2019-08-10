@@ -4,7 +4,7 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
+import org.dimensinfin.eveonline.neocom.domain.LocationClass;
 import org.dimensinfin.eveonline.neocom.exception.NeoComError;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -14,13 +14,6 @@ import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
@@ -69,7 +62,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 
 	// - C A C H E   S T O R A G E   S E C T I O N
 	private static final Hashtable<Integer, EveItem> itemCache = new Hashtable<Integer, EveItem>();
-	private static Hashtable<Long, EsiLocation> locationCache = new Hashtable<Long, EsiLocation>();
+//	private static Hashtable<Long, EsiLocation> locationCache = new Hashtable<Long, EsiLocation>();
 	private static final Hashtable<Integer, ItemGroup> itemGroupCache = new Hashtable<Integer, ItemGroup>();
 	private static final Hashtable<Integer, ItemCategory> itemCategoryCache = new Hashtable<Integer, ItemCategory>();
 
@@ -78,75 +71,75 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		itemCache.clear();
 	}
 
-	public static void cleanLocationsCache() {
-		locationCache.clear();
-	}
-
-	public static void readLocationsDataCache() {
-		logger.info(">> [GlobalDataManager.readLocationsDataCache]");
-		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
-				                             + GlobalDataManager.getResourceString("R.cache.locationscache.filename");
-		logger.info("-- [GlobalDataManager.readLocationsDataCache]> Opening cache file: {}", cacheFileName);
-		try {
-			final BufferedInputStream buffer = new BufferedInputStream(
-					GlobalDataManager.openResource4Input(cacheFileName)
-			);
-			final ObjectInputStream input = new ObjectInputStream(buffer);
-			try {
-				synchronized (locationCache) {
-					locationCache = (Hashtable<Long, EsiLocation>) input.readObject();
-					logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
-							            + " entries.");
-				}
-			} finally {
-				input.close();
-				buffer.close();
-			}
-		} catch (final ClassNotFoundException ex) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> ClassNotFoundException. {}", ex.getMessage()); //$NON-NLS-1$
-		} catch (final FileNotFoundException fnfe) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> FileNotFoundException. {}", fnfe.getMessage()); //$NON-NLS-1$
-		} catch (final IOException ioe) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IOException. {}", ioe.getMessage()); //$NON-NLS-1$
-		} catch (final IllegalArgumentException iae) {
-			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IllegalArgumentException. {}", iae.getMessage()); //$NON-NLS-1$
-		} catch (final RuntimeException rex) {
-			rex.printStackTrace();
-		} finally {
-			logger.info("<< [GlobalDataManager.readLocationsDataCache]");
-		}
-	}
-
-	public static void writeLocationsDatacache() {
-		logger.info(">> [GlobalDataManager.writeLocationsDatacache]");
-		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
-				                             + GlobalDataManager.getResourceString("R.cache.locationscache.filename");
-		logger.info("-- [GlobalDataManager.writeLocationsDatacache]> Openning cache file: {}", cacheFileName);
-		//		File modelStoreFile = new File(cacheFileName);
-		try {
-			final BufferedOutputStream buffer = new BufferedOutputStream(
-					GlobalDataManager.openResource4Output(cacheFileName)
-			);
-			final ObjectOutput output = new ObjectOutputStream(buffer);
-			try {
-				synchronized (locationCache) {
-					output.writeObject(locationCache);
-					logger.info(
-							"-- [GlobalDataManager.writeLocationsDatacache]> Wrote Locations cache: " + locationCache.size() + " entries.");
-				}
-			} finally {
-				output.flush();
-				output.close();
-				buffer.close();
-			}
-		} catch (final FileNotFoundException fnfe) {
-			logger.warn("W> [GlobalDataManager.writeLocationsDatacache]> FileNotFoundException."); //$NON-NLS-1$
-		} catch (final IOException ex) {
-			logger.warn("W> [GlobalDataManager.writeLocationsDatacache]> IOException."); //$NON-NLS-1$
-		} finally {
-			logger.info("<< [GlobalDataManager.writeLocationsDatacache]");
-		}
-	}
+//	public static void cleanLocationsCache() {
+//		locationCache.clear();
+//	}
+//
+//	public static void readLocationsDataCache() {
+//		logger.info(">> [GlobalDataManager.readLocationsDataCache]");
+//		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
+//				                             + GlobalDataManager.getResourceString("R.cache.locationscache.filename");
+//		logger.info("-- [GlobalDataManager.readLocationsDataCache]> Opening cache file: {}", cacheFileName);
+//		try {
+//			final BufferedInputStream buffer = new BufferedInputStream(
+//					GlobalDataManager.openResource4Input(cacheFileName)
+//			);
+//			final ObjectInputStream input = new ObjectInputStream(buffer);
+//			try {
+//				synchronized (locationCache) {
+//					locationCache = (Hashtable<Long, EsiLocation>) input.readObject();
+//					logger.info("-- [GlobalDataManager.readLocationsDataCache]> Restored cache Locations: " + locationCache.size()
+//							            + " entries.");
+//				}
+//			} finally {
+//				input.close();
+//				buffer.close();
+//			}
+//		} catch (final ClassNotFoundException ex) {
+//			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> ClassNotFoundException. {}", ex.getMessage()); //$NON-NLS-1$
+//		} catch (final FileNotFoundException fnfe) {
+//			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> FileNotFoundException. {}", fnfe.getMessage()); //$NON-NLS-1$
+//		} catch (final IOException ioe) {
+//			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IOException. {}", ioe.getMessage()); //$NON-NLS-1$
+//		} catch (final IllegalArgumentException iae) {
+//			logger.warn("W> [GlobalDataManager.readLocationsDataCache]> IllegalArgumentException. {}", iae.getMessage()); //$NON-NLS-1$
+//		} catch (final RuntimeException rex) {
+//			rex.printStackTrace();
+//		} finally {
+//			logger.info("<< [GlobalDataManager.readLocationsDataCache]");
+//		}
+//	}
+//
+//	public static void writeLocationsDataCache() {
+//		logger.info(">> [GlobalDataManager.writeLocationsDataCache]");
+//		final String cacheFileName = GlobalDataManager.getResourceString("R.cache.directorypath")
+//				                             + GlobalDataManager.getResourceString("R.cache.locationscache.filename");
+//		logger.info("-- [GlobalDataManager.writeLocationsDataCache]> Openning cache file: {}", cacheFileName);
+//		//		File modelStoreFile = new File(cacheFileName);
+//		try {
+//			final BufferedOutputStream buffer = new BufferedOutputStream(
+//					GlobalDataManager.openResource4Output(cacheFileName)
+//			);
+//			final ObjectOutput output = new ObjectOutputStream(buffer);
+//			try {
+//				synchronized (locationCache) {
+//					output.writeObject(locationCache);
+//					logger.info(
+//							"-- [GlobalDataManager.writeLocationsDataCache]> Wrote Locations cache: " + locationCache.size() + " entries.");
+//				}
+//			} finally {
+//				output.flush();
+//				output.close();
+//				buffer.close();
+//			}
+//		} catch (final FileNotFoundException fnfe) {
+//			logger.warn("W> [GlobalDataManager.writeLocationsDataCache]> FileNotFoundException."); //$NON-NLS-1$
+//		} catch (final IOException ex) {
+//			logger.warn("W> [GlobalDataManager.writeLocationsDataCache]> IOException."); //$NON-NLS-1$
+//		} finally {
+//			logger.info("<< [GlobalDataManager.writeLocationsDataCache]");
+//		}
+//	}
 
 
 	public void shutdownExecutors() {
@@ -245,24 +238,7 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 	}
 
 	public EsiLocation searchLocation4Id( final long locationId ) {
-		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
-		if (locationCache.containsKey(locationId)) {
-			// Account for a hit on the cache.
-			int access = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
-			int hits = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.getHits();
-			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
-			return locationCache.get(locationId);
-		} else {
-			final EsiLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
-			// Add the hit to the cache but only when it is not UNKNOWN.
-			if (hit.getTypeId() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
-			// Account for a miss on the cache.
-			int access = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
-			int hits = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.getHits();
-			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {} found at database.",
-					locationId);
-			return hit;
-		}
+		return this.esiDataAdapter.searchLocation4Id(locationId);
 	}
 
 	public static EsiLocation searchLocationBySystem( final String name ) {

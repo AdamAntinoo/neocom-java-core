@@ -9,9 +9,9 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.contentmngmt;
 
+import org.dimensinfin.eveonline.neocom.domain.ExtendedLocation;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.interfaces.IAssetContainer;
-import org.dimensinfin.eveonline.neocom.model.ExtendedLocation;
 
 /**
  * This is another class of Content Manager. Instead of managing the contend on demand we should be sure that

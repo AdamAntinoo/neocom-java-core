@@ -8,13 +8,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.Objects;
+
+import javax.persistence.Entity;
 
 /**
  * This class represents the database entity to store the ESI character's mining extractions. That data are records that are kept for 30 days
@@ -31,6 +33,7 @@ import java.util.Objects;
  *
  * @author Adam Antinoo
  */
+@Entity(name = "MiningExtractions")
 @DatabaseTable(tableName = "MiningExtractions")
 public class MiningExtraction extends UpdatableEntity implements IAggregableItem {
 	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
@@ -66,19 +69,19 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	@Deprecated
 	public static String generateRecordId( final String date, final int hour, final int typeId, final long systemId, final long ownerId ) {
 		return "".concat(date).concat(":")
-		         .concat(Integer.toString(hour)).concat("-")
-		         .concat(Long.toString(systemId)).concat("-")
-		         .concat(Integer.toString(typeId)).concat("-")
-		         .concat(Long.toString(ownerId));
+				       .concat(Integer.toString(hour)).concat("-")
+				       .concat(Long.toString(systemId)).concat("-")
+				       .concat(Integer.toString(typeId)).concat("-")
+				       .concat(Long.toString(ownerId));
 	}
 
 	public static String generateRecordId( final LocalDate date, final int hour, final int typeId,
 	                                       final long systemId, final long ownerId ) {
 		return "".concat(date.toString(EXTRACTION_DATE_FORMAT)).concat(":")
-		         .concat(Integer.toString(hour)).concat("-")
-		         .concat(Long.toString(systemId)).concat("-")
-		         .concat(Integer.toString(typeId)).concat("-")
-		         .concat(Long.toString(ownerId));
+				       .concat(Integer.toString(hour)).concat("-")
+				       .concat(Long.toString(systemId)).concat("-")
+				       .concat(Integer.toString(typeId)).concat("-")
+				       .concat(Long.toString(ownerId));
 	}
 
 	// - F I E L D - S E C T I O N
@@ -100,7 +103,7 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	private long ownerId = -1;
 
 	private transient EveItem resourceItem;
-	private transient EsiLocation systemCache;
+	private transient EsiLocation solarSystemLocation;
 
 	// - C O N S T R U C T O R S
 	private MiningExtraction() {
@@ -118,13 +121,6 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 
 	public String getResourceName() {
 		return this.resourceItem.getName();
-	}
-
-	public String getSystemName() {
-		if (null == this.systemCache) {
-			this.systemCache = new EsiLocation(this.solarSystemId);
-		}
-		return this.systemCache.getSystemName();
 	}
 
 	public LocalDate getExtractionDate() {
@@ -247,8 +243,10 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 			return this;
 		}
 
-		public Builder withSolarSystemId( final int solarSystemId ) {
-			this.onConstruction.solarSystemId = solarSystemId;
+		public Builder withSolarSystemLocation( final EsiLocation solarSystemLocation ) {
+			Objects.requireNonNull(solarSystemLocation);
+			this.onConstruction.solarSystemLocation = solarSystemLocation;
+			this.onConstruction.solarSystemId = this.onConstruction.solarSystemLocation.getSystemId();
 			return this;
 		}
 
@@ -263,14 +261,8 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		}
 
 		public Builder withExtractionDate( final LocalDate extractionDate ) {
-			// Update the extractions date string.
+			Objects.requireNonNull(extractionDate);
 			this.onConstruction.extractionDateName = extractionDate.toString(EXTRACTION_DATE_FORMAT);
-//			final String todayDate = DateTime.now().toString(EXTRACTION_DATE_FORMAT);
-//			final String targetDate = extractionDate.toString(EXTRACTION_DATE_FORMAT);
-//			if (todayDate.equalsIgnoreCase(targetDate))
-//				this.onConstruction.extractionHour = DateTime.now().getHourOfDay();
-//			else
-//				this.onConstruction.extractionHour = 24;
 			return this;
 		}
 
@@ -281,7 +273,6 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 
 		public Builder fromMining( final GetCharactersCharacterIdMining200Ok mineInstance ) {
 			this.withTypeId(mineInstance.getTypeId());
-			this.withSolarSystemId(mineInstance.getSolarSystemId());
 			this.withQuantity(mineInstance.getQuantity().intValue());
 			this.withExtractionDate(mineInstance.getDate());
 			return this;
@@ -293,21 +284,13 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		 */
 		public MiningExtraction build() {
 			Objects.requireNonNull(this.onConstruction.resourceItem);
-//			final DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd");
-//			if (null == this.onConstruction.extractionDateName) this.withExtractionDate(LocalDate.now());
-//			final LocalDate dt = dtf.parseLocalDate(this.onConstruction.extractionDateName);
-//			if (this.onConstruction.extractionHour == 24) this.onConstruction.id = MiningExtraction.generateRecordId(
-//					dt
-//					, this.onConstruction.typeId
-//					, this.onConstruction.solarSystemId
-//					, this.onConstruction.ownerId);
-//			else
+			Objects.requireNonNull(this.onConstruction.solarSystemLocation);
 			this.onConstruction.id = MiningExtraction.generateRecordId(
-					this.onConstruction.extractionDateName
-					, this.onConstruction.extractionHour
-					, this.onConstruction.typeId
-					, this.onConstruction.solarSystemId
-					, this.onConstruction.ownerId);
+					new LocalDate(this.onConstruction.extractionDateName),
+					this.onConstruction.extractionHour,
+					this.onConstruction.typeId,
+					this.onConstruction.solarSystemId,
+					this.onConstruction.ownerId);
 			return this.onConstruction;
 		}
 	}

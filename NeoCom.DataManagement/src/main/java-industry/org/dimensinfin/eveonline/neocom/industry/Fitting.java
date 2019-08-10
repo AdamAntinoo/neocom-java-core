@@ -12,19 +12,18 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class Fitting extends ANeoComEntity {
@@ -172,7 +171,8 @@ public class Fitting extends ANeoComEntity {
 			this.flag = flag;
 			// Transform the numeric flag to a categorized value.
 			try {
-				detailedFlag = accessGlobal().searchFlag4Id(flag.hashCode());
+				// TODO - this requires reimplementation reading data from SDE persistnce repository
+				detailedFlag = new InventoryFlag();
 			} catch (NeoComRuntimeException neoe) {
 				detailedFlag = new InventoryFlag()
 						.setFlagID(4)
