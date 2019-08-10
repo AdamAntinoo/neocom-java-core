@@ -1,7 +1,7 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.support.TestConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.TestFileSystem;
 import org.junit.Assert;

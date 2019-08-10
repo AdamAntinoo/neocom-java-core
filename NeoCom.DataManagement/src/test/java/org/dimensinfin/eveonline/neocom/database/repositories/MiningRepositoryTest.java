@@ -7,7 +7,7 @@ import com.j256.ormlite.stmt.Where;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.support.EsiDataAdapterSupportTest;
 import org.joda.time.LocalDate;
 import org.junit.Assert;

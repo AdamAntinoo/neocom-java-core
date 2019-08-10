@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
 import org.joda.time.LocalDate;

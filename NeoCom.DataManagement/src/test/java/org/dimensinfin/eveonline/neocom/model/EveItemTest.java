@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.core.EventEmitter;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
@@ -23,7 +24,7 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Before
 	public void setUp() {
 		esiDataAdapter = Mockito.mock(ESIDataAdapter.class);
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 	}
 
 	@Test
@@ -34,12 +35,12 @@ public class EveItemTest extends TestEsiAdapterReady {
 		type.setName("Tritanium");
 		type.setVolume(0.01F);
 		type.setCapacity(10.0F);
-		final EveItem item = new EveItem(type);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem(type);
 		Assert.assertNotNull(item);
 	}
 	@Test
 	public void equalsContract() {
-		EqualsVerifier.forClass(EveItem.class)
+		EqualsVerifier.forClass(org.dimensinfin.eveonline.neocom.domain.EveItem.class)
 		              .usingGetClass().verify();
 	}
 
@@ -51,7 +52,7 @@ public class EveItemTest extends TestEsiAdapterReady {
 		type.setName("Tritanium");
 		type.setVolume(0.01F);
 		type.setCapacity(10.0F);
-		final EveItem item = new EveItem(type);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem(type);
 		Assert.assertNotNull(item);
 		Assert.assertEquals(-1, item.getItemId());
 		Assert.assertEquals(10.0F, item.getCapacity().floatValue());
@@ -69,9 +70,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getName() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem(34);
 		final String expected = "Tritanium";
 		final String obtained = item.getName();
 		Assert.assertNotNull(item);
@@ -81,9 +82,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getTypeId() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem().setTypeId(34);
 		final int obtained = item.getTypeId();
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The type should be the type set.", 34, obtained);
@@ -92,9 +93,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getGroupId() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem().setTypeId(34);
 		final int obtained = item.getGroupId();
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The group should be valid.", 18, obtained);
@@ -103,9 +104,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getCategoryId() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem().setTypeId(34);
 		final int obtained = item.getCategoryId();
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The category should be valid.", 4, obtained);
@@ -114,9 +115,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getVolume() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem().setTypeId(34);
 		final double obtained = item.getVolume();
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The volume should match.", 0.01, obtained, 0.001);
@@ -125,9 +126,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getIndustryGroup() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem().setTypeId(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem().setTypeId(34);
 		final EIndustryGroup obtained = item.getIndustryGroup();
 		Assert.assertNotNull(item);
 		Assert.assertEquals("The volume should match.", EIndustryGroup.REFINEDMATERIAL, obtained);
@@ -143,8 +144,8 @@ public class EveItemTest extends TestEsiAdapterReady {
 		Mockito.when(esiDataAdapter.searchItemGroup4Id(Mockito.anyInt())).thenReturn(group);
 		Mockito.when(esiDataAdapter.searchItemCategory4Id(Mockito.anyInt())).thenReturn(category);
 		Mockito.when(category.getName()).thenReturn("Capsuleer Bases");
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem(34);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem(34);
 		Assert.assertNotNull(item);
 		Assert.assertFalse(item.isBlueprint());
 	}
@@ -159,8 +160,8 @@ public class EveItemTest extends TestEsiAdapterReady {
 		Mockito.when(esiDataAdapter.searchItemGroup4Id(Mockito.anyInt())).thenReturn(group);
 		Mockito.when(esiDataAdapter.searchItemCategory4Id(Mockito.anyInt())).thenReturn(category);
 		Mockito.when(category.getName()).thenReturn("Energy Neutralizer Blueprint");
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem(15799);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new org.dimensinfin.eveonline.neocom.domain.EveItem(15799);
 		Assert.assertNotNull(item);
 		Assert.assertFalse(item.isBlueprint());
 	}
@@ -168,9 +169,9 @@ public class EveItemTest extends TestEsiAdapterReady {
 	@Test
 	public void getPrice() throws IOException {
 		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter(esiDataAdapter);
+		org.dimensinfin.eveonline.neocom.domain.EveItem.injectEsiDataAdapter(esiDataAdapter);
 		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem(34);
+		final org.dimensinfin.eveonline.neocom.domain.EveItem item = new EveItem(34);
 		double obtained = item.getPrice();
 		Assert.assertTrue("Price expected to be positive value.", obtained > 3.0);
 	}

@@ -2,7 +2,7 @@ package org.dimensinfin.eveonline.neocom.planetary;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.support.TestEsiAdapterReady;
 import org.junit.Assert;
 import org.junit.Test;
