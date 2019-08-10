@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-//@Component
 public class CredentialRepository {
 	private static Logger logger = LoggerFactory.getLogger(CredentialRepository.class);
 

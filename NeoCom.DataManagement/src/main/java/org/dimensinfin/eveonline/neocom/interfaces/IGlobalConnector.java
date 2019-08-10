@@ -19,7 +19,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.model.EveLocation;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public interface IGlobalConnector {
 
 	public EveItem searchItem4Id( final int typeId );
 
-	public EveLocation searchLocation4Id( final long locationId );
+//	public EveLocation searchLocation4Id( final long locationId );
 
 	public int searchModule4Blueprint( final int bpitemId );
 

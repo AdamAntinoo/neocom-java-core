@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.stream.Location;
+
 public class NeoComSupportDBAdapter {
 	private static Logger logger = LoggerFactory.getLogger(NeoComSupportDBAdapter.class);
 
@@ -25,6 +27,7 @@ public class NeoComSupportDBAdapter {
 
 	private Dao<Credential, String> credentialDao = null;
 	private Dao<MiningExtraction, String> miningExtractionDao = null;
+	private Dao<Location, Integer> locationDao = null;
 
 	private NeoComSupportDBAdapter() {
 	}
@@ -41,6 +44,14 @@ public class NeoComSupportDBAdapter {
 		}
 		return this.credentialDao;
 	}
+
+	public Dao<Location, Integer> getLocationDao() throws SQLException {
+		if (null == this.locationDao) {
+			this.locationDao = DaoManager.createDao(this.getConnectionSource(), Location.class);
+		}
+		return this.locationDao;
+	}
+
 	public Dao<MiningExtraction, String> getMiningExtractionDao() throws SQLException {
 		if (null == this.miningExtractionDao) {
 			this.miningExtractionDao = DaoManager.createDao(this.getConnectionSource(), MiningExtraction.class);
@@ -55,8 +66,8 @@ public class NeoComSupportDBAdapter {
 	}
 
 	protected ConnectionSource getConnectionSource() throws SQLException {
-		if (null == connectionSource) this.openNeoComDB();
-		return connectionSource;
+		if (null == this.connectionSource) this.openNeoComDB();
+		return this.connectionSource;
 	}
 
 	/**
@@ -66,7 +77,8 @@ public class NeoComSupportDBAdapter {
 		this.connectionSource = new JdbcPooledConnectionSource(this.databaseConnection);
 		this.connectionSource.setMaxConnectionAgeMillis(TimeUnit.MINUTES.toMillis(5)); // Keep the connections open for 5 minutes
 		this.connectionSource.setCheckConnectionsEveryMillis(TimeUnit.SECONDS.toMillis(60));
-		this.connectionSource.setTestBeforeGet(true); // Enable the testing of connections right before they are handed to the user
+		this.connectionSource.setTestBeforeGet(
+				true); // Enable the testing of connections right before they are handed to the user
 	}
 
 	protected void onCreate( final ConnectionSource databaseConnection ) {
@@ -89,6 +101,11 @@ public class NeoComSupportDBAdapter {
 		}
 		try {
 			TableUtils.createTableIfNotExists(databaseConnection, MiningExtraction.class);
+		} catch (SQLException sqle) {
+			logger.warn("SQL [NeoComSupportDBAdapter.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
+		}
+		try {
+			TableUtils.createTableIfNotExists(databaseConnection, Location.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComSupportDBAdapter.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}

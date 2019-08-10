@@ -36,8 +36,23 @@ public class NeoComComponentFactory {
 	private CredentialRepository credentialRepository;
 	private SupportMiningRepository miningRepository;
 	private ISDEDatabaseAdapter sdeDatabaseAdapter;
+	private SupportLocationRepository locationRepository;
 
 	// - A C C E S S O R S
+	public SupportLocationRepository getLocationRepository() {
+		if (null == this.locationRepository) {
+			try {
+				this.locationRepository = new SupportLocationRepository.Builder()
+						                          .withLocationDao(this.getNeoComDBAdapter().getLocationDao())
+						                          .build();
+			} catch (SQLException sqle) {
+				this.locationRepository = null;
+				Objects.requireNonNull(this.locationRepository);
+			}
+		}
+		return this.locationRepository;
+	}
+
 	public ISDEDatabaseAdapter getSDEDatabaseAdapter() {
 		if (null == this.sdeDatabaseAdapter) {
 			this.sdeDatabaseAdapter = new SDEDatabaseAdapter.Builder()
@@ -48,6 +63,7 @@ public class NeoComComponentFactory {
 		}
 		return this.sdeDatabaseAdapter;
 	}
+
 	public CredentialRepository getCredentialRepository() {
 		if (null == this.credentialRepository) {
 			try {
@@ -61,12 +77,13 @@ public class NeoComComponentFactory {
 		}
 		return this.credentialRepository;
 	}
+
 	public SupportMiningRepository getMiningRepository() {
 		if (null == this.miningRepository) {
 			try {
 				this.miningRepository = new SupportMiningRepository.Builder()
-						                       .withMiningExtractionDao(this.getNeoComDBAdapter().getMiningExtractionDao())
-						                       .build();
+						                        .withMiningExtractionDao(this.getNeoComDBAdapter().getMiningExtractionDao())
+						                        .build();
 			} catch (SQLException sqle) {
 				this.miningRepository = null;
 				Objects.requireNonNull(this.miningRepository);
@@ -78,7 +95,8 @@ public class NeoComComponentFactory {
 	public NeoComSupportDBAdapter getNeoComDBAdapter() {
 		if (null == this.neocomDBAdapter) {
 			//			try {
-			final String databaseType = this.getConfigurationProvider().getResourceString("P.database.neocom.databasetype", "sqlite");
+			final String databaseType = this.getConfigurationProvider().getResourceString("P.database.neocom.databasetype",
+			                                                                              "sqlite");
 			final String runtimePlatform = this.getConfigurationProvider().getResourceString("P.runtime.platform", "Java");
 			if (databaseType.equalsIgnoreCase("postgres")) {
 				// Postgres means Heroku and then configuration for connection from environment
@@ -90,7 +108,8 @@ public class NeoComComponentFactory {
 			if (runtimePlatform.equalsIgnoreCase("java")) {
 				if (databaseType.equalsIgnoreCase("sqlite")) {
 					// Postgres means Heroku and then configuration for connection from environment
-					final String localConnectionDescriptor = this.getConfigurationProvider().getResourceString("P.database.neocom.database.sqlite.connection");
+					final String localConnectionDescriptor = this.getConfigurationProvider().getResourceString(
+							"P.database.neocom.database.sqlite.connection");
 					neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
 							                  .withDatabaseConnection(localConnectionDescriptor)
 							                  .build();
