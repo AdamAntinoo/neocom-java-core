@@ -12,12 +12,12 @@ public class SBRawStatement extends RawStatement {
     public SBRawStatement(final Connection privateConnection, final String query, final String[] parameters) throws
             SQLException {
         if (null != privateConnection) {
-            prepStmt = privateConnection.prepareStatement(query);
+            this.prepStmt = privateConnection.prepareStatement(query);
             for (int i = 0; i < parameters.length; i++) {
-                prepStmt.setString(i + 1, parameters[i]);
+                this.prepStmt.setString(i + 1, parameters[i]);
             }
-            cursor = prepStmt.executeQuery();
-            if (null == cursor)
+            this.cursor = this.prepStmt.executeQuery();
+            if (null == this.cursor)
                 throw new SQLException("Invalid statement when processing query: " + query);
         } else
             throw new SQLException("No valid connection to database to create statement. {}", query);
@@ -26,7 +26,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public boolean moveToFirst() {
         try {
-            return cursor.first();
+            return this.cursor.first();
         } catch (SQLException sqle) {
             return false;
         }
@@ -35,7 +35,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public boolean moveToLast() {
         try {
-            return cursor.last();
+            return this.cursor.last();
         } catch (SQLException sqle) {
             return false;
         }
@@ -44,7 +44,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public boolean moveToNext() {
         try {
-            return cursor.next();
+            return this.cursor.next();
         } catch (SQLException sqle) {
             return false;
         }
@@ -53,7 +53,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public boolean isFirst() {
         try {
-            return cursor.isFirst();
+            return this.cursor.isFirst();
         } catch (SQLException sqle) {
             return false;
         }
@@ -71,7 +71,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public String getString(int colindex) {
         try {
-            return cursor.getString(colindex);
+            return this.cursor.getString(colindex);
         } catch (SQLException sqle) {
             return "";
         }
@@ -80,7 +80,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public short getShort(int colindex) {
         try {
-            return cursor.getShort(colindex);
+            return this.cursor.getShort(colindex);
         } catch (SQLException sqle) {
             return 0;
         }
@@ -89,7 +89,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public int getInt(int colindex) {
         try {
-            return cursor.getInt(colindex);
+            return this.cursor.getInt(colindex);
         } catch (SQLException sqle) {
             return 0;
         }
@@ -98,7 +98,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public long getLong(int colindex) {
         try {
-            return cursor.getLong(colindex);
+            return this.cursor.getLong(colindex);
         } catch (SQLException sqle) {
             return 0;
         }
@@ -107,7 +107,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public float getFloat(int colindex) {
         try {
-            return cursor.getFloat(colindex);
+            return this.cursor.getFloat(colindex);
         } catch (SQLException sqle) {
             return 0;
         }
@@ -116,7 +116,7 @@ public class SBRawStatement extends RawStatement {
     @Override
     public double getDouble(int colindex) {
         try {
-            return cursor.getDouble(colindex);
+            return this.cursor.getDouble(colindex);
         } catch (SQLException sqle) {
             return 0;
         }
@@ -124,8 +124,8 @@ public class SBRawStatement extends RawStatement {
 
     public void close() {
         try {
-            if (null != cursor) cursor.close();
-            if (null != prepStmt) prepStmt.close();
+            if (null != this.cursor) this.cursor.close();
+            if (null != this.prepStmt) this.prepStmt.close();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.When;
 
 public class WhenRequestingTheListOfExtractions {

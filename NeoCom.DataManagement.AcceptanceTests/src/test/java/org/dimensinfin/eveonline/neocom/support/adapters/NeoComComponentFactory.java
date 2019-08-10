@@ -1,6 +1,8 @@
 package org.dimensinfin.eveonline.neocom.support.adapters;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapters.SDEDatabaseAdapter;
+import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
@@ -33,8 +35,19 @@ public class NeoComComponentFactory {
 	private NeoComSupportDBAdapter neocomDBAdapter;
 	private CredentialRepository credentialRepository;
 	private SupportMiningRepository miningRepository;
+	private ISDEDatabaseAdapter sdeDatabaseAdapter;
 
 	// - A C C E S S O R S
+	public ISDEDatabaseAdapter getSDEDatabaseAdapter() {
+		if (null == this.sdeDatabaseAdapter) {
+			this.sdeDatabaseAdapter = new SDEDatabaseAdapter.Builder()
+					                          .withFileSystemAdapter(this.getFileSystemAdapter())
+					                          .withDatabasePath("")
+					                          .withDatabaseName("sde.db")
+					                          .build();
+		}
+		return this.sdeDatabaseAdapter;
+	}
 	public CredentialRepository getCredentialRepository() {
 		if (null == this.credentialRepository) {
 			try {
