@@ -448,13 +448,13 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 
 	@Override
 	public EsiLocation getLocation() {
-		try {
-			if ( null == locationCache ) {
-				locationCache = accessGlobal().searchLocation4Id(locationId);
-			}
-		} catch ( NeoComRuntimeException neoe ) {
+//		try {
+//			if ( null == locationCache ) {
+//				locationCache = accessGlobal().searchLocation4Id(locationId);
+//			}
+//		} catch ( NeoComRuntimeException neoe ) {
 			locationCache =  EsiLocation.getJitaLocation();
-		}
+//		}
 		return locationCache;
 	}
 
@@ -574,7 +574,7 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 	 * Replaces a non reachable parent asset into an Unknown Location.
 	 */
 	private EsiLocation moveAssetToUnknown( final long newlocationid ) {
-		final EsiLocation newundefloc = new EsiLocation();
+		final EsiLocation newundefloc = EsiLocation.getJitaLocation();
 		//		newundefloc.setId(newlocationid);
 		newundefloc.setRegion("SPACE");
 		newundefloc.setSystem("Undefined");

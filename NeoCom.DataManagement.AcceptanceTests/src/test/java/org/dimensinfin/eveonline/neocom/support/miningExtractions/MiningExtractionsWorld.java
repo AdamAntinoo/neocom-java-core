@@ -1,18 +1,19 @@
 package org.dimensinfin.eveonline.neocom.support.miningExtractions;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.mining.DailyExtractionResourcesContainer;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.mining.DailyExtractionResourcesContainer;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.joda.time.LocalDate;
 
 import java.util.List;
 
 public class MiningExtractionsWorld {
+	private ESIDataAdapter esiDataAdapter;
 	private Credential credential;
-//	private MiningRepository miningRepository;
 	private List<MiningExtraction> miningExtractionRecords;
 	private LocalDate processingDate;
 	private int hour;
@@ -36,9 +37,13 @@ public class MiningExtractionsWorld {
 				                  .withRaceName("Minmatar")
 				                  .build();
 		// Connect the item to the adapter
-		EveItem.injectEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
-		NeoComUpdater.injectsEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
-//		this.miningRepository = NeoComComponentFactory.getSingleton().getMiningRepository();
+		this.esiDataAdapter = NeoComComponentFactory.getSingleton().getEsiDataAdapter();
+		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
+		NeoComUpdater.injectsEsiDataAdapter(this.esiDataAdapter);
+	}
+
+	public ESIDataAdapter getEsiDataAdapter() {
+		return this.esiDataAdapter;
 	}
 
 	public Credential getCredential() {

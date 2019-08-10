@@ -75,7 +75,7 @@ public class ESIDataPersistenceService {
 		final MiningExtraction newExtraction = new MiningExtraction.Builder()
 				                                       .withTypeId(extractionOk.getTypeId())
 //				                                       .withSolarSystemId(extractionOk.getSolarSystemId())
-													   .withSolarSystemLocation(this.esiAdapter.searchLocation4Id(extractionOk.getSolarSystemId()))
+													   .withSolarSystemLocation(this.esiAdapter.searchLocation4Id(extractionOk.getSolarSystemId().longValue()))
 				                                       .withQuantity(extractionOk.getQuantity().intValue())
 				                                       .withOwnerId(credential.getAccountId())
 				                                       .withExtractionDate(extractionOk.getDate())

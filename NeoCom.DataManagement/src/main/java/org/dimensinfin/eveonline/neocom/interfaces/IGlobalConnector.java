@@ -14,7 +14,6 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
@@ -46,7 +45,7 @@ public interface IGlobalConnector {
 
 	public EveItem searchItem4Id( final int typeId );
 
-	public EsiLocation searchLocation4Id( final long locationId );
+//	public EsiLocation searchLocation4Id( final long locationId );
 
 	public int searchModule4Blueprint( final int bpitemId );
 

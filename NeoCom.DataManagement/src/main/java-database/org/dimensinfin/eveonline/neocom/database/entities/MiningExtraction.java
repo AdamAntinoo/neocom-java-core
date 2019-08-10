@@ -146,6 +146,8 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		return this.solarSystemId;
 	}
 
+	public String getSystemName() {return this.solarSystemLocation.getSystemName();}
+
 	public long getDelta() {
 		return this.delta;
 	}

@@ -163,13 +163,13 @@ public class MarketOrder extends ANeoComEntity {
 	}
 
 	public EsiLocation getLocation() {
-		if (null == orderLocation) {
-			try {
-				orderLocation = accessGlobal().searchLocation4Id(locationId);
-			} catch (NeoComRuntimeException neoe) {
+//		if (null == orderLocation) {
+//			try {
+//				orderLocation = accessGlobal().searchLocation4Id(locationId);
+//			} catch (NeoComRuntimeException neoe) {
 				orderLocation = EsiLocation.getJitaLocation();
-			}
-		}
+//			}
+//		}
 		return orderLocation;
 	}
 

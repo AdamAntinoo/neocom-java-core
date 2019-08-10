@@ -105,7 +105,7 @@ public class DownloadManager {
 				//--- L O C A T I O N   P R O C E S S I N G
 				// Check the asset location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
-				EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(myasset.getLocationId());
+				EsiLocation targetLoc = this.esiAdapter.searchLocation4Id(myasset.getLocationId());
 				if (targetLoc.getClassType() == LocationClass.UNKNOWN) {
 					// Add this asset to the list of items to be reprocessed.
 					this.unlocatedAssets.add(myasset);

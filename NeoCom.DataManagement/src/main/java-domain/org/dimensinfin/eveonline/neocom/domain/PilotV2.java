@@ -7,8 +7,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
-import org.dimensinfin.eveonline.neocom.model.AllianceV1;
-import org.dimensinfin.eveonline.neocom.model.CorporationV1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +21,8 @@ public abstract class PilotV2 extends UpdatableNode {
 	public long birthday = 0;
 	public String gender = "-undefined-";
 	public double securityStatus = 0.0;
-	public CorporationV1 corporation = null;
-	public AllianceV1 alliance = null;
+//	public CorporationV1 corporation = null;
+//	public AllianceV1 alliance = null;
 //	public GetUniverseRaces200Ok race = null;
 	public GetUniverseBloodlines200Ok bloodline = null;
 	public GetUniverseAncestries200Ok ancestry = null;
@@ -70,23 +68,23 @@ public abstract class PilotV2 extends UpdatableNode {
 		return securityStatus;
 	}
 
-	public CorporationV1 getCorporation() {
-		return corporation;
-	}
+//	public CorporationV1 getCorporation() {
+//		return corporation;
+//	}
+//
+//	public PilotV2 setCorporation( final CorporationV1 corporation ) {
+//		this.corporation = corporation;
+//		return this;
+//	}
 
-	public PilotV2 setCorporation( final CorporationV1 corporation ) {
-		this.corporation = corporation;
-		return this;
-	}
-
-	public AllianceV1 getAlliance() {
-		return alliance;
-	}
-
-	public PilotV2 setAlliance( final AllianceV1 alliance ) {
-		this.alliance = alliance;
-		return this;
-	}
+//	public AllianceV1 getAlliance() {
+//		return alliance;
+//	}
+//
+//	public PilotV2 setAlliance( final AllianceV1 alliance ) {
+//		this.alliance = alliance;
+//		return this;
+//	}
 
 //	public GetUniverseRaces200Ok getRace() {
 //		return race;

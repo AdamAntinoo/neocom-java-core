@@ -176,7 +176,7 @@ public class ESIDataAdapter {
 		return Futures.immediateFuture(new MarketDataSet(itemId, side));
 	}
 
-	public EsiLocation searchLocation4Id( final Integer locationId ) {
+	public EsiLocation searchLocation4Id( final Long locationId ) {
 		return this.locationCatalogService.searchLocation4Id(locationId);
 	}
 

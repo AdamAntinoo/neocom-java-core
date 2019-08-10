@@ -20,7 +20,6 @@ import com.j256.ormlite.table.DatabaseTable;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.domain.LocationClass;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdIndustryJobs200Ok;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
@@ -186,13 +185,13 @@ public class Job extends ANeoComEntity {
 	}
 
 	public EsiLocation getJobLocation() {
-		try {
-			if (null == jobLocation) {
-				jobLocation = accessGlobal().searchLocation4Id(facilityId);
-			}
-		} catch (NeoComRuntimeException neoe) {
+//		try {
+//			if (null == jobLocation) {
+//				jobLocation = accessGlobal().searchLocation4Id(facilityId);
+//			}
+//		} catch (NeoComRuntimeException neoe) {
 			jobLocation =EsiLocation.getJitaLocation();
-		}
+//		}
 		return jobLocation;
 	}
 
@@ -269,13 +268,13 @@ public class Job extends ANeoComEntity {
 	}
 
 	public Job setBlueprintLocationId( final long blueprintLocationId ) {
-		try {
-			this.blueprintLocationId = blueprintLocationId;
-			// Cache the location pointed bu this identifier.
-			blueprintLocation = accessGlobal().searchLocation4Id(blueprintLocationId);
-		} catch (NeoComRuntimeException neoe) {
+//		try {
+//			this.blueprintLocationId = blueprintLocationId;
+//			// Cache the location pointed bu this identifier.
+//			blueprintLocation = accessGlobal().searchLocation4Id(blueprintLocationId);
+//		} catch (NeoComRuntimeException neoe) {
 			blueprintLocation = EsiLocation.getJitaLocation();
-		}
+//		}
 		return this;
 	}
 
@@ -296,20 +295,21 @@ public class Job extends ANeoComEntity {
 	}
 
 	public Job setOutputLocationId( final long outputLocationId ) {
-		this.outputLocationId = outputLocationId;
-		try {
-			// Load the output location item reference.
-			final EsiLocation ouputLocation = accessGlobal().searchLocation4Id(outputLocationId);
-			if (ouputLocation.getClassType() == LocationClass.UNKNOWN) {
-				// If the output location is UNKNOWN then this should be a reachable item. Search for it.
-				jobOutputLocation = accessGlobal().getNeocomDBHelper()
-						.getAssetDao().queryForEq("assetId", outputLocationId).get(0);
-			} else jobOutputLocation = ouputLocation;
-		} catch (SQLException sqle) {
-			sqle.printStackTrace();
-		} catch (NeoComRuntimeException neoe) {
-			jobOutputLocation = EsiLocation.getJitaLocation();
-		}
+		// TODO - Neeeds reimplementsation
+//		this.outputLocationId = outputLocationId;
+//		try {
+//			// Load the output location item reference.
+//			final EsiLocation ouputLocation = accessGlobal().searchLocation4Id(outputLocationId);
+//			if (ouputLocation.getClassType() == LocationClass.UNKNOWN) {
+//				// If the output location is UNKNOWN then this should be a reachable item. Search for it.
+//				jobOutputLocation = accessGlobal().getNeocomDBHelper()
+//						.getAssetDao().queryForEq("assetId", outputLocationId).get(0);
+//			} else jobOutputLocation = ouputLocation;
+//		} catch (SQLException sqle) {
+//			sqle.printStackTrace();
+//		} catch (NeoComRuntimeException neoe) {
+//			jobOutputLocation = EsiLocation.getJitaLocation();
+//		}
 		return this;
 	}
 
