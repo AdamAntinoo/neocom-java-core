@@ -21,7 +21,9 @@ group = 'org.dimensinfin'
 version = '0.15.0'
 archivesBaseName = 'NeoCom.DataManagement'
 description = 'Data management and processes that are common to all developments. Based on the core NeoCom.Model. Swagger version 2.0 .0 in use.'
-
+ext {
+    SDEDatabaseVersion = '20190530-APP'
+}
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 

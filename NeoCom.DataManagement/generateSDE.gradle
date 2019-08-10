@@ -1,27 +1,39 @@
 // - T A S K S
 ext {
-    sdeRepositoryProjectpath = "$projectDir/src/main/sh"
+    sdeRepositoryProjectPath = "$projectDir/src/main/sh"
+    propertiesPath = "$projectDir/src/main/resources/properties"
+    assetsPath = "$projectDir/src/main/resources"
 }
 // Create the sde setup version data with the configured version contents.
 task generateVersionSQL() {
     group = "build"
     doLast {
         println '> Task :NeoCom.DataManagement:generateVersionSQL: generating configuration version file...'
-        new File("$sdeRepositoryProjectpath/setVersion.sql").text = "INSERT INTO `version` VALUES (`20190530-VT`);"
+        new File("$sdeRepositoryProjectPath/setVersion.sql").text = "INSERT INTO `version` VALUES (\'$SDEDatabaseVersion\');"
+    }
+}
+task generateVersionProperty() {
+    group = "build"
+    doLast {
+        println '> Task :NeoCom.DataManagement:generateVersionProperty: generating version property file...'
+        new File("$propertiesPath/sderepository.properties").text = "P.sde.repository.version=$SDEDatabaseVersion"
     }
 }
 // Generate the SDE database if does not exist or the version does not match
 task generateSDEDatabase(type: Exec) {
     group = "build"
-    println 'Generate the Version data...'
-    workingDir './src/main/sh'
-    commandLine './create-sde.sh'
+    println '> Task :NeoCom.DataManagement:generateSDEDatabase: generating new sde database...'
+    workingDir "$sdeRepositoryProjectPath"
+    commandLine 'sh', './create-sde.sh'
 }
-task copySDEDatabase(type: Copy) {
-    println 'Copy SDE database to Assets...'
-    from './src/main/sh/sde.db'
-    into './src/main/assets'
-}
+//task copySDEDatabase(type: Copy) {
+//    group = "publishing"
+//    doLast {
+//        println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
+//        from "$sdeRepositoryProjectPath/sde.db"
+//        into "$assetsPath"
+//    }
+//}
 generateSDEDatabase.dependsOn generateVersionSQL
-copySDEDatabase.dependsOn generateSDEDatabase
-build.dependsOn copySDEDatabase
+//copySDEDatabase.dependsOn generateSDEDatabase
+//build.dependsOn copySDEDatabase

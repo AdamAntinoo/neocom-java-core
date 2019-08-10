@@ -102,6 +102,22 @@ dependencies {
     testImplementation 'org.xerial:sqlite-jdbc:3.25.2'
     testImplementation 'javax.persistence:javax.persistence-api:2.2'
 }
+
+// - T A S K S
+// Install the SDE database on the assets for testing
+ext {
+    assetsPath = "$projectDir/AcceptanceTests"
+}
+task copySDEDatabase(type: Copy) {
+    group = "publishing"
+//    doLast {
+        println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
+        from project(':NeoCom.DataManagement').file("src/main/sh/sde.db")
+        into "$assetsPath"
+//    }
+}
+copySDEDatabase.dependsOn(':NeoCom.DataManagement:generateSDEDatabase')
+
 cucumber {
     formats = ['pretty','json:build/cucumber.json','junit:build/cucumber.xml']
     glueDirs = ['src/test/java',
