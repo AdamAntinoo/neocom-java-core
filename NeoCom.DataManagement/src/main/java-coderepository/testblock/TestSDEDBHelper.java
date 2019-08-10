@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.database.SDEDatabaseManager;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 /**

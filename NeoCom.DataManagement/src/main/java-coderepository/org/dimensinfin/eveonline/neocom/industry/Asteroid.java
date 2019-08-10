@@ -9,7 +9,7 @@ package org.dimensinfin.eveonline.neocom.industry;
 // - IMPORT SECTION .........................................................................................
 import java.util.logging.Logger;
 
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.joda.time.Instant;
 
 // - CLASS IMPLEMENTATION ...................................................................................

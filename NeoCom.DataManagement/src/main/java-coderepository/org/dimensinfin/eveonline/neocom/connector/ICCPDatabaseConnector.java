@@ -10,7 +10,7 @@
 package org.dimensinfin.eveonline.neocom.connector;
 
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;

@@ -2,13 +2,14 @@ package org.dimensinfin.eveonline.neocom.datamngmt;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.enums.ELocationType;
 import org.dimensinfin.eveonline.neocom.exception.NeoComError;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.model.ItemCategory;
 import org.dimensinfin.eveonline.neocom.model.ItemGroup;
 import org.dimensinfin.eveonline.neocom.planetary.Schematics;
@@ -243,26 +244,26 @@ public class GlobalDataManager extends GlobalDataManagerFileSystem implements IG
 		}
 	}
 
-//	public EsiLocation searchLocation4Id( final long locationId ) {
-//		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
-//		if (locationCache.containsKey(locationId)) {
-//			// Account for a hit on the cache.
-//			int access = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
-//			int hits = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.getHits();
-//			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
-//			return locationCache.get(locationId);
-//		} else {
-//			final EsiLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
-//			// Add the hit to the cache but only when it is not UNKNOWN.
-//			if (hit.getTypeId() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
-//			// Account for a miss on the cache.
-//			int access = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
-//			int hits = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.getHits();
-//			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {} found at database.",
-//					locationId);
-//			return hit;
-//		}
-//	}
+	public EsiLocation searchLocation4Id( final long locationId ) {
+		// Check if this item already on the cache. The only values that can change upon time are the Market prices.
+		if (locationCache.containsKey(locationId)) {
+			// Account for a hit on the cache.
+			int access = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.accountAccess(true);
+			int hits = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.getHits();
+			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location " + locationId + " found at cache.");
+			return locationCache.get(locationId);
+		} else {
+			final EsiLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
+			// Add the hit to the cache but only when it is not UNKNOWN.
+			if (hit.getTypeId() != ELocationType.UNKNOWN) locationCache.put(locationId, hit);
+			// Account for a miss on the cache.
+			int access = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.accountAccess(false);
+			int hits = GlobalDataManager.getSingleton().getSDEDBHelper().locationsCacheStatistics.getHits();
+			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-" + hits + "/" + access + "] Location {} found at database.",
+					locationId);
+			return hit;
+		}
+	}
 
 	public static EsiLocation searchLocationBySystem( final String name ) {
 		return GlobalDataManager.getSingleton().getSDEDBHelper().searchLocationBySystem(name);

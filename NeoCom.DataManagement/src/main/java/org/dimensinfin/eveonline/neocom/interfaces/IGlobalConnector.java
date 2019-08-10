@@ -14,11 +14,11 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
-import org.dimensinfin.eveonline.neocom.industry.InventoryFlag;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
 import java.util.List;
@@ -46,11 +46,11 @@ public interface IGlobalConnector {
 
 	public EveItem searchItem4Id( final int typeId );
 
-//	public EsiLocation searchLocation4Id( final long locationId );
+	public EsiLocation searchLocation4Id( final long locationId );
 
 	public int searchModule4Blueprint( final int bpitemId );
 
-	public InventoryFlag searchFlag4Id( final int identifier );
+//	public InventoryFlag searchFlag4Id( final int identifier );
 
 	// --- C O N F I G U R A T I O N
 	public String getResourcePropertyString( final String key );

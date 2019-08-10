@@ -12,17 +12,26 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.conf.IGlobalPreferencesManager;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Adam Antinoo
  */
 // - CLASS IMPLEMENTATION ...................................................................................
-public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
+public class GlobalDataManagerConfiguration {
 	// - S T A T I C - S E C T I O N ..........................................................................
-//	private static Logger logger = LoggerFactory.getLogger("GlobalDataManagerConfiguration");
+	protected static Logger logger = LoggerFactory.getLogger(GlobalDataManagerConfiguration.class);
+
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected ESIGlobalAdapter  esiAdapter;
+	protected ESIDataAdapter esiDataAdapter;
 
 	// --- P U B L I C   E N U M E R A T O R S
 	public enum EDataUpdateJobs {
@@ -40,28 +49,28 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 
 	// --- P R I M A R Y    K E Y   C O N S T R U C T O R S
 	public static String constructModelStoreReference( final GlobalDataManager.EDataUpdateJobs type, final long
-			identifier ) {
+			                                                                                                 identifier ) {
 		return new StringBuffer("TS/")
-				.append(type.name())
-				.append("/")
-				.append(identifier)
-				.toString();
+				       .append(type.name())
+				       .append("/")
+				       .append(identifier)
+				       .toString();
 	}
 
 	public static String constructJobReference( final EDataUpdateJobs type, final long identifier ) {
 		return new StringBuffer("JOB:")
-				.append(type.name())
-				.append("/")
-				.append(identifier)
-				.toString();
+				       .append(type.name())
+				       .append("/")
+				       .append(identifier)
+				       .toString();
 	}
 
 	public static String constructPlanetStorageIdentifier( final int characterIdentifier, final int planetIdentifier ) {
 		return new StringBuffer("CS:")
-				.append(Integer.valueOf(characterIdentifier).toString())
-				.append(":")
-				.append(Integer.valueOf(planetIdentifier).toString())
-				.toString();
+				       .append(Integer.valueOf(characterIdentifier).toString())
+				       .append(":")
+				       .append(Integer.valueOf(planetIdentifier).toString())
+				       .toString();
 	}
 
 	// --- C O N F I G U R A T I O N   S E C T I O N
@@ -175,9 +184,10 @@ public class GlobalDataManagerConfiguration extends SDEExternalDataManager {
 	public static IGlobalPreferencesManager getDefaultSharedPreferences() {
 		if (null != preferencesprovider) return preferencesprovider;
 		else
-			throw new NeoComRuntimeException("[GlobalDataManagerConfiguration.getDefaultSharedPreferences]> Preferences provider not " +
-					"configured " +
-					"into the Global area.");
+			throw new NeoComRuntimeException(
+					"[GlobalDataManagerConfiguration.getDefaultSharedPreferences]> Preferences provider not " +
+							"configured " +
+							"into the Global area.");
 	}
 }
 

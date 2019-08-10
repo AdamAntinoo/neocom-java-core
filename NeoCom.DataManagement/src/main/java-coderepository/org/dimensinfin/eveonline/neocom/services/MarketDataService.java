@@ -17,7 +17,7 @@ import org.dimensinfin.eveonline.neocom.market.EVEMarketDataParser;
 import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.market.TrackEntry;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.xml.sax.SAXException;
 

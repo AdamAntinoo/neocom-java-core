@@ -20,7 +20,7 @@ import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.enums.ERequestClass;
 import org.dimensinfin.eveonline.neocom.enums.ERequestState;
 import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.services.MarketDataService;
 import org.dimensinfin.eveonline.neocom.services.PendingRequestEntry;
 

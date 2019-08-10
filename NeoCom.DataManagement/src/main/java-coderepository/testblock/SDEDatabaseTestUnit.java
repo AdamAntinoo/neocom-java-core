@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.manager.SDEExternalDataManager;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.dimensinfin.eveonline.neocom.utilityblock.config.TestConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.utilityblock.database.TestSDEDBHelper;

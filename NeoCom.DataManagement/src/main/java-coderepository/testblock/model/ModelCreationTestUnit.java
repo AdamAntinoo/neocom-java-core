@@ -13,7 +13,7 @@
 package org.dimensinfin.eveonline.neocom.testblock.model;
 
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 
 import org.junit.Assert;
 import org.junit.Test;
