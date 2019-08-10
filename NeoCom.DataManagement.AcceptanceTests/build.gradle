@@ -107,13 +107,13 @@ cucumber {
     glueDirs = ['src/test/java',
                 'src/test/resources/features']
     featureDirs = ['src/test/resources/features']
-    tags = ['@Credential']
+    tags = ['not @skip_scenario', '@DM02']
     monochrome = false
     strict = false
     dryRun = false
     ignoreFailures = false
     jvmOptions {
-        maxHeapSize = '1024m'
+        maxHeapSize = '20148m'
         environment 'ENV', 'staging'
         def jacocoAgent = zipTree(configurations.jacocoAgent.singleFile).filter { it.name == "jacocoagent.jar" }.singleFile
         jvmArgs "-javaagent:$jacocoAgent=destfile=$buildDir/results/jacoco/cucumber.exec,append=false"
@@ -135,5 +135,5 @@ jacocoTestReport {
 //        html.destination "$buildDir/reports/jacoco"
     }
     dependsOn test
-    dependsOn "cucumber"
+//    dependsOn "cucumber"
 }

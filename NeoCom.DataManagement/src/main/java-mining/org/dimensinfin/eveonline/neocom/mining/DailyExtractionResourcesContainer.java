@@ -6,7 +6,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.Objects;
 public class DailyExtractionResourcesContainer extends NeoComNode {
 	private Credential credential;
 	private MiningRepository miningRepository;
-	private DateTime targetDate;
+	private LocalDate targetDate;
 	private List<Resource> resources = new ArrayList<>();
 
 	protected void fillResources() {
-		if (null == this.targetDate) this.targetDate = DateTime.now();
+		if (null == this.targetDate) this.targetDate = LocalDate.now();
 		final List<MiningExtraction> extractions = this.miningRepository.accessResources4Date(
 				this.credential,
 				this.targetDate);
@@ -55,7 +55,7 @@ public class DailyExtractionResourcesContainer extends NeoComNode {
 			return this;
 		}
 
-		public Builder withTargetDate( final DateTime targetDate ) {
+		public Builder withTargetDate( final LocalDate targetDate ) {
 			this.onConstruction.targetDate = targetDate;
 			return this;
 		}

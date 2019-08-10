@@ -8,7 +8,7 @@ import com.j256.ormlite.stmt.Where;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +27,13 @@ public class MiningRepository {
 	 * extractions until the 23 hours. The first extraction will add to the hour until the next hour starts. Then the accounting for this
 	 * new hour will show the new ore totals and so on hour after hour.
 	 */
-//	private List<MiningExtraction> extractions4Test = new ArrayList<>();
 	protected MiningRepository() { }
 
 	public List<MiningExtraction> accessTodayMiningExtractions4Pilot( final Credential credential ) {
-		return this.accessDatedMiningExtractions4Pilot(credential, DateTime.now());
+		return this.accessDatedMiningExtractions4Pilot(credential, LocalDate.now());
 	}
 
-	public List<MiningExtraction> accessDatedMiningExtractions4Pilot( final Credential credential, final DateTime filterDate ) {
+	public List<MiningExtraction> accessDatedMiningExtractions4Pilot( final Credential credential, final LocalDate filterDate ) {
 		try {
 			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
 			final Where<MiningExtraction, String> where = builder.where();
@@ -49,10 +48,10 @@ public class MiningRepository {
 			List<MiningExtraction> results = new ArrayList<>();
 //			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
 			// Filter out all records not belonging to today.
-			for (MiningExtraction extraction : dataList) {
-				final String date = extraction.getExtractionDateName();
-				if (date.equalsIgnoreCase(filterDate.toString("YYYY-MM-dd"))) results.add(extraction);
-			}
+			for (MiningExtraction extraction : dataList)
+				if (extraction.getExtractionDateName().equalsIgnoreCase(
+						filterDate.toString(MiningExtraction.EXTRACTION_DATE_FORMAT)))
+					results.add(extraction);
 			return results;
 		} catch (SQLException sqle) {
 			logger.error("");
@@ -60,7 +59,7 @@ public class MiningRepository {
 		}
 	}
 
-	public List<MiningExtraction> accessResources4Date( final Credential credential, final DateTime filterDate ) {
+	public List<MiningExtraction> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
 		try {
 			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
 			final Where<MiningExtraction, String> where = builder.where();

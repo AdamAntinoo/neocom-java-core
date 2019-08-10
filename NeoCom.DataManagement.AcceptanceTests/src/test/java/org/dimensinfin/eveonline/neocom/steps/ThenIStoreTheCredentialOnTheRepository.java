@@ -1,13 +1,12 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
+import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
+import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.sql.SQLException;
 import java.util.Objects;
-
-import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
-import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import cucumber.api.java.en.Then;
 

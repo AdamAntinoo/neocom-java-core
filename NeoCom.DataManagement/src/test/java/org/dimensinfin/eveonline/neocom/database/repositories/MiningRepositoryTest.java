@@ -1,33 +1,35 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.model.EveItem;
+import org.dimensinfin.eveonline.neocom.support.EsiDataAdapterSupportTest;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.PreparedQuery;
-import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.stmt.Where;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
-public class MiningRepositoryTest {
+public class MiningRepositoryTest extends EsiDataAdapterSupportTest {
 	private static final List<MiningExtraction> miningExtractionList = new ArrayList();
 	private static MiningExtraction miningExtraction;
 	private static Dao<MiningExtraction, String> dao;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
+		super.setUp();
 		miningExtractionList.clear();
 		miningExtraction = new MiningExtraction.Builder()
 				                   .withTypeId(34)
@@ -38,6 +40,7 @@ public class MiningRepositoryTest {
 				                   .build();
 		miningExtractionList.add(miningExtraction);
 		dao = Mockito.mock(Dao.class);
+		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
 	}
 
 	@Test

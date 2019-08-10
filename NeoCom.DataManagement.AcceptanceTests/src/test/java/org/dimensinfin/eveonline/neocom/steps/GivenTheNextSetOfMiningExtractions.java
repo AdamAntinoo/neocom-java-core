@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.steps;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.adapters.SupportMiningRepository;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.CucumberTableToGetCharactersCharacterIdMining200OkConverter;
@@ -33,8 +32,6 @@ public class GivenTheNextSetOfMiningExtractions {
 		this.cucumberTable2GetCharactersCharacterIdMining200OkConverter =
 				cucumberTable2GetCharactersCharacterIdMining200OkConverter;
 		this.miningRepository = NeoComComponentFactory.getSingleton().getMiningRepository();
-		// Connect the item to the adapter
-		EveItem.injectEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
 	}
 
 	@Before

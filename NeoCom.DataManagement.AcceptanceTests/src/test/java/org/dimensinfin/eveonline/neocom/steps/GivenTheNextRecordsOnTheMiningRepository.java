@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.steps;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
-import org.dimensinfin.eveonline.neocom.model.EveItem;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.CucumberTableToMiningExtractionConverter;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
@@ -26,8 +25,6 @@ public class GivenTheNextRecordsOnTheMiningRepository {
 		this.miningExtractionsWorld = miningExtractionsWorld;
 		this.cucumberTableToMiningExtractionConverter = cucumberTableToMiningExtractionConverter;
 		this.miningRepository = NeoComComponentFactory.getSingleton().getMiningRepository();
-		// Connect the item to the adapter
-		EveItem.injectEsiDataAdapter(NeoComComponentFactory.getSingleton().getEsiDataAdapter());
 	}
 
 	@Given("the next records on the MiningRepository")
