@@ -943,6 +943,7 @@ public class ESIDataAdapter {
 																 .withEsiDataAdapter(this.onConstruction)
 																 .withConfigurationProvider(this.onConstruction.configurationProvider)
 																 .withFileSystem(this.onConstruction.fileSystemAdapter)
+																 .withLocationRepository(NeoComCo)
 					                                             .build();
 			Objects.requireNonNull(this.onConstruction.locationCatalogService);
 			return this.onConstruction;

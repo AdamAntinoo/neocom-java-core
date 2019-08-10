@@ -15,3 +15,13 @@ Feature: [DM05] Location catalog Service
 	And the SDE database is accessed with the next result
 	  | regionID | regionName | factionID |
 	  | 10000031 | Impass     |           |
+
+  @DM05.02
+  Scenario: [DM05][01] After accessing a location hat should be stored on the respository stop the service and persist cached locations
+	Given a new empty Location Catalog
+	When requested to locate Location "10000031"
+	And after getting a "Region" location
+	And verify that the obtained location is persisted on the repository
+	Then stop the Location catalog service
+	And start the Location catalog service
+	And verify that the obtained location is persisted on the repository
