@@ -1,0 +1,1 @@
+INSERT INTO `version` VALUES (`20190530-VT`);

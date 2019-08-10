@@ -1,0 +1,27 @@
+// - T A S K S
+ext {
+    sdeRepositoryProjectpath = "$projectDir/src/main/sh"
+}
+// Create the sde setup version data with the configured version contents.
+task generateVersionSQL() {
+    group = "build"
+    doLast {
+        println '> Task :NeoCom.DataManagement:generateVersionSQL: generating configuration version file...'
+        new File("$sdeRepositoryProjectpath/setVersion.sql").text = "INSERT INTO `version` VALUES (`20190530-VT`);"
+    }
+}
+// Generate the SDE database if does not exist or the version does not match
+task generateSDEDatabase(type: Exec) {
+    group = "build"
+    println 'Generate the Version data...'
+    workingDir './src/main/sh'
+    commandLine './create-sde.sh'
+}
+task copySDEDatabase(type: Copy) {
+    println 'Copy SDE database to Assets...'
+    from './src/main/sh/sde.db'
+    into './src/main/assets'
+}
+generateSDEDatabase.dependsOn generateVersionSQL
+copySDEDatabase.dependsOn generateSDEDatabase
+build.dependsOn copySDEDatabase
