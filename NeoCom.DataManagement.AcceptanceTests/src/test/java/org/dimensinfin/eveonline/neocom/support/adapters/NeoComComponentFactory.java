@@ -2,11 +2,10 @@ package org.dimensinfin.eveonline.neocom.support.adapters;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.adapters.SDEDatabaseAdapter;
-import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,7 @@ public class NeoComComponentFactory {
 	private NeoComSupportDBAdapter neocomDBAdapter;
 	private CredentialRepository credentialRepository;
 	private SupportMiningRepository miningRepository;
-	private ISDEDatabaseAdapter sdeDatabaseAdapter;
+	private SDEDatabaseAdapter sdeDatabaseAdapter;
 	private SupportLocationRepository locationRepository;
 
 	// - A C C E S S O R S
@@ -43,7 +42,7 @@ public class NeoComComponentFactory {
 		if (null == this.locationRepository) {
 			try {
 				this.locationRepository = new SupportLocationRepository.Builder()
-						                          .withLocationDao(this.getNeoComDBAdapter().getLocationDao())
+						                          .withLocationDao(this.getSDEDatabaseAdapter().getLocationDao())
 						                          .build();
 			} catch (SQLException sqle) {
 				this.locationRepository = null;
@@ -53,7 +52,7 @@ public class NeoComComponentFactory {
 		return this.locationRepository;
 	}
 
-	public ISDEDatabaseAdapter getSDEDatabaseAdapter() {
+	public SDEDatabaseAdapter getSDEDatabaseAdapter() {
 		if (null == this.sdeDatabaseAdapter) {
 			this.sdeDatabaseAdapter = new SDEDatabaseAdapter.Builder()
 					                          .withFileSystemAdapter(this.getFileSystemAdapter())

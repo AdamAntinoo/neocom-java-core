@@ -14,14 +14,16 @@ public class GivenANewEmptyLocationCatalog {
 		this.locationWorld = locationWorld;
 	}
 
-	@Given("a new empty Location Catalog")
-	public void aNewEmptyLocationCatalog() {
+	@Given("a new empty Location Catalog store and repository")
+	public void aNewEmptyLocationCatalogStoreAndRepository() {
+		// Clear the store on the file system
+		// Clear the records on the sde repository
+
 		final ISDEDatabaseAdapter sdeAdapter = NeoComComponentFactory.getSingleton().getSDEDatabaseAdapter();
 		Assert.assertNotNull(sdeAdapter);
 		this.locationWorld.setSdeDatabaseManager(sdeAdapter);
 		this.locationWorld.getLocationRepository().deleteAll();
 	}
-
 
 	//	@Then("the memory cache is accessed with {string} result")
 	public void theMemoryCacheIsAccessedWithResult( String arg0 ) {

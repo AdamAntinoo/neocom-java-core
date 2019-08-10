@@ -1,13 +1,15 @@
 @DM02 @MiningExtraction
 Feature: [DM02] Download and process pilot mining extractions.
 
-  Fetch a new update for the pilot mining extractions each 10
-  minutes and process the received data against the Mining Extraction Repository where the records are stored updated for
-  extractions calculated every hour or date extractions when the recorded data is from older dates.
+  Fetch a new update for the pilot mining extractions each 10 minutes and process the received data against the
+  Mining Extraction Repository where the records are stored. Mining extractions are updated on each download and
+  new records are generated every hour with the latest amount of resources. If the downloaded data is from previous
+  dates the recors are marked with a special hour indicator.
 
   @DM02.01
-  Scenario: [DM02][01] Download a set of extractions by first time and store the processed data on the repository
-	Given the next set of mining extractions for pilot "92223647"
+  Scenario: [DM02][01] Download a set of extractions by first time and store the processed data on the repository. Records downloaded match with the processing date.
+	Given an empty Mining Extraction repository
+	And the next set of mining extractions for pilot "92223647"
 	  | date       | quantity | solar_system_id | type_id |
 	  | 2019-08-07 | 1566     | 30001735        | 17471   |
 	  | 2019-08-07 | 421      | 30001735        | 17459   |
@@ -18,7 +20,7 @@ Feature: [DM02] Download and process pilot mining extractions.
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 421      | 0     | 2019-08-07         | 10             | 92223647 |
 
   @DM02.02
-  Scenario: [DM02][02] Download another set of extractions on the same hour and store the processed data on the repository
+  Scenario: [DM02][02] Download another set of extractions on the same hour and store the processed data on the repository. Update records because download date and processing dates match.
 	Given the next records on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 421      | 0     | 2019-08-07         | 10             | 92223647 |

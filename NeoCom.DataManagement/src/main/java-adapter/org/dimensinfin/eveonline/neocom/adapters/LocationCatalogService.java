@@ -24,9 +24,10 @@ public class LocationCatalogService {
 	private static Map<Long, EsiLocation> locationCache = new HashMap<Long, EsiLocation>();
 	private static boolean dirtyCache = false;
 	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
-	private ESIDataAdapter esiDataAdapter;
+	//	private ESIDataAdapter esiDataAdapter;
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystem;
+	private SDEDatabaseAdapter sdeDatabaseAdapter;
 	private LocationRepository locationRepository;
 
 	// - C A C H E   M A N A G E M E N T
@@ -98,6 +99,10 @@ public class LocationCatalogService {
 		}
 	}
 
+	public void verifySDERepository() {
+
+	}
+
 	private void registerOnScheduler() {
 		// TODO - register this on the future scheduler
 	}
@@ -159,10 +164,10 @@ public class LocationCatalogService {
 			this.onConstruction = new LocationCatalogService();
 		}
 
-		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
-			this.onConstruction.esiDataAdapter = esiDataAdapter;
-			return this;
-		}
+//		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
+//			this.onConstruction.esiDataAdapter = esiDataAdapter;
+//			return this;
+//		}
 
 		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
@@ -174,6 +179,11 @@ public class LocationCatalogService {
 			return this;
 		}
 
+		public Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
+			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
+			return this;
+		}
+
 		public Builder withLocationRepository( final LocationRepository locationRepository ) {
 			Objects.requireNonNull(locationRepository);
 			this.onConstruction.locationRepository = locationRepository;
@@ -181,10 +191,12 @@ public class LocationCatalogService {
 		}
 
 		public LocationCatalogService build() {
-			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
+//			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
 			Objects.requireNonNull(this.onConstruction.configurationProvider);
 			Objects.requireNonNull(this.onConstruction.fileSystem);
+			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);
 			Objects.requireNonNull(this.onConstruction.locationRepository);
+			this.onConstruction.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
 			this.onConstruction.readLocationsDataCache(); // Load the cache from the storage.
 			this.onConstruction.registerOnScheduler(); // register on scheduler to update storage every some minutes
 			return this.onConstruction;

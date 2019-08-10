@@ -22,11 +22,11 @@ public class NeoComSupportDBAdapter {
 	private static Logger logger = LoggerFactory.getLogger(NeoComSupportDBAdapter.class);
 
 	private String databaseConnection;
-	private JdbcPooledConnectionSource connectionSource = null;
+	private JdbcPooledConnectionSource connectionSource;
 
 	private Dao<Credential, String> credentialDao = null;
 	private Dao<MiningExtraction, String> miningExtractionDao = null;
-	private Dao<EsiLocation, Long> locationDao = null;
+//	private Dao<EsiLocation, Long> locationDao = null;
 
 	private NeoComSupportDBAdapter() {
 	}
@@ -49,11 +49,11 @@ public class NeoComSupportDBAdapter {
 		return this.miningExtractionDao;
 	}
 
-	public Dao<EsiLocation, Long> getLocationDao() throws SQLException {
-		if (null == this.locationDao)
-			this.locationDao = DaoManager.createDao(this.getConnectionSource(), EsiLocation.class);
-		return this.locationDao;
-	}
+//	public Dao<EsiLocation, Long> getLocationDao() throws SQLException {
+//		if (null == this.locationDao)
+//			this.locationDao = DaoManager.createDao(this.getConnectionSource(), EsiLocation.class);
+//		return this.locationDao;
+//	}
 
 	protected void openNeoComDB() throws SQLException {
 		// TODO - read the current database version to run the upgrade method if do not match.
