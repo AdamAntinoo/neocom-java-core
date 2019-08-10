@@ -1,22 +1,21 @@
 package org.dimensinfin.eveonline.neocom.database;
 
+import org.dimensinfin.core.util.Chrono;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.LocationClass;
+import org.dimensinfin.eveonline.neocom.industry.Resource;
+import org.dimensinfin.eveonline.neocom.model.ItemCategory;
+import org.dimensinfin.eveonline.neocom.planetary.Schematics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.model.ItemCategory;
-import org.dimensinfin.eveonline.neocom.planetary.Schematics;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 public abstract class SDEDatabaseManager {
 	protected static Logger logger = LoggerFactory.getLogger(SDEDatabaseManager.class);
 	// - L O C A T I O N B Y I D
@@ -204,7 +203,7 @@ public abstract class SDEDatabaseManager {
 
 	private EsiLocation searchLocation4IdAtSDE( final long locationId ) {
 		logger.info(">< [SDEDatabaseManager.searchLocation4IdAtSDE]> locationId: {}", locationId);
-		EsiLocation target = new EsiLocation();
+		EsiLocation target = EsiLocation.getJitaLocation();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_LOCATIONBYID, new String[]{Long.valueOf(locationId).toString()});
 			boolean detected = false;
@@ -228,7 +227,7 @@ public abstract class SDEDatabaseManager {
 					target.setRegionId(fragmentID);
 					target.setRegion(cursor.getString(LOCATIONBYID_REGION_COLINDEX));
 				}
-				target.setTypeId(ELocationType.CCPLOCATION);
+				target.setClassType(LocationClass.CCPLOCATION);
 				target.setStation(cursor.getString(LOCATIONBYID_LOCATIONNAME_COLINDEX));
 				target.setId(cursor.getLong(LOCATIONBYID_LOCATIONID_COLINDEX));
 				target.setSecurity(cursor.getString(LOCATIONBYID_SECURITY_COLINDEX));
@@ -252,7 +251,7 @@ public abstract class SDEDatabaseManager {
 	 * Search for the location using only the system identifier.
 	 */
 	public EsiLocation searchLocationBySystem( final String name ) {
-		final EsiLocation newLocation = new EsiLocation();
+		final EsiLocation newLocation = EsiLocation.getJitaLocation();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_LOCATIONBYSYSTEM, new String[]{name});
 			while (cursor.moveToNext()) {

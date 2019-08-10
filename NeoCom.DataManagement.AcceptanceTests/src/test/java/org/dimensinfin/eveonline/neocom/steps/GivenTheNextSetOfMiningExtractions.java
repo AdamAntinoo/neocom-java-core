@@ -49,6 +49,7 @@ public class GivenTheNextSetOfMiningExtractions {
 					this.cucumberTable2GetCharactersCharacterIdMining200OkConverter.convert(row);
 			miningExtractionRecords.add(new MiningExtraction.Builder()
 					                            .fromMining(esiMiningExtractionRecord)
+					.withSolarSystemLocation(this.miningExtractionsWorld.getesi)
 					                            .withOwnerId(Integer.parseInt(pilotIdentifier))
 					                            .build());
 		}

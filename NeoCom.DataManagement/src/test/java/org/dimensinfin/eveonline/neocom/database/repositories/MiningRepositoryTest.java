@@ -33,7 +33,7 @@ public class MiningRepositoryTest extends EsiDataAdapterSupportTest {
 		miningExtractionList.clear();
 		miningExtraction = new MiningExtraction.Builder()
 				                   .withTypeId(34)
-				                   .withSolarSystemId(30001647)
+				                   .withSolarSystemLocation(30001647)
 				                   .withQuantity(12345)
 				                   .withOwnerId(92223647)
 				                   .withExtractionDate(new LocalDate())

@@ -453,7 +453,7 @@ public class NeoComAsset extends ANeoComEntity implements ILocatableAsset {
 				locationCache = accessGlobal().searchLocation4Id(locationId);
 			}
 		} catch ( NeoComRuntimeException neoe ) {
-			locationCache = new EsiLocation();
+			locationCache =  EsiLocation.getJitaLocation();
 		}
 		return locationCache;
 	}

@@ -8,6 +8,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.entities.DatabaseVersion;
 import org.dimensinfin.eveonline.neocom.entities.TimeStamp;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
@@ -17,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.stream.Location;
-
 public class NeoComSupportDBAdapter {
 	private static Logger logger = LoggerFactory.getLogger(NeoComSupportDBAdapter.class);
 
@@ -27,7 +26,7 @@ public class NeoComSupportDBAdapter {
 
 	private Dao<Credential, String> credentialDao = null;
 	private Dao<MiningExtraction, String> miningExtractionDao = null;
-	private Dao<Location, Integer> locationDao = null;
+	private Dao<EsiLocation, Long> locationDao = null;
 
 	private NeoComSupportDBAdapter() {
 	}
@@ -39,24 +38,21 @@ public class NeoComSupportDBAdapter {
 	}
 
 	public Dao<Credential, String> getCredentialDao() throws SQLException {
-		if (null == this.credentialDao) {
+		if (null == this.credentialDao)
 			this.credentialDao = DaoManager.createDao(this.getConnectionSource(), Credential.class);
-		}
 		return this.credentialDao;
 	}
 
-	public Dao<Location, Integer> getLocationDao() throws SQLException {
-		if (null == this.locationDao) {
-			this.locationDao = DaoManager.createDao(this.getConnectionSource(), Location.class);
-		}
-		return this.locationDao;
+	public Dao<MiningExtraction, String> getMiningExtractionDao() throws SQLException {
+		if (null == this.miningExtractionDao)
+			this.miningExtractionDao = DaoManager.createDao(this.getConnectionSource(), MiningExtraction.class);
+		return this.miningExtractionDao;
 	}
 
-	public Dao<MiningExtraction, String> getMiningExtractionDao() throws SQLException {
-		if (null == this.miningExtractionDao) {
-			this.miningExtractionDao = DaoManager.createDao(this.getConnectionSource(), MiningExtraction.class);
-		}
-		return this.miningExtractionDao;
+	public Dao<EsiLocation, Long> getLocationDao() throws SQLException {
+		if (null == this.locationDao)
+			this.locationDao = DaoManager.createDao(this.getConnectionSource(), EsiLocation.class);
+		return this.locationDao;
 	}
 
 	protected void openNeoComDB() throws SQLException {
@@ -105,7 +101,7 @@ public class NeoComSupportDBAdapter {
 			logger.warn("SQL [NeoComSupportDBAdapter.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}
 		try {
-			TableUtils.createTableIfNotExists(databaseConnection, Location.class);
+			TableUtils.createTableIfNotExists(databaseConnection, EsiLocation.class);
 		} catch (SQLException sqle) {
 			logger.warn("SQL [NeoComSupportDBAdapter.onCreate]> SQL NeoComDatabase: {}", sqle.getMessage());
 		}

@@ -44,6 +44,7 @@ public class MiningExtractionUpdater extends NeoComUpdater<Credential> {
 				final MiningExtraction miningExtraction = new MiningExtraction.Builder()
 						                                          .fromMining(extractionOk)
 						                                          .withExtractionHour(this.getExtractionHour())
+																  .withSolarSystemLocation(esiDataAdapter.searchLocation)
 						                                          .withOwnerId(this.getModel().getAccountId())
 						                                          .build();
 				this.processMiningExtraction(miningExtraction, this.getModel(), LocalDate.now());

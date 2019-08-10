@@ -31,8 +31,8 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 @DatabaseTable(tableName = "Locations")
 public class EsiLocation extends UpdatableEntity {
 	private static final long serialVersionUID = 1522765618286937377L;
-//	private static ESIDataAdapter esiDataAdapter;
-	private static final EsiLocation jita = new EsiLocation();
+	//	private static ESIDataAdapter esiDataAdapter;
+	private static final EsiLocation jita = new EsiLocation.Builder().build();
 
 	static {
 		jita.setId(60003760)
@@ -80,16 +80,16 @@ public class EsiLocation extends UpdatableEntity {
 //	public String urlLocationIcon = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-//	public EsiLocation() {
-//		super();
-//	}
-//
-//	public EsiLocation( final long locationId ) {
-////		this();
-//		this.id = locationId;
-//		this.stationId = locationId;
-//
-//	}
+	private EsiLocation() {
+		super();
+	}
+
+	@Deprecated
+	public EsiLocation( final long locationId ) {
+//		this();
+		this.id = locationId;
+		this.stationId = locationId;
+	}
 
 //	public EsiLocation( final long citadelid, final Citadel cit ) {
 //		this();
@@ -368,7 +368,7 @@ public class EsiLocation extends UpdatableEntity {
 //		try {
 //			systemLocation = accessGlobal().searchLocation4Id(newid);
 //		} catch (NeoComRuntimeException newe) {
-		systemLocation = new EsiLocation();
+		systemLocation = EsiLocation.getJitaLocation();
 //		}
 		systemId = systemLocation.getSystemId();
 		system = systemLocation.getSystem();
@@ -404,6 +404,17 @@ public class EsiLocation extends UpdatableEntity {
 	public int hashCode() {
 		return super.hashCode();
 	}
-}
 
-// - UNUSED CODE ............................................................................................
+	// - B U I L D E R
+	public static class Builder {
+		private EsiLocation onConstruction;
+
+		public Builder() {
+			this.onConstruction = new EsiLocation();
+		}
+
+		public EsiLocation build() {
+			return this.onConstruction;
+		}
+	}
+}

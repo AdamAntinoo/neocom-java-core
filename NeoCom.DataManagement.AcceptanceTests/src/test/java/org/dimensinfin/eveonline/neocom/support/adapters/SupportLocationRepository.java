@@ -4,11 +4,10 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
 import java.sql.SQLException;
 import java.util.Objects;
-
-import javax.xml.stream.Location;
 
 public class SupportLocationRepository extends LocationRepository {
 	/**
@@ -17,7 +16,7 @@ public class SupportLocationRepository extends LocationRepository {
 	 */
 	public int deleteAll() {
 		try {
-			final DeleteBuilder<Location, Integer> deleteBuilder = this.locationDao.deleteBuilder();
+			final DeleteBuilder<EsiLocation, Long> deleteBuilder = this.locationDao.deleteBuilder();
 			deleteBuilder.where().isNotNull("id");
 			return deleteBuilder.delete();
 		} catch (SQLException sqle) {
@@ -34,7 +33,7 @@ public class SupportLocationRepository extends LocationRepository {
 			this.onConstruction = new SupportLocationRepository();
 		}
 
-		public SupportLocationRepository.Builder withLocationDao( final Dao<Location, Integer> locationDao ) {
+		public SupportLocationRepository.Builder withLocationDao( final Dao<EsiLocation, Long> locationDao ) {
 			this.onConstruction.locationDao = locationDao;
 			return this;
 		}

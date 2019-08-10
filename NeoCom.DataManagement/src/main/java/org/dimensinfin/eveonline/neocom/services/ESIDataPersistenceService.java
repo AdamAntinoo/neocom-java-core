@@ -1,19 +1,17 @@
 package org.dimensinfin.eveonline.neocom.services;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
-import org.dimensinfin.eveonline.neocom.datamngmt.ESIGlobalAdapter;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ESIDataPersistenceService {
 	private static Logger logger = LoggerFactory.getLogger(ESIDataPersistenceService.class);
@@ -76,7 +74,8 @@ public class ESIDataPersistenceService {
 	private void createMiningExtraction( final String recordId, final GetCharactersCharacterIdMining200Ok extractionOk, final Credential credential ) throws SQLException {
 		final MiningExtraction newExtraction = new MiningExtraction.Builder()
 				                                       .withTypeId(extractionOk.getTypeId())
-				                                       .withSolarSystemId(extractionOk.getSolarSystemId())
+//				                                       .withSolarSystemId(extractionOk.getSolarSystemId())
+													   .withSolarSystemLocation(this.esiAdapter.searchLocation4Id(extractionOk.getSolarSystemId()))
 				                                       .withQuantity(extractionOk.getQuantity().intValue())
 				                                       .withOwnerId(credential.getAccountId())
 				                                       .withExtractionDate(extractionOk.getDate())

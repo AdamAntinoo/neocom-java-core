@@ -1,17 +1,16 @@
 package org.dimensinfin.eveonline.neocom.market;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-
 import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 /**
  * This class stores the module and the market information and any other data for manufacturing calculations
@@ -72,7 +71,7 @@ public class MarketDataSet extends NeoComNode {
 		//		} catch ( NeoComRuntimeException neoe ) {
 		//			baseprice = 0.0;
 		//		}
-		bestmarketHigh = bestmarketLow = bestmarketNull = new MarketDataEntry(new EsiLocation());
+		bestmarketHigh = bestmarketLow = bestmarketNull = new MarketDataEntry(EsiLocation.getJitaLocation());
 		bestmarketHigh.setPrice(baseprice);
 	}
 
@@ -186,7 +185,7 @@ public class MarketDataSet extends NeoComNode {
 				//				} catch ( NeoComRuntimeException neoe ) {
 				//					baseprice = 0.0;
 				//				}
-				bestmarketHigh = bestmarketLow = bestmarketNull = new MarketDataEntry(new EsiLocation());
+				bestmarketHigh = bestmarketLow = bestmarketNull = new MarketDataEntry(EsiLocation.getJitaLocation());
 				bestmarketHigh.setPrice(baseprice);
 				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
 			} else {
@@ -206,7 +205,7 @@ public class MarketDataSet extends NeoComNode {
 				}
 				// Check for empty process. For example on blueprints.
 				if (null == bestmarketHigh) {
-					bestmarketHigh = new MarketDataEntry(new EsiLocation());
+					bestmarketHigh = new MarketDataEntry(EsiLocation.getJitaLocation());
 				}
 			}
 		}
@@ -218,7 +217,7 @@ public class MarketDataSet extends NeoComNode {
 				//				} catch ( NeoComRuntimeException neoe ) {
 				//					baseprice = 0.0;
 				//				}
-				bestmarketHigh = bestmarketLow = bestmarketNull = new MarketDataEntry(new EsiLocation());
+				bestmarketHigh = bestmarketLow = bestmarketNull = new MarketDataEntry(EsiLocation.getJitaLocation());
 				bestmarketHigh.setPrice(baseprice);
 				//				MarketDataSet.logger.info("-- MarketDataSet.updateBestMarket - using default price: " + baseprice); //$NON-NLS-1$
 			} else {
@@ -236,7 +235,7 @@ public class MarketDataSet extends NeoComNode {
 				}
 				// Check for empty process. For example on blueprints.
 				if (null == bestmarketHigh) {
-					bestmarketHigh = new MarketDataEntry(new EsiLocation());
+					bestmarketHigh = new MarketDataEntry(EsiLocation.getJitaLocation());
 				}
 			}
 		}

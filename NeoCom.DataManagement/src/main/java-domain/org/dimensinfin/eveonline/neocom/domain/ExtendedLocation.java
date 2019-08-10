@@ -9,9 +9,7 @@
 //								Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.core.interfaces.IDownloadable;
@@ -19,7 +17,9 @@ import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class ExtendedLocation extends EsiLocation implements IExpandable, IDownloadable {
@@ -37,11 +37,11 @@ public class ExtendedLocation extends EsiLocation implements IExpandable, IDownl
 	private boolean _downloading = false;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
-	public ExtendedLocation () {
-		super();
-		this.setRenderWhenEmpty(false);
-//		jsonClass = "ExtendedLocation";
-	}
+//	public ExtendedLocation () {
+////		super();
+//		this.setRenderWhenEmpty(false);
+////		jsonClass = "ExtendedLocation";
+//	}
 
 	@Deprecated
 	public ExtendedLocation ( final Credential credential, final EsiLocation delegate) {
@@ -55,7 +55,7 @@ public class ExtendedLocation extends EsiLocation implements IExpandable, IDownl
 	}
 
 	private ExtendedLocation (final EsiLocation delegate) {
-		this();
+		super(delegate.getId());
 		//		this.setDownloaded(false);
 		this.setRenderWhenEmpty(false);
 		this.delegate = delegate;
@@ -155,10 +155,10 @@ public class ExtendedLocation extends EsiLocation implements IExpandable, IDownl
 		return delegate.getClassType();
 	}
 
-	@Override
-	public String getUrlLocationIcon () {
-		return delegate.getUrlLocationIcon();
-	}
+//	@Override
+//	public String getUrlLocationIcon () {
+//		return delegate.getUrlLocationIcon();
+//	}
 
 	public boolean isDownloaded () {
 		if ( contentManager instanceof IDownloadable )

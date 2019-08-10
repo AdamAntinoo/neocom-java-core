@@ -12,7 +12,7 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.database;
 
-import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
+import org.dimensinfin.eveonline.neocom.adapters.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;

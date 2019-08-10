@@ -12,22 +12,21 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.entities;
 
-import java.sql.SQLException;
-
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrders200Ok;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.model.ANeoComEntity;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.sql.SQLException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 @DatabaseTable(tableName = "MarketOrders")
@@ -72,7 +71,7 @@ public class MarketOrder extends ANeoComEntity {
 	@DatabaseField
 	private boolean isCorporation = false;
 	@DatabaseField(dataType = DataType.ENUM_STRING)
-	private EOrderStates orderState=EOrderStates.OPEN;
+	private EOrderStates orderState = EOrderStates.OPEN;
 
 	/**
 	 * Derived fields that store cached data.
@@ -168,7 +167,7 @@ public class MarketOrder extends ANeoComEntity {
 			try {
 				orderLocation = accessGlobal().searchLocation4Id(locationId);
 			} catch (NeoComRuntimeException neoe) {
-				orderLocation = new EsiLocation();
+				orderLocation = EsiLocation.getJitaLocation();
 			}
 		}
 		return orderLocation;

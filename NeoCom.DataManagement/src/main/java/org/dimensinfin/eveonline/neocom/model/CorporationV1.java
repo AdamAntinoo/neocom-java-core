@@ -36,7 +36,7 @@ public class CorporationV1 extends ANeoComEntity {
 	public String description = "-NA-";
 	public double taxRate = 0.0;
 	public long dateFounded = 0;
-	public EsiLocation homeStation = new EsiLocation();
+	public EsiLocation homeStation = EsiLocation.getJitaLocation();
 	public String url4Icon = "http://image.eveonline.com/Alliance/117383987_128.png";
 
 	private GetCorporationsCorporationIdOk publicData = null;

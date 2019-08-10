@@ -12,13 +12,13 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.industry;
 
-import java.util.concurrent.ExecutionException;
-
-import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
 import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
+import java.util.concurrent.ExecutionException;
 
 // - CLASS IMPLEMENTATION ...................................................................................
 public class EveTask extends NeoComNode {
@@ -62,7 +62,7 @@ public class EveTask extends NeoComNode {
 	}
 
 	public EsiLocation getLocation() {
-		if (null == location) return new EsiLocation();
+		if (null == location) return EsiLocation.getJitaLocation();
 		return location;
 	}
 

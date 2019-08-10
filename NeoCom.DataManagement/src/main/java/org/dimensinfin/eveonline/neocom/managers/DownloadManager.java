@@ -1,32 +1,31 @@
 package org.dimensinfin.eveonline.neocom.managers;
 
+import com.j256.ormlite.dao.Dao;
+
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.LocationClass;
+import org.dimensinfin.eveonline.neocom.entities.Job;
+import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
+import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
+import org.dimensinfin.eveonline.neocom.entities.NeoComBlueprint;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
-import org.dimensinfin.eveonline.neocom.entities.Job;
-import org.dimensinfin.eveonline.neocom.entities.MarketOrder;
-import org.dimensinfin.eveonline.neocom.entities.NeoComAsset;
-import org.dimensinfin.eveonline.neocom.entities.NeoComBlueprint;
-import org.dimensinfin.eveonline.neocom.enums.ELocationType;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.dimensinfin.eveonline.neocom.interfaces.ILocatableAsset;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.j256.ormlite.dao.Dao;
 
 /**
  * This id the class responsible to serve as an interface between the data source and the internal system model. Downloading should not be a pure
@@ -107,7 +106,7 @@ public class DownloadManager {
 				// Check the asset location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
 				EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(myasset.getLocationId());
-				if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+				if (targetLoc.getClassType() == LocationClass.UNKNOWN) {
 					// Add this asset to the list of items to be reprocessed.
 					this.unlocatedAssets.add(myasset);
 				}
@@ -195,7 +194,7 @@ public class DownloadManager {
 				// Check the blueprint location. The location can be a known game station, a known user structure, another asset
 				// or an unknown player structure. Check which one is this location.
 				EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(newBlueprint.getLocationId());
-				if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+				if (targetLoc.getClassType() == LocationClass.UNKNOWN) {
 					// Add this blueprint to the list of items to be reprocessed.
 					this.unlocatedBlueprints.add(newBlueprint);
 				}
@@ -378,10 +377,10 @@ public class DownloadManager {
 	 * (Container, Ship, etc) or another player/corporation structure resource that is not listed on the asset
 	 * list.
 	 */
-	private ELocationType validateLocation( final ILocatableAsset locatable ) {
+	private LocationClass validateLocation( final ILocatableAsset locatable ) {
 		long targetLocationid = locatable.getLocationId();
 		EsiLocation targetLoc = GlobalDataManager.getSingleton().searchLocation4Id(targetLocationid);
-		if (targetLoc.getTypeId() == ELocationType.UNKNOWN) {
+		if (targetLoc.getClassType() == LocationClass.UNKNOWN) {
 			try {
 				// Need to check if asset or unreachable location. Search for asset with locationid.
 				List<NeoComAsset> targetList = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao()
@@ -389,7 +388,7 @@ public class DownloadManager {
 				NeoComAsset target = null;
 				if (targetList.size() > 0) target = targetList.get(0);
 				if (null == target)
-					return ELocationType.UNKNOWN;
+					return LocationClass.UNKNOWN;
 				else {
 					// Change the asset parentship and update the asset location with the location of the parent.
 					locatable.setParentId(targetLocationid);
@@ -409,13 +408,13 @@ public class DownloadManager {
 					locatable.setLocationType(target.getLocationType());
 					locatable.setLocationFlag(target.getLocationFlag());
 					locatable.store();
-					return target.getLocation().getTypeId();
+					return target.getLocation().getClassType();
 				}
 			} catch (SQLException sqle) {
-				return ELocationType.UNKNOWN;
+				return LocationClass.UNKNOWN;
 			}
 		} else
-			return targetLoc.getTypeId();
+			return targetLoc.getClassType();
 	}
 
 	/**
