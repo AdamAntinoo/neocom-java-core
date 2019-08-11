@@ -17,7 +17,7 @@ Feature: [DM04] Mining Repository. Verify all the login on the Mining Repository
 	  | 2019-08-07:10-30001735-17471-92223647 | 17471  | 30001735      | 19276    | 0     | 2019-08-07         | 10             | 92223647 |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |
 	And the pilot is "92223647"
-	And the today date being "2019-08-08"
+	And today date being "2019-08-08"
 	When requesting the list of extractions
 	Then we get the next list of extractions
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |

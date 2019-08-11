@@ -174,6 +174,9 @@ public class LocationCatalogService {
 		if (locationId < 40000000) { // Can be a system
 			return this.locationRepository.searchSystemById(locationId);
 		}
+		if (locationId < 61000000) { // Can be a game station
+//			return this.locationRepository.searchStationById(locationId);
+		}
 		return new EsiLocation.Builder().build();
 	}
 

@@ -45,11 +45,11 @@ Feature: [DM01] Location catalog Service
 	  | 10000020 | Tash-Murkon | 20000257        | Peges             | 30001735 | Uhodoh     | SYSTEM    |
 
   @DM01.05
-  Scenario: [DM01.03] After accessing a location that should be stored on the repository stop the service and persist cached locations
-	Given a new empty Location Catalog
-	When requested to locate Location "10000031"
-	And after getting a "Region" location
-	And verify that the obtained location is persisted on the repository
-	Then stop the Location catalog service
-	And start the Location catalog service
-	And verify that the obtained location is persisted on the repository
+  Scenario: [DM01.05] Check that a second access to the same location getS a MEMORY access
+	Given a new empty Location Catalog store and repository
+	When requested to locate Location "30001735"
+	Then the access result is "GENERATED"
+	And the generated Location class is "SYSTEM"
+	When the location is requested again
+	Then the locations match
+	Then the access result is "MEMORY_ACCESS"

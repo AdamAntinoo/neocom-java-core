@@ -25,6 +25,7 @@ public class DM01InitializeLocationCatalog {
 	private CucumberTableToEsiLocationConverter cucumberTableToEsiLocationConverter;
 	private ESIDataAdapter esiDataAdapter;
 	private Map<String, Integer> counters;
+	private EsiLocation secondLocation;
 
 	public DM01InitializeLocationCatalog( final LocationWorld locationWorld,
 	                                      final CucumberTableToEsiLocationConverter cucumberTableToEsiLocationConverter ) {
@@ -79,5 +80,16 @@ public class DM01InitializeLocationCatalog {
 	public void theLocationFoundHasTheNextValues( final List<Map<String, String>> cucumberTable ) {
 		final EsiLocation expected = this.cucumberTableToEsiLocationConverter.convert(cucumberTable.get(0));
 		Assert.assertTrue(expected.equals(this.locationWorld.getLocation()));
+	}
+
+	@When("the location is requested again")
+	public void theLocationIsRequestedAgain() {
+		 this.secondLocation = this.esiDataAdapter.searchLocation4Id(
+				this.locationWorld.getLocation().getId());
+	}
+
+	@Then("the locations match")
+	public void theLocationsMatch() {
+		Assert.assertTrue(this.secondLocation.equals(this.locationWorld.getLocation()));
 	}
 }
