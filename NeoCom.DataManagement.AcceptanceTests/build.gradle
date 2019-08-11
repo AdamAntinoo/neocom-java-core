@@ -37,9 +37,12 @@ allprojects {
     }
 }
 
-//task clean(type: Delete) {
-//    delete rootProject.buildDir
-//}
+sourceSets {
+    test.java {
+        srcDirs += "src/test/java-steps"
+        srcDirs += "src/test/java-support"
+    }
+}
 
 // - P R O D U C T   V E R S I O N S
 ext {
