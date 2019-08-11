@@ -1,5 +1,9 @@
 package org.dimensinfin.eveonline.neocom.support.adapters;
 
+import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,11 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Spring boot implementation for the File System isolation interface. We can get access to the application generated data
@@ -56,9 +55,6 @@ public class FileSystemSBImplementation implements IFileSystem {
 		URI propertyURI = null;
 		try {
 			final String executionDirectory = new File(".").getCanonicalPath() + "/build/resources/main/";
-			//			final URL resource = getClassLoader().getResource(filePath);
-			//			if (null == resource) throw new IOException("[FileSystemSBImplementation.openAsset4Input]> Resource file " + filePath + "" +
-			//					" not found with classloader.");
 			propertyURI = new URI(executionDirectory + filePath);
 			logger.info("DD [FileSystemSBImplementation.openAsset4Input]> Processing file: {}", propertyURI);
 		} catch (URISyntaxException use) {
@@ -71,9 +67,6 @@ public class FileSystemSBImplementation implements IFileSystem {
 		URI propertyURI = null;
 		try {
 			final String executionDirectory = new File(".").getCanonicalPath() + "/build/resources/main/";
-			//			final URL resource = getClassLoader().getResource(filePath);
-			//			if (null == resource) throw new IOException("[FileSystemSBImplementation.openAsset4Input]> Resource file " + filePath + "" +
-			//					" not found with classloader.");
 			propertyURI = new URI(executionDirectory + filePath);
 			logger.info("DD [FileSystemSBImplementation.accessAsset4Path]> Processing file: {}", propertyURI);
 		} catch (URISyntaxException e) {
@@ -90,12 +83,6 @@ public class FileSystemSBImplementation implements IFileSystem {
 	public void copyFromAssets( final String sourceFileName, final String destinationDirectory ) {
 
 	}
-
-	//	@Override
-	//	public String accessAppStorage4Path( final String filePath ) {
-	//		return accessResource4Path(filePath);
-	//	}
-	//[01]
 
 	/**
 	 * Get a first access application classloader to be used to generate Resource paths.
@@ -116,9 +103,7 @@ public class FileSystemSBImplementation implements IFileSystem {
 			buffer.append("assetsFolder:").append(accessAsset4Path("")).append(" ");
 		} catch (IOException ioe) {
 		}
-		return buffer.append("]")
-				       //				.append("->").append(super.toString())
-				       .toString();
+		return buffer.append("]").toString();
 	}
 
 	// - B U I L D E R

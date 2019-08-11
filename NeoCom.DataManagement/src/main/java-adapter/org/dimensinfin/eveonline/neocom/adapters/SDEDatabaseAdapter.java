@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.SBRawStatement;
@@ -51,6 +52,7 @@ public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
 	private String getConnectionDescriptor() {
 		return this.schema + ":" + this.databasePath + this.databaseName;
 	}
+
 	private Connection getSDEDatabase() {
 		if (null == this.ccpDatabaseConnection) this.openSDEDB();
 		return this.ccpDatabaseConnection;
@@ -85,8 +87,20 @@ public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
 				return false;
 			}
 		}
+		this.onCreate(this.connectionSource);
 		logger.info("<< [SDEDatabaseAdapter.openSDEDB]");
 		return true;
+	}
+
+	private void onCreate( final ConnectionSource databaseConnection ) {
+		logger.info(">> [SDEDatabaseAdapter.onCreate]");
+		// Create the tables that do not exist
+		try {
+			TableUtils.createTableIfNotExists(databaseConnection, EsiLocation.class);
+		} catch (SQLException sqle) {
+			logger.warn("SQL [SDEDatabaseAdapter.onCreate]> SQL SDEDatabase: {}", sqle.getMessage());
+		}
+		logger.info("<< [SDEDatabaseAdapter.onCreate]");
 	}
 
 	private void createConnectionSource() throws SQLException {
