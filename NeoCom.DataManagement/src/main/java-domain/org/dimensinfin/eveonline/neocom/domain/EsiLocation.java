@@ -7,6 +7,9 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import net.nikr.eve.jeveasset.data.Citadel;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 
 import javax.persistence.Entity;
@@ -50,41 +53,32 @@ public class EsiLocation extends UpdatableEntity {
 				.setClassType(LocationClass.CCPLOCATION);
 	}
 
-	public static EsiLocation getUnknownLocation() {
-		return unknown;
-	}
-	public static EsiLocation getJitaLocation() {
-		return jita;
-	}
-
-//	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
-//		esiDataAdapter = newEsiDataAdapter;
-//	}
-
 	@DatabaseField(id = true, index = true)
 	protected long id = -2;
 	@DatabaseField
 	protected long stationId = -1;
-	@DatabaseField
-	private String station = "SPACE";
+
+	//	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
+//		esiDataAdapter = newEsiDataAdapter;
+//	}
 	@DatabaseField
 	protected int systemId = -1;
 	@DatabaseField
-	private String system = "UNKNOWN";
-	@DatabaseField
 	protected long constellationId = -1;
 	@DatabaseField
-	private String constellation = "Echo Cluster";
-	@DatabaseField
 	protected long regionId = -1;
+	@DatabaseField(dataType = DataType.ENUM_STRING)
+	protected LocationClass classType = LocationClass.UNKNOWN;
+	@DatabaseField
+	private String station = "SPACE";
+	@DatabaseField
+	private String system = "UNKNOWN";
+	@DatabaseField
+	private String constellation = "Echo Cluster";
 	@DatabaseField
 	private String region = "-DEEP SPACE-";
 	@DatabaseField
 	private String security = "0.0";
-	@DatabaseField(dataType = DataType.ENUM_STRING)
-	protected LocationClass classType = LocationClass.UNKNOWN;
-//	@DatabaseField
-//	public String urlLocationIcon = null;
 
 	// - C O N S T R U C T O R - S E C T I O N ................................................................
 	private EsiLocation() {
@@ -96,6 +90,16 @@ public class EsiLocation extends UpdatableEntity {
 //		this();
 		this.id = locationId;
 		this.stationId = locationId;
+	}
+//	@DatabaseField
+//	public String urlLocationIcon = null;
+
+	public static EsiLocation getUnknownLocation() {
+		return unknown;
+	}
+
+	public static EsiLocation getJitaLocation() {
+		return jita;
 	}
 
 //	public EsiLocation( final long citadelid, final Citadel cit ) {
@@ -170,11 +174,6 @@ public class EsiLocation extends UpdatableEntity {
 		return this.station;
 	}
 
-	public EsiLocation setStation( final String station ) {
-		this.station = station;
-		return this;
-	}
-
 	public int getSystemId() {
 		return this.systemId;
 	}
@@ -190,11 +189,6 @@ public class EsiLocation extends UpdatableEntity {
 
 	public String getSystemName() {
 		return this.system;
-	}
-
-	public EsiLocation setSystem( final String system ) {
-		this.system = system;
-		return this;
 	}
 
 	public long getConstellationId() {
@@ -228,11 +222,6 @@ public class EsiLocation extends UpdatableEntity {
 		return this.region;
 	}
 
-	public EsiLocation setRegion( final String region ) {
-		this.region = region;
-		return this;
-	}
-
 	public String getSecurity() {
 		return this.security;
 	}
@@ -248,6 +237,23 @@ public class EsiLocation extends UpdatableEntity {
 
 	public EsiLocation setClassType( final LocationClass classType ) {
 		this.classType = classType;
+		return this;
+	}
+
+	//--- V I R T U A L   A C C E S S O R S
+	@JsonIgnore
+	public final boolean isCitadel() {
+		if (this.getClassType() == LocationClass.CITADEL) return true;
+		return false;
+	}
+
+	@JsonIgnore
+	public final boolean isRegion() {
+		return ((this.getStationId() == 0) && (this.getSystemId() == 0) && (this.getRegionId() != 0));
+	}
+
+	public EsiLocation setRegion( final String region ) {
+		this.region = region;
 		return this;
 	}
 
@@ -286,26 +292,24 @@ public class EsiLocation extends UpdatableEntity {
 //		return this;
 //	}
 
-	//--- V I R T U A L   A C C E S S O R S
-	@JsonIgnore
-	public final boolean isCitadel() {
-		if (this.getClassType() == LocationClass.CITADEL) return true;
-		return false;
-	}
-
-	@JsonIgnore
-	public final boolean isRegion() {
-		return ((this.getStationId() == 0) && (this.getSystemId() == 0) && (this.getRegionId() != 0));
-	}
-
 	@JsonIgnore
 	public final boolean isStation() {
 		return ((this.getStationId() != 0) && (this.getSystemId() != 0) && (this.getRegionId() != 0));
 	}
 
+	public EsiLocation setStation( final String station ) {
+		this.station = station;
+		return this;
+	}
+
 	@JsonIgnore
 	public final boolean isSystem() {
 		return ((this.getStationId() == 0) && (this.getSystemId() != 0) && (this.getRegionId() != 0));
+	}
+
+	public EsiLocation setSystem( final String system ) {
+		this.system = system;
+		return this;
 	}
 
 	@JsonIgnore
@@ -344,23 +348,22 @@ public class EsiLocation extends UpdatableEntity {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
 	}
 
-	@Override
-	public String toString() {
-		final StringBuffer buffer = new StringBuffer("NeoComLocation [");
-		buffer.append("#").append(this.getId()).append(" ");
-		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
-		buffer.append("[").append(this.getRegion()).append("] ");
-		if (null != system) {
-			buffer.append("system: ").append(system).append(" ");
-		}
-		if (null != station) {
-			buffer.append("station: ").append(station).append(" ");
-		}
-		buffer.append("]");
-		return buffer.toString();
-	}
-
-	//--- P R I V A T E   F I E L D S
+//	@Override
+//	public String toString() {
+//		final StringBuffer buffer = new StringBuffer("NeoComLocation [");
+//		buffer.append("#").append(this.getId()).append(" ");
+//		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
+//		buffer.append("[").append(this.getRegion()).append("] ");
+//		if (null != system) {
+//			buffer.append("system: ").append(system).append(" ");
+//		}
+//		if (null != station) {
+//			buffer.append("station: ").append(station).append(" ");
+//		}
+//		buffer.append("]");
+//		return buffer.toString();
+//	}
+	// - P R I V A T E   F I E L D S
 	private void updateFromCitadel( final long newid, final Citadel cit ) {
 		this.updateFromSystem(cit.systemId);
 		// Copy the data from the citadel location.
@@ -386,30 +389,74 @@ public class EsiLocation extends UpdatableEntity {
 		security = systemLocation.getSecurity();
 	}
 
-	/**
-	 * Two Locations are equal if they have the same locations codes.
-	 *
-	 * @param obj the target EsiLocation to compare.
-	 */
+//	/**
+//	 * Two Locations are equal if they have the same locations codes.
+//	 *
+//	 * @param obj the target EsiLocation to compare.
+//	 */
+//	@Override
+//	public boolean equals( final Object obj ) {
+//		if (stationId != ((EsiLocation) obj).getStationId()) return false;
+//		if (systemId != ((EsiLocation) obj).getSystemId()) return false;
+//		if (constellationId != ((EsiLocation) obj).getConstellationId()) return false;
+//		if (regionId != ((EsiLocation) obj).getRegionId()) return false;
+//		return true;
+//	}
+//
+//	@Override
+//	public int hashCode() {
+//		return super.hashCode();
+//	}
+//
+//	public boolean equals( final EsiLocation obj ) {
+//		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
+//		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
+//		if (!this.getStation().equalsIgnoreCase(obj.getStation())) return false;
+//		return true;
+//	}
+
+	// - C O R E
 	@Override
-	public boolean equals( final Object obj ) {
-		if (stationId != ((EsiLocation) obj).getStationId()) return false;
-		if (systemId != ((EsiLocation) obj).getSystemId()) return false;
-		if (constellationId != ((EsiLocation) obj).getConstellationId()) return false;
-		if (regionId != ((EsiLocation) obj).getRegionId()) return false;
-		return true;
+	public String toString() {
+		return new ToStringBuilder(this)
+				       .append("id", this.id)
+				       .append("classType", this.classType)
+				       .append("station", this.station)
+				       .append("system", this.system)
+				       .append("region", this.region)
+				       .append("security", this.security)
+				       .toString();
 	}
 
-	public boolean equals( final EsiLocation obj ) {
-		if (!this.getRegion().equalsIgnoreCase(obj.getRegion())) return false;
-		if (!this.getSystem().equalsIgnoreCase(obj.getSystem())) return false;
-		if (!this.getStation().equalsIgnoreCase(obj.getStation())) return false;
-		return true;
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final EsiLocation that = (EsiLocation) o;
+		return new EqualsBuilder()
+				       .appendSuper(super.equals(o))
+				       .append(this.id, that.id)
+				       .append(this.classType, that.classType)
+				       .append(this.station, that.station)
+				       .append(this.system, that.system)
+				       .append(this.constellation, that.constellation)
+				       .append(this.region, that.region)
+				       .append(this.security, that.security)
+				       .isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		return new HashCodeBuilder(17, 37)
+				       .appendSuper(super.hashCode())
+				       .append(this.id)
+				       .append(this.classType)
+				       .append(this.station)
+				       .append(this.system)
+				       .append(this.constellation)
+				       .append(this.region)
+				       .append(this.security)
+				       .toHashCode();
 	}
 
 	// - B U I L D E R
@@ -420,7 +467,32 @@ public class EsiLocation extends UpdatableEntity {
 			this.onConstruction = new EsiLocation();
 		}
 
+		public EsiLocation.Builder withClassType( final LocationClass classType ) {
+			this.onConstruction.classType = classType;
+			return this;
+		}
+
+		public EsiLocation.Builder withRegionId( final int regionId ) {
+			this.onConstruction.regionId = regionId;
+			return this;
+		}
+
+		public EsiLocation.Builder withRegionName( final String regionName ) {
+			if (null != regionName) this.onConstruction.region = regionName;
+			return this;
+		}
+		public EsiLocation.Builder withConstellationId( final int constellationId ) {
+			this.onConstruction.constellationId = constellationId;
+			return this;
+		}
+
+		public EsiLocation.Builder withConstellationName( final String constellationName ) {
+			if (null != constellationName) this.onConstruction.constellation = constellationName;
+			return this;
+		}
+
 		public EsiLocation build() {
+			this.onConstruction.getId();
 			return this.onConstruction;
 		}
 	}

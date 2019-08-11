@@ -169,7 +169,7 @@ public class LocationCatalogService {
 			return sdeRegion;
 		}
 		if (locationId < 30000000) { // Can be a constellation
-
+			return this.locationRepository.searchConstellationById(locationId);
 		}
 		return new EsiLocation.Builder().build();
 	}

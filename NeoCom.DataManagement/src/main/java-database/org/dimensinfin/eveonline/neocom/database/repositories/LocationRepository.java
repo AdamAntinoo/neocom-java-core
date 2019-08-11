@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class LocationRepository {
-	// - L O C A T I O N B Y I D
+	// - R E G I O N B Y I D
 	private static final int REGION_BYID_REGIONID_COLINDEX = 1;
 	private static final int REGION_BYID_REGIONNAME_COLINDEX = 2;
 	private static final int REGION_BYID_FACTIONID_COLINDEX = 3;
@@ -31,6 +31,20 @@ public class LocationRepository {
 	private static final String SELECT_REGION_BYID = "SELECT regionID as locationId, regionName as locationName, factionID as factionId" +
 			                                                 " FROM mapRegions" +
 			                                                 " WHERE regionID = ?";
+	// - C O N S T E L L A T I O N B Y I D
+	private static final int CONSTELLATION_BYID_REGIONID_COLINDEX = 1;
+	private static final int CONSTELLATION_BYID_REGIONNAME_COLINDEX = 2;
+	private static final int CONSTELLATION_BYID_FACTIONID_COLINDEX = 3;
+	private static final int CONSTELLATION_BYID_CONSTELLATIONID_COLINDEX = 4;
+	private static final int CONSTELLATION_BYID_CONSTELLATIONNAME_COLINDEX = 5;
+	private static final String SELECT_CONSTELLATION_BYID = "SELECT mapr.regionID as regionId, mapr.regionName as regionName, " +
+			                                                        " mapc.factionID as factionId, " +
+			                                                        " mapc.constellationID as constellationID, " +
+			                                                        " mapc.constellationName as constellationName" +
+			                                                        " FROM mapConstellations mapc, mapRegions mapr" +
+			                                                        " WHERE constellationID = ?" +
+			                                                        " AND mapr.regionID = mapc.regionID";
+
 	protected static Logger logger = LoggerFactory.getLogger(LocationRepository.class);
 	// - C O M P O N E N T S
 	protected SDEDatabaseAdapter sdeDatabaseAdapter;
@@ -70,10 +84,11 @@ public class LocationRepository {
 			boolean detected = false;
 			while (cursor.moveToNext()) {
 				detected = true;
-				target.setRegionId(cursor.getInt(REGION_BYID_REGIONID_COLINDEX));
-				target.setRegion(cursor.getString(REGION_BYID_REGIONNAME_COLINDEX));
-				target.setClassType(LocationClass.REGION);
-				target.getId(); // Update the final location identifier
+				target = new EsiLocation.Builder()
+						         .withRegionId(cursor.getInt(REGION_BYID_REGIONID_COLINDEX))
+						         .withRegionName(cursor.getString(REGION_BYID_REGIONNAME_COLINDEX))
+						         .withClassType(LocationClass.REGION)
+						         .build();
 			}
 			if (!detected) {
 				logger.info("-- [LocationRepository.searchRegionById]> Location: {} not found on any Database - UNKNOWN-.",
@@ -84,6 +99,36 @@ public class LocationRepository {
 			return target;
 		} catch (final SQLException sqle) {
 			logger.error("E [LocationRepository.searchRegionById]> Exception processing statement: {}", sqle.getMessage());
+			return target;
+		}
+	}
+
+	public EsiLocation searchConstellationById( final long locationId ) {
+		logger.info(">< [LocationRepository.searchConstellationById]> Searching ID: {}", locationId);
+		EsiLocation target = EsiLocation.getUnknownLocation();
+		try {
+			final RawStatement cursor = this.sdeDatabaseAdapter.constructStatement(SELECT_CONSTELLATION_BYID,
+			                                                                       new String[]{ Long.toString(locationId) });
+			boolean detected = false;
+			while (cursor.moveToNext()) {
+				detected = true;
+				target = new EsiLocation.Builder()
+						         .withRegionId(cursor.getInt(CONSTELLATION_BYID_REGIONID_COLINDEX))
+						         .withRegionName(cursor.getString(CONSTELLATION_BYID_REGIONNAME_COLINDEX))
+						         .withClassType(LocationClass.CONSTELLATION)
+						         .withConstellationId(cursor.getInt(CONSTELLATION_BYID_CONSTELLATIONID_COLINDEX))
+						         .withConstellationName(cursor.getString(CONSTELLATION_BYID_CONSTELLATIONNAME_COLINDEX))
+						         .build();
+			}
+			if (!detected) {
+				logger.info("-- [LocationRepository.searchConstellationById]> Location: {} not found on any Database - UNKNOWN-.",
+				            locationId);
+				target.setId(locationId);
+				target.setSystem("ID>" + Long.valueOf(locationId).toString());
+			}
+			return target;
+		} catch (final SQLException sqle) {
+			logger.error("E [LocationRepository.searchConstellationById]> Exception processing statement: {}", sqle.getMessage());
 			return target;
 		}
 	}

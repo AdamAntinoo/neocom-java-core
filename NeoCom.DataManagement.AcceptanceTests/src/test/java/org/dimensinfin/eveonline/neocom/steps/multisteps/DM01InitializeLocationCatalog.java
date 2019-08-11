@@ -5,6 +5,7 @@ import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.support.location.CucumberTableToEsiLocationConverter;
 import org.dimensinfin.eveonline.neocom.support.location.LocationWorld;
 import org.junit.Assert;
 
@@ -21,11 +22,14 @@ public class DM01InitializeLocationCatalog {
 	private static final String COUNTER = "count";
 
 	private LocationWorld locationWorld;
+	private CucumberTableToEsiLocationConverter cucumberTableToEsiLocationConverter;
 	private ESIDataAdapter esiDataAdapter;
 	private Map<String, Integer> counters;
 
-	public DM01InitializeLocationCatalog( final LocationWorld locationWorld ) {
+	public DM01InitializeLocationCatalog( final LocationWorld locationWorld,
+	                                      final CucumberTableToEsiLocationConverter cucumberTableToEsiLocationConverter ) {
 		this.locationWorld = locationWorld;
+		this.cucumberTableToEsiLocationConverter = cucumberTableToEsiLocationConverter;
 		this.esiDataAdapter = NeoComComponentFactory.getSingleton().getEsiDataAdapter();
 	}
 
@@ -69,5 +73,11 @@ public class DM01InitializeLocationCatalog {
 	@And("the generated Location class is {string}")
 	public void theGeneratedLocationClassIs( final String classType ) {
 		Assert.assertEquals(classType, this.locationWorld.getLocation().getClassType().name());
+	}
+
+	@And("the location found has the next values")
+	public void theLocationFoundHasTheNextValues( final List<Map<String, String>> cucumberTable ) {
+		final EsiLocation expected = this.cucumberTableToEsiLocationConverter.convert(cucumberTable.get(0));
+		Assert.assertTrue(expected.equals(this.locationWorld.getLocation()));
 	}
 }
