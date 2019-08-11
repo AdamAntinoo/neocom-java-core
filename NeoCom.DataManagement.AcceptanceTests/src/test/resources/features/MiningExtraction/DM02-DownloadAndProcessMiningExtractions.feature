@@ -7,7 +7,7 @@ Feature: [DM02] Download and process pilot mining extractions.
   dates the recors are marked with a special hour indicator.
 
   @DM02.01
-  Scenario: [DM02][01] Download a set of extractions by first time and store the processed data on the repository. Records downloaded match with the processing date.
+  Scenario: [DM02.01] Download a set of extractions on a clean repository and store the processed data on the repository. Records downloaded match with the processing date.
 	Given an empty Mining Extraction repository
 	And the next set of mining extractions for pilot "92223647"
 	  | date       | quantity | solar_system_id | type_id |
@@ -20,7 +20,7 @@ Feature: [DM02] Download and process pilot mining extractions.
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 421      | 0     | 2019-08-07         | 10             | 92223647 |
 
   @DM02.02
-  Scenario: [DM02][02] Download another set of extractions on the same hour and store the processed data on the repository. Update records because download date and processing dates match.
+  Scenario: [DM02.02] Download another set of extractions on the same hour and store the processed data on the repository. Update records because download date and processing dates match.
 	Given the next records on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 421      | 0     | 2019-08-07         | 10             | 92223647 |
@@ -36,7 +36,7 @@ Feature: [DM02] Download and process pilot mining extractions.
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |
 
   @DM02.03
-  Scenario: [DM02][03] Download another set of extractions on another hour and store the processed data on the repository
+  Scenario: [DM02.03] Download another set of extractions on another hour and store the processed data on the repository
 	Given the next records on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |
@@ -56,7 +56,7 @@ Feature: [DM02] Download and process pilot mining extractions.
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |
 
   @DM02.04
-  Scenario: [DM02][04] Download another set of extractions covering more that one date
+  Scenario: [DM02.04] Download another set of extractions covering more that one date
 	Given the next records on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |
@@ -84,7 +84,7 @@ Feature: [DM02] Download and process pilot mining extractions.
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |
 
   @DM02.05
-  Scenario: [DM02][05] Download a set of extractions but from older dates that today
+  Scenario: [DM02.05] Download a set of extractions but from older dates that today
 	Given the next records on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
 	  | 2019-08-07:10-30001735-17459-92223647 | 17459  | 30001735      | 5894     | 0     | 2019-08-07         | 10             | 92223647 |

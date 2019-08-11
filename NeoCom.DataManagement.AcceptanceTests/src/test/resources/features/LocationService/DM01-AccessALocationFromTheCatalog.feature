@@ -1,4 +1,4 @@
-@DM01
+@DM01 @LocationService
 Feature: [DM01] Location catalog Service
 
   Control the access to the multilevel Location catalog cache. There is the memory cache level, the persistence cache

@@ -1,9 +1,11 @@
 @DM04 @MiningExtractions
-Feature: [DM04] Mining Repository. Verify all the login on the Mining Repository methods. This will require to review and check
+Feature: [DM04] Mining Repository. Verify all the login on the Mining Repository methods.
+
+  This will require to review and check
   all the SQL statements that are enclosed on the repository.
 
   @DM04.01
-  Scenario: [DM04][01] get the list of extractions for a pilot on the current date
+  Scenario: [DM04.01] get the list of extractions for a pilot on the current date
 	Given the next records on the MiningRepository
 	  | id                                    | typeId | solarSystemId | quantity | delta | extractionDateName | extractionHour | ownerId  |
 	  | 2019-08-08:24-30001735-17459-92223647 | 17459  | 30001735      | 14511    | 0     | 2019-08-08         | 24             | 92223647 |
