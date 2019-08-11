@@ -1,5 +1,6 @@
 package org.dimensinfin.eveonline.neocom.support.location;
 
+import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComComponentFactory;
@@ -7,7 +8,9 @@ import org.dimensinfin.eveonline.neocom.support.adapters.SupportLocationReposito
 
 public class LocationWorld {
 	private ISDEDatabaseAdapter sdeDatabaseManager;
+	private LocationCatalogService locationCatalogService;
 	private SupportLocationRepository locationRepository;
+
 	private EsiLocation location;
 
 	public LocationWorld() {
@@ -20,6 +23,15 @@ public class LocationWorld {
 
 	public LocationWorld setSdeDatabaseManager( final ISDEDatabaseAdapter sdeDatabaseManager ) {
 		this.sdeDatabaseManager = sdeDatabaseManager;
+		return this;
+	}
+
+	public LocationCatalogService getLocationCatalogService() {
+		return this.locationCatalogService;
+	}
+
+	public LocationWorld setLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+		this.locationCatalogService = locationCatalogService;
 		return this;
 	}
 

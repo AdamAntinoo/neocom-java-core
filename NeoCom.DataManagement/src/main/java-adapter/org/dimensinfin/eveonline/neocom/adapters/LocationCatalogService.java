@@ -24,11 +24,11 @@ public class LocationCatalogService {
 	private static Map<Long, EsiLocation> locationCache = new HashMap<Long, EsiLocation>();
 	private static boolean dirtyCache = false;
 	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
-	//	private ESIDataAdapter esiDataAdapter;
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystem;
 	private SDEDatabaseAdapter sdeDatabaseAdapter;
 	private LocationRepository locationRepository;
+	private Map<String, Integer> locationTypeCounters = new HashMap<>();
 
 	// - C A C H E   M A N A G E M E N T
 	public void stopService() {
@@ -100,11 +100,7 @@ public class LocationCatalogService {
 	}
 
 	public void verifySDERepository() {
-
-	}
-
-	private void registerOnScheduler() {
-		// TODO - register this on the future scheduler
+		locationTypeCounters = this.locationRepository.getCounters();
 	}
 
 	public EsiLocation searchLocation4Id( final long locationId ) {
@@ -147,6 +143,13 @@ public class LocationCatalogService {
 		}
 	}
 
+	public Map<String, Integer> getLocationTypeCounters() {
+		return this.locationTypeCounters;
+	}
+
+	private void registerOnScheduler() {
+		// TODO - register this on the future scheduler
+	}
 	private EsiLocation buildUpLocation( final long locationId ) {
 		// TODO Read the location data from the SDE repository.
 		return new EsiLocation.Builder().build();
@@ -163,11 +166,6 @@ public class LocationCatalogService {
 		public Builder() {
 			this.onConstruction = new LocationCatalogService();
 		}
-
-//		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
-//			this.onConstruction.esiDataAdapter = esiDataAdapter;
-//			return this;
-//		}
 
 		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
@@ -191,7 +189,6 @@ public class LocationCatalogService {
 		}
 
 		public LocationCatalogService build() {
-//			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
 			Objects.requireNonNull(this.onConstruction.configurationProvider);
 			Objects.requireNonNull(this.onConstruction.fileSystem);
 			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);

@@ -7,12 +7,12 @@ Feature: [DM01] Location catalog Service
 
   @DM01.01
   Scenario: [DM01] During the initialization phase check that the SDE repository is available and verify the number and type
-	of the locations stored on it.
+  of the locations stored on it.
 	Given a new empty Location Catalog store and repository
-	When the Location Catalog is created
-	Then check that the SDE repository is available
-	And that the LocationCache table is ready
-	And that the number of records on the LocationCache table is "0"
+	When the Location Catalog is checked
+	Then the number of records on the LocationCache table is
+	  | counterClass | count |
+	  | TOTAL        | 0     |
 
   @DM01.01
   Scenario: [DM01] Access a Location in the range 10 to get a Region

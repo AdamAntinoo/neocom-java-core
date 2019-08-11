@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.support.adapters;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapters.SDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
@@ -23,12 +24,6 @@ public class NeoComComponentFactory {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
 	protected static Logger logger = LoggerFactory.getLogger(NeoComComponentFactory.class);
 	private static NeoComComponentFactory singleton;
-
-	public static NeoComComponentFactory getSingleton() {
-		if (null == singleton) singleton = new NeoComComponentFactory();
-		return singleton;
-	}
-
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
 	private ESIDataAdapter esiDataAdapter;
@@ -37,22 +32,26 @@ public class NeoComComponentFactory {
 	private SupportMiningRepository miningRepository;
 	private SDEDatabaseAdapter sdeDatabaseAdapter;
 	private SupportLocationRepository locationRepository;
-	private SupportLocationCatalogService locationCatalogService;
+	private LocationCatalogService locationCatalogService;
+
+	public static NeoComComponentFactory getSingleton() {
+		if (null == singleton) singleton = new NeoComComponentFactory();
+		return singleton;
+	}
 
 	// - A C C E S S O R S
-	public SupportLocationCatalogService getSupportLocationCatalogService(){
+	public LocationCatalogService getLocationCatalogService() {
 		if (null == this.locationCatalogService) {
-//			try {
-				this.locationCatalogService = new SupportLocationCatalogService.Builder()
-//						                          .withLocationDao(this.getSDEDatabaseAdapter().getLocationDao())
-						                          .build();
-//			} catch (SQLException sqle) {
-//				this.locationCatalogService = null;
-//				Objects.requireNonNull(this.locationRepository);
-//			}
+			this.locationCatalogService = new LocationCatalogService.Builder()
+					                              .withConfigurationProvider(this.getConfigurationProvider())
+					                              .withFileSystem(this.getFileSystemAdapter())
+					                              .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
+					                              .withLocationRepository(this.getLocationRepository())
+					                              .build();
 		}
 		return this.locationCatalogService;
 	}
+
 	public SupportLocationRepository getLocationRepository() {
 		if (null == this.locationRepository) {
 			try {
@@ -164,8 +163,9 @@ public class NeoComComponentFactory {
 	public ESIDataAdapter getEsiDataAdapter() {
 		if (null == this.esiDataAdapter)
 			esiDataAdapter = new ESIDataAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
-									 .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
-									 .withLocationRepository(this.getLocationRepository())
+//					                 .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
+//					                 .withLocationRepository(this.getLocationRepository())
+									 .withLocationCatalogService(this.getLocationCatalogService())
 					                 .build();
 		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
 		NeoComUpdater.injectsEsiDataAdapter(this.esiDataAdapter);

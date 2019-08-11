@@ -6,7 +6,6 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -83,8 +82,8 @@ public class ESIDataAdapter {
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
-	private SDEDatabaseAdapter sdeDatabaseAdapter;
-	private LocationRepository locationRepository;
+//	private SDEDatabaseAdapter sdeDatabaseAdapter;
+//	private LocationRepository locationRepository;
 	private NeoComRetrofitFactory retrofitFactory;
 	private StoreCacheManager cacheManager;
 	private LocationCatalogService locationCatalogService;
@@ -92,8 +91,8 @@ public class ESIDataAdapter {
 	// - C O N S T R U C T O R S
 	private ESIDataAdapter( final IConfigurationProvider newConfigurationProvider
 			, final IFileSystem newFileSystemAdapter ) {
-		configurationProvider = newConfigurationProvider;
-		fileSystemAdapter = newFileSystemAdapter;
+		this.configurationProvider = newConfigurationProvider;
+		this.fileSystemAdapter = newFileSystemAdapter;
 	}
 
 	public void activateEsiServer( final String esiServer ) {
@@ -932,15 +931,19 @@ public class ESIDataAdapter {
 			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
 		}
 
-		public Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
-			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
+		public Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
-		public Builder withLocationRepository( final LocationRepository locationRepository ) {
-			Objects.requireNonNull(locationRepository);
-			this.onConstruction.locationRepository = locationRepository;
-			return this;
-		}
+//		public Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
+//			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
+//			return this;
+//		}
+//		public Builder withLocationRepository( final LocationRepository locationRepository ) {
+//			Objects.requireNonNull(locationRepository);
+//			this.onConstruction.locationRepository = locationRepository;
+//			return this;
+//		}
 
 		public ESIDataAdapter build() {
 			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
@@ -952,16 +955,16 @@ public class ESIDataAdapter {
 			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
 					, this.onConstruction.fileSystemAdapter).build();
 			Objects.requireNonNull(this.onConstruction.retrofitFactory);
-			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);
-			this.onConstruction.locationCatalogService = new LocationCatalogService.Builder()
-//																 .withEsiDataAdapter(this.onConstruction)
-					                                             .withConfigurationProvider(
-							                                             this.onConstruction.configurationProvider)
-					                                             .withFileSystem(this.onConstruction.fileSystemAdapter)
-					                                             .withSDEDatabaseAdapter(this.onConstruction.sdeDatabaseAdapter)
-																 .withLocationRepository(this.onConstruction.locationRepository)
-					                                             .build();
-			Objects.requireNonNull(this.onConstruction.locationCatalogService);
+//			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);
+//			this.onConstruction.locationCatalogService = new LocationCatalogService.Builder()
+////																 .withEsiDataAdapter(this.onConstruction)
+//					                                             .withConfigurationProvider(
+//							                                             this.onConstruction.configurationProvider)
+//					                                             .withFileSystem(this.onConstruction.fileSystemAdapter)
+//					                                             .withSDEDatabaseAdapter(this.onConstruction.sdeDatabaseAdapter)
+//																 .withLocationRepository(this.onConstruction.locationRepository)
+//					                                             .build();
+//			Objects.requireNonNull(this.onConstruction.locationCatalogService);
 			return this.onConstruction;
 		}
 	}
