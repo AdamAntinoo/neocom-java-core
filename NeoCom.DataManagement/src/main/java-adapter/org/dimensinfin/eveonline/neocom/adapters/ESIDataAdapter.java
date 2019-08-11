@@ -6,6 +6,7 @@ import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.datamngmt.ESINetworkManager;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -72,16 +73,18 @@ import retrofit2.Response;
 public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
+	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>(100);
+	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
 	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
-	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>(100);
 	private static Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
-	private static final List<Long> id4Names = new ArrayList<>();
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
+	private SDEDatabaseAdapter sdeDatabaseAdapter;
+	private LocationRepository locationRepository;
 	private NeoComRetrofitFactory retrofitFactory;
 	private StoreCacheManager cacheManager;
 	private LocationCatalogService locationCatalogService;
@@ -929,6 +932,16 @@ public class ESIDataAdapter {
 			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
 		}
 
+		public Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
+			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
+			return this;
+		}
+		public Builder withLocationRepository( final LocationRepository locationRepository ) {
+			Objects.requireNonNull(locationRepository);
+			this.onConstruction.locationRepository = locationRepository;
+			return this;
+		}
+
 		public ESIDataAdapter build() {
 			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
 					                                   .withEsiDataAdapter(this.onConstruction)
@@ -939,11 +952,14 @@ public class ESIDataAdapter {
 			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
 					, this.onConstruction.fileSystemAdapter).build();
 			Objects.requireNonNull(this.onConstruction.retrofitFactory);
+			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);
 			this.onConstruction.locationCatalogService = new LocationCatalogService.Builder()
-																 .withEsiDataAdapter(this.onConstruction)
-																 .withConfigurationProvider(this.onConstruction.configurationProvider)
-																 .withFileSystem(this.onConstruction.fileSystemAdapter)
-																 .withLocationRepository(NeoComCo)
+//																 .withEsiDataAdapter(this.onConstruction)
+					                                             .withConfigurationProvider(
+							                                             this.onConstruction.configurationProvider)
+					                                             .withFileSystem(this.onConstruction.fileSystemAdapter)
+					                                             .withSDEDatabaseAdapter(this.onConstruction.sdeDatabaseAdapter)
+																 .withLocationRepository(this.onConstruction.locationRepository)
 					                                             .build();
 			Objects.requireNonNull(this.onConstruction.locationCatalogService);
 			return this.onConstruction;

@@ -42,8 +42,8 @@ public class LocationCatalogService {
 
 	public void readLocationsDataCache() {
 		logger.info(">> [LocationCatalogService.readLocationsDataCache]");
-		final String cacheFileName = this.configurationProvider.getResourceString("R.cache.directorypath") +
-				                             this.configurationProvider.getResourceString("R.cache.locationscache.filename");
+		final String cacheFileName = this.configurationProvider.getResourceString("P.cache.directory.path") +
+				                             this.configurationProvider.getResourceString("P.cache.locationscache.filename");
 		logger.info("-- [LocationCatalogService.readLocationsDataCache]> Opening cache file: {}", cacheFileName);
 		try (final BufferedInputStream buffer = new BufferedInputStream(this.fileSystem.openResource4Input(cacheFileName));
 		     final ObjectInputStream input = new ObjectInputStream(buffer)) {

@@ -23,36 +23,17 @@ import java.util.Properties;
  */
 public class SBConfigurationProvider extends GlobalConfigurationProvider {
 	private static Logger logger = LoggerFactory.getLogger(SBConfigurationProvider.class);
-	//	@Autowired
-//	private SBResourceLoader resourceLoader;
-//	@Value("classpath*:./acceptancetests.properties/*.property")
-//	private Resource[] files;
 
 	// - C O N S T R U C T O R S
 	private SBConfigurationProvider( final String propertiesFolder ) {
 		super(propertiesFolder);
-//		this.resourceLoader=new SBResourceLoader().setPropertiesFolder(propertiesFolder);
 	}
-
-//	public List<Resource> loadResources() {
-//		return Arrays.asList(this.files);
-////		try {
-////			Resource[] resources = this.resourceLoader.loadResources("file:acceptancetests.properties/*");
-////			return Arrays.asList(resources);
-////		} catch (IOException ex) {
-////			ex.printStackTrace();
-////			return new ArrayList<>();
-////		}
-//	}
-
 	protected void readAllProperties() throws IOException {
 		logger.info(">> [SBConfigurationProvider.readAllProperties]");
 		logger.info("-- [SBConfigurationProvider.readAllProperties]> Properties directory location: {}",
 		            new File(this.getResourceLocation()).getCanonicalPath());
 		// Read all .properties files under the predefined path on the /resources folder.
 		final List<String> propertyFiles = this.getResourceFiles(this.getResourceLocation());
-//		final List<Resource> resources = this.loadResources();
-//		final ClassLoader classLoader = getClass().getClassLoader();
 		Stream.of(propertyFiles)
 		      .sorted()
 		      .forEach(( fileName ) -> {
@@ -63,10 +44,8 @@ public class SBConfigurationProvider extends GlobalConfigurationProvider {
 				      final String propertyFileName = this.getResourceLocation() + "/" + fileName;
 				      final URI propertyURI = new URI(this.getClass().getClassLoader().getResource(propertyFileName).toString());
 				      properties.load(new FileInputStream(propertyURI.getPath()));
-				      logger.info("-- [SBConfigurationProvider.readAllProperties]> Processing file: {}",
+				      logger.debug("-- [SBConfigurationProvider.readAllProperties]> Processing file: {}",
 				                  new File(propertyFileName).getCanonicalPath());
-//				      properties.load(new FileInputStream(new File(propertyFileName)));
-				      // Copy properties to globals.
 				      this.configurationProperties.putAll(properties);
 			      } catch (IOException ioe) {
 				      logger.error("E [SBConfigurationProvider.readAllProperties]> Exception reading properties file {}. {}",
@@ -96,9 +75,9 @@ public class SBConfigurationProvider extends GlobalConfigurationProvider {
 		return in == null ? getClass().getResourceAsStream(resource) : in;
 	}
 
-	private ClassLoader getContextClassLoader() {
-		return Thread.currentThread().getContextClassLoader();
-	}
+//	private ClassLoader getContextClassLoader() {
+//		return Thread.currentThread().getContextClassLoader();
+//	}
 
 	// - B U I L D E R
 	public static class Builder {
