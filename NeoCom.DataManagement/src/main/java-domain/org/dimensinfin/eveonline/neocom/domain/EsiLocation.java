@@ -490,6 +490,15 @@ public class EsiLocation extends UpdatableEntity {
 			if (null != constellationName) this.onConstruction.constellation = constellationName;
 			return this;
 		}
+		public EsiLocation.Builder withSystemId( final int systemId ) {
+			this.onConstruction.systemId = systemId;
+			return this;
+		}
+
+		public EsiLocation.Builder withSystemName( final String systemName ) {
+			if (null != systemName) this.onConstruction.system = systemName;
+			return this;
+		}
 
 		public EsiLocation build() {
 			this.onConstruction.getId();

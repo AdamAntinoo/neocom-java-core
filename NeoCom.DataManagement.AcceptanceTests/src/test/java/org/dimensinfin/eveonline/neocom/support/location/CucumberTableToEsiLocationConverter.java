@@ -14,6 +14,8 @@ public class CucumberTableToEsiLocationConverter extends CucumberTableConverter<
 	private static final String REGION_NAME = "regionName";
 	private static final String CONSTELLATION_ID = "constellationId";
 	private static final String CONSTELLATION_NAME = "constellationName";
+	private static final String SYSTEM_ID = "systemId";
+	private static final String SYSTEM_NAME = "systemName";
 
 	@Override
 	public EsiLocation convert( Map<String, String> cucumberCardRow ) {
@@ -34,6 +36,12 @@ public class CucumberTableToEsiLocationConverter extends CucumberTableConverter<
 					break;
 				case CONSTELLATION_NAME:
 					locationBuilder.withConstellationName(entry.getValue());
+					break;
+				case SYSTEM_ID:
+					locationBuilder.withSystemId(Integer.parseInt(entry.getValue()));
+					break;
+				case SYSTEM_NAME:
+					locationBuilder.withSystemName(entry.getValue());
 					break;
 			}
 		}

@@ -21,13 +21,6 @@ public class LocationRepository {
 	private static final int REGION_BYID_REGIONID_COLINDEX = 1;
 	private static final int REGION_BYID_REGIONNAME_COLINDEX = 2;
 	private static final int REGION_BYID_FACTIONID_COLINDEX = 3;
-	//	private static final int LOCATIONBYID_CONSTELLATIONID_COLINDEX = 7;
-//	private static final int LOCATIONBYID_CONSTELLATION_COLINDEX = 8;
-//	private static final int LOCATIONBYID_REGIONID_COLINDEX = 9;
-//	private static final int LOCATIONBYID_REGION_COLINDEX = 10;
-//	private static final int LOCATIONBYID_TYPEID_COLINDEX = 2;
-//	private static final int LOCATIONBYID_LOCATIONID_COLINDEX = 1;
-//	private static final int LOCATIONBYID_SECURITY_COLINDEX = 4;
 	private static final String SELECT_REGION_BYID = "SELECT regionID as locationId, regionName as locationName, factionID as factionId" +
 			                                                 " FROM mapRegions" +
 			                                                 " WHERE regionID = ?";
@@ -44,6 +37,25 @@ public class LocationRepository {
 			                                                        " FROM mapConstellations mapc, mapRegions mapr" +
 			                                                        " WHERE constellationID = ?" +
 			                                                        " AND mapr.regionID = mapc.regionID";
+	// - S Y S T E M B Y I D
+	private static final int SYSTEM_BYID_REGIONID_COLINDEX = 1;
+	private static final int SYSTEM_BYID_REGIONNAME_COLINDEX = 2;
+	private static final int SYSTEM_BYID_FACTIONID_COLINDEX = 3;
+	private static final int SYSTEM_BYID_CONSTELLATIONID_COLINDEX = 4;
+	private static final int SYSTEM_BYID_CONSTELLATIONNAME_COLINDEX = 5;
+	private static final int SYSTEM_BYID_SYSTEMID_COLINDEX = 6;
+	private static final int SYSTEM_BYID_SYSTEMNAME_COLINDEX = 7;
+	private static final String SELECT_SYSTEM_BYID = "SELECT mapr.regionID as regionId, mapr.regionName as regionName, " +
+			                                                        " mapc.factionID as factionId, " +
+			                                                        " mapc.constellationID as constellationID, " +
+			                                                        " mapc.constellationName as constellationName, " +
+			                                                        " mapss.solarSystemID as systemId, " +
+			                                                        " mapss.solarSystemName as systemName " +
+			                                                        " FROM mapSolarSystems mapss, mapConstellations mapc, " +
+			                                                        " mapRegions mapr " +
+			                                                        " WHERE solarSystemID = ? " +
+			                                                        " AND mapr.regionID = mapss.regionID " +
+			                                                        " AND mapc.constellationID = mapss.constellationID";
 
 	protected static Logger logger = LoggerFactory.getLogger(LocationRepository.class);
 	// - C O M P O N E N T S
@@ -129,6 +141,37 @@ public class LocationRepository {
 			return target;
 		} catch (final SQLException sqle) {
 			logger.error("E [LocationRepository.searchConstellationById]> Exception processing statement: {}", sqle.getMessage());
+			return target;
+		}
+	}
+	public EsiLocation searchSystemById( final long locationId ) {
+		logger.info(">< [LocationRepository.searchSystemById]> Searching ID: {}", locationId);
+		EsiLocation target = EsiLocation.getUnknownLocation();
+		try {
+			final RawStatement cursor = this.sdeDatabaseAdapter.constructStatement(SELECT_SYSTEM_BYID,
+			                                                                       new String[]{ Long.toString(locationId) });
+			boolean detected = false;
+			while (cursor.moveToNext()) {
+				detected = true;
+				target = new EsiLocation.Builder()
+						         .withRegionId(cursor.getInt(SYSTEM_BYID_REGIONID_COLINDEX))
+						         .withRegionName(cursor.getString(SYSTEM_BYID_REGIONNAME_COLINDEX))
+						         .withClassType(LocationClass.SYSTEM)
+						         .withConstellationId(cursor.getInt(SYSTEM_BYID_CONSTELLATIONID_COLINDEX))
+						         .withConstellationName(cursor.getString(SYSTEM_BYID_CONSTELLATIONNAME_COLINDEX))
+								 .withSystemId(cursor.getInt(SYSTEM_BYID_SYSTEMID_COLINDEX))
+								 .withSystemName(cursor.getString(SYSTEM_BYID_SYSTEMNAME_COLINDEX))
+						         .build();
+			}
+			if (!detected) {
+				logger.info("-- [LocationRepository.searchSystemById]> Location: {} not found on any Database - UNKNOWN-.",
+				            locationId);
+				target.setId(locationId);
+				target.setSystem("ID>" + Long.valueOf(locationId).toString());
+			}
+			return target;
+		} catch (final SQLException sqle) {
+			logger.error("E [LocationRepository.searchSystemById]> Exception processing statement: {}", sqle.getMessage());
 			return target;
 		}
 	}

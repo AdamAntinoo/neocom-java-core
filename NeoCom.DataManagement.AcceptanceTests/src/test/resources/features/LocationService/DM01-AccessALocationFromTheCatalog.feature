@@ -31,24 +31,20 @@ Feature: [DM01] Location catalog Service
 	Then the access result is "GENERATED"
 	And the generated Location class is "CONSTELLATION"
 	And the location found has the next values
-	  | regionId | regionName | constellationId | constellationName | classType |
-	  | 10000001 | Derelik    | 20000008        | Mossas            | CONSTELLATION    |
+	  | regionId | regionName | constellationId | constellationName | classType     |
+	  | 10000001 | Derelik    | 20000008        | Mossas            | CONSTELLATION |
 
   @DM01.04
   Scenario: [DM01.04] Access a Location in the range 30 to get a System
 	Given a new empty Location Catalog store and repository
-	When requested to locate Location "30000071"
+	When requested to locate Location "30001735"
 	Then the access result is "GENERATED"
 	And the generated Location class is "SYSTEM"
+	And the location found has the next values
+	  | regionId | regionName  | constellationId | constellationName | systemId | systemName | classType |
+	  | 10000020 | Tash-Murkon | 20000257        | Peges             | 30001735 | Uhodoh     | SYSTEM    |
 
   @DM01.05
-  Scenario: [DM01.02] Access a Location in the range 10 to get a Region
-	Given a new empty Location Catalog store and repository
-	When requested to locate Location "10000031"
-	Then the access result is "GENERATED"
-	And the generated Location class is "REGION"
-
-  @DM01.06
   Scenario: [DM01.03] After accessing a location that should be stored on the repository stop the service and persist cached locations
 	Given a new empty Location Catalog
 	When requested to locate Location "10000031"

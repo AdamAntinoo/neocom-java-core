@@ -171,6 +171,9 @@ public class LocationCatalogService {
 		if (locationId < 30000000) { // Can be a constellation
 			return this.locationRepository.searchConstellationById(locationId);
 		}
+		if (locationId < 40000000) { // Can be a system
+			return this.locationRepository.searchSystemById(locationId);
+		}
 		return new EsiLocation.Builder().build();
 	}
 
