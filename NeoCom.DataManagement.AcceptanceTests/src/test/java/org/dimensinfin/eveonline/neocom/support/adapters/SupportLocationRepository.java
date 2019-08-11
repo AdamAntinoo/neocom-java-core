@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.support.adapters;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 
+import org.dimensinfin.eveonline.neocom.adapters.SDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 
@@ -37,11 +38,15 @@ public class SupportLocationRepository extends LocationRepository {
 			this.onConstruction.locationDao = locationDao;
 			return this;
 		}
+		public SupportLocationRepository.Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
+			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
+			return this;
+		}
 
 		public SupportLocationRepository build() {
 			Objects.requireNonNull(this.onConstruction.locationDao);
+			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);
 			return this.onConstruction;
 		}
 	}
-
 }

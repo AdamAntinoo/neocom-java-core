@@ -181,6 +181,10 @@ public class ESIDataAdapter {
 	public EsiLocation searchLocation4Id( final Long locationId ) {
 		return this.locationCatalogService.searchLocation4Id(locationId);
 	}
+	public LocationCatalogService.LocationCacheAccessType lastSearchLocationAccessType() {
+		return this.locationCatalogService.lastSearchLocationAccessType();
+	}
+
 
 	@Deprecated
 	protected void prepareRaces() {

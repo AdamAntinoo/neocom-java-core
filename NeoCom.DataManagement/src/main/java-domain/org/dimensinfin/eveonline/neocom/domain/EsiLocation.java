@@ -31,21 +31,28 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 @DatabaseTable(tableName = "Locations")
 public class EsiLocation extends UpdatableEntity {
 	private static final long serialVersionUID = 1522765618286937377L;
-	//	private static ESIDataAdapter esiDataAdapter;
+	private static final EsiLocation unknown = new EsiLocation.Builder().build();
 	private static final EsiLocation jita = new EsiLocation.Builder().build();
 
 	static {
+		unknown.setId(30000000)
+				.setRegionId(10000000).setRegion("Unknown Region")
+				.setConstellationId(20000000).setConstellation("Outer Space")
+				.setSystemId(30000000).setSystem("Unknown Space Area")
+				.setSecurity("0.0").setSecurityValue(0.0)
+				.setClassType(LocationClass.UNKNOWN);
 		jita.setId(60003760)
 				.setRegionId(10000002).setRegion("The Forge")
 				.setConstellationId(20000020).setConstellation("Kimotoro")
 				.setSystemId(30000142).setSystem("Jita")
 				.setStationId(60003760).setStation("Jita IV - Moon 4 - Caldari Navy Assembly Plant")
 				.setSecurity("0.945913116664839").setSecurityValue(0.945913116664839)
-				.setClassType(LocationClass.CCPLOCATION)
-//				.setUrlLocationIcon("http://image.eveonline.com/Render/1529_64.png")
-				.setName(jita.getRegion() + " - " + jita.getStation());
+				.setClassType(LocationClass.CCPLOCATION);
 	}
 
+	public static EsiLocation getUnknownLocation() {
+		return unknown;
+	}
 	public static EsiLocation getJitaLocation() {
 		return jita;
 	}
@@ -311,7 +318,7 @@ public class EsiLocation extends UpdatableEntity {
 	 * stations.
 	 */
 	public String getName() {
-		return system + " - " + station;
+		return this.system + " - " + this.station;
 	}
 
 	public EsiLocation setName( final String dummy ) {

@@ -20,15 +20,16 @@ import java.util.Map;
 import java.util.Objects;
 
 public class LocationCatalogService {
+	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
 	private static Logger logger = LoggerFactory.getLogger(LocationCatalogService.class);
 	private static Map<Long, EsiLocation> locationCache = new HashMap<Long, EsiLocation>();
-	private static boolean dirtyCache = false;
-	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystem;
 	private SDEDatabaseAdapter sdeDatabaseAdapter;
 	private LocationRepository locationRepository;
 	private Map<String, Integer> locationTypeCounters = new HashMap<>();
+	private boolean dirtyCache = false;
+	private LocationCacheAccessType lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 
 	// - C A C H E   M A N A G E M E N T
 	public void stopService() {
@@ -104,16 +105,21 @@ public class LocationCatalogService {
 	}
 
 	public EsiLocation searchLocation4Id( final long locationId ) {
+		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 		if (locationCache.containsKey(locationId)) return this.searchOnMemoryCache(locationId);
 		final int access = locationsCacheStatistics.accountAccess(false);
 		EsiLocation hit = this.searchOnRepository(locationId);
+		final int hits = locationsCacheStatistics.getHits();
 		if (null == hit) {
-			final int hits = locationsCacheStatistics.getHits();
-			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {} found at database.",
-			            hits, access, locationId);
 			hit = this.buildUpLocation(locationId);
+			this.lastLocationAccess = LocationCacheAccessType.GENERATED;
 			this.storeOnCacheLocation(hit);
+			logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from SDE data.",
+			            hits, access, locationId);
+			return hit;
 		}
+		logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {} found at database.",
+		            hits, access, locationId);
 //		final EsiLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
 		// Add the hit to the cache but only when it is not UNKNOWN.
 //		if (hit.getClassType() != LocationClass.UNKNOWN) locationCache.put(locationId, hit);
@@ -121,8 +127,13 @@ public class LocationCatalogService {
 		return hit;
 	}
 
+	public LocationCacheAccessType lastSearchLocationAccessType() {
+		return this.lastLocationAccess;
+	}
+
 	private EsiLocation searchOnMemoryCache( final long locationId ) {
 		int access = locationsCacheStatistics.accountAccess(true);
+		this.lastLocationAccess = LocationCacheAccessType.MEMORY_ACCESS;
 		int hits = locationsCacheStatistics.getHits();
 		logger.info(">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {}  found at cache.",
 		            hits, access, locationId);
@@ -134,7 +145,8 @@ public class LocationCatalogService {
 			final EsiLocation hit = this.locationRepository.findById(locationId);
 			if (null != hit) {
 				locationCache.put(locationId, hit);
-				dirtyCache = true;
+				this.lastLocationAccess = LocationCacheAccessType.DATABASE_ACCESS;
+				this.dirtyCache = true;
 			}
 			return hit;
 		} catch (final SQLException sqle) {
@@ -150,13 +162,29 @@ public class LocationCatalogService {
 	private void registerOnScheduler() {
 		// TODO - register this on the future scheduler
 	}
+
 	private EsiLocation buildUpLocation( final long locationId ) {
-		// TODO Read the location data from the SDE repository.
+		if (locationId < 20000000) { // Can be a Region
+			final EsiLocation sdeRegion = this.locationRepository.searchRegionById(locationId);
+			return sdeRegion;
+		}
+		if (locationId < 30000000) { // Can be a constellation
+
+		}
 		return new EsiLocation.Builder().build();
 	}
 
 	private void storeOnCacheLocation( final EsiLocation location ) {
+//		try {
+//			this.locationRepository.persist(location);
+			locationCache.put(location.getId(), location);
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+	}
 
+	public enum LocationCacheAccessType {
+		NOT_FOUND, GENERATED, DATABASE_ACCESS, MEMORY_ACCESS
 	}
 
 	// - B U I L D E R

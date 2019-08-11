@@ -56,6 +56,7 @@ public class NeoComComponentFactory {
 		if (null == this.locationRepository) {
 			try {
 				this.locationRepository = new SupportLocationRepository.Builder()
+						                          .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
 						                          .withLocationDao(this.getSDEDatabaseAdapter().getLocationDao())
 						                          .build();
 			} catch (SQLException sqle) {
@@ -70,8 +71,8 @@ public class NeoComComponentFactory {
 		if (null == this.sdeDatabaseAdapter) {
 			this.sdeDatabaseAdapter = new SDEDatabaseAdapter.Builder()
 					                          .withFileSystemAdapter(this.getFileSystemAdapter())
-					                          .withDatabasePath("")
-					                          .withDatabaseName("sde.db")
+					                          .withDatabasePath("AcceptanceTests/")
+					                          .withDatabaseName("sde-acceptance.db")
 					                          .build();
 		}
 		return this.sdeDatabaseAdapter;
@@ -163,8 +164,6 @@ public class NeoComComponentFactory {
 	public ESIDataAdapter getEsiDataAdapter() {
 		if (null == this.esiDataAdapter)
 			esiDataAdapter = new ESIDataAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
-//					                 .withSDEDatabaseAdapter(this.getSDEDatabaseAdapter())
-//					                 .withLocationRepository(this.getLocationRepository())
 									 .withLocationCatalogService(this.getLocationCatalogService())
 					                 .build();
 		EveItem.injectEsiDataAdapter(this.esiDataAdapter);

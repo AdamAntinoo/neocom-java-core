@@ -14,18 +14,18 @@ Feature: [DM01] Location catalog Service
 	  | counterClass | count |
 	  | TOTAL        | 0     |
 
-  @DM01.01
-  Scenario: [DM01] Access a Location in the range 10 to get a Region
-	Given a new empty Location Catalog
-	When requested to locate Location "10000031"
-	Then the memory cache is accessed with "MISS" result
-	And the persistence repository is accessed with "MISS" result
-	And the calculated Location class is "Region"
-	And the SDE database is accessed with the next result
-	  | regionID | regionName | factionID |
-	  | 10000031 | Impass     |           |
-
   @DM01.02
+  Scenario: [DM01] Access a Location in the range 10 to get a Region
+	Given a new empty Location Catalog store and repository
+	When requested to locate Location "10000031"
+	Then the access result is "GENERATED"
+	And the generated Location class is "REGION"
+
+#	And the SDE database is accessed with the next result
+#	  | regionID | regionName | factionID |
+#	  | 10000031 | Impass     |           |
+
+  @DM01.03
   Scenario: [DM01] After accessing a location hat should be stored on the respository stop the service and persist cached locations
 	Given a new empty Location Catalog
 	When requested to locate Location "10000031"
