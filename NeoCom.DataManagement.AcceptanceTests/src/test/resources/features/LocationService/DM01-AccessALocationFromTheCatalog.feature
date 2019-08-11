@@ -19,6 +19,7 @@ Feature: [DM01] Location catalog Service
 	Given a new empty Location Catalog store and repository
 	When requested to locate Location "10000031"
 	Then the access result is "GENERATED"
+	And the location memory cache dirty state is "true"
 	And the generated Location class is "REGION"
 	And the location found has the next values
 	  | regionId | regionName | classType |
@@ -29,6 +30,7 @@ Feature: [DM01] Location catalog Service
 	Given a new empty Location Catalog store and repository
 	When requested to locate Location "20000008"
 	Then the access result is "GENERATED"
+	And the location memory cache dirty state is "true"
 	And the generated Location class is "CONSTELLATION"
 	And the location found has the next values
 	  | regionId | regionName | constellationId | constellationName | classType     |
@@ -39,6 +41,7 @@ Feature: [DM01] Location catalog Service
 	Given a new empty Location Catalog store and repository
 	When requested to locate Location "30001735"
 	Then the access result is "GENERATED"
+	And the location memory cache dirty state is "true"
 	And the generated Location class is "SYSTEM"
 	And the location found has the next values
 	  | regionId | regionName  | constellationId | constellationName | systemId | systemName | classType |
@@ -49,7 +52,31 @@ Feature: [DM01] Location catalog Service
 	Given a new empty Location Catalog store and repository
 	When requested to locate Location "30001735"
 	Then the access result is "GENERATED"
+	And the location memory cache dirty state is "true"
 	And the generated Location class is "SYSTEM"
 	When the location is requested again
 	Then the locations match
+	And the access result is "MEMORY_ACCESS"
+	And the location memory cache dirty state is "true"
+
+  @DM01.06
+  Scenario: [DM01.06] After some requests persist the memory cache to the storage and check that next requests do not report GENERATED
+	Given a new empty Location Catalog store and repository
+	When requested to locate Location "10000031"
+	When requested to locate Location "20000008"
+	When requested to locate Location "30001735"
+	Then the access result is "GENERATED"
+	And the location memory cache dirty state is "true"
+	And the generated Location class is "SYSTEM"
+	When we request to persist the memory cache
+	And the location memory cache dirty state is "false"
+	And requested to locate Location "20000008"
 	Then the access result is "MEMORY_ACCESS"
+
+  @DM01.07
+  Scenario: [DM01.07] Using a repository persisted should return MEMORY_ACCESS on first requests
+	Given a persisted repository
+	When requested to locate Location "10000031"
+	Then the access result is "MEMORY_ACCESS"
+	And the location memory cache dirty state is "false"
+	And the generated Location class is "REGION"

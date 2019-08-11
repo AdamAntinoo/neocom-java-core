@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 
 public class GivenTheNextSetOfMiningExtractions {
@@ -34,11 +33,11 @@ public class GivenTheNextSetOfMiningExtractions {
 		this.miningRepository = NeoComComponentFactory.getSingleton().getMiningRepository();
 	}
 
-	@Before
-	public void beforeAll() {
-		final int recordsDeleted = this.miningRepository.deleteAll();
-		logger.info("-- [GivenTheNextSetOfMiningExtractions.beforeAll]> Records deleted: {}", recordsDeleted);
-	}
+//	@Before
+//	public void beforeAll() {
+//		final int recordsDeleted = this.miningRepository.deleteAll();
+//		logger.info("-- [GivenTheNextSetOfMiningExtractions.beforeAll]> Records deleted: {}", recordsDeleted);
+//	}
 
 	@Given("the next set of mining extractions for pilot {string}")
 	public void theNextSetOfMiningExtractionsForPilot( final String pilotIdentifier,

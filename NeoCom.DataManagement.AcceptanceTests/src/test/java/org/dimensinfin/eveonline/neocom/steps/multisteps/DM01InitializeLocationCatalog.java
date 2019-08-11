@@ -44,6 +44,15 @@ public class DM01InitializeLocationCatalog {
 		this.locationWorld.getLocationCatalogService().cleanLocationsCache();
 	}
 
+	@Given("a persisted repository")
+	public void aPersistedRepository() {
+		final ISDEDatabaseAdapter sdeAdapter = NeoComComponentFactory.getSingleton().getSDEDatabaseAdapter();
+		Assert.assertNotNull(sdeAdapter);
+		this.locationWorld.setSdeDatabaseManager(sdeAdapter);
+		this.locationWorld.getLocationRepository().deleteAll(); // Clear the records on the sde repository
+		this.locationWorld.setLocationCatalogService(NeoComComponentFactory.getSingleton().getLocationCatalogService());
+	}
+
 	@When("the Location Catalog is checked")
 	public void theLocationCatalogIsChecked() {
 		this.counters = this.locationWorld.getLocationCatalogService().getLocationTypeCounters();
@@ -71,6 +80,12 @@ public class DM01InitializeLocationCatalog {
 		Assert.assertEquals(accessType, obtained.name());
 	}
 
+	@And("the location memory cache dirty state is {string}")
+	public void theLocationMemoryCacheDirtyStateIs( final String cacheState ) {
+		final boolean status = this.locationWorld.getLocationCatalogService().getMemoryStatus();
+		Assert.assertTrue(Boolean.toString(status).equalsIgnoreCase(cacheState));
+	}
+
 	@And("the generated Location class is {string}")
 	public void theGeneratedLocationClassIs( final String classType ) {
 		Assert.assertEquals(classType, this.locationWorld.getLocation().getClassType().name());
@@ -84,12 +99,22 @@ public class DM01InitializeLocationCatalog {
 
 	@When("the location is requested again")
 	public void theLocationIsRequestedAgain() {
-		 this.secondLocation = this.esiDataAdapter.searchLocation4Id(
+		this.secondLocation = this.esiDataAdapter.searchLocation4Id(
 				this.locationWorld.getLocation().getId());
 	}
 
 	@Then("the locations match")
 	public void theLocationsMatch() {
 		Assert.assertTrue(this.secondLocation.equals(this.locationWorld.getLocation()));
+	}
+
+	@When("we request to persist the memory cache")
+	public void weRequestToPersistTheMemoryCache() {
+		this.locationWorld.getLocationCatalogService().writeLocationsDataCache();
+	}
+
+	@And("we clear the memory cache")
+	public void weClearTheMemoryCache() {
+		this.locationWorld.getLocationCatalogService().cleanLocationsCache();
 	}
 }

@@ -78,9 +78,9 @@ public class LocationCatalogService {
 
 	public void writeLocationsDataCache() {
 		logger.info(">> [LocationCatalogService.writeLocationsDataCache]");
-		if (dirtyCache) {
-			final String cacheFileName = this.configurationProvider.getResourceString("R.cache.directorypath") +
-					                             this.configurationProvider.getResourceString("R.cache.locationscache.filename");
+		if (this.dirtyCache) {
+			final String cacheFileName = this.configurationProvider.getResourceString("P.cache.directory.path") +
+					                             this.configurationProvider.getResourceString("P.cache.locationscache.filename");
 			logger.info("-- [LocationCatalogService.writeLocationsDataCache]> Opening cache file: {}", cacheFileName);
 			try (final BufferedOutputStream buffer = new BufferedOutputStream(this.fileSystem.openResource4Output(cacheFileName));
 			     final ObjectOutput output = new ObjectOutputStream(buffer)) {
@@ -165,14 +165,13 @@ public class LocationCatalogService {
 
 	private EsiLocation buildUpLocation( final long locationId ) {
 		if (locationId < 20000000) { // Can be a Region
-			final EsiLocation sdeRegion = this.locationRepository.searchRegionById(locationId);
-			return sdeRegion;
+			return this.storeOnCacheLocation(this.locationRepository.searchRegionById(locationId));
 		}
 		if (locationId < 30000000) { // Can be a constellation
-			return this.locationRepository.searchConstellationById(locationId);
+			return this.storeOnCacheLocation(this.locationRepository.searchConstellationById(locationId));
 		}
 		if (locationId < 40000000) { // Can be a system
-			return this.locationRepository.searchSystemById(locationId);
+			return this.storeOnCacheLocation(this.locationRepository.searchSystemById(locationId));
 		}
 		if (locationId < 61000000) { // Can be a game station
 //			return this.locationRepository.searchStationById(locationId);
@@ -180,13 +179,23 @@ public class LocationCatalogService {
 		return new EsiLocation.Builder().build();
 	}
 
-	private void storeOnCacheLocation( final EsiLocation location ) {
+	private EsiLocation storeOnCacheLocation( final EsiLocation entry ) {
+		if (null != entry) {
+			locationCache.put(entry.getId(), entry);
+			this.dirtyCache = true;
+		}
+		return entry;
+
 //		try {
 //			this.locationRepository.persist(location);
-			locationCache.put(location.getId(), location);
+//		locationCache.put(location.getId(), location);
 //		} catch (SQLException e) {
 //			e.printStackTrace();
 //		}
+	}
+
+	public boolean getMemoryStatus() {
+		return this.dirtyCache;
 	}
 
 	public enum LocationCacheAccessType {
