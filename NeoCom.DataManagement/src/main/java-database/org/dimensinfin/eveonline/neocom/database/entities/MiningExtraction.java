@@ -37,6 +37,29 @@ import javax.persistence.Entity;
 @DatabaseTable(tableName = "MiningExtractions")
 public class MiningExtraction extends UpdatableEntity implements IAggregableItem {
 	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
+	// - F I E L D - S E C T I O N
+	@DatabaseField(id = true)
+	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
+	@DatabaseField
+	private int typeId = -1;
+	@DatabaseField
+	private int solarSystemId = -2;
+	@DatabaseField
+	private int quantity = 0;
+	@DatabaseField
+	private long delta = 0;
+	@DatabaseField
+	private String extractionDateName;
+	@DatabaseField
+	private int extractionHour = 24;
+	@DatabaseField(index = true)
+	private long ownerId = -1;
+	private transient EveItem resourceItem;
+	private transient EsiLocation solarSystemLocation;
+	// - C O N S T R U C T O R S
+	private MiningExtraction() {
+		super();
+	}
 
 	/**
 	 * The record id creation used two algorithms. If the date is the current date we add the hour as an identifier. But id the date is not
@@ -84,32 +107,6 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 				       .concat(Long.toString(ownerId));
 	}
 
-	// - F I E L D - S E C T I O N
-	@DatabaseField(id = true)
-	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
-	@DatabaseField
-	private int typeId = -1;
-	@DatabaseField
-	private int solarSystemId = -2;
-	@DatabaseField
-	private int quantity = 0;
-	@DatabaseField
-	private long delta = 0;
-	@DatabaseField
-	private String extractionDateName;
-	@DatabaseField
-	private int extractionHour = 24;
-	@DatabaseField(index = true)
-	private long ownerId = -1;
-
-	private transient EveItem resourceItem;
-	private transient EsiLocation solarSystemLocation;
-
-	// - C O N S T R U C T O R S
-	private MiningExtraction() {
-		super();
-	}
-
 	// -  G E T T E R S   &   S E T T E R S
 	public String getId() {
 		return this.id;
@@ -146,24 +143,26 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		return this.solarSystemId;
 	}
 
+	public MiningExtraction setSolarSystemLocation( final EsiLocation solarSystemLocation ) {
+		Objects.requireNonNull(solarSystemLocation);
+		this.solarSystemLocation = solarSystemLocation;
+		//this.solarSystemId=this.solarSystemLocation.getSystemId(); // This can change the extraction identifier so do not change
+		return this;
+	}
+
 	public String getSystemName() {return this.solarSystemLocation.getSystemName();}
 
 	public long getDelta() {
 		return this.delta;
 	}
 
-	public long getOwnerId() {
-		return this.ownerId;
-	}
-
-	public MiningExtraction setQuantity( final int quantity ) {
-		this.quantity = quantity;
-		return this;
-	}
-
 	public MiningExtraction setDelta( final long delta ) {
 		this.delta = delta;
 		return this;
+	}
+
+	public long getOwnerId() {
+		return this.ownerId;
 	}
 
 	public String getURLForItem() {
@@ -173,6 +172,11 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	// - I A G G R E G A B L E I T E M
 	public int getQuantity() {
 		return this.quantity;
+	}
+
+	public MiningExtraction setQuantity( final int quantity ) {
+		this.quantity = quantity;
+		return this;
 	}
 
 	public double getVolume() {
@@ -245,6 +249,13 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 			return this;
 		}
 
+		// TODO - Helper to allow setting the id required system identifier without locading the Location
+		public Builder withSolarSystemId( final Integer solarSystemId ) {
+			Objects.requireNonNull(solarSystemId);
+			this.onConstruction.solarSystemId = solarSystemId;
+			return this;
+		}
+
 		public Builder withSolarSystemLocation( final EsiLocation solarSystemLocation ) {
 			Objects.requireNonNull(solarSystemLocation);
 			this.onConstruction.solarSystemLocation = solarSystemLocation;
@@ -286,7 +297,8 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		 */
 		public MiningExtraction build() {
 			Objects.requireNonNull(this.onConstruction.resourceItem);
-			Objects.requireNonNull(this.onConstruction.solarSystemLocation);
+			// TODO - This comment allows for lazy load of the extraction location so converters do not depend on ESIAdapter
+//			Objects.requireNonNull(this.onConstruction.solarSystemLocation);
 			this.onConstruction.id = MiningExtraction.generateRecordId(
 					new LocalDate(this.onConstruction.extractionDateName),
 					this.onConstruction.extractionHour,
