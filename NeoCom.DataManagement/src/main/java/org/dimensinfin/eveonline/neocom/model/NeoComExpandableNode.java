@@ -9,35 +9,33 @@ import org.dimensinfin.core.interfaces.IExpandable;
 public abstract class NeoComExpandableNode extends NeoComNode implements IExpandable {
 	private static final long serialVersionUID = -3742179733511283434L;
 
-	protected boolean _expanded = false;
-//	protected boolean _renderIfEmpty = true;
+	protected boolean expanded = false;
 
 	// - C O N S T R U C T O R S
 	public NeoComExpandableNode () {
 		super();
-//		jsonClass = "NeoComExpandableNode";
 	}
 
 	// - I E X P A N D A B L E   I N T E R F A C E
 	public boolean collapse () {
-		_expanded = false;
-		return _expanded;
+		this.expanded = false;
+		return this.expanded;
 	}
 
 	public boolean expand () {
-		_expanded = true;
-		return _expanded;
+		expanded = true;
+		return expanded;
 	}
 
 	public boolean toggleExpand() {
-		this._expanded = !this._expanded;
+		this.expanded = !this.expanded;
 		return this.isExpanded();
 	}
 
 	public abstract boolean isEmpty ();
 
 	public boolean isExpanded () {
-		return _expanded;
+		return expanded;
 	}
 
 	public boolean isRenderWhenEmpty () {

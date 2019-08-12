@@ -6,8 +6,10 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,8 @@ import java.util.Objects;
 public class MiningRepository {
 	protected static Logger logger = LoggerFactory.getLogger(MiningRepository.class);
 	protected Dao<MiningExtraction, String> miningExtractionDao;
+	// - C O M P O N E N T S
+	private ESIDataAdapter esiDataAdapter;
 
 	/**
 	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
@@ -48,10 +52,12 @@ public class MiningRepository {
 			List<MiningExtraction> results = new ArrayList<>();
 //			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
 			// Filter out all records not belonging to today.
-			for (MiningExtraction extraction : dataList)
+			for (MiningExtraction extraction : dataList) {
+				this.postprocessExtraction(extraction);
 				if (extraction.getExtractionDateName().equalsIgnoreCase(
 						filterDate.toString(MiningExtraction.EXTRACTION_DATE_FORMAT)))
 					results.add(extraction);
+			}
 			return results;
 		} catch (SQLException sqle) {
 			logger.error("");
@@ -59,13 +65,23 @@ public class MiningRepository {
 		}
 	}
 
+	/**
+	 * Because transient fields lost their contents when the record is stored on the database, when retrieving the record the
+	 * date should be set again by searching for the esi resources again.
+	 * @param extraction the mining extraction to update.
+	 */
+	private void postprocessExtraction( final MiningExtraction extraction ) {
+		extraction.setResourceItem(new EveItem(extraction.getTypeId()));
+		extraction.setSolarSystemLocation(this.esiDataAdapter.searchLocation4Id(extraction.getSolarSystemId()));
+	}
+
 	public List<MiningExtraction> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
 		try {
 			final QueryBuilder<MiningExtraction, String> builder = this.miningExtractionDao.queryBuilder();
 			final Where<MiningExtraction, String> where = builder.where();
 			where.eq("ownerId", credential.getAccountId())
-			     .and()
-			     .eq("extractionDateName", filterDate.toString("YYYY-MM-dd"));
+					.and()
+					.eq("extractionDateName", filterDate.toString("YYYY-MM-dd"));
 			builder.selectRaw("id", "typeId", "MAX(quantity)");
 			builder.groupBy("typeId");
 //			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepareStatementString()
@@ -127,12 +143,18 @@ public class MiningRepository {
 			this.onConstruction = new MiningRepository();
 		}
 
-		public Builder withMiningExtractionDao( final Dao<MiningExtraction, String> miningExtractionDao ) {
+		public MiningRepository.Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
+			this.onConstruction.esiDataAdapter = esiDataAdapter;
+			return this;
+		}
+
+		public MiningRepository.Builder withMiningExtractionDao( final Dao<MiningExtraction, String> miningExtractionDao ) {
 			this.onConstruction.miningExtractionDao = miningExtractionDao;
 			return this;
 		}
 
 		public MiningRepository build() {
+			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
 			Objects.requireNonNull(this.onConstruction.miningExtractionDao);
 			return this.onConstruction;
 		}

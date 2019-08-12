@@ -5,5 +5,5 @@
 
 DROP TABLE IF EXISTS `version`;
 CREATE TABLE `version` (
-  `version` varchar(16) NOT NULL
+  `version` varchar(32) NOT NULL
 );

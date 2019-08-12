@@ -4,7 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.QueryBuilder;
 
-import org.dimensinfin.eveonline.neocom.adapters.SDEDatabaseAdapter;
+import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.RawStatement;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.LocationClass;
@@ -59,7 +59,7 @@ public class LocationRepository {
 
 	protected static Logger logger = LoggerFactory.getLogger(LocationRepository.class);
 	// - C O M P O N E N T S
-	protected SDEDatabaseAdapter sdeDatabaseAdapter;
+	protected ISDEDatabaseAdapter sdeDatabaseAdapter;
 	protected Dao<EsiLocation, Long> locationDao;
 
 	public EsiLocation findById( final long locationId ) throws SQLException {
@@ -191,7 +191,7 @@ public class LocationRepository {
 			this.onConstruction = new LocationRepository();
 		}
 
-		public LocationRepository.Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
+		public LocationRepository.Builder withSDEDatabaseAdapter( final ISDEDatabaseAdapter sdeDatabaseAdapter ) {
 			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
 			return this;
 		}

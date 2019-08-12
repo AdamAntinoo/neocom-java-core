@@ -33,7 +33,7 @@ public class AssetGroup extends Container implements IAssetContainer {
 	private double totalVolume = 0.0;
 
 	//	public final Vector<NeoComAsset>	_contents					= new Vector<NeoComAsset>();
-	//	private boolean										_expanded					= false;
+	//	private boolean										expanded					= false;
 	//	private boolean										_renderIfEmpty		= true;
 	//	private final boolean							_downloaded				= false;
 	public EGroupType groupType = EGroupType.DEFAULT;
@@ -124,13 +124,13 @@ public class AssetGroup extends Container implements IAssetContainer {
 		return buffer.toString();
 	}
 	//	public boolean collapse() {
-	//		_expanded = false;
-	//		return _expanded;
+	//		expanded = false;
+	//		return expanded;
 	//	}
 	//
 	//	public boolean expand() {
-	//		_expanded = true;
-	//		return _expanded;
+	//		expanded = true;
+	//		return expanded;
 	//	}
 	//
 	//	//	public boolean isDownloaded() {
@@ -147,7 +147,7 @@ public class AssetGroup extends Container implements IAssetContainer {
 	//	}
 	//
 	//	public boolean isExpanded() {
-	//		return _expanded;
+	//		return expanded;
 	//	}
 	//
 	//	public boolean isRenderWhenEmpty() {
