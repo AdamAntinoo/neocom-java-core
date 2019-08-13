@@ -1,5 +1,6 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
+import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
@@ -25,7 +26,7 @@ public class LocationCatalogService {
 	private static Map<Long, EsiLocation> locationCache = new HashMap<Long, EsiLocation>();
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystem;
-	private SDEDatabaseAdapter sdeDatabaseAdapter;
+	private ISDEDatabaseAdapter sdeDatabaseAdapter;
 	private LocationRepository locationRepository;
 	private Map<String, Integer> locationTypeCounters = new HashMap<>();
 	private boolean dirtyCache = false;
@@ -220,7 +221,7 @@ public class LocationCatalogService {
 			return this;
 		}
 
-		public Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
+		public Builder withSDEDatabaseAdapter( final ISDEDatabaseAdapter sdeDatabaseAdapter ) {
 			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
 			return this;
 		}

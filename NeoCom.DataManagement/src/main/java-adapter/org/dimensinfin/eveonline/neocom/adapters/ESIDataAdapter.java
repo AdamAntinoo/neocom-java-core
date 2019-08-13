@@ -71,24 +71,26 @@ import retrofit2.Response;
  */
 public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
-	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
+	protected static final Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
+	private static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>(100);
 	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
-	protected static Logger logger = LoggerFactory.getLogger(ESINetworkManager.class);
 	private static Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
-//	private SDEDatabaseAdapter sdeDatabaseAdapter;
+	//	private SDEDatabaseAdapter sdeDatabaseAdapter;
 //	private LocationRepository locationRepository;
 	private NeoComRetrofitFactory retrofitFactory;
 	private StoreCacheManager cacheManager;
 	private LocationCatalogService locationCatalogService;
 
 	// - C O N S T R U C T O R S
+	private ESIDataAdapter() {}
+
 	private ESIDataAdapter( final IConfigurationProvider newConfigurationProvider
 			, final IFileSystem newFileSystemAdapter ) {
 		this.configurationProvider = newConfigurationProvider;
@@ -181,6 +183,11 @@ public class ESIDataAdapter {
 	public EsiLocation searchLocation4Id( final Long locationId ) {
 		return this.locationCatalogService.searchLocation4Id(locationId);
 	}
+
+	public EsiLocation searchLocation4Id( final Integer locationId ) {
+		return this.locationCatalogService.searchLocation4Id(locationId);
+	}
+
 	public LocationCatalogService.LocationCacheAccessType lastSearchLocationAccessType() {
 		return this.locationCatalogService.lastSearchLocationAccessType();
 	}
@@ -925,9 +932,11 @@ public class ESIDataAdapter {
 	public static class Builder {
 		private ESIDataAdapter onConstruction;
 
-		/**
-		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as possible.
-		 */
+		public Builder() {
+			this.onConstruction = new ESIDataAdapter();
+		}
+
+		@Deprecated
 		public Builder( final IConfigurationProvider configurationProvider,
 		                final IFileSystem fileSystemAdapter ) {
 			Objects.requireNonNull(configurationProvider);
@@ -935,40 +944,35 @@ public class ESIDataAdapter {
 			this.onConstruction = new ESIDataAdapter(configurationProvider, fileSystemAdapter);
 		}
 
-		public Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+		public ESIDataAdapter.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+			this.onConstruction.configurationProvider = configurationProvider;
+			return this;
+		}
+
+		public ESIDataAdapter.Builder withFileSystem( final IFileSystem fileSystemAdapter ) {
+			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
+			return this;
+		}
+
+		public ESIDataAdapter.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
-//		public Builder withSDEDatabaseAdapter( final SDEDatabaseAdapter sdeDatabaseAdapter ) {
-//			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
-//			return this;
-//		}
-//		public Builder withLocationRepository( final LocationRepository locationRepository ) {
-//			Objects.requireNonNull(locationRepository);
-//			this.onConstruction.locationRepository = locationRepository;
-//			return this;
-//		}
 
 		public ESIDataAdapter build() {
+			Objects.requireNonNull(this.onConstruction.configurationProvider);
+			Objects.requireNonNull(this.onConstruction.fileSystemAdapter);
+			Objects.requireNonNull(this.onConstruction.locationCatalogService);
 			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
 					                                   .withEsiDataAdapter(this.onConstruction)
 					                                   .withConfigurationProvider(this.onConstruction.configurationProvider)
 					                                   .withFileSystem(this.onConstruction.fileSystemAdapter)
 					                                   .build();
 			Objects.requireNonNull(this.onConstruction.cacheManager);
-			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider
-					, this.onConstruction.fileSystemAdapter).build();
+			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder(this.onConstruction.configurationProvider,
+			                                                                        this.onConstruction.fileSystemAdapter)
+					                                      .build();
 			Objects.requireNonNull(this.onConstruction.retrofitFactory);
-//			Objects.requireNonNull(this.onConstruction.sdeDatabaseAdapter);
-//			this.onConstruction.locationCatalogService = new LocationCatalogService.Builder()
-////																 .withEsiDataAdapter(this.onConstruction)
-//					                                             .withConfigurationProvider(
-//							                                             this.onConstruction.configurationProvider)
-//					                                             .withFileSystem(this.onConstruction.fileSystemAdapter)
-//					                                             .withSDEDatabaseAdapter(this.onConstruction.sdeDatabaseAdapter)
-//																 .withLocationRepository(this.onConstruction.locationRepository)
-//					                                             .build();
-//			Objects.requireNonNull(this.onConstruction.locationCatalogService);
 			return this.onConstruction;
 		}
 	}

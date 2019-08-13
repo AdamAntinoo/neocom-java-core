@@ -54,6 +54,7 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	private int extractionHour = 24;
 	@DatabaseField(index = true)
 	private long ownerId = -1;
+
 	private transient EveItem resourceItem;
 	private transient EsiLocation solarSystemLocation;
 	// - C O N S T R U C T O R S
@@ -118,6 +119,11 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 
 	public String getResourceName() {
 		return this.resourceItem.getName();
+	}
+
+	public MiningExtraction setResourceItem( final EveItem resourceItem ) {
+		this.resourceItem = resourceItem;
+		return this;
 	}
 
 	public LocalDate getExtractionDate() {

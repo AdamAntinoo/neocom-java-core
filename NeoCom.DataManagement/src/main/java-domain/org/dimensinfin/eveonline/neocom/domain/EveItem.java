@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.annotations.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
@@ -24,57 +25,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class EveItem extends NeoComNode implements IItemFacet {
-	public enum ItemTechnology {
-		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
-
-		private String label;
-
-		ItemTechnology( String newlabel ) {
-			this.label = newlabel;
-		}
-
-		public String getName() {
-			return this.label;
-		}
-
-		/** Return the item tech from the label string by matching it to the enum label. */
-		public static ItemTechnology lookupLabel( String label ) {
-			return lookup.get(label);
-		}
-
-		// - I N V E R S E   L O O K U P   T A B L E
-		private static final Map<String, ItemTechnology> lookup = new HashMap<>();
-
-		static {
-			for (ItemTechnology env : ItemTechnology.values()) {
-				lookup.put(env.getName(), env);
-			}
-		}
-	}
-
 	private static final long serialVersionUID = -2548296399305221197L;
 	private static ESIDataAdapter esiDataAdapter;
-
-	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
-		esiDataAdapter = newEsiDataAdapter;
-	}
-
 	protected int id = -1;
 	private transient GetUniverseTypesTypeIdOk item;
 	private transient GetUniverseGroupsGroupIdOk group;
 	private transient GetUniverseCategoriesCategoryIdOk category;
-	//	/**
-	//	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
-	//	 * methods to get any other price set from the market data.
-	//	 */
-	//	private double baseprice = -1.0;
 	/**
 	 * This is the ESI returned price from the global market data service. This is the price shown on the game UI for item values
 	 * and it is not tied to any specific market place.
 	 */
 	private double price = -1.0;
 	private String tech = ModelWideConstants.eveglobal.TechI;
-
+	//	/**
+	//	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
+	//	 * methods to get any other price set from the market data.
+	//	 */
+	//	private double baseprice = -1.0;
 	// - A D D I T I O N A L   F I E L D S
 	private transient EIndustryGroup industryGroup = EIndustryGroup.UNDEFINED;
 	/**
@@ -86,24 +53,28 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	 * The same but for SELLER orders present at the market.
 	 */
 	private transient Future<MarketDataSet> futureSellerData;
-
 	// - C O N S T R U C T O R S
 	@Deprecated
 	public EveItem() {
 		super();
 	}
-
 	@Deprecated
 	public EveItem( final GetUniverseTypesTypeIdOk sdeItem ) {
 		super();
 		this.item = sdeItem;
 	}
 
+	@RequiresNetwork
 	public EveItem( final int typeId ) {
 		this.id = typeId;
 		this.loadup();
 	}
 
+	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
+		esiDataAdapter = newEsiDataAdapter;
+	}
+
+	@RequiresNetwork
 	private void loadup() {
 		try {
 			this.item = esiDataAdapter.searchEsiItem4Id(this.id);
@@ -128,67 +99,6 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this.id;
 	}
 
-	public String getName() {
-		if (null == this.item) this.loadup();
-		return this.item.getName();
-	}
-
-	/**
-	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
-	 * not using now.
-	 */
-	public double getPrice() {
-		if (price < 0.0) {
-			price = esiDataAdapter.searchSDEMarketPrice(this.getTypeId());
-		}
-		return price;
-	}
-
-	public int getGroupId() {
-		if (null == this.group) this.loadup();
-		return this.group.getGroupId();
-	}
-
-	public int getCategoryId() {
-		if (null == this.category) this.loadup();
-		return this.category.getCategoryId();
-	}
-
-	/**
-	 * Some items have tech while others don't. Tech information has to be calculated for some items when I
-	 * download them as assets or blueprints. Set it to a default value that by now I can consider valid.
-	 */
-	public String getTech() {
-		return tech;
-	}
-
-	public double getVolume() {
-		if (null == this.item) this.loadup();
-		return this.item.getVolume();
-	}
-
-	public boolean isBlueprint() {
-		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
-			return true;
-		else
-			return false;
-	}
-
-	public EIndustryGroup getIndustryGroup() {
-		if (industryGroup == EIndustryGroup.UNDEFINED) {
-			this.classifyIndustryGroup();
-		}
-		return industryGroup;
-	}
-
-	public Float getCapacity() {
-		return this.item.getCapacity();
-	}
-
-	public List<GetUniverseTypesTypeIdOkDogmaAttributes> getDogmaAttributes() {
-		return this.item.getDogmaAttributes();
-	}
-
 	/**
 	 * This is the key method used when instantiating an EveItem to set the eve item identifier for the esi underlying object. After setting this
 	 * value we can post the download or caches access to the delegated esi data.
@@ -205,12 +115,77 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this;
 	}
 
+	@RequiresNetwork
+	public String getName() {
+		if (null == this.item) this.loadup();
+		return this.item.getName();
+	}
+
+	/**
+	 * Return the ESI api market set price for this item. Sometimes there is another price markets as the average price that I am
+	 * not using now.
+	 */
+	@RequiresNetwork
+	public double getPrice() {
+		if (this.price < 0.0)
+			this.price = esiDataAdapter.searchSDEMarketPrice(this.getTypeId());
+		return this.price;
+	}
+
 	public void setPrice( final double price ) {
 		this.price = price;
 	}
 
+	@RequiresNetwork
+	public int getGroupId() {
+		if (null == this.group) this.loadup();
+		return this.group.getGroupId();
+	}
+
+	@RequiresNetwork
+	public int getCategoryId() {
+		if (null == this.category) this.loadup();
+		return this.category.getCategoryId();
+	}
+
+	/**
+	 * Some items have tech while others don't. Tech information has to be calculated for some items when I
+	 * download them as assets or blueprints. Set it to a default value that by now I can consider valid.
+	 */
+	public String getTech() {
+		return tech;
+	}
+
 	public void setTech( final String tech ) {
 		this.tech = tech;
+	}
+
+	@RequiresNetwork
+	public double getVolume() {
+		if (null == this.item) this.loadup();
+		return this.item.getVolume();
+	}
+
+	public boolean isBlueprint() {
+		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
+			return true;
+		else
+			return false;
+	}
+
+	public EIndustryGroup getIndustryGroup() {
+		if (this.industryGroup == EIndustryGroup.UNDEFINED) {
+			this.classifyIndustryGroup();
+		}
+		return this.industryGroup;
+	}
+
+	public Float getCapacity() {
+		return this.item.getCapacity();
+	}
+
+	public List<GetUniverseTypesTypeIdOkDogmaAttributes> getDogmaAttributes() {
+		return this.item.getDogmaAttributes();
 	}
 
 	// - V I R T U A L   A C C E S S O R S
@@ -283,6 +258,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this;
 	}
 
+	@RequiresNetwork
 	public String getGroupName() {
 		if (null == this.group) this.loadup();
 		return this.group.getName();
@@ -295,6 +271,20 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	// - I I T E M F A C E T
 	public String getURLForItem() {
 		return "http://image.eveonline.com/Type/" + this.getTypeId() + "_64.png";
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(17, 37)
+				       .appendSuper(super.hashCode())
+				       .append(this.id)
+				       .append(this.item)
+				       .append(this.group)
+				       .append(this.category)
+				       .append(this.price)
+				       .append(this.tech)
+				       .append(this.industryGroup)
+				       .toHashCode();
 	}
 
 	// - C O R E
@@ -317,30 +307,16 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				       .appendSuper(super.hashCode())
-				       .append(this.id)
-				       .append(this.item)
-				       .append(this.group)
-				       .append(this.category)
-				       .append(this.price)
-				       .append(this.tech)
-				       .append(this.industryGroup)
-				       .toHashCode();
-	}
-
-	@Override
 	public String toString() {
 		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("id", this.id)
-				.append("item", this.item)
-				.append("group", this.group)
-				.append("category", this.category)
-				.append("price", this.price)
-				.append("tech", this.tech)
-				.append("industryGroup", this.industryGroup)
-				.toString();
+				       .append("id", this.id)
+				       .append("item", this.item)
+				       .append("group", this.group)
+				       .append("category", this.category)
+				       .append("price", this.price)
+				       .append("tech", this.tech)
+				       .append("industryGroup", this.industryGroup)
+				       .toString();
 	}
 
 	// - P R I V A T E   S E C T I O N
@@ -433,5 +409,33 @@ public class EveItem extends NeoComNode implements IItemFacet {
 			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
 		}
 		return futureBuyerData.get();
+	}
+
+	public enum ItemTechnology {
+		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");
+
+		// - I N V E R S E   L O O K U P   T A B L E
+		private static final Map<String, ItemTechnology> lookup = new HashMap<>();
+
+		static {
+			for (ItemTechnology env : ItemTechnology.values()) {
+				lookup.put(env.getName(), env);
+			}
+		}
+
+		private String label;
+
+		ItemTechnology( String newlabel ) {
+			this.label = newlabel;
+		}
+
+		/** Return the item tech from the label string by matching it to the enum label. */
+		public static ItemTechnology lookupLabel( String label ) {
+			return lookup.get(label);
+		}
+
+		public String getName() {
+			return this.label;
+		}
 	}
 }
