@@ -1,11 +1,11 @@
 package org.dimensinfin.eveonline.neocom.core.updaters;
 
+import org.dimensinfin.core.domain.EEvents;
+import org.dimensinfin.core.domain.EventEmitter;
+import org.dimensinfin.core.domain.IntercommunicationEvent;
+import org.dimensinfin.core.interfaces.IEventEmitter;
+import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.core.EEvents;
-import org.dimensinfin.eveonline.neocom.core.EventEmitter;
-import org.dimensinfin.eveonline.neocom.core.IEventEmitter;
-import org.dimensinfin.eveonline.neocom.core.IEventReceiver;
-import org.dimensinfin.eveonline.neocom.core.NeoComEvent;
 import org.dimensinfin.eveonline.neocom.services.UpdaterJobManager;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -14,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {
-	protected static Logger logger = LoggerFactory.getLogger(NeoComUpdater.class);
-
 	public enum JobStatus {READY, SCHEDULED, RUNNING, EXCEPTION, COMPLETED}
-
+	protected static Logger logger = LoggerFactory.getLogger(NeoComUpdater.class);
 	// - C O M P O N E N T S
 	protected static ESIDataAdapter esiDataAdapter;
 
@@ -93,7 +91,17 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	}
 
 	@Override
-	public boolean sendChangeEvent( final NeoComEvent event ) {
-		return this.eventEmitter.sendChangeEvent(event);
+	public boolean sendChangeEvent( final IntercommunicationEvent event ) {
+		return this.eventEmitter.sendChangeEvent(event.getPropertyName());
+	}
+
+	@Override
+	public boolean sendChangeEvent( final String eventName, final Object origin ) {
+		return this.eventEmitter.sendChangeEvent(eventName, origin);
+	}
+
+	@Override
+	public boolean sendChangeEvent( final String eventName, final Object origin, final Object oldValue, final Object newValue ) {
+		return this.eventEmitter.sendChangeEvent(eventName, origin, oldValue, newValue);
 	}
 }

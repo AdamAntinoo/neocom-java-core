@@ -1,9 +1,13 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
+import org.dimensinfin.eveonline.neocom.industry.Resource;
 import org.dimensinfin.eveonline.neocom.mining.DailyExtractionResourcesContainer;
 import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.adapters.SupportMiningRepository;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cucumber.api.java.en.When;
 
@@ -18,10 +22,12 @@ public class WhenTheResourceAggregatorIsInitialized {
 
 	@When("the resource aggregator is initialized")
 	public void theResourceAggregatorIsInitialized() {
+		final List<Resource> resources = new ArrayList<>();
 		final DailyExtractionResourcesContainer resourcesContainer = new DailyExtractionResourcesContainer.Builder()
-				.withCredential(this.miningExtractionsWorld.getCredential())
-				.withMiningRepository(this.miningRepository)
-				.withTargetDate(this.miningExtractionsWorld.getTodayDate())
+																			 .withResourceList(resources)
+//				.withCredential(this.miningExtractionsWorld.getCredential())
+//				.withMiningRepository(this.miningRepository)
+//				.withTargetDate(this.miningExtractionsWorld.getTodayDate())
 				.build();
 		this.miningExtractionsWorld.setResourcesContainer(resourcesContainer);
 	}

@@ -1,9 +1,9 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
+import org.dimensinfin.core.domain.EEvents;
+import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.adapters.NeoComUpdaterFactory;
-import org.dimensinfin.eveonline.neocom.core.EEvents;
-import org.dimensinfin.eveonline.neocom.core.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.core.NeoComEvent;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -14,7 +14,7 @@ import org.junit.Assert;
 
 import cucumber.api.java.en.When;
 
-public class WhenICheckCredentialUpdateState implements IEventReceiver {
+public abstract class WhenICheckCredentialUpdateState implements IEventReceiver {
 	private CredentialWorld credentialWorld;
 
 	public WhenICheckCredentialUpdateState( final CredentialWorld credentialWorld ) {
@@ -34,7 +34,7 @@ public class WhenICheckCredentialUpdateState implements IEventReceiver {
 		Assert.assertTrue(credential.getAssetsCount() > 0);
 	}
 
-	@Override
+//	@Override
 	public void eventReceived( final NeoComEvent event ) {
 		Assert.assertNotNull(event);
 		if (event.getPropertyName().equalsIgnoreCase(EEvents.EVENT_REFRESHDATA.name())) {
