@@ -1,6 +1,5 @@
 package org.dimensinfin.eveonline.neocom.database;
 
-import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.datamngmt.GlobalDataManager;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -474,7 +473,7 @@ public abstract class SDEDatabaseManager {
 	public List<Resource> searchListOfMaterials( final int bpid ) {
 		logger.info(">< [SDEDatabaseManager.searchListOfMaterials]> bpid: {}", bpid);
 		List<Resource> lom = new ArrayList<Resource>();
-		final Chrono chrono = new Chrono();
+//		final Chrono chrono = new Chrono();
 		try {
 			final RawStatement cursor = constructStatement(SELECT_LIST_OF_MATERIALS, new String[]{Integer.valueOf(bpid).toString()});
 			//			int blueprintId = -1;

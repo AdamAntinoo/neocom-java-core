@@ -105,7 +105,7 @@ ext {
 
 // - N E O C O M   L I B R A R I E S
 dependencies {
-    compileOnly 'org.dimensinfin:CoreBase.core:3.0.1'
+    compileOnly 'org.dimensinfin:CoreBase.core:3.1.0'
     compileOnly 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
     compileOnly files('libs/jeveassets.3.1.2.jar')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

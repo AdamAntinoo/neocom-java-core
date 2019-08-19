@@ -12,7 +12,6 @@ package org.dimensinfin.eveonline.neocom.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IDownloadable;
 import org.dimensinfin.core.interfaces.IExpandable;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.interfaces.IContentManager;
@@ -22,7 +21,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 // - CLASS IMPLEMENTATION ...................................................................................
-public class ExtendedLocation extends EsiLocation implements IExpandable, IDownloadable {
+public class ExtendedLocation extends EsiLocation implements IExpandable/*, IDownloadable*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -4484922266027865406L;
 	private static Logger logger = Logger.getLogger("ExtendedLocation");
@@ -160,12 +159,12 @@ public class ExtendedLocation extends EsiLocation implements IExpandable, IDownl
 //		return delegate.getUrlLocationIcon();
 //	}
 
-	public boolean isDownloaded () {
-		if ( contentManager instanceof IDownloadable )
-			return ((IDownloadable) delegate).isDownloaded();
-		else
-			return true;
-	}
+//	public boolean isDownloaded () {
+//		if ( contentManager instanceof IDownloadable )
+//			return ((IDownloadable) delegate).isDownloaded();
+//		else
+//			return true;
+//	}
 
 	public boolean isEmpty () {
 		if ( null != contentManager )
@@ -226,19 +225,19 @@ public class ExtendedLocation extends EsiLocation implements IExpandable, IDownl
 		return contentManager;
 	}
 
-	public IDownloadable setDownloaded (final boolean downloadedstate) {
-		if ( null == delegate )
-			return this;
-		else if ( contentManager instanceof IDownloadable ) {
-			((IDownloadable) delegate).setDownloaded(downloadedstate);
-			return this;
-		} else
-			return this;
-	}
-	public IDownloadable setDownloading (final boolean downloading) {
-		this._downloading = downloading;
-		return this;
-	}
+//	public IDownloadable setDownloaded (final boolean downloadedstate) {
+//		if ( null == delegate )
+//			return this;
+//		else if ( contentManager instanceof IDownloadable ) {
+//			((IDownloadable) delegate).setDownloaded(downloadedstate);
+//			return this;
+//		} else
+//			return this;
+//	}
+//	public IDownloadable setDownloading (final boolean downloading) {
+//		this._downloading = downloading;
+//		return this;
+//	}
 	public boolean isDownloading () {
 		return _downloading;
 	}

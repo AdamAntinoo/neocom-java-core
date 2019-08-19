@@ -15,13 +15,9 @@ package org.dimensinfin.eveonline.neocom.interfaces;
 import org.dimensinfin.eveonline.neocom.database.INeoComDBHelper;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
 import org.dimensinfin.eveonline.neocom.planetary.ColonyStructure;
 
 import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * @author Adam Antinoo
@@ -33,9 +29,9 @@ public interface IGlobalConnector {
 	public ISDEDBHelper getSDEDBHelper();
 
 	// --- M A R K E T   D A T A
-	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side );
-
-	public GetMarketsPrices200Ok searchMarketPrice( final int typeId );
+//	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side );
+//
+//	public GetMarketsPrices200Ok searchMarketPrice( final int typeId );
 
 	// --- C O L O N Y
 	public List<ColonyStructure> downloadStructures4Colony( final int characterid, final int planetid );

@@ -81,7 +81,7 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:3.1.6'
     testImplementation "org.springframework.boot:spring-boot-starter:$SpringBootRelease"
     testImplementation "org.springframework.boot:spring-boot-starter-test:$SpringBootRelease"
-    testImplementation('org.dimensinfin:CoreBase.core:3.0.1')
+    testImplementation('org.dimensinfin:CoreBase.core:3.1.0')
     testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
     testImplementation project(':NeoCom.DataManagement')
 }

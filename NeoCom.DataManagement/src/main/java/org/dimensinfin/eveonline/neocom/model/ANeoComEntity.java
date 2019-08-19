@@ -1,13 +1,12 @@
 package org.dimensinfin.eveonline.neocom.model;
 
-import java.util.Objects;
-
-import org.dimensinfin.core.model.AbstractPropertyChanger;
 import org.dimensinfin.eveonline.neocom.database.EntityManager;
 import org.dimensinfin.eveonline.neocom.database.ISDEDBHelper;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.interfaces.IDatabaseEntity;
 import org.dimensinfin.eveonline.neocom.interfaces.IGlobalConnector;
+
+import java.util.Objects;
 
 /**
  * This utility class is responsible to connect the Model classes that require database access and that are

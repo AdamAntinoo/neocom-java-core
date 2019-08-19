@@ -8,14 +8,13 @@
 //               the source for the specific functionality for the backend services.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
 
@@ -31,7 +30,7 @@ public class ESINetworkManagerCorporation extends ESINetworkManagerZBase{
 			, final String refreshToken
 			, final String server ) {
 		logger.info(">> [ESINetworkManagerCorporation.getCorporationsCorporationIdAssets]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		List<GetCorporationsCorporationIdAssets200Ok> returnAssetList = new ArrayList<>(1000);
 		try {
 			// Set the refresh to be used during the request.
@@ -66,7 +65,7 @@ public class ESINetworkManagerCorporation extends ESINetworkManagerZBase{
 				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
 		} finally {
-			logger.info("<< [ESINetworkManagerCorporation.getCorporationsCorporationIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+//			logger.info("<< [ESINetworkManagerCorporation.getCorporationsCorporationIdAssets]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return returnAssetList;
 	}

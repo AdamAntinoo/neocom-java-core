@@ -1,11 +1,5 @@
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.core.util.Chrono.ChronoOptions;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.ClonesApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
@@ -19,6 +13,12 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOrdersHistory200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillqueue200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdSkillsOk;
+import org.joda.time.Duration;
+import org.joda.time.Instant;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Response;
 
@@ -147,7 +147,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	public GetCharactersCharacterIdClonesOk getCharactersCharacterIdClones( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdClones]");
-		final Chrono accessFullTime = new Chrono();
+		final Instant accessFullTime = Instant.now();
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_CLONES, identifier);
 		// Check if network is available and we have configured allowed access to download data.
@@ -177,8 +177,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 				// Return cached response if available
 				return (GetCharactersCharacterIdClonesOk) okResponseCache.get(reference).body();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}"
-						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdClones]> [TIMING] Full elapsed: {}",
+				            new Duration(Instant.now().getMillis() - accessFullTime.getMillis()).toStandardSeconds());
 			}
 		} else return (GetCharactersCharacterIdClonesOk) okResponseCache.get(reference).body();
 	}
@@ -294,7 +294,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		// Check if this response already available at cache.
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.INDUSTRY_JOBS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
-		final Chrono accessFullTime = new Chrono();
+		final Instant accessFullTime = Instant.now();
 		if (null == hit) {
 			try {
 				// Set the refresh to be used during the request.
@@ -314,7 +314,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdIndustryJobs]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdIndustryJobs]> [TIMING] Full elapsed: {}",
+				            new Duration(Instant.now().getMillis() - accessFullTime.getMillis()).toStandardSeconds());
 			}
 			return new ArrayList<>();
 		} else {
@@ -383,7 +384,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		// Check if this response already available at cache.
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.INDUSTRY_MARKET_ORDERS, identifier);
 		final Response<?> hit = okResponseCache.get(reference);
-		final Chrono accessFullTime = new Chrono();
+		final Instant accessFullTime = Instant.now();
 		if (null == hit) {
 			try {
 				// Set the refresh to be used during the request.
@@ -402,7 +403,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrders]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+				logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrders]> [TIMING] Full elapsed: {}",
+				            new Duration(Instant.now().getMillis() - accessFullTime.getMillis()).toStandardSeconds());
 			}
 			return null;
 		} else {
@@ -414,7 +416,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	public static List<GetCharactersCharacterIdOrdersHistory200Ok> getCharactersCharacterIdOrdersHistory( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdOrdersHistory]");
-		final Chrono accessFullTime = new Chrono();
+		final Instant accessFullTime = Instant.now();
 		List<GetCharactersCharacterIdOrdersHistory200Ok> returnOrderList = new ArrayList<>(1000);
 		try {
 			// Set the refresh to be used during the request.
@@ -442,7 +444,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrdersHistory]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			logger.info("<< [ESINetworkManager.getCharactersCharacterIdOrdersHistory]> [TIMING] Full elapsed: {}",
+			            new Duration(Instant.now().getMillis() - accessFullTime.getMillis()).toStandardSeconds());
 		}
 		return returnOrderList;
 	}
@@ -562,7 +565,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	// --- F I T T I N G   S E C T I O N
 	public static List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings( final int identifier, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdFittings]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
@@ -580,7 +583,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdFittings]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}
@@ -624,7 +627,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	public static List<GetCharactersCharacterIdSkillqueue200Ok> getCharactersCharacterIdSkillqueue( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdSkillqueue]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_SKILLQUEUE, identifier);
 		// Check if network is available and we have configured allowed access to download data.
@@ -654,8 +657,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 				// Return cached response if available
 				return (List<GetCharactersCharacterIdSkillqueue200Ok>) okResponseCache.get(reference).body();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdSkillqueue]> [TIMING] Full elapsed: {}"
-						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//				logger.info("<< [ESINetworkManager.getCharactersCharacterIdSkillqueue]> [TIMING] Full elapsed: {}"
+//						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 			}
 		} else return (List<GetCharactersCharacterIdSkillqueue200Ok>) okResponseCache.get(reference).body();
 	}
@@ -663,7 +666,7 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 	public static GetCharactersCharacterIdSkillsOk getCharactersCharacterIdSkills( final int identifier
 			, final String refreshToken, final String server ) {
 		logger.info(">> [ESINetworkManager.getCharactersCharacterIdSkills]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
 		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_SKILLQUEUE, identifier);
 		// Check if network is available and we have configured allowed access to download data.
@@ -693,8 +696,8 @@ public class ESINetworkManagerCharacter extends ESINetworkManagerCorporation {
 				// Return cached response if available
 				return (GetCharactersCharacterIdSkillsOk) okResponseCache.get(reference).body();
 			} finally {
-				logger.info("<< [ESINetworkManager.getCharactersCharacterIdSkills]> [TIMING] Full elapsed: {}"
-						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//				logger.info("<< [ESINetworkManager.getCharactersCharacterIdSkills]> [TIMING] Full elapsed: {}"
+//						, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 			}
 		} else return (GetCharactersCharacterIdSkillsOk) okResponseCache.get(reference).body();
 	}

@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.adapters;
 
 import com.nytimes.android.external.cache3.Futures;
 
-import org.dimensinfin.core.util.Chrono;
 import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -301,7 +300,7 @@ public class ESIDataAdapter {
 
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
 		logger.info(">> [ESIDataAdapter.getUniverseRaces]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit().create(
 					UniverseApi.class)
@@ -313,15 +312,15 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESIDataAdapter.getUniverseRaces]> [TIMING] Full elapsed: {}",
-			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+//			logger.info("<< [ESIDataAdapter.getUniverseRaces]> [TIMING] Full elapsed: {}",
+//			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
 	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
 		logger.info(">> [ESIDataAdapter.getUniverseAncestries]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit().create(
 					UniverseApi.class)
@@ -334,15 +333,15 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESIDataAdapter.getUniverseAncestries]> [TIMING] Full elapsed: {}",
-			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+//			logger.info("<< [ESIDataAdapter.getUniverseAncestries]> [TIMING] Full elapsed: {}",
+//			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
 	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
 		logger.info(">> [ESIDataAdapter.getUniverseBloodlines]");
-		final Chrono accessFullTime = new Chrono();
+//		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = retrofitFactory.accessNoAuthRetrofit().create(
 					UniverseApi.class)
@@ -355,8 +354,8 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			logger.info("<< [ESIDataAdapter.getUniverseBloodlines]> [TIMING] Full elapsed: {}",
-			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
+//			logger.info("<< [ESIDataAdapter.getUniverseBloodlines]> [TIMING] Full elapsed: {}",
+//			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}

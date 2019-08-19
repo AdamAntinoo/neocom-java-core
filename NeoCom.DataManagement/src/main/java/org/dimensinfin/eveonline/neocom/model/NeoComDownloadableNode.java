@@ -9,15 +9,11 @@
 //									Code integration that is not dependent on any specific platform.
 package org.dimensinfin.eveonline.neocom.model;
 
-import org.dimensinfin.core.interfaces.IDownloadable;
-
-// - CLASS IMPLEMENTATION ...................................................................................
-
 /**
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the
  * common methods and implement the default behavior for nodes.
  */
-public abstract class NeoComDownloadableNode extends NeoComExpandableNode implements IDownloadable {
+public abstract class NeoComDownloadableNode extends NeoComExpandableNode /*implements IDownloadable*/ {
 	// - S T A T I C - S E C T I O N ..........................................................................
 	private static final long serialVersionUID = -3742179733663283434L;
 
@@ -33,15 +29,15 @@ public abstract class NeoComDownloadableNode extends NeoComExpandableNode implem
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 
-	public IDownloadable setDownloading (final boolean downloading) {
-		this._downloading = downloading;
-		return this;
-	}
-
-	public IDownloadable setDownloaded (final boolean downloaded) {
-		this._downloaded = downloaded;
-		return this;
-	}
+//	public IDownloadable setDownloading (final boolean downloading) {
+//		this._downloading = downloading;
+//		return this;
+//	}
+//
+//	public IDownloadable setDownloaded (final boolean downloaded) {
+//		this._downloaded = downloaded;
+//		return this;
+//	}
 
 	public boolean isDownloading () {
 		return _downloading;

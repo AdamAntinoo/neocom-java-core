@@ -12,15 +12,10 @@
 //               runtime implementation provided by the Application.
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.services.MarketDataServer;
 
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -70,28 +65,28 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 	}
 
 	//--- M A R K E T   D A T A   S E R V I C E   S E C T I O N
-	private static MarketDataServer marketDataService = null;
+//	private static MarketDataServer marketDataService = null;
 	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
 
-	public void connectMarketDataManager( final MarketDataServer manager ) {
-		logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]");
-		marketDataService = manager;
-		// At this point we should have been initialized.
-		// The next section should be executed out of the main thread to be compatible con Android.
-		GlobalDataManager.getSingleton().submitJob(() -> {
-			// Initialize and process the list of market process form the ESI full market data.
-			final List<GetMarketsPrices200Ok> marketPrices = this.esiAdapter.getMarketsPrices(GlobalDataManager.TRANQUILITY_DATASOURCE);
-			logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]> Process all market prices: {} items", marketPrices.size());
-			for (GetMarketsPrices200Ok price : marketPrices) {
-				marketDefaultPrices.put(price.getTypeId(), price);
-			}
-		});
-		logger.info("<< [GlobalDataManagerCache.connectMarketDataManager]");
-	}
+//	public void connectMarketDataManager( final MarketDataServer manager ) {
+//		logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]");
+////		marketDataService = manager;
+//		// At this point we should have been initialized.
+//		// The next section should be executed out of the main thread to be compatible con Android.
+//		GlobalDataManager.getSingleton().submitJob(() -> {
+//			// Initialize and process the list of market process form the ESI full market data.
+//			final List<GetMarketsPrices200Ok> marketPrices = this.esiAdapter.getMarketsPrices(GlobalDataManager.TRANQUILITY_DATASOURCE);
+//			logger.info(">> [GlobalDataManagerCache.connectMarketDataManager]> Process all market prices: {} items", marketPrices.size());
+//			for (GetMarketsPrices200Ok price : marketPrices) {
+//				marketDefaultPrices.put(price.getTypeId(), price);
+//			}
+//		});
+//		logger.info("<< [GlobalDataManagerCache.connectMarketDataManager]");
+//	}
 
-	public static MarketDataServer currentMarketDataManager() {
-		return marketDataService;
-	}
+//	public static MarketDataServer currentMarketDataManager() {
+//		return marketDataService;
+//	}
 
 	/**
 	 * Returns the default and average prices found on the ESI market price list for the specified item identifier.
@@ -110,10 +105,10 @@ public class GlobalDataManagerCache extends GlobalDataManagerConfiguration {
 		} else return hit;
 	}
 
-	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
-		if ( null != marketDataService ) return marketDataService.searchMarketData(itemId, side);
-		else throw new RuntimeException("No MarketDataManager service connected.");
-	}
+//	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
+//		if ( null != marketDataService ) return marketDataService.searchMarketData(itemId, side);
+//		else throw new RuntimeException("No MarketDataManager service connected.");
+//	}
 	//	public static void activateMarketDataCache4Id( final int typeId ) {
 	//		if (null != marketDataService) marketDataService.activateMarketDataCache4Id(typeId);
 	//		else throw new RuntimeException("No MarketDataManager service connected.");

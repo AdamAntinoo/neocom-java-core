@@ -1,22 +1,9 @@
 package org.dimensinfin.eveonline.neocom.datamngmt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import org.dimensinfin.core.util.Chrono;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
 
-import retrofit2.Response;
+import java.util.Objects;
 
 public class ESIGlobalAdapter extends ESINetworkManager {
 //	private static final HashMap<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap(1000);
