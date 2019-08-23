@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CredentialRepository {
-	private static Logger logger = LoggerFactory.getLogger(CredentialRepository.class);
+	protected static Logger logger = LoggerFactory.getLogger(CredentialRepository.class);
 
 	protected Dao<Credential, String> credentialDao;
 
@@ -50,7 +50,7 @@ public class CredentialRepository {
 
 	// - B U I L D E R
 	public static class Builder {
-		private CredentialRepository onConstruction;
+		protected CredentialRepository onConstruction;
 
 		public Builder() {
 			this.onConstruction = new CredentialRepository();

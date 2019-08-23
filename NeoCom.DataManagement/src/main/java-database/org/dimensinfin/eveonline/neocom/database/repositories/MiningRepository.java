@@ -21,9 +21,9 @@ import java.util.Objects;
 
 public class MiningRepository {
 	protected static Logger logger = LoggerFactory.getLogger(MiningRepository.class);
-	protected Dao<MiningExtraction, String> miningExtractionDao;
 	// - C O M P O N E N T S
-	private ESIDataAdapter esiDataAdapter;
+	protected ESIDataAdapter esiDataAdapter;
+	protected Dao<MiningExtraction, String> miningExtractionDao;
 
 	/**
 	 * This other method does the same Mining Extractions processing but only for the records for the current date. The difference is
@@ -49,30 +49,42 @@ public class MiningRepository {
 			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepare();
 			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}", preparedQuery.getStatement());
 			final List<MiningExtraction> dataList = this.miningExtractionDao.query(preparedQuery);
-			List<MiningExtraction> results = new ArrayList<>();
-//			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
-			// Filter out all records not belonging to today.
-			for (MiningExtraction extraction : dataList) {
-				this.postprocessExtraction(extraction);
-				if (extraction.getExtractionDateName().equalsIgnoreCase(
-						filterDate.toString(MiningExtraction.EXTRACTION_DATE_FORMAT)))
-					results.add(extraction);
-			}
-			return results;
+			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> Records read: {}",
+			            dataList.size());
+			return this.filterOutNotTodayRecords(dataList, filterDate);
 		} catch (SQLException sqle) {
-			logger.error("");
+			logger.error("SQL [MiningRepository.accessDatedMiningExtractions4Pilot]> SQL Exception: {}", sqle.getMessage());
 			return new ArrayList<>();
 		}
 	}
 
 	/**
+	 * Filter out all records not belonging to today.
+	 *
+	 * @param dataList records read from the database.
+	 * @return completed list of extractions for the date of today and with all the delegates reloaded
+	 */
+	private List<MiningExtraction> filterOutNotTodayRecords( final List<MiningExtraction> dataList,
+	                                                         final LocalDate filterDate ) {
+		List<MiningExtraction> results = new ArrayList<>();
+		// Filter out all records not belonging to today.
+		for (MiningExtraction extraction : dataList)
+			if (extraction.getExtractionDateName().equalsIgnoreCase(
+					filterDate.toString(MiningExtraction.EXTRACTION_DATE_FORMAT)))
+				results.add(this.postProcessExtraction(extraction));
+		return results;
+	}
+
+	/**
 	 * Because transient fields lost their contents when the record is stored on the database, when retrieving the record the
 	 * date should be set again by searching for the esi resources again.
+	 *
 	 * @param extraction the mining extraction to update.
 	 */
-	private void postprocessExtraction( final MiningExtraction extraction ) {
+	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
 		extraction.setResourceItem(new EveItem(extraction.getTypeId()));
 		extraction.setSolarSystemLocation(this.esiDataAdapter.searchLocation4Id(extraction.getSolarSystemId()));
+		return extraction;
 	}
 
 	public List<MiningExtraction> accessResources4Date( final Credential credential, final LocalDate filterDate ) {
@@ -84,23 +96,18 @@ public class MiningRepository {
 					.eq("extractionDateName", filterDate.toString("YYYY-MM-dd"));
 			builder.selectRaw("id", "typeId", "MAX(quantity)");
 			builder.groupBy("typeId");
-//			final PreparedQuery<MiningExtraction> preparedQuery = builder.prepareStatementString()
-//			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}", preparedQuery.getStatement());
+			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}", builder.prepareStatementString());
 			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw(
 					builder.prepareStatementString());
 			List<MiningExtraction> results = new ArrayList<>();
 			for (String[] record : dataList.getResults()) {
 				results.add(this.miningExtractionDao.queryForId(record[0]));
 			}
-//			final String filterDate = DateTime.now().toString("YYYY/MM/dd");
-			// Filter out all records not belonging to today.
-//			for (MiningExtraction extraction : dataList) {
-//				final String date = extraction.getExtractionDateName();
-//				if (date.equalsIgnoreCase(filterDate.toString("YYYY-MM-dd"))) results.add(extraction);
-//			}
+			logger.info("-- [MiningRepository.accessTodayMiningExtractions4Pilot]> Records read: {}",
+			            results.size());
 			return results;
 		} catch (SQLException sqle) {
-			logger.error("");
+			logger.error("SQL [MiningRepository.accessResources4Date]> SQL Exception: {}", sqle.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -110,7 +117,10 @@ public class MiningRepository {
 	}
 
 	public void persist( final MiningExtraction record ) throws SQLException {
-		this.miningExtractionDao.createOrUpdate(record);
+		if (null != record) {
+			record.timeStamp();
+			this.miningExtractionDao.createOrUpdate(record);
+		}
 	}
 
 	/**
