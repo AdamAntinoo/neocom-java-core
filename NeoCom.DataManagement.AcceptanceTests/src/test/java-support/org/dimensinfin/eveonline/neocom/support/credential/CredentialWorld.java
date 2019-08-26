@@ -9,7 +9,6 @@ import java.util.Objects;
 public class CredentialWorld {
 	private List<Map<String, String>> authorisationData;
 	private Credential credentialUnderTest;
-//	private Credential credentialRead;
 
 	public List<Map<String, String>> getAuthorisationData() {
 		Objects.requireNonNull(this.authorisationData);
@@ -27,14 +26,6 @@ public class CredentialWorld {
 	public void setCredentialUnderTest( final Credential credentialUnderTest ) {
 		this.credentialUnderTest = credentialUnderTest;
 	}
-
-//	public Credential getCredentialRead() {
-//		return credentialRead;
-//	}
-
-//	public void setCredentialRead( final Credential credentialRead ) {
-//		this.credentialRead = credentialRead;
-//	}
 
 	public String getCredentialId() {
 		return this.credentialUnderTest.getUniqueId();
