@@ -5,8 +5,8 @@ import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.mining.updaters.MiningExtractionUpdater;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 import org.joda.time.LocalDate;
 
 import java.util.List;

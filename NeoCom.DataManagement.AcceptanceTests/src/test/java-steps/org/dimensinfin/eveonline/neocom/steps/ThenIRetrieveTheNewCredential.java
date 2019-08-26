@@ -1,8 +1,8 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 
 import java.sql.SQLException;
 import java.util.Objects;

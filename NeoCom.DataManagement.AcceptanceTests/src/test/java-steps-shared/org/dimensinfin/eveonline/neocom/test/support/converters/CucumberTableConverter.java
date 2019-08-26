@@ -1,21 +1,21 @@
-package org.dimensinfin.eveonline.neocom.support;
+package org.dimensinfin.eveonline.neocom.test.support.converters;
+
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dimensinfin.eveonline.neocom.support.adapters.Converter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-public abstract class CucumberTableConverter<T> implements Converter<List<Map<String, String>>, List<T>> {
+public abstract class CucumberTableConverter<T> implements IConverter<List<Map<String, String>>, List<T>> {
 
 	private static final String LIST_SEPARATOR = ",";
 
 	@Override
 	public List<T> convert( List<Map<String, String>> dataTable ) {
-		return dataTable.stream()
+		return Stream.of(dataTable)
 				       .map(row -> convert(row))
 				       .collect(Collectors.toList());
 	}
@@ -33,6 +33,6 @@ public abstract class CucumberTableConverter<T> implements Converter<List<Map<St
 
 	protected List<String> getListFromCucumberValue( String value ) {
 		return StringUtils.isNotEmpty(value) ?
-				       Arrays.stream(value.split(LIST_SEPARATOR)).map(String::trim).collect(Collectors.toList()) : null;
+				       Stream.of(value.split(LIST_SEPARATOR)).map(String::trim).collect(Collectors.toList()) : null;
 	}
 }

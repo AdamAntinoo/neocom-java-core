@@ -3,8 +3,8 @@ package org.dimensinfin.eveonline.neocom.support.location;
 import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.adapters.SupportLocationRepository;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 
 public class LocationWorld {
 	private ISDEDatabaseAdapter sdeDatabaseManager;

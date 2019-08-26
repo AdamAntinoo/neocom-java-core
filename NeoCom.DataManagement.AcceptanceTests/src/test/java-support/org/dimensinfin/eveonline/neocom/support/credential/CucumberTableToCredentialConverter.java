@@ -1,11 +1,10 @@
 package org.dimensinfin.eveonline.neocom.support.credential;
 
-import java.util.Map;
-
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.support.CucumberTableConverter;
-
+import org.dimensinfin.eveonline.neocom.test.support.converters.CucumberTableConverter;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class CucumberTableToCredentialConverter extends CucumberTableConverter<Credential> {

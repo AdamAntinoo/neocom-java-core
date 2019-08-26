@@ -1,8 +1,9 @@
-package org.dimensinfin.eveonline.neocom.support.adapters;
+package org.dimensinfin.eveonline.neocom.test.support.adapters;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 
@@ -21,12 +22,27 @@ public class SupportMiningRepository extends MiningRepository {
 		}
 	}
 
+	public Long countRecords() {
+		try {
+			return this.miningExtractionDao.countOf();
+		} catch (SQLException sqle) {
+			logger.info("EX [SupportMiningRepository.countRecords]> SQL exception while counting records: {}",
+			            sqle.getMessage());
+			return 0L;
+		}
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private SupportMiningRepository onConstruction;
 
 		public Builder() {
 			this.onConstruction = new SupportMiningRepository();
+		}
+
+		public SupportMiningRepository.Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
+			this.onConstruction.esiDataAdapter = esiDataAdapter;
+			return this;
 		}
 
 		public SupportMiningRepository.Builder withMiningExtractionDao( final Dao<MiningExtraction, String> miningExtractionDao ) {

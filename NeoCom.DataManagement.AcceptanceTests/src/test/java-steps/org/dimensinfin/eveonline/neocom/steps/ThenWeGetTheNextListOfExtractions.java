@@ -4,9 +4,9 @@ import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
-import org.dimensinfin.eveonline.neocom.support.miningExtractions.CucumberTableToMiningExtractionConverter;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.test.support.converters.CucumberTableToMiningExtractionConverter;
 import org.junit.Assert;
 
 import java.util.List;

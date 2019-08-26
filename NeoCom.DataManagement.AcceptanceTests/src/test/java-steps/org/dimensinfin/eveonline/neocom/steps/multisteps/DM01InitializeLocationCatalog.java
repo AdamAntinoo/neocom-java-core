@@ -4,9 +4,9 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.location.CucumberTableToEsiLocationConverter;
 import org.dimensinfin.eveonline.neocom.support.location.LocationWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 import org.junit.Assert;
 
 import java.util.List;

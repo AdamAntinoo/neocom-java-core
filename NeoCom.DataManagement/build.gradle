@@ -3,7 +3,7 @@ apply plugin: 'java-library'
 apply plugin: 'kotlin'
 apply plugin: 'maven-publish'
 apply plugin: 'project-report'
-apply from: 'generateSDE.gradle'
+apply from: './generateSDE.gradle'
 
 // - K O T L I N
 buildscript {

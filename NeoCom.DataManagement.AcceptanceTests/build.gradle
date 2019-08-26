@@ -1,75 +1,31 @@
-buildscript {
-    ext.kotlin_version = '1.3.41'
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        jcenter()
-        maven { url 'https://jitpack.io' }
-        maven { url "https://kotlin.bintray.com/kotlinx/" }
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.2'
-//        classpath 'com.google.gms:google-services:4.3.0'
-//        classpath 'me.tatarka:gradle-retrolambda:3.2.3'
-//        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-plugins {
-    id "com.github.samueltbrown.cucumber" version "0.9"
-}
+// -  P L U G I N S
 apply plugin: 'java'
 apply plugin: 'project-report'
-apply plugin: 'jacoco'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        jcenter()
-        maven { url 'https://jitpack.io' }
-        maven { url "https://kotlin.bintray.com/kotlinx/" }
-    }
-}
 
 sourceSets {
     test.java {
         srcDirs += "src/test/java-steps"
+        srcDirs += "src/test/java-steps-shared"
         srcDirs += "src/test/java-support"
     }
 }
 
 // - P R O D U C T   V E R S I O N S
 ext {
-    supportLibraryVersion = '29.0.0'
+    SpringBootRelease = '2.1.6.RELEASE'
     jodaTimeVersion = '2.3'
     loggerVersion = '1.7.26'
     jacksonVersion = '2.9.4'
     fasterxmlJackson = '2.9.4'
     ormliteVersion = '4.48'
-    retrofitVersion = '2.3.0'
-    powermockVersion = '2.0.2'
     retrofitVersion = '2.5.0'
-}
-// - P R O D U C T   V E R S I O N S
-ext {
-    loggerVersion = '1.7.26'
-    jacksonVersion = '2.9.4'
-    ormliteVersion = '4.48'
-    retrofitVersion = '2.3.0'
     cacheVersion = '3.1.1'
-    SpringBootRelease = '2.1.6.RELEASE'
-    cucumberVersion = '3.0.1'
+    cucumberVersion = '4.3.0'
 }
 
 // - C U C U M B E R
 dependencies {
-    testImplementation "io.cucumber:cucumber-jvm:$cucumberVersion"
+//    testImplementation "io.cucumber:cucumber-jvm:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-java:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-junit:$cucumberVersion"
     testImplementation "io.cucumber:cucumber-picocontainer:$cucumberVersion"
@@ -78,9 +34,11 @@ dependencies {
 // - T E S T I N G
 dependencies {
     testImplementation "org.slf4j:slf4j-simple:$loggerVersion"
+    testImplementation 'junit:junit:4.12'
     testImplementation 'org.awaitility:awaitility:3.1.6'
-    testImplementation "org.springframework.boot:spring-boot-starter:$SpringBootRelease"
-    testImplementation "org.springframework.boot:spring-boot-starter-test:$SpringBootRelease"
+    testImplementation 'org.mockito:mockito-core:2.23.4'
+//    testImplementation "org.springframework.boot:spring-boot-starter:$SpringBootRelease"
+//    testImplementation "org.springframework.boot:spring-boot-starter-test:$SpringBootRelease"
     testImplementation('org.dimensinfin:CoreBase.core:3.1.0')
     testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
     testImplementation project(':NeoCom.DataManagement')
@@ -89,6 +47,14 @@ dependencies {
 dependencies {
     testImplementation 'org.apache.commons:commons-lang3:3.7'
     testImplementation 'com.annimon:stream:1.1.9' // Android compatible streams
+
+    // https://mvnrepository.com/artifact/org.apache.oltu.oauth2/org.apache.oltu.oauth2.common
+    testImplementation group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.common', version: '1.0.2'
+// https://mvnrepository.com/artifact/org.apache.oltu.oauth2/org.apache.oltu.oauth2.httpclient4
+    testImplementation group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.httpclient4', version: '1.0.2'
+// https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-scalars
+    testImplementation group: 'com.squareup.retrofit2', name: 'converter-scalars', version: '2.6.1'
+
 
     testImplementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
     // JSON converter
@@ -109,60 +75,60 @@ dependencies {
 
 // - T A S K S
 // Install the SDE database on the assets for testing
-ext {
-    assetsPath = "$projectDir/AcceptanceTests"
-}
-task copySDEDatabase(type: Copy) {
-    group = "publishing"
-    println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
-    from project(':NeoCom.DataManagement').file("src/main/sh/sde.db")
-    into "$assetsPath"
-}
-task renameSDEDatabase(type: Copy) {
-    group = "publishing"
-    println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
-    from project(':NeoCom.DataManagement').file("src/main/sh/*.db")
-    rename { String filename ->
-        return 'sde-acceptance.db'
-    }
-    into "$assetsPath"
-}
-copySDEDatabase.dependsOn(':NeoCom.DataManagement:generateSDEDatabase')
+//ext {
+//    assetsPath = "$projectDir/AcceptanceTests"
+//}
+//task copySDEDatabase(type: Copy) {
+//    group = "publishing"
+//    println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
+//    from project(':NeoCom.DataManagement').file("src/main/sh/sde.db")
+//    into "$assetsPath"
+//}
+//task renameSDEDatabase(type: Copy) {
+//    group = "publishing"
+//    println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
+//    from project(':NeoCom.DataManagement').file("src/main/sh/*.db")
+//    rename { String filename ->
+//        return 'sde-acceptance.db'
+//    }
+//    into "$assetsPath"
+//}
+//copySDEDatabase.dependsOn(':NeoCom.DataManagement:generateSDEDatabase')
 
-cucumber {
-    formats = ['pretty', 'json:build/cucumber.json', 'junit:build/cucumber.xml']
-    glueDirs = ['src/test/java',
-                'src/test/resources/features']
-    featureDirs = ['src/test/resources/features']
-    tags = ['not @skip_scenario', '@DM02']
-    monochrome = false
-    strict = false
-    dryRun = false
-    ignoreFailures = false
-    jvmOptions {
-        maxHeapSize = '20148m'
-        environment 'ENV', 'staging'
-        def jacocoAgent = zipTree(configurations.jacocoAgent.singleFile).filter {
-            it.name == "jacocoagent.jar"
-        }.singleFile
-        jvmArgs "-javaagent:$jacocoAgent=destfile=$buildDir/results/jacoco/cucumber.exec,append=false"
-    }
-}
-testResultsDirName = "results/test"
+//cucumber {
+//    formats = ['pretty', 'json:build/cucumber.json', 'junit:build/cucumber.xml']
+//    glueDirs = ['src/test/java',
+//                'src/test/resources/features']
+//    featureDirs = ['src/test/resources/features']
+//    tags = ['not @skip_scenario', '@DM02']
+//    monochrome = false
+//    strict = false
+//    dryRun = false
+//    ignoreFailures = false
+//    jvmOptions {
+//        maxHeapSize = '20148m'
+//        environment 'ENV', 'staging'
+//        def jacocoAgent = zipTree(configurations.jacocoAgent.singleFile).filter {
+//            it.name == "jacocoagent.jar"
+//        }.singleFile
+//        jvmArgs "-javaagent:$jacocoAgent=destfile=$buildDir/results/jacoco/cucumber.exec,append=false"
+//    }
+//}
+//testResultsDirName = "results/test"
 
-test {
-    jacoco {
-        append = false
-        destinationFile = file("$buildDir/results/jacoco/test.exec")
-    }
-}
-jacocoTestReport {
-    executionData = files("$buildDir/results/jacoco/test.exec", "$buildDir/results/jacoco/cucumber.exec")
-    reports {
-        xml.enabled false
-        csv.enabled false
-//        html.destination "$buildDir/reports/jacoco"
-    }
-    dependsOn test
-//    dependsOn "cucumber"
-}
+//test {
+//    jacoco {
+//        append = false
+//        destinationFile = file("$buildDir/results/jacoco/test.exec")
+//    }
+//}
+//jacocoTestReport {
+//    executionData = files("$buildDir/results/jacoco/test.exec", "$buildDir/results/jacoco/cucumber.exec")
+//    reports {
+//        xml.enabled false
+//        csv.enabled false
+////        html.destination "$buildDir/reports/jacoco"
+//    }
+//    dependsOn test
+////    dependsOn "cucumber"
+//}

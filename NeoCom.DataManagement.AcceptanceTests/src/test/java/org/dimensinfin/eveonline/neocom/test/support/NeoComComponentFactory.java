@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.support;
+package org.dimensinfin.eveonline.neocom.test.support;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
@@ -12,7 +12,7 @@ import org.dimensinfin.eveonline.neocom.support.adapters.FileSystemSBImplementat
 import org.dimensinfin.eveonline.neocom.support.adapters.NeoComSupportDBAdapter;
 import org.dimensinfin.eveonline.neocom.support.adapters.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.adapters.SupportLocationRepository;
-import org.dimensinfin.eveonline.neocom.support.adapters.SupportMiningRepository;
+import org.dimensinfin.eveonline.neocom.test.support.adapters.SupportMiningRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +101,7 @@ public class NeoComComponentFactory {
 		if (null == this.miningRepository) {
 			try {
 				this.miningRepository = new SupportMiningRepository.Builder()
+						                        .withEsiDataAdapter(this.getEsiDataAdapter())
 						                        .withMiningExtractionDao(this.getNeoComDBAdapter().getMiningExtractionDao())
 						                        .build();
 			} catch (SQLException sqle) {

@@ -2,7 +2,7 @@ package org.dimensinfin.eveonline.neocom.support.location;
 
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.LocationClass;
-import org.dimensinfin.eveonline.neocom.support.CucumberTableConverter;
+import org.dimensinfin.eveonline.neocom.test.support.converters.CucumberTableConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

@@ -4,22 +4,24 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.mining.DailyExtractionResourcesContainer;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.test.support.SharedWorld;
 import org.joda.time.LocalDate;
 
 import java.util.List;
 
-public class MiningExtractionsWorld {
+public class MiningExtractionsWorld  {
+	private SharedWorld sharedWorld;
 	private ESIDataAdapter esiDataAdapter;
 	private Credential credential;
 	private List<MiningExtraction> miningExtractionRecords;
 	private LocalDate processingDate;
 	private int hour;
 	private int pilotIdentifier;
-	private LocalDate todayDate;
 	private DailyExtractionResourcesContainer resourcesContainer;
 
-	public MiningExtractionsWorld() {
+	public MiningExtractionsWorld( final SharedWorld sharedWorld) {
+		this.sharedWorld=sharedWorld;
 		this.credential = new Credential.Builder(92223647)
 				                  .withAccountId(92223647)
 				                  .withAccountName("Beth Ripley")
@@ -36,8 +38,6 @@ public class MiningExtractionsWorld {
 				                  .build();
 		// Connect the item to the adapter
 		this.esiDataAdapter = NeoComComponentFactory.getSingleton().getEsiDataAdapter();
-//		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
-//		NeoComUpdater.injectsEsiDataAdapter(this.esiDataAdapter);
 	}
 
 	public ESIDataAdapter getEsiDataAdapter() {
@@ -87,16 +87,6 @@ public class MiningExtractionsWorld {
 	public boolean validateRecord( final MiningExtraction verificationRecord, final MiningExtraction targetRecord ) {
 		return verificationRecord.equals(targetRecord);
 	}
-
-	public LocalDate getTodayDate() {
-		return this.todayDate;
-	}
-
-	public MiningExtractionsWorld setTodayDate( final LocalDate todayDate ) {
-		this.todayDate = todayDate;
-		return this;
-	}
-
 	public DailyExtractionResourcesContainer getResourcesContainer() {
 		return this.resourcesContainer;
 	}
@@ -105,4 +95,8 @@ public class MiningExtractionsWorld {
 		this.resourcesContainer = resourcesContainer;
 		return this;
 	}
+
+	public LocalDate getTodayDate() {return this.sharedWorld.getTodayDate();}
+
+	public SharedWorld setTodayDate( final LocalDate todayDate ) {return this.sharedWorld.setTodayDate(todayDate);}
 }

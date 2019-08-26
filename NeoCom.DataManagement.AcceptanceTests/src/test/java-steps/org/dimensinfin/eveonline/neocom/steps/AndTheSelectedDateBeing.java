@@ -1,8 +1,8 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 import org.joda.time.LocalDate;
 
 import cucumber.api.java.en.And;

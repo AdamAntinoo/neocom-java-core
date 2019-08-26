@@ -1,9 +1,9 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
-import org.dimensinfin.eveonline.neocom.support.adapters.SupportMiningRepository;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.test.support.adapters.SupportMiningRepository;
 
 import java.util.List;
 

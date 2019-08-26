@@ -1,8 +1,8 @@
 package org.dimensinfin.eveonline.neocom.steps;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.support.CucumberTableConverter;
 import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
+import org.dimensinfin.eveonline.neocom.test.support.converters.CucumberTableConverter;
 import org.junit.Assert;
 
 import java.util.List;

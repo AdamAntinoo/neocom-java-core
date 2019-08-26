@@ -1,7 +1,7 @@
 package org.dimensinfin.eveonline.neocom.support.miningExtractions;
 
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
-import org.dimensinfin.eveonline.neocom.support.CucumberTableConverter;
+import org.dimensinfin.eveonline.neocom.test.support.converters.CucumberTableConverter;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;

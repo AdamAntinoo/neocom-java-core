@@ -2,10 +2,10 @@ package org.dimensinfin.eveonline.neocom.steps.multisteps;
 
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
-import org.dimensinfin.eveonline.neocom.support.adapters.SupportMiningRepository;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.CucumberTableToGetCharactersCharacterIdMining200OkConverter;
 import org.dimensinfin.eveonline.neocom.support.miningExtractions.MiningExtractionsWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
+import org.dimensinfin.eveonline.neocom.test.support.adapters.SupportMiningRepository;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -8,8 +8,8 @@ import org.dimensinfin.eveonline.neocom.core.NeoComEvent;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.support.NeoComComponentFactory;
 import org.dimensinfin.eveonline.neocom.support.credential.CredentialWorld;
+import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 import org.junit.Assert;
 
 import cucumber.api.java.en.When;
