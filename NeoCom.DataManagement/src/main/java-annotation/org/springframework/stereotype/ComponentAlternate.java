@@ -1,4 +1,4 @@
 package org.springframework.stereotype;
 
-public @interface Component {
+public @interface ComponentAlternate {
 }
