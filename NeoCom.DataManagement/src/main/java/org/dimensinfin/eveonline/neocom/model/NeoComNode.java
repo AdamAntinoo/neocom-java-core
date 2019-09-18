@@ -20,15 +20,15 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 	protected static final long serialVersionUID = 6506043294337948561L;
 	protected static Logger logger = LoggerFactory.getLogger(NeoComNode.class);
 
+	// - C O N S T R U C T O R S
+	public NeoComNode() { }
+
 	public static String capitalizeFirstLetter( String original ) {
 		if (original == null || original.length() == 0) {
 			return original;
 		}
 		return original.substring(0, 1).toUpperCase() + original.substring(1);
 	}
-
-	// - C O N S T R U C T O R S
-	public NeoComNode() { }
 
 	// - I C O L L A B O R A T I O N
 	public List<ICollaboration> collaborate2Model( final String variant ) {
@@ -37,6 +37,10 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 
 	public String getJsonClass() {
 		return this.getClass().getSimpleName();
+	}
+
+	public NeoComNode setJsonClass( final String dummy ) {
+		return this;
 	}
 
 	@Override

@@ -3,18 +3,15 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.Objects;
-
 import javax.persistence.Entity;
-
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import java.util.Objects;
 
 /**
  * Credentials are the block of data that stores the new authorization data for the ESI access to Eve Online data servers. The
@@ -100,6 +97,7 @@ public class Credential extends UpdatableEntity {
 		return this.accountId;
 	}
 
+	@Deprecated
 	public Credential setAccountId( final int accountId ) {
 		this.accountId = accountId;
 		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
@@ -125,7 +123,7 @@ public class Credential extends UpdatableEntity {
 	public String getDataSource() {
 		return this.dataSource.toLowerCase();
 	}
-
+	@Deprecated
 	public void setDataSource( final String dataSource ) {
 		if (null != dataSource) this.dataSource = dataSource.toLowerCase();
 	}
@@ -168,6 +166,10 @@ public class Credential extends UpdatableEntity {
 
 	public String getScope() {
 		return scope;
+	}
+
+	public Credential setUniqueId( final String dummy ) {
+		return this;
 	}
 
 	// - C O R E

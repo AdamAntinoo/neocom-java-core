@@ -1,7 +1,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.core.EventEmitter;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-
-import nl.jqno.equalsverifier.EqualsVerifier;
 
 public class EveItemTest extends TestEsiAdapterReady {
 	private static ESIDataAdapter esiDataAdapter;
@@ -178,8 +176,8 @@ public class EveItemTest extends TestEsiAdapterReady {
 
 //	@Test
 	public void signalCompletion_itemData() {
-		final EventEmitter emitter = Mockito.mock(EventEmitter.class);
-		final GetUniverseTypesTypeIdOk universeItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
+//		final EventEmitter emitter = Mockito.mock(EventEmitter.class);
+//		final GetUniverseTypesTypeIdOk universeItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
 //		final EveItem item = new EveItem(34);
 //		Mockito.doAnswer(( call ) -> {
 //			final PropertyChangeEvent event = call.getArgument(0);
