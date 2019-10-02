@@ -3,12 +3,14 @@
 *.ppm
 *.db
 
-.gradle
+# - IntelliJ ignorable configuration project files
 .idea/caches/
 .idea/libraries/
 .idea/sonarlint/
 .idea/workspace.xml
 .idea/gradle.xml
 .idea/modules.xml
-AcceptanceTests/
 
+# - Build ignorable files
+.gradle
+NeoCom.DataManagement.AcceptanceTests/AcceptanceTests/
