@@ -1,5 +1,0 @@
-# - Android Studio
-*.iml
-
-build/
-src/test/NeoCom.UnitTest/
