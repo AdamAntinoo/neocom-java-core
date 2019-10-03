@@ -8,4 +8,6 @@ public interface IConfigurationProvider {
 	String getResourceString( final String key, final String defaultValue );
 
 	Integer getResourceInteger( final String key );
+
+	Integer getResourceInteger( final String key, final Integer defaultValue );
 }

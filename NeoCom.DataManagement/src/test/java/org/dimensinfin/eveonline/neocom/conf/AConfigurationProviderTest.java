@@ -11,7 +11,7 @@ import org.junit.runners.MethodSorters;
 import org.mockito.Mockito;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class GlobalConfigurationProviderTest {
+public class AConfigurationProviderTest {
 	private TestConfigurationProvider provider;
 
 	@Before

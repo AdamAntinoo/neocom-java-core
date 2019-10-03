@@ -1,17 +1,16 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
-import javax.persistence.Entity;
-import java.util.Objects;
 
 /**
  * Credentials are the block of data that stores the new authorization data for the ESI access to Eve Online data servers. The
@@ -35,7 +34,7 @@ import java.util.Objects;
  *
  * @author Adam Antinoo
  */
-@Immutable
+//@Immutable
 @Entity(name = "Credentials")
 @DatabaseTable(tableName = "Credentials")
 public class Credential extends UpdatableEntity {

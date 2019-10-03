@@ -1,0 +1,86 @@
+// - P R O D U C T   V E R S I O N S
+ext {
+    jacksonVersion = '2.9.4'
+    ormliteVersion = '4.48'
+    retrofitVersion = '2.3.0'
+    cacheVersion = '3.1.1'
+}
+
+// - C O R E
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compileOnly 'org.slf4j:slf4j-api:1.7.26'
+    compileOnly 'joda-time:joda-time:2.3'
+}
+
+// - N E O C O M   L I B R A R I E S
+dependencies {
+    implementation 'org.dimensinfin:CoreBase.core:3.2.0'
+    implementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
+    implementation files('libs/jeveassets.3.1.2.jar')
+    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'com.annimon:stream:1.1.9' // Android compatible streams
+}
+
+// - C O R E
+//dependencies {
+//}
+dependencies {
+    // C A C H E
+    implementation "com.nytimes.android:store3:$cacheVersion" // Cache and store
+    implementation "com.nytimes.android:cache3:$cacheVersion"
+    implementation "com.nytimes.android:middleware3:$cacheVersion"
+    implementation "com.nytimes.android:filesystem3:$cacheVersion"
+    compile 'io.reactivex.rxjava2:rxjava:2.2.9'
+    implementation 'com.jakewharton:disklrucache:2.0.2'
+//    compile 'com.squareup.okio:okio:2.2.2' // Extended file io
+    // P A R S E R
+    implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion" // JSON converter
+    implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-joda:$jacksonVersion"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
+    // - H T T P C L I E N T
+    implementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion" // HTTP encapsulation and swagger support
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    implementation 'com.github.scribejava:scribejava-core:5.4.0'
+    // D A T A B A S E
+    implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
+    compileOnly 'org.xerial:sqlite-jdbc:3.25.2'
+    implementation 'javax.persistence:javax.persistence-api:2.2'
+//    implementation 'commons-io:commons-io:2.6'
+}
+// - N E O C O M
+dependencies {
+
+//    implementation 'org.htmlparser:htmlparser:2.1'
+}
+// - D E P R E C A T E D
+//dependencies {
+//    implementation 'org.modelmapper:modelmapper:1.1.0' // Model conversion from one model to another
+//    implementation 'com.beimin:eveapi:6.0.6'
+//    compileOnly 'org.aspectj:aspectjrt:1.9.4'
+//}
+
+// - U N I T   T E S T I N G
+dependencies {
+    compileOnly 'org.slf4j:slf4j-simple:1.7.26'
+    testImplementation 'org.dimensinfin:CoreBase.core:3.0.1'
+    testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
+    testImplementation files('libs/jeveassets.3.1.2.jar')
+    // C O R E
+//    testImplementation 'org.slf4j:slf4j-simple:1.7.26'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'joda-time:joda-time:2.9.9'
+    testImplementation 'org.apache.commons:commons-lang3:3.7'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.9'
+    // T E S T F R A M E W O R K
+    testImplementation 'org.mockito:mockito-core:2.23.4'
+    testImplementation 'org.powermock:powermock-module-junit4:2.0.2'
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.2'
+    testImplementation 'com.openpojo:openpojo:0.8.12'
+    // D A T A B A S E
+    testImplementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
+    testImplementation 'org.xerial:sqlite-jdbc:3.25.2'
+    testImplementation 'javax.persistence:javax.persistence-api:2.2'
+}

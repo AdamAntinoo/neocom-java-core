@@ -12,6 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
@@ -33,7 +34,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
  */
 @Entity(name = "MiningExtractions")
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends UpdatableEntity implements org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem {
+public class MiningExtraction extends UpdatableEntity implements IAggregableItem {
 	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
 	// - F I E L D - S E C T I O N
 	@DatabaseField(id = true)

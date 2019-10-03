@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.interfaces;
+package org.dimensinfin.eveonline.neocom.core;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 
