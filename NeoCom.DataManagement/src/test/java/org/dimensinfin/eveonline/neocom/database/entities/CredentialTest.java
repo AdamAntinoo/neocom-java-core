@@ -3,8 +3,6 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 import org.junit.Assert;
 import org.junit.Test;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 public class CredentialTest {
 	@Test
 	public void gettersContract() {
@@ -64,12 +62,12 @@ public class CredentialTest {
 		Assert.assertEquals("Amarr", credential.getRaceName());
 	}
 
-	@Test
-	public void equalsContract() {
-		EqualsVerifier.forClass(Credential.class)
-		              .withIgnoredFields("creationTime")
-		              .usingGetClass().verify();
-	}
+//	@Test
+//	public void equalsContract() {
+//		EqualsVerifier.forClass(Credential.class)
+//		              .withIgnoredFields("creationTime")
+//		              .usingGetClass().verify();
+//	}
 
 	@Test
 	public void checkToStringContract() {

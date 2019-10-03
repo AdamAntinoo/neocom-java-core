@@ -1,13 +1,14 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.support.EsiDataAdapterSupportTest;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class NeoAssetTest extends EsiDataAdapterSupportTest {
-	@Test
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
+
+public class NeoAssetTest extends ESIDataAdapterSupportTest {
+//	@Test
 	public void gettersContract() {
 		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
 		final GetCharactersCharacterIdAssets200Ok esiAsset = new GetCharactersCharacterIdAssets200Ok();

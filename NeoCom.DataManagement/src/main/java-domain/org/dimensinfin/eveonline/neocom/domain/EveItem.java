@@ -85,8 +85,9 @@ public class EveItem extends NeoComNode implements IItemFacet {
 			this.category = esiDataAdapter.searchItemCategory4Id(this.group.getCategoryId());
 			Objects.requireNonNull(this.category);
 		} catch (RuntimeException rtex) {
-			logger.info("RT [Eveitem.loadup]> Error downloading the EveItem data. Not able to complete the instantiation.");
-			logger.info("RT [Eveitem.loadup]> Message: {}", rtex.getMessage());
+			logger.info("RT [EveItem.loadup]> Error downloading the EveItem data for code {}. Not able to complete the " +
+					"instantiation.",this.id);
+			logger.info("RT [EveItem.loadup]> Message: {}", rtex.getMessage());
 		}
 	}
 

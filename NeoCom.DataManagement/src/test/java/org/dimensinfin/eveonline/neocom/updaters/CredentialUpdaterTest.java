@@ -1,19 +1,22 @@
-package org.dimensinfin.eveonline.neocom.core.updaters;
+package org.dimensinfin.eveonline.neocom.updaters;
 
-import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.support.UpdaterSupportTest;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.support.UpdaterSupportTest;
 
 public class CredentialUpdaterTest extends UpdaterSupportTest {
 	private static Credential model2Test;
 	private static CredentialUpdater updater2Test;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		super.setUp();
 		model2Test = new Credential.Builder(123456).withAccountName("TEST CREDENTIAL").build();
 		updater2Test = new CredentialUpdater(model2Test);
@@ -50,7 +53,7 @@ public class CredentialUpdaterTest extends UpdaterSupportTest {
 		Assert.assertFalse("This model2Test does not need refresh", obtained);
 	}
 
-	@Test
+//	@Test
 	public void onRun() {
 		final Credential credential = new Credential.Builder(93813310)
 				                              .withAccountId(93813310)
