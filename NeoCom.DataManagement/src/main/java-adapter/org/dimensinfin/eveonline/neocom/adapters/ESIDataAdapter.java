@@ -17,6 +17,7 @@ import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
@@ -48,6 +49,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdater;
 
 import retrofit2.Response;
 
@@ -96,6 +98,7 @@ public class ESIDataAdapter {
 	 *
 	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
 	 */
+	@Deprecated
 	public void activateEsiServer( final String esiServer ) {
 		this.retrofitFactory.activateEsiServer( esiServer );
 	}
@@ -954,16 +957,19 @@ public class ESIDataAdapter {
 //		}
 
 		public ESIDataAdapter.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}
 
 		public ESIDataAdapter.Builder withFileSystemAdapter( final IFileSystem fileSystemAdapter ) {
+			Objects.requireNonNull( fileSystemAdapter );
 			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
 			return this;
 		}
 
 		public ESIDataAdapter.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
@@ -983,6 +989,13 @@ public class ESIDataAdapter {
 					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
 					.build();
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
+
+			// Inject the new adapter to the classes that depend on it.
+			EveItem.injectEsiDataAdapter( this.onConstruction );
+			NeoComUpdater.injectsEsiDataAdapter(this.onConstruction);
+			// TODO - Add this when the market data is back present.
+//			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);
+
 			return this.onConstruction;
 		}
 	}

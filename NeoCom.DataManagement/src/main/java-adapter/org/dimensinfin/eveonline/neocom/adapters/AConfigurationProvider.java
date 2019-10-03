@@ -124,7 +124,7 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 
 		public B withPropertiesDirectory( final String propertiesDirectory ) {
 			if (null != propertiesDirectory) this.getActual().configuredPropertiesDirectory = propertiesDirectory;
-			return this.actualClassBuilder;
+			return this.getActualBuilder();
 		}
 
 		public T build() throws IOException {

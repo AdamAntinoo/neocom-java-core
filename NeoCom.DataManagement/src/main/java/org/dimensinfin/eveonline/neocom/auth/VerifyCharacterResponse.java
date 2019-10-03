@@ -25,10 +25,10 @@ public class VerifyCharacterResponse {
 	}
 
 	public long getCharacterID() {
-		return characterID;
+		return this.characterID;
 	}
 
 	public String getCharacterName() {
-		return characterName;
+		return this.characterName;
 	}
 }
