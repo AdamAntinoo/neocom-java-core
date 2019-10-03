@@ -69,21 +69,25 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 		else return Integer.valueOf( value );
 	}
 
-	/**
-	 * This initialization method reads all the files located on a predefined folder under the src/main/resources path.
-	 * All the files are expected to be Properties files and are read in alphabetical order and their contents added
-	 * to the list of application properties. Read order will replace same ids with new data so the developer
-	 * can use a naming convention to replace older values with new values without editing the older files.
-	 */
-	protected AConfigurationProvider initialize() {
-		try {
-			this.readAllProperties();
-		} catch (IOException ioe) {
-			logger.error( "E [GlobalConfigurationProvider.initialize]> Unprocessed exception: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-		}
+	public AConfigurationProvider setConfiguredPropertiesDirectory( final String configuredPropertiesDirectory ) {
+		this.configuredPropertiesDirectory = configuredPropertiesDirectory;
 		return this;
 	}
+//	/**
+//	 * This initialization method reads all the files located on a predefined folder under the src/main/resources path.
+//	 * All the files are expected to be Properties files and are read in alphabetical order and their contents added
+//	 * to the list of application properties. Read order will replace same ids with new data so the developer
+//	 * can use a naming convention to replace older values with new values without editing the older files.
+//	 */
+//	protected AConfigurationProvider initialize() {
+//		try {
+//			this.readAllProperties();
+//		} catch (IOException ioe) {
+//			logger.error( "E [GlobalConfigurationProvider.initialize]> Unprocessed exception: {}", ioe.getMessage() );
+//			ioe.printStackTrace();
+//		}
+//		return this;
+//	}
 
 	protected String getResourceLocation() {
 		return this.configuredPropertiesDirectory;
@@ -123,8 +127,9 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 			return this.actualClassBuilder;
 		}
 
-		public T build() {
+		public T build() throws IOException {
 			Objects.requireNonNull( this.getActual().configuredPropertiesDirectory );
+			this.getActual().readAllProperties(); // Initialize and read the properties.
 			return this.getActual();
 		}
 	}
