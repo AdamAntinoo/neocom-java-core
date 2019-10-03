@@ -13,4 +13,6 @@
 
 # - Build ignorable files
 .gradle
+build/
+NeoCom.DataManagement/build/
 NeoCom.DataManagement.AcceptanceTests/AcceptanceTests/

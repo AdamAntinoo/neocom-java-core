@@ -3,16 +3,16 @@ package org.dimensinfin.eveonline.neocom.auth;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
-import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
-
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.GsonBuilder;
+import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
+import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
+
 import okhttp3.Cache;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -46,7 +46,6 @@ public class NeoComRetrofitHTTP {
 	}
 
 	// - F I E L D S
-	//	protected IConfigurationProvider configurationProvider;
 	protected NeoComOAuth20 neoComOAuth20;
 	protected String esiDataServerLocation;
 	protected String agent;

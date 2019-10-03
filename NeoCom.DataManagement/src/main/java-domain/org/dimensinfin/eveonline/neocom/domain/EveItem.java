@@ -1,30 +1,29 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.annotations.RequiresNetwork;
-import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.enums.EIndustryGroup;
-import org.dimensinfin.eveonline.neocom.enums.EMarketSide;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
-import org.dimensinfin.eveonline.neocom.market.MarketDataEntry;
-import org.dimensinfin.eveonline.neocom.market.MarketDataSet;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.annotations.RequiresNetwork;
+import org.dimensinfin.eveonline.neocom.core.EveGlobalConstants;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
+import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+
 public class EveItem extends NeoComNode implements IItemFacet {
+	public enum IndustryGroup {
+		UNDEFINED, OUTPUT, SKILL, BLUEPRINT, COMPONENTS, HULL, CHARGE, DATACORES, DATAINTERFACES, DECRIPTORS, ITEMS, MINERAL,
+		PLANETARYMATERIALS, REACTIONMATERIALS, REFINEDMATERIAL, SALVAGEDMATERIAL, OREMATERIALS, COMMODITY}
 	private static final long serialVersionUID = -2548296399305221197L;
 	private static ESIDataAdapter esiDataAdapter;
 	protected int id = -1;
@@ -36,23 +35,25 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	 * and it is not tied to any specific market place.
 	 */
 	private double price = -1.0;
-	private String tech = ModelWideConstants.eveglobal.TechI;
+	private String tech = EveGlobalConstants.TechI;
 	//	/**
 	//	 * This is the default price set for an item at the SDE database. This price should not be changed and there should be
 	//	 * methods to get any other price set from the market data.
 	//	 */
 	//	private double baseprice = -1.0;
 	// - A D D I T I O N A L   F I E L D S
-	private transient EIndustryGroup industryGroup = EIndustryGroup.UNDEFINED;
+	private transient IndustryGroup industryGroup = IndustryGroup.UNDEFINED;
 	/**
 	 * This represents the market data for the BUY market orders present at different selected systems. This element and the
 	 * next are lazy evaluated as futures and should enqueue market requests for background threads.
 	 */
-	private transient Future<MarketDataSet> futureBuyerData;
+	@Deprecated
+	private transient Future<String> futureBuyerData;
 	/**
 	 * The same but for SELLER orders present at the market.
 	 */
-	private transient Future<MarketDataSet> futureSellerData;
+	@Deprecated
+	private transient Future<String> futureSellerData;
 	// - C O N S T R U C T O R S
 	@Deprecated
 	public EveItem() {
@@ -110,8 +111,8 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	public EveItem setTypeId( final int typeId ) {
 		this.id = typeId;
 		this.loadup();
-		futureBuyerData = this.retrieveMarketData(getTypeId(), EMarketSide.BUYER);
-		futureSellerData = this.retrieveMarketData(getTypeId(), EMarketSide.SELLER);
+//		futureBuyerData = this.retrieveMarketData(getTypeId(), EMarketSide.BUYER);
+//		futureSellerData = this.retrieveMarketData(getTypeId(), EMarketSide.SELLER);
 		return this;
 	}
 
@@ -167,14 +168,14 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	public boolean isBlueprint() {
-		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint))
+		if (this.getCategoryName().equalsIgnoreCase(EveGlobalConstants.Blueprint))
 			return true;
 		else
 			return false;
 	}
 
-	public EIndustryGroup getIndustryGroup() {
-		if (this.industryGroup == EIndustryGroup.UNDEFINED) {
+	public IndustryGroup getIndustryGroup() {
+		if (this.industryGroup == IndustryGroup.UNDEFINED) {
 			this.classifyIndustryGroup();
 		}
 		return this.industryGroup;
@@ -190,7 +191,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 
 	// - V I R T U A L   A C C E S S O R S
 	public String getHullGroup() {
-		if (getIndustryGroup() == EIndustryGroup.HULL) {
+		if (getIndustryGroup() == IndustryGroup.HULL) {
 			if (getGroupName().equalsIgnoreCase("Assault Frigate")) return "frigate";
 			if (getGroupName().equalsIgnoreCase("Attack Battlecruiser")) return "battlecruiser";
 			if (getGroupName().equalsIgnoreCase("Battleship")) return "battleship";
@@ -223,31 +224,31 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this;
 	}
 
-	/**
-	 * Try to get the best price for this element. There are two sets of prices, those for selling an item
-	 * (highest buyers) and those to buy the same item (lower seller). The default price that is the one from
-	 * the SDE database if sometimes far from close to the real market price.
-	 * The item declared price can also be obtained from the market but this will require a location to get
-	 * access to t the CCP API. The item closest price will be obtained from the best buyer so that price
-	 * represent the income I will obtain in case I sell that item.
-	 * For simple item it is not an important point since the interface allows to get the original data to any
-	 * higher level model object.
-	 */
-	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
-		return this.getSellerMarketData().getBestMarket();
-	}
-
-	public EveItem setLowestSellerPrice( final MarketDataEntry dummy ) {
-		return this;
-	}
-
-	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
-		return this.getBuyerMarketData().getBestMarket();
-	}
-
-	public EveItem setHighestBuyerPrice( final MarketDataEntry dummy ) {
-		return this;
-	}
+//	/**
+//	 * Try to get the best price for this element. There are two sets of prices, those for selling an item
+//	 * (highest buyers) and those to buy the same item (lower seller). The default price that is the one from
+//	 * the SDE database if sometimes far from close to the real market price.
+//	 * The item declared price can also be obtained from the market but this will require a location to get
+//	 * access to t the CCP API. The item closest price will be obtained from the best buyer so that price
+//	 * represent the income I will obtain in case I sell that item.
+//	 * For simple item it is not an important point since the interface allows to get the original data to any
+//	 * higher level model object.
+//	 */
+//	public MarketDataEntry getLowestSellerPrice() throws ExecutionException, InterruptedException {
+//		return this.getSellerMarketData().getBestMarket();
+//	}
+//
+//	public EveItem setLowestSellerPrice( final MarketDataEntry dummy ) {
+//		return this;
+//	}
+//
+//	public MarketDataEntry getHighestBuyerPrice() throws ExecutionException, InterruptedException {
+//		return this.getBuyerMarketData().getBestMarket();
+//	}
+//
+//	public EveItem setHighestBuyerPrice( final MarketDataEntry dummy ) {
+//		return this;
+//	}
 
 	public String getCategoryName() {
 		if (null == this.category) this.loadup();
@@ -322,94 +323,94 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	// - P R I V A T E   S E C T I O N
 	protected void classifyIndustryGroup() {
 		if ((this.getGroupName().equalsIgnoreCase("Composite")) && (this.getCategoryName().equalsIgnoreCase("Material"))) {
-			industryGroup = EIndustryGroup.REACTIONMATERIALS;
+			industryGroup = IndustryGroup.REACTIONMATERIALS;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Asteroid")) {
-			industryGroup = EIndustryGroup.OREMATERIALS;
+			industryGroup = IndustryGroup.OREMATERIALS;
 		}
 		if ((this.getGroupName().equalsIgnoreCase("Mining Crystal")) && (this.getCategoryName().equalsIgnoreCase("Charge"))) {
-			industryGroup = EIndustryGroup.ITEMS;
+			industryGroup = IndustryGroup.ITEMS;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Charge")) {
-			industryGroup = EIndustryGroup.CHARGE;
+			industryGroup = IndustryGroup.CHARGE;
 		}
 		if (this.getGroupName().equalsIgnoreCase("Tool")) {
-			industryGroup = EIndustryGroup.ITEMS;
+			industryGroup = IndustryGroup.ITEMS;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Commodity")) {
-			industryGroup = EIndustryGroup.COMMODITY;
+			industryGroup = IndustryGroup.COMMODITY;
 		}
-		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Blueprint)) {
-			industryGroup = EIndustryGroup.BLUEPRINT;
+		if (this.getCategoryName().equalsIgnoreCase(EveGlobalConstants.Blueprint)) {
+			industryGroup = IndustryGroup.BLUEPRINT;
 		}
-		if (this.getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-			industryGroup = EIndustryGroup.SKILL;
+		if (this.getCategoryName().equalsIgnoreCase(EveGlobalConstants.Skill)) {
+			industryGroup = IndustryGroup.SKILL;
 		}
-		if (this.getGroupName().equalsIgnoreCase(ModelWideConstants.eveglobal.Mineral)) {
-			industryGroup = EIndustryGroup.REFINEDMATERIAL;
+		if (this.getGroupName().equalsIgnoreCase(EveGlobalConstants.Mineral)) {
+			industryGroup = IndustryGroup.REFINEDMATERIAL;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Module")) {
-			industryGroup = EIndustryGroup.COMPONENTS;
+			industryGroup = IndustryGroup.COMPONENTS;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Drone")) {
-			industryGroup = EIndustryGroup.ITEMS;
+			industryGroup = IndustryGroup.ITEMS;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Planetary Commodities")) {
-			industryGroup = EIndustryGroup.PLANETARYMATERIALS;
+			industryGroup = IndustryGroup.PLANETARYMATERIALS;
 		}
 		if (this.getGroupName().equalsIgnoreCase("Datacores")) {
-			industryGroup = EIndustryGroup.DATACORES;
+			industryGroup = IndustryGroup.DATACORES;
 		}
 		if (this.getGroupName().equalsIgnoreCase("Salvaged Materials")) {
-			industryGroup = EIndustryGroup.SALVAGEDMATERIAL;
+			industryGroup = IndustryGroup.SALVAGEDMATERIAL;
 		}
 		if (this.getCategoryName().equalsIgnoreCase("Ship")) {
-			industryGroup = EIndustryGroup.HULL;
+			industryGroup = IndustryGroup.HULL;
 		}
 	}
 
-	/**
-	 * Submits a <code>Callable</code> request to the background threads to retrieve the data into the <code>Future</code>. In
-	 * the case the market data is accessed and the Future was not completed the thread should wait until the market data access
-	 * completes. Most of the calls will execute fast because the data being cached continuously py the scheduled submitted jobs.
-	 *
-	 * @param itemId the items id to search market data.
-	 * @param side   if we should search buy orders or sell orders.
-	 * @return a <code>Future</code> with the whole market data values.
-	 */
-	private Future<MarketDataSet> retrieveMarketData( final int itemId, final EMarketSide side ) {
-		return esiDataAdapter.searchMarketData(itemId, side);
-	}
-
-	/**
-	 * Search on the market data provider for the market registers for this particular item. This will search on
-	 * the market data cache and then if not found on the market data service that will call the corresponding
-	 * parsers to extract the information.<br>
-	 * This method can fail by some causes. First of them because there are no connection to the sources of by
-	 * errors during the parsing of the information. In such cases I should be ready to get the price
-	 * information from other sources like the default price information.
-	 */
-	public MarketDataSet getBuyerMarketData() throws ExecutionException, InterruptedException {
-		if (null == futureBuyerData) {
-			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.BUYER);
-		}
-		return futureBuyerData.get();
-	}
-
-	/**
-	 * Search on the market data provider for the market registers for this particular item. This will search on
-	 * the market data cache and then if not found on the market data service that will call the corresponding
-	 * parsers to extract the information.<br>
-	 * This method can fail by some causes. First of them because there are no connection to the sources of by
-	 * errors during the parsing of the information. In such cases I should be ready to get the price
-	 * information from other sources like the default price information.
-	 */
-	public MarketDataSet getSellerMarketData() throws ExecutionException, InterruptedException {
-		if (null == futureBuyerData) {
-			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
-		}
-		return futureBuyerData.get();
-	}
+//	/**
+//	 * Submits a <code>Callable</code> request to the background threads to retrieve the data into the <code>Future</code>. In
+//	 * the case the market data is accessed and the Future was not completed the thread should wait until the market data access
+//	 * completes. Most of the calls will execute fast because the data being cached continuously py the scheduled submitted jobs.
+//	 *
+//	 * @param itemId the items id to search market data.
+//	 * @param side   if we should search buy orders or sell orders.
+//	 * @return a <code>Future</code> with the whole market data values.
+//	 */
+//	private Future<MarketDataSet> retrieveMarketData( final int itemId, final EMarketSide side ) {
+//		return esiDataAdapter.searchMarketData(itemId, side);
+//	}
+//
+//	/**
+//	 * Search on the market data provider for the market registers for this particular item. This will search on
+//	 * the market data cache and then if not found on the market data service that will call the corresponding
+//	 * parsers to extract the information.<br>
+//	 * This method can fail by some causes. First of them because there are no connection to the sources of by
+//	 * errors during the parsing of the information. In such cases I should be ready to get the price
+//	 * information from other sources like the default price information.
+//	 */
+//	public MarketDataSet getBuyerMarketData() throws ExecutionException, InterruptedException {
+//		if (null == futureBuyerData) {
+//			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.BUYER);
+//		}
+//		return futureBuyerData.get();
+//	}
+//
+//	/**
+//	 * Search on the market data provider for the market registers for this particular item. This will search on
+//	 * the market data cache and then if not found on the market data service that will call the corresponding
+//	 * parsers to extract the information.<br>
+//	 * This method can fail by some causes. First of them because there are no connection to the sources of by
+//	 * errors during the parsing of the information. In such cases I should be ready to get the price
+//	 * information from other sources like the default price information.
+//	 */
+//	public MarketDataSet getSellerMarketData() throws ExecutionException, InterruptedException {
+//		if (null == futureBuyerData) {
+//			futureBuyerData = retrieveMarketData(getTypeId(), EMarketSide.SELLER);
+//		}
+//		return futureBuyerData.get();
+//	}
 
 	public enum ItemTechnology {
 		Tech_1("Tech I"), Tech_2("Tech II"), Tech_3("Tech III");

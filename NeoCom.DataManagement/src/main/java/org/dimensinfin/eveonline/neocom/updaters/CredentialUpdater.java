@@ -1,16 +1,16 @@
-package org.dimensinfin.eveonline.neocom.core.updaters;
+package org.dimensinfin.eveonline.neocom.updaters;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.annimon.stream.Stream;
+import org.joda.time.DateTime;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
-import org.joda.time.DateTime;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class CredentialUpdater extends NeoComUpdater<Credential> {
 	private static final long CREDENTIAL_CACHE_TIME = TimeUnit.MINUTES.toMillis(15);

@@ -2,9 +2,6 @@ package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-
 import org.apache.commons.lang3.StringUtils;
 
 import okhttp3.Cache;
@@ -75,10 +72,10 @@ public class NeoComRetrofitNoOAuthHTTP extends NeoComRetrofitHTTP {
 			this.onConstruction = new NeoComRetrofitNoOAuthHTTP();
 		}
 
-		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
-			this.onConstruction.neoComOAuth20 = neoComOAuth20;
-			return this;
-		}
+//		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
+//			this.onConstruction.neoComOAuth20 = neoComOAuth20;
+//			return this;
+//		}
 
 		public Builder withEsiServerLocation( final String esiDataServerLocation ) {
 			this.onConstruction.esiDataServerLocation = esiDataServerLocation;

@@ -93,6 +93,7 @@ public class ESIDataAdapter {
 	/**
 	 * Allows the selection of the ESI server. Changes the retrofit factory to discard current retrofit instances and create
 	 * new ones but related to the new server configuration.
+	 *
 	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
 	 */
 	public void activateEsiServer( final String esiServer ) {
@@ -101,12 +102,14 @@ public class ESIDataAdapter {
 
 	/**
 	 * Method to export the current retrofit factory authorization URL being in use by the current server configuration.
+	 *
 	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
 	 * @return the current authrorization url.
 	 */
 	public String getAuthorizationUrl4Server( final String esiServer ) {
 		return this.retrofitFactory.getAuthorizationUrl4Server( esiServer );
 	}
+
 	public String getStringScopes() {
 		return this.retrofitFactory.getScopes();
 	}
@@ -159,7 +162,7 @@ public class ESIDataAdapter {
 		return this.cacheManager.accessGroup( groupId ).blockingGet();
 	}
 
-//	@TimeElapsed
+	//	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
 		logger.info( "-- [ESIDataAdapter.searchItemCategory4Id]> targetGroupId: {}", categoryId );
 		return this.cacheManager.accessCategory( categoryId ).blockingGet();
@@ -360,7 +363,7 @@ public class ESIDataAdapter {
 		return new ArrayList<>();
 	}
 
-//	@TimeElapsed
+	//	@TimeElapsed
 	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier ) {
 		try {
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
@@ -975,8 +978,9 @@ public class ESIDataAdapter {
 					.withFileSystem( this.onConstruction.fileSystemAdapter )
 					.build();
 			Objects.requireNonNull( this.onConstruction.cacheManager );
-			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder( this.onConstruction.configurationProvider,
-					this.onConstruction.fileSystemAdapter )
+			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder()
+					.withConfigurationProvider( this.onConstruction.configurationProvider )
+					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
 					.build();
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 			return this.onConstruction;

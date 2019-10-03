@@ -1,22 +1,20 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
-import org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import java.util.Objects;
-
-import javax.persistence.Entity;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 
 /**
  * This class represents the database entity to store the ESI character's mining extractions. That data are records that are kept for 30 days
@@ -35,7 +33,7 @@ import javax.persistence.Entity;
  */
 @Entity(name = "MiningExtractions")
 @DatabaseTable(tableName = "MiningExtractions")
-public class MiningExtraction extends UpdatableEntity implements IAggregableItem {
+public class MiningExtraction extends UpdatableEntity implements org.dimensinfin.eveonline.neocom.interfaces.IAggregableItem {
 	public static final String EXTRACTION_DATE_FORMAT = "YYYY-MM-dd";
 	// - F I E L D - S E C T I O N
 	@DatabaseField(id = true)

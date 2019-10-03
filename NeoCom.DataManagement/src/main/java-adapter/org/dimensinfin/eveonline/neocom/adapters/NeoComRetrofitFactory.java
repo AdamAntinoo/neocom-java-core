@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.auth.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
@@ -230,7 +231,7 @@ public class NeoComRetrofitFactory {
 					.withClientKey( SECRET_KEY )
 					.withCallback( CALLBACK )
 					.withAgent( AGENT )
-					.withStore( NeoComOAuth20.ESIStore.DEFAULT )
+					.withStore( ESIStore.DEFAULT )
 					.withScopes( scopes )
 					.withState( "NEOCOM-VERIFICATION-STATE" )
 					.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.server"
@@ -263,7 +264,7 @@ public class NeoComRetrofitFactory {
 					.withClientKey( SECRET_KEY )
 					.withCallback( CALLBACK )
 					.withAgent( AGENT )
-					.withStore( NeoComOAuth20.ESIStore.DEFAULT )
+					.withStore( ESIStore.DEFAULT )
 					.withScopes( scopes )
 					.withState( this.configurationProvider.getResourceString( "P.esi.authorization.state"
 							, "NEOCOM-VERIFICATION-STATE" ) )

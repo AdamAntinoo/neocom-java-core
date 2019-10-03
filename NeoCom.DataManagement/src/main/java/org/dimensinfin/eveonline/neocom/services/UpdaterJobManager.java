@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.services;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.LogMessagesExternalisedType;
-import org.dimensinfin.eveonline.neocom.domain.ServiceJob;
-import org.dimensinfin.eveonline.neocom.exception.NeoComException;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdater;
 
@@ -66,37 +63,37 @@ public class UpdaterJobManager {
 		}
 	}
 
-	@Deprecated
-	public static synchronized void submit( final ServiceJob newJob ) {
-		try {
-			// Search for the job to detect duplications
-			final String identifier = newJob.getReference();
-			//			final Future<?> hit = runningJobs.get(identifier);
-			final CompletableFuture hit = null;
-			if (null == hit) {
-				// New job. Launch it and store the reference.
-				logger.info("-- [MARKETORDERS]> Launching job {}", newJob.getReference());
-				logger.info("-- [UpdaterJobManager.submit]> Launching job {}", newJob.getReference());
-				final Future<?> future = newJob.submit();
-				//				runningJobs.put(identifier, future);
-			} else {
-				// Check for job completed.
-				if (hit.isDone()) {
-					// The job with this same reference has completed. We can launch a new one.
-					final Future<?> future = newJob.submit();
-					//					runningJobs.put(identifier, future);
-				}
-			}
-		} catch (NeoComException neoe) {
-			neoe.printStackTrace();
-		}
-		// Count the running or pending jobs to update the ActionBar counter.
-		//		int counter = 0;
-		//		for (Future<?> future : runningJobs.values()) {
-		//			if (!future.isDone()) counter++;
-		//		}
-		//		updateJobCounter = counter;
-	}
+//	@Deprecated
+//	public static synchronized void submit( final ServiceJob newJob ) {
+//		try {
+//			// Search for the job to detect duplications
+//			final String identifier = newJob.getReference();
+//			//			final Future<?> hit = runningJobs.get(identifier);
+//			final CompletableFuture hit = null;
+//			if (null == hit) {
+//				// New job. Launch it and store the reference.
+//				logger.info("-- [MARKETORDERS]> Launching job {}", newJob.getReference());
+//				logger.info("-- [UpdaterJobManager.submit]> Launching job {}", newJob.getReference());
+//				final Future<?> future = newJob.submit();
+//				//				runningJobs.put(identifier, future);
+//			} else {
+//				// Check for job completed.
+//				if (hit.isDone()) {
+//					// The job with this same reference has completed. We can launch a new one.
+//					final Future<?> future = newJob.submit();
+//					//					runningJobs.put(identifier, future);
+//				}
+//			}
+//		} catch (NeoComRuntimeException neoe) {
+//			neoe.printStackTrace();
+//		}
+//		// Count the running or pending jobs to update the ActionBar counter.
+//		//		int counter = 0;
+//		//		for (Future<?> future : runningJobs.values()) {
+//		//			if (!future.isDone()) counter++;
+//		//		}
+//		//		updateJobCounter = counter;
+//	}
 
 	/**
 	 * Clean up all the jobs that are already completed.

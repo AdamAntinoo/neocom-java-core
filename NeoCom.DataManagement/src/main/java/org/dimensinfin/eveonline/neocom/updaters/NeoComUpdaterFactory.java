@@ -1,8 +1,6 @@
 package org.dimensinfin.eveonline.neocom.updaters;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.eveonline.neocom.core.updaters.CredentialUpdater;
-import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 
 public class NeoComUpdaterFactory {
