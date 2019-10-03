@@ -14,21 +14,24 @@ public class ESIDataAdapterSupportTest {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
+	protected SupportNeoComRetrofitFactory.Builder retrofitFactoryBuilder;
 	protected ESIDataAdapter esiDataAdapter;
 
 	@Before
 	public void setUp() throws IOException {
-		configurationProvider = new SupportConfigurationProvider.Builder()
+		this.configurationProvider = new SupportConfigurationProvider.Builder()
 				.withPropertiesDirectory( "properties.unitest" )
 				.build();
-		fileSystemAdapter = new SupportFileSystem.Builder()
+		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
-		locationCatalogService = Mockito.mock( LocationCatalogService.class );
+		this.locationCatalogService = Mockito.mock( LocationCatalogService.class );
+		this.retrofitFactoryBuilder = new SupportNeoComRetrofitFactory.Builder();
 		this.esiDataAdapter = new ESIDataAdapter.Builder()
-				.withConfigurationProvider( configurationProvider )
-				.withFileSystemAdapter( fileSystemAdapter )
-				.withLocationCatalogService( locationCatalogService )
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withLocationCatalogService( this.locationCatalogService )
+				.testingRetrofitFactory( this.retrofitFactoryBuilder )
 				.build();
 	}
 }

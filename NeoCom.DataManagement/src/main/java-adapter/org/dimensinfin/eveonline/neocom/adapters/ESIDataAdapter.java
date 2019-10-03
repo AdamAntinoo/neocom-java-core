@@ -130,19 +130,19 @@ public class ESIDataAdapter {
 	public void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( DEFAULT_ESI_SERVER );
-		logger.info( ">> [ESIDataAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
+		logger.info( "-- [ESIDataAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
 		for (GetUniverseRaces200Ok race : racesList) {
 			racesCache.put( race.getRaceId(), race );
 		}
 		final List<GetUniverseAncestries200Ok> ancestriesList = this.getUniverseAncestries(
 				DEFAULT_ESI_SERVER );
-		logger.info( ">> [ESIDataAdapter.downloadPilotFamilyData]> Download ancestries: {} items", racesList.size() );
+		logger.info( "-- [ESIDataAdapter.downloadPilotFamilyData]> Download ancestries: {} items", ancestriesList.size() );
 		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
 			ancestriesCache.put( ancestry.getId(), ancestry );
 		}
 		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getUniverseBloodlines(
 				DEFAULT_ESI_SERVER );
-		logger.info( ">> [ESIDataAdapter.downloadPilotFamilyData]> Download blood lines: {} items", racesList.size() );
+		logger.info( "-- [ESIDataAdapter.downloadPilotFamilyData]> Download blood lines: {} items", bloodLineList.size() );
 		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
 			bloodLinesCache.put( bloodLine.getBloodlineId(), bloodLine );
 		}
@@ -151,7 +151,7 @@ public class ESIDataAdapter {
 	// - S D E   D A T A
 	public double searchSDEMarketPrice( final int typeId ) {
 		logger.info( "-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId );
-		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
+//		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
 		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
 		else return -1.0;
 	}
@@ -165,14 +165,13 @@ public class ESIDataAdapter {
 		return this.cacheManager.accessGroup( groupId ).blockingGet();
 	}
 
-	//	@TimeElapsed
+		@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
-		logger.info( "-- [ESIDataAdapter.searchItemCategory4Id]> targetGroupId: {}", categoryId );
+		logger.info( "-- [ESIDataAdapter.searchItemCategory4Id]> categoryId: {}", categoryId );
 		return this.cacheManager.accessCategory( categoryId ).blockingGet();
 	}
 
 	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
-//		this.prepareRaces();
 		return racesCache.get( identifier );
 	}
 
@@ -308,8 +307,8 @@ public class ESIDataAdapter {
 		logger.info( ">> [ESIDataAdapter.getUniverseRaces]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit().create(
-					UniverseApi.class )
+			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit()
+					.create( UniverseApi.class )
 					.getUniverseRaces( DEFAULT_ACCEPT_LANGUAGE,
 							datasource, null, "en-us" )
 					.execute();
@@ -328,8 +327,8 @@ public class ESIDataAdapter {
 		logger.info( ">> [ESIDataAdapter.getUniverseAncestries]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit().create(
-					UniverseApi.class )
+			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit()
+					.create( UniverseApi.class )
 					.getUniverseAncestries(
 							DEFAULT_ACCEPT_LANGUAGE,
 							datasource, null, "en-us" )
@@ -943,6 +942,7 @@ public class ESIDataAdapter {
 	// - B U I L D E R
 	public static class Builder {
 		private ESIDataAdapter onConstruction;
+		private NeoComRetrofitFactory.Builder retrofitFactoryBuilder = new NeoComRetrofitFactory.Builder();
 
 		public Builder() {
 			this.onConstruction = new ESIDataAdapter();
@@ -974,6 +974,11 @@ public class ESIDataAdapter {
 			return this;
 		}
 
+		public ESIDataAdapter.Builder testingRetrofitFactory( final NeoComRetrofitFactory.Builder retrofitFactoryBuilder ) {
+			this.retrofitFactoryBuilder = retrofitFactoryBuilder;
+			return this;
+		}
+
 		public ESIDataAdapter build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
@@ -984,7 +989,7 @@ public class ESIDataAdapter {
 					.withFileSystem( this.onConstruction.fileSystemAdapter )
 					.build();
 			Objects.requireNonNull( this.onConstruction.cacheManager );
-			this.onConstruction.retrofitFactory = new NeoComRetrofitFactory.Builder()
+			this.onConstruction.retrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
 					.withConfigurationProvider( this.onConstruction.configurationProvider )
 					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
 					.build();
@@ -992,7 +997,7 @@ public class ESIDataAdapter {
 
 			// Inject the new adapter to the classes that depend on it.
 			EveItem.injectEsiDataAdapter( this.onConstruction );
-			NeoComUpdater.injectsEsiDataAdapter(this.onConstruction);
+			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );
 			// TODO - Add this when the market data is back present.
 //			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);
 

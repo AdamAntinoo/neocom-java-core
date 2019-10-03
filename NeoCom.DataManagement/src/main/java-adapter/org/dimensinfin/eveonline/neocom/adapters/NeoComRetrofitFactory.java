@@ -52,15 +52,15 @@ public class NeoComRetrofitFactory {
 	}
 
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
 
-	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
+	protected Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 	private Retrofit neocomRetrofitESIAuthorization; // HTTP client to be used to access ESI authenticated endpoints.
 	private Retrofit neocomRetrofitMountebank; // HTTP client for mocked endpoints.
 
 	// - C O N S T R U C T O R S
-	private NeoComRetrofitFactory() { }
+	protected NeoComRetrofitFactory() { }
 
 	public void activateEsiServer( final String esiServer ) {
 		authorizationURL = null;
