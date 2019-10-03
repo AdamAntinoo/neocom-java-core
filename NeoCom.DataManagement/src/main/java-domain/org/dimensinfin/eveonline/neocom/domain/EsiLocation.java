@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-
 import net.nikr.eve.jeveasset.data.Citadel;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,8 +12,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 
 import javax.persistence.Entity;
-
-import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
  * This class encapsulates the concept of Eve Location. There are different types of locations and the new CCP
@@ -30,7 +26,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  *
  * @author Adam Antinoo
  */
-@Immutable
+//@Immutable
 @Entity(name = "Locations")
 @DatabaseTable(tableName = "Locations")
 public class EsiLocation extends UpdatableEntity {
@@ -428,7 +424,6 @@ public class EsiLocation extends UpdatableEntity {
 				       .append("security", this.security)
 				       .toString();
 	}
-
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;

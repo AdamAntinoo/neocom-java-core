@@ -4,7 +4,7 @@ import org.dimensinfin.core.domain.EEvents;
 import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
-import org.dimensinfin.eveonline.neocom.adapters.NeoComUpdaterFactory;
+import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdaterFactory;
 import org.dimensinfin.eveonline.neocom.core.updaters.NeoComUpdater;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;

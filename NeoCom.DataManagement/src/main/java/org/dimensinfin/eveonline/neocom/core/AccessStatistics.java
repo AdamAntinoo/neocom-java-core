@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapters;
+package org.dimensinfin.eveonline.neocom.core;
 
 public class AccessStatistics {
 	private int accesses = 0;
@@ -12,15 +12,7 @@ public class AccessStatistics {
 		return this.accesses;
 	}
 
-//	public int getAccesses() {
-//		return this.accesses;
-//	}
-
 	public int getHits() {
 		return this.hits;
 	}
-
-//	public int getMisses() {
-//		return this.misses;
-//	}
 }
