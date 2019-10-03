@@ -73,7 +73,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 //    testImplementation 'joda-time:joda-time:2.9.9'
 //    testImplementation 'org.apache.commons:commons-lang3:3.7'
-//    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.9'
+    testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
     // T E S T   F R A M E W O R K
     testImplementation 'org.mockito:mockito-core:2.23.4'
 //    testImplementation 'org.powermock:powermock-module-junit4:2.0.2'

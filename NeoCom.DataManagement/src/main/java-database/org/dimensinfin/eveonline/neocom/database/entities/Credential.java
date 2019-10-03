@@ -34,7 +34,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  *
  * @author Adam Antinoo
  */
-//@Immutable
 @Entity(name = "Credentials")
 @DatabaseTable(tableName = "Credentials")
 public class Credential extends UpdatableEntity {
