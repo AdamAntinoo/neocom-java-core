@@ -1,13 +1,5 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
-import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
-import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.eveonline.neocom.annotations.NeoComAdapter;
+import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
+import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
+import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
+import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+
+@NeoComAdapter
 public class LocationCatalogService {
 	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
 	private static Logger logger = LoggerFactory.getLogger(LocationCatalogService.class);

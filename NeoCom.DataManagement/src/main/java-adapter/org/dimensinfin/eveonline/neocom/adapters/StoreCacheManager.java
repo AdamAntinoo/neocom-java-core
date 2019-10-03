@@ -1,5 +1,10 @@
 package org.dimensinfin.eveonline.neocom.adapters;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,25 +16,20 @@ import com.nytimes.android.external.store3.base.RecordProvider;
 import com.nytimes.android.external.store3.base.RecordState;
 import com.nytimes.android.external.store3.base.impl.Store;
 import com.nytimes.android.external.store3.base.impl.StoreBuilder;
+import org.joda.time.DateTime;
 
+import org.dimensinfin.eveonline.neocom.annotations.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.core.StorageUnits;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
-import org.joda.time.DateTime;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
 import okio.BufferedSource;
 
+@NeoComAdapter
 public class StoreCacheManager {
 	private static final int CACHE_VERSION = 151;
 	private static final int CACHE_COUNTER = 2;
