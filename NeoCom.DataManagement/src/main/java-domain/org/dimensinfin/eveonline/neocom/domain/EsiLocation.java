@@ -1,17 +1,17 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
+import javax.persistence.Entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import net.nikr.eve.jeveasset.data.Citadel;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 
-import javax.persistence.Entity;
+import org.dimensinfin.eveonline.neocom.database.entities.UpdatableEntity;
 
 /**
  * This class encapsulates the concept of Eve Location. There are different types of locations and the new CCP
@@ -26,7 +26,6 @@ import javax.persistence.Entity;
  *
  * @author Adam Antinoo
  */
-//@Immutable
 @Entity(name = "Locations")
 @DatabaseTable(tableName = "Locations")
 public class EsiLocation extends UpdatableEntity {
@@ -35,29 +34,25 @@ public class EsiLocation extends UpdatableEntity {
 	private static final EsiLocation jita = new EsiLocation.Builder().build();
 
 	static {
-		unknown.setId(30000000)
-				.setRegionId(10000000).setRegion("Unknown Region")
-				.setConstellationId(20000000).setConstellation("Outer Space")
-				.setSystemId(30000000).setSystem("Unknown Space Area")
-				.setSecurity("0.0").setSecurityValue(0.0)
-				.setClassType(LocationClass.UNKNOWN);
-		jita.setId(60003760)
-				.setRegionId(10000002).setRegion("The Forge")
-				.setConstellationId(20000020).setConstellation("Kimotoro")
-				.setSystemId(30000142).setSystem("Jita")
-				.setStationId(60003760).setStation("Jita IV - Moon 4 - Caldari Navy Assembly Plant")
-				.setSecurity("0.945913116664839").setSecurityValue(0.945913116664839)
-				.setClassType(LocationClass.CCPLOCATION);
+		unknown.setId( 30000000 )
+				.setRegionId( 10000000 ).setRegion( "Unknown Region" )
+				.setConstellationId( 20000000 ).setConstellation( "Outer Space" )
+				.setSystemId( 30000000 ).setSystem( "Unknown Space Area" )
+				.setSecurity( "0.0" ).setSecurityValue( 0.0 )
+				.setClassType( LocationClass.UNKNOWN );
+		jita.setId( 60003760 )
+				.setRegionId( 10000002 ).setRegion( "The Forge" )
+				.setConstellationId( 20000020 ).setConstellation( "Kimotoro" )
+				.setSystemId( 30000142 ).setSystem( "Jita" )
+				.setStationId( 60003760 ).setStation( "Jita IV - Moon 4 - Caldari Navy Assembly Plant" )
+				.setSecurity( "0.945913116664839" ).setSecurityValue( 0.945913116664839 )
+				.setClassType( LocationClass.CCPLOCATION );
 	}
 
 	@DatabaseField(id = true, index = true)
 	protected long id = -2;
 	@DatabaseField
 	protected long stationId = -1;
-
-	//	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
-//		esiDataAdapter = newEsiDataAdapter;
-//	}
 	@DatabaseField
 	protected int systemId = -1;
 	@DatabaseField
@@ -77,28 +72,17 @@ public class EsiLocation extends UpdatableEntity {
 	@DatabaseField
 	private String security = "0.0";
 
-	// - C O N S T R U C T O R - S E C T I O N ................................................................
+	// - C O N S T R U C T O R S
 	private EsiLocation() {
 		super();
 	}
 
 	@Deprecated
 	public EsiLocation( final long locationId ) {
-//		this();
+		this();
 		this.id = locationId;
 		this.stationId = locationId;
 	}
-//	@DatabaseField
-//	public String urlLocationIcon = null;
-
-	public static EsiLocation getUnknownLocation() {
-		return unknown;
-	}
-
-	public static EsiLocation getJitaLocation() {
-		return jita;
-	}
-
 //	public EsiLocation( final long citadelid, final Citadel cit ) {
 //		this();
 //		try {
@@ -145,9 +129,17 @@ public class EsiLocation extends UpdatableEntity {
 //		return this;
 //	}
 
-	// --- G E T T E R S   &   S E T T E R S
+	public static EsiLocation getUnknownLocation() {
+		return unknown;
+	}
+
+	public static EsiLocation getJitaLocation() {
+		return jita;
+	}
+
+	// - G E T T E R S   &   S E T T E R S
 	public long getId() {
-		long newid = Math.max(Math.max(Math.max(stationId, systemId), constellationId), regionId);
+		long newid = Math.max( Math.max( Math.max( stationId, systemId ), constellationId ), regionId );
 		this.id = newid;
 		return newid;
 	}
@@ -237,7 +229,7 @@ public class EsiLocation extends UpdatableEntity {
 		return this;
 	}
 
-	//--- V I R T U A L   A C C E S S O R S
+	// - V I R T U A L   A C C E S S O R S
 	@JsonIgnore
 	public final boolean isCitadel() {
 		if (this.getClassType() == LocationClass.CITADEL) return true;
@@ -246,7 +238,10 @@ public class EsiLocation extends UpdatableEntity {
 
 	@JsonIgnore
 	public final boolean isRegion() {
-		return ((this.getStationId() == 0) && (this.getSystemId() == 0) && (this.getRegionId() != 0));
+		return ((this.getStationId() < 0)
+				&& (this.getSystemId() < 0)
+				&& (this.getConstellationId() < 0)
+				&& (this.getRegionId() != 0));
 	}
 
 	public EsiLocation setRegion( final String region ) {
@@ -328,63 +323,48 @@ public class EsiLocation extends UpdatableEntity {
 
 	public double getSecurityValue() {
 		try {
-			return Double.parseDouble(security);
+			return Double.parseDouble( security );
 		} catch (final RuntimeException rtex) {
 		}
 		return 0.0;
 	}
 
 	public EsiLocation setSecurityValue( final double _newvalue ) {
-		this.security = Double.valueOf(_newvalue).toString();
+		this.security = Double.valueOf( _newvalue ).toString();
 		return this;
 	}
 
-	//--- N O N   E X P O R T A B L E   F I E L D S
+	// - N O N   E X P O R T A B L E   F I E L D S
 	@JsonIgnore
 	public String getFullLocation() {
 		return "[" + security + "] " + station + " - " + region + " > " + system;
 	}
 
-//	@Override
-//	public String toString() {
-//		final StringBuffer buffer = new StringBuffer("NeoComLocation [");
-//		buffer.append("#").append(this.getId()).append(" ");
-//		//		buffer.append("(").append(this.getContents(false).size()).append(") ");
-//		buffer.append("[").append(this.getRegion()).append("] ");
-//		if (null != system) {
-//			buffer.append("system: ").append(system).append(" ");
-//		}
-//		if (null != station) {
-//			buffer.append("station: ").append(station).append(" ");
-//		}
-//		buffer.append("]");
-//		return buffer.toString();
-//	}
 	// - P R I V A T E   F I E L D S
-	private void updateFromCitadel( final long newid, final Citadel cit ) {
-		this.updateFromSystem(cit.systemId);
-		// Copy the data from the citadel location.
-		stationId = newid;
-		station = cit.name;
-		systemId = Long.valueOf(cit.systemId).intValue();
-	}
-
-	private void updateFromSystem( final long newid ) {
-		// Get the system information from the CCP location tables.
-		EsiLocation systemLocation;
-//		try {
-//			systemLocation = accessGlobal().searchLocation4Id(newid);
-//		} catch (NeoComRuntimeException newe) {
-		systemLocation = EsiLocation.getJitaLocation();
-//		}
-		systemId = systemLocation.getSystemId();
-		system = systemLocation.getSystem();
-		constellationId = Long.valueOf(systemLocation.getConstellationId()).intValue();
-		constellation = systemLocation.getConstellation();
-		regionId = Long.valueOf(systemLocation.getRegionId()).intValue();
-		region = systemLocation.getRegion();
-		security = systemLocation.getSecurity();
-	}
+//	private void updateFromCitadel( final long newid, final Citadel cit ) {
+//		this.updateFromSystem(cit.systemId);
+//		// Copy the data from the citadel location.
+//		stationId = newid;
+//		station = cit.name;
+//		systemId = Long.valueOf(cit.systemId).intValue();
+//	}
+//
+//	private void updateFromSystem( final long newid ) {
+//		// Get the system information from the CCP location tables.
+//		EsiLocation systemLocation;
+////		try {
+////			systemLocation = accessGlobal().searchLocation4Id(newid);
+////		} catch (NeoComRuntimeException newe) {
+//		systemLocation = EsiLocation.getJitaLocation();
+////		}
+//		systemId = systemLocation.getSystemId();
+//		system = systemLocation.getSystem();
+//		constellationId = Long.valueOf(systemLocation.getConstellationId()).intValue();
+//		constellation = systemLocation.getConstellation();
+//		regionId = Long.valueOf(systemLocation.getRegionId()).intValue();
+//		region = systemLocation.getRegion();
+//		security = systemLocation.getSecurity();
+//	}
 
 //	/**
 //	 * Two Locations are equal if they have the same locations codes.
@@ -415,44 +395,45 @@ public class EsiLocation extends UpdatableEntity {
 	// - C O R E
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				       .append("id", this.id)
-				       .append("classType", this.classType)
-				       .append("station", this.station)
-				       .append("system", this.system)
-				       .append("region", this.region)
-				       .append("security", this.security)
-				       .toString();
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "id", this.id )
+				.append( "classType", this.classType )
+				.append( "station", this.station )
+				.append( "system", this.system )
+				.append( "region", this.region )
+				.append( "security", this.security )
+				.toString();
 	}
+
 	@Override
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (!(o instanceof EsiLocation)) return false;
 		final EsiLocation that = (EsiLocation) o;
 		return new EqualsBuilder()
-				       .appendSuper(super.equals(o))
-				       .append(this.id, that.id)
-				       .append(this.classType, that.classType)
-				       .append(this.station, that.station)
-				       .append(this.system, that.system)
-				       .append(this.constellation, that.constellation)
-				       .append(this.region, that.region)
-				       .append(this.security, that.security)
-				       .isEquals();
+				.appendSuper( super.equals( o ) )
+				.append( this.id, that.id )
+				.append( this.classType, that.classType )
+				.append( this.station, that.station )
+				.append( this.system, that.system )
+				.append( this.constellation, that.constellation )
+				.append( this.region, that.region )
+				.append( this.security, that.security )
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				       .appendSuper(super.hashCode())
-				       .append(this.id)
-				       .append(this.classType)
-				       .append(this.station)
-				       .append(this.system)
-				       .append(this.constellation)
-				       .append(this.region)
-				       .append(this.security)
-				       .toHashCode();
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( this.id )
+				.append( this.classType )
+				.append( this.station )
+				.append( this.system )
+				.append( this.constellation )
+				.append( this.region )
+				.append( this.security )
+				.toHashCode();
 	}
 
 	// - B U I L D E R
@@ -477,6 +458,7 @@ public class EsiLocation extends UpdatableEntity {
 			if (null != regionName) this.onConstruction.region = regionName;
 			return this;
 		}
+
 		public EsiLocation.Builder withConstellationId( final int constellationId ) {
 			this.onConstruction.constellationId = constellationId;
 			return this;
@@ -486,6 +468,7 @@ public class EsiLocation extends UpdatableEntity {
 			if (null != constellationName) this.onConstruction.constellation = constellationName;
 			return this;
 		}
+
 		public EsiLocation.Builder withSystemId( final int systemId ) {
 			this.onConstruction.systemId = systemId;
 			return this;
