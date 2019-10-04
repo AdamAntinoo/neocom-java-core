@@ -32,7 +32,7 @@ public class NeoComRuntimeException extends RuntimeException {
 
 	public String getMessage() {
 		String message = "";
-		if (null != this.getMessage()) message = this.getMessage();
+		if (null != super.getMessage()) message = super.getMessage();
 		if (null != this.rootException) message = message.concat( ":" ).concat( this.rootException.getMessage() );
 		return message;
 	}
