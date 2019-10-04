@@ -27,7 +27,7 @@ public class NeoComUpdaterTest {
 	public void setUp() throws Exception {
 		this.esiDataAdapter = Mockito.mock( ESIDataAdapter.class );
 		NeoComUpdater.injectsEsiDataAdapter( this.esiDataAdapter );
-		 this.updaterUnderTest = new UpdaterUnderTest( new TestPayload() );
+		this.updaterUnderTest = new UpdaterUnderTest( new TestPayload() );
 		Assert.assertNotNull( updaterUnderTest );
 	}
 
@@ -36,7 +36,7 @@ public class NeoComUpdaterTest {
 		PojoTestUtils.validateAccessors( UpdaterUnderTest.class );
 	}
 
-//	@Test
+	//	@Test
 	public void equalsContract() {
 		EqualsVerifier.forClass( UpdaterUnderTest.class ).verify();
 	}
@@ -106,9 +106,9 @@ public class NeoComUpdaterTest {
 
 	@Test
 	public void update() {
-//		final UpdaterJobManager manager = Mockito.mock(UpdaterJobManager.class);
-		this.updaterUnderTest.update();
-		Assert.assertEquals( NeoComUpdater.JobStatus.SCHEDULED, this.updaterUnderTest.getStatus() );
+		final UpdaterUnderTest updateTest = new UpdaterUnderTest( new TestPayload() );
+		updateTest.update();
+		Assert.assertEquals( NeoComUpdater.JobStatus.READY, this.updaterUnderTest.getStatus() );
 	}
 
 	public static class TestEventReceiver implements IEventReceiver {
