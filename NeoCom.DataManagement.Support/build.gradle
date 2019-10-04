@@ -39,6 +39,6 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.25.2'
 }
 dependencies {
-    implementation 'org.dimensinfin:CoreBase.core:3.0.1'
+    implementation 'org.dimensinfin:CoreBase.core:3.2.0'
     implementation project( ':NeoCom.DataManagement')
 }

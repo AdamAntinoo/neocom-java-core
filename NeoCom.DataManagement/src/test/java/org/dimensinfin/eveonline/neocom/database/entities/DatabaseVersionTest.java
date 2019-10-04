@@ -25,7 +25,7 @@ public class DatabaseVersionTest {
 	}
 
 	@Test
-	public void constructor_number() {
+	public void constructorNumber() {
 		final DatabaseVersion versionStringValid = new DatabaseVersion( 2000 );
 		Assert.assertNotNull( versionStringValid );
 		Assert.assertEquals( 2000, versionStringValid.getVersionNumber() );

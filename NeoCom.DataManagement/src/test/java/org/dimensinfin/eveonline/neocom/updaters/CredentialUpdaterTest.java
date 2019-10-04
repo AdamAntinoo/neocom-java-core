@@ -7,23 +7,24 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.support.UpdaterSupportTest;
+import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
 
-public class CredentialUpdaterTest extends UpdaterSupportTest {
-	private static Credential model2Test;
-	private static CredentialUpdater updater2Test;
+public class CredentialUpdaterTest extends ESIDataAdapterSupportTest {
+	private  Credential model2Test;
+	private  CredentialUpdater updater2Test;
 
 	@Before
 	public void setUp() throws IOException {
 		super.setUp();
-		model2Test = new Credential.Builder(123456).withAccountName("TEST CREDENTIAL").build();
-		updater2Test = new CredentialUpdater(model2Test);
+		this.model2Test = new Credential.Builder(123456).withAccountName("TEST CREDENTIAL").build();
+		this.updater2Test = new CredentialUpdater(this.model2Test);
 	}
 
 	@Test
-	public void CredentialUpdater_constructor() {
+	public void CredentialUpdaterConstructor() {
 		final Credential credential = Mockito.mock(Credential.class);
 		final CredentialUpdater updater = new CredentialUpdater(credential);
 
@@ -41,19 +42,19 @@ public class CredentialUpdaterTest extends UpdaterSupportTest {
 	}
 
 	@Test
-	public void needsRefresh_needs() {
+	public void needsRefreshNeeds() {
 		final boolean obtained = updater2Test.needsRefresh();
 		Assert.assertTrue("This model2Test needs refresh", obtained);
 	}
 
 	@Test
-	public void needsRefresh_doesnotneed() {
+	public void needsRefreshDoesNotNeed() {
 		updater2Test.getModel().timeStamp();
 		final boolean obtained = updater2Test.needsRefresh();
 		Assert.assertFalse("This model2Test does not need refresh", obtained);
 	}
 
-//	@Test
+	@Test
 	public void onRun() {
 		final Credential credential = new Credential.Builder(93813310)
 				                              .withAccountId(93813310)
@@ -66,15 +67,20 @@ public class CredentialUpdaterTest extends UpdaterSupportTest {
 				                              .withWalletBalance(6.309543632E8)
 				                              .withRaceName("Amarr")
 				                              .build();
-		NeoComRetrofitFactory.add2MockList("getCharactersCharacterIdAssets");
+		final ESIDataAdapter realEsiDataAdapter = new ESIDataAdapter.Builder() // Create a ESI adapter with not retrofit mocked
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withLocationCatalogService( this.locationCatalogService )
+				.build();
+		NeoComRetrofitFactory.add2MockList("getCharactersCharacterIdAssets"); // Use ESI call deviation to mock service.
+		NeoComUpdater.injectsEsiDataAdapter(realEsiDataAdapter);
 		final CredentialUpdater updater = new CredentialUpdater(credential);
-		NeoComUpdater.injectsEsiDataAdapter(this.esiDataAdapter);
 		updater.onRun();
 		Assert.assertEquals("Check the number of assets.", 5, updater.getModel().getAssetsCount());
 		Assert.assertEquals("Check the wallet amount.",
 		                    6.309543632E8, updater.getModel().getWalletBalance(), 0.01);
 		Assert.assertEquals("Check the value of mineral resources",
-		                    4.17, updater.getModel().getMiningResourcesEstimatedValue(), 0.01);
+		                    4.5, updater.getModel().getMiningResourcesEstimatedValue(), 0.6);
 		Assert.assertEquals("Check the value of the race",
 		                    "Amarr", updater.getModel().getRaceName());
 	}

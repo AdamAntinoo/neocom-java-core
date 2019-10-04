@@ -28,7 +28,6 @@ public class NeoComRetrofitFactory {
 	private static Logger logger = LoggerFactory.getLogger( NeoComRetrofitFactory.class );
 	private static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
 	private static final List<String> mockList = new ArrayList<>(); // List of ESI methods mocked dynamically.
-	//	private static final NeoComOAuth20.ESIStore STORE = NeoComOAuth20.ESIStore.DEFAULT;
 	private static String activatedServer;
 	private static String authorizationURL;
 	private static String SCOPESTRING = "publicData";
@@ -354,6 +353,7 @@ public class NeoComRetrofitFactory {
 		public NeoComRetrofitFactory build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
+			this.onConstruction.activateEsiServer(ESIDataAdapter.DEFAULT_ESI_SERVER);
 			return this.onConstruction;
 		}
 	}

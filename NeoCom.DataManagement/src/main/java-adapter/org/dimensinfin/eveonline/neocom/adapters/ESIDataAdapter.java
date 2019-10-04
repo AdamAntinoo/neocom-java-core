@@ -708,6 +708,7 @@ public class ESIDataAdapter {
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} catch (RuntimeException rtex) {
+			rtex.printStackTrace();
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
 				logger.info( "EX [ESIDataAdapter.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
 				this.retrofitFactory.reset();
@@ -1001,6 +1002,9 @@ public class ESIDataAdapter {
 			// TODO - Add this when the market data is back present.
 //			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);
 
+			// Preload the esi caches with SDE data.
+			this.onConstruction.downloadItemPrices();
+			this.onConstruction.downloadPilotFamilyData();
 			return this.onConstruction;
 		}
 	}
