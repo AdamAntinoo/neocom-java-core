@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapters;
+package org.dimensinfin.neocom.support.adapters.implementers;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,20 +14,23 @@ import com.j256.ormlite.table.TableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.SBRawStatement;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 /**
  * This is the adapter to read the data from the SDE database repository. This instance is configured as java SpringBoot
  * compatible SQLite database adapter. The SDE database is generated from the downloaded SDE raw data and configured for
  * a game version that should match the latest game client implementation.
  *
- * This adater will support custom queries to the SDE tables along with addition DAO for additional persistence tables.
+ * This adapter will support custom queries to the SDE tables along with addition DAO for additional persistence tables.
  */
-public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
-	private static Logger logger = LoggerFactory.getLogger(SDEDatabaseAdapter.class);
-	private IFileSystem fileSystemAdapter;
+public class SBSDEDatabaseAdapter implements ISDEDatabaseAdapter {
+	private static Logger logger = LoggerFactory.getLogger( SBSDEDatabaseAdapter.class );
+	// - C O M P O N E N T S
+	protected IFileSystem fileSystemAdapter;
 
 	private String schema = "jdbc:sqlite";
 	private String databasePath;
@@ -38,13 +41,16 @@ public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
 
 	private Dao<EsiLocation, Long> locationDao = null;
 
-	private SDEDatabaseAdapter() {
-		super();
-	}
+	protected SBSDEDatabaseAdapter() { }
 
-	public Dao<EsiLocation, Long> getLocationDao() throws SQLException {
-		if (null == this.locationDao)
-			this.locationDao = DaoManager.createDao(this.getConnectionSource(), EsiLocation.class);
+	public Dao<EsiLocation, Long> getLocationDao() throws NeoComRuntimeException {
+		if (null == this.locationDao) {
+			try {
+				this.locationDao = DaoManager.createDao( this.getConnectionSource(), EsiLocation.class );
+			} catch (final SQLException sqle) {
+				throw new NeoComRuntimeException(sqle);
+			}
+		}
 		return this.locationDao;
 	}
 
@@ -72,42 +78,43 @@ public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
 	 * parallel to the database instance. This only is effective for MySql databases.
 	 */
 	private boolean openSDEDB() {
-		logger.info(">> [SDEDatabaseAdapter.openSDEDB]");
+		logger.info( ">> [SDEDatabaseAdapter.openSDEDB]" );
 		if ((null == this.ccpDatabaseConnection) && (this.isDatabaseDefinitionValid())) {
 			try {
-				this.ccpDatabaseConnection = DriverManager.getConnection(this.getConnectionDescriptor());
-				this.ccpDatabaseConnection.setAutoCommit(false);
-				Objects.requireNonNull(this.ccpDatabaseConnection);
-				logger.info("-- [SDEDatabaseAdapter.openSDEDB]> Opened database {} successfully with version {}."
-						, this.getConnectionDescriptor(), this.databaseVersion);
+				this.ccpDatabaseConnection = DriverManager.getConnection( this.getConnectionDescriptor() );
+				this.ccpDatabaseConnection.setAutoCommit( false );
+				Objects.requireNonNull( this.ccpDatabaseConnection );
+				logger.info( "-- [SDEDatabaseAdapter.openSDEDB]> Opened database {} successfully with version {}."
+						, this.getConnectionDescriptor(), this.databaseVersion );
 				this.createConnectionSource();
 			} catch (Exception sqle) {
-				logger.error("E> [SDEDatabaseAdapter.openSDEDB]> " + sqle.getClass().getName() + ": " + sqle.getMessage());
+				logger.error( "E> [SDEDatabaseAdapter.openSDEDB]> " + sqle.getClass().getName() + ": " + sqle.getMessage() );
 				return false;
 			}
 		}
-		this.onCreate(this.connectionSource);
-		logger.info("<< [SDEDatabaseAdapter.openSDEDB]");
+		this.onCreate( this.connectionSource );
+		logger.info( "<< [SDEDatabaseAdapter.openSDEDB]" );
 		return true;
 	}
 
 	private void onCreate( final ConnectionSource databaseConnection ) {
-		logger.info(">> [SDEDatabaseAdapter.onCreate]");
+		logger.info( ">> [SDEDatabaseAdapter.onCreate]" );
 		// Create the tables that do not exist
 		try {
-			TableUtils.createTableIfNotExists(databaseConnection, EsiLocation.class);
+			TableUtils.createTableIfNotExists( databaseConnection, EsiLocation.class );
 		} catch (SQLException sqle) {
-			logger.warn("SQL [SDEDatabaseAdapter.onCreate]> SQL SDEDatabase: {}", sqle.getMessage());
+			logger.warn( "SQL [SDEDatabaseAdapter.onCreate]> SQL SDEDatabase: {}", sqle.getMessage() );
 		}
-		logger.info("<< [SDEDatabaseAdapter.onCreate]");
+		logger.info( "<< [SDEDatabaseAdapter.onCreate]" );
 	}
 
 	private void createConnectionSource() throws SQLException {
-		this.connectionSource = new JdbcPooledConnectionSource(this.getConnectionDescriptor());
-		this.connectionSource.setMaxConnectionAgeMillis(TimeUnit.MINUTES.toMillis(5)); // Keep the connections open for 5 minutes
-		this.connectionSource.setCheckConnectionsEveryMillis(TimeUnit.SECONDS.toMillis(60));
+		this.connectionSource = new JdbcPooledConnectionSource( this.getConnectionDescriptor() );
+		this.connectionSource
+				.setMaxConnectionAgeMillis( TimeUnit.MINUTES.toMillis( 5 ) ); // Keep the connections open for 5 minutes
+		this.connectionSource.setCheckConnectionsEveryMillis( TimeUnit.SECONDS.toMillis( 60 ) );
 		this.connectionSource.setTestBeforeGet(
-				true); // Enable the testing of connections right before they are handed to the user
+				true ); // Enable the testing of connections right before they are handed to the user
 	}
 
 	// - I S D E D A T A B A S E A D A P T E R
@@ -118,15 +125,20 @@ public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
 	 * statement uses the database connection to create a generic JDBC Java statement.
 	 */
 	public SBRawStatement constructStatement( final String query, final String[] parameters ) throws SQLException {
-		return new SBRawStatement(this.getSDEDatabase(), query, parameters);
+		return new SBRawStatement( this.getSDEDatabase(), query, parameters );
 	}
 
 	// - B U I L D E R
 	public static class Builder {
-		private SDEDatabaseAdapter onConstruction;
+		private SBSDEDatabaseAdapter onConstruction;
 
 		public Builder() {
-			this.onConstruction = new SDEDatabaseAdapter();
+			this.onConstruction = new SBSDEDatabaseAdapter();
+		}
+
+		public Builder( final SBSDEDatabaseAdapter preInstance ) {
+			if (null != preInstance) this.onConstruction = preInstance;
+			else this.onConstruction = new SBSDEDatabaseAdapter();
 		}
 
 		public Builder withDatabasePath( final String databasePath ) {
@@ -144,10 +156,10 @@ public class SDEDatabaseAdapter implements ISDEDatabaseAdapter {
 			return this;
 		}
 
-		public SDEDatabaseAdapter build() {
-			Objects.requireNonNull(this.onConstruction.databasePath);
-			Objects.requireNonNull(this.onConstruction.databaseName);
-			Objects.requireNonNull(this.onConstruction.fileSystemAdapter);
+		public SBSDEDatabaseAdapter build() {
+			Objects.requireNonNull( this.onConstruction.databasePath );
+			Objects.requireNonNull( this.onConstruction.databaseName );
+			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			return this.onConstruction;
 		}
 	}

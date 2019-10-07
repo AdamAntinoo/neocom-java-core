@@ -69,25 +69,18 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 		else return Integer.valueOf( value );
 	}
 
+	public boolean getResourceBoolean( final String key ) {
+		final String value = this.getResourceString( key, "false" );
+		if (value.equalsIgnoreCase( "true" )) return true;
+		if (value.equalsIgnoreCase( "on" )) return true;
+		if (value.equalsIgnoreCase( "0" )) return false;
+		return false;
+	}
+
 	public AConfigurationProvider setConfiguredPropertiesDirectory( final String configuredPropertiesDirectory ) {
 		this.configuredPropertiesDirectory = configuredPropertiesDirectory;
 		return this;
 	}
-//	/**
-//	 * This initialization method reads all the files located on a predefined folder under the src/main/resources path.
-//	 * All the files are expected to be Properties files and are read in alphabetical order and their contents added
-//	 * to the list of application properties. Read order will replace same ids with new data so the developer
-//	 * can use a naming convention to replace older values with new values without editing the older files.
-//	 */
-//	protected AConfigurationProvider initialize() {
-//		try {
-//			this.readAllProperties();
-//		} catch (IOException ioe) {
-//			logger.error( "E [GlobalConfigurationProvider.initialize]> Unprocessed exception: {}", ioe.getMessage() );
-//			ioe.printStackTrace();
-//		}
-//		return this;
-//	}
 
 	protected String getResourceLocation() {
 		return this.configuredPropertiesDirectory;
@@ -96,14 +89,6 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 	private String generateMissing( final String key ) {
 		return '!' + key + '!';
 	}
-
-//	@Override
-//	public String toString() {
-//		return new StringBuffer( "GlobalConfigurationProvider[" )
-//				.append( "Property count: " ).append( contentCount() ).append( " " )
-//				.append( "]" )
-//				.toString();
-//	}
 
 	// - P L A T F O R M   S P E C I F I C   S E C T I O N
 	protected abstract void readAllProperties() throws IOException;

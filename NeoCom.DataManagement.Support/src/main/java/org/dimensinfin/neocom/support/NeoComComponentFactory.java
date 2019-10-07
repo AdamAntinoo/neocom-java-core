@@ -1,31 +1,38 @@
-package org.dimensinfin.neocom.support.adapters;
+package org.dimensinfin.neocom.support;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.interfaces.IFileSystem;
+import org.dimensinfin.neocom.support.adapters.FileSystemSBImplementation;
+import org.dimensinfin.neocom.support.adapters.NeoComSupportDBAdapter;
+import org.dimensinfin.neocom.support.adapters.implementers.SBConfigurationProvider;
+import org.dimensinfin.neocom.support.adapters.implementers.SBFileSystemAdapter;
+import org.dimensinfin.neocom.support.adapters.implementers.SBNeoComDBAdapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is a singleton with global access that will contain application component references so they can be injected to other components. The creation
+ * This is a singleton with global access that will contain application component references so they can be injected to other
+ * components. The creation
  * of those components will be down internally on demand and with the knowledge of what components depend on other components.
  *
  * @author Adam Antinoo
  */
 public class NeoComComponentFactory {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility";
-	protected static Logger logger = LoggerFactory.getLogger(NeoComComponentFactory.class);
+	protected static Logger logger = LoggerFactory.getLogger( NeoComComponentFactory.class );
 	private static NeoComComponentFactory singleton;
 
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
 	private ESIDataAdapter esiDataAdapter;
-	private NeoComSupportDBAdapter neocomDBAdapter;
+	private SBNeoComDBAdapter neocomDBAdapter;
 	private CredentialRepository credentialRepository;
 
 	public static NeoComComponentFactory getSingleton() {
@@ -38,38 +45,51 @@ public class NeoComComponentFactory {
 		if (null == this.credentialRepository) {
 			try {
 				credentialRepository = new CredentialRepository.Builder()
-						                       .withCredentialDao(this.getNeoComDBAdapter().getCredentialDao())
-						                       .build();
+						.withCredentialDao( this.getNeoComDBAdapter().getCredentialDao() )
+						.build();
 			} catch (SQLException sqle) {
 				credentialRepository = null;
-				Objects.requireNonNull(credentialRepository);
+				Objects.requireNonNull( credentialRepository );
 			}
 		}
 		return this.credentialRepository;
 	}
 
-	public NeoComSupportDBAdapter getNeoComDBAdapter() {
+	public SBNeoComDBAdapter getNeoComDBAdapter() {
 		if (null == this.neocomDBAdapter) {
-			//			try {
-			final String databaseType = this.getConfigurationProvider().getResourceString("P.database.neocom.databasetype","sqlite");
-			if (databaseType.equalsIgnoreCase("postgres")) {
-				// Postgres means Heroku and then configuration for connection from environment
-				final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
-				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
-						                  .withDatabaseConnection(localConnectionDescriptor)
-						                  .build();
+			try {
+				// Create the neocom databasea adapter from configuration properties.
+				final String databaseHost = this.getConfigurationProvider().getResourceString( "P.database.neocom.databasehost" );
+				final String databaseName = this.getConfigurationProvider().getResourceString( "P.database.neocom.databasename" );
+//				final String user = this.getConfigurationProvider().getResourceString( "P.database.neocom.databaseuser" );
+//				final String password = this.getConfigurationProvider().getResourceString( "P.database.neocom.databasepassword" );
+				final String locator = databaseHost+databaseName;
+				this.neocomDBAdapter = new SBNeoComDBAdapter.Builder()
+						.optionalDatabaseUrl( locator )
+						.build();
+
+
+				//			try {
+//			final String databaseType = this.getConfigurationProvider()
+//					.getResourceString( "P.database.neocom.databasetype", "sqlite" );
+//			if (databaseType.equalsIgnoreCase( "postgres" )) {
+//				// Postgres means Heroku and then configuration for connection from environment
+//				final String localConnectionDescriptor = System.getenv( "JDBC_DATABASE_URL" );
+//				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
+//						.withDatabaseConnection( localConnectionDescriptor )
+//						.build();
+//			}
+//			if (databaseType.equalsIgnoreCase( "sqlite" )) {
+//				// Postgres means Heroku and then configuration for connection from environment
+//				final String localConnectionDescriptor = System.getenv( "JDBC_DATABASE_URL" );
+//				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
+//						.withDatabaseConnection( localConnectionDescriptor )
+//						.build();
+//			}
+			} catch (SQLException sqle) {
+				neocomDBAdapter = null;
+				Objects.requireNonNull( neocomDBAdapter );
 			}
-			if (databaseType.equalsIgnoreCase("sqlite")) {
-				// Postgres means Heroku and then configuration for connection from environment
-				final String localConnectionDescriptor = System.getenv("JDBC_DATABASE_URL");
-				neocomDBAdapter = new NeoComSupportDBAdapter.Builder()
-						                  .withDatabaseConnection(localConnectionDescriptor)
-						                  .build();
-			}
-			//			} catch (SQLException sqle) {
-			//				neocomDBAdapter = null;
-			//				Objects.requireNonNull(neocomDBAdapter);
-			//			}
 		}
 		return this.neocomDBAdapter;
 	}
@@ -82,9 +102,9 @@ public class NeoComComponentFactory {
 
 	public IFileSystem getFileSystemAdapter() {
 		if (null == this.fileSystemAdapter) {
-			fileSystemAdapter = new FileSystemSBImplementation.Builder()
-					                    .withRootDirectory("Support")
-					                    .build();
+			this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
+					.withRootDirectory( "NeoCom.Support" )
+					.build();
 		}
 		return this.fileSystemAdapter;
 	}
@@ -97,7 +117,14 @@ public class NeoComComponentFactory {
 
 	public IConfigurationProvider getConfigurationProvider() {
 		if (null == this.configurationProvider) {
-			this.configurationProvider = new SBConfigurationProvider.Builder("properties").build();
+			try {
+				this.configurationProvider =
+						new SBConfigurationProvider.Builder(  )
+						.withPropertiesDirectory( "properties" )
+						.build();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return this.configurationProvider;
 	}

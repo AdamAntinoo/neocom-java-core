@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.neocom.support.adapters.NeoComComponentFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
