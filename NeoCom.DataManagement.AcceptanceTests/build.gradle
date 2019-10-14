@@ -37,22 +37,16 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.awaitility:awaitility:3.1.6'
     testImplementation 'org.mockito:mockito-core:2.23.4'
-//    testImplementation "org.springframework.boot:spring-boot-starter:$SpringBootRelease"
-//    testImplementation "org.springframework.boot:spring-boot-starter-test:$SpringBootRelease"
     testImplementation('org.dimensinfin:CoreBase.core:3.2.0')
-    testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
+    testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
     testImplementation project(':NeoCom.DataManagement')
 }
 // - N E O C O M
 dependencies {
     testImplementation 'org.apache.commons:commons-lang3:3.7'
     testImplementation 'com.annimon:stream:1.1.9' // Android compatible streams
-
-    // https://mvnrepository.com/artifact/org.apache.oltu.oauth2/org.apache.oltu.oauth2.common
     testImplementation group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.common', version: '1.0.2'
-// https://mvnrepository.com/artifact/org.apache.oltu.oauth2/org.apache.oltu.oauth2.httpclient4
     testImplementation group: 'org.apache.oltu.oauth2', name: 'org.apache.oltu.oauth2.httpclient4', version: '1.0.2'
-// https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-scalars
     testImplementation group: 'com.squareup.retrofit2', name: 'converter-scalars', version: '2.6.1'
 
 
@@ -72,63 +66,3 @@ dependencies {
     testImplementation 'org.xerial:sqlite-jdbc:3.25.2'
     testImplementation 'javax.persistence:javax.persistence-api:2.2'
 }
-
-// - T A S K S
-// Install the SDE database on the assets for testing
-//ext {
-//    assetsPath = "$projectDir/AcceptanceTests"
-//}
-//task copySDEDatabase(type: Copy) {
-//    group = "publishing"
-//    println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
-//    from project(':NeoCom.DataManagement').file("src/main/sh/sde.db")
-//    into "$assetsPath"
-//}
-//task renameSDEDatabase(type: Copy) {
-//    group = "publishing"
-//    println '> Task :NeoCom.DataManagement:copySDEDatabase: copying new sde database to assets...'
-//    from project(':NeoCom.DataManagement').file("src/main/sh/*.db")
-//    rename { String filename ->
-//        return 'sde-acceptance.db'
-//    }
-//    into "$assetsPath"
-//}
-//copySDEDatabase.dependsOn(':NeoCom.DataManagement:generateSDEDatabase')
-
-//cucumber {
-//    formats = ['pretty', 'json:build/cucumber.json', 'junit:build/cucumber.xml']
-//    glueDirs = ['src/test/java',
-//                'src/test/resources/features']
-//    featureDirs = ['src/test/resources/features']
-//    tags = ['not @skip_scenario', '@DM02']
-//    monochrome = false
-//    strict = false
-//    dryRun = false
-//    ignoreFailures = false
-//    jvmOptions {
-//        maxHeapSize = '20148m'
-//        environment 'ENV', 'staging'
-//        def jacocoAgent = zipTree(configurations.jacocoAgent.singleFile).filter {
-//            it.name == "jacocoagent.jar"
-//        }.singleFile
-//        jvmArgs "-javaagent:$jacocoAgent=destfile=$buildDir/results/jacoco/cucumber.exec,append=false"
-//    }
-//}
-//testResultsDirName = "results/test"
-
-//test {
-//    jacoco {
-//        append = false
-//        destinationFile = file("$buildDir/results/jacoco/test.exec")
-//    }
-//}
-//jacocoTestReport {
-//    executionData = files("$buildDir/results/jacoco/test.exec", "$buildDir/results/jacoco/cucumber.exec")
-//    reports {
-//        xml.enabled false
-//        csv.enabled false
-////        html.destination "$buildDir/reports/jacoco"
-//    }
-//    dependsOn test
-////    dependsOn "cucumber"
-//}

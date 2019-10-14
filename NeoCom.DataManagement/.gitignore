@@ -1,1 +1,12 @@
+# - Ignore compilation and generated files
+build/
+coverage/
+
+# - Test caches and generated test data to be ignored
+src/test/NeoCom.UnitTest
+
+# - Mock server code not to be included on repository
+src/test/apisimulator/apisimulator-http-1.4/
+
+# - staged files
 src/stage/

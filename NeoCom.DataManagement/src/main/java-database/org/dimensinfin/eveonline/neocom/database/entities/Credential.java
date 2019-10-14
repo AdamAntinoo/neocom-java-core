@@ -51,7 +51,7 @@ public class Credential extends UpdatableEntity {
 	private String accountName;
 	@DatabaseField
 	private String dataSource = "Tranquility".toLowerCase();
-	@DatabaseField
+	@DatabaseField(dataType = DataType.LONG_STRING)
 	private String accessToken;
 	@DatabaseField
 	private String tokenType = "Bearer";

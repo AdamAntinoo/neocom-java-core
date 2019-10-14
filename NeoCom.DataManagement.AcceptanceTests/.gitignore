@@ -1,6 +1,6 @@
-# - Android Studio
-*.iml
-
+# - Ignore compilation and generated files
 build/
-out/
-target/
+coverage/
+
+# - Ignore runtime cache files.
+AcceptanceTests/

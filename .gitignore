@@ -15,11 +15,3 @@
 # - Build ignorable files
 .gradle
 build/
-NeoCom.DataManagement/build/
-NeoCom.DataManagement.AcceptanceTests/AcceptanceTests/
-
-# - Test caches and generated test data to be ignored
-NeoCom.DataManagement/src/test/NeoCom.UnitTest
-
-# - Mock server code not to be included on repository
-NeoCom.DataManagement/src/test/apisimulator/apisimulator-http-1.4/

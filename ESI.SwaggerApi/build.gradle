@@ -10,7 +10,7 @@ apply plugin: 'org.hidetake.swagger.generator'
 
 //--- P R O J E C T   D E F I N I T I O N
 group = 'org.dimensinfin'
-version = '4.0.1'
+version = '4.16.0'
 archivesBaseName = 'ESI.SwaggerApi'
 description = 'Swagger Api to access ESI published Eve Online inside game data structures.'
 
@@ -134,6 +134,7 @@ dependencies {
     // M O D U L E    D E P E N D E N C I E S
     // C O R E   P L A T F O R M
     compileOnly 'joda-time:joda-time:2.9.9'
+    compileOnly 'javax.annotation:javax.annotation-api:1.2'
 
     // P R O J E C T S
 

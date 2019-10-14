@@ -16,7 +16,7 @@ dependencies {
 // - N E O C O M   L I B R A R I E S
 dependencies {
     implementation 'org.dimensinfin:CoreBase.core:3.2.0'
-    implementation 'org.dimensinfin:ESI.SwaggerApi:4.0.1'
+    implementation 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
     implementation files('libs/jeveassets.3.1.2.jar')
     implementation 'org.apache.commons:commons-lang3:3.7'
     implementation 'com.annimon:stream:1.1.9' // Android compatible streams
