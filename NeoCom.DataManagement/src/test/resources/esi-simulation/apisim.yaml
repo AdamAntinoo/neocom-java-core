@@ -271,3 +271,36 @@ response:
       "type_id": 34,
       "volume": 0.01
     }
+
+---
+
+simlet: character-assets-1
+
+request:
+  - method: GET
+  - uriPath: /characters/{characterId}/assets/?datasource=tranquility&page=1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/assets.json"
+
+---
+
+simlet: character-assets-2
+
+request:
+  - method: GET
+  - uriPath: /characters/{characterId}/assets/?datasource=tranquility&page=2
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    []
