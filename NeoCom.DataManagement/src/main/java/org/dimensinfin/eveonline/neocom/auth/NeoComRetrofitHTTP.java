@@ -7,8 +7,6 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
 import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
@@ -26,9 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Adam on 15/01/2018.
  */
 public class NeoComRetrofitHTTP {
-	// - S T A T I C - S E C T I O N
-	private static Logger logger = LoggerFactory.getLogger(NeoComRetrofitHTTP.class);
-
 	protected static final Converter.Factory GSON_CONVERTER_FACTORY =
 			GsonConverterFactory.create(
 					new GsonBuilder()

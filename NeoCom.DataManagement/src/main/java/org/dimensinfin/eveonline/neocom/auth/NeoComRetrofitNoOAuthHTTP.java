@@ -72,11 +72,6 @@ public class NeoComRetrofitNoOAuthHTTP extends NeoComRetrofitHTTP {
 			this.onConstruction = new NeoComRetrofitNoOAuthHTTP();
 		}
 
-//		public Builder withNeoComOAuth20( final NeoComOAuth20 neoComOAuth20 ) {
-//			this.onConstruction.neoComOAuth20 = neoComOAuth20;
-//			return this;
-//		}
-
 		public Builder withEsiServerLocation( final String esiDataServerLocation ) {
 			this.onConstruction.esiDataServerLocation = esiDataServerLocation;
 			return this;

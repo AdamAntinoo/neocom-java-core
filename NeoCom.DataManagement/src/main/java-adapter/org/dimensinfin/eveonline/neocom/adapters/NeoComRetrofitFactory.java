@@ -25,7 +25,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import retrofit2.Retrofit;
 
 public class NeoComRetrofitFactory {
-	private static Logger logger = LoggerFactory.getLogger( NeoComRetrofitFactory.class );
+	public static Logger logger = LoggerFactory.getLogger( NeoComRetrofitFactory.class );
 	private static final long CACHE_SIZE = 10 * 1024 * 1024; // 10G of storage space for the ESI downloaded data.
 	private static final List<String> mockList = new ArrayList<>(); // List of ESI methods mocked dynamically.
 	private static String activatedServer;
@@ -33,9 +33,9 @@ public class NeoComRetrofitFactory {
 	private static String SCOPESTRING = "publicData";
 
 	// TODO - Remove on next iteration at Android because now tests can set their own mock methods.
-	static {
-		mockList.add( "getCharactersCharacterIdMining" );
-	}
+//	static {
+//		mockList.add( "getCharactersCharacterIdMining" );
+//	}
 
 	// - M O C K   L I S T
 	public static void add2MockList( final String methodName ) {
@@ -90,9 +90,6 @@ public class NeoComRetrofitFactory {
 	 */
 	public Retrofit accessESIAuthRetrofit() {
 		final String methodName = this.getCallerMethodName();
-//		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-//		StackTraceElement stackElement = stacktrace[3];//maybe this number needs to be corrected
-//		final String methodName = stackElement.getMethodName();
 		if (mockList.contains( methodName )) {
 			if (null == this.neocomRetrofitMountebank)
 				this.neocomRetrofitMountebank = this.generateMountebankRetrofit();
@@ -113,7 +110,7 @@ public class NeoComRetrofitFactory {
 		StackTraceElement stackElement = stacktrace[0]; // This is to check if we are using Dalvik
 		String methodName = stackElement.getMethodName();
 		if (methodName.equalsIgnoreCase( "getThreadStackTrace" )) {
-			stackElement = stacktrace[4]; // Using Dalvik. Get a trace one level deep
+			stackElement = stacktrace[4]; // Using Dalvik. Get a trace one level deeper
 			return stackElement.getMethodName();
 		} else {
 			stackElement = stacktrace[3]; // Using Java or testing. Get a trace at right level
@@ -123,8 +120,9 @@ public class NeoComRetrofitFactory {
 
 	private Retrofit generateMountebankRetrofit() {
 		final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
+		final String esiMockServer = this.configurationProvider.getResourceString( "P.esi.authorization.mock.server");
 		return new NeoComRetrofitMock.Builder()
-				.withEsiServerLocation( "http://localhost:8448/" )
+				.withEsiServerLocation( esiMockServer )
 				.withAgent( agent )
 				.build();
 	}
@@ -136,7 +134,7 @@ public class NeoComRetrofitFactory {
 			final File cacheDataFile = new File( fileSystemAdapter.accessResource4Path( cacheFilePath ) );
 			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
 			final long timeout = TimeUnit.SECONDS
-					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esiitem.timeout" ) );
+					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esinetwork.timeout" ) );
 			return new NeoComRetrofitNoOAuthHTTP.Builder()
 					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
 							, "https://esi.evetech.net/latest/" ) )
@@ -166,7 +164,6 @@ public class NeoComRetrofitFactory {
 			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
 			final long timeout = TimeUnit.SECONDS
 					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esinetwork.timeout" ) );
-//			if ("TRANQUILITY".equalsIgnoreCase( esiServer )) {
 			return new NeoComRetrofitHTTP.Builder()
 					.withNeoComOAuth20( this.getConfiguredOAuth( esiServer.toLowerCase() ) )
 					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
@@ -176,20 +173,6 @@ public class NeoComRetrofitFactory {
 					.withCacheSize( CACHE_SIZE )
 					.withTimeout( timeout )
 					.build();
-//			}
-//			if ("SINGULARITY".equalsIgnoreCase( esiServer )) {
-//				return new NeoComRetrofitHTTP.Builder()
-//						.withNeoComOAuth20( this.getConfiguredOAuth( "Singularity" ) )
-//						.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
-//								, "https://esi.evetech.net/latest/" ) )
-//						.withAgent( agent )
-//						.withCacheDataFile( cacheDataFile )
-//						.withCacheSize( CACHE_SIZE )
-//						.withTimeout( timeout )
-//						.build();
-//			}
-//			return this
-//					.generateESIAuthRetrofit( "TRANQUILITY" ); // This is in case there is no server set. Defaults to Tranquility.
 		} catch (final IOException ioe) { // If there is an exception with the cache create the retrofit not cached.
 			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
 			final long timeout = TimeUnit.SECONDS

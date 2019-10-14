@@ -10,8 +10,8 @@ import com.github.scribejava.core.exceptions.OAuthException;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
 
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -21,8 +21,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class NeoComOAuth20 {
-	private static Logger logger = LoggerFactory.getLogger(NeoComOAuth20.class);
-
 	private String clientId;
 	private String clientKey;
 	private String callback;
@@ -69,8 +67,7 @@ public class NeoComOAuth20 {
 										.newBuilder()
 										.addHeader("User-Agent", this.agent)
 										.build()));
-		this.verify =
-				new Retrofit.Builder()
+		this.verify = new Retrofit.Builder()
 						.baseUrl(this.baseUrl)
 						.addConverterFactory(JacksonConverterFactory.create())
 						.client(verifyClient.build())
@@ -83,19 +80,19 @@ public class NeoComOAuth20 {
 	}
 
 	public TokenTranslationResponse fromRefresh( final String refresh ) {
-		logger.info(">> [NeoComOAuth20.fromRefresh]");
+		NeoComRetrofitFactory.logger.info(">> [NeoComOAuth20.fromRefresh]");
 		try {
 			TokenTranslationResponse existing = this.store.get(refresh);
 			if ((null == existing) || (existing.getExpiresOn() < (System.currentTimeMillis() - 5 * 1000))) {
-				logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
+				NeoComRetrofitFactory.logger.info("-- [NeoComOAuth20.fromRefresh]> Refresh of access token requested.");
 				final OAuth2AccessToken token = this.oAuth20Service.refreshAccessToken(refresh);
-				logger.info("<< [NeoComOAuth20.fromRefresh]> Saving new token.");
+				NeoComRetrofitFactory.logger.info("<< [NeoComOAuth20.fromRefresh]> Saving new token.");
 				return save(token);
 			}
-			logger.info("<< [NeoComOAuth20.fromRefresh]> Return valid token.");
+			NeoComRetrofitFactory.logger.info("<< [NeoComOAuth20.fromRefresh]> Return valid token.");
 			return existing;
 		} catch (OAuthException | IOException | InterruptedException | ExecutionException e) {
-			logger.error(e.getMessage(), e);
+			NeoComRetrofitFactory.logger.error(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -110,7 +107,7 @@ public class NeoComOAuth20 {
 			}
 			return null;
 		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
+			NeoComRetrofitFactory.logger.error(e.getMessage(), e);
 			return null;
 		}
 	}

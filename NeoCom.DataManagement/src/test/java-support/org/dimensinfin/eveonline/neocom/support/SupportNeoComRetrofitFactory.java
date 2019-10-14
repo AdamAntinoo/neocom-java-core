@@ -19,7 +19,7 @@ public class SupportNeoComRetrofitFactory extends NeoComRetrofitFactory {
 	private Retrofit generateNoAuthRetrofit() {
 		final String agent = "Default agent" ;
 		return new NeoComRetrofitNoOAuthHTTP.Builder()
-				.withEsiServerLocation( "http://localhost:6092" )
+				.withEsiServerLocation( "http://localhost:6091" )
 				.withAgent( agent )
 				.build();
 	}

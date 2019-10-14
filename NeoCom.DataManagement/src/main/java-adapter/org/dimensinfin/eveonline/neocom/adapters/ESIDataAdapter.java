@@ -76,14 +76,14 @@ public class ESIDataAdapter {
 	private static final Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static final Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
-	private NeoComRetrofitFactory retrofitFactory;
-	private StoreCacheManager cacheManager;
-	private LocationCatalogService locationCatalogService;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected LocationCatalogService locationCatalogService;
+	protected NeoComRetrofitFactory retrofitFactory;
+	protected StoreCacheManager cacheManager;
 
 	// - C O N S T R U C T O R S
-	private ESIDataAdapter() {}
+	protected ESIDataAdapter() {}
 
 //	@Deprecated
 //	private ESIDataAdapter( final IConfigurationProvider newConfigurationProvider
@@ -165,7 +165,7 @@ public class ESIDataAdapter {
 		return this.cacheManager.accessGroup( groupId ).blockingGet();
 	}
 
-		@TimeElapsed
+	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
 		logger.info( "-- [ESIDataAdapter.searchItemCategory4Id]> categoryId: {}", categoryId );
 		return this.cacheManager.accessCategory( categoryId ).blockingGet();
@@ -947,6 +947,11 @@ public class ESIDataAdapter {
 
 		public Builder() {
 			this.onConstruction = new ESIDataAdapter();
+		}
+
+		public Builder( final ESIDataAdapter preInstance ) {
+			if (null != preInstance) this.onConstruction = preInstance;
+			else this.onConstruction = new ESIDataAdapter();
 		}
 
 //		@Deprecated
