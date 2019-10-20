@@ -7,6 +7,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.domain.EEvents;
 import org.dimensinfin.core.domain.EventEmitter;
@@ -17,6 +19,7 @@ import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.services.UpdaterJobManager;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {
+	protected static final Logger logger = LoggerFactory.getLogger( NeoComUpdater.class );
 	public enum JobStatus {READY, SCHEDULED, RUNNING, EXCEPTION, COMPLETED}
 
 	// - C O M P O N E N T S
