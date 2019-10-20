@@ -39,7 +39,7 @@ public class Pilot extends PilotV2 {
 
 	// - G E T T E R S   &   S E T T E R S
 	public Credential getCredential() {
-		return credential;
+		return this.credential;
 	}
 
 	public GetUniverseRaces200Ok getRace() {
@@ -81,6 +81,12 @@ public class Pilot extends PilotV2 {
 // [01]
 
 	// - D E L E G A T E D
+	public int getCorporationId() {
+		if (null != this.characterPublicData)
+			return this.characterPublicData.getCorporationId();
+		else return -1;
+	}
+
 	public DateTime getBirthday() {
 		return this.characterPublicData.getBirthday();
 	}
@@ -231,11 +237,13 @@ public class Pilot extends PilotV2 {
 				this.onConstruction.raceData = raceData;
 			return this;
 		}
+
 		public Pilot.Builder withAncestryData( final GetUniverseAncestries200Ok ancestryData ) {
 			if (null != ancestryData)
 				this.onConstruction.ancestryData = ancestryData;
 			return this;
 		}
+
 		public Pilot.Builder withBloodlineData( final GetUniverseBloodlines200Ok bloodlineData ) {
 			if (null != bloodlineData)
 				this.onConstruction.bloodlineData = bloodlineData;
