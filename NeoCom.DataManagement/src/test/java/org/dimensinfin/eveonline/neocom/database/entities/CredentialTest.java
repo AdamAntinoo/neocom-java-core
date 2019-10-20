@@ -1,14 +1,20 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 public class CredentialTest {
-	@Test
-	public void gettersContract() {
-		final Credential credential = new Credential.Builder(123456)
+	private Credential credential4Test;
+
+	@Before
+	public void setUp() throws Exception {
+		credential4Test = new Credential.Builder(123456)
 				.withAccountId(234567)
 				.withAccountName("TEST CREDENTIAL")
+				.withCorporationId( 4321987 )
 				.withAccessToken("-TEST INVALID ACCESS TOKEN-")
 				.withRefreshToken("-TEST INVALID ACCESS TOKEN-")
 				.withDataSource("Tranquility")
@@ -18,56 +24,49 @@ public class CredentialTest {
 				.withMiningResourcesEstimatedValue(123456789.98)
 				.withRaceName("TEST RACE")
 				.build();
-		Assert.assertNotNull(credential);
-		Assert.assertEquals(234567, credential.getAccountId());
-		Assert.assertEquals("TEST CREDENTIAL", credential.getAccountName());
-		Assert.assertEquals("-TEST INVALID ACCESS TOKEN-", credential.getAccessToken());
-		Assert.assertEquals("-TEST INVALID ACCESS TOKEN-", credential.getRefreshToken());
-		Assert.assertEquals("Tranquility".toLowerCase(), credential.getDataSource());
-		Assert.assertEquals("SCOPE", credential.getScope());
-		Assert.assertEquals(98, credential.getAssetsCount());
-		Assert.assertEquals(876567.54, credential.getWalletBalance(), 0.1);
-		Assert.assertEquals(123456789.98, credential.getMiningResourcesEstimatedValue(), 0.1);
-		Assert.assertEquals("TEST RACE", credential.getRaceName());
+	}
 
-		Assert.assertEquals("tranquility/234567", credential.getUniqueId());
-		Assert.assertEquals("TEST CREDENTIAL", credential.getName());
+	@Test
+	public void gettersContract() {
+		Assert.assertNotNull(credential4Test);
+		Assert.assertEquals(234567, credential4Test.getAccountId());
+		Assert.assertEquals("TEST CREDENTIAL", credential4Test.getAccountName());
+		Assert.assertEquals(4321987, credential4Test.getCorporationId());
+		Assert.assertEquals("-TEST INVALID ACCESS TOKEN-", credential4Test.getAccessToken());
+		Assert.assertEquals("-TEST INVALID ACCESS TOKEN-", credential4Test.getRefreshToken());
+		Assert.assertEquals("Tranquility".toLowerCase(), credential4Test.getDataSource());
+		Assert.assertEquals("SCOPE", credential4Test.getScope());
+		Assert.assertEquals(98, credential4Test.getAssetsCount());
+		Assert.assertEquals(876567.54, credential4Test.getWalletBalance(), 0.1);
+		Assert.assertEquals(123456789.98, credential4Test.getMiningResourcesEstimatedValue(), 0.1);
+		Assert.assertEquals("TEST RACE", credential4Test.getRaceName());
+
+		Assert.assertEquals("tranquility/234567", credential4Test.getUniqueId());
+		Assert.assertEquals("TEST CREDENTIAL", credential4Test.getName());
 	}
 
 	@Test
 	public void setterContract() {
-		final Credential credential = new Credential.Builder(123456)
-				.withAccountId(234567)
-				.withAccountName("TEST CREDENTIAL")
-				.withAccessToken("-TEST INVALID ACCESS TOKEN-")
-				.withRefreshToken("-TEST INVALID ACCESS TOKEN-")
-				.withDataSource("Tranquility")
-				.withScope("SCOPE")
-				.withAssetsCount(98)
-				.withWalletBalance(876567.54)
-				.withMiningResourcesEstimatedValue(123456789.98)
-				.withRaceName("TEST RACE")
-				.build();
-		credential.setAccountId(654321);
-		Assert.assertEquals(654321, credential.getAccountId());
-		credential.setDataSource("Testing");
-		Assert.assertEquals("Testing".toLowerCase(), credential.getDataSource());
-		credential.setWalletBalance(123456789.98);
-		Assert.assertEquals(123456789.98, credential.getWalletBalance(),0.1);
-		credential.setMiningResourcesEstimatedValue(123456789.98);
-		Assert.assertEquals(123456789.98, credential.getMiningResourcesEstimatedValue(),0.1);
-		credential.setAssetsCount(12);
-		Assert.assertEquals(12, credential.getAssetsCount(),0.1);
-		credential.setRaceName("Amarr");
-		Assert.assertEquals("Amarr", credential.getRaceName());
+		credential4Test.setAccountId(654321);
+		Assert.assertEquals(654321, credential4Test.getAccountId());
+		credential4Test.setDataSource("Testing");
+		Assert.assertEquals("Testing".toLowerCase(), credential4Test.getDataSource());
+		credential4Test.setWalletBalance(123456789.98);
+		Assert.assertEquals(123456789.98, credential4Test.getWalletBalance(),0.1);
+		credential4Test.setMiningResourcesEstimatedValue(123456789.98);
+		Assert.assertEquals(123456789.98, credential4Test.getMiningResourcesEstimatedValue(),0.1);
+		credential4Test.setAssetsCount(12);
+		Assert.assertEquals(12, credential4Test.getAssetsCount(),0.1);
+		credential4Test.setRaceName("Amarr");
+		Assert.assertEquals("Amarr", credential4Test.getRaceName());
 	}
 
-//	@Test
-//	public void equalsContract() {
-//		EqualsVerifier.forClass(Credential.class)
-//		              .withIgnoredFields("creationTime")
-//		              .usingGetClass().verify();
-//	}
+	@Test
+	public void equalsContract() {
+		EqualsVerifier.forClass(Credential.class)
+		              .withIgnoredFields("creationTime","lastUpdateTime")
+		              .usingGetClass().verify();
+	}
 
 	@Test
 	public void checkToStringContract() {

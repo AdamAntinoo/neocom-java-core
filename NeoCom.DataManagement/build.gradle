@@ -20,8 +20,7 @@ buildscript {
 
 // - P R O J E C T   D E F I N I T I O N
 group = 'org.dimensinfin'
-//name = 'NeoCom.DataManagement'
-version = '0.16.0'
+version = '0.16.1'
 archivesBaseName = 'NeoCom.DataManagement'
 description = 'Data management and processes that are common to all developments. Based on the core NeoCom.Model. Swagger version 2.0 .0 in use.'
 ext {
@@ -43,14 +42,6 @@ sourceSets {
         srcDirs += 'src/main/java-adapter'
         srcDirs += 'src/main/java-domain'
         srcDirs += 'src/main/java-database'
-
-//        srcDirs += 'src/main/java-core'
-//        srcDirs += 'src/main/java-annotation'
-//        srcDirs += 'src/main/java-planetary'
-//        srcDirs += 'src/main/java-mining'
-
-//        srcDirs += 'src/main/java-market' // This should be added the latest
-//        srcDirs += 'src/main/java-industry'
     }
     test.java {
         srcDirs += 'src/test/java'

@@ -28,7 +28,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * problem sharing the information on different sessions. ONn contrary on the multi user applications like Infinity there
  * should be an isolation level and the Credential should only be used to update cache data.
  *
- * To keep Credential unique I will not use sequence generated ids but the identifier plus the server to use for the authentication.
+ * To keep Credential unique I will not use sequence generated ids but the identifier plus the server to use for the
+ * authentication.
  * This way I can store credentials for the different eve online servers ans sill only keep one for each server using the pilot
  * unique identifier to isolate this. Using sequence will not avoid having duplicated entries for the same pilot.
  *
@@ -44,11 +45,13 @@ public class Credential extends UpdatableEntity {
 	}
 
 	@DatabaseField(id = true, index = true)
-	private String uniqueCredential = Credential.createUniqueIdentifier("Tranquility".toLowerCase(), -1);
+	private String uniqueCredential = Credential.createUniqueIdentifier( "Tranquility".toLowerCase(), -1 );
 	@DatabaseField
 	private int accountId = -2;
 	@DatabaseField
 	private String accountName;
+	@DatabaseField
+	private int corporationId = -3; // Store the pilot's corporation identifier to be used on the UI.
 	@DatabaseField
 	private String dataSource = "Tranquility".toLowerCase();
 	@DatabaseField(dataType = DataType.LONG_STRING)
@@ -76,14 +79,14 @@ public class Credential extends UpdatableEntity {
 	private Credential( final int newAccountIdentifier ) {
 		super();
 		this.accountId = newAccountIdentifier;
-		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
+		this.uniqueCredential = Credential.createUniqueIdentifier( this.dataSource, this.accountId );
 	}
 
 	// - G E T T E R S   &   S E T T E R S
 	public boolean isValid() {
-		if (StringUtils.isEmpty(this.dataSource)) return false;
-		if (StringUtils.isEmpty(this.accessToken)) return false;
-		if (StringUtils.isEmpty(this.refreshToken)) return false;
+		if (StringUtils.isEmpty( this.dataSource )) return false;
+		if (StringUtils.isEmpty( this.accessToken )) return false;
+		if (StringUtils.isEmpty( this.refreshToken )) return false;
 		return true;
 	}
 
@@ -98,12 +101,16 @@ public class Credential extends UpdatableEntity {
 	@Deprecated
 	public Credential setAccountId( final int accountId ) {
 		this.accountId = accountId;
-		this.uniqueCredential = Credential.createUniqueIdentifier(this.dataSource, this.accountId);
+		this.uniqueCredential = Credential.createUniqueIdentifier( this.dataSource, this.accountId );
 		return this;
 	}
 
 	public String getAccountName() {
 		return this.accountName;
+	}
+
+	public int getCorporationId() {
+		return this.corporationId;
 	}
 
 	public String getName() {
@@ -121,6 +128,7 @@ public class Credential extends UpdatableEntity {
 	public String getDataSource() {
 		return this.dataSource.toLowerCase();
 	}
+
 	@Deprecated
 	public void setDataSource( final String dataSource ) {
 		if (null != dataSource) this.dataSource = dataSource.toLowerCase();
@@ -177,51 +185,53 @@ public class Credential extends UpdatableEntity {
 		if (o == null || getClass() != o.getClass()) return false;
 		final Credential that = (Credential) o;
 		return new EqualsBuilder()
-				.appendSuper(super.equals(o))
-				.append(this.accountId, that.accountId)
-				.append(this.assetsCount, that.assetsCount)
-				.append(this.accessToken, that.accessToken)
-				.append(this.tokenType, that.tokenType)
-				.append(this.dataSource, that.dataSource)
-				.append(this.scope, that.scope)
-				.append(this.uniqueCredential, that.uniqueCredential)
-				.append(this.walletBalance, that.walletBalance)
-				.append(this.refreshToken, that.refreshToken)
-				.append(this.miningResourcesEstimatedValue, that.miningResourcesEstimatedValue)
-				.append(this.accountName, that.accountName)
-				.append(this.raceName, that.raceName)
+				.appendSuper( super.equals( o ) )
+				.append( this.accountId, that.accountId )
+				.append( this.corporationId, that.corporationId )
+				.append( this.assetsCount, that.assetsCount )
+				.append( this.accessToken, that.accessToken )
+				.append( this.tokenType, that.tokenType )
+				.append( this.dataSource, that.dataSource )
+				.append( this.scope, that.scope )
+				.append( this.uniqueCredential, that.uniqueCredential )
+				.append( this.walletBalance, that.walletBalance )
+				.append( this.refreshToken, that.refreshToken )
+				.append( this.miningResourcesEstimatedValue, that.miningResourcesEstimatedValue )
+				.append( this.accountName, that.accountName )
+				.append( this.raceName, that.raceName )
 				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder(17, 37)
-				.appendSuper(super.hashCode())
-				.append(this.accountId)
-				.append(this.assetsCount)
-				.append(this.accessToken)
-				.append(this.tokenType)
-				.append(this.dataSource)
-				.append(this.scope)
-				.append(this.uniqueCredential)
-				.append(this.walletBalance)
-				.append(this.refreshToken)
-				.append(this.miningResourcesEstimatedValue)
-				.append(this.accountName)
-				.append(this.raceName)
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( this.accountId )
+				.append( this.corporationId )
+				.append( this.assetsCount )
+				.append( this.accessToken )
+				.append( this.tokenType )
+				.append( this.dataSource )
+				.append( this.scope )
+				.append( this.uniqueCredential )
+				.append( this.walletBalance )
+				.append( this.refreshToken )
+				.append( this.miningResourcesEstimatedValue )
+				.append( this.accountName )
+				.append( this.raceName )
 				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-				.append("jsonClass", this.getJsonClass())
-				.append("uniqueCredential", this.uniqueCredential)
-				.append("walletBalance", this.walletBalance)
-				.append("assetsCount", this.assetsCount)
-				.append("miningResourcesEstimatedValue", this.miningResourcesEstimatedValue)
-				.append("accountName", this.accountName)
-				.append("raceName", this.raceName)
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "jsonClass", this.getJsonClass() )
+				.append( "uniqueCredential", this.uniqueCredential )
+				.append( "walletBalance", this.walletBalance )
+				.append( "assetsCount", this.assetsCount )
+				.append( "miningResourcesEstimatedValue", this.miningResourcesEstimatedValue )
+				.append( "accountName", this.accountName )
+				.append( "raceName", this.raceName )
 				.toString();
 	}
 
@@ -230,16 +240,21 @@ public class Credential extends UpdatableEntity {
 		private Credential onConstruction;
 
 		public Builder( final int account ) {
-			this.onConstruction = new Credential(account);
+			this.onConstruction = new Credential( account );
 		}
 
 		public Builder withAccountId( final Integer accountId ) {
-			if (null != accountId) this.onConstruction.setAccountId(accountId);
+			if (null != accountId) this.onConstruction.setAccountId( accountId );
 			return this;
 		}
 
 		public Builder withAccountName( final String accountName ) {
 			if (null != accountName) this.onConstruction.accountName = accountName;
+			return this;
+		}
+
+		public Builder withCorporationId( final int corporationId ) {
+			this.onConstruction.corporationId = corporationId;
 			return this;
 		}
 
@@ -279,7 +294,8 @@ public class Credential extends UpdatableEntity {
 		}
 
 		public Builder withMiningResourcesEstimatedValue( final Double miningResourcesEstimatedValue ) {
-			if (null != miningResourcesEstimatedValue) this.onConstruction.miningResourcesEstimatedValue = miningResourcesEstimatedValue;
+			if (null != miningResourcesEstimatedValue)
+				this.onConstruction.miningResourcesEstimatedValue = miningResourcesEstimatedValue;
 			return this;
 		}
 
@@ -289,7 +305,7 @@ public class Credential extends UpdatableEntity {
 		}
 
 		public Credential build() {
-			Objects.requireNonNull(this.onConstruction.accountName);
+			Objects.requireNonNull( this.onConstruction.accountName );
 			return this.onConstruction;
 		}
 	}

@@ -31,4 +31,8 @@ public class VerifyCharacterResponse {
 	public String getCharacterName() {
 		return this.characterName;
 	}
+
+	public String getScopes() {
+		return this.scopes;
+	}
 }
