@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 
 import com.annimon.stream.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -21,6 +22,7 @@ import org.joda.time.DateTime;
 
 import java.util.concurrent.TimeUnit;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Pilot extends PilotV2 {
 	private static final long PILOT_CACHE_TIME = TimeUnit.HOURS.toMillis( 12 );
 
@@ -30,14 +32,6 @@ public class Pilot extends PilotV2 {
 	private transient GetUniverseBloodlines200Ok bloodlineData;
 
 	private Credential credential;
-//	@Deprecated
-//	private transient GetCorporationsCorporationIdOk corporationData;
-//	@Deprecated
-//	private String corporationIconUrl;
-//	@Deprecated
-//	private transient GetAlliancesAllianceIdOk allianceData;
-//	@Deprecated
-//	private String allianceIconUrl;
 
 	// - C O N S T R U C T O R S
 	private Pilot() {
