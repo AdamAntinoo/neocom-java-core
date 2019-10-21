@@ -20,6 +20,7 @@ public class PilotTest {
 	@Before
 	public void setUp() throws Exception {
 		publicData = new GetCharactersCharacterIdOk();
+		publicData.setCorporationId( 98765 );
 		publicData.setBirthday( birthDate );
 		publicData.setRaceId( 100 );
 		publicData.setAncestryId( 200 );
@@ -80,5 +81,16 @@ public class PilotTest {
 		Assert.assertNotNull( pilot4Test.getRace() );
 		Assert.assertNotNull(  pilot4Test.getAncestry() );
 		Assert.assertNotNull(  pilot4Test.getBloodline() );
+	}
+
+	@Test
+	public void getCorporationId() {
+		final int expected = 98765;
+		Assert.assertEquals( expected, pilot4Test.getCorporationId() );
+	}
+
+	@Test
+	public void getJsonClass() {
+		Assert.assertEquals( "Pilot", pilot4Test.getJsonClass() );
 	}
 }
