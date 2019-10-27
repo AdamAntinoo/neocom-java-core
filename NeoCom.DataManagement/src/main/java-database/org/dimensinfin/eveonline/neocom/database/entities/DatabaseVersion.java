@@ -30,14 +30,14 @@ public class DatabaseVersion /*extends ANeoComEntity*/ {
 		this.versionNumber = newVersion;
 	}
 
-	public DatabaseVersion( final String newVersion ) {
-		this();
-		try {
-			this.versionNumber = Integer.valueOf( newVersion ).intValue();
-		} catch (final NumberFormatException nfe) {
-			this.versionNumber = 100;
-		}
-	}
+//	public DatabaseVersion( final String newVersion ) {
+//		this();
+//		try {
+//			this.versionNumber = Integer.valueOf( newVersion ).intValue();
+//		} catch (final NumberFormatException nfe) {
+//			this.versionNumber = 100;
+//		}
+//	}
 
 	public int getVersionNumber() {
 		return this.versionNumber;

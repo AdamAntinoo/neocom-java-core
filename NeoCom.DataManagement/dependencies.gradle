@@ -18,7 +18,7 @@ dependencies {
     implementation 'org.dimensinfin:CoreBase.core:3.2.0'
     implementation 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
     implementation files('libs/jeveassets.3.1.2.jar')
-    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'org.apache.commons:commons-lang3:3.9'
     implementation 'com.annimon:stream:1.1.9' // Android compatible streams
 }
 
@@ -31,7 +31,7 @@ dependencies {
     implementation "com.nytimes.android:cache3:$cacheVersion"
     implementation "com.nytimes.android:middleware3:$cacheVersion"
     implementation "com.nytimes.android:filesystem3:$cacheVersion"
-    compile 'io.reactivex.rxjava2:rxjava:2.2.9'
+    compile 'io.reactivex.rxjava2:rxjava:2.2.12'
     implementation 'com.jakewharton:disklrucache:2.0.2'
 //    compile 'com.squareup.okio:okio:2.2.2' // Extended file io
     // P A R S E R
