@@ -1,26 +1,22 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
 
+import java.util.concurrent.TimeUnit;
+
 import com.annimon.stream.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.joda.time.DateTime;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
-
-import org.joda.time.DateTime;
-
-import java.util.concurrent.TimeUnit;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Pilot extends PilotV2 {
@@ -76,7 +72,7 @@ public class Pilot extends PilotV2 {
 
 	// - V I R T U A L S
 	public String getUrl4Icon() {
-		return "http://image.eveonline.com/character/" + this.pilotId + "_256.jpg";
+		return "https://image.eveonline.com/character/" + this.pilotId + "_256.jpg";
 	}
 // [01]
 
@@ -95,6 +91,11 @@ public class Pilot extends PilotV2 {
 		if (null != this.characterPublicData)
 			return this.characterPublicData.getRaceId();
 		else return -1;
+	}
+	public String getRaceName() {
+		if (null != this.raceData)
+			return this.raceData.getName();
+		else return "-";
 	}
 
 	public Integer getAncestryId() {
