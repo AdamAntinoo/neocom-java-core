@@ -20,9 +20,9 @@ buildscript {
 
 // - P R O J E C T   D E F I N I T I O N
 group = 'org.dimensinfin'
-version = '0.16.1'
+version = '0.17.0'
 archivesBaseName = 'NeoCom.DataManagement'
-description = 'Data management and processes that are common to all developments. Based on the core NeoCom.Model. Swagger version 2.0 .0 in use.'
+description = 'Data management and processes that are common to all developments.'
 ext {
     SDEDatabaseVersion = '20190530-APP'
 }
@@ -42,6 +42,7 @@ sourceSets {
         srcDirs += 'src/main/java-adapter'
         srcDirs += 'src/main/java-domain'
         srcDirs += 'src/main/java-database'
+        srcDirs += 'src/main/java-android'
     }
     test.java {
         srcDirs += 'src/test/java'

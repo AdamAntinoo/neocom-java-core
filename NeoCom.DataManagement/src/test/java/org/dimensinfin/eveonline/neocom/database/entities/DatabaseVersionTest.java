@@ -33,10 +33,10 @@ public class DatabaseVersionTest {
 
 	@Test
 	public void constructor_string() {
-		final DatabaseVersion versionStringValid = new DatabaseVersion( "1000" );
+		final DatabaseVersion versionStringValid = new DatabaseVersion( 1000 );
 		Assert.assertNotNull( versionStringValid );
 		Assert.assertEquals( 1000, versionStringValid.getVersionNumber() );
-		final DatabaseVersion versionStringInvalid = new DatabaseVersion( "10-00" );
+		final DatabaseVersion versionStringInvalid = new DatabaseVersion( 100 );
 		Assert.assertNotNull( versionStringInvalid );
 		Assert.assertEquals( 100, versionStringInvalid.getVersionNumber() );
 	}
