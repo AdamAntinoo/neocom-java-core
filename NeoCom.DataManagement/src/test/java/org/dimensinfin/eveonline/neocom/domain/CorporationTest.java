@@ -29,7 +29,6 @@ public class CorporationTest {
 		final GetAlliancesAllianceIdOk alliance = Mockito.mock( GetAlliancesAllianceIdOk.class );
 		ceo = new Pilot.Builder()
 				.withPilotIdentifier( 123456 )
-				.withCredential( credential )
 				.withCharacterPublicData( ceoPublicData )
 				.withRaceData( null )
 				.withAncestryData( null )

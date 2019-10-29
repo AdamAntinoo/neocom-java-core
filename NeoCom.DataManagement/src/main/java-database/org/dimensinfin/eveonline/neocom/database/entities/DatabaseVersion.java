@@ -15,45 +15,26 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 @Entity(name = "Version")
 @DatabaseTable(tableName = "Version")
-public class DatabaseVersion /*extends ANeoComEntity*/ {
-	@DatabaseField(id = true)
-	public String identifier = "CURRENT-VERSION";
+public class DatabaseVersion {
 	@DatabaseField
 	public int versionNumber;
 
 	// - C O N S T R U C T O R S
-	public DatabaseVersion() {
-	}
+	private DatabaseVersion() { }
 
 	public DatabaseVersion( final int newVersion ) {
 		this();
 		this.versionNumber = newVersion;
 	}
 
-//	public DatabaseVersion( final String newVersion ) {
-//		this();
-//		try {
-//			this.versionNumber = Integer.valueOf( newVersion ).intValue();
-//		} catch (final NumberFormatException nfe) {
-//			this.versionNumber = 100;
-//		}
-//	}
-
 	public int getVersionNumber() {
 		return this.versionNumber;
 	}
 
-	public DatabaseVersion setVersionNumber( final int versionNumber ) {
-		this.versionNumber = versionNumber;
-		return this;
-	}
-
 	// - C O R E
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "identifier", identifier )
 				.append( "versionNumber", versionNumber )
 				.toString();
 	}
@@ -64,16 +45,14 @@ public class DatabaseVersion /*extends ANeoComEntity*/ {
 		if (!(o instanceof DatabaseVersion)) return false;
 		final DatabaseVersion that = (DatabaseVersion) o;
 		return new EqualsBuilder()
-				.append( versionNumber, that.versionNumber )
-				.append( identifier, that.identifier )
+				.append( this.versionNumber, that.versionNumber )
 				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
-				.append( identifier )
-				.append( versionNumber )
+				.append( this.versionNumber )
 				.toHashCode();
 	}
 }
