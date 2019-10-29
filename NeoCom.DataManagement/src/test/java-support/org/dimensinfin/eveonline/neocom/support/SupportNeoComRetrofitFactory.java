@@ -7,6 +7,7 @@ import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 
+
 import retrofit2.Retrofit;
 
 public class SupportNeoComRetrofitFactory extends NeoComRetrofitFactory {

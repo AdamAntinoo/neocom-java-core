@@ -34,7 +34,7 @@ public class ESIDataAdapterSupportTest {
 		 .withSystemName( "PVH8-0" )
 		 .build();
 		this.configurationProvider = new SupportConfigurationProvider.Builder()
-				.withPropertiesDirectory( "properties.unitest" )
+				.withPropertiesDirectory( "properties.unittest" )
 				.build();
 		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
@@ -42,11 +42,11 @@ public class ESIDataAdapterSupportTest {
 		this.locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( defaultLocation );
 		this.retrofitFactoryBuilder = new SupportNeoComRetrofitFactory.Builder();
-		this.esiDataAdapter = new ESIDataAdapter.Builder()
+		this.esiDataAdapter = new ESIDataAdapter.Builder() // Use an special configuration to call the mock server
 				.withConfigurationProvider( this.configurationProvider )
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( this.locationCatalogService )
-				.testingRetrofitFactory( this.retrofitFactoryBuilder )
+//				.testingRetrofitFactory( this.retrofitFactoryBuilder ) // This is not longer required
 				.build();
 	}
 }

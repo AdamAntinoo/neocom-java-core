@@ -1,15 +1,15 @@
 package org.dimensinfin.eveonline.neocom.database.repositories;
 
-import com.j256.ormlite.dao.Dao;
-
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import com.j256.ormlite.dao.Dao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 
 public class CredentialRepository {
 	protected static Logger logger = LoggerFactory.getLogger(CredentialRepository.class);
@@ -57,6 +57,7 @@ public class CredentialRepository {
 		}
 
 		public Builder withCredentialDao( final Dao<Credential, String> credentialDao ) {
+			Objects.requireNonNull( credentialDao );
 			this.onConstruction.credentialDao = credentialDao;
 			return this;
 		}
