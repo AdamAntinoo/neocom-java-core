@@ -12,6 +12,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries20
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 public class PilotTest {
 	private Pilot pilot4Test;
 	private GetCharactersCharacterIdOk publicData;
@@ -30,33 +32,32 @@ public class PilotTest {
 		publicData.setName( "-TEST-PILOT-NAME-" );
 		publicData.setSecurityStatus( 0.5F );
 		final Credential credential = Mockito.mock( Credential.class );
+		final GetUniverseRaces200Ok raceData = Mockito.mock( GetUniverseRaces200Ok.class );
+		Mockito.when( raceData.getName() ).thenReturn( "-TEST-RACE-NAME" );
+		final GetUniverseAncestries200Ok ancestryData = Mockito.mock( GetUniverseAncestries200Ok.class );
+		final GetUniverseBloodlines200Ok bloodlineData = Mockito.mock( GetUniverseBloodlines200Ok.class );
 		pilot4Test = new Pilot.Builder()
 				.withPilotIdentifier( 123456 )
-				.withCredential( credential )
 				.withCharacterPublicData( publicData )
-				.withRaceData( null )
-				.withAncestryData( null )
-				.withBloodlineData( null )
-//				.withAccountName("TEST CREDENTIAL")
-//				.withCorporationId( 4321987 )
-//				.withAccessToken("-TEST INVALID ACCESS TOKEN-")
-//				.withRefreshToken("-TEST INVALID ACCESS TOKEN-")
-//				.withDataSource("Tranquility")
-//				.withScope("SCOPE")
-//				.withAssetsCount(98)
-//				.withWalletBalance(876567.54)
-//				.withMiningResourcesEstimatedValue(123456789.98)
-//				.withRaceName("TEST RACE")
+				.withRaceData( raceData )
+				.withAncestryData( ancestryData )
+				.withBloodlineData( bloodlineData )
 				.build();
+	}
+
+//	@Test
+	public void equalsContract() {
+		EqualsVerifier.forClass( Pilot.class ).verify();
 	}
 
 	@Test
 	public void gettersContract() {
 		Assert.assertNotNull( pilot4Test );
-		Assert.assertNotNull( pilot4Test.getCredential() );
-		Assert.assertEquals( null, pilot4Test.getRace() );
-		Assert.assertEquals( null, pilot4Test.getAncestry() );
-		Assert.assertEquals( null, pilot4Test.getBloodline() );
+		Assert.assertEquals( 123456, pilot4Test.getPilotId());
+		Assert.assertNotNull( pilot4Test.getRace() );
+		Assert.assertNotNull( pilot4Test.getAncestry() );
+		Assert.assertNotNull( pilot4Test.getBloodline() );
+		Assert.assertEquals( "-TEST-RACE-NAME", pilot4Test.getRaceName() );
 		Assert.assertEquals( birthDate, pilot4Test.getBirthday() );
 		Assert.assertEquals( 100, pilot4Test.getRaceId().intValue() );
 		Assert.assertEquals( 200, pilot4Test.getAncestryId().intValue() );
@@ -65,22 +66,31 @@ public class PilotTest {
 		Assert.assertEquals( GetCharactersCharacterIdOk.GenderEnum.MALE.name(), pilot4Test.getGender() );
 		Assert.assertEquals( "-TEST-PILOT-NAME-", pilot4Test.getName() );
 		Assert.assertEquals( 0.5F, pilot4Test.getSecurityStatus(), 0.1 );
-		Assert.assertEquals( "http://image.eveonline.com/character/123456_256.jpg", pilot4Test.getUrl4Icon() );
+		Assert.assertEquals( "https://image.eveonline.com/Character/123456_256.jpg", pilot4Test.getUrl4Icon() );
+	}
+
+	@Test
+	public void gettersContractFailure() {
+		final Pilot emptyPilot = new Pilot.Builder()
+				.withPilotIdentifier( 123456 )
+				.withCharacterPublicData( publicData )
+				.build();
+		Assert.assertEquals( "-", emptyPilot.getRaceName() );
 	}
 
 	@Test
 	public void settersContract() {
-		final GetCharactersCharacterIdOk publicData = Mockito.mock(GetCharactersCharacterIdOk.class );
-		final GetUniverseRaces200Ok race = Mockito.mock(GetUniverseRaces200Ok.class );
-		final GetUniverseAncestries200Ok ancestry = Mockito.mock(GetUniverseAncestries200Ok.class );
-		final GetUniverseBloodlines200Ok bloodline = Mockito.mock(GetUniverseBloodlines200Ok.class );
+		final GetCharactersCharacterIdOk publicData = Mockito.mock( GetCharactersCharacterIdOk.class );
+		final GetUniverseRaces200Ok race = Mockito.mock( GetUniverseRaces200Ok.class );
+		final GetUniverseAncestries200Ok ancestry = Mockito.mock( GetUniverseAncestries200Ok.class );
+		final GetUniverseBloodlines200Ok bloodline = Mockito.mock( GetUniverseBloodlines200Ok.class );
 		pilot4Test.setCharacterPublicData( publicData );
 		pilot4Test.setRaceData( race );
 		pilot4Test.setAncestryData( ancestry );
 		pilot4Test.setBloodlineData( bloodline );
 		Assert.assertNotNull( pilot4Test.getRace() );
-		Assert.assertNotNull(  pilot4Test.getAncestry() );
-		Assert.assertNotNull(  pilot4Test.getBloodline() );
+		Assert.assertNotNull( pilot4Test.getAncestry() );
+		Assert.assertNotNull( pilot4Test.getBloodline() );
 	}
 
 	@Test

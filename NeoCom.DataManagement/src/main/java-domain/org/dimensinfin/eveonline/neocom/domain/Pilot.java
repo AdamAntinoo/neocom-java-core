@@ -11,7 +11,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.joda.time.DateTime;
 
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
@@ -19,23 +18,22 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Pilot extends PilotV2 {
+public class Pilot extends NeoComNode {
 	private static final long PILOT_CACHE_TIME = TimeUnit.HOURS.toMillis( 12 );
 
+	private Integer pilotId;
 	private transient GetCharactersCharacterIdOk characterPublicData;
 	private transient GetUniverseRaces200Ok raceData;
 	private transient GetUniverseAncestries200Ok ancestryData;
 	private transient GetUniverseBloodlines200Ok bloodlineData;
-
-	private Credential credential;
 
 	// - C O N S T R U C T O R S
 	private Pilot() {
 	}
 
 	// - G E T T E R S   &   S E T T E R S
-	public Credential getCredential() {
-		return this.credential;
+	public int getPilotId() {
+		return this.pilotId;
 	}
 
 	public GetUniverseRaces200Ok getRace() {
@@ -72,15 +70,12 @@ public class Pilot extends PilotV2 {
 
 	// - V I R T U A L S
 	public String getUrl4Icon() {
-		return "https://image.eveonline.com/character/" + this.pilotId + "_256.jpg";
+		return "https://image.eveonline.com/Character/" + this.pilotId + "_256.jpg";
 	}
-// [01]
 
 	// - D E L E G A T E D
 	public int getCorporationId() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getCorporationId();
-		else return -1;
+		return this.characterPublicData.getCorporationId();
 	}
 
 	public DateTime getBirthday() {
@@ -88,10 +83,9 @@ public class Pilot extends PilotV2 {
 	}
 
 	public Integer getRaceId() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getRaceId();
-		else return -1;
+		return this.characterPublicData.getRaceId();
 	}
+
 	public String getRaceName() {
 		if (null != this.raceData)
 			return this.raceData.getName();
@@ -99,47 +93,27 @@ public class Pilot extends PilotV2 {
 	}
 
 	public Integer getAncestryId() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getAncestryId();
-		else return -1;
+		return this.characterPublicData.getAncestryId();
 	}
 
 	public Integer getBloodlineId() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getBloodlineId();
-		else return -1;
+		return this.characterPublicData.getBloodlineId();
 	}
 
 	public String getDescription() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getDescription();
-		else return "-";
+		return this.characterPublicData.getDescription();
 	}
 
 	public String getGender() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getGender().name();
-		else return "-";
+		return this.characterPublicData.getGender().name();
 	}
 
 	public String getName() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getName();
-		else return "-";
+		return this.characterPublicData.getName();
 	}
 
 	public Float getSecurityStatus() {
-		if (null != this.characterPublicData)
-			return this.characterPublicData.getSecurityStatus();
-		else return -1.0F;
-	}
-
-	// - I U P D A T A B L E
-	@Override
-	public boolean needsRefresh() {
-		if (this.getLastUpdateTime().plus( PILOT_CACHE_TIME ).isBefore( DateTime.now() ))
-			return true;
-		return false;
+		return this.characterPublicData.getSecurityStatus();
 	}
 
 	// - C O R E
@@ -150,16 +124,11 @@ public class Pilot extends PilotV2 {
 		final Pilot pilot = (Pilot) o;
 		return new EqualsBuilder()
 				.appendSuper( super.equals( o ) )
-				.append( pilotId, pilot.pilotId )
-//				.append( credential, pilot.credential )
-				.append( characterPublicData, pilot.characterPublicData )
-				.append( raceData, pilot.raceData )
-				.append( bloodlineData, pilot.bloodlineData )
-				.append( ancestryData, pilot.ancestryData )
-//				.append( corporationData, pilot.corporationData )
-//				.append( corporationIconUrl, pilot.corporationIconUrl )
-//				.append( allianceData, pilot.allianceData )
-//				.append( allianceIconUrl, pilot.allianceIconUrl )
+				.append( this.pilotId, pilot.pilotId )
+				.append( this.characterPublicData, pilot.characterPublicData )
+				.append( this.raceData, pilot.raceData )
+				.append( this.bloodlineData, pilot.bloodlineData )
+				.append( this.ancestryData, pilot.ancestryData )
 				.isEquals();
 	}
 
@@ -167,63 +136,33 @@ public class Pilot extends PilotV2 {
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
 				.appendSuper( super.hashCode() )
-				.append( pilotId )
-//				.append( credential )
-				.append( characterPublicData )
-				.append( raceData )
-				.append( bloodlineData )
-				.append( ancestryData )
-//				.append( corporationData )
-//				.append( corporationIconUrl )
-//				.append( allianceData )
-//				.append( allianceIconUrl )
+				.append( this.pilotId )
+				.append( this.characterPublicData )
+				.append( this.raceData )
+				.append( this.bloodlineData )
+				.append( this.ancestryData )
 				.toHashCode();
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
-				.append( "pilotIdentifier", pilotId )
-//				.append( "credential", credential )
+				.append( "pilotId", pilotId )
 				.append( "characterPublicData", characterPublicData )
-//				.append( "raceData", raceData )
-//				.append( "corporationData", corporationData )
-//				.append( "allianceData", allianceData )
 				.toString();
 	}
 
 	// - B U I L D E R
-	public static class Builder extends NeoComNode.Builder<Pilot, Pilot.Builder> {
+	public static class Builder {
 		private Pilot onConstruction;
 
-		@Override
-		protected Pilot getActual() {
-			if (null == this.onConstruction) this.onConstruction = new Pilot();
-			return this.onConstruction;
-		}
-
-		@Override
-		protected Builder getActualBuilder() {
-			return this;
-		}
-
-		public Pilot build() {
-			final Pilot instance = super.build();
-			Objects.requireNonNull( this.onConstruction.pilotId );
-			Objects.requireNonNull( this.onConstruction.characterPublicData );
-//			Objects.requireNonNull( this.onConstruction.credential );
-			return instance;
+		public Builder() {
+			this.onConstruction = new Pilot();
 		}
 
 		public Pilot.Builder withPilotIdentifier( final Integer pilotIdentifier ) {
 			Objects.requireNonNull( pilotIdentifier );
 			this.onConstruction.pilotId = pilotIdentifier;
-			return this;
-		}
-
-		public Pilot.Builder withCredential( final Credential credential ) {
-			Objects.requireNonNull( credential );
-			this.onConstruction.credential = credential;
 			return this;
 		}
 
@@ -250,65 +189,11 @@ public class Pilot extends PilotV2 {
 				this.onConstruction.bloodlineData = bloodlineData;
 			return this;
 		}
+
+		public Pilot build() {
+			Objects.requireNonNull( this.onConstruction.pilotId );
+			Objects.requireNonNull( this.onConstruction.characterPublicData );
+			return this.onConstruction;
+		}
 	}
 }
-// [01]
-//	public GetCorporationsCorporationIdOk getCorporationData() {
-//		return this.corporationData;
-//	}
-//
-//	public Pilot setCorporationData( final GetCorporationsCorporationIdOk corporationData ) {
-//		this.corporationData = corporationData;
-//		return this;
-//	}
-
-//	public String getCorporationIconUrl() {
-//		return this.corporationIconUrl;
-//	}
-//
-//	public Pilot setCorporationIconUrl( final String corporationIconUrl ) {
-//		this.corporationIconUrl = corporationIconUrl;
-//		return this;
-//	}
-//
-//	public GetAlliancesAllianceIdOk getAllianceData() {
-//		return this.allianceData;
-//	}
-//
-//	public Pilot setAllianceData( final GetAlliancesAllianceIdOk allianceData ) {
-//		this.allianceData = allianceData;
-//		return this;
-//	}
-//
-//	public String getAllianceIconUrl() {
-//		return this.allianceIconUrl;
-//	}
-//
-//	public Pilot setAllianceIconUrl( final String allianceIconUrl ) {
-//		this.allianceIconUrl = allianceIconUrl;
-//		return this;
-//	}
-
-//	public Credential getCredential() {
-//		return credential;
-//	}
-
-//	public Pilot setRaceData( final GetUniverseRaces200Ok raceData ) {
-//		this.raceData = raceData;
-//		return this;
-//	}
-//	public Integer getAllianceId() {
-//		return this.characterPublicData.getAllianceId();
-//	}
-//
-//
-//	public Integer getCorporationId() {
-//		return this.characterPublicData.getCorporationId();
-//	}
-//
-//
-//	public GetCharactersCharacterIdOk.GenderEnum getGender() {
-//		return this.characterPublicData.getGender();
-//	}
-//
-//

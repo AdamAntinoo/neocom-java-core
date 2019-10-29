@@ -224,7 +224,7 @@ public class ESIDataAdapter {
 			if (null != server) datasource = server;
 			final Response<GetStatusOk> statusApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
 					.create( StatusApi.class )
-					.getStatus( datasource, null ).execute();
+					.getStatus( datasource.toLowerCase(), null ).execute();
 			if (statusApiResponse.isSuccessful())
 				return statusApiResponse.body();
 //			} else {
