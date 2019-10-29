@@ -16,8 +16,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity(name = "Version")
 @DatabaseTable(tableName = "Version")
 public class DatabaseVersion {
-	@DatabaseField
-	public int versionNumber;
+	@DatabaseField(id = true)
+	public Integer versionNumber;
 
 	// - C O N S T R U C T O R S
 	private DatabaseVersion() { }

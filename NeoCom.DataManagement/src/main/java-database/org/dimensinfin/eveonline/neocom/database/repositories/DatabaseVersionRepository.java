@@ -12,7 +12,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.DatabaseVersion;
 
 public class DatabaseVersionRepository {
 	protected static Logger logger = LoggerFactory.getLogger( DatabaseVersionRepository.class );
-	protected Dao<DatabaseVersion, String> databaseVersionDao;
+	protected Dao<DatabaseVersion, Integer> databaseVersionDao;
 
 	public DatabaseVersion accessVersion() {
 		try {
@@ -40,7 +40,7 @@ public class DatabaseVersionRepository {
 			this.onConstruction = new DatabaseVersionRepository();
 		}
 
-		public DatabaseVersionRepository.Builder withDatabaseVersionDao( final Dao<DatabaseVersion, String> databaseVersionDao ) {
+		public DatabaseVersionRepository.Builder withDatabaseVersionDao( final Dao<DatabaseVersion, Integer> databaseVersionDao ) {
 			Objects.requireNonNull( databaseVersionDao );
 			this.onConstruction.databaseVersionDao = databaseVersionDao;
 			return this;
