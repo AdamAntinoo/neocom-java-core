@@ -1,18 +1,63 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
-
 import java.util.Objects;
+import java.util.UUID;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
-public class NeoAsset {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
+import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+
+@Entity(name = "Assets")
+@DatabaseTable(tableName = "Assets")
+public class NeoAsset extends UpdatableEntity {
+	@Id
+	@GeneratedValue(generator = "UUID_generator")
+	@GenericGenerator(
+			name = "UUID_generator",
+			strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	@Column(name = "id", updatable = false, nullable = false)
+	private UUID uid;
+	@Type(type = "jsonb")
+	@Column(columnDefinition = "jsonb", name = "assetDelegate", updatable = true, nullable = false)
 	private GetCharactersCharacterIdAssets200Ok assetDelegate;
+	// - A P I   C C P   F I E L D S
+	@DatabaseField(index = true)
+	@Column(name = "assetId", updatable = true, nullable = false)
+	private Long assetId;
+	//	@DatabaseField
+//	@Column(name = "typeId", updatable = true, nullable = false)
+//	private Integer typeId;
+	@DatabaseField(index = true)
+	@Type(type = "jsonb")
+	@Column(name = "locationIdentifier", updatable = true, nullable = false)
+	private LocationIdentifier locationId;
+
+	@JsonIgnore
 	private EveItem itemDelegate;
 
-	// - D E L E G A T E D   M E T H O D S
-	public Integer getQuantity() {return assetDelegate.getQuantity();}
+	private NeoAsset() {
+	}
 
-	public int getTypeId() {return this.itemDelegate.getTypeId();}
+	// - G E T T E R S   &   S E T T E R S
+	public UUID getUid() {
+		return uid;
+	}
+
+	// - D E L E G A T E D   M E T H O D S
+	public int getTypeId() {return this.assetDelegate.getTypeId();}
+
+	public Integer getQuantity() {return assetDelegate.getQuantity();}
 
 	public String getName() {return this.itemDelegate.getName();}
 
@@ -43,9 +88,10 @@ public class NeoAsset {
 		}
 
 		public NeoAsset fromEsiAsset( final GetCharactersCharacterIdAssets200Ok esiAsset ) {
+			Objects.requireNonNull( esiAsset );
 			this.onConstruction.assetDelegate = esiAsset;
-			this.onConstruction.itemDelegate = new EveItem(esiAsset.getTypeId());
-			Objects.requireNonNull(this.onConstruction.itemDelegate);
+			this.onConstruction.itemDelegate = new EveItem( esiAsset.getTypeId() );
+			Objects.requireNonNull( this.onConstruction.itemDelegate );
 			return this.onConstruction;
 		}
 	}

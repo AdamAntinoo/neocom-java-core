@@ -272,7 +272,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 
 	// - I I T E M F A C E T
 	public String getURLForItem() {
-		return "http://image.eveonline.com/Type/" + this.getTypeId() + "_64.png";
+		return "https://image.eveonline.com/Type/" + this.getTypeId() + "_64.png";
 	}
 
 	@Override

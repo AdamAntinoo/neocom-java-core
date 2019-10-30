@@ -23,8 +23,6 @@ dependencies {
 }
 
 // - C O R E
-//dependencies {
-//}
 dependencies {
     // C A C H E
     implementation "com.nytimes.android:store3:$cacheVersion" // Cache and store
@@ -33,7 +31,6 @@ dependencies {
     implementation "com.nytimes.android:filesystem3:$cacheVersion"
     compile 'io.reactivex.rxjava2:rxjava:2.2.12'
     implementation 'com.jakewharton:disklrucache:2.0.2'
-//    compile 'com.squareup.okio:okio:2.2.2' // Extended file io
     // P A R S E R
     implementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion" // JSON converter
     implementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
@@ -48,12 +45,12 @@ dependencies {
     implementation "com.j256.ormlite:ormlite-jdbc:$ormliteVersion"
     compileOnly 'org.xerial:sqlite-jdbc:3.25.2'
     implementation 'javax.persistence:javax.persistence-api:2.2'
-//    implementation 'commons-io:commons-io:2.6'
+    compileOnly  'javax.validation:validation-api:2.0.1.Final'
+    compileOnly 'com.vladmihalcea:hibernate-types-52:2.3.0'
+    compileOnly 'org.hibernate:hibernate-annotations:3.5.6-Final'
 }
 // - N E O C O M
 dependencies {
-
-//    implementation 'org.htmlparser:htmlparser:2.1'
 }
 // - D E P R E C A T E D
 //dependencies {
