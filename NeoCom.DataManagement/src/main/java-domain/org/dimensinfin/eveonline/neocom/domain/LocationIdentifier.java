@@ -7,7 +7,7 @@ import java.util.Objects;
  * the definition of the structure hangars already defined on the flags.
  */
 public class LocationIdentifier {
-	private Integer spaceIdentifier;
+	private Long spaceIdentifier;
 
 	private LocationIdentifier() {
 	}
@@ -20,7 +20,7 @@ public class LocationIdentifier {
 			this.onConstruction = new LocationIdentifier();
 		}
 
-		public LocationIdentifier.Builder withSpaceIdentifier( final Integer spaceIdentifier ) {
+		public LocationIdentifier.Builder withSpaceIdentifier( final Long spaceIdentifier ) {
 			Objects.requireNonNull( spaceIdentifier );
 			this.onConstruction.spaceIdentifier = spaceIdentifier;
 			return this;

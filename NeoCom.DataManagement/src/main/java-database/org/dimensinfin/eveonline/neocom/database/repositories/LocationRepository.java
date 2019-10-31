@@ -70,10 +70,10 @@ public class LocationRepository {
 		final Map<String, Integer> counters = new HashMap<>();
 		try {
 			final QueryBuilder<EsiLocation, Long> queryBuilder = this.locationDao.queryBuilder();
-			queryBuilder.selectRaw( "classType", "COUNT(*)" )
+			queryBuilder
+					.selectRaw( "classType", "COUNT(*)" )
 					.groupBy( "classType" );
-			final GenericRawResults<String[]> rows = this.locationDao.queryRaw(
-					queryBuilder.prepareStatementString() );
+			final GenericRawResults<String[]> rows = this.locationDao.queryRaw( queryBuilder.prepareStatementString() );
 			int totalRecords = 0;
 			for (String[] record : rows.getResults()) {
 				final int counter = Integer.parseInt( record[1] );

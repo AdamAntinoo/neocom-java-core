@@ -113,9 +113,9 @@ public class ESIDataAdapter {
 		return this.retrofitFactory.getAuthorizationUrl4Server( esiServer );
 	}
 
-	public String getStringScopes() {
-		return this.retrofitFactory.getScopes();
-	}
+//	public String getStringScopes() {
+//		return this.retrofitFactory.getScopes();
+//	}
 
 	// - D O W N L O A D   S T A R T E R S
 	public void downloadItemPrices() {
