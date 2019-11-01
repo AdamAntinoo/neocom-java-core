@@ -9,7 +9,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSyste
 public class SpaceKLocation extends NeoComNode {
 	private static final long serialVersionUID = -9028958348146320642L;
 	protected Integer systemId;
-	protected GetUniverseSystemsSystemIdOk system;
+	protected GetUniverseSystemsSystemIdOk solarSystem;
 	protected Integer constellationId;
 	protected GetUniverseConstellationsConstellationIdOk constellation;
 	protected Integer regionId;
@@ -45,17 +45,17 @@ public class SpaceKLocation extends NeoComNode {
 			return this;
 		}
 
-		public SpaceKLocation.Builder withSystem( final GetUniverseSystemsSystemIdOk system ) {
-			Objects.requireNonNull( system );
-			this.onConstruction.system = system;
-			this.onConstruction.systemId = system.getSystemId();
+		public SpaceKLocation.Builder withSolarSystem( final GetUniverseSystemsSystemIdOk solarSystem ) {
+			Objects.requireNonNull( solarSystem );
+			this.onConstruction.solarSystem = solarSystem;
+			this.onConstruction.systemId = solarSystem.getSystemId();
 			return this;
 		}
 
 		public SpaceKLocation build() {
 			Objects.requireNonNull( this.onConstruction.region );
 			Objects.requireNonNull( this.onConstruction.constellation );
-			Objects.requireNonNull( this.onConstruction.system );
+			Objects.requireNonNull( this.onConstruction.solarSystem );
 			return this.onConstruction;
 		}
 	}

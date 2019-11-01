@@ -21,7 +21,6 @@ import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
@@ -36,8 +35,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdIconsOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
@@ -382,61 +379,6 @@ public class ESIDataAdapter {
 			ioe.printStackTrace();
 			return null;
 		}
-	}
-
-	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
-	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
-//		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = DEFAULT_ESI_SERVER;
-			// Use server parameter to override configuration server to use.
-//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetCorporationsCorporationIdOk> corporationResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create( CorporationApi.class )
-					.getCorporationsCorporationId(
-							identifier,
-							datasource, null )
-					.execute();
-			if (corporationResponse.isSuccessful())
-				return corporationResponse.body();
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-//		} finally {
-//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
-
-	public GetCorporationsCorporationIdIconsOk getCorporationsCorporationIdIcons( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationIdIcons]" );
-//		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-//			String datasource = DEFAULT_ESI_SERVER;
-			// Use server parameter to override configuration server to use.
-//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetCorporationsCorporationIdIconsOk> corporationResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create( CorporationApi.class )
-					.getCorporationsCorporationIdIcons(
-							identifier,
-							DEFAULT_ESI_SERVER,
-							null ).execute();
-			if (corporationResponse.isSuccessful())
-				return corporationResponse.body();
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-//		} finally {
-//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
 	}
 
 	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N

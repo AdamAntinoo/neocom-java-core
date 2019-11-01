@@ -12,9 +12,13 @@ import org.dimensinfin.core.domain.Units;
 import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdIconsOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 
 import retrofit2.Response;
@@ -67,6 +71,21 @@ public class ESIUniverseDataProvider {
 	}
 
 	// - P R O V I D E R   A P I
+	public GetUniverseStationsStationIdOk getUniverseStationById( final Integer stationId ) {
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseStationsStationIdOk> stationResponse = this.neocomRetrofitNoAuth
+					.create( UniverseApi.class )
+					.getUniverseStationsStationId( stationId
+							, DEFAULT_ESI_SERVER.toLowerCase(), null )
+					.execute();
+			if (stationResponse.isSuccessful()) return stationResponse.body();
+		} catch (IOException ioe) {
+			logger.info( "EX [ESIUniverseDataProvider.getUniverseStationById]> IOException during ESI data access: {}",
+					ioe.getMessage() );
+		}
+		return null;
+	}
 	public GetUniverseSystemsSystemIdOk getUniverseSystemById( final Integer systemId ) {
 		try {
 			// Create the request to be returned so it can be called.
@@ -114,6 +133,61 @@ public class ESIUniverseDataProvider {
 		} catch (IOException ioe) {
 			logger.info( "EX [ESIUniverseDataProvider.getUniverseRegionById]> IOException during ESI data access: {}",
 					ioe.getMessage() );
+		}
+		return null;
+	}
+
+	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
+	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier ) {
+		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
+//		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			// Use server parameter to override configuration server to use.
+//			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCorporationsCorporationIdOk> corporationResponse = this.neocomRetrofitNoAuth
+					.create( CorporationApi.class )
+					.getCorporationsCorporationId(
+							identifier,
+							datasource, null )
+					.execute();
+			if (corporationResponse.isSuccessful())
+				return corporationResponse.body();
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
+	public GetCorporationsCorporationIdIconsOk getCorporationsCorporationIdIcons( final int identifier ) {
+		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationIdIcons]" );
+//		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = DEFAULT_ESI_SERVER;
+			// Use server parameter to override configuration server to use.
+//			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetCorporationsCorporationIdIconsOk> corporationResponse = this.neocomRetrofitNoAuth
+					.create( CorporationApi.class )
+					.getCorporationsCorporationIdIcons(
+							identifier,
+							DEFAULT_ESI_SERVER,
+							null ).execute();
+			if (corporationResponse.isSuccessful())
+				return corporationResponse.body();
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
 	}

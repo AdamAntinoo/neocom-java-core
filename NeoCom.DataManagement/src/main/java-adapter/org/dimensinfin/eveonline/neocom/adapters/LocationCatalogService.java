@@ -21,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.SpaceKLocation;
+import org.dimensinfin.eveonline.neocom.domain.StationLocation;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 
 @NeoComAdapter
@@ -121,6 +122,13 @@ public class LocationCatalogService {
 		return new EsiLocation2SpaceKLocationConverter.Builder()
 				.withESIUniverseDataProvider( this.esiUniverseDataProvider )
 				.build().convert( this.buildUpLocation( spaceIdentifier ) );
+	}
+
+	public StationLocation searchStationLocation4Id( final Integer stationIdentifier ) {
+		if (stationIdentifier < 61000000) { // Can be a game station
+			return this.locationRepository.searchStationById( stationIdentifier );
+		}
+		return null;
 	}
 
 	public EsiLocation searchLocation4Id( final long locationId ) {

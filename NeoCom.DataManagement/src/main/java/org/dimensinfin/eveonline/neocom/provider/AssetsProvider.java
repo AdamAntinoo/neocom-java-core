@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import net.nikr.eve.jeveasset.data.model.Station;
 import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class AssetsProvider implements Serializable {
 	private static final Logger logger = LoggerFactory.getLogger( AssetsProvider.class );
 
 	//	private Map<Integer, NeoAsset> structuresCache = new HashMap<>();
+	private Map<Integer, FacetedAssetContainer<Station>> stationsCache = new HashMap<>();
 	private Map<Integer, FacetedAssetContainer<SpaceKLocation>> systemsCache = new HashMap<>();
 	private Map<Integer, FacetedLocationContainer<Region>> regionsCache = new HashMap<>();
 
@@ -109,8 +111,22 @@ public class AssetsProvider implements Serializable {
 			this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
 			this.add2SpaceLocation( asset );
 		}
+		if (asset.getLocationId().getType() == LocationIdentifierType.STATION) {
+			this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
+			this.add2StationLocation( asset );
+		}
 	}
+	private void add2StationLocation( final NeoAsset asset ) {
+		final Integer stationIdentifier = asset.getLocationId().getStationIdentifier();
+		FacetedAssetContainer<Station> hit = this.stationsCache.get( stationIdentifier );
+		if (null == hit) {
+			hit = new FacetedAssetContainer.Builder<Station>()
+					.withFacet( this.locationCatalogService.searchStationLocation4Id( stationIdentifier ) )
+					.build();
+			this.systemsCache.put( stationIdentifier, hit );
+		}
 
+	}
 	private void add2SpaceLocation( final NeoAsset asset ) {
 		final Integer spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
 		FacetedAssetContainer<SpaceKLocation> hit = this.systemsCache.get( spaceIdentifier );
