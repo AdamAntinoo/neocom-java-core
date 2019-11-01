@@ -1,6 +1,7 @@
 package org.dimensinfin.eveonline.neocom.model;
 
 import org.dimensinfin.core.interfaces.IExpandable;
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 
 /**
  * This model class will serve as the base placeholder for the NeoCom application nodes. Will define the

@@ -5,7 +5,6 @@ import java.util.Objects;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 public class SpaceKLocation extends NeoComNode {
 	private static final long serialVersionUID = -9028958348146320642L;

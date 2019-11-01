@@ -2,7 +2,7 @@ package org.dimensinfin.eveonline.neocom.mining;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.industry.Resource;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 
 import java.util.ArrayList;
 import java.util.List;

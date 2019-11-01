@@ -15,7 +15,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Pilot extends NeoComNode {

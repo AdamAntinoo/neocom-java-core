@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.model;
+package org.dimensinfin.eveonline.neocom.domain;
 
 import java.util.ArrayList;
 import java.util.List;

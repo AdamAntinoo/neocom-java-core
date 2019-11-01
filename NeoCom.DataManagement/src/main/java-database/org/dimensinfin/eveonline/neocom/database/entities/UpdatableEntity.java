@@ -4,7 +4,7 @@ import com.j256.ormlite.field.DatabaseField;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 import org.joda.time.DateTime;
 
 public abstract class UpdatableEntity extends NeoComNode {

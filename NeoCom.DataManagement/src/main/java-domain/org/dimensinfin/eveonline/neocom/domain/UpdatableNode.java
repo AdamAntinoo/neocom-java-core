@@ -2,7 +2,6 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 import org.joda.time.DateTime;
 
 public abstract class UpdatableNode extends NeoComNode implements IUpdatable {

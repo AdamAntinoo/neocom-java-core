@@ -18,7 +18,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCa
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
 
 public class EveItem extends NeoComNode implements IItemFacet {
 	public enum IndustryGroup {

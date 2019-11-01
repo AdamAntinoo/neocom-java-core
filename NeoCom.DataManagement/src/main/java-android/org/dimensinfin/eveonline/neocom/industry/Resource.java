@@ -6,7 +6,7 @@ import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
-import org.dimensinfin.eveonline.neocom.model.NeoComNode;
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
