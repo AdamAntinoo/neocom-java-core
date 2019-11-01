@@ -1,15 +1,34 @@
 package org.dimensinfin.eveonline.neocom.utility;
 
-public class FacetedAssetContainer {
+import java.util.Objects;
+
+public class FacetedAssetContainer<F> extends AssetContainer {
+	private F facet;
+
+	private FacetedAssetContainer() {
+		super();
+	}
+
+	public F getFacet() {
+		return this.facet;
+	}
+
 	// - B U I L D E R
-	public static class Builder {
-		private FacetedAssetContainer onConstruction;
+	public static class Builder<F> {
+		private FacetedAssetContainer<F> onConstruction;
 
 		public Builder() {
-			this.onConstruction = new FacetedAssetContainer();
+			this.onConstruction = new FacetedAssetContainer<F>();
 		}
 
-		public FacetedAssetContainer build() {
+		public FacetedAssetContainer.Builder<F> withFacet( final F facet ) {
+			Objects.requireNonNull( facet );
+			this.onConstruction.facet = facet;
+			return this;
+		}
+
+		public FacetedAssetContainer<F> build() {
+			Objects.requireNonNull( this.onConstruction.facet );
 			return this.onConstruction;
 		}
 	}

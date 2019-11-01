@@ -11,4 +11,8 @@
 >* EsiLocation2SpaceKLocationConverter
 >* SpaceKLocation
 >* Region
->
+>* AssetsProvider
+>* FacetedAssetContainer
+
+[OPTIONAL CLASSES TO DO UNIT TESTING]
+>* AssetContainer

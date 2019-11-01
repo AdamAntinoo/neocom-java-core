@@ -3,13 +3,13 @@ package org.dimensinfin.eveonline.neocom.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dimensinfin.core.interfaces.ICollaboration;
-import org.dimensinfin.core.interfaces.IJsonAngular;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+import org.dimensinfin.core.interfaces.IJsonAngular;
 
 
 /**
@@ -66,22 +66,22 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 				       .isEquals();
 	}
 
-	// - B U I L D E R
-	public static abstract class Builder<T, B extends Builder> {
-		protected T actualClass;
-		protected B actualClassBuilder;
-
-		public Builder() {
-			this.actualClass = this.getActual();
-			this.actualClassBuilder = this.getActualBuilder();
-		}
-
-		protected abstract T getActual();
-
-		protected abstract B getActualBuilder();
-
-		public T build() {
-			return this.getActual();
-		}
-	}
+//	// - B U I L D E R
+//	public static abstract class Builder<T, B extends Builder> {
+//		protected T actualClass;
+//		protected B actualClassBuilder;
+//
+//		public Builder() {
+//			this.actualClass = this.getActual();
+//			this.actualClassBuilder = this.getActualBuilder();
+//		}
+//
+//		protected abstract T getActual();
+//
+//		protected abstract B getActualBuilder();
+//
+//		public T build() {
+//			return this.getActual();
+//		}
+//	}
 }

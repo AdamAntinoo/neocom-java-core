@@ -8,6 +8,8 @@ import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 public class AssetContainer {
 	private List<NeoAsset> contents = new ArrayList<>();
 
+	protected AssetContainer() {}
+
 	public int addContent( final NeoAsset item ) {
 		this.contents.add( item );
 		return this.contents.size();
