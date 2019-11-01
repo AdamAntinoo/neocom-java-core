@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.updaters;
+package org.dimensinfin.eveonline.neocom.updater;
 
 import java.io.IOException;
 
@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
 

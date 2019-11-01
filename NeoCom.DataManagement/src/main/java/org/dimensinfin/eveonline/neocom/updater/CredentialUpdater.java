@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.updaters;
+package org.dimensinfin.eveonline.neocom.updater;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

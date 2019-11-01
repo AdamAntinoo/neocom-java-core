@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.updaters;
+package org.dimensinfin.eveonline.neocom.updater;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventEmitter;
 import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.services.UpdaterJobManager;
+import org.dimensinfin.eveonline.neocom.service.UpdaterJobManager;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {
 	protected static final Logger logger = LoggerFactory.getLogger( NeoComUpdater.class );

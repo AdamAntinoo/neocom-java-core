@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.services;
+package org.dimensinfin.eveonline.neocom.service;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.LogMessagesExternalisedType;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdater;
+import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 /**
  * The main responsibility of this class is to have a unique list of update jobs. If every minute we check for

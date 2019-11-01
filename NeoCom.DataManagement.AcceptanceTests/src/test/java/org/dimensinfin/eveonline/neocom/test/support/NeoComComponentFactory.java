@@ -11,7 +11,7 @@ import org.dimensinfin.eveonline.neocom.support.adapters.NeoComSupportDBAdapter;
 import org.dimensinfin.eveonline.neocom.support.adapters.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.adapters.SupportLocationRepository;
 import org.dimensinfin.eveonline.neocom.test.support.adapters.SupportMiningRepository;
-import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdater;
+import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

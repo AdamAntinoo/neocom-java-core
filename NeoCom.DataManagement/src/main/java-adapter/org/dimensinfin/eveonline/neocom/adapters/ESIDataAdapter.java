@@ -12,8 +12,8 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.annotations.NeoComAdapter;
-import org.dimensinfin.eveonline.neocom.annotations.TimeElapsed;
+import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
+import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -49,7 +49,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdater;
+import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 import retrofit2.Response;
 

@@ -1,10 +1,10 @@
-package org.dimensinfin.eveonline.neocom.services;
+package org.dimensinfin.eveonline.neocom.service;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.updaters.NeoComUpdater;
+import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 public class UpdaterJobManagerTest {
 	@Test

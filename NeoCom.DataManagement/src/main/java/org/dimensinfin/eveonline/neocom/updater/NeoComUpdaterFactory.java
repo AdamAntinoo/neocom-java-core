@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.updaters;
+package org.dimensinfin.eveonline.neocom.updater;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
