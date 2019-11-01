@@ -16,9 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotations.NeoComAdapter;
+import org.dimensinfin.eveonline.neocom.converter.EsiLocation2SpaceKLocationConverter;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
+import org.dimensinfin.eveonline.neocom.domain.SpaceKLocation;
+import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 
 @NeoComAdapter
 public class LocationCatalogService {
@@ -32,7 +35,8 @@ public class LocationCatalogService {
 	// - C O M P O N E N T S
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
-//	protected ISDEDatabaseAdapter sdeDatabaseAdapter;
+	private ESIUniverseDataProvider esiUniverseDataProvider;
+	//	protected ISDEDatabaseAdapter sdeDatabaseAdapter;
 	protected LocationRepository locationRepository;
 
 	// - C A C H E   M A N A G E M E N T
@@ -41,6 +45,7 @@ public class LocationCatalogService {
 		this.cleanLocationsCache();
 	}
 
+	// - S T O R A G E
 	public void cleanLocationsCache() {
 		locationCache.clear();
 	}
@@ -111,6 +116,13 @@ public class LocationCatalogService {
 		this.locationTypeCounters = this.locationRepository.getCounters();
 	}
 
+	// - S E A R C H   L O C A T I O N   A P I
+	public SpaceKLocation searchSpaceLocation4Id( final Integer spaceIdentifier ) {
+		return new EsiLocation2SpaceKLocationConverter.Builder()
+				.withESIUniverseDataProvider( this.esiUniverseDataProvider )
+				.build().convert( this.buildUpLocation( spaceIdentifier ) );
+	}
+
 	public EsiLocation searchLocation4Id( final long locationId ) {
 		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 		if (locationCache.containsKey( locationId )) return this.searchOnMemoryCache( locationId );
@@ -121,16 +133,12 @@ public class LocationCatalogService {
 			hit = this.buildUpLocation( locationId );
 			this.lastLocationAccess = LocationCacheAccessType.GENERATED;
 			this.storeOnCacheLocation( hit );
-			logger.info( ">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from SDE data.",
+			logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from SDE data.",
 					hits, access, locationId );
 			return hit;
 		}
-		logger.info( ">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {} found at database.",
+		logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} found at database.",
 				hits, access, locationId );
-//		final EsiLocation hit = GlobalDataManager.getSingleton().getSDEDBHelper().searchLocation4Id(locationId);
-		// Add the hit to the cache but only when it is not UNKNOWN.
-//		if (hit.getClassType() != LocationClass.UNKNOWN) locationCache.put(locationId, hit);
-		// Account for a miss on the cache.
 		return hit;
 	}
 
@@ -181,7 +189,6 @@ public class LocationCatalogService {
 			return this.storeOnCacheLocation( this.locationRepository.searchSystemById( locationId ) );
 		}
 		if (locationId < 61000000) { // Can be a game station
-//			return this.locationRepository.searchStationById(locationId);
 		}
 		return new EsiLocation.Builder().build();
 	}
@@ -232,10 +239,11 @@ public class LocationCatalogService {
 			return this;
 		}
 
-//		public Builder withSDEDatabaseAdapter( final ISDEDatabaseAdapter sdeDatabaseAdapter ) {
-//			this.onConstruction.sdeDatabaseAdapter = sdeDatabaseAdapter;
-//			return this;
-//		}
+		public Builder withESIUniverseDataProvider( final ESIUniverseDataProvider esiUniverseDataProvider ) {
+			Objects.requireNonNull( esiUniverseDataProvider );
+			this.onConstruction.esiUniverseDataProvider = esiUniverseDataProvider;
+			return this;
+		}
 
 		public Builder withLocationRepository( final LocationRepository locationRepository ) {
 			Objects.requireNonNull( locationRepository );

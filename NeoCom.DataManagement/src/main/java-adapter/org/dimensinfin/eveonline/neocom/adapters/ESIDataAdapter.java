@@ -67,8 +67,8 @@ import retrofit2.Response;
 @NeoComAdapter
 public class ESIDataAdapter {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
+	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	protected static final Logger logger = LoggerFactory.getLogger( ESIDataAdapter.class );
-	private static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 100 );
