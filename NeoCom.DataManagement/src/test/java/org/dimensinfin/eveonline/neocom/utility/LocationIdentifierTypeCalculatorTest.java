@@ -11,7 +11,7 @@ public class LocationIdentifierTypeCalculatorTest {
 	@Test
 	public void calculate() {
 		final LocationIdentifier identifier = Mockito.mock(LocationIdentifier.class);
-		Assert.assertEquals( LocationIdentifierTypeCalculator.LocationIdentifierType.UNKNOWN,
+		Assert.assertEquals( LocationIdentifierType.UNKNOWN,
 				LocationIdentifierTypeCalculator.calculate( identifier ));
 	}
 }

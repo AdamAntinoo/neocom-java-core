@@ -9,7 +9,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegio
  */
 public class Region extends SpaceKLocation {
 	private static final long serialVersionUID = 3623925848703776069L;
-//	private List<SpaceKLocation> locations = new ArrayList<>();
 
 	public Integer getConstellationId() {
 		return this.regionId;
@@ -19,10 +18,8 @@ public class Region extends SpaceKLocation {
 		return this.regionId;
 	}
 
-//	public int addLocation( final SpaceKLocation location ) {
-//		this.locations.add( location );
-//		return this.locations.size();
-//	}
+	// - D E L E G A T E D
+	public String getName() {return region.getName();}
 
 	// - B U I L D E R
 	public static class Builder {

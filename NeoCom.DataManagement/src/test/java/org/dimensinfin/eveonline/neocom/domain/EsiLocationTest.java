@@ -15,9 +15,9 @@ public class EsiLocationTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getterContract() {
 		final EsiLocation location = this.esiDataAdapter.searchLocation4Id( 30003283 );
-		Assert.assertEquals( 10000041, location.getRegionId() );
+		Assert.assertEquals( 10000041, location.getRegionId().intValue() );
 		Assert.assertEquals( "Syndicate", location.getRegion() );
-		Assert.assertEquals( 20000479, location.getConstellationId() );
+		Assert.assertEquals( 20000479, location.getConstellationId().intValue() );
 		Assert.assertEquals( "2-M6DE", location.getConstellation() );
 		Assert.assertEquals( 30003283, location.getSystemId() );
 		Assert.assertEquals( "PVH8-0", location.getSystem() );
