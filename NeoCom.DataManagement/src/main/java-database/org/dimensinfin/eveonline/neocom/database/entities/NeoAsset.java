@@ -75,6 +75,10 @@ public class NeoAsset extends UpdatableEntity {
 		return assetId;
 	}
 
+	public LocationIdentifier getLocationId() {
+		return locationId;
+	}
+
 	public Long getParentContainer() {
 		return this.parentContainer;
 	}
@@ -168,7 +172,7 @@ public class NeoAsset extends UpdatableEntity {
 		                                                     final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag,
 		                                                     final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
 			return new LocationIdentifier.Builder()
-					.withSpaceIdentifier( locationId )
+					.withSpaceIdentifier( locationId.intValue() )
 					.build();
 		}
 

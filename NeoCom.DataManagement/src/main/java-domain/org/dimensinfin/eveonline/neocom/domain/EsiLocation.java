@@ -56,9 +56,9 @@ public class EsiLocation extends UpdatableEntity {
 	@DatabaseField
 	protected int systemId = -1;
 	@DatabaseField
-	protected long constellationId = -1;
+	protected Integer constellationId = -1;
 	@DatabaseField
-	protected long regionId = -1;
+	protected Integer regionId = -1;
 	@DatabaseField(dataType = DataType.ENUM_STRING)
 	protected LocationClass classType = LocationClass.UNKNOWN;
 	@DatabaseField
@@ -180,11 +180,11 @@ public class EsiLocation extends UpdatableEntity {
 		return this.system;
 	}
 
-	public long getConstellationId() {
+	public Integer getConstellationId() {
 		return this.constellationId;
 	}
 
-	public EsiLocation setConstellationId( final long constellationId ) {
+	public EsiLocation setConstellationId( final Integer constellationId ) {
 		this.constellationId = constellationId;
 		return this;
 	}
@@ -198,11 +198,11 @@ public class EsiLocation extends UpdatableEntity {
 		return this;
 	}
 
-	public long getRegionId() {
+	public Integer getRegionId() {
 		return this.regionId;
 	}
 
-	public EsiLocation setRegionId( final long regionId ) {
+	public EsiLocation setRegionId( final Integer regionId ) {
 		this.regionId = regionId;
 		return this;
 	}
