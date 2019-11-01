@@ -4,6 +4,10 @@
 .read mapConstellations.sql
 .print ">>> Create Solar Systems data..."
 .read mapSolarSystems.sql
+.print ">>> Create Stations data..."
+.read staStations.sql
+.print ">>> Create Station Types data..."
+.read staStationTypes.sql
 .print ">>> Create Planetary Interaction Schematics data..."
 .read planetSchematics.sql
 .print ">>> Create Planetary Interaction Schematics Type maps data..."
