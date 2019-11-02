@@ -2,7 +2,7 @@ package org.dimensinfin.eveonline.neocom.support;
 
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;

@@ -29,7 +29,7 @@ public class NeoAssetTest {
 		Mockito.when( this.esiDataAdapter.searchEsiItem4Id( Mockito.anyInt() ) ).thenReturn( this.esiItem );
 		Mockito.when( this.esiDataAdapter.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( this.esiGroup );
 		Mockito.when( this.esiDataAdapter.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( this.esiCategory );
-		NeoItem.injectEsiDataAdapter( this.esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( this.esiDataAdapter );
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class NeoAssetTest {
 
 	//		@Test
 	public void gettersContract() {
-		NeoItem.injectEsiDataAdapter( this.esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( this.esiDataAdapter );
 		final GetCharactersCharacterIdAssets200Ok esiAsset = new GetCharactersCharacterIdAssets200Ok();
 		esiAsset.setItemId( 1234567L );
 		esiAsset.setTypeId( 34 );

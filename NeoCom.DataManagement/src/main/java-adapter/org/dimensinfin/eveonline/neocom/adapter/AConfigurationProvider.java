@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 /**
  * Reads all the properties files found under a configurable place. The class scans for all files that end with '.properties'

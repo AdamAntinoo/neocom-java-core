@@ -25,7 +25,7 @@ public class NeoItemTest extends ESIDataAdapterSupportTest {
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( this.locationCatalogService )
 				.build();
-		NeoItem.injectEsiDataAdapter(realEsiDataAdapter);
+		NeoItem.injectEsiUniverseDataAdapter(realEsiDataAdapter);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class NeoItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getName() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final NeoItem item = new NeoItem( 34 );
 		final String expected = "Tritanium";
@@ -88,7 +88,7 @@ public class NeoItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getTypeId() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final NeoItem item = new NeoItem()
 				.setTypeId( 34 );
@@ -151,7 +151,7 @@ public class NeoItemTest extends ESIDataAdapterSupportTest {
 		Mockito.when( esiDataAdapter.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( group );
 		Mockito.when( esiDataAdapter.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( category );
 		Mockito.when( category.getName() ).thenReturn( "Capsuleer Bases" );
-		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( esiDataAdapter );
 		final NeoItem item = new NeoItem( 34 );
 		Assert.assertNotNull( item );
 		Assert.assertFalse( item.isBlueprint() );
@@ -167,7 +167,7 @@ public class NeoItemTest extends ESIDataAdapterSupportTest {
 		Mockito.when( esiDataAdapter.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( group );
 		Mockito.when( esiDataAdapter.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( category );
 		Mockito.when( category.getName() ).thenReturn( "Energy Neutralizer Blueprint" );
-		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( esiDataAdapter );
 		final NeoItem item = new NeoItem( 15799 );
 		Assert.assertNotNull( item );
 		Assert.assertFalse( item.isBlueprint() );
@@ -176,7 +176,7 @@ public class NeoItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getPrice() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiUniverseDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
 		final NeoItem item = new NeoItem( 34 );
 		double obtained = item.getPrice();

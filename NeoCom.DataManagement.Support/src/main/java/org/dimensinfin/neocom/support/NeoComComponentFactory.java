@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.neocom.support.adapters.implementers.SBConfigurationProvider;

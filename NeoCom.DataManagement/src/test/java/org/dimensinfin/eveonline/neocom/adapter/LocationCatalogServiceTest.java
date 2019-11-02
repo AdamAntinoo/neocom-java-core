@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 public class LocationCatalogServiceTest {
 	@Test

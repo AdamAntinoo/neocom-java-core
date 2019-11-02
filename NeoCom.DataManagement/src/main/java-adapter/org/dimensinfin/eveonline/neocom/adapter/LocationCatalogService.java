@@ -23,6 +23,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegionImplementation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
 import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 @NeoComAdapter
 public class LocationCatalogService {

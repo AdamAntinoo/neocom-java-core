@@ -41,7 +41,7 @@ public class MiningRepositoryTest extends ESIDataAdapterSupportTest {
 				                   .build();
 		miningExtractionList.add(miningExtraction);
 		dao = Mockito.mock(Dao.class);
-		NeoItem.injectEsiDataAdapter(this.esiDataAdapter);
+		NeoItem.injectEsiUniverseDataAdapter(this.esiDataAdapter);
 	}
 
 	@Test

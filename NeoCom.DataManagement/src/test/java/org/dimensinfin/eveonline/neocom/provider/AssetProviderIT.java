@@ -8,13 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
@@ -116,9 +117,13 @@ public class AssetProviderIT {
 		this.itFileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "TestCacheDirectory" )
 				.build();
+		final RetrofitUniverseConnector retrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.build();
 		this.itStoreCacheManager = new SupportStoreCacheManager.Builder()
-		.withNoAuthRetrofitConnector( retrofitConnector )
-		.build();
+				.withNoAuthRetrofitConnector( retrofitUniverseConnector )
+				.build();
 	}
 
 	@Before
@@ -166,7 +171,9 @@ public class AssetProviderIT {
 		final ESIUniverseDataProvider esiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.withStoreCacheManager( this.it )
+				.withStoreCacheManager( this.itStoreCacheManager )
+				.build();
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		provider.classifyAssetsByLocation();
 
 		Assert.assertNotNull( provider );
