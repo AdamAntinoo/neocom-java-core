@@ -17,21 +17,25 @@ import com.nytimes.android.external.store3.base.RecordState;
 import com.nytimes.android.external.store3.base.impl.Store;
 import com.nytimes.android.external.store3.base.impl.StoreBuilder;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.core.StorageUnits;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
-import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import okio.BufferedSource;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * This class will deal with external storage of cached data. For that I will use already known libraries.
@@ -40,6 +44,7 @@ import okio.BufferedSource;
  */
 @NeoComAdapter
 public class StoreCacheManager {
+	private static final Logger logger = LoggerFactory.getLogger( StoreCacheManager.class );
 	private static final int CACHE_VERSION = 151;
 	private static final int CACHE_COUNTER = 2;
 	private static final ObjectMapper jsonMapper = new ObjectMapper();
@@ -52,16 +57,15 @@ public class StoreCacheManager {
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystem;
-	private ESIUniverseDataProvider esiUniverseDataProvider;
-	private ESIDataAdapter esiDataAdapter;
+	//	private ESIUniverseDataProvider esiUniverseDataProvider;
+//	private ESIDataAdapter esiDataAdapter;
+	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
 	// - C A C H E S
-//	private String cacheRegistry;
-
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
 	private Store<GetUniverseGroupsGroupIdOk, Integer> itemGroupStore;
 	private Store<GetUniverseCategoriesCategoryIdOk, Integer> categoryStore;
-	//	private Store<GetUniverseCategoriesCategoryIdOk, Integer> categoryStore;
+	private Store<GetUniverseStationsStationIdOk, Integer> stationStore;
 	private Store<GetUniverseSystemsSystemIdOk, Integer> systemsStoreCache;
 	private Store<GetUniverseConstellationsConstellationIdOk, Integer> constellationsStoreCache;
 	private Store<GetUniverseRegionsRegionIdOk, Integer> regionStoreCache;
@@ -73,11 +77,7 @@ public class StoreCacheManager {
 	private DiskLruCache regionStoreCachePersistence;
 
 	// - C O N S T R U C T O R S
-	private StoreCacheManager() { }
-
-//	public void registerCache() {
-//
-//	}
+	protected StoreCacheManager() { }
 
 	private void createStores() {
 		this.createEsiItemStore();
@@ -87,12 +87,7 @@ public class StoreCacheManager {
 		this.createSystemsStore();
 	}
 
-	private void createSystemsStore() {
-		this.systemsStoreCache = StoreBuilder.<Integer, BufferedSource, GetUniverseSystemsSystemIdOk>parsedWithKey()
-				.fetcher( (Fetcher) new UniverseSystemFetcher( this.esiUniverseDataProvider ) )
-				.open();
-	}
-
+	// - S T O R E S   C R E A T I O N
 	private void createEsiItemStore() {
 		try {
 			final File cachedir = new File( this.fileSystem.accessResource4Path(
@@ -100,9 +95,8 @@ public class StoreCacheManager {
 							"/" + this.configurationProvider.getResourceString( "P.cache.directory.store.esiitem" ) ) );
 			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES );
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
-					.fetcher( typeId -> Single.just( this.esiDataAdapter.getUniverseTypeById( typeId ) ) )
-					//										.fetcher(new UniverseTypeFetcher(esiDataAdapter))
-					.persister( new EseItemPersistent( esiItemPersistentStore ) )
+					.fetcher( new UniverseTypeFetcher( this.neocomRetrofitNoAuth ) )
+					.persister( new EsiItemPersister( esiItemPersistentStore ) )
 					.networkBeforeStale()
 					.open();
 		} catch (IOException ioe) {
@@ -112,16 +106,23 @@ public class StoreCacheManager {
 	}
 
 	private void createItemGroupStore() {
-		this.itemGroupStore = StoreBuilder.<Integer, BufferedSource, GetUniverseGroupsGroupIdOk>parsedWithKey()
-				.fetcher( (Fetcher) new ItemGroupFetcher( this.esiDataAdapter ) )
+		this.itemGroupStore = StoreBuilder.<Integer, GetUniverseGroupsGroupIdOk>key()
+				.fetcher( new UniverseItemGroupFetcher( this.neocomRetrofitNoAuth ) )
 				.open();
 	}
 
 	private void createItemCategoryStore() {
-		this.categoryStore = StoreBuilder.<Integer, BufferedSource, GetUniverseCategoriesCategoryIdOk>parsedWithKey()
-				.fetcher( (Fetcher) new ItemCategoryFetcher( this.esiDataAdapter ) )
+		this.categoryStore = StoreBuilder.<Integer, GetUniverseCategoriesCategoryIdOk>key()
+				.fetcher( new UniverseItemCategoryFetcher( this.neocomRetrofitNoAuth ) )
 				.open();
 	}
+
+	private void createSystemsStore() {
+		this.systemsStoreCache = StoreBuilder.<Integer, GetUniverseSystemsSystemIdOk>key()
+				.fetcher( new UniverseSystemFetcher( this.neocomRetrofitNoAuth ) )
+				.open();
+	}
+
 
 	// - C A C H E   E X P O R T E D   A P I
 	public Single<GetUniverseTypesTypeIdOk> accessItem( final Integer itemId ) {
@@ -135,7 +136,11 @@ public class StoreCacheManager {
 	public Single<GetUniverseCategoriesCategoryIdOk> accessCategory( final Integer categoryId ) {
 		return this.categoryStore.get( categoryId );
 	}
+	public Single<GetUniverseSystemsSystemIdOk> accessSolarSystem( final Integer solarSystemId ) {
+		return this.systemsStoreCache.get( solarSystemId );
+	}
 
+	// - E S I   D A T A   A C C E S S
 	// - B U I L D E R
 	public static class Builder {
 		private StoreCacheManager onConstruction;
@@ -148,79 +153,141 @@ public class StoreCacheManager {
 			this.onConstruction = new StoreCacheManager();
 		}
 
-		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
-			this.onConstruction.esiDataAdapter = esiDataAdapter;
-			return this;
-		}
+//		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
+//			this.onConstruction.esiDataAdapter = esiDataAdapter;
+//			return this;
+//		}
 
-		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public StoreCacheManager.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}
 
-		public Builder withFileSystem( final IFileSystem fileSystem ) {
+		public StoreCacheManager.Builder withFileSystem( final IFileSystem fileSystem ) {
 			this.onConstruction.fileSystem = fileSystem;
 			return this;
 		}
 
+//		public StoreCacheManager.Builder withESIUniverseDataProvider( final ESIUniverseDataProvider esiUniverseDataProvider ) {
+//			Objects.requireNonNull( esiUniverseDataProvider );
+//			this.onConstruction.esiUniverseDataProvider = esiUniverseDataProvider;
+//			return this;
+//		}
+
 		public StoreCacheManager build() {
-			Objects.requireNonNull( this.onConstruction.esiDataAdapter );
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystem );
+//			Objects.requireNonNull( this.onConstruction.esiUniverseDataProvider );
 			this.onConstruction.createStores(); // Run the initialisation code.
 			return this.onConstruction;
 		}
 	}
 
-	// - E V E I T E M F E T C H E R
+	// - U N I V E R S E T Y P E F E T C H E R
 	public static class UniverseTypeFetcher implements Fetcher<GetUniverseTypesTypeIdOk, Integer> {
-		private ESIDataAdapter esiDataAdapter;
+		private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
-		public UniverseTypeFetcher( final ESIDataAdapter esiDataAdapter ) {
-			this.esiDataAdapter = esiDataAdapter;
+		public UniverseTypeFetcher( final Retrofit neocomRetrofitNoAuth ) {
+			this.neocomRetrofitNoAuth = neocomRetrofitNoAuth;
 		}
 
 		@Override
 		public Single<GetUniverseTypesTypeIdOk> fetch( final Integer typeId ) {
-			return Single.just( this.esiDataAdapter.getUniverseTypeById( typeId ) );
+			try {
+				return Single.just( this.getUniverseTypeById( typeId ) );
+			} catch (final IOException e) {
+				return Single.just( null );
+			}
+		}
+
+		/**
+		 * Go for the item to the ESI server source. This endpoint means that the item is not found on the cache.
+		 */
+		private GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId ) throws IOException {
+			final Response<GetUniverseTypesTypeIdOk> itemListResponse = this.neocomRetrofitNoAuth
+					.create( UniverseApi.class )
+					.getUniverseTypesTypeId( typeId,
+							ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE,
+							ESIDataAdapter.DEFAULT_ESI_SERVER, null, null )
+					.execute();
+			if (itemListResponse.isSuccessful()) {
+				logger.info( "-- [StoreCacheManager.getUniverseTypeById]> Downloading: {}-{}"
+						, itemListResponse.body().getTypeId()
+						, itemListResponse.body().getName() );
+				return itemListResponse.body();
+			}
+			return null;
 		}
 	}
 
-	// - I T E M G R O U P F E T C H E R
-	public static class ItemGroupFetcher implements Fetcher<GetUniverseGroupsGroupIdOk, Integer> {
-		private ESIDataAdapter esiDataAdapter;
+	// - U N I V E R S E I T E M G R O U P F E T C H E R
+	public static class UniverseItemGroupFetcher implements Fetcher<GetUniverseGroupsGroupIdOk, Integer> {
+		private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
-		public ItemGroupFetcher( final ESIDataAdapter esiDataAdapter ) {
-			this.esiDataAdapter = esiDataAdapter;
+		public UniverseItemGroupFetcher( final Retrofit neocomRetrofitNoAuth ) {
+			this.neocomRetrofitNoAuth = neocomRetrofitNoAuth;
 		}
 
 		@Override
 		public Single<GetUniverseGroupsGroupIdOk> fetch( final Integer typeId ) {
-			return Single.just( this.esiDataAdapter.getUniverseGroupById( typeId ) );
+			try {
+				return Single.just( this.getUniverseGroupById( typeId ) );
+			} catch (IOException e) {
+				return Single.just( null );
+			}
+		}
+
+		private GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) throws IOException {
+			final Response<GetUniverseGroupsGroupIdOk> groupResponse = this.neocomRetrofitNoAuth
+					.create( UniverseApi.class )
+					.getUniverseGroupsGroupId( groupId,
+							ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE,
+							ESIDataAdapter.DEFAULT_ESI_SERVER, null, null )
+					.execute();
+			if (groupResponse.isSuccessful())
+				return groupResponse.body();
+			return null;
 		}
 	}
 
-	// - I T E M C A T E G O R Y F E T C H E R
-	public static class ItemCategoryFetcher implements Fetcher<GetUniverseCategoriesCategoryIdOk, Integer> {
-		private ESIDataAdapter esiDataAdapter;
+	// - U N I V E R S E I T E M C A T E G O R Y F E T C H E R
+	public static class UniverseItemCategoryFetcher implements Fetcher<GetUniverseCategoriesCategoryIdOk, Integer> {
+		private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
-		public ItemCategoryFetcher( final ESIDataAdapter esiDataAdapter ) {
-			this.esiDataAdapter = esiDataAdapter;
+		public UniverseItemCategoryFetcher( final Retrofit neocomRetrofitNoAuth ) {
+			this.neocomRetrofitNoAuth = neocomRetrofitNoAuth;
 		}
 
 		@Override
 		public Single<GetUniverseCategoriesCategoryIdOk> fetch( final Integer typeId ) {
-			return Single.just( this.esiDataAdapter.getUniverseCategoryById( typeId ) );
+			try {
+				return Single.just( this.getUniverseCategoryById( typeId ) );
+			} catch (IOException e) {
+				return Single.just( null );
+			}
+		}
+
+		private GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) throws IOException {
+			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = this.neocomRetrofitNoAuth
+					.create( UniverseApi.class )
+					.getUniverseCategoriesCategoryId( categoryId,
+							ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE,
+							ESIDataAdapter.DEFAULT_ESI_SERVER, null, null )
+					.execute();
+			if (groupResponse.isSuccessful())
+				return groupResponse.body();
+			return null;
 		}
 	}
 
-	public static class EseItemPersistent implements Persister<GetUniverseTypesTypeIdOk, Integer>, RecordProvider<Integer> {
-		private static final long ITEM_CACHE_TIME = TimeUnit.DAYS.toMillis( 1 );
+	// - E S I I T E M P E R S I S T E R
+	public static class EsiItemPersister implements Persister<GetUniverseTypesTypeIdOk, Integer>, RecordProvider<Integer> {
+		private static final long ITEM_CACHE_TIME = TimeUnit.DAYS.toMillis( 30 );
 		private static final int DATA_CACHE_INDEX = 0;
 		private static final int TIMESTAMP_CACHE_INDEX = 1;
 		private DiskLruCache persistentStorage;
 
-		public EseItemPersistent( final DiskLruCache persistentStorage ) {
+		public EsiItemPersister( final DiskLruCache persistentStorage ) {
 			this.persistentStorage = persistentStorage;
 		}
 
