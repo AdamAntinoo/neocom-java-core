@@ -90,3 +90,9 @@ system-constellation-region.
 * **Station identifier**. The game station is below 61M or the asset id
 for a corporation structure.
 * **Parent Container**. Asset identifier for the asset container.
+
+### Space locations
+Space locations have a discontinuity because usually contain stations
+that may or may not be corporation assets. But at the same time the pilot
+can leave assets on space so their contents have to support stations
+and assets at the same time.
