@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.joda.time.LocalTime;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,27 +23,23 @@ public class AssetsProvider implements Serializable {
 	private static final long serialVersionUID = -4896485833695914012L;
 	private static final Logger logger = LoggerFactory.getLogger( AssetsProvider.class );
 
-	//	private Map<Integer, NeoAsset> structuresCache = new HashMap<>();
 	private Map<Long, AssetContainer> spaceLocationsCache = new HashMap<>();
-//	private Map<Integer, FacetedNodeContainer<SpaceLocation>> systemsCache = new HashMap<>();
-//	private Map<Integer, FacetedLocationContainer<Region>> regionsCache = new HashMap<>();
-
-	// - C O M P O N E N T S
-	private Credential credential;
-	private AssetRepository assetRepository;
-	private LocationCatalogService locationCatalogService;
-
-	private LocalTime assetsReadTime;
+	private DateTime assetsReadTime;
 	private int assetCounter = 0;
-
-	private AssetsProvider() {}
-
 	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/**
 	 * Use a map to allow the removal of more nodes during the processing.
 	 */
 	private transient HashMap<Long, NeoAsset> assetMap = new HashMap<>();
 	private List<NeoAsset> unlocatedAssets = new ArrayList<>();
+
+	// - C O M P O N E N T S
+	private Credential credential;
+	private AssetRepository assetRepository;
+	private LocationCatalogService locationCatalogService;
+
+	private AssetsProvider() {}
+
 
 	public void classifyAssetsByLocation() {
 		if (this.verifyTimeStamp()) return;
@@ -64,6 +60,7 @@ public class AssetsProvider implements Serializable {
 			logger.info( "<< [AssetsProvider.classifyAssetsByLocation]> Classification complete: {} assets",
 					this.assetCounter );
 		}
+		this.timeStamp();
 	}
 
 	public List<Region> getRegionList() {
@@ -83,6 +80,10 @@ public class AssetsProvider implements Serializable {
 		if (null == this.assetsReadTime) return false;
 		// TODO - verify that the time stamp has elapsed to get a new list of assets updated.
 		return false;
+	}
+
+	private void timeStamp() {
+		this.assetsReadTime = DateTime.now();
 	}
 
 	private void clear() {

@@ -180,16 +180,17 @@ public class ESIDataAdapter {
 		return this.bloodLinesCache.get( identifier );
 	}
 
-//	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
+	//	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
 //		return Futures.immediateFuture( new MarketDataSet( itemId, side ) );
 //	}
-
+	@Deprecated
 	public EsiLocation searchLocation4Id( final Long locationId ) {
-		return this.locationCatalogService.searchLocation4Id( locationId );
+		return null;
 	}
 
+	@Deprecated
 	public EsiLocation searchLocation4Id( final Integer locationId ) {
-		return this.locationCatalogService.searchLocation4Id( locationId );
+		return null;
 	}
 
 //	public LocationCatalogService.LocationCacheAccessType lastSearchLocationAccessType() {

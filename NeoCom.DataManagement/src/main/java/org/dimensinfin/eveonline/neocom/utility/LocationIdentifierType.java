@@ -1,5 +1,5 @@
 package org.dimensinfin.eveonline.neocom.utility;
 
 public enum LocationIdentifierType {
-	UNKNOWN, SPACE, STATION, STRUCTURE, CONTAINER, SHIP;
+	UNKNOWN, REGION, CONSTELLATION, SPACE, STATION, STRUCTURE, SHIP, CONTAINER;
 }
