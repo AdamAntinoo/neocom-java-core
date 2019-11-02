@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
  */
 public class LocationIdentifier {
 	private Integer spaceIdentifier;
-	private Integer stationIdentifier;
+//	private Integer stationIdentifier;
 	private Long containerIdentifier;
 	private LocationIdentifierType type = LocationIdentifierType.UNKNOWN;
 
@@ -21,9 +21,9 @@ public class LocationIdentifier {
 		return spaceIdentifier;
 	}
 
-	public Integer getStationIdentifier() {
-		return stationIdentifier;
-	}
+//	public Integer getStationIdentifier() {
+//		return stationIdentifier;
+//	}
 
 	public Long getContainerIdentifier() {
 		return containerIdentifier;

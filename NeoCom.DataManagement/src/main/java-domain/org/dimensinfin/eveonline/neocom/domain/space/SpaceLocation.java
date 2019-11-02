@@ -8,23 +8,24 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellatio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 public class SpaceLocation extends NeoComNode implements SpaceSystem, Station, Structure {
 	private static final long serialVersionUID = -9028958348146320642L;
 
-	private Integer systemId;
-	private GetUniverseSystemsSystemIdOk solarSystem;
-	private Integer constellationId;
-	private GetUniverseConstellationsConstellationIdOk constellation;
 	private Integer regionId;
 	private GetUniverseRegionsRegionIdOk region;
+	private Integer constellationId;
+	private GetUniverseConstellationsConstellationIdOk constellation;
+	private Integer solarSystemId;
+	private GetUniverseSystemsSystemIdOk solarSystem;
 	private Integer stationId;
 	private GetUniverseStationsStationIdOk station;
 	private Double security;
 	private Integer corporationId;
 	private GetCorporationsCorporationIdOk corporation;
 
-	protected SpaceLocation() {super();}
+	private SpaceLocation() {super();}
 
 	@Override
 	public Integer getRegionId() {
@@ -64,7 +65,7 @@ public class SpaceLocation extends NeoComNode implements SpaceSystem, Station, S
 
 	@Override
 	public Integer getSolarSystemId() {
-		return this.systemId;
+		return this.solarSystemId;
 	}
 
 	@Override
@@ -74,6 +75,38 @@ public class SpaceLocation extends NeoComNode implements SpaceSystem, Station, S
 
 	@Override
 	public String getSolarSystemName() {return this.solarSystem.getName();}
+
+	public void setSolarSystem( final GetUniverseSystemsSystemIdOk solarSystem ) {
+		this.solarSystem = solarSystem;
+		this.solarSystemId = this.solarSystem.getSystemId();
+	}
+
+	@Override
+	public Integer getStationId() {
+		return this.stationId;
+	}
+
+	@Override
+	public GetUniverseStationsStationIdOk getStation() {
+		return this.station;
+	}
+
+	@Override
+	public String getStationName() {return this.station.getName();}
+
+	public void setStation( final GetUniverseStationsStationIdOk station ) {
+		this.station = station;
+		this.stationId = this.station.getStationId();
+	}
+
+	// - V I R T U A L
+	public Long getLocationId() {
+		if (null != this.station) return this.stationId.longValue();
+		if (null != this.solarSystem) return this.solarSystemId.longValue();
+		if (null != this.constellation) return this.constellationId.longValue();
+		if (null != this.region) return this.regionId.longValue();
+		throw new NeoComRuntimeException( "The SpaceLocation is invalid. There is not any of the minimum information." );
+	}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -100,7 +133,7 @@ public class SpaceLocation extends NeoComNode implements SpaceSystem, Station, S
 		public SpaceLocation.Builder withSolarSystem( final GetUniverseSystemsSystemIdOk solarSystem ) {
 			Objects.requireNonNull( solarSystem );
 			this.onConstruction.solarSystem = solarSystem;
-			this.onConstruction.systemId = solarSystem.getSystemId();
+			this.onConstruction.solarSystemId = solarSystem.getSystemId();
 			return this;
 		}
 

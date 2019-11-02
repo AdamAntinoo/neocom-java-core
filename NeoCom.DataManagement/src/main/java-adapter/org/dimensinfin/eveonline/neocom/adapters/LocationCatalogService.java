@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,19 +15,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
-import org.dimensinfin.eveonline.neocom.converter.EsiLocation2SpaceKLocationConverter;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.domain.SpaceKLocation;
-import org.dimensinfin.eveonline.neocom.domain.StationLocation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceConstellationImplementation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegionImplementation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
+import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 
 @NeoComAdapter
 public class LocationCatalogService {
 	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
 	private static Logger logger = LoggerFactory.getLogger( LocationCatalogService.class );
-	private static Map<Long, EsiLocation> locationCache = new HashMap<Long, EsiLocation>();
+	private static Map<Long, SpaceLocation> locationCache = new HashMap<>();
 	private Map<String, Integer> locationTypeCounters = new HashMap<>();
 	private boolean dirtyCache = false;
 	private LocationCacheAccessType lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
@@ -40,10 +40,19 @@ public class LocationCatalogService {
 	//	protected ISDEDatabaseAdapter sdeDatabaseAdapter;
 	protected LocationRepository locationRepository;
 
+	private LocationCatalogService() { }
+
 	// - C A C H E   M A N A G E M E N T
 	public void stopService() {
 		this.writeLocationsDataCache();
 		this.cleanLocationsCache();
+	}
+
+	private void startService() {
+		// TODO - This is not required until the citadel structures get stored on the SDE database.
+//		this.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
+		this.readLocationsDataCache(); // Load the cache from the storage.
+		this.registerOnScheduler(); // Register on scheduler to update storage every some minutes
 	}
 
 	// - S T O R A G E
@@ -57,17 +66,15 @@ public class LocationCatalogService {
 		final String fileName = this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
 		final String cacheFileName = directoryPath + fileName;
 		logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Opening cache file: {}", cacheFileName );
-		try (final BufferedInputStream buffer = new BufferedInputStream( this.fileSystemAdapter
-				.openResource4Input( cacheFileName ) );
-		     final ObjectInputStream input = new ObjectInputStream( buffer )) {
-//			try {
+		try (final BufferedInputStream buffer = new BufferedInputStream(
+				this.fileSystemAdapter.openResource4Input( cacheFileName ) );
+		     final ObjectInputStream input = new ObjectInputStream( buffer )
+		) {
 			synchronized (locationCache) {
-				locationCache = (HashMap<Long, EsiLocation>) input.readObject();
+				locationCache = (Map<Long, SpaceLocation>) input.readObject();
 				logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Restored cache Locations: {} entries.",
 						locationCache.size() );
 			}
-//			} finally {
-//			}
 		} catch (final ClassNotFoundException ex) {
 			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> ClassNotFoundException. {}",
 					ex.getMessage() );
@@ -82,8 +89,6 @@ public class LocationCatalogService {
 		} catch (final RuntimeException rex) {
 			rex.printStackTrace();
 		} finally {
-//			input.close();
-//			buffer.close();
 			logger.info( "<< [LocationCatalogService.readLocationsDataCache]" );
 		}
 	}
@@ -96,7 +101,8 @@ public class LocationCatalogService {
 			logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Opening cache file: {}", cacheFileName );
 			try (final BufferedOutputStream buffer = new BufferedOutputStream(
 					this.fileSystemAdapter.openResource4Output( cacheFileName ) );
-			     final ObjectOutput output = new ObjectOutputStream( buffer )) {
+			     final ObjectOutput output = new ObjectOutputStream( buffer )
+			) {
 				synchronized (locationCache) {
 					output.writeObject( locationCache );
 					dirtyCache = false;
@@ -113,70 +119,70 @@ public class LocationCatalogService {
 		}
 	}
 
-	public void verifySDERepository() {
-		this.locationTypeCounters = this.locationRepository.getCounters();
-	}
+//	public void verifySDERepository() {
+//		this.locationTypeCounters = this.locationRepository.getCounters();
+//	}
 
 	// - S E A R C H   L O C A T I O N   A P I
-	public SpaceKLocation searchSpaceLocation4Id( final Integer spaceIdentifier ) {
-		return new EsiLocation2SpaceKLocationConverter.Builder()
-				.withESIUniverseDataProvider( this.esiUniverseDataProvider )
-				.build().convert( this.buildUpLocation( spaceIdentifier ) );
-	}
+//	public SpaceLocation searchSpaceLocation4Id( final Long locationIdentifier ) {
+//		return new EsiLocation2SpaceKLocationConverter.Builder()
+//				.withESIUniverseDataProvider( this.esiUniverseDataProvider )
+//				.build().convert( this.buildUpLocation( locationIdentifier ) );
+//	}
 
-	public StationLocation searchStationLocation4Id( final Integer stationIdentifier ) {
-		if (stationIdentifier < 61000000) { // Can be a game station
-			return this.locationRepository.searchStationById( stationIdentifier );
-		}
-		return null;
-	}
+//	public StationLocation searchStationLocation4Id( final Integer stationIdentifier ) {
+//		if (stationIdentifier < 61000000) { // Can be a game station
+//			return this.locationRepository.searchStationById( stationIdentifier );
+//		}
+//		return null;
+//	}
 
-	public EsiLocation searchLocation4Id( final long locationId ) {
+	public SpaceLocation searchLocation4Id( final Long locationId ) {
 		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 		if (locationCache.containsKey( locationId )) return this.searchOnMemoryCache( locationId );
 		final int access = locationsCacheStatistics.accountAccess( false );
-		EsiLocation hit = this.searchOnRepository( locationId );
+//		SpaceLocation hit = this.searchOnRepository( locationId );
 		final int hits = locationsCacheStatistics.getHits();
-		if (null == hit) {
-			hit = this.buildUpLocation( locationId );
-			this.lastLocationAccess = LocationCacheAccessType.GENERATED;
-			this.storeOnCacheLocation( hit );
-			logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from SDE data.",
-					hits, access, locationId );
-			return hit;
-		}
-		logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} found at database.",
+//		if (null == hit) {
+		SpaceLocation hit = this.buildUpLocation( locationId );
+		this.lastLocationAccess = LocationCacheAccessType.GENERATED;
+		this.storeOnCacheLocation( hit );
+		logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from ESI data.",
 				hits, access, locationId );
 		return hit;
+//		}
+//		logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} found at database.",
+//				hits, access, locationId );
+//		return hit;
 	}
 
-	public LocationCacheAccessType lastSearchLocationAccessType() {
-		return this.lastLocationAccess;
-	}
+//	public LocationCacheAccessType lastSearchLocationAccessType() {
+//		return this.lastLocationAccess;
+//	}
 
-	private EsiLocation searchOnMemoryCache( final long locationId ) {
+	private SpaceLocation searchOnMemoryCache( final Long locationId ) {
 		int access = locationsCacheStatistics.accountAccess( true );
 		this.lastLocationAccess = LocationCacheAccessType.MEMORY_ACCESS;
 		int hits = locationsCacheStatistics.getHits();
-		logger.info( ">< [GlobalDataManager.searchLocation4Id]> [HIT-{}/{} ] Location {}  found at cache.",
+		logger.info( ">< [LocationCatalogService.searchOnMemoryCache]> [HIT-{}/{} ] Location {}  found at cache.",
 				hits, access, locationId );
 		return locationCache.get( locationId );
 	}
-
-	private EsiLocation searchOnRepository( final long locationId ) {
-		try {
-			final EsiLocation hit = this.locationRepository.findById( locationId );
-			if (null != hit) {
-				locationCache.put( locationId, hit );
-				this.lastLocationAccess = LocationCacheAccessType.DATABASE_ACCESS;
-				this.dirtyCache = true;
-			}
-			return hit;
-		} catch (final SQLException sqle) {
-			logger.info( "-- [GlobalDataManager.searchLocation4Id]> Location {} not found on storage.", locationId );
-			return null;
-		}
-	}
+// TODO - Needs reimplementation for corporation structures
+//	private SpaceLocation searchOnRepository( final Long locationId ) {
+//		try {
+//			final EsiLocation hit = this.locationRepository.findById( locationId );
+//			if (null != hit) {
+//				locationCache.put( locationId, hit );
+//				this.lastLocationAccess = LocationCacheAccessType.DATABASE_ACCESS;
+//				this.dirtyCache = true;
+//			}
+//			return hit;
+//		} catch (final SQLException sqle) {
+//			logger.info( "-- [GlobalDataManager.searchLocation4Id]> Location {} not found on storage.", locationId );
+//			return null;
+//		}
+//	}
 
 	public Map<String, Integer> getLocationTypeCounters() {
 		return this.locationTypeCounters;
@@ -186,34 +192,49 @@ public class LocationCatalogService {
 		// TODO - register this on the future scheduler
 	}
 
-	private EsiLocation buildUpLocation( final long locationId ) {
+	private SpaceLocation buildUpLocation( final Long locationId ) {
 		if (locationId < 20000000) { // Can be a Region
-			return this.storeOnCacheLocation( this.locationRepository.searchRegionById( locationId ) );
+			return this.storeOnCacheLocation(
+					(SpaceLocation) new SpaceRegionImplementation.Builder()
+							.withRegion( this.esiUniverseDataProvider.getUniverseRegionById( locationId.intValue() ) )
+							.build() );
 		}
-		if (locationId < 30000000) { // Can be a constellation
-			return this.storeOnCacheLocation( this.locationRepository.searchConstellationById( locationId ) );
+		if (locationId < 30000000) { // Can be a Constellation
+			return this.storeOnCacheLocation(
+					(SpaceLocation) new SpaceConstellationImplementation.Builder()
+							.withRegion( this.esiUniverseDataProvider.getUniverseRegionById( locationId.intValue() ) )
+							.withConstellation(
+									this.esiUniverseDataProvider.getUniverseConstellationById( locationId.intValue() ) )
+							.build() );
 		}
 		if (locationId < 40000000) { // Can be a system
-			return this.storeOnCacheLocation( this.locationRepository.searchSystemById( locationId ) );
+			return this.storeOnCacheLocation(
+					(SpaceLocation) new SpaceSystemImplementation.Builder()
+							.withRegion( this.esiUniverseDataProvider.getUniverseRegionById( locationId.intValue() ) )
+							.withConstellation(
+									this.esiUniverseDataProvider.getUniverseConstellationById( locationId.intValue() ) )
+							.withSolarSystem( this.esiUniverseDataProvider.getUniverseSystemById( locationId.intValue() ) )
+							.build() );
 		}
 		if (locationId < 61000000) { // Can be a game station
+			return this.storeOnCacheLocation(
+					(SpaceLocation) new StationImplementation.Builder()
+							.withRegion( this.esiUniverseDataProvider.getUniverseRegionById( locationId.intValue() ) )
+							.withConstellation(
+									this.esiUniverseDataProvider.getUniverseConstellationById( locationId.intValue() ) )
+							.withSolarSystem( this.esiUniverseDataProvider.getUniverseSystemById( locationId.intValue() ) )
+							.withStation( this.esiUniverseDataProvider.getUniverseStationById( locationId.intValue() ) )
+							.build() );
 		}
-		return new EsiLocation.Builder().build();
+		return null;
 	}
 
-	private EsiLocation storeOnCacheLocation( final EsiLocation entry ) {
+	private SpaceLocation storeOnCacheLocation( final SpaceLocation entry ) {
 		if (null != entry) {
-			locationCache.put( entry.getId(), entry );
+			locationCache.put( entry.getLocationId(), entry );
 			this.dirtyCache = true;
 		}
 		return entry;
-
-//		try {
-//			this.locationRepository.persist(location);
-//		locationCache.put(location.getId(), location);
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	public boolean getMemoryStatus() {
@@ -264,9 +285,7 @@ public class LocationCatalogService {
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 //			Objects.requireNonNull( this.onConstruction.sdeDatabaseAdapter );
 			Objects.requireNonNull( this.onConstruction.locationRepository );
-			this.onConstruction.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
-			this.onConstruction.readLocationsDataCache(); // Load the cache from the storage.
-			this.onConstruction.registerOnScheduler(); // Register on scheduler to update storage every some minutes
+			this.onConstruction.startService();
 			return this.onConstruction;
 		}
 	}
