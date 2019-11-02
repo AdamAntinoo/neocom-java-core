@@ -17,7 +17,6 @@ import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
@@ -46,6 +45,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 import retrofit2.Response;
@@ -77,7 +77,7 @@ public class ESIDataAdapter {
 	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
 	protected NeoComRetrofitFactory retrofitFactory;
-	protected StoreCacheManager cacheManager;
+	protected StoreCacheManager storeCacheManager;
 
 	// - C O N S T R U C T O R S
 	protected ESIDataAdapter() {}
@@ -115,14 +115,14 @@ public class ESIDataAdapter {
 //	}
 
 	// - D O W N L O A D   S T A R T E R S
-	public void downloadItemPrices() {
-		// Initialize and process the list of market process form the ESI full market data.
-		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
-		logger.info( ">> [ESIDataAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
-		for (GetMarketsPrices200Ok price : marketPrices) {
-			marketDefaultPrices.put( price.getTypeId(), price );
-		}
-	}
+//	public void downloadItemPrices() {
+//		// Initialize and process the list of market process form the ESI full market data.
+//		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
+//		logger.info( ">> [ESIDataAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
+//		for (GetMarketsPrices200Ok price : marketPrices) {
+//			marketDefaultPrices.put( price.getTypeId(), price );
+//		}
+//	}
 
 	public void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
@@ -146,26 +146,26 @@ public class ESIDataAdapter {
 	}
 
 	// - S D E   D A T A
-	public double searchSDEMarketPrice( final int typeId ) {
-		logger.info( "-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId );
-//		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
-		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
-		else return -1.0;
-	}
+//	public double searchSDEMarketPrice( final int typeId ) {
+//		logger.info( "-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId );
+////		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
+//		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
+//		else return -1.0;
+//	}
 
 	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
-		return this.cacheManager.accessItem( itemId ).blockingGet();
+		return this.storeCacheManager.accessItem( itemId ).blockingGet();
 	}
 
 	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
 		logger.info( "-- [ESIDataAdapter.searchItemGroup4Id]> targetGroupId: {}", groupId );
-		return this.cacheManager.accessGroup( groupId ).blockingGet();
+		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
 	}
 
 	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
 		logger.info( "-- [ESIDataAdapter.searchItemCategory4Id]> categoryId: {}", categoryId );
-		return this.cacheManager.accessCategory( categoryId ).blockingGet();
+		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
 	}
 
 	public GetUniverseRaces200Ok searchSDERace( final int identifier ) {
@@ -238,30 +238,30 @@ public class ESIDataAdapter {
 		return null;
 	}
 
-	/**
-	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
-	 * because probably there is not valid market price information at other servers.
-	 * To access the public data it will use the current unauthorized retrofit connection.
-	 */
-//	@TimeElapsed
-	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<List<GetMarketsPrices200Ok>> marketApiResponse =
-					this.retrofitFactory.accessNoAuthRetrofit()
-							.create( MarketApi.class )
-							.getMarketsPrices( DEFAULT_ESI_SERVER.toLowerCase(), null )
-							.execute();
-			if (!marketApiResponse.isSuccessful()) {
-				return new ArrayList<>();
-			} else return marketApiResponse.body();
-		} catch (IOException ioe) {
-			return new ArrayList<>();
-		} catch (RuntimeException rte) {
-			rte.printStackTrace();
-			return new ArrayList<>();
-		}
-	}
+//	/**
+//	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
+//	 * because probably there is not valid market price information at other servers.
+//	 * To access the public data it will use the current unauthorized retrofit connection.
+//	 */
+////	@TimeElapsed
+//	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
+//		try {
+//			// Create the request to be returned so it can be called.
+//			final Response<List<GetMarketsPrices200Ok>> marketApiResponse =
+//					this.retrofitFactory.accessNoAuthRetrofit()
+//							.create( MarketApi.class )
+//							.getMarketsPrices( DEFAULT_ESI_SERVER.toLowerCase(), null )
+//							.execute();
+//			if (!marketApiResponse.isSuccessful()) {
+//				return new ArrayList<>();
+//			} else return marketApiResponse.body();
+//		} catch (IOException ioe) {
+//			return new ArrayList<>();
+//		} catch (RuntimeException rte) {
+//			rte.printStackTrace();
+//			return new ArrayList<>();
+//		}
+//	}
 
 //	protected GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
 //		try {
@@ -896,15 +896,6 @@ public class ESIDataAdapter {
 			if (null != preInstance) this.onConstruction = preInstance;
 			else this.onConstruction = new ESIDataAdapter();
 		}
-
-//		@Deprecated
-//		public Builder( final IConfigurationProvider configurationProvider,
-//		                final IFileSystem fileSystemAdapter ) {
-//			Objects.requireNonNull( configurationProvider );
-//			Objects.requireNonNull( fileSystemAdapter );
-//			this.onConstruction = new ESIDataAdapter( configurationProvider, fileSystemAdapter );
-//		}
-
 		public ESIDataAdapter.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
@@ -922,22 +913,28 @@ public class ESIDataAdapter {
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
-
-		public ESIDataAdapter.Builder testingRetrofitFactory( final NeoComRetrofitFactory.Builder retrofitFactoryBuilder ) {
-			this.retrofitFactoryBuilder = retrofitFactoryBuilder;
+		public ESIDataAdapter.Builder withStoreCacheManager( final StoreCacheManager storeCacheManager ) {
+			Objects.requireNonNull( storeCacheManager );
+			this.onConstruction.storeCacheManager = storeCacheManager;
 			return this;
 		}
+
+//		public ESIDataAdapter.Builder testingRetrofitFactory( final NeoComRetrofitFactory.Builder retrofitFactoryBuilder ) {
+//			this.retrofitFactoryBuilder = retrofitFactoryBuilder;
+//			return this;
+//		}
 
 		public ESIDataAdapter build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.locationCatalogService );
-			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
-					.withEsiDataAdapter( this.onConstruction )
-					.withConfigurationProvider( this.onConstruction.configurationProvider )
-					.withFileSystem( this.onConstruction.fileSystemAdapter )
-					.build();
-			Objects.requireNonNull( this.onConstruction.cacheManager );
+			Objects.requireNonNull( this.onConstruction.storeCacheManager );
+//			this.onConstruction.storeCacheManager = new StoreCacheManager.Builder()
+//					.withEsiDataAdapter( this.onConstruction )
+//					.withConfigurationProvider( this.onConstruction.configurationProvider )
+//					.withFileSystem( this.onConstruction.fileSystemAdapter )
+//					.build();
+//			Objects.requireNonNull( this.onConstruction.storeCacheManager );
 			this.onConstruction.retrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
 					.withConfigurationProvider( this.onConstruction.configurationProvider )
 					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
@@ -945,7 +942,7 @@ public class ESIDataAdapter {
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 
 			// Inject the new adapter to the classes that depend on it.
-			NeoItem.injectEsiDataAdapter( this.onConstruction );
+//			NeoItem.injectEsiUniverseDataAdapter( this.onConstruction );
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );
 			// TODO - Add this when the market data is back present.
 //			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);

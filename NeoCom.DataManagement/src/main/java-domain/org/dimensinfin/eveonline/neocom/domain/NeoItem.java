@@ -70,7 +70,7 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 		this.loadup();
 	}
 
-	public static void injectEsiDataAdapter( final ESIUniverseDataProvider newEsiUniverseDataProvider ) {
+	public static void injectEsiUniverseDataAdapter( final ESIUniverseDataProvider newEsiUniverseDataProvider ) {
 		esiUniverseDataProvider = newEsiUniverseDataProvider;
 	}
 

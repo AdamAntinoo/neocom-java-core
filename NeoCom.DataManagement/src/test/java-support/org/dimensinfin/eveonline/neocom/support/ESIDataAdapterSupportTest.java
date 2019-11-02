@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
