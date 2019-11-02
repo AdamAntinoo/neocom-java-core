@@ -15,7 +15,7 @@ import org.dimensinfin.core.domain.EventEmitter;
 import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventEmitter;
 import org.dimensinfin.core.interfaces.IEventReceiver;
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.service.UpdaterJobManager;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {

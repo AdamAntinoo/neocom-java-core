@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapters;
+package org.dimensinfin.eveonline.neocom.adapter;
 
 import org.junit.Assert;
 import org.junit.Test;

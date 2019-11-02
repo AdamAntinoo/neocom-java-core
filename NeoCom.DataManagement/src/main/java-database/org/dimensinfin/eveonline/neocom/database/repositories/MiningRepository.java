@@ -6,7 +6,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;

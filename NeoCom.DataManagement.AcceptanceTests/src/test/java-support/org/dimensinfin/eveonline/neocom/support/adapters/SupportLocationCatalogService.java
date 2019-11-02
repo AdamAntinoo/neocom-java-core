@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.support.adapters;
 
-import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 
 public class SupportLocationCatalogService extends LocationCatalogService {
 	// - B U I L D E R

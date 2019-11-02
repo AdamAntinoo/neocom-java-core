@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.test.support.converters;
 
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.test.support.NeoComComponentFactory;
 import org.joda.time.LocalDate;

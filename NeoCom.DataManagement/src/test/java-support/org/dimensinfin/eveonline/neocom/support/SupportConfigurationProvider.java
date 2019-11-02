@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dimensinfin.eveonline.neocom.adapters.AConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapter.AConfigurationProvider;
 
 public class SupportConfigurationProvider extends AConfigurationProvider {
 //	protected static Logger logger = LoggerFactory.getLogger(GlobalConfigurationProvider.class);

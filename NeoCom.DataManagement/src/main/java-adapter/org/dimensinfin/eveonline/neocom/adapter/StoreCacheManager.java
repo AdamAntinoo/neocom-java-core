@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapters;
+package org.dimensinfin.eveonline.neocom.adapter;
 
 import java.io.File;
 import java.io.IOException;

@@ -3,7 +3,7 @@ package org.dimensinfin.eveonline.neocom.support.adapters;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 
-import org.dimensinfin.eveonline.neocom.adapters.SDEDatabaseAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.SDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 

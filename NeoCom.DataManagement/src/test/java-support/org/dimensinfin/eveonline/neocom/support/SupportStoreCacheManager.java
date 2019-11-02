@@ -2,7 +2,7 @@ package org.dimensinfin.eveonline.neocom.support;
 
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.adapters.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 
 import retrofit2.Retrofit;
 

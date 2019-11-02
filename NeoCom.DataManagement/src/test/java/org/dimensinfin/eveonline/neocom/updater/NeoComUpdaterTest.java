@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.dimensinfin.core.domain.EEvents;
 import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventReceiver;
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 

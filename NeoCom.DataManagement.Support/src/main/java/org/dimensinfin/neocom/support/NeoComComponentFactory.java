@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
-import org.dimensinfin.neocom.support.adapters.FileSystemSBImplementation;
-import org.dimensinfin.neocom.support.adapters.NeoComSupportDBAdapter;
 import org.dimensinfin.neocom.support.adapters.implementers.SBConfigurationProvider;
 import org.dimensinfin.neocom.support.adapters.implementers.SBFileSystemAdapter;
 import org.dimensinfin.neocom.support.adapters.implementers.SBNeoComDBAdapter;

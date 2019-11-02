@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
 

@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 
 /**
  * Spring boot implementation for the File System isolation interface. We can get access to the application generated data

@@ -14,7 +14,7 @@ import com.j256.ormlite.table.TableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.database.SBRawStatement;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;

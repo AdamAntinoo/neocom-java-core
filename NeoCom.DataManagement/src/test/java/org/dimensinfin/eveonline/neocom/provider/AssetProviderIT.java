@@ -8,10 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
-import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapters.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;

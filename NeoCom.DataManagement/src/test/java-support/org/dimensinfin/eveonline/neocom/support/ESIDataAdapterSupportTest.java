@@ -5,10 +5,10 @@ import java.io.IOException;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
-import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.LocationClass;
 

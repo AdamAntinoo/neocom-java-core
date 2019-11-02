@@ -11,7 +11,7 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import org.apache.commons.lang3.StringUtils;
 
-import org.dimensinfin.eveonline.neocom.adapters.NeoComRetrofitFactory;
+import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
 
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;

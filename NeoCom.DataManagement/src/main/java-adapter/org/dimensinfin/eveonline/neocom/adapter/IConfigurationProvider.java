@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapters;
+package org.dimensinfin.eveonline.neocom.adapter;
 
 public interface IConfigurationProvider {
 	int contentCount();

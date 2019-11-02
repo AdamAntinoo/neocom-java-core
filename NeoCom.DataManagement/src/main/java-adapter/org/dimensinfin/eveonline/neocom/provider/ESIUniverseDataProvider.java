@@ -9,9 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.core.domain.Units;
-import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
-import org.dimensinfin.eveonline.neocom.adapters.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
@@ -27,8 +27,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import static org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE;
-import static org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter.DEFAULT_ESI_SERVER;
+import static org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE;
+import static org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter.DEFAULT_ESI_SERVER;
 
 public class ESIUniverseDataProvider {
 	private static final Logger logger = LoggerFactory.getLogger( ESIUniverseDataProvider.class );

@@ -1,9 +1,9 @@
 package org.dimensinfin.eveonline.neocom.test.support;
 
-import org.dimensinfin.eveonline.neocom.adapters.ESIDataAdapter;
-import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
-import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.adapter.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.domain.EveItem;
 import org.dimensinfin.eveonline.neocom.support.adapters.FileSystemSBImplementation;
