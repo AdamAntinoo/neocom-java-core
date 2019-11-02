@@ -263,43 +263,43 @@ public class ESIDataAdapter {
 		}
 	}
 
-	protected GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(
-					UniverseApi.class )
-					.getUniverseGroupsGroupId( groupId
-							, DEFAULT_ACCEPT_LANGUAGE
-							, DEFAULT_ESI_SERVER.toLowerCase(),
-							null, null )
-					.execute();
-			if (!groupResponse.isSuccessful()) {
-				return null;
-			} else return groupResponse.body();
-		} catch (IOException ioe) {
-			return null;
-		}
-	}
+//	protected GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
+//		try {
+//			// Create the request to be returned so it can be called.
+//			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(
+//					UniverseApi.class )
+//					.getUniverseGroupsGroupId( groupId
+//							, DEFAULT_ACCEPT_LANGUAGE
+//							, DEFAULT_ESI_SERVER.toLowerCase(),
+//							null, null )
+//					.execute();
+//			if (!groupResponse.isSuccessful()) {
+//				return null;
+//			} else return groupResponse.body();
+//		} catch (IOException ioe) {
+//			return null;
+//		}
+//	}
 
-	protected GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(
-					UniverseApi.class )
-					.getUniverseCategoriesCategoryId(
-							categoryId
-							, DEFAULT_ACCEPT_LANGUAGE
-							, DEFAULT_ESI_SERVER
-									.toLowerCase(),
-							null, null )
-					.execute();
-			if (!groupResponse.isSuccessful()) {
-				return null;
-			} else return groupResponse.body();
-		} catch (IOException ioe) {
-			return null;
-		}
-	}
+//	protected GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) {
+//		try {
+//			// Create the request to be returned so it can be called.
+//			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(
+//					UniverseApi.class )
+//					.getUniverseCategoriesCategoryId(
+//							categoryId
+//							, DEFAULT_ACCEPT_LANGUAGE
+//							, DEFAULT_ESI_SERVER
+//									.toLowerCase(),
+//							null, null )
+//					.execute();
+//			if (!groupResponse.isSuccessful()) {
+//				return null;
+//			} else return groupResponse.body();
+//		} catch (IOException ioe) {
+//			return null;
+//		}
+//	}
 
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
 		logger.info( ">> [ESIDataAdapter.getUniverseRaces]" );
@@ -767,47 +767,47 @@ public class ESIDataAdapter {
 		return returnBlueprintList;
 	}
 
-	/**
-	 * Search for the item on the current downloaded items cache. If not found then go for it to the network.
-	 */
-	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId ) {
-		final GetUniverseTypesTypeIdOk item = this.getUniverseTypeById( typeId, "tranquility" );
-		//		return getUniverseTypeById("tranquility", typeId);
-		return item;
-	}
-
-	@Deprecated
-	private GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
-		//		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
-		final DateTime startTimePoint = DateTime.now();
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseTypesTypeIdOk> itemListResponse = retrofitFactory.accessNoAuthRetrofit()
-					.create( UniverseApi.class )
-					.getUniverseTypesTypeId( typeId
-							, "en-us"
-							, server
-							, null
-							, null )
-					.execute();
-			if (!itemListResponse.isSuccessful()) {
-				return null;
-			} else {
-				logger.info( "-- [ESIDataAdapter.getUniverseTypeById]> Downloading: {}-{}"
-						, itemListResponse.body().getTypeId()
-						, itemListResponse.body().getName() );
-				return itemListResponse.body();
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} catch (RuntimeException runtime) {
-			runtime.printStackTrace();
-		} finally {
-			//			logger.info("<< [ESINetworkManager.getUniverseTypeById]> [TIMING] Full elapsed: {}"
-			//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
-		}
-		return null;
-	}
+//	/**
+//	 * Search for the item on the current downloaded items cache. If not found then go for it to the network.
+//	 */
+//	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId ) {
+//		final GetUniverseTypesTypeIdOk item = this.getUniverseTypeById( typeId, "tranquility" );
+//		//		return getUniverseTypeById("tranquility", typeId);
+//		return item;
+//	}
+//
+//	@Deprecated
+//	private GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
+//		//		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
+//		final DateTime startTimePoint = DateTime.now();
+//		try {
+//			// Create the request to be returned so it can be called.
+//			final Response<GetUniverseTypesTypeIdOk> itemListResponse = retrofitFactory.accessNoAuthRetrofit()
+//					.create( UniverseApi.class )
+//					.getUniverseTypesTypeId( typeId
+//							, "en-us"
+//							, server
+//							, null
+//							, null )
+//					.execute();
+//			if (!itemListResponse.isSuccessful()) {
+//				return null;
+//			} else {
+//				logger.info( "-- [ESIDataAdapter.getUniverseTypeById]> Downloading: {}-{}"
+//						, itemListResponse.body().getTypeId()
+//						, itemListResponse.body().getName() );
+//				return itemListResponse.body();
+//			}
+//		} catch (IOException ioe) {
+//			ioe.printStackTrace();
+//		} catch (RuntimeException runtime) {
+//			runtime.printStackTrace();
+//		} finally {
+//			//			logger.info("<< [ESINetworkManager.getUniverseTypeById]> [TIMING] Full elapsed: {}"
+//			//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
+//		}
+//		return null;
+//	}
 
 	public List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {
 		logger.info( ">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]" );

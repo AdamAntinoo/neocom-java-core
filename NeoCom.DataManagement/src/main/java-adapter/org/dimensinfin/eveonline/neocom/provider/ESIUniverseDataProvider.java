@@ -11,15 +11,19 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.core.domain.Units;
 import org.dimensinfin.eveonline.neocom.adapters.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapters.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapters.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdIconsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -31,13 +35,11 @@ public class ESIUniverseDataProvider {
 	private static final long CACHE_SIZE = 2 * Units.GIGABYTES;
 
 	// - C O M P O N E N T S
-	protected IConfigurationProvider configurationProvider;
-	protected IFileSystem fileSystemAdapter;
-//	protected LocationCatalogService locationCatalogService;
-////	protected NeoComRetrofitFactory retrofitFactory;
-//	protected StoreCacheManager cacheManager;
+	private IConfigurationProvider configurationProvider;
+	private IFileSystem fileSystemAdapter;
+	private StoreCacheManager storeCacheManager;
 
-	protected Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
+	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
 	private ESIUniverseDataProvider() {}
 
@@ -86,22 +88,22 @@ public class ESIUniverseDataProvider {
 		}
 		return null;
 	}
-	public GetUniverseSystemsSystemIdOk getUniverseSystemById( final Integer systemId ) {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseSystemsSystemIdOk> systemResponse = this.neocomRetrofitNoAuth
-					.create( UniverseApi.class )
-					.getUniverseSystemsSystemId( systemId
-							, DEFAULT_ACCEPT_LANGUAGE
-							, DEFAULT_ESI_SERVER.toLowerCase(), null, null )
-					.execute();
-			if (systemResponse.isSuccessful()) return systemResponse.body();
-		} catch (IOException ioe) {
-			logger.info( "EX [ESIUniverseDataProvider.getUniverseSystemById]> IOException during ESI data access: {}",
-					ioe.getMessage() );
-		}
-		return null;
-	}
+//	public GetUniverseSystemsSystemIdOk getUniverseSystemById( final Integer systemId ) {
+//		try {
+//			// Create the request to be returned so it can be called.
+//			final Response<GetUniverseSystemsSystemIdOk> systemResponse = this.neocomRetrofitNoAuth
+//					.create( UniverseApi.class )
+//					.getUniverseSystemsSystemId( systemId
+//							, DEFAULT_ACCEPT_LANGUAGE
+//							, DEFAULT_ESI_SERVER.toLowerCase(), null, null )
+//					.execute();
+//			if (systemResponse.isSuccessful()) return systemResponse.body();
+//		} catch (IOException ioe) {
+//			logger.info( "EX [ESIUniverseDataProvider.getUniverseSystemById]> IOException during ESI data access: {}",
+//					ioe.getMessage() );
+//		}
+//		return null;
+//	}
 
 	public GetUniverseConstellationsConstellationIdOk getUniverseConstellationById( final Integer constellationId ) {
 		try {
@@ -136,6 +138,20 @@ public class ESIUniverseDataProvider {
 		}
 		return null;
 	}
+	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
+		return this.storeCacheManager.accessItem( itemId ).blockingGet();
+	}
+
+	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
+		logger.info( "-- [ESIUniverseDataProvider.searchItemGroup4Id]> targetGroupId: {}", groupId );
+		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
+	}
+
+	@TimeElapsed
+	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
+		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
+		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
+	}
 
 	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
 	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier ) {
@@ -144,7 +160,6 @@ public class ESIUniverseDataProvider {
 		try {
 			// Set the refresh to be used during the request.
 //			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = DEFAULT_ESI_SERVER;
 			// Use server parameter to override configuration server to use.
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
@@ -152,7 +167,7 @@ public class ESIUniverseDataProvider {
 					.create( CorporationApi.class )
 					.getCorporationsCorporationId(
 							identifier,
-							datasource, null )
+							DEFAULT_ESI_SERVER, null )
 					.execute();
 			if (corporationResponse.isSuccessful())
 				return corporationResponse.body();
@@ -211,17 +226,16 @@ public class ESIUniverseDataProvider {
 			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
 			return this;
 		}
+		public ESIUniverseDataProvider.Builder withStoreCacheManager( final StoreCacheManager storeCacheManager ) {
+			Objects.requireNonNull( storeCacheManager );
+			this.onConstruction.storeCacheManager = storeCacheManager;
+			return this;
+		}
 
 		public ESIUniverseDataProvider build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-//			Objects.requireNonNull( this.onConstruction.locationCatalogService );
-//			this.onConstruction.cacheManager = new StoreCacheManager.Builder()
-//					                                   .withEsiDataAdapter( this.onConstruction )
-//					                                   .withConfigurationProvider( this.onConstruction.configurationProvider )
-//					                                   .withFileSystem( this.onConstruction.fileSystemAdapter )
-//					                                   .build();
-//			Objects.requireNonNull( this.onConstruction.cacheManager );
+			Objects.requireNonNull( this.onConstruction.storeCacheManager );
 			return this.onConstruction;
 		}
 	}

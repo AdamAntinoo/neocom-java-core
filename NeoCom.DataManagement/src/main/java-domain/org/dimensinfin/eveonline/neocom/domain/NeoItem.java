@@ -18,13 +18,14 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCa
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
+import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 
 public class NeoItem extends NeoComNode implements IItemFacet {
 	public enum IndustryGroup {
 		UNDEFINED, OUTPUT, SKILL, BLUEPRINT, COMPONENTS, HULL, CHARGE, DATACORES, DATAINTERFACES, DECRIPTORS, ITEMS, MINERAL,
 		PLANETARYMATERIALS, REACTIONMATERIALS, REFINEDMATERIAL, SALVAGEDMATERIAL, OREMATERIALS, COMMODITY}
 	private static final long serialVersionUID = -2548296399305221197L;
-	private static ESIDataAdapter esiDataAdapter;
+	private static ESIUniverseDataProvider esiUniverseDataProvider;
 	protected int id = -1;
 	private transient GetUniverseTypesTypeIdOk item;
 	private transient GetUniverseGroupsGroupIdOk group;
@@ -70,18 +71,18 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 		this.loadup();
 	}
 
-	public static void injectEsiDataAdapter( final ESIDataAdapter newEsiDataAdapter ) {
-		esiDataAdapter = newEsiDataAdapter;
+	public static void injectEsiDataAdapter( final ESIUniverseDataProvider newEsiUniverseDataProvider ) {
+		esiUniverseDataProvider = newEsiUniverseDataProvider;
 	}
 
 	@RequiresNetwork
 	private void loadup() {
 		try {
-			this.item = esiDataAdapter.searchEsiItem4Id(this.id);
+			this.item = esiUniverseDataProvider.searchEsiItem4Id(this.id);
 			Objects.requireNonNull(this.item);
-			this.group = esiDataAdapter.searchItemGroup4Id(this.item.getGroupId());
+			this.group = esiUniverseDataProvider.searchItemGroup4Id(this.item.getGroupId());
 			Objects.requireNonNull(this.group);
-			this.category = esiDataAdapter.searchItemCategory4Id(this.group.getCategoryId());
+			this.category = esiUniverseDataProvider.searchItemCategory4Id(this.group.getCategoryId());
 			Objects.requireNonNull(this.category);
 		} catch (RuntimeException rtex) {
 			logger.info("RT [NeoItem.loadup]> Error downloading the NeoItem data for code {}. Not able to complete the " +
@@ -129,7 +130,7 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 	@RequiresNetwork
 	public double getPrice() {
 		if (this.price < 0.0)
-			this.price = esiDataAdapter.searchSDEMarketPrice(this.getTypeId());
+			this.price = esiUniverseDataProvider.searchSDEMarketPrice(this.getTypeId());
 		return this.price;
 	}
 

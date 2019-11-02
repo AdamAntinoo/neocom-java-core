@@ -3,10 +3,11 @@ package org.dimensinfin.eveonline.neocom.support;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.adapters.StoreCacheManager;
-import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
+
+import retrofit2.Retrofit;
 
 public class SupportStoreCacheManager extends StoreCacheManager {
-	private ESIUniverseDataProvider esiUniverseDataProvider;
+	private Retrofit noAuthRetrofitConnector;
 
 	private SupportStoreCacheManager() {}
 
@@ -18,9 +19,9 @@ public class SupportStoreCacheManager extends StoreCacheManager {
 			this.onConstruction = new SupportStoreCacheManager();
 		}
 
-		public SupportStoreCacheManager.Builder withESIUniverseDataProvider( final ESIUniverseDataProvider esiUniverseDataProvider ) {
-			Objects.requireNonNull( esiUniverseDataProvider );
-			this.onConstruction.esiUniverseDataProvider = esiUniverseDataProvider;
+		public SupportStoreCacheManager.Builder withNoAuthRetrofitConnector( final Retrofit noAuthRetrofitConnector ) {
+			Objects.requireNonNull( noAuthRetrofitConnector );
+			this.onConstruction.noAuthRetrofitConnector = noAuthRetrofitConnector;
 			return this;
 		}
 		public SupportStoreCacheManager build() {

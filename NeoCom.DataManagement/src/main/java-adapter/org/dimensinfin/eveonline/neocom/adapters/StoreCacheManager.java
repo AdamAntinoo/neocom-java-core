@@ -59,7 +59,7 @@ public class StoreCacheManager {
 	private IFileSystem fileSystem;
 	//	private ESIUniverseDataProvider esiUniverseDataProvider;
 //	private ESIDataAdapter esiDataAdapter;
-	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
+	private Retrofit noAuthRetrofitConnector; // HTTP client to be used on not authenticated endpoints.
 
 	// - C A C H E S
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
@@ -95,7 +95,7 @@ public class StoreCacheManager {
 							"/" + this.configurationProvider.getResourceString( "P.cache.directory.store.esiitem" ) ) );
 			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES );
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
-					.fetcher( new UniverseTypeFetcher( this.neocomRetrofitNoAuth ) )
+					.fetcher( new UniverseTypeFetcher( this.noAuthRetrofitConnector ) )
 					.persister( new EsiItemPersister( esiItemPersistentStore ) )
 					.networkBeforeStale()
 					.open();
@@ -107,19 +107,19 @@ public class StoreCacheManager {
 
 	private void createItemGroupStore() {
 		this.itemGroupStore = StoreBuilder.<Integer, GetUniverseGroupsGroupIdOk>key()
-				.fetcher( new UniverseItemGroupFetcher( this.neocomRetrofitNoAuth ) )
+				.fetcher( new UniverseItemGroupFetcher( this.noAuthRetrofitConnector ) )
 				.open();
 	}
 
 	private void createItemCategoryStore() {
 		this.categoryStore = StoreBuilder.<Integer, GetUniverseCategoriesCategoryIdOk>key()
-				.fetcher( new UniverseItemCategoryFetcher( this.neocomRetrofitNoAuth ) )
+				.fetcher( new UniverseItemCategoryFetcher( this.noAuthRetrofitConnector ) )
 				.open();
 	}
 
 	private void createSystemsStore() {
 		this.systemsStoreCache = StoreBuilder.<Integer, GetUniverseSystemsSystemIdOk>key()
-				.fetcher( new UniverseSystemFetcher( this.neocomRetrofitNoAuth ) )
+				.fetcher( new UniverseSystemFetcher( this.noAuthRetrofitConnector ) )
 				.open();
 	}
 
@@ -136,6 +136,7 @@ public class StoreCacheManager {
 	public Single<GetUniverseCategoriesCategoryIdOk> accessCategory( final Integer categoryId ) {
 		return this.categoryStore.get( categoryId );
 	}
+
 	public Single<GetUniverseSystemsSystemIdOk> accessSolarSystem( final Integer solarSystemId ) {
 		return this.systemsStoreCache.get( solarSystemId );
 	}
@@ -168,16 +169,21 @@ public class StoreCacheManager {
 			return this;
 		}
 
-//		public StoreCacheManager.Builder withESIUniverseDataProvider( final ESIUniverseDataProvider esiUniverseDataProvider ) {
+		//		public StoreCacheManager.Builder withESIUniverseDataProvider( final ESIUniverseDataProvider esiUniverseDataProvider ) {
 //			Objects.requireNonNull( esiUniverseDataProvider );
 //			this.onConstruction.esiUniverseDataProvider = esiUniverseDataProvider;
 //			return this;
 //		}
+		public StoreCacheManager.Builder withNoAuthRetrofitConnector( final Retrofit noAuthRetrofitConnector ) {
+			Objects.requireNonNull( noAuthRetrofitConnector );
+			this.onConstruction.noAuthRetrofitConnector = noAuthRetrofitConnector;
+			return this;
+		}
 
 		public StoreCacheManager build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystem );
-//			Objects.requireNonNull( this.onConstruction.esiUniverseDataProvider );
+			Objects.requireNonNull( this.onConstruction.noAuthRetrofitConnector );
 			this.onConstruction.createStores(); // Run the initialisation code.
 			return this.onConstruction;
 		}
