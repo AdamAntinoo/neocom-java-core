@@ -43,6 +43,11 @@ public class SBSDEDatabaseAdapter implements ISDEDatabaseAdapter {
 
 	protected SBSDEDatabaseAdapter() { }
 
+	@Override
+	public Integer getDatabaseVersion() {
+		return 100;
+	}
+
 	public Dao<EsiLocation, Long> getLocationDao() throws NeoComRuntimeException {
 		if (null == this.locationDao) {
 			try {
