@@ -14,7 +14,7 @@ import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 
 /**
@@ -54,7 +54,7 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	@DatabaseField(index = true)
 	private long ownerId = -1;
 
-	private transient EveItem resourceItem;
+	private transient NeoItem resourceItem;
 	private transient EsiLocation solarSystemLocation;
 	// - C O N S T R U C T O R S
 	private MiningExtraction() {
@@ -120,7 +120,7 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		return this.resourceItem.getName();
 	}
 
-	public MiningExtraction setResourceItem( final EveItem resourceItem ) {
+	public MiningExtraction setResourceItem( final NeoItem resourceItem ) {
 		this.resourceItem = resourceItem;
 		return this;
 	}
@@ -250,7 +250,7 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 
 		public Builder withTypeId( final int typeId ) {
 			this.onConstruction.typeId = typeId;
-			this.onConstruction.resourceItem = new EveItem(typeId);
+			this.onConstruction.resourceItem = new NeoItem(typeId);
 			return this;
 		}
 

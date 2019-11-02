@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
 
 public class MiningRepositoryTest extends ESIDataAdapterSupportTest {
@@ -41,7 +41,7 @@ public class MiningRepositoryTest extends ESIDataAdapterSupportTest {
 				                   .build();
 		miningExtractionList.add(miningExtraction);
 		dao = Mockito.mock(Dao.class);
-		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
+		NeoItem.injectEsiDataAdapter(this.esiDataAdapter);
 	}
 
 	@Test

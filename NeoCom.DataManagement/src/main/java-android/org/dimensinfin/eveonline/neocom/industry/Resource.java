@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
 import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 
@@ -27,12 +27,12 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	protected int stackSize = 1;
 	protected double damage = 1.0;
 
-	protected transient EveItem esiItem;
+	protected transient NeoItem esiItem;
 
 	// - C O N S T R U C T O R S
 	public Resource( final int typeId ) {
 		super();
-		this.esiItem = new EveItem(typeId);
+		this.esiItem = new NeoItem(typeId);
 		Objects.requireNonNull(this.esiItem);
 		this.baseQty = 0;
 	}
@@ -86,8 +86,8 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 		return getItem().getGroupName();
 	}
 
-	public EveItem getItem() {
-//		if (null == this.esiItem) this.esiItem = new EveItem(this.typeId);
+	public NeoItem getItem() {
+//		if (null == this.esiItem) this.esiItem = new NeoItem(this.typeId);
 		return this.esiItem;
 	}
 

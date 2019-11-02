@@ -14,8 +14,8 @@ public class MiningExtractionTest {
 //	public void getPrice() throws IOException {
 //		final SupportConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder("properties").build();
 //		final SupportFileSystem fileSystem = new SupportFileSystem();
-//		EveItem.injectEsiDataAdapter(new ESIDataAdapter.Builder(configurationProvider, fileSystem).build());
-//		final EveItem item = Mockito.mock(EveItem.class);
+//		NeoItem.injectEsiDataAdapter(new ESIDataAdapter.Builder(configurationProvider, fileSystem).build());
+//		final NeoItem item = Mockito.mock(NeoItem.class);
 //		final MiningExtraction miningExtraction = new MiningExtraction.Builder()
 //				                                          .withTypeId(34)
 //				                                          .withQuantity(1000)

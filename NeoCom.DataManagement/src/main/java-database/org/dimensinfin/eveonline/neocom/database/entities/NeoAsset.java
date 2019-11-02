@@ -14,7 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 
@@ -61,7 +61,7 @@ public class NeoAsset extends UpdatableEntity {
 	private Long parentContainer;
 
 	@JsonIgnore
-	private EveItem itemDelegate;
+	private NeoItem itemDelegate;
 
 	private NeoAsset() {
 	}
@@ -158,7 +158,7 @@ public class NeoAsset extends UpdatableEntity {
 			asset.assetId = esiAsset.getItemId();
 			asset.typeId = esiAsset.getTypeId();
 			asset.assetDelegate = esiAsset;
-			asset.itemDelegate = new EveItem( esiAsset.getTypeId() );
+			asset.itemDelegate = new NeoItem( esiAsset.getTypeId() );
 			asset.locationId = transformLocation( esiAsset.getLocationId(),
 					esiAsset.getLocationFlag(),
 					esiAsset.getLocationType() );

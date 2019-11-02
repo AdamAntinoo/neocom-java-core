@@ -17,7 +17,7 @@ import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.domain.EveItem;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
@@ -945,7 +945,7 @@ public class ESIDataAdapter {
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 
 			// Inject the new adapter to the classes that depend on it.
-			EveItem.injectEsiDataAdapter( this.onConstruction );
+			NeoItem.injectEsiDataAdapter( this.onConstruction );
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );
 			// TODO - Add this when the market data is back present.
 //			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);

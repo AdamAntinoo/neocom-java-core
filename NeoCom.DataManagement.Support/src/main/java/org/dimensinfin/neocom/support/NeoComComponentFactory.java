@@ -153,7 +153,7 @@ public class NeoComComponentFactory {
 	//		if (null == this.esiDataAdapter)
 	//			esiDataAdapter = new ESIDataAdapter.Builder(this.getConfigurationProvider(), this.getFileSystemAdapter())
 	//					                 .build();
-	//		EveItem.injectEsiDataAdapter(this.esiDataAdapter);
+	//		NeoItem.injectEsiDataAdapter(this.esiDataAdapter);
 	//		return this.esiDataAdapter;
 	//	}
 	//

@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOkDogmaAttributes;
 
-public class EveItem extends NeoComNode implements IItemFacet {
+public class NeoItem extends NeoComNode implements IItemFacet {
 	public enum IndustryGroup {
 		UNDEFINED, OUTPUT, SKILL, BLUEPRINT, COMPONENTS, HULL, CHARGE, DATACORES, DATAINTERFACES, DECRIPTORS, ITEMS, MINERAL,
 		PLANETARYMATERIALS, REACTIONMATERIALS, REFINEDMATERIAL, SALVAGEDMATERIAL, OREMATERIALS, COMMODITY}
@@ -55,17 +55,17 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	private transient Future<String> futureSellerData;
 	// - C O N S T R U C T O R S
 	@Deprecated
-	public EveItem() {
+	public NeoItem() {
 		super();
 	}
 	@Deprecated
-	public EveItem( final GetUniverseTypesTypeIdOk sdeItem ) {
+	public NeoItem( final GetUniverseTypesTypeIdOk sdeItem ) {
 		super();
 		this.item = sdeItem;
 	}
 
 	@RequiresNetwork
-	public EveItem( final int typeId ) {
+	public NeoItem( final int typeId ) {
 		this.id = typeId;
 		this.loadup();
 	}
@@ -84,9 +84,9 @@ public class EveItem extends NeoComNode implements IItemFacet {
 			this.category = esiDataAdapter.searchItemCategory4Id(this.group.getCategoryId());
 			Objects.requireNonNull(this.category);
 		} catch (RuntimeException rtex) {
-			logger.info("RT [EveItem.loadup]> Error downloading the EveItem data for code {}. Not able to complete the " +
+			logger.info("RT [NeoItem.loadup]> Error downloading the NeoItem data for code {}. Not able to complete the " +
 					"instantiation.",this.id);
-			logger.info("RT [EveItem.loadup]> Message: {}", rtex.getMessage());
+			logger.info("RT [NeoItem.loadup]> Message: {}", rtex.getMessage());
 		}
 	}
 
@@ -101,14 +101,14 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	}
 
 	/**
-	 * This is the key method used when instantiating an EveItem to set the eve item identifier for the esi underlying object. After setting this
+	 * This is the key method used when instantiating an NeoItem to set the eve item identifier for the esi underlying object. After setting this
 	 * value we can post the download or caches access to the delegated esi data.
 	 * Also we later will used this entry point to locate the extended market information to be used when calculating prices. This price
 	 * data will be located inside a new delegete instance.
 	 *
 	 * @param typeId the eve game unique type identifier.
 	 */
-	public EveItem setTypeId( final int typeId ) {
+	public NeoItem setTypeId( final int typeId ) {
 		this.id = typeId;
 		this.loadup();
 //		futureBuyerData = this.retrieveMarketData(getTypeId(), EMarketSide.BUYER);
@@ -220,7 +220,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return "not-applies";
 	}
 
-	public EveItem setHullGroup( final String dummy ) {
+	public NeoItem setHullGroup( final String dummy ) {
 		return this;
 	}
 
@@ -238,7 +238,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 //		return this.getSellerMarketData().getBestMarket();
 //	}
 //
-//	public EveItem setLowestSellerPrice( final MarketDataEntry dummy ) {
+//	public NeoItem setLowestSellerPrice( final MarketDataEntry dummy ) {
 //		return this;
 //	}
 //
@@ -246,7 +246,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 //		return this.getBuyerMarketData().getBestMarket();
 //	}
 //
-//	public EveItem setHighestBuyerPrice( final MarketDataEntry dummy ) {
+//	public NeoItem setHighestBuyerPrice( final MarketDataEntry dummy ) {
 //		return this;
 //	}
 
@@ -255,7 +255,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this.category.getName();
 	}
 
-	public EveItem setCategoryName( final String dummy ) {
+	public NeoItem setCategoryName( final String dummy ) {
 		return this;
 	}
 
@@ -265,7 +265,7 @@ public class EveItem extends NeoComNode implements IItemFacet {
 		return this.group.getName();
 	}
 
-	public EveItem setGroupName( final String dummy ) {
+	public NeoItem setGroupName( final String dummy ) {
 		return this;
 	}
 
@@ -294,16 +294,16 @@ public class EveItem extends NeoComNode implements IItemFacet {
 	public boolean equals( final Object o ) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		final EveItem eveItem = (EveItem) o;
+		final NeoItem neoItem = (NeoItem) o;
 		return new EqualsBuilder()
 				       .appendSuper(super.equals(o))
-				       .append(this.id, eveItem.id)
-				       .append(this.price, eveItem.price)
-				       .append(this.item, eveItem.item)
-				       .append(this.group, eveItem.group)
-				       .append(this.category, eveItem.category)
-				       .append(this.tech, eveItem.tech)
-				       .append(this.industryGroup, eveItem.industryGroup)
+				       .append(this.id, neoItem.id)
+				       .append(this.price, neoItem.price)
+				       .append(this.item, neoItem.item)
+				       .append(this.group, neoItem.group)
+				       .append(this.category, neoItem.category)
+				       .append(this.tech, neoItem.tech)
+				       .append(this.industryGroup, neoItem.industryGroup)
 				       .isEquals();
 	}
 

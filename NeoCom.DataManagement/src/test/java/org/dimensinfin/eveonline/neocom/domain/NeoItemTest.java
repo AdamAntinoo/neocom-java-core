@@ -14,7 +14,7 @@ import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class EveItemTest extends ESIDataAdapterSupportTest {
+public class NeoItemTest extends ESIDataAdapterSupportTest {
 	private ESIDataAdapter realEsiDataAdapter;
 
 //	@Before
@@ -25,7 +25,7 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( this.locationCatalogService )
 				.build();
-		EveItem.injectEsiDataAdapter(realEsiDataAdapter);
+		NeoItem.injectEsiDataAdapter(realEsiDataAdapter);
 	}
 
 	@Test
@@ -36,13 +36,13 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 		type.setName( "Tritanium" );
 		type.setVolume( 0.01F );
 		type.setCapacity( 10.0F );
-		final EveItem item = new EveItem( type );
+		final NeoItem item = new NeoItem( type );
 		Assert.assertNotNull( item );
 	}
 
 //	@Test
 	public void equalsContract() {
-		EqualsVerifier.forClass( EveItem.class )
+		EqualsVerifier.forClass( NeoItem.class )
 				.usingGetClass().verify();
 	}
 
@@ -55,7 +55,7 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 //		type.setVolume( 0.01F );
 //		type.setCapacity( 10.0F );
 //		final GetUniverseTypesTypeIdOk item = this.esiDataAdapter.searchEsiItem4Id( 34 );
-		final EveItem item = new EveItem( 34 );
+		final NeoItem item = new NeoItem( 34 );
 		Assert.assertNotNull( item );
 		Assert.assertEquals( 34, item.getTypeId());
 		Assert.assertEquals( 18, item.getGroupId());
@@ -63,22 +63,22 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 //		Assert.assertEquals( 0.1F, item.getCapacity().floatValue() , 0.1   );
 		Assert.assertNotNull( item.getDogmaAttributes() );
 		Assert.assertEquals( "not-applies", item.getHullGroup() );
-		Assert.assertEquals( EveItem.IndustryGroup.REFINEDMATERIAL, item.getIndustryGroup());
+		Assert.assertEquals( NeoItem.IndustryGroup.REFINEDMATERIAL, item.getIndustryGroup());
 	}
 
 //	@Test
 //	public void accessorContract() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-//		EveItem.injectEsiDataAdapter(esiDataAdapter);
-//		PojoTestUtils.validateAccessors(EveItem.class);
+//		NeoItem.injectEsiDataAdapter(esiDataAdapter);
+//		PojoTestUtils.validateAccessors(NeoItem.class);
 //	}
 
 	@Test
 	public void getName() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem( 34 );
+		final NeoItem item = new NeoItem( 34 );
 		final String expected = "Tritanium";
 		final String obtained = item.getName();
 		Assert.assertNotNull( item );
@@ -88,9 +88,9 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getTypeId() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem()
+		final NeoItem item = new NeoItem()
 				.setTypeId( 34 );
 		final int obtained = item.getTypeId();
 		Assert.assertNotNull( item );
@@ -100,9 +100,9 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getGroupId() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-//		EveItem.injectEsiDataAdapter( esiDataAdapter );
+//		NeoItem.injectEsiDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem(34 );
+		final NeoItem item = new NeoItem(34 );
 		final int obtained = item.getGroupId();
 		Assert.assertNotNull( item );
 		Assert.assertEquals( "The group should be valid.", 18, obtained );
@@ -111,9 +111,9 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getCategoryId() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-//		EveItem.injectEsiDataAdapter( esiDataAdapter );
+//		NeoItem.injectEsiDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem( 34 );
+		final NeoItem item = new NeoItem( 34 );
 		final int obtained = item.getCategoryId();
 		Assert.assertNotNull( item );
 		Assert.assertEquals( "The category should be valid.", 4, obtained );
@@ -122,9 +122,9 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getVolume() {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-//		EveItem.injectEsiDataAdapter( this.esiDataAdapter );
+//		NeoItem.injectEsiDataAdapter( this.esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem( 34 );
+		final NeoItem item = new NeoItem( 34 );
 		final double obtained = item.getVolume();
 		Assert.assertNotNull( item );
 		Assert.assertEquals( "The volume should match.", 0.01, obtained, 0.001 );
@@ -133,12 +133,12 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getIndustryGroup() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-//		EveItem.injectEsiDataAdapter( esiDataAdapter );
+//		NeoItem.injectEsiDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem( 34 );
-		final EveItem.IndustryGroup obtained = item.getIndustryGroup();
+		final NeoItem item = new NeoItem( 34 );
+		final NeoItem.IndustryGroup obtained = item.getIndustryGroup();
 		Assert.assertNotNull( item );
-		Assert.assertEquals( "The volume should match.", EveItem.IndustryGroup.REFINEDMATERIAL, obtained );
+		Assert.assertEquals( "The volume should match.", NeoItem.IndustryGroup.REFINEDMATERIAL, obtained );
 	}
 
 	@Test
@@ -151,8 +151,8 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 		Mockito.when( esiDataAdapter.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( group );
 		Mockito.when( esiDataAdapter.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( category );
 		Mockito.when( category.getName() ).thenReturn( "Capsuleer Bases" );
-		EveItem.injectEsiDataAdapter( esiDataAdapter );
-		final EveItem item = new EveItem( 34 );
+		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		final NeoItem item = new NeoItem( 34 );
 		Assert.assertNotNull( item );
 		Assert.assertFalse( item.isBlueprint() );
 	}
@@ -167,8 +167,8 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 		Mockito.when( esiDataAdapter.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( group );
 		Mockito.when( esiDataAdapter.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( category );
 		Mockito.when( category.getName() ).thenReturn( "Energy Neutralizer Blueprint" );
-		EveItem.injectEsiDataAdapter( esiDataAdapter );
-		final EveItem item = new EveItem( 15799 );
+		NeoItem.injectEsiDataAdapter( esiDataAdapter );
+		final NeoItem item = new NeoItem( 15799 );
 		Assert.assertNotNull( item );
 		Assert.assertFalse( item.isBlueprint() );
 	}
@@ -176,9 +176,9 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void getPrice() throws IOException {
 //		final ESIDataAdapter esiDataAdapter = this.setupRealAdapter();
-		EveItem.injectEsiDataAdapter( esiDataAdapter );
+		NeoItem.injectEsiDataAdapter( esiDataAdapter );
 //		MarketDataSet.injectEsiDataAdapter(esiDataAdapter);
-		final EveItem item = new EveItem( 34 );
+		final NeoItem item = new NeoItem( 34 );
 		double obtained = item.getPrice();
 		Assert.assertTrue( "Price expected to be positive value.", obtained > 3.0 );
 	}
@@ -187,7 +187,7 @@ public class EveItemTest extends ESIDataAdapterSupportTest {
 	public void signalCompletion_itemData() {
 //		final EventEmitter emitter = Mockito.mock(EventEmitter.class);
 //		final GetUniverseTypesTypeIdOk universeItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
-//		final EveItem item = new EveItem(34);
+//		final NeoItem item = new NeoItem(34);
 //		Mockito.doAnswer(( call ) -> {
 //			final PropertyChangeEvent event = call.getArgument(0);
 //			Assert.assertNotNull(event);
