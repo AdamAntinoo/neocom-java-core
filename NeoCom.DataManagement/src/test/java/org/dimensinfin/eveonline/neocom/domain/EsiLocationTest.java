@@ -3,13 +3,11 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-import static org.mockito.ArgumentMatchers.anyLong;
 
 public class EsiLocationTest extends ESIDataAdapterSupportTest {
 	@Test
@@ -40,7 +38,7 @@ public class EsiLocationTest extends ESIDataAdapterSupportTest {
 				.withRegionId( 10000041 )
 				.withRegionName( "Syndicate" )
 				.build();
-		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( regionLocation );
+//		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( regionLocation );
 
 		final EsiLocation locationRegion = this.esiDataAdapter.searchLocation4Id( 10000041 );
 		Assert.assertTrue( "This should be a region.",locationRegion.isRegion() );

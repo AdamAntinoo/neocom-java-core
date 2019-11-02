@@ -13,6 +13,11 @@
 >* Region
 >* AssetsProvider
 >* FacetedAssetContainer
+>* SpaceSystemImplementation
+>* SpaceConstellationImplementation
+>* SpaceRegionImplementation
+>* LocationCatalogService
 
 [OPTIONAL CLASSES TO DO UNIT TESTING]
 >* AssetContainer
+>* LocationRepository

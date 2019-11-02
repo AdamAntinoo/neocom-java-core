@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.domain.SpaceKLocation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 
 public class FacetedLocationContainerTest {
 	@Test
@@ -52,7 +52,7 @@ public class FacetedLocationContainerTest {
 				.withFacet( facet )
 				.build();
 		Assert.assertNotNull( container );
-		final SpaceKLocation location = Mockito.mock( SpaceKLocation.class );
+		final SpaceLocation location = Mockito.mock( SpaceLocation.class );
 		Assert.assertEquals( 1, container.addContent( location ) );
 		Assert.assertEquals( 2, container.addContent( location ) );
 	}
@@ -64,7 +64,7 @@ public class FacetedLocationContainerTest {
 				.withFacet( facet )
 				.build();
 		Assert.assertNotNull( container );
-		final SpaceKLocation location = Mockito.mock( SpaceKLocation.class );
+		final SpaceLocation location = Mockito.mock( SpaceLocation.class );
 		Assert.assertEquals( 1, container.addContent( location ) );
 
 		Assert.assertNotNull( container.collaborate2Model( "-TEST-VARIATION-" ) );

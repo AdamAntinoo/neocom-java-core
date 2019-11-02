@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.LocationClass;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
@@ -104,12 +103,12 @@ public class ESIDataAdapterTest extends ESIDataAdapterSupportTest {
 		Assert.assertEquals( LocationClass.SYSTEM, location.getClassType() );
 	}
 
-	@Test
-	public void getCorporationsCorporationId() {
-		final GetCorporationsCorporationIdOk corporation = this.esiDataAdapter.getCorporationsCorporationId( 98384726 );
-		Assert.assertNotNull( corporation );
-		Assert.assertEquals( "Industrias Machaque", corporation.getName() );
-	}
+//	@Test
+//	public void getCorporationsCorporationId() {
+//		final GetCorporationsCorporationIdOk corporation = this.esiDataAdapter.getCorporationsCorporationId( 98384726 );
+//		Assert.assertNotNull( corporation );
+//		Assert.assertEquals( "Industrias Machaque", corporation.getName() );
+//	}
 
 	@Test
 	public void getCharactersCharacterId() {

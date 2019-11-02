@@ -12,8 +12,6 @@ import org.dimensinfin.eveonline.neocom.adapters.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.LocationClass;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-
 public class ESIDataAdapterSupportTest {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
@@ -40,7 +38,7 @@ public class ESIDataAdapterSupportTest {
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
 		this.locationCatalogService = Mockito.mock( LocationCatalogService.class );
-		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( defaultLocation );
+//		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( defaultLocation );
 		this.retrofitFactoryBuilder = new SupportNeoComRetrofitFactory.Builder();
 		this.esiDataAdapter = new ESIDataAdapter.Builder() // Use an special configuration to call the mock server
 				.withConfigurationProvider( this.configurationProvider )
