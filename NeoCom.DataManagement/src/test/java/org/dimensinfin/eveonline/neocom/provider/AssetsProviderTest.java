@@ -286,24 +286,4 @@ public class AssetsProviderTest {
 		provider.classifyAssetsByLocation(); // The first time the timestamp is not set.
 		provider.classifyAssetsByLocation(); // The second time I run the rest of the code
 	}
-
-	@Test
-	public void classifyAssetsByLocationContainerCase() {
-		final ArrayList<NeoAsset> testAssetList = new ArrayList<>();
-		testAssetList.add(this.assetHangarItem);
-		testAssetList.add(this.assetContainerItem);
-		testAssetList.add(this.assetContainerItem);
-		final  AssetRepository localAssetRepository = Mockito.mock(AssetRepository.class);
-		Mockito.when( localAssetRepository.findAllByOwnerId( Mockito.anyInt() ) ).thenReturn( testAssetList );
-		final AssetsProvider provider = new AssetsProvider.Builder()
-				.withCredential( credential )
-				.withAssetRepository( localAssetRepository )
-				.withLocationCatalogService( locationService )
-				.build();
-
-		provider.classifyAssetsByLocation();
-
-		Assert.assertNotNull( provider );
-		Assert.assertNotNull( provider.getRegionList() );
-	}
 }
