@@ -15,21 +15,26 @@ import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
-import org.dimensinfin.eveonline.neocom.domain.NeoItem;
+import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.support.SupportConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
-import org.dimensinfin.eveonline.neocom.support.SupportStoreCacheManager;
 
 public class AssetProviderIT {
 	private GetUniverseRegionsRegionIdOk regionData;
 	private GetUniverseConstellationsConstellationIdOk constellationData;
 	private GetUniverseSystemsSystemIdOk systemData;
 	private GetUniverseStationsStationIdOk stationData;
+	private GetUniverseTypesTypeIdOk defaultItem;
+	private GetUniverseGroupsGroupIdOk defaultGroup;
+	private GetUniverseCategoriesCategoryIdOk defaultCategory;
 
 	private NeoAsset assetHangarItem;
 	private NeoAsset assetHangarContainer;
@@ -40,15 +45,9 @@ public class AssetProviderIT {
 	private IConfigurationProvider itConfigurationProvider;
 	private IFileSystem itFileSystemAdapter;
 	private StoreCacheManager itStoreCacheManager;
-
-//	private LocationIdentifier locationIdentifier;
-//	private List<NeoAsset> assetList;
-//	private AssetRepository assetRepository;
-//	private LocationCatalogService locationService;
-//	private AssetsProvider provider4Test;
-
-
-	private AssetProviderIT() {}
+	private RetrofitUniverseConnector itRetrofitUniverseConnector;
+	private ESIUniverseDataProvider itEsiUniverseDataProvider;
+	private LocationCatalogService itLocationService;
 
 	public void setUpEsiData() {
 		this.regionData = new GetUniverseRegionsRegionIdOk();
@@ -77,6 +76,51 @@ public class AssetProviderIT {
 		this.stationData.setReprocessingStationsTake( 0.05F );
 		this.stationData.setSystemId( 30000013 );
 		this.stationData.setTypeId( 1531 );
+
+		this.defaultItem = new GetUniverseTypesTypeIdOk();
+		this.defaultItem.setTypeId( 34 );
+		this.defaultItem.setCapacity( 0F );
+		this.defaultItem.setGroupId( 18 );
+		this.defaultItem.setName( "Tritanium" );
+		this.defaultItem.setVolume( 0.01F );
+
+		this.defaultGroup = new GetUniverseGroupsGroupIdOk();
+		this.defaultGroup.setGroupId( 18 );
+		this.defaultGroup.setCategoryId( 4 );
+		this.defaultGroup.setName( "Mineral" );
+
+		this.defaultCategory = new GetUniverseCategoriesCategoryIdOk();
+		this.defaultCategory.setCategoryId( 4 );
+		this.defaultCategory.setName( "Material" );
+	}
+
+	public void setUpIntegrationEnvironment() throws IOException {
+		this.itConfigurationProvider = new SupportConfigurationProvider.Builder().build();
+		this.itFileSystemAdapter = new SupportFileSystem.Builder()
+				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
+				.build();
+		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.build();
+		this.itStoreCacheManager = new StoreCacheManager.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystem( this.itFileSystemAdapter )
+				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
+				.build();
+		this.itEsiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.withStoreCacheManager( this.itStoreCacheManager )
+				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
+				.build();
+		final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
+		this.itLocationService = new LocationCatalogService.Builder(  )
+		.withConfigurationProvider( this.itConfigurationProvider )
+		.withFileSystemAdapter( this.itFileSystemAdapter )
+		.withLocationRepository( locationRepository )
+		.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
+		.build();
 	}
 
 	public void setUpNeoComAssetData() {
@@ -112,68 +156,31 @@ public class AssetProviderIT {
 
 	}
 
-	public void setUpIntegrationEnvironment() throws IOException {
-		this.itConfigurationProvider = new SupportConfigurationProvider.Builder().build();
-		this.itFileSystemAdapter = new SupportFileSystem.Builder()
-				.optionalApplicationDirectory( "TestCacheDirectory" )
-				.build();
-		final RetrofitUniverseConnector retrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.build();
-		this.itStoreCacheManager = new SupportStoreCacheManager.Builder()
-				.withNoAuthRetrofitConnector( retrofitUniverseConnector )
-				.build();
-	}
-
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		this.setUpEsiData();
-		this.setUpNeoComAssetData();
+		this.setUpIntegrationEnvironment();
+//		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		this.credential = Mockito.mock( Credential.class );
 		Mockito.when( this.credential.getAccountId() ).thenReturn( 92220000 );
-//		this.locationIdentifier = Mockito.mock( LocationIdentifier.class );
-//		Mockito.when( this.locationIdentifier.getType() ).thenReturn( LocationIdentifierType.SPACE );
-//		Mockito.when( this.locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000 );
-//		final NeoAsset asset = Mockito.mock( NeoAsset.class );
-//		Mockito.when( asset.getAssetId() ).thenReturn( 987654L );
-//		Mockito.when( asset.getLocationId() ).thenReturn( locationIdentifier );
-//		this.assetList = new ArrayList<>();
-//		this.assetRepository = Mockito.mock( AssetRepository.class );
-//		Mockito.when( this.assetRepository.findAllByOwnerId( Mockito.anyInt() ) ).thenReturn( this.assetList );
-//		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
-//		Mockito.when( spaceLocation.getRegion() ).thenReturn( regionData );
-//		this.locationService = Mockito.mock( LocationCatalogService.class );
-//		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
-//		this.provider4Test = new AssetsProvider.Builder()
-//				.withCredential( credential )
-//				.withAssetRepository( assetRepository )
-//				.withLocationCatalogService( locationService )
-//				.build();
-//		Assert.assertNotNull( this.provider4Test );
 	}
 
 	@Test
 	public void classifyAssetsByLocationContainerCase() {
+		this.setUpNeoComAssetData();
 		final ArrayList<NeoAsset> testAssetList = new ArrayList<>();
 		testAssetList.add( this.assetHangarItem );
 		testAssetList.add( this.assetContainerItem );
 		testAssetList.add( this.assetContainerItem );
 		final AssetRepository localAssetRepository = Mockito.mock( AssetRepository.class );
 		Mockito.when( localAssetRepository.findAllByOwnerId( Mockito.anyInt() ) ).thenReturn( testAssetList );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
+//		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
 		final AssetsProvider provider = new AssetsProvider.Builder()
-				.withCredential( credential )
+				.withCredential( this.credential )
 				.withAssetRepository( localAssetRepository )
-				.withLocationCatalogService( locationService )
+				.withLocationCatalogService( this.itLocationService )
 				.build();
 
-		final ESIUniverseDataProvider esiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.withStoreCacheManager( this.itStoreCacheManager )
-				.build();
-		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		provider.classifyAssetsByLocation();
 
 		Assert.assertNotNull( provider );

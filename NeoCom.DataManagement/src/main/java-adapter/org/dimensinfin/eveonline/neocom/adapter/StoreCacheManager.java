@@ -58,9 +58,7 @@ public class StoreCacheManager {
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystem;
-	//	private ESIUniverseDataProvider esiUniverseDataProvider;
-//	private ESIDataAdapter esiDataAdapter;
-	private Retrofit noAuthRetrofitConnector; // HTTP client to be used on not authenticated endpoints.
+	private RetrofitUniverseConnector retrofitUniverseConnector;
 
 	// - C A C H E S
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
@@ -96,7 +94,7 @@ public class StoreCacheManager {
 							"/" + this.configurationProvider.getResourceString( "P.cache.directory.store.esiitem" ) ) );
 			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES );
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
-					.fetcher( new UniverseTypeFetcher( this.noAuthRetrofitConnector ) )
+					.fetcher( new UniverseTypeFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
 					.persister( new EsiItemPersister( esiItemPersistentStore ) )
 					.networkBeforeStale()
 					.open();
@@ -108,22 +106,21 @@ public class StoreCacheManager {
 
 	private void createItemGroupStore() {
 		this.itemGroupStore = StoreBuilder.<Integer, GetUniverseGroupsGroupIdOk>key()
-				.fetcher( new UniverseItemGroupFetcher( this.noAuthRetrofitConnector ) )
+				.fetcher( new UniverseItemGroupFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
 				.open();
 	}
 
 	private void createItemCategoryStore() {
 		this.categoryStore = StoreBuilder.<Integer, GetUniverseCategoriesCategoryIdOk>key()
-				.fetcher( new UniverseItemCategoryFetcher( this.noAuthRetrofitConnector ) )
+				.fetcher( new UniverseItemCategoryFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
 				.open();
 	}
 
 	private void createSystemsStore() {
 		this.systemsStoreCache = StoreBuilder.<Integer, GetUniverseSystemsSystemIdOk>key()
-				.fetcher( new UniverseSystemFetcher( this.noAuthRetrofitConnector ) )
+				.fetcher( new UniverseSystemFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
 				.open();
 	}
-
 
 	// - C A C H E   E X P O R T E D   A P I
 	public Single<GetUniverseTypesTypeIdOk> accessItem( final Integer itemId ) {
@@ -155,11 +152,6 @@ public class StoreCacheManager {
 			this.onConstruction = new StoreCacheManager();
 		}
 
-//		public Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
-//			this.onConstruction.esiDataAdapter = esiDataAdapter;
-//			return this;
-//		}
-
 		public StoreCacheManager.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
@@ -170,21 +162,16 @@ public class StoreCacheManager {
 			return this;
 		}
 
-		//		public StoreCacheManager.Builder withESIUniverseDataProvider( final ESIUniverseDataProvider esiUniverseDataProvider ) {
-//			Objects.requireNonNull( esiUniverseDataProvider );
-//			this.onConstruction.esiUniverseDataProvider = esiUniverseDataProvider;
-//			return this;
-//		}
-		public StoreCacheManager.Builder withNoAuthRetrofitConnector( final Retrofit noAuthRetrofitConnector ) {
-			Objects.requireNonNull( noAuthRetrofitConnector );
-			this.onConstruction.noAuthRetrofitConnector = noAuthRetrofitConnector;
+		public StoreCacheManager.Builder withRetrofitUniverseConnector( final RetrofitUniverseConnector retrofitUniverseConnector ) {
+			Objects.requireNonNull( retrofitUniverseConnector );
+			this.onConstruction.retrofitUniverseConnector = retrofitUniverseConnector;
 			return this;
 		}
 
 		public StoreCacheManager build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystem );
-			Objects.requireNonNull( this.onConstruction.noAuthRetrofitConnector );
+			Objects.requireNonNull( this.onConstruction.retrofitUniverseConnector );
 			this.onConstruction.createStores(); // Run the initialisation code.
 			return this.onConstruction;
 		}

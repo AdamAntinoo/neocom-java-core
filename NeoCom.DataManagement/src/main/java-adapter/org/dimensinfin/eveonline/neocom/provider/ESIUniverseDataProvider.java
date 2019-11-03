@@ -30,6 +30,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellatio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 
 import retrofit2.Response;
@@ -204,6 +205,11 @@ public class ESIUniverseDataProvider {
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
 		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
 		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
+	}
+	@TimeElapsed
+	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {
+		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", solarSystemId );
+		return this.storeCacheManager.accessSolarSystem( solarSystemId ).blockingGet();
 	}
 
 	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N

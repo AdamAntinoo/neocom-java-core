@@ -173,6 +173,8 @@ public class NeoAsset extends UpdatableEntity {
 		                                                     final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
 			return new LocationIdentifier.Builder()
 					.withSpaceIdentifier( locationId.intValue() )
+					.withLocationFlag ( locationFlag)
+					.withLocationType( locationType)
 					.build();
 		}
 

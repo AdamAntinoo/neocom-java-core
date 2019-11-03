@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
-public class SpaceLocation extends NeoComNode implements SpaceSystem, Station, Structure {
+public class SpaceLocation extends NeoComNode implements Station, Structure {
 	private static final long serialVersionUID = -9028958348146320642L;
 
 	private Integer regionId;

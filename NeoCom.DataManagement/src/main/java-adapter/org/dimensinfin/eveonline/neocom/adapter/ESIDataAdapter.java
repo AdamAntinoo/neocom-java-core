@@ -21,7 +21,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
@@ -948,7 +947,7 @@ public class ESIDataAdapter {
 //			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);
 
 			// Preload the esi caches with SDE data.
-			this.onConstruction.downloadItemPrices();
+//			this.onConstruction.downloadItemPrices();
 			this.onConstruction.downloadPilotFamilyData();
 			return this.onConstruction;
 		}

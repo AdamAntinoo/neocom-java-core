@@ -120,6 +120,10 @@ public class AssetsProvider implements Serializable {
 				this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
 				this.add2SpaceLocation( asset );
 				break;
+			case UNKNOWN:
+				logger.info( "--[AssetsProvider.processAsset]> Searching for parent asset: {}",
+						asset.getLocationId().toString() );
+
 //			case STATION:
 //				this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
 //				this.add2StationLocation( asset );

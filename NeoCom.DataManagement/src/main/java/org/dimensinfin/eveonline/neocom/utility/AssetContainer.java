@@ -6,15 +6,14 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.domain.space.Station;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 
-public class AssetContainer implements Station, SpaceSystem {
-	private SpaceLocation spaceLocation;
+public class AssetContainer implements Station {
+	protected SpaceLocation spaceLocation;
 	private List<NeoAsset> contents = new ArrayList<>();
 
 	protected AssetContainer() {}

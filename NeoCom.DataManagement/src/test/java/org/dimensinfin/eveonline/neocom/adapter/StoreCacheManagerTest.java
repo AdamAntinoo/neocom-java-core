@@ -1,104 +1,94 @@
 package org.dimensinfin.eveonline.neocom.adapter;
 
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SupportConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
 
 import io.reactivex.Single;
 
 public class StoreCacheManagerTest {
-	private static SupportConfigurationProvider configurationProvider;
-	private static final IFileSystem fileSystem = new SupportFileSystem.Builder()
-			.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
-			.build();
-	private static ESIDataAdapter esiDataAdapter;
-	private static StoreCacheManager cacheManager;
+	private StoreCacheManager storeCacheManager4test;
 
 	@Before
 	public void setUp() throws Exception {
-		configurationProvider = new SupportConfigurationProvider.Builder()
-				.withPropertiesDirectory( "properties.unitest" )
+		final IConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder().build();
+		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
+				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
-		esiDataAdapter = Mockito.mock( ESIDataAdapter.class );
-		cacheManager = new StoreCacheManager.Builder()
-				.withEsiDataAdapter( esiDataAdapter )
+		final RetrofitUniverseConnector retrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
 				.withConfigurationProvider( configurationProvider )
-				.withFileSystem( fileSystem )
+				.withFileSystemAdapter( fileSystemAdapter )
+				.build();
+		this.storeCacheManager4test = new StoreCacheManager.Builder()
+				.withConfigurationProvider( configurationProvider )
+				.withFileSystem( fileSystemAdapter )
+				.withRetrofitUniverseConnector( retrofitUniverseConnector )
 				.build();
 	}
-
 	@Test
-	public void builder_alldependencies() {
-		final StoreCacheManager cacheManager = new StoreCacheManager.Builder()
-				.withEsiDataAdapter( esiDataAdapter )
-				.withConfigurationProvider( configurationProvider )
-				.withFileSystem( fileSystem )
+	public void buildComplete() throws IOException {
+		final IConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder().build();
+		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
+				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
-		Assert.assertNotNull( cacheManager );
+		final RetrofitUniverseConnector retrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+				.withConfigurationProvider( configurationProvider )
+				.withFileSystemAdapter( fileSystemAdapter )
+				.build();
+		final StoreCacheManager storeCacheManager = new StoreCacheManager.Builder()
+				.withConfigurationProvider( configurationProvider )
+				.withFileSystem( fileSystemAdapter )
+				.withRetrofitUniverseConnector( retrofitUniverseConnector )
+				.build();
+		Assert.assertNotNull( storeCacheManager );
 	}
 
 	@Test
 	public void accessItem() {
-		final GetUniverseTypesTypeIdOk item = new GetUniverseTypesTypeIdOk();
-		Mockito.when( esiDataAdapter.getUniverseTypeById( Mockito.anyInt() ) ).thenReturn( item );
+		final Single<GetUniverseTypesTypeIdOk> itemSingle = this.storeCacheManager4test.accessItem( 34 );
 
-		final Single<GetUniverseTypesTypeIdOk> itemRestored = cacheManager.accessItem( 34 );
-		Assert.assertNotNull( itemRestored );
-		final GetUniverseTypesTypeIdOk itemCached = cacheManager.accessItem( 34 ).blockingGet();
-		Assert.assertNotNull( itemCached );
+		Assert.assertNotNull( itemSingle );
+		Assert.assertNotNull( itemSingle.blockingGet() );
+
+		final GetUniverseTypesTypeIdOk item = itemSingle.blockingGet();
+		Assert.assertNotNull( item );
+		Assert.assertEquals( 34, item.getTypeId().intValue() );
+		Assert.assertEquals( "Tritanium", item.getName() );
 	}
 
 	@Test
 	public void accessGroup() throws InterruptedException {
-		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
-		Mockito.when( esiDataAdapter.getUniverseGroupById( Mockito.anyInt() ) ).thenReturn( group );
-		Mockito.when( group.getName() ).thenReturn( "Capsuleer Bases" );
+		final Single<GetUniverseGroupsGroupIdOk> groupSingle = this.storeCacheManager4test.accessGroup( 18 );
 
-		final Single<GetUniverseGroupsGroupIdOk> groupSingle = cacheManager.accessGroup( 1082 );
-		//		Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 		Assert.assertNotNull( groupSingle );
-		GetUniverseGroupsGroupIdOk obtained = groupSingle.blockingGet();
-		Assert.assertNotNull( obtained );
-		Assert.assertEquals( "Check the value of the downloaded category.", "Capsuleer Bases", obtained.getName() );
+		Assert.assertNotNull( groupSingle.blockingGet() );
 
-		Mockito.when( esiDataAdapter.getUniverseGroupById( Mockito.anyInt() ) ).thenReturn( null );
-		final Single<GetUniverseGroupsGroupIdOk> groupSingleCached = cacheManager.accessGroup( 1082 );
-		Thread.sleep( TimeUnit.SECONDS.toMillis( 1 ) );
-		Assert.assertNotNull( groupSingleCached );
-		obtained = groupSingleCached.blockingGet();
-		Assert.assertNotNull( obtained );
-		Assert.assertEquals( "Check the value of the downloaded category already cached.", "Capsuleer Bases",
-				obtained.getName() );
+		final GetUniverseGroupsGroupIdOk group = groupSingle.blockingGet();
+		Assert.assertNotNull( group );
+		Assert.assertEquals( 18, group.getGroupId().intValue() );
+		Assert.assertEquals( "Mineral", group.getName() );
 	}
 
 	@Test
 	public void accessCategory() throws InterruptedException {
-		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
-		Mockito.when( esiDataAdapter.getUniverseCategoryById( Mockito.anyInt() ) ).thenReturn( category );
-		Mockito.when( category.getName() ).thenReturn( "Planetary Interaction" );
+		final Single<GetUniverseCategoriesCategoryIdOk> categorySingle = this.storeCacheManager4test
+				.accessCategory( 4 );
 
-		final Single<GetUniverseCategoriesCategoryIdOk> categorySingle = cacheManager.accessCategory( 41 );
-		Thread.sleep( TimeUnit.SECONDS.toMillis( 1 ) );
 		Assert.assertNotNull( categorySingle );
-		GetUniverseCategoriesCategoryIdOk obtained = categorySingle.blockingGet();
-		Assert.assertNotNull( obtained );
-		Assert.assertEquals( "Check the value of the downloaded category.", "Planetary Interaction", obtained.getName() );
+		Assert.assertNotNull( categorySingle.blockingGet() );
 
-		Mockito.when( esiDataAdapter.getUniverseCategoryById( Mockito.anyInt() ) ).thenReturn( null );
-		final Single<GetUniverseCategoriesCategoryIdOk> categorySingleCached = cacheManager.accessCategory( 41 );
-		Thread.sleep( TimeUnit.SECONDS.toMillis( 1 ) );
-		Assert.assertNotNull( categorySingleCached );
-		obtained = categorySingleCached.blockingGet();
-		Assert.assertNotNull( obtained );
-		Assert.assertEquals( "Check the value of the downloaded category.", "Planetary Interaction", obtained.getName() );
+		final GetUniverseCategoriesCategoryIdOk category = categorySingle.blockingGet();
+		Assert.assertNotNull( category );
+		Assert.assertEquals( 4, category.getCategoryId().intValue() );
+		Assert.assertEquals( "Material", category.getName() );
 	}
 }

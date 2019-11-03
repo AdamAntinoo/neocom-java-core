@@ -21,11 +21,21 @@ public class SupportConfigurationProvider extends AConfigurationProvider {
 
 	// - P L A T F O R M   S P E C I F I C   S E C T I O N
 	protected void readAllProperties() {
-		this.addProperty( "P.cache.root.storage.name", "src/test/NeoCom.UnitTest" );
-		this.addProperty( "P.cache.directory.path", "NeoComCache/" );
+		// - C A C H E
+		this.addProperty( "P.cache.directory.path", "UnitTest/NeoComCache/" );
 		this.addProperty( "P.cache.directory.store.esiitem", "ESIData.cache.store" );
-		this.addProperty( "P.cache.esiitem.timeout", "86400" );
+		this.addProperty( "P.cache.directory.store.universe", "Universe.cache.store");
+		this.addProperty( "P.cache.retrofit.universe.network", "ESIUniverse.cache.store");
+		this.addProperty( "P.cache.retrofit.universe.timeout", "36000");
+		this.addProperty( "P.cache.retrofit.universe.size.gb", "4");
+		this.addProperty( "P.cache.locationscache.filename", "Locations.cache.store");
+		this.addProperty( "P.cache.locationscache.activestate", "true");
+		this.addProperty( "P.cache.locationscache.writedown", "citadelupdate");
 		this.addProperty( "P.cache.esinetwork.filename", "ESINetworkManager.cache.store" );
+		this.addProperty( "P.cache.esiitem.timeout", "86400" );
+		this.addProperty( "P.cache.esiitem.time", "86400" );
+
+		this.addProperty( "P.cache.root.storage.name", "src/test/NeoCom.UnitTest" );
 		this.addProperty( "P.esi.tranquility.authorization.server", "http://localhost:6091" );
 		this.addProperty( "P.esi.tranquility.authorization.clientid", "dbc9c2b1d18d49d8adacd23436c5281d" );
 		this.addProperty( "P.esi.tranquility.authorization.secretkey", "QqnTLCqLQxZYHgHUuobkNA9g950vXVYDMg8ETTXM" );
@@ -33,7 +43,6 @@ public class SupportConfigurationProvider extends AConfigurationProvider {
 		this.addProperty( "P.esi.tranquility.authorization.agent", "org.dimensinfin.eveonline.neocom; Dimensinfin Industries; " +
 				"Data Management Unit Testing" );
 		this.addProperty( "P.esi.tranquility.authorization.scopes.filename", "esiconf/ESINetworkScopes.Tranquility.txt" );
-
 	}
 
 	protected List<String> getResourceFiles( String path ) throws IOException {

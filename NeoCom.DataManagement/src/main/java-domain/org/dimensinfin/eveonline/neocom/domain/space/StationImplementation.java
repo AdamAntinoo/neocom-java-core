@@ -15,6 +15,10 @@ public class StationImplementation extends AssetContainer {
 	// - B U I L D E R
 	public static class Builder {
 		private StationImplementation onConstruction;
+		private GetUniverseRegionsRegionIdOk region;
+		private GetUniverseConstellationsConstellationIdOk constellation;
+		private GetUniverseSystemsSystemIdOk solarSystem;
+		private GetUniverseStationsStationIdOk station;
 
 		public Builder() {
 			this.onConstruction = new StationImplementation();
@@ -22,30 +26,39 @@ public class StationImplementation extends AssetContainer {
 
 		public StationImplementation.Builder withRegion( final GetUniverseRegionsRegionIdOk region ) {
 			Objects.requireNonNull( region );
-			this.onConstruction.setRegion( region);
+			this.region = region;
 			return this;
 		}
+
 		public StationImplementation.Builder withConstellation( final GetUniverseConstellationsConstellationIdOk constellation ) {
 			Objects.requireNonNull( constellation );
-			this.onConstruction.setConstellation( constellation);
+			this.constellation = constellation;
 			return this;
 		}
+
 		public StationImplementation.Builder withSolarSystem( final GetUniverseSystemsSystemIdOk solarSystem ) {
 			Objects.requireNonNull( solarSystem );
-			this.onConstruction.setSolarSystem( solarSystem);
+			this.solarSystem = solarSystem;
 			return this;
 		}
+
 		public StationImplementation.Builder withStation( final GetUniverseStationsStationIdOk station ) {
 			Objects.requireNonNull( station );
-			this.onConstruction.setStation( station);
+			this.station = station;
 			return this;
 		}
 
 		public Station build() {
-			Objects.requireNonNull( this.onConstruction.getRegion() );
-			Objects.requireNonNull( this.onConstruction.getConstellation() );
-			Objects.requireNonNull( this.onConstruction.getSolarSystem() );
-			Objects.requireNonNull( this.onConstruction.getStation() );
+			Objects.requireNonNull( this.region );
+			Objects.requireNonNull( this.constellation );
+			Objects.requireNonNull( this.solarSystem );
+			Objects.requireNonNull( this.station );
+			this.onConstruction.spaceLocation = new SpaceLocation.Builder()
+					.withRegion( this.region )
+					.withConstellation( this.constellation )
+					.withSolarSystem( this.solarSystem )
+					.withStation( this.station )
+					.build();
 			return this.onConstruction;
 		}
 	}
