@@ -17,6 +17,11 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.Region;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
+import org.dimensinfin.eveonline.neocom.domain.space.Station;
+import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
 public class AssetsProvider implements Serializable {
@@ -66,14 +71,21 @@ public class AssetsProvider implements Serializable {
 	public List<Region> getRegionList() {
 		final Map<Integer, Region> regions = new HashMap<>();
 		for (AssetContainer spaceLocation : this.spaceLocationsCache.values()) {
-			Region hit = regions.get( spaceLocation.getRegionId() );
+			Region hit = regions.get( ((SpaceRegion) spaceLocation).getRegionId() );
 			if (null == hit) {
-				hit = new Region.Builder().withRegion( spaceLocation.getRegion() ).build();
-				regions.put( spaceLocation.getRegionId(), hit );
+				hit = new Region.Builder().withRegion( ((SpaceRegion) spaceLocation).getRegion() ).build();
+				regions.put( ((SpaceRegion) spaceLocation).getRegionId(), hit );
 			}
 			hit.addContent( spaceLocation );
 		}
 		return new ArrayList<>( regions.values() );
+	}
+
+	private void checks() {
+		final Station station = new StationImplementation.Builder().build();
+
+		final SpaceSystem system = new SpaceSystemImplementation.Builder().build();
+
 	}
 
 	private boolean verifyTimeStamp() {
@@ -163,9 +175,10 @@ public class AssetsProvider implements Serializable {
 		if (null == hit) {
 //			switch (asset.getLocationId().getType()) {
 //				case SPACE:
-			hit = new AssetContainer.Builder()
-					.withSpaceLocation( this.locationCatalogService.searchLocation4Id( spaceIdentifier ) )
-					.build();
+//			hit = new AssetContainer.Builder()
+//					.withSpaceLocation(
+			hit = (AssetContainer) this.locationCatalogService.searchLocation4Id( spaceIdentifier );
+//					.build();
 //			}
 //			hit = new FacetedNodeContainer.Builder<SpaceLocation>()
 //					.withFacet( this.locationCatalogService.searchSpaceLocation4Id( spaceIdentifier ) )

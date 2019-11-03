@@ -8,9 +8,51 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class StationImplementation extends AssetContainer {
+public class StationImplementation extends AssetContainer implements Station {
+	private static final long serialVersionUID = -646550210810227292L;
+	private SpaceLocationImplementation spaceLocation;
 
 	private StationImplementation() {super();}
+
+	// - D E L E G A T E S
+	@Override
+	public Long getLocationId() {return spaceLocation.getLocationId();}
+
+	@Override
+	public Integer getRegionId() {return spaceLocation.getRegionId();}
+
+	@Override
+	public GetUniverseRegionsRegionIdOk getRegion() {return spaceLocation.getRegion();}
+
+	@Override
+	public String getRegionName() {return spaceLocation.getRegionName();}
+
+	@Override
+	public Integer getConstellationId() {return spaceLocation.getConstellationId();}
+
+	@Override
+	public GetUniverseConstellationsConstellationIdOk getConstellation() {return spaceLocation.getConstellation();}
+
+	@Override
+	public String getConstellationName() {return spaceLocation.getConstellationName();}
+
+	@Override
+	public Integer getSolarSystemId() {return spaceLocation.getSolarSystemId();}
+
+	@Override
+	public GetUniverseSystemsSystemIdOk getSolarSystem() {return spaceLocation.getSolarSystem();}
+
+	@Override
+	public String getSolarSystemName() {return spaceLocation.getSolarSystemName();}
+
+	@Override
+	public Integer getStationId() {return spaceLocation.getStationId();}
+
+	@Override
+	public GetUniverseStationsStationIdOk getStation() {return spaceLocation.getStation();}
+
+	@Override
+	public String getStationName() {return spaceLocation.getStationName();}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -53,7 +95,7 @@ public class StationImplementation extends AssetContainer {
 			Objects.requireNonNull( this.constellation );
 			Objects.requireNonNull( this.solarSystem );
 			Objects.requireNonNull( this.station );
-			this.onConstruction.spaceLocation = new SpaceLocation.Builder()
+			this.onConstruction.spaceLocation = new SpaceLocationImplementation.Builder()
 					.withRegion( this.region )
 					.withConstellation( this.constellation )
 					.withSolarSystem( this.solarSystem )

@@ -17,6 +17,9 @@ public class Region implements SpaceRegion {
 
 	// - S P A C E R E G I O N
 	@Override
+	public Long getLocationId() {return this.getLocationId();}
+
+	@Override
 	public Integer getRegionId() {
 		return this.regionId;
 	}
