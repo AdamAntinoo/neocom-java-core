@@ -14,7 +14,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.DatabaseVersion;
 public class DatabaseVersionRepositoryTest {
 	@Test
 	public void buildComplete() {
-		final Dao dao = Mockito.mock( Dao.class );
+		final Dao<DatabaseVersion,Integer> dao = Mockito.mock( Dao.class );
 		final DatabaseVersionRepository repository = new DatabaseVersionRepository.Builder()
 				.withDatabaseVersionDao( dao )
 				.build();
@@ -23,7 +23,7 @@ public class DatabaseVersionRepositoryTest {
 
 	@Test(expected = NullPointerException.class)
 	public void buildFailureA() {
-		final Dao dao = Mockito.mock( Dao.class );
+		final Dao<DatabaseVersion,Integer> dao = Mockito.mock( Dao.class );
 		final DatabaseVersionRepository repository = new DatabaseVersionRepository.Builder()
 				.build();
 		Assert.assertNotNull( repository );
@@ -31,7 +31,7 @@ public class DatabaseVersionRepositoryTest {
 
 	@Test(expected = NullPointerException.class)
 	public void buildFailureB() {
-		final Dao dao = Mockito.mock( Dao.class );
+		final Dao<DatabaseVersion,Integer> dao = Mockito.mock( Dao.class );
 		final DatabaseVersionRepository repository = new DatabaseVersionRepository.Builder()
 				.withDatabaseVersionDao( null )
 				.build();
@@ -40,7 +40,7 @@ public class DatabaseVersionRepositoryTest {
 
 	@Test
 	public void accessVersionSuccess() throws SQLException {
-		final Dao dao = Mockito.mock( Dao.class );
+		final Dao<DatabaseVersion,Integer> dao = Mockito.mock( Dao.class );
 		final List<DatabaseVersion> versionList = new ArrayList<>();
 		versionList.add( new DatabaseVersion( 123 ) );
 		Mockito.when( dao.queryForAll() ).thenReturn( versionList );
@@ -55,7 +55,7 @@ public class DatabaseVersionRepositoryTest {
 
 	@Test
 	public void accessVersionNotFound() throws SQLException {
-		final Dao dao = Mockito.mock( Dao.class );
+		final Dao<DatabaseVersion,Integer> dao = Mockito.mock( Dao.class );
 		final List<DatabaseVersion> versionList = new ArrayList<>();
 		Mockito.when( dao.queryForAll() ).thenReturn( versionList );
 		final DatabaseVersionRepository repository = new DatabaseVersionRepository.Builder()
@@ -83,7 +83,7 @@ public class DatabaseVersionRepositoryTest {
 
 	@Test
 	public void persist() throws SQLException {
-		final Dao dao = Mockito.mock( Dao.class );
+		final Dao<DatabaseVersion,Integer> dao = Mockito.mock( Dao.class );
 		final DatabaseVersion version = Mockito.mock( DatabaseVersion.class );
 		Mockito.when( dao.createOrUpdate( Mockito.any( DatabaseVersion.class ) ) )
 				.thenReturn( Mockito.any( Dao.CreateOrUpdateStatus.class ) );

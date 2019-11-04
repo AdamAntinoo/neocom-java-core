@@ -1,4 +1,11 @@
 package org.dimensinfin.eveonline.neocom.domain.space;
 
-public interface Structure {
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
+
+public interface Structure extends SpaceSystem{
+	Long getStructureId();
+
+	GetUniverseStructuresStructureIdOk getStructure();
+
+	String getStructureName();
 }

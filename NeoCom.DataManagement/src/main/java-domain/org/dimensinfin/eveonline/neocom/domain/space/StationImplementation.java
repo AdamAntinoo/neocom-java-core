@@ -6,9 +6,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellatio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
-import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class StationImplementation extends AssetContainer implements Station {
+public class StationImplementation /*extends AssetContainer*/ implements Station {
 	private static final long serialVersionUID = -646550210810227292L;
 	private SpaceLocationImplementation spaceLocation;
 

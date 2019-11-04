@@ -7,6 +7,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
@@ -24,80 +25,59 @@ public class SpaceLocationImplementation extends NeoComNode implements SpaceLoca
 	private Double security;
 	private Integer corporationId;
 	private GetCorporationsCorporationIdOk corporation;
+	private Long structureId;
+	private GetUniverseStructuresStructureIdOk structure;
 
 	private SpaceLocationImplementation() {super();}
 
-//	@Override
 	public Integer getRegionId() {
 		return this.regionId;
 	}
 
-//	@Override
 	public GetUniverseRegionsRegionIdOk getRegion() {
 		return this.region;
 	}
 
-//	@Override
 	public String getRegionName() {return this.region.getName();}
 
-//	public void setRegion( final GetUniverseRegionsRegionIdOk region ) {
-//		this.region = region;
-//		this.regionId = this.region.getRegionId();
-//	}
-
-//	@Override
 	public Integer getConstellationId() {
 		return this.constellationId;
 	}
 
-//	@Override
 	public GetUniverseConstellationsConstellationIdOk getConstellation() {
 		return this.constellation;
 	}
 
-//	@Override
 	public String getConstellationName() {return this.constellation.getName();}
 
-//	public void setConstellation( final GetUniverseConstellationsConstellationIdOk constellation ) {
-//		this.constellation = constellation;
-//		this.constellationId = this.constellation.getConstellationId();
-//	}
-
-//	@Override
 	public Integer getSolarSystemId() {
 		return this.solarSystemId;
 	}
 
-//	@Override
 	public GetUniverseSystemsSystemIdOk getSolarSystem() {
 		return this.solarSystem;
 	}
 
-//	@Override
 	public String getSolarSystemName() {return this.solarSystem.getName();}
 
-//	public void setSolarSystem( final GetUniverseSystemsSystemIdOk solarSystem ) {
-//		this.solarSystem = solarSystem;
-//		this.solarSystemId = this.solarSystem.getSystemId();
-//	}
-
-//	@Override
 	public Integer getStationId() {
 		return this.stationId;
 	}
 
-//	@Override
 	public GetUniverseStationsStationIdOk getStation() {
 		return this.station;
 	}
 
-//	@Override
 	public String getStationName() {return this.station.getName();}
 
-//	public void setStation( final GetUniverseStationsStationIdOk station ) {
-//		this.station = station;
-//		this.stationId = this.station.getStationId();
-//	}
+	public Long getStructureId() {
+		return this.structureId;
+	}
+
+	public GetUniverseStructuresStructureIdOk getStructure() {
+		return this.structure;
+	}
+	public String getStructureName() {return this.structure.getName();}
 
 	// - V I R T U A L
 	public Long getLocationId() {
@@ -143,6 +123,14 @@ public class SpaceLocationImplementation extends NeoComNode implements SpaceLoca
 			this.onConstruction.stationId = station.getStationId();
 			return this;
 		}
+		public SpaceLocationImplementation.Builder withStructure( final Long structureId,
+		                                                          final GetUniverseStructuresStructureIdOk structure ) {
+			Objects.requireNonNull( structureId );
+			Objects.requireNonNull( structure );
+			this.onConstruction.structureId = structureId;
+			this.onConstruction.structure = structure;
+			return this;
+		}
 
 		public SpaceLocationImplementation.Builder withSecurity( final Double security ) {
 			Objects.requireNonNull( security );
@@ -150,15 +138,12 @@ public class SpaceLocationImplementation extends NeoComNode implements SpaceLoca
 			return this;
 		}
 
-		public SpaceLocationImplementation.Builder withCorporation( final GetCorporationsCorporationIdOk corporation ) {
-			Objects.requireNonNull( corporation );
-			this.onConstruction.corporation = corporation;
-			return this;
-		}
-
-		public SpaceLocationImplementation.Builder withCorporationId( final Integer corporationId ) {
+		public SpaceLocationImplementation.Builder withCorporation( final Integer corporationId,
+		                                                            final GetCorporationsCorporationIdOk corporation ) {
 			Objects.requireNonNull( corporationId );
+			Objects.requireNonNull( corporation );
 			this.onConstruction.corporationId = corporationId;
+			this.onConstruction.corporation = corporation;
 			return this;
 		}
 

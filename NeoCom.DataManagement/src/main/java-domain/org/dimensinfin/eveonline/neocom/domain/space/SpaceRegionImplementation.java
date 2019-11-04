@@ -3,9 +3,8 @@ package org.dimensinfin.eveonline.neocom.domain.space;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
-import org.dimensinfin.eveonline.neocom.utility.LocationContainer;
 
-public class SpaceRegionImplementation extends LocationContainer implements SpaceRegion {
+public class SpaceRegionImplementation /* extends LocationContainer*/ implements SpaceRegion {
 	private SpaceLocationImplementation spaceLocation;
 
 	private SpaceRegionImplementation() {super();}

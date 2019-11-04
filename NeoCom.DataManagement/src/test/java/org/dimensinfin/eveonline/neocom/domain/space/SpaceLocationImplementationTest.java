@@ -10,7 +10,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 
-public class SpaceLocationTest {
+public class SpaceLocationImplementationTest {
 	@Test
 	public void buildComplete() {
 		final GetUniverseRegionsRegionIdOk region = Mockito.mock(GetUniverseRegionsRegionIdOk.class);
@@ -19,7 +19,7 @@ public class SpaceLocationTest {
 		final GetUniverseSystemsSystemIdOk solarSystem = Mockito.mock(GetUniverseSystemsSystemIdOk.class);
 		final GetUniverseStationsStationIdOk station = Mockito.mock(GetUniverseStationsStationIdOk.class);
 		final GetCorporationsCorporationIdOk corporation = Mockito.mock(GetCorporationsCorporationIdOk.class);
-		final SpaceLocation location = new SpaceLocation.Builder()
+		final SpaceLocation location = new SpaceLocationImplementation.Builder()
 				.withRegion( region )
 				.withConstellation( constellation )
 				.withSolarSystem( solarSystem )

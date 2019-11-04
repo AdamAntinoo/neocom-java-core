@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DatabaseField;
@@ -14,9 +15,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
-import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @Entity(name = "Assets")
 @DatabaseTable(tableName = "Assets")
@@ -58,10 +60,14 @@ public class NeoAsset extends UpdatableEntity {
 	private boolean containerFlag = false;
 	@DatabaseField
 	@Column(name = "parentContainer", nullable = true)
-	private Long parentContainer;
+	private Long parentContainerId;
 
 	@JsonIgnore
-	private NeoItem itemDelegate;
+	@Transient
+	private transient NeoItem itemDelegate;
+	@JsonIgnore
+	@Transient
+	private transient NeoAsset parentContainer;
 
 	private NeoAsset() {
 	}
@@ -79,19 +85,24 @@ public class NeoAsset extends UpdatableEntity {
 		return locationId;
 	}
 
-	public Long getParentContainer() {
-		return this.parentContainer;
+	public Long getParentContainerId() {
+		return this.parentContainerId;
 	}
 
-	public NeoAsset setParentContainer( final Long parentContainer ) {
-		this.parentContainer = parentContainer;
-		return this;
-	}
+//	public NeoAsset setParentContainerId( final Long parentContainerId ) {
+//		this.parentContainerId = parentContainerId;
+//		return this;
+//	}
 
 	public boolean hasParentContainer() {
-		if (null != this.parentContainer) return true;
+		if (null != this.parentContainerId) return true;
 		return false;
 	}
+
+//	public NeoAsset getParentContainer() {
+//		if ( null == this.parentContainer) // Get the asset from the database
+//			return null;
+//	}
 
 	// - D E L E G A T E D   M E T H O D S
 	public int getTypeId() {return this.assetDelegate.getTypeId();}
@@ -136,6 +147,10 @@ public class NeoAsset extends UpdatableEntity {
 		return this.shipFlag;
 	}
 
+	public boolean isStructure() {
+		return false;
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private NeoAsset onConstruction;
@@ -144,10 +159,22 @@ public class NeoAsset extends UpdatableEntity {
 			this.onConstruction = new NeoAsset();
 		}
 
-		public NeoAsset fromEsiAsset( final GetCharactersCharacterIdAssets200Ok esiAsset ) {
+		public NeoAsset.Builder fromEsiAsset( final GetCharactersCharacterIdAssets200Ok esiAsset ) {
 			Objects.requireNonNull( esiAsset );
 			EsiAssetTransformer.transform( esiAsset, this.onConstruction );
 			Objects.requireNonNull( this.onConstruction.itemDelegate );
+			return this;
+		}
+
+		public NeoAsset.Builder withPublicStructure( final Long structureId ) {
+			Objects.requireNonNull( structureId );
+			Objects.requireNonNull( this.onConstruction.itemDelegate ); // Protect the order. This should be after the esi.
+			this.onConstruction.locationId.setType( LocationIdentifierType.STRUCTURE );
+			this.onConstruction.locationId.setStructureIdentifier( structureId );
+			return this;
+		}
+
+		public NeoAsset build() {
 			return this.onConstruction;
 		}
 	}
@@ -166,15 +193,17 @@ public class NeoAsset extends UpdatableEntity {
 				asset.shipFlag = true;
 			}
 			asset.containerFlag = checkIfContainer( asset );
+			if (esiAsset.getLocationId() > 61E6) // The asset is contained into another asset. Set the parent.
+				asset.parentContainerId = esiAsset.getLocationId();
 		}
 
 		private static LocationIdentifier transformLocation( final Long locationId,
 		                                                     final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag,
 		                                                     final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
 			return new LocationIdentifier.Builder()
-					.withSpaceIdentifier( locationId.intValue() )
-					.withLocationFlag ( locationFlag)
-					.withLocationType( locationType)
+					.withSpaceIdentifier( locationId )
+					.withLocationFlag( locationFlag )
+					.withLocationType( locationType )
 					.build();
 		}
 
@@ -212,6 +241,5 @@ public class NeoAsset extends UpdatableEntity {
 			if (asset.getName().contains( "Container" )) return true;
 			return asset.getName().contains( "Wrap" );
 		}
-
 	}
 }

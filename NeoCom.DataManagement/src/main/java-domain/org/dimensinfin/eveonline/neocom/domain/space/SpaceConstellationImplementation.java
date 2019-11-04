@@ -4,9 +4,8 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
-import org.dimensinfin.eveonline.neocom.utility.LocationContainer;
 
-public class SpaceConstellationImplementation extends LocationContainer implements SpaceConstellation {
+public class SpaceConstellationImplementation /*extends LocationContainer*/ implements SpaceConstellation {
 	private static final long serialVersionUID = -9105742282576579945L;
 	private SpaceLocationImplementation spaceLocation;
 
