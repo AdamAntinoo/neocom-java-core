@@ -14,6 +14,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
@@ -21,7 +22,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
-public class AssetsProviderTest {
+public class AssetProviderTest {
 	private Credential credential;
 	private LocationIdentifier locationIdentifier;
 	private List<NeoAsset> assetList;
@@ -31,7 +32,7 @@ public class AssetsProviderTest {
 	private GetUniverseSystemsSystemIdOk systemData;
 	private GetUniverseStationsStationIdOk stationData;
 	private LocationCatalogService locationService;
-	private AssetsProvider provider4Test;
+	private AssetProvider provider4Test;
 
 	private NeoAsset assetHangarItem;
 	private NeoAsset assetHangarContainer;
@@ -48,14 +49,14 @@ public class AssetsProviderTest {
 		this.constellationData.setName( "Anares" );
 		this.constellationData.setRegionId( 10000001 );
 
-		this.systemData= new GetUniverseSystemsSystemIdOk();
+		this.systemData = new GetUniverseSystemsSystemIdOk();
 		this.systemData.setSystemId( 30000013 );
 		this.systemData.setName( "Onsooh" );
 		this.systemData.setSecurityClass( "B2" );
 		this.systemData.setSecurityStatus( 0.4428166449069977F );
 		this.systemData.setStarId( 40000769 );
 
-		this.stationData=new GetUniverseStationsStationIdOk();
+		this.stationData = new GetUniverseStationsStationIdOk();
 		this.stationData.setStationId( 60001084 );
 		this.stationData.setName( "Ardene VIII - Moon 5 - CBD Corporation Storage" );
 		this.stationData.setOfficeRentalCost( 10000F );
@@ -76,7 +77,7 @@ public class AssetsProviderTest {
 		esiAssetHangarItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarItem.setQuantity( 28145 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem );
+		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetHangarContainer = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetHangarContainer.setItemId( 1020057863986L );
@@ -86,7 +87,7 @@ public class AssetsProviderTest {
 		esiAssetHangarContainer.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarContainer.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( true );
-		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer );
+		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetContainerItem = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetContainerItem.setItemId( 1019577379251L );
@@ -96,7 +97,7 @@ public class AssetsProviderTest {
 		esiAssetContainerItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT );
 		esiAssetContainerItem.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem );
+		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem ).build();
 
 	}
 
@@ -108,7 +109,7 @@ public class AssetsProviderTest {
 		Mockito.when( this.credential.getAccountId() ).thenReturn( 92220000 );
 		this.locationIdentifier = Mockito.mock( LocationIdentifier.class );
 		Mockito.when( this.locationIdentifier.getType() ).thenReturn( LocationIdentifierType.SPACE );
-		Mockito.when( this.locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000 );
+		Mockito.when( this.locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000L );
 //		final NeoAsset asset = Mockito.mock( NeoAsset.class );
 //		Mockito.when( asset.getAssetId() ).thenReturn( 987654L );
 //		Mockito.when( asset.getLocationId() ).thenReturn( locationIdentifier );
@@ -119,7 +120,7 @@ public class AssetsProviderTest {
 //		Mockito.when( spaceLocation.getRegion() ).thenReturn( regionData );
 		this.locationService = Mockito.mock( LocationCatalogService.class );
 //		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
-		this.provider4Test = new AssetsProvider.Builder()
+		this.provider4Test = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
 				.withLocationCatalogService( locationService )
@@ -132,7 +133,7 @@ public class AssetsProviderTest {
 		final Credential credential = Mockito.mock( Credential.class );
 		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
 				.withLocationCatalogService( locationService )
@@ -145,7 +146,7 @@ public class AssetsProviderTest {
 		final Credential credential = Mockito.mock( Credential.class );
 		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( null )
 				.withAssetRepository( assetRepository )
 				.withLocationCatalogService( locationService )
@@ -158,7 +159,7 @@ public class AssetsProviderTest {
 		final Credential credential = Mockito.mock( Credential.class );
 		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( null )
 				.withLocationCatalogService( locationService )
@@ -171,7 +172,7 @@ public class AssetsProviderTest {
 		final Credential credential = Mockito.mock( Credential.class );
 		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
 				.withLocationCatalogService( null )
@@ -185,7 +186,7 @@ public class AssetsProviderTest {
 		Mockito.when( credential.getAccountId() ).thenReturn( 321 );
 		final LocationIdentifier locationIdentifier = Mockito.mock( LocationIdentifier.class );
 		Mockito.when( locationIdentifier.getType() ).thenReturn( LocationIdentifierType.SPACE );
-		Mockito.when( locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000 );
+		Mockito.when( locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000L );
 		final NeoAsset asset = Mockito.mock( NeoAsset.class );
 		Mockito.when( asset.getAssetId() ).thenReturn( 987654L );
 		Mockito.when( asset.getLocationId() ).thenReturn( locationIdentifier );
@@ -197,10 +198,10 @@ public class AssetsProviderTest {
 		regionData.setRegionId( 1100000 );
 		regionData.setName( "-TEST-REGION-NAME-" );
 		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
-		Mockito.when( spaceLocation.getRegion() ).thenReturn( regionData );
+		Mockito.when( ((SpaceRegion) spaceLocation).getRegion() ).thenReturn( regionData );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
 		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
 				.withLocationCatalogService( locationService )
@@ -237,7 +238,7 @@ public class AssetsProviderTest {
 //		Mockito.when( stationLocation.getRegion() ).thenReturn( regionData );
 //		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
 //		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( stationLocation );
-//		final AssetsProvider provider = new AssetsProvider.Builder()
+//		final AssetProvider provider = new AssetProvider.Builder()
 //				.withCredential( credential )
 //				.withAssetRepository( assetRepository )
 //				.withLocationCatalogService( locationService )
@@ -262,7 +263,7 @@ public class AssetsProviderTest {
 		Mockito.when( credential.getAccountId() ).thenReturn( 321 );
 		final LocationIdentifier locationIdentifier = Mockito.mock( LocationIdentifier.class );
 		Mockito.when( locationIdentifier.getType() ).thenReturn( LocationIdentifierType.SPACE );
-		Mockito.when( locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000 );
+		Mockito.when( locationIdentifier.getSpaceIdentifier() ).thenReturn( 3100000L );
 		final NeoAsset asset = Mockito.mock( NeoAsset.class );
 		Mockito.when( asset.getAssetId() ).thenReturn( 987654L );
 		Mockito.when( asset.getLocationId() ).thenReturn( locationIdentifier );
@@ -274,10 +275,10 @@ public class AssetsProviderTest {
 		regionData.setRegionId( 1100000 );
 		regionData.setName( "-TEST-REGION-NAME-" );
 		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
-		Mockito.when( spaceLocation.getRegion() ).thenReturn( regionData );
+		Mockito.when( ((SpaceRegion) spaceLocation).getRegion() ).thenReturn( regionData );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
 		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
 				.withLocationCatalogService( locationService )

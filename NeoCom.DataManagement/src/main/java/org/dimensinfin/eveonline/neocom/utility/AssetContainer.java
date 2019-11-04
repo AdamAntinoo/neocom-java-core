@@ -2,12 +2,15 @@ package org.dimensinfin.eveonline.neocom.utility;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
+import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 
 public class AssetContainer /* implements Station*/ {
-//	@Deprecated
-//	protected SpaceLocation spaceLocation;
+	private LocationIdentifier spaceLocationIdentifier;
+	private SpaceLocation spaceLocation;
 	private List<NeoAsset> contents = new ArrayList<>();
 
 	protected AssetContainer() {}
@@ -75,22 +78,28 @@ public class AssetContainer /* implements Station*/ {
 //	}
 
 	// - B U I L D E R
-//	public static class Builder {
-//		private AssetContainer onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new AssetContainer();
-//		}
-//
-//		public AssetContainer.Builder withSpaceLocation( final SpaceLocation spaceLocation ) {
-//			Objects.requireNonNull( spaceLocation );
-//			this.onConstruction.spaceLocation = spaceLocation;
-//			return this;
-//		}
-//
-//		public AssetContainer build() {
+	public static class Builder {
+		private AssetContainer onConstruction;
+
+		public Builder() {
+			this.onConstruction = new AssetContainer();
+		}
+
+		public AssetContainer.Builder withSpaceLocationIdentifier( final LocationIdentifier spaceLocationIdentifier ) {
+			Objects.requireNonNull( spaceLocationIdentifier );
+			this.onConstruction.spaceLocationIdentifier = spaceLocationIdentifier;
+			return this;
+		}
+
+		public AssetContainer.Builder withSpaceLocation( final SpaceLocation spaceLocation ) {
+			Objects.requireNonNull( spaceLocation );
+			this.onConstruction.spaceLocation = spaceLocation;
+			return this;
+		}
+
+		public AssetContainer build() {
 //			Objects.requireNonNull( this.onConstruction.spaceLocation );
-//			return this.onConstruction;
-//		}
-//	}
+			return this.onConstruction;
+		}
+	}
 }

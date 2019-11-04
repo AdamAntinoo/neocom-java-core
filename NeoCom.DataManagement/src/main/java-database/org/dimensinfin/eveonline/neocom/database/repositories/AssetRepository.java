@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.database.repositories;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
@@ -32,6 +33,19 @@ public class AssetRepository {
 		} catch (java.sql.SQLException sqle) {
 			logger.error( "SQL [AssetRepository.findAllByOwnerId]> SQL Exception: {}", sqle.getMessage() );
 			return new ArrayList<>();
+		}
+	}
+
+	public Optional<NeoAsset> findAssetById( final Long assetId ) {
+		Objects.requireNonNull( assetId );
+		try {
+			final List<NeoAsset> assetList = this.assetsDao.queryForEq( "assetId", assetId );
+			logger.info( "-- Assets read: " + assetList.size() );
+			if (assetList.size() > 0) return Optional.ofNullable( assetList.get( 0 ) );
+			else return Optional.empty();
+		} catch (java.sql.SQLException sqle) {
+			logger.error( "SQL [AssetRepository.findAllByOwnerId]> SQL Exception: {}", sqle.getMessage() );
+			return Optional.empty();
 		}
 	}
 

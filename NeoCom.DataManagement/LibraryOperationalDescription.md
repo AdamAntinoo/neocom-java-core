@@ -1,3 +1,18 @@
+# NeoCom - DataManagement
+NeoCom project library that comes from the old Models 
+package but that includes much more functionaly than 
+the model definitions for the Eve Online NeoCom application.
+If now defines the pure java code for all the repositories, 
+caches and managers that do not have an specific Android 
+implementation serving as a code base for generic platform 
+development. The architecture model has also changed to 
+a better singleton/static implementation that reduces 
+dependencies and allows separate use of the modules.
+
+Still there should be some initialization/configuration 
+code to connect the new library to the runtime implementation 
+provided by the Application.
+
 # Library Operational Description
 ## LOCATIONS
 Eve Online locations are a quite complex game element. Many things 
@@ -96,3 +111,60 @@ Space locations have a discontinuity because usually contain stations
 that may or may not be corporation assets. But at the same time the pilot
 can leave assets on space so their contents have to support stations
 and assets at the same time.
+
+## Asset Processing
+### Asset Preparation
+The asset classification system expects that that asset knows its location
+. This information is something we can get when converting the asset
+from the esi form to the persistence repository form.
+
+When processing an esi asset we know about the identifier of the 
+location. If the values is below 61M then it is a game structure
+but ig greater then we face two options.
+
+If the identifier value is on the list of the character assets
+or the corporation assets then we can know the pointer parent
+asset and know it it is a corporation structure or a container.
+
+But if the identifier is not known we can not get any other information
+from the ESI service and we should consider the location as
+UNKNOWN.
+
+The list of unknown locations can be reduced by searching other
+game data repositories that may show the list of citadels and
+structures belonging to other corporations. This should reduce
+the list to only new structures still not registered or the
+customs offices and other old game structures that are not
+registered elsewere.
+
+### Asset Processing
+So when we process the assets for rendering we know the exact
+type of the location hat was calculated when the asset was
+persisted. With that information then asset classification
+is much more easy since every asset has the identifiers
+pointing to the first level location (up to the structure level)
+and the low level pointing to the parent container.
+
+There should be then two lists of containers. Space locations
+for space and structure items and container locations to be aggregated
+and that will conform a container hierarchy up to the asset at
+the first level.
+
+Because a character does not own the structures it should
+relay the search to a new public game structure service available
+on the ESI service but on the authenticated side.
+
+If the location is not found on this list or on the asset list
+then it should be considered on UNKNOWN space location.
+
+The problem to search for the corporation public structures
+is that the endpoint requires authentication. The normal search 
+is not valid because the Location Catalog has not access to
+credential data. This action should be done outside and then
+used the registration mechanism to cache the obtained data.
+
+### Location Caching mechanics
+Generated locations should be single instances that can be 
+reused everywhere. There should be a single copy of a location
+on the application. But there can be multiple references to it
+from many asset containers.

@@ -2,12 +2,14 @@ package org.dimensinfin.eveonline.neocom.provider;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
@@ -22,6 +24,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellatio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.support.SupportConfigurationProvider;
@@ -47,6 +50,7 @@ public class AssetProviderIT {
 	private StoreCacheManager itStoreCacheManager;
 	private RetrofitUniverseConnector itRetrofitUniverseConnector;
 	private ESIUniverseDataProvider itEsiUniverseDataProvider;
+	private ESIDataAdapter itEsiAuthorizedDataProvider;
 	private LocationCatalogService itLocationService;
 
 	public void setUpEsiData() {
@@ -114,13 +118,27 @@ public class AssetProviderIT {
 				.withStoreCacheManager( this.itStoreCacheManager )
 				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
 				.build();
-		final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-		this.itLocationService = new LocationCatalogService.Builder(  )
-		.withConfigurationProvider( this.itConfigurationProvider )
-		.withFileSystemAdapter( this.itFileSystemAdapter )
-		.withLocationRepository( locationRepository )
-		.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
-		.build();
+//		this.itEsiAuthorizedDataProvider = new ESIDataAdapter.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.withStoreCacheManager( this.itStoreCacheManager )
+//				.withLocationCatalogService( this.itLocationService )
+//				.build();
+		final GetUniverseStructuresStructureIdOk structureData = new GetUniverseStructuresStructureIdOk();
+		structureData.setName( "Anjedin - minealotperhaps - refinery" );
+		structureData.setOwnerId( 98035995 );
+		structureData.setSolarSystemId( 30001647 );
+		structureData.setTypeId( 35835 );
+		this.itEsiAuthorizedDataProvider = Mockito.mock( ESIDataAdapter.class );
+		Mockito.when( this.itEsiAuthorizedDataProvider.searchStructureById( Mockito.anyLong(), Mockito.any( Credential.class ) ) )
+				.thenReturn( structureData );
+		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
+		this.itLocationService = new LocationCatalogService.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.withLocationRepository( locationRepository )
+				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
+				.build();
 	}
 
 	public void setUpNeoComAssetData() {
@@ -132,7 +150,7 @@ public class AssetProviderIT {
 		esiAssetHangarItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarItem.setQuantity( 28145 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem );
+		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetHangarContainer = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetHangarContainer.setItemId( 1020057863986L );
@@ -142,25 +160,34 @@ public class AssetProviderIT {
 		esiAssetHangarContainer.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarContainer.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( true );
-		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer );
+		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetContainerItem = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetContainerItem.setItemId( 1019577379251L );
 		esiAssetContainerItem.setTypeId( 12547 );
-		esiAssetContainerItem.setLocationId( 1020057863986L );
+		esiAssetContainerItem.setLocationId( 1028333032455L );
 		esiAssetContainerItem.setLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.OTHER );
 		esiAssetContainerItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT );
 		esiAssetContainerItem.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem );
-
+		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem ).build();
+		// Add additional information for the location of this asset.
+		if (esiAssetContainerItem.getLocationId() > 61E6) {
+			// We are expected to search for the parent and know if it is structure.
+			final GetUniverseStructuresStructureIdOk structure = this.itEsiAuthorizedDataProvider
+					.searchStructureById( 1028333032455L, this.credential );
+			final NeoAsset parent = this.assetHangarContainer;
+			this.assetContainerItem = new NeoAsset.Builder()
+					.fromEsiAsset( esiAssetContainerItem )
+					.withPublicStructure( 1028333032455L )
+					.build();
+		}
 	}
 
 	@Before
 	public void setUp() throws IOException {
 		this.setUpEsiData();
 		this.setUpIntegrationEnvironment();
-//		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		this.credential = Mockito.mock( Credential.class );
 		Mockito.when( this.credential.getAccountId() ).thenReturn( 92220000 );
 	}
@@ -169,13 +196,14 @@ public class AssetProviderIT {
 	public void classifyAssetsByLocationContainerCase() {
 		this.setUpNeoComAssetData();
 		final ArrayList<NeoAsset> testAssetList = new ArrayList<>();
+		testAssetList.add( this.assetContainerItem );
 		testAssetList.add( this.assetHangarItem );
-		testAssetList.add( this.assetContainerItem );
-		testAssetList.add( this.assetContainerItem );
+		testAssetList.add( this.assetHangarContainer );
+		final Optional<NeoAsset> parentAsset = Optional.ofNullable( this.assetHangarContainer );
 		final AssetRepository localAssetRepository = Mockito.mock( AssetRepository.class );
 		Mockito.when( localAssetRepository.findAllByOwnerId( Mockito.anyInt() ) ).thenReturn( testAssetList );
-//		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetsProvider provider = new AssetsProvider.Builder()
+		Mockito.when( localAssetRepository.findAssetById( Mockito.anyLong() ) ).thenReturn( parentAsset );
+		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( this.credential )
 				.withAssetRepository( localAssetRepository )
 				.withLocationCatalogService( this.itLocationService )
@@ -186,17 +214,4 @@ public class AssetProviderIT {
 		Assert.assertNotNull( provider );
 		Assert.assertNotNull( provider.getRegionList() );
 	}
-
-//	// - B U I L D E R
-//	public static class Builder {
-//		private AssetProviderIT onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new AssetProviderIT();
-//		}
-//
-//		public AssetProviderIT build() {
-//			return this.onConstruction;
-//		}
-//	}
 }

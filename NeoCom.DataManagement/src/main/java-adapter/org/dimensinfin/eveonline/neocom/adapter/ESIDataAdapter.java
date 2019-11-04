@@ -42,6 +42,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
@@ -145,6 +146,30 @@ public class ESIDataAdapter {
 	}
 
 	// - S D E   D A T A
+	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
+		final String refreshToken = credential.getRefreshToken();
+		final int identifier = credential.getAccountId();
+		try {
+			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+			String datasource = DEFAULT_ESI_SERVER;
+			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
+					.accessESIAuthRetrofit()
+					.create( UniverseApi.class )
+					.getUniverseStructuresStructureId( structureId, datasource, null, null ).execute();
+			if (universeResponse.isSuccessful()) {
+				return universeResponse.body();
+			} else return null;
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+			return null;
+		} catch (RuntimeException rte) {
+			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
+			rte.printStackTrace();
+			return null;
+		}
+//		return null;
+	}
 //	public double searchSDEMarketPrice( final int typeId ) {
 //		logger.info( "-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId );
 ////		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
@@ -895,6 +920,7 @@ public class ESIDataAdapter {
 			if (null != preInstance) this.onConstruction = preInstance;
 			else this.onConstruction = new ESIDataAdapter();
 		}
+
 		public ESIDataAdapter.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
@@ -912,6 +938,7 @@ public class ESIDataAdapter {
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
+
 		public ESIDataAdapter.Builder withStoreCacheManager( final StoreCacheManager storeCacheManager ) {
 			Objects.requireNonNull( storeCacheManager );
 			this.onConstruction.storeCacheManager = storeCacheManager;

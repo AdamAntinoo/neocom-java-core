@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -16,26 +17,27 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
+import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.Region;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
-import org.dimensinfin.eveonline.neocom.domain.space.Station;
-import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class AssetsProvider implements Serializable {
+public class AssetProvider implements Serializable {
 	private static final long serialVersionUID = -4896485833695914012L;
-	private static final Logger logger = LoggerFactory.getLogger( AssetsProvider.class );
+	private static final Logger logger = LoggerFactory.getLogger( AssetProvider.class );
+	private static final LocationIdentifier UNKNOWN_SPACE_LOCATION_IDENTIFIER = new LocationIdentifier.Builder()
+			.withSpaceIdentifier( 0L )
+			.build();
 
-	private Map<Long, AssetContainer> spaceLocationsCache = new HashMap<>();
-	private DateTime assetsReadTime;
-	private int assetCounter = 0;
-	// - P R I V A T E   I N T E R C H A N G E   V A R I A B L E S
 	/**
 	 * Use a map to allow the removal of more nodes during the processing.
 	 */
 	private transient HashMap<Long, NeoAsset> assetMap = new HashMap<>();
+	private Map<Long, AssetContainer> spaceLocationsCache = new HashMap<>();
+	private Map<Long, AssetContainer> containersCache = new HashMap<>();
+	private DateTime assetsReadTime;
+	private int assetCounter = 0;
 	private List<NeoAsset> unlocatedAssets = new ArrayList<>();
 
 	// - C O M P O N E N T S
@@ -43,8 +45,7 @@ public class AssetsProvider implements Serializable {
 	private AssetRepository assetRepository;
 	private LocationCatalogService locationCatalogService;
 
-	private AssetsProvider() {}
-
+	private AssetProvider() {}
 
 	public void classifyAssetsByLocation() {
 		if (this.verifyTimeStamp()) return;
@@ -62,7 +63,7 @@ public class AssetsProvider implements Serializable {
 				point = this.assetMap.get( key );
 			}
 		} catch (final NoSuchElementException nsee) {
-			logger.info( "<< [AssetsProvider.classifyAssetsByLocation]> Classification complete: {} assets",
+			logger.info( "<< [AssetProvider.classifyAssetsByLocation]> Classification complete: {} assets",
 					this.assetCounter );
 		}
 		this.timeStamp();
@@ -81,12 +82,13 @@ public class AssetsProvider implements Serializable {
 		return new ArrayList<>( regions.values() );
 	}
 
-	private void checks() {
-		final Station station = new StationImplementation.Builder().build();
-
-		final SpaceSystem system = new SpaceSystemImplementation.Builder().build();
-
-	}
+//	private void checks() {
+//		final Station station = new StationImplementation.Builder().build();
+//
+//		final SpaceSystem system = new SpaceSystemImplementation.Builder().build();
+//
+//		final Structure structure = new StructureImplementation.Builder().build();
+//	}
 
 	private boolean verifyTimeStamp() {
 		if (null == this.assetsReadTime) return false;
@@ -101,7 +103,6 @@ public class AssetsProvider implements Serializable {
 	private void clear() {
 		this.assetCounter = 0;
 		this.assetMap.clear();
-		int assetCounter = 0;
 	}
 
 	/**
@@ -126,108 +127,105 @@ public class AssetsProvider implements Serializable {
 	 * space location of a game station. All assets should be covered by this classification.
 	 */
 	private void processAsset( final NeoAsset asset ) {
+		logger.info( "--[AssetProvider.processAsset]> Processing asset: {}",
+				asset.getAssetId() );
+		this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
 		switch (asset.getLocationId().getType()) {
 			case SPACE:
 			case STATION:
-				this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
+			case STRUCTURE:
 				this.add2SpaceLocation( asset );
 				break;
-			case UNKNOWN:
-				logger.info( "--[AssetsProvider.processAsset]> Searching for parent asset: {}",
+			case UNKNOWN: // Add the asset to the UNKNOWN space location.
+				logger.info( "--[AssetProvider.processAsset]> Not accessible location coordinates: {}",
 						asset.getLocationId().toString() );
-
-//			case STATION:
-//				this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
-//				this.add2StationLocation( asset );
-//				break;
+				final LocationIdentifier spaceIdentifier = UNKNOWN_SPACE_LOCATION_IDENTIFIER;
+				AssetContainer hit = this.spaceLocationsCache.get( spaceIdentifier.getSpaceIdentifier() );
+				if (null == hit) {
+					hit = new AssetContainer.Builder()
+							.withSpaceLocationIdentifier( UNKNOWN_SPACE_LOCATION_IDENTIFIER )
+							.build();
+					this.spaceLocationsCache.put( spaceIdentifier.getSpaceIdentifier(), hit );
+				}
+				hit.addContent( asset );
+//
+//
+//				if (asset.hasParentContainer()) { // Read the asset from the database with a new call.
+//					final Optional<NeoAsset> parentAsset = this.assetRepository
+//							.findAssetById( asset.getParentContainerId() );
+//					parentAsset.ifPresent( this::processAsset );
+//				}
+//				this.add2ContainerLocation( asset ); // The container should be present because the processing of the parent.
+				break;
 		}
 	}
-
-//	private void add2StationLocation( final NeoAsset asset ) {
-//		final Integer stationIdentifier = asset.getLocationId().getStationIdentifier();
-//		FacetedAssetContainer<StationLocation> hit = this.spaceLocationsCache.get( stationIdentifier );
-//		if (null == hit) {
-//			hit = new FacetedAssetContainer.Builder<StationLocation>()
-//					.withFacet( this.locationCatalogService.searchStationLocation4Id( stationIdentifier ) )
-//					.build();
-//			this.spaceLocationsCache.put( stationIdentifier, hit );
-//		}
-//		this.add2SpaceLocation( hit );
-//		hit.addContent( asset );
-//	}
-
-//	private void add2SpaceLocation( final FacetedAssetContainer<StationLocation> station ) {
-//		final Integer spaceIdentifier = station.getFacet().getSystemId();
-//		FacetedNodeContainer<SpaceLocation> hit = this.systemsCache.get( spaceIdentifier );
-//		if (null == hit) {
-//			hit = new FacetedNodeContainer.Builder<SpaceLocation>()
-//					.withFacet( this.locationCatalogService.searchSpaceLocation4Id( spaceIdentifier ) )
-//					.build();
-//			this.systemsCache.put( spaceIdentifier, hit );
-//		}
-//		this.add2Region( hit );
-//		hit.addContent( station );
-//	}
 
 	private void add2SpaceLocation( final NeoAsset asset ) {
-		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier().longValue();
+		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
 		AssetContainer hit = this.spaceLocationsCache.get( spaceIdentifier );
 		if (null == hit) {
-//			switch (asset.getLocationId().getType()) {
-//				case SPACE:
-//			hit = new AssetContainer.Builder()
-//					.withSpaceLocation(
-			hit = (AssetContainer) this.locationCatalogService.searchLocation4Id( spaceIdentifier );
-//					.build();
-//			}
-//			hit = new FacetedNodeContainer.Builder<SpaceLocation>()
-//					.withFacet( this.locationCatalogService.searchSpaceLocation4Id( spaceIdentifier ) )
-//					.build();
-			this.spaceLocationsCache.put( spaceIdentifier, hit );
+			final Optional<SpaceLocation> location = this.searchSpaceLocation( spaceIdentifier );
+			if (location.isPresent()) { // The location is a public accessible structure and we can add it to the list
+				hit = new AssetContainer.Builder().withSpaceLocation( location.get() ).build();
+				this.spaceLocationsCache.put( spaceIdentifier, hit );
+				hit.addContent( asset );
+			} else { // This should be a container and so we add it to the list of container
+				this.add2ContainerLocation( asset );
+			}
 		}
-//		this.add2Region( hit );
-		hit.addContent( asset );
 	}
 
-//	private void add2Region( final FacetedAssetContainer<SpaceLocation> location ) {
-//		final Integer regionIdentifier = location.getFacet().getRegionId();
-//		FacetedLocationContainer<Region> hit = this.regionsCache.get( regionIdentifier );
-//		if (null == hit) {
-//			hit = new FacetedLocationContainer.Builder<Region>()
-//					.withFacet( SpaceKLocation2RegionDuplicator.clone( location.getFacet() ) )
-//					.build();
-//			this.regionsCache.put( regionIdentifier, hit );
-//		}
-//		hit.addContent( location.getFacet() );
-//	}
+	private void add2ContainerLocation( final NeoAsset asset ) {
+		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
+		AssetContainer hit = this.containersCache.get( spaceIdentifier );
+		if (null == hit) { // This is an exception because container should exist.
+			logger.info( "--[AssetProvider.processAsset]> Parent container not found: {}",
+					asset.getParentContainerId() );
+			this.unlocatedAssets.add( asset );
+		} else hit.addContent( asset );
+	}
+
+	private Optional<SpaceLocation> searchSpaceLocation( final Long spaceIdentifier ) {
+		// Search on the universe list of space locations and stations.
+		final Optional<SpaceLocation> location = this.locationCatalogService.searchLocation4Id( spaceIdentifier );
+		if (location.isPresent()) // The location is a station or space location
+			return location;
+
+		// Search on the authenticated list of public structures.
+		final Optional<SpaceLocation> structure = this.locationCatalogService.searchStructure4Id( spaceIdentifier,
+				this.credential );
+		if (structure.isPresent()) // The location is a public accessible structure and we can add it to the list
+			return location;
+		return Optional.empty();
+	}
 
 	// - B U I L D E R
 	public static class Builder {
-		private AssetsProvider onConstruction;
+		private AssetProvider onConstruction;
 
 		public Builder() {
-			this.onConstruction = new AssetsProvider();
+			this.onConstruction = new AssetProvider();
 		}
 
-		public AssetsProvider.Builder withCredential( final Credential credential ) {
+		public AssetProvider.Builder withCredential( final Credential credential ) {
 			Objects.requireNonNull( credential );
 			this.onConstruction.credential = credential;
 			return this;
 		}
 
-		public AssetsProvider.Builder withAssetRepository( final AssetRepository assetRepository ) {
+		public AssetProvider.Builder withAssetRepository( final AssetRepository assetRepository ) {
 			Objects.requireNonNull( assetRepository );
 			this.onConstruction.assetRepository = assetRepository;
 			return this;
 		}
 
-		public AssetsProvider.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+		public AssetProvider.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
 
-		public AssetsProvider build() {
+		public AssetProvider build() {
 			Objects.requireNonNull( this.onConstruction.credential );
 			return this.onConstruction;
 		}
