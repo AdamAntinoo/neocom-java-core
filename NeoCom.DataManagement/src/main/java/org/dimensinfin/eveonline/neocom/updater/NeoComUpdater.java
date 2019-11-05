@@ -17,10 +17,10 @@ import org.dimensinfin.core.interfaces.IEventEmitter;
 import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.service.UpdaterJobManager;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 
 public abstract class NeoComUpdater<M> implements IEventEmitter {
 	protected static final Logger logger = LoggerFactory.getLogger( NeoComUpdater.class );
-	public enum JobStatus {READY, SCHEDULED, RUNNING, EXCEPTION, COMPLETED}
 
 	// - C O M P O N E N T S
 	protected static ESIDataAdapter esiDataAdapter;

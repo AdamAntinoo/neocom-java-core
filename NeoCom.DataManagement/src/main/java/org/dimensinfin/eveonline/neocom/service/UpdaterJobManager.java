@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.core.LogMessagesExternalisedType;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 /**
@@ -45,13 +46,13 @@ public class UpdaterJobManager {
 		final String identifier = updater.getIdentifier();
 		if (alreadyScheduled(identifier)) {
 			final JobRecord target = runningJobs.get(identifier);
-			final NeoComUpdater.JobStatus jobStatus = target.getJob().getStatus();
+			final JobStatus jobStatus = target.getJob().getStatus();
 			logger.info("-- [UpdaterJobManager.submit]> Job {} already on state: {}",
 					updater.getIdentifier(), jobStatus.name());
 			return;
 		}
 		logger.info("-- [UpdaterJobManager.submit]> Scheduling job {}", updater.getIdentifier());
-		updater.setStatus(NeoComUpdater.JobStatus.SCHEDULED);
+		updater.setStatus(JobStatus.SCHEDULED);
 		try {
 			final JobRecord record = new JobRecord(updater);
 			final Future<NeoComUpdater> future = updaterExecutor.submit(record);
@@ -104,9 +105,9 @@ public class UpdaterJobManager {
 		synchronized (runningJobs) {
 			for (Map.Entry<String, JobRecord> entry : runningJobs.entrySet()) {
 				if (entry.getValue().getFuture().isDone()) runningJobs.remove(entry.getKey());
-				if (entry.getValue().getJob().getStatus() == NeoComUpdater.JobStatus.COMPLETED)
+				if (entry.getValue().getJob().getStatus() == JobStatus.COMPLETED)
 					runningJobs.remove(entry.getKey());
-				if (entry.getValue().getJob().getStatus() == NeoComUpdater.JobStatus.EXCEPTION)
+				if (entry.getValue().getJob().getStatus() == JobStatus.EXCEPTION)
 					runningJobs.remove(entry.getKey());
 			}
 			return runningJobs.size();
@@ -125,8 +126,8 @@ public class UpdaterJobManager {
 	protected static boolean alreadyScheduled( final String jobIdentifier ) {
 		final JobRecord target = runningJobs.get(jobIdentifier);
 		if (null == target) return false;
-		if (target.getJob().getStatus() == NeoComUpdater.JobStatus.COMPLETED) return false;
-		return !(target.getJob().getStatus() == NeoComUpdater.JobStatus.EXCEPTION);
+		if (target.getJob().getStatus() == JobStatus.COMPLETED) return false;
+		return !(target.getJob().getStatus() == JobStatus.EXCEPTION);
 	}
 
 	private UpdaterJobManager() {
@@ -174,8 +175,8 @@ public class UpdaterJobManager {
 		}
 
 		public boolean isDone() {
-			return (this.job.getStatus() == NeoComUpdater.JobStatus.COMPLETED) ||
-					(this.job.getStatus() == NeoComUpdater.JobStatus.EXCEPTION);
+			return (this.job.getStatus() == JobStatus.COMPLETED) ||
+					(this.job.getStatus() == JobStatus.EXCEPTION);
 		}
 	}
 }
