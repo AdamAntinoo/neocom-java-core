@@ -274,11 +274,11 @@ response:
 
 ---
 
-simlet: character-assets-1
+simlet: character-assets-page1
 
 request:
   - method: GET
-  - uriPath: /characters/{characterId}/assets/?datasource=tranquility&page=1
+  - uriPathPattern: /characters/{characterId}/assets/
 
 response:
   from: template
@@ -287,15 +287,15 @@ response:
     - "Content-Type: application/json"
   body:
     type: text
-    file: "${sim.path}/esiresponses/assets.json"
+    file: "${sim.path}/esiresponses/assetspage1.json"
 
 ---
 
-simlet: character-assets-2
+simlet: character-assets-page2
 
 request:
   - method: GET
-  - uriPath: /characters/{characterId}/assets/?datasource=tranquility&page=2
+  - uriPathPattern: /characters/123/assets/
 
 response:
   from: template
