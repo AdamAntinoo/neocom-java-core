@@ -71,20 +71,19 @@ public class AssetDownloadProcessor extends Job {
 	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
 	 */
 	public boolean downloadPilotAssetsESI() throws SQLException {
-		NeoComLogger.info( ">> [AssetsManager.downloadPilotAssetsESI]" );
+		NeoComLogger.enter( ">> [AssetsManager.downloadPilotAssetsESI]" );
 		//		try {
 		// Clear any previous record with owner -1 from database.
 //		GlobalDataManager.getSingleton().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
 		// Download the list of assets.
 		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataAdapter.getCharactersCharacterIdAssets(
-				credential.getAccountId(), credential.getRefreshToken(), null
-		);
+				credential);
 		if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
 		// Create the list for orphaned locations assets. They should be processed later.
 //		this.unlocatedAssets.clear();
 
 		this.createAssetMap( assetOkList );
-		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
+//		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
 		// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
 		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
 			// - A S S E T   P R O C E S S I N G
@@ -121,7 +120,7 @@ public class AssetDownloadProcessor extends Job {
 //			this.validateLocation( asset );
 //		}
 		// Assign the assets to the pilot.
-		this.assetRepository.replaceAssets( this.credential.getAccountId() );
+//		this.assetRepository.replaceAssets( this.credential.getAccountId() );
 		// Remove from memory the managers that contain now stale data.
 		//TODO Removed until this is checked if required.
 		//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
@@ -175,25 +174,37 @@ public class AssetDownloadProcessor extends Job {
 
 		public AssetDownloadProcessor.Builder withCredential( final Credential credential ) {
 			Objects.requireNonNull( credential );
-			this.onConstruction.credential = credential;
+			this.getActual().credential = credential;
+			return this;
+		}
+		public AssetDownloadProcessor.Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
+			Objects.requireNonNull( esiDataAdapter );
+			this.onConstruction.esiDataAdapter = esiDataAdapter;
+			return this;
+		}
+		public AssetDownloadProcessor.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+			Objects.requireNonNull( locationCatalogService );
+			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
 
 		public AssetDownloadProcessor.Builder withAssetRepository( final AssetRepository assetRepository ) {
 			Objects.requireNonNull( assetRepository );
-			this.onConstruction.assetRepository = assetRepository;
+			this.getActual().assetRepository = assetRepository;
 			return this;
 		}
 
 		public AssetDownloadProcessor.Builder withNeoAssetConverter( final GetCharactersCharacterIdAsset2NeoAssetConverter neoAssetConverter ) {
 			Objects.requireNonNull( neoAssetConverter );
-			this.onConstruction.neoAssetConverter = neoAssetConverter;
+			this.getActual().neoAssetConverter = neoAssetConverter;
 			return this;
 		}
 
 		public AssetDownloadProcessor build() {
 			final AssetDownloadProcessor instance = super.build();
 			Objects.requireNonNull( instance.credential );
+			Objects.requireNonNull( instance.esiDataAdapter );
+			Objects.requireNonNull( instance.locationCatalogService );
 			Objects.requireNonNull( instance.assetRepository );
 			Objects.requireNonNull( instance.neoAssetConverter );
 			return instance;

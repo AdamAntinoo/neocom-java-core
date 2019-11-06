@@ -4,6 +4,7 @@ coverage/
 
 # - Test caches and generated test data to be ignored
 src/test/NeoCom.UnitTest
+src/test/NeoCom.IntegrationTest/NeoComCache
 
 # - Mock server code not to be included on repository
 src/test/apisimulator-http-1.4/

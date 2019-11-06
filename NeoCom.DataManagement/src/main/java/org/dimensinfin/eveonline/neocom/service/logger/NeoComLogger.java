@@ -13,11 +13,19 @@ public class NeoComLogger {
 	}
 
 	public static void info( final String message, String... arguments ) {
-		logger.info( wrapper( generateCaller() ) + "> " + message, arguments );
+		logger.info( "-- " + header() + message, arguments );
 	}
 
 	public static void enter( final String message, String... arguments ) {
-		logger.info( wrapper( ">>" + generateCaller() ) + "> " + message, arguments );
+		logger.info( ">> " + header() + message, arguments );
+	}
+
+	public static void exit( final String message, String... arguments ) {
+		logger.info( "<< " + header() + message, arguments );
+	}
+
+	private static String header() {
+		return wrapper( generateCaller() ) + "> ";
 	}
 
 	private static String wrapper( final String data ) {
@@ -26,21 +34,8 @@ public class NeoComLogger {
 
 	private static String generateCaller() {
 		StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
-		final StackTraceElement element = traceElements[2];
-		return element.getClassName() + "." +
+		final StackTraceElement element = traceElements[3];
+		return element.getClassName().substring( element.getClassName().lastIndexOf( '.' ) ) + "." +
 				element.getMethodName();
 	}
-
-//	// - B U I L D E R
-//	public static class Builder {
-//		private NeoComLogger onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new NeoComLogger();
-//		}
-//
-//		public NeoComLogger build() {
-//			return this.onConstruction;
-//		}
-//	}
 }

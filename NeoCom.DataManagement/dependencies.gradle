@@ -61,6 +61,13 @@ dependencies {
 
 // - U N I T   T E S T I N G
 dependencies {
+//    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    testImplementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion" // HTTP encapsulation and swagger support
+//    testImplementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+//    testImplementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion" // JSON converter
+//    testImplementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+//    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
+//    testImplementation 'io.swagger:swagger-jersey2-jaxrs:1.5.0'
     // C O R E
     testImplementation 'org.slf4j:slf4j-simple:1.7.26'
     testImplementation 'joda-time:joda-time:2.9.9'

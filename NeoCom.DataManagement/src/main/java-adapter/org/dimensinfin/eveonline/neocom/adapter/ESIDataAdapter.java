@@ -82,13 +82,6 @@ public class ESIDataAdapter {
 	// - C O N S T R U C T O R S
 	protected ESIDataAdapter() {}
 
-//	@Deprecated
-//	private ESIDataAdapter( final IConfigurationProvider newConfigurationProvider
-//			, final IFileSystem newFileSystemAdapter ) {
-//		this.configurationProvider = newConfigurationProvider;
-//		this.fileSystemAdapter = newFileSystemAdapter;
-//	}
-
 	/**
 	 * Allows the selection of the ESI server. Changes the retrofit factory to discard current retrofit instances and create
 	 * new ones but related to the new server configuration.
@@ -109,10 +102,6 @@ public class ESIDataAdapter {
 	public String getAuthorizationUrl4Server( final String esiServer ) {
 		return this.retrofitFactory.getAuthorizationUrl4Server( esiServer );
 	}
-
-//	public String getStringScopes() {
-//		return this.retrofitFactory.getScopes();
-//	}
 
 	// - D O W N L O A D   S T A R T E R S
 //	public void downloadItemPrices() {
@@ -689,17 +678,18 @@ public class ESIDataAdapter {
 	}
 
 	@TimeElapsed
-	public List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final int identifier
+	public List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final Credential credential
+			/*final int identifier
 			, final String refreshToken
-			, final String server ) {
+			, final String server */ ) {
 		logger.info( ">> [ESIDataAdapter.getCharactersCharacterIdAssets]" );
 		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
@@ -707,25 +697,21 @@ public class ESIDataAdapter {
 				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = this.retrofitFactory
 						.accessESIAuthRetrofit()
 						.create( AssetsApi.class )
-						.getCharactersCharacterIdAssets(
-								identifier
-								, datasource
-										.toLowerCase()
-								, null, pageCounter,
-								null ).execute();
-				if (!assetsApiResponse.isSuccessful()) {
-					// Or error or we have reached the end of the list.
-					return returnAssetList;
-				} else {
+						.getCharactersCharacterIdAssets( credential.getAccountId(),
+								credential.getDataSource().toLowerCase(),
+								null, pageCounter, null )
+						.execute();
+				if (assetsApiResponse.isSuccessful()) {
 					// Copy the assets to the result list.
 					returnAssetList.addAll( assetsApiResponse.body() );
 					pageCounter++;
 					// Check for out of page running.
 					if (assetsApiResponse.body().size() < 1) morePages = false;
-				}
+				} else
+					return returnAssetList; // Or error or we have reached the end of the list.
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
 		} catch (RuntimeException rtex) {
 			// Check if the problem is a connection reset.
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {

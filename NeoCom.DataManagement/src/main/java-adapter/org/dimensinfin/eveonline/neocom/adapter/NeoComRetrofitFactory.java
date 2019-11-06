@@ -33,11 +33,6 @@ public class NeoComRetrofitFactory {
 	private static String authorizationURL;
 	private static String SCOPESTRING = "publicData";
 
-	// TODO - Remove on next iteration at Android because now tests can set their own mock methods.
-//	static {
-//		mockList.add( "getCharactersCharacterIdMining" );
-//	}
-
 	// - M O C K   L I S T
 	public static void add2MockList( final String methodName ) {
 		mockList.add( methodName );

@@ -40,9 +40,7 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 			if (this.getModel().isValid()) {
 				// Count the number of assets.
 				final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataAdapter.getCharactersCharacterIdAssets(
-						this.getModel().getAccountId(),
-						this.getModel().getRefreshToken(),
-						this.getModel().getDataSource() );
+						this.getModel() );
 				this.getModel().setAssetsCount( assetList.size() );
 
 				// Estimate the mining resources value.

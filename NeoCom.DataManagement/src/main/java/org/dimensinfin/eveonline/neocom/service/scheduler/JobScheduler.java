@@ -44,8 +44,8 @@ public class JobScheduler {
 		final Iterator<Job> it = this.jobsRegistered.iterator();
 		while (it.hasNext()) {
 			final Job job = it.next();
-			this.cronScheduleGenerator.match( job.getSchedule() );
-			this.scheduleJob( job );
+			if (this.cronScheduleGenerator.match( job.getSchedule() ))
+				this.scheduleJob( job );
 		}
 
 	}
