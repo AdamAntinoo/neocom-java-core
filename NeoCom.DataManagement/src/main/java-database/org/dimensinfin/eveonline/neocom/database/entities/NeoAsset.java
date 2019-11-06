@@ -29,6 +29,9 @@ public class NeoAsset extends UpdatableEntity {
 	private UUID uid;
 	// - A P I   C C P   F I E L D S
 	@DatabaseField(index = true)
+	@Column(name = "ownerId", nullable = false)
+	private Long ownerId; // The id of the character or corporations that own the asset.
+	@DatabaseField(index = true)
 	@Column(name = "assetId", nullable = false)
 	private Long assetId;
 	@DatabaseField
@@ -76,15 +79,19 @@ public class NeoAsset extends UpdatableEntity {
 
 	// - G E T T E R S   &   S E T T E R S
 	public UUID getUid() {
-		return uid;
+		return this.uid;
+	}
+
+	public Long getOwnerId() {
+		return this.ownerId;
 	}
 
 	public Long getAssetId() {
-		return assetId;
+		return this.assetId;
 	}
 
 	public LocationIdentifier getLocationId() {
-		return locationId;
+		return this.locationId;
 	}
 
 	public Long getParentContainerId() {
@@ -97,6 +104,16 @@ public class NeoAsset extends UpdatableEntity {
 	}
 
 	// - C O N T R U C T I O N   S E T T E R S
+	public NeoAsset generateUid() {
+		this.uid = UUID.randomUUID();
+		return this;
+	}
+
+	public NeoAsset setOwnerId( final Long ownerId ) {
+		this.ownerId = ownerId;
+		return this;
+	}
+
 	public NeoAsset setAssetDelegate( final GetCharactersCharacterIdAssets200Ok assetDelegate ) {
 		this.assetDelegate = assetDelegate;
 		return this;
@@ -194,6 +211,10 @@ public class NeoAsset extends UpdatableEntity {
 		return false;
 	}
 
+//	public NeoAsset setStructureIdentifier( final Long structureIdentifier ) {
+//		this.locationId.setStructureIdentifier( structureIdentifier );
+//		return this;
+//	}
 //	// - B U I L D E R
 //	public static class Builder {
 //		private NeoAsset onConstruction;
@@ -284,5 +305,5 @@ public class NeoAsset extends UpdatableEntity {
 //			if (asset.getName().contains( "Container" )) return true;
 //			return asset.getName().contains( "Wrap" );
 //		}
-	}
+//	}
 }

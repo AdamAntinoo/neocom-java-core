@@ -14,6 +14,7 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
  */
 public class LocationIdentifier {
 	private Long spaceIdentifier;
+	@Deprecated
 	private Long structureIdentifier;
 	private GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag;
 	private GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType =
@@ -61,6 +62,7 @@ public class LocationIdentifier {
 			this.type = LocationIdentifierType.STATION;
 			return;
 		}
+//		this.structureIdentifier = this.spaceIdentifier; // The location is > 61M so can be an structure.
 		if (null == this.locationType) this.locationType = GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.OTHER;
 		if (this.locationType == GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.SOLAR_SYSTEM)
 			this.type = LocationIdentifierType.SPACE;
