@@ -168,3 +168,18 @@ Generated locations should be single instances that can be
 reused everywhere. There should be a single copy of a location
 on the application. But there can be multiple references to it
 from many asset containers.
+
+## Scheduler
+### When register jobs to the scheduler
+This is the key question because the scheduler will check every minute
+the actions to execute from the list of registered jobs. But 
+the job registration should not be executed every minute because
+the jobs are valid with a single registration.
+
+For components this is simple since the registration
+can be done when the component is initialized. But for
+Credential update action that are repetitive the registration
+is not so clear.
+Probably the right place is an initialization task that
+will run the list of Credentials and generate the jobs
+registrations.

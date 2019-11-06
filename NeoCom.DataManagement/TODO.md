@@ -17,6 +17,9 @@
 >* SpaceConstellationImplementation
 >* SpaceRegionImplementation
 >* LocationCatalogService
+>* JobScheduleGenerator
+>* Job
+>* NeoComLogger
 
 [OPTIONAL CLASSES TO DO UNIT TESTING]
 >* AssetContainer
