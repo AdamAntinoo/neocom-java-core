@@ -1,10 +1,8 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler.domain;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Callable;
-
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 
 public abstract class Job implements Callable<Boolean> {
 	private UUID identifier;
@@ -18,11 +16,11 @@ public abstract class Job implements Callable<Boolean> {
 	}
 
 	public String getSchedule() {
-		return schedule;
+		return this.schedule;
 	}
 
 	public JobStatus getStatus() {
-		return status;
+		return this.status;
 	}
 
 	public Job setStatus( final JobStatus status ) {
@@ -30,29 +28,46 @@ public abstract class Job implements Callable<Boolean> {
 		return this;
 	}
 
-	//	@Override
-	public abstract Boolean call( final Credential credential ) throws NeoComRuntimeException;
-
-	@Override
-	public Boolean call() throws Exception {
-		return null;
+	protected Job setIdentifier( final UUID identifier ) {
+		this.identifier = identifier;
+		return this;
 	}
 
-	// - B U I L D E R
-//	public static class Builder {
-//		private Job onConstruction;
+	protected Job setSchedule( final String schedule ) {
+		this.schedule = schedule;
+		return this;
+	}
+//	//	@Override
+//	public abstract Boolean call( final Credential credential ) throws NeoComRuntimeException;
 //
-//		public Builder() {
-//			this.onConstruction = new Job();
-//		}
-//
-//		public Job.Builder addCronSchedule( final String cronPattern ) {
-//			this.onConstruction.schedule = cronPattern;
-//			return this;
-//		}
-//
-//		public Job build() {
-//			return this.onConstruction;
-//		}
+//	@Override
+//	public Boolean call() throws Exception {
+//		return null;
 //	}
+
+	// - B U I L D E R
+	public abstract static class Builder<T extends Job, B extends Job.Builder> {
+		protected B actualClassBuilder;
+
+		public Builder() {
+			this.actualClassBuilder = getActualBuilder();
+		}
+
+		protected abstract T getActual();
+
+		protected abstract B getActualBuilder();
+
+		public B addCronSchedule( final String cronPattern ) {
+			Objects.requireNonNull( cronPattern );
+			this.getActual().setSchedule( cronPattern );
+			return this.actualClassBuilder;
+		}
+
+		public T build() {
+			this.getActual().setIdentifier( UUID.randomUUID());
+			Objects.requireNonNull( this.getActual().getSchedule() );
+			Objects.requireNonNull( this.getActual().getIdentifier() );
+			return this.getActual();
+		}
+	}
 }

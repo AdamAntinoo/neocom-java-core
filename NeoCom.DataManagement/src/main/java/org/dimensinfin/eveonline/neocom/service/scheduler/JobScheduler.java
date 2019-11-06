@@ -23,11 +23,17 @@ public class JobScheduler {
 
 	private JobScheduler() {}
 
+	public void clear() {
+		this.jobsRegistered.clear();
+		this.jobsKeys.clear();
+	}
+
 	public int registerJob( final Job job2Register ) {
-		if (!this.checkDuplicatedJob( job2Register )) {
+		if (!this.alreadyRegistered( job2Register )) {
 			this.jobsKeys.add( job2Register.getIdentifier().toString() );
 			this.jobsRegistered.add( job2Register );
-		} else NeoComLogger.info( "The job {} is already on the scheduler.", job2Register.getIdentifier().toString() );
+		} else NeoComLogger.info( "The job {} is already registered on the scheduler.",
+				job2Register.getIdentifier().toString() );
 		return this.jobsRegistered.size();
 	}
 
@@ -44,7 +50,7 @@ public class JobScheduler {
 
 	}
 
-	private void scheduleJob( final Job job ) {
+	protected void scheduleJob( final Job job ) {
 		NeoComLogger.info( "-- [JobScheduler.submit]> Scheduling job {}", job.getIdentifier().toString() );
 		job.setStatus( JobStatus.SCHEDULED );
 		try {
@@ -52,13 +58,13 @@ public class JobScheduler {
 			final Future<Boolean> future = schedulerExecutor.submit( job );
 //			record.setFuture( future );
 //			runningJobs.put( updater.getIdentifier(), record );
-		} catch (NeoComRuntimeException neoe) {
+		} catch (final NeoComRuntimeException neoe) {
 			NeoComLogger.info( "RT [JobScheduler.submit]> Runtime exception: {}", neoe.getMessage() );
 			NeoComLogger.info( "RT [JobScheduler.submit]> Stack Trace: {}", neoe.toString() );
 		}
 	}
 
-	private boolean checkDuplicatedJob( final Job job2Register ) {
+	private boolean alreadyRegistered( final Job job2Register ) {
 		return this.jobsKeys.contains( job2Register.getIdentifier().toString() );
 	}
 
@@ -77,6 +83,7 @@ public class JobScheduler {
 		}
 
 		public JobScheduler build() {
+			Objects.requireNonNull( this.onConstruction.cronScheduleGenerator );
 			return this.onConstruction;
 		}
 	}

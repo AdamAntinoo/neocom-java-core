@@ -88,8 +88,9 @@ public class HourlyCronScheduleGenerator implements CronScheduleGenerator {
 		List<Integer> result = new ArrayList<>();
 		result.add( start );
 		int counter = 1;
-		while (start + every * counter < 24) {
-			result.add( start + every * counter );
+		while ((start + every * counter) <= (start+24)) {
+			result.add( (start + every * counter ) % 24);
+			counter++;
 		}
 		return result;
 	}

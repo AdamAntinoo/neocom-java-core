@@ -52,7 +52,30 @@ class HourlyCronScheduleGeneratorTest {
 		final int minute = new LocalTime().getMinuteOfHour();
 		final String schedule = minute + "/5 - *";
 		Assertions.assertTrue( this.generator4Test.match( schedule ) );
-		DateTimeUtils.setCurrentMillisFixed( LocalTime.now().getMillisOfDay()+ TimeUnit.MINUTES.toMillis( 5 ));
+		DateTimeUtils.setCurrentMillisFixed( LocalTime.now().getMillisOfDay() + TimeUnit.MINUTES.toMillis( 5 ) );
 		Assertions.assertTrue( this.generator4Test.match( schedule ) );
+	}
+
+	@Test
+	void matchThisHour() {
+		final int hour = new LocalTime().getHourOfDay();
+		final String schedule = "* - " + hour;
+		Assertions.assertTrue( this.generator4Test.match( schedule ) );
+	}
+
+	@Test
+	void matchThisHourAndMinute() {
+		final int hour = new LocalTime().getHourOfDay();
+		final int minute = new LocalTime().getMinuteOfHour();
+		final String schedule = minute + " - " + hour;
+		Assertions.assertTrue( this.generator4Test.match( schedule ) );
+	}
+
+	@Test
+	void notMatchThisHourAndMinute() {
+		final int hour = new LocalTime().getHourOfDay() + 1;
+		final int minute = new LocalTime().getMinuteOfHour() + 1;
+		final String schedule = minute + " - " + hour;
+		Assertions.assertFalse( this.generator4Test.match( schedule ) );
 	}
 }
