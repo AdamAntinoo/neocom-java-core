@@ -19,9 +19,10 @@ import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
-public class AssetDownloadProcessor /*extends DownloadManager*/ {
+public class AssetDownloadProcessor extends Job {
 	// -  C O M P O N E N T S
 	private Credential credential;
 	private AssetRepository assetRepository;
@@ -158,11 +159,18 @@ public class AssetDownloadProcessor /*extends DownloadManager*/ {
 	}
 
 	// - B U I L D E R
-	public static class Builder {
+	public static class Builder extends Job.Builder<AssetDownloadProcessor, AssetDownloadProcessor.Builder>{
 		private AssetDownloadProcessor onConstruction;
 
-		public Builder() {
-			this.onConstruction = new AssetDownloadProcessor();
+		@Override
+		protected AssetDownloadProcessor getActual() {
+			if (null == this.onConstruction) this.onConstruction = new AssetDownloadProcessor();
+			return this.onConstruction;
+		}
+
+		@Override
+		protected AssetDownloadProcessor.Builder getActualBuilder() {
+			return this;
 		}
 
 		public AssetDownloadProcessor.Builder withCredential( final Credential credential ) {
@@ -184,10 +192,11 @@ public class AssetDownloadProcessor /*extends DownloadManager*/ {
 		}
 
 		public AssetDownloadProcessor build() {
-			Objects.requireNonNull( this.onConstruction.credential );
-			Objects.requireNonNull( this.onConstruction.assetRepository );
-			Objects.requireNonNull( this.onConstruction.neoAssetConverter );
-			return this.onConstruction;
+			final AssetDownloadProcessor instance = super.build();
+			Objects.requireNonNull( instance.credential );
+			Objects.requireNonNull( instance.assetRepository );
+			Objects.requireNonNull( instance.neoAssetConverter );
+			return instance;
 		}
 	}
 }

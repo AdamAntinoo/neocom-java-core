@@ -12,6 +12,8 @@ import com.j256.ormlite.field.DatabaseField;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import org.dimensinfin.eveonline.neocom.database.persister.GetCharactersCharacterIdAssets200OkPersister;
+import org.dimensinfin.eveonline.neocom.database.persister.LocationIdentifierPersister;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -52,11 +54,11 @@ public class NeoAsset extends UpdatableEntity {
 	@DatabaseField(index = true)
 	@Column(name = "category")
 	private String category;
-	@DatabaseField
+	@DatabaseField(persisterClass = GetCharactersCharacterIdAssets200OkPersister.class)
 	@Type(type = "jsonb")
 	@Column(columnDefinition = "jsonb", name = "assetDelegate", nullable = false)
 	private GetCharactersCharacterIdAssets200Ok assetDelegate;
-	@DatabaseField(index = true)
+	@DatabaseField(index = true, persisterClass = LocationIdentifierPersister.class)
 	@Type(type = "jsonb")
 	@Column(name = "locationIdentifier", nullable = false)
 	private LocationIdentifier locationId;

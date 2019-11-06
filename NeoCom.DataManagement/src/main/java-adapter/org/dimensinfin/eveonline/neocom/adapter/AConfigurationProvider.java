@@ -33,18 +33,10 @@ public abstract class AConfigurationProvider implements IConfigurationProvider {
 	protected final Properties configurationProperties = new Properties(); // The list of defined properties
 	protected String configuredPropertiesDirectory = DEFAULT_PROPERTIES_FOLDER; // The place where to search for properties.
 
-	// - C O N S T R U C T O R S
-//	public AConfigurationProvider( final String propertiesFolder ) {
-//		if (null != propertiesFolder) configuredPropertiesDirectory = propertiesFolder;
-//	}
-
 	// - I C O N F I G U R A T I O N P R O V I D E R   I N T E R F A C E
 	public int contentCount() {
 		return this.configurationProperties.size();
 	}
-//	public String getPropertiesDirectory() {
-//		return this.configuredPropertiesDirectory;
-//	}
 
 	public String getResourceString( final String key ) {
 		final String value = this.configurationProperties.getProperty( key );

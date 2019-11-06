@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import com.j256.ormlite.dao.Dao;
@@ -23,8 +24,10 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 public class AssetRepository {
 	private static final Logger logger = LoggerFactory.getLogger( AssetRepository.class );
 	// - C O M P O N E N T S
-	protected Dao<NeoAsset, String> assetDao;
+	protected Dao<NeoAsset, UUID> assetDao;
 	private ConnectionSource connection4Transaction;
+
+	private AssetRepository(){}
 
 	/**
 	 * Get the complete list of the assets that belong to this owner.
@@ -32,8 +35,8 @@ public class AssetRepository {
 	public List<NeoAsset> findAllByOwnerId( final Integer ownerId ) {
 		Objects.requireNonNull( ownerId );
 		try {
-			QueryBuilder<NeoAsset, String> queryBuilder = this.assetDao.queryBuilder();
-			Where<NeoAsset, String> where = queryBuilder.where();
+			QueryBuilder<NeoAsset, UUID> queryBuilder = this.assetDao.queryBuilder();
+			Where<NeoAsset, UUID> where = queryBuilder.where();
 			where.eq( "ownerID", ownerId );
 			final List<NeoAsset> assetList = assetDao.query( queryBuilder.prepare() );
 			logger.info( "-- Assets read: " + assetList.size() );
@@ -68,7 +71,7 @@ public class AssetRepository {
 			try {
 				TransactionManager.callInTransaction( this.connection4Transaction, (Callable<Void>) () -> {
 					// Remove all assets that do not have a valid owner.
-					final DeleteBuilder<NeoAsset, String> deleteBuilder = assetDao.deleteBuilder();
+					final DeleteBuilder<NeoAsset, UUID> deleteBuilder = assetDao.deleteBuilder();
 					deleteBuilder.where().eq( "ownerId", (pilotIdentifier * -1) );
 					int count = deleteBuilder.delete();
 					NeoComLogger.info( "Invalid assets cleared for owner {}: {}",
@@ -104,14 +107,14 @@ public class AssetRepository {
 			try {
 				TransactionManager.callInTransaction( this.connection4Transaction, (Callable<Void>) () -> {
 					// Remove all assets from this owner before adding the new set.
-					final DeleteBuilder<NeoAsset, String> deleteBuilder = this.assetDao.deleteBuilder();
+					final DeleteBuilder<NeoAsset, UUID> deleteBuilder = this.assetDao.deleteBuilder();
 					deleteBuilder.where().eq( "ownerId", pilotid );
 					int count = deleteBuilder.delete();
 					logger.info( "-- [AndroidNeoComDBHelper.replaceAssets]> Invalid assets cleared for owner {}: {}", pilotid,
 							count );
 
 					// Replace the owner to vake the assets valid.
-					final UpdateBuilder<NeoAsset, String> updateBuilder = this.assetDao.updateBuilder();
+					final UpdateBuilder<NeoAsset, UUID> updateBuilder = this.assetDao.updateBuilder();
 					updateBuilder.updateColumnValue( "ownerId", pilotid )
 							.where().eq( "ownerId", (pilotid * -1) );
 					count = updateBuilder.update();
@@ -144,7 +147,7 @@ public class AssetRepository {
 			this.onConstruction = new AssetRepository();
 		}
 
-		public AssetRepository.Builder withAssetDao( final Dao<NeoAsset, String> assetsDao ) {
+		public AssetRepository.Builder withAssetDao( final Dao<NeoAsset, UUID> assetsDao ) {
 			Objects.requireNonNull( assetsDao );
 			this.onConstruction.assetDao = assetsDao;
 			return this;
