@@ -77,7 +77,7 @@ public class AssetProviderTest {
 		esiAssetHangarItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarItem.setQuantity( 28145 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem ).build();
+//		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetHangarContainer = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetHangarContainer.setItemId( 1020057863986L );
@@ -87,7 +87,7 @@ public class AssetProviderTest {
 		esiAssetHangarContainer.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarContainer.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( true );
-		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer ).build();
+//		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetContainerItem = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetContainerItem.setItemId( 1019577379251L );
@@ -97,7 +97,7 @@ public class AssetProviderTest {
 		esiAssetContainerItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT );
 		esiAssetContainerItem.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem ).build();
+//		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem ).build();
 
 	}
 
@@ -200,7 +200,7 @@ public class AssetProviderTest {
 		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
 		Mockito.when( ((SpaceRegion) spaceLocation).getRegion() ).thenReturn( regionData );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
+//		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
 		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
@@ -277,7 +277,7 @@ public class AssetProviderTest {
 		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
 		Mockito.when( ((SpaceRegion) spaceLocation).getRegion() ).thenReturn( regionData );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
+//		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
 		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )

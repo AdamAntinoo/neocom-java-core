@@ -150,7 +150,7 @@ public class AssetProviderIT {
 		esiAssetHangarItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarItem.setQuantity( 28145 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem ).build();
+//		this.assetHangarItem = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarItem ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetHangarContainer = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetHangarContainer.setItemId( 1020057863986L );
@@ -160,7 +160,7 @@ public class AssetProviderIT {
 		esiAssetHangarContainer.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR );
 		esiAssetHangarContainer.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( true );
-		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer ).build();
+//		this.assetHangarContainer = new NeoAsset.Builder().fromEsiAsset( esiAssetHangarContainer ).build();
 
 		final GetCharactersCharacterIdAssets200Ok esiAssetContainerItem = new GetCharactersCharacterIdAssets200Ok();
 		esiAssetContainerItem.setItemId( 1019577379251L );
@@ -170,17 +170,17 @@ public class AssetProviderIT {
 		esiAssetContainerItem.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.AUTOFIT );
 		esiAssetContainerItem.setQuantity( 1 );
 		esiAssetHangarItem.isSingleton( false );
-		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem ).build();
+//		this.assetContainerItem = new NeoAsset.Builder().fromEsiAsset( esiAssetContainerItem ).build();
 		// Add additional information for the location of this asset.
 		if (esiAssetContainerItem.getLocationId() > 61E6) {
 			// We are expected to search for the parent and know if it is structure.
 			final GetUniverseStructuresStructureIdOk structure = this.itEsiAuthorizedDataProvider
 					.searchStructureById( 1028333032455L, this.credential );
 			final NeoAsset parent = this.assetHangarContainer;
-			this.assetContainerItem = new NeoAsset.Builder()
-					.fromEsiAsset( esiAssetContainerItem )
-					.withPublicStructure( 1028333032455L )
-					.build();
+//			this.assetContainerItem = new NeoAsset.Builder()
+//					.fromEsiAsset( esiAssetContainerItem )
+//					.withPublicStructure( 1028333032455L )
+//					.build();
 		}
 	}
 

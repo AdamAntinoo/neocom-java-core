@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 public class UpdaterJobManagerTest {
@@ -22,7 +23,7 @@ public class UpdaterJobManagerTest {
 	public void submit_duplicatedjob() {
 		final NeoComUpdater updater = Mockito.mock(NeoComUpdater.class);
 		Mockito.when(updater.getIdentifier()).thenReturn("UPDATER-TEST-IDENTIFIER");
-		Mockito.when(updater.getStatus()).thenReturn(NeoComUpdater.JobStatus.SCHEDULED);
+		Mockito.when(updater.getStatus()).thenReturn( JobStatus.SCHEDULED);
 		final int size = UpdaterJobManager.clearJobs();
 		UpdaterJobManager.submit(updater);
 

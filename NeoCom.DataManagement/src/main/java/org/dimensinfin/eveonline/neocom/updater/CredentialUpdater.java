@@ -3,11 +3,9 @@ package org.dimensinfin.eveonline.neocom.updater;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.annimon.stream.Stream;
 import org.joda.time.DateTime;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
@@ -48,12 +46,13 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 				this.getModel().setAssetsCount( assetList.size() );
 
 				// Estimate the mining resources value.
-				final Double miningResourcesValue = Stream.of( assetList )
-						.map( asset -> new NeoAsset.Builder().fromEsiAsset( asset ) )
-						.filter( asset -> this.isMiningResource( asset ) )
-						.mapToDouble( asset -> asset.getPrice() * asset.getQuantity() )
-						.sum();
-				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
+				// TODO - Do this but form a directed wuery to the asset repository.
+//				final Double miningResourcesValue = Stream.of( assetList )
+//						.filter( asset -> this.isMiningResource( asset ) )
+//						.map( asset -> new NeoAsset.Builder().fromEsiAsset( asset ) )
+//						.mapToDouble( asset -> asset.getPrice() * asset.getQuantity() )
+//						.sum();
+//				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
 
 				// Get the wallet balance.
 				final Double walletBalance = esiDataAdapter.getCharactersCharacterIdWallet( this.getModel().getAccountId()
@@ -70,10 +69,10 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 		}
 	}
 
-	private boolean isMiningResource( final NeoAsset asset2Test ) {
-		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
-		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
-				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
+	private boolean isMiningResource( final GetCharactersCharacterIdAssets200Ok asset2Test ) {
+//		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
+//		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
+//				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
 		return false;
 	}
 }

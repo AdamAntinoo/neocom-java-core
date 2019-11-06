@@ -16,6 +16,10 @@ public class NeoComLogger {
 		logger.info( wrapper( generateCaller() ) + "> " + message, arguments );
 	}
 
+	public static void enter( final String message, String... arguments ) {
+		logger.info( wrapper( ">>" + generateCaller() ) + "> " + message, arguments );
+	}
+
 	private static String wrapper( final String data ) {
 		return "[" + data + "]";
 	}

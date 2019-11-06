@@ -14,6 +14,7 @@ import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventReceiver;
 import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -53,9 +54,9 @@ public class NeoComUpdaterTest {
 		final UpdaterUnderTest updater = new UpdaterUnderTest( new TestPayload() );
 		Assert.assertNotNull( updater );
 		Assert.assertTrue( updater.needsRefresh() );
-		Assert.assertEquals( NeoComUpdater.JobStatus.READY, updater.getStatus() );
+		Assert.assertEquals( JobStatus.READY, updater.getStatus() );
 		updater.onPrepare();
-		Assert.assertEquals( NeoComUpdater.JobStatus.RUNNING, updater.getStatus() );
+		Assert.assertEquals( JobStatus.RUNNING, updater.getStatus() );
 		Assert.assertFalse( updater.needsRefresh() );
 	}
 
@@ -65,7 +66,7 @@ public class NeoComUpdaterTest {
 		final UpdaterUnderTest updater = new UpdaterUnderTest( new TestPayload() );
 		Assert.assertNotNull( updater );
 		Assert.assertTrue( updater.needsRefresh() );
-		Assert.assertEquals( NeoComUpdater.JobStatus.READY, updater.getStatus() );
+		Assert.assertEquals( JobStatus.READY, updater.getStatus() );
 		updater.onPrepare();
 	}
 
@@ -75,7 +76,7 @@ public class NeoComUpdaterTest {
 		Assert.assertNotNull( updater );
 		updater.onException( new NeoComRuntimeException( "Updater test exception." ) );
 		Assert.assertNotNull( updater.getLastException() );
-		Assert.assertEquals( NeoComUpdater.JobStatus.EXCEPTION, updater.getStatus() );
+		Assert.assertEquals( JobStatus.EXCEPTION, updater.getStatus() );
 	}
 
 	@Test
@@ -87,7 +88,7 @@ public class NeoComUpdaterTest {
 
 		updater.addEventListener( spyReceiver );
 		updater.onComplete();
-		Assert.assertEquals( NeoComUpdater.JobStatus.COMPLETED, updater.getStatus() );
+		Assert.assertEquals( JobStatus.COMPLETED, updater.getStatus() );
 		Mockito.verify( spyReceiver, Mockito.atLeastOnce() ).receiveEvent( any( IntercommunicationEvent.class ) );
 	}
 
@@ -99,16 +100,16 @@ public class NeoComUpdaterTest {
 
 	@Test
 	public void setStatus() {
-		Assert.assertEquals( NeoComUpdater.JobStatus.READY, this.updaterUnderTest.getStatus() );
-		this.updaterUnderTest.setStatus( NeoComUpdater.JobStatus.SCHEDULED );
-		Assert.assertEquals( NeoComUpdater.JobStatus.SCHEDULED, this.updaterUnderTest.getStatus() );
+		Assert.assertEquals( JobStatus.READY, this.updaterUnderTest.getStatus() );
+		this.updaterUnderTest.setStatus( JobStatus.SCHEDULED );
+		Assert.assertEquals( JobStatus.SCHEDULED, this.updaterUnderTest.getStatus() );
 	}
 
 	@Test
 	public void update() {
 		final UpdaterUnderTest updateTest = new UpdaterUnderTest( new TestPayload() );
 		updateTest.update();
-		Assert.assertEquals( NeoComUpdater.JobStatus.READY, this.updaterUnderTest.getStatus() );
+		Assert.assertEquals( JobStatus.READY, this.updaterUnderTest.getStatus() );
 	}
 
 	public static class TestEventReceiver implements IEventReceiver {
