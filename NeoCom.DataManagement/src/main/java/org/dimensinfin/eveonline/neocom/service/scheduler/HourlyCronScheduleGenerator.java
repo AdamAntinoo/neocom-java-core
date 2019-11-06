@@ -1,8 +1,11 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.joda.time.LocalTime;
+
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGenerator;
 
 /**
  * Uses a simplified cron pattern to detect if a job should be executed at this time.
@@ -15,8 +18,8 @@ import java.util.List;
  * <b>*</b> - all ticks
  * minutes - hours
  */
-public class CronScheduleGenerator {
-	private CronScheduleGenerator() {}
+public class HourlyCronScheduleGenerator implements CronScheduleGenerator {
+	public HourlyCronScheduleGenerator() {}
 
 	/**
 	 * Checks if the cron pattern of the schedule matches to the HOUR:MINUTE combination of the current system time.
@@ -25,8 +28,8 @@ public class CronScheduleGenerator {
 	 * @return true if the current time matches on this pattern.
 	 */
 	public boolean match( final String schedule ) {
-		if (this.checkHourMatch( schedule, this.getHourlySchedule(schedule) ))
-			if (this.checkMinuteMatch( schedule, this.getHourlySchedule(schedule) )) return true;
+		if (this.checkHourMatch( schedule, this.getHourlySchedule( schedule ) ))
+			if (this.checkMinuteMatch( schedule, this.getMinuteSchedule( schedule ) )) return true;
 			else return false;
 		else return false;
 	}
@@ -38,8 +41,15 @@ public class CronScheduleGenerator {
 		else return "*";
 	}
 
+	private String getMinuteSchedule( final String schedule ) {
+		final String[] schedules = schedule.split( "-" );
+		if (schedules.length > 0)
+			return schedules[0].trim();
+		else return "*";
+	}
+
 	private boolean checkHourMatch( final String schedule, final String scheduleHour ) {
-		final Integer hour = LocalTime.now().getHour();
+		final Integer hour = LocalTime.now().getHourOfDay();
 		if (scheduleHour.startsWith( "*" )) return true;
 		if (scheduleHour.contains( "/" )) {
 			final String[] tickGenerator = scheduleHour.split( "/" );
@@ -56,18 +66,18 @@ public class CronScheduleGenerator {
 		return false;
 	}
 
-	private boolean checkMinuteMatch( final String schedule, final String scheduleHour ) {
-		final Integer minute = LocalTime.now().getMinute();
-		if (scheduleHour.startsWith( "*" )) return true;
-		if (scheduleHour.contains( "/" )) {
-			final String[] tickGenerator = scheduleHour.split( "/" );
+	private boolean checkMinuteMatch( final String schedule, final String scheduleMinute ) {
+		final Integer minute = LocalTime.now().getMinuteOfHour();
+		if (scheduleMinute.startsWith( "*" )) return true;
+		if (scheduleMinute.contains( "/" )) {
+			final String[] tickGenerator = scheduleMinute.split( "/" );
 			final List<Integer> ticks = this.generateMinuteTicks( Integer.parseInt( tickGenerator[0] ),
 					Integer.parseInt( tickGenerator[1] ) );
 			for (Integer tick : ticks)
 				if (tick == minute) return true;
 			return false;
 		}
-		final String[] ticks = scheduleHour.split( "," );
+		final String[] ticks = scheduleMinute.split( "," );
 		for (int i = 0; i < ticks.length; i++) {
 			if (minute == Integer.parseInt( ticks[i].trim() )) return true;
 		}
@@ -88,21 +98,22 @@ public class CronScheduleGenerator {
 		List<Integer> result = new ArrayList<>();
 		result.add( start );
 		int counter = 1;
-		while (start + every * counter < 60) {
-			result.add( start + every * counter );
+		while ((start + every * counter) <= (start + 60)) {
+			result.add( (start + every * counter) % 60 );
+			counter++;
 		}
 		return result;
 	}
 
 	// - B U I L D E R
 	public static class Builder {
-		private CronScheduleGenerator onConstruction;
+		private HourlyCronScheduleGenerator onConstruction;
 
 		public Builder() {
-			this.onConstruction = new CronScheduleGenerator();
+			this.onConstruction = new HourlyCronScheduleGenerator();
 		}
 
-		public CronScheduleGenerator build() {
+		public HourlyCronScheduleGenerator build() {
 			return this.onConstruction;
 		}
 	}
