@@ -153,13 +153,13 @@ public class NeoComRetrofitFactory {
 	}
 
 	private Retrofit generateESIAuthRetrofit( final String esiServer ) {
+		final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
+		final long timeout = TimeUnit.SECONDS
+				.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esinetwork.timeout" ) );
 		try {
 			final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
 					+ this.configurationProvider.getResourceString( "P.cache.esinetwork.filename" );
 			final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-			final long timeout = TimeUnit.SECONDS
-					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esinetwork.timeout" ) );
 			return new NeoComRetrofitHTTP.Builder()
 					.withNeoComOAuth20( this.getConfiguredOAuth( esiServer.toLowerCase() ) )
 					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
@@ -170,9 +170,6 @@ public class NeoComRetrofitFactory {
 					.withTimeout( timeout )
 					.build();
 		} catch (final IOException ioe) { // If there is an exception with the cache create the retrofit not cached.
-			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-			final long timeout = TimeUnit.SECONDS
-					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esinetwork.timeout" ) );
 			return new NeoComRetrofitHTTP.Builder()
 					.withNeoComOAuth20( this.getConfiguredOAuth( esiServer.toLowerCase() ) )
 					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"

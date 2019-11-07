@@ -120,8 +120,8 @@
     "is_singleton": true,
     "item_id": 1027957760661,
     "location_flag": "Hangar",
-    "location_id": 60004543,
-    "location_type": "station",
+    "location_id": 1031243921503,
+    "location_type": "other",
     "quantity": 1,
     "type_id": 601
   },
@@ -169,15 +169,6 @@
     "location_type": "other",
     "quantity": 3,
     "type_id": 15331
-  },
-  {
-    "is_singleton": true,
-    "item_id": 1027893592299,
-    "location_flag": "Hangar",
-    "location_id": 60004543,
-    "location_type": "station",
-    "quantity": 1,
-    "type_id": 670
   },
   {
     "is_singleton": true,

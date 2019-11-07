@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -48,6 +49,17 @@ public class JobScheduler {
 				this.scheduleJob( job );
 		}
 
+	}
+
+	public void wait4Completion() {
+		NeoComLogger.enter();
+		schedulerExecutor.shutdown();
+		try {
+			schedulerExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+			NeoComLogger.exit();
+		} catch (InterruptedException ie) {
+			NeoComLogger.info("Scheduler terminated by external event.");
+		}
 	}
 
 	protected void scheduleJob( final Job job ) {

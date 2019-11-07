@@ -44,6 +44,7 @@ public class AssetProcessorIT {
 	private GenericContainer postgres;
 
 	private final ObjectMapper mapper = new ObjectMapper();
+	private Credential itCredential;
 	private IConfigurationProvider itConfigurationProvider;
 	private IFileSystem itFileSystemAdapter;
 	private JobScheduler itJobScheduler;
@@ -68,6 +69,7 @@ public class AssetProcessorIT {
 			application.registerJobOnScheduler();
 			application.itJobScheduler.runSchedule();
 //			application.stopContainers();
+			application.waitSchedulerCompletion();
 		} catch (IOException ioe) {
 			NeoComLogger.info( "Application interrupted: ", ioe );
 		} catch (SQLException sqle) {
@@ -98,7 +100,22 @@ public class AssetProcessorIT {
 		this.postgres.stop();
 	}
 
+	private void waitSchedulerCompletion() {
+		this.itJobScheduler.wait4Completion();
+	}
+
 	private void setUpEnvironment() throws IOException, SQLException {
+		this.itCredential = new Credential.Builder(92002067)
+				.withAccountId(92002067)
+				.withAccountName("Adam Antinoo")
+				.withAccessToken("1|CfDJ8O+5Z0aH+aBNj61BXVSPWfgwinvonqit33OOltSQucRKlTj5JQ0dkS1+5460Qg+WgjTYMSY1MgE9EIziZ3UvyTrp9Z9xUfANwNgQHS1bXRopP5UWiQynzy06zeAOh3+xlVvIsTLG82fd/iM1Y+6r798F0l6t5i9zi5QPWwW6yI85")
+				.withRefreshToken("VcWjKFnOdogRIRLNYliZYwQJccUp-vRfTLxizM9TY59daHvOKwgxfytuX0p0uisOuUkw35ooY4D4Hsz6ZPHyRs0uEl3zPFt_HVUWJ2ovqb8pf2nPiZdcgD03IuMeAPGLT7xa7g5AT4v2po6KwsFXyzVqDX1sJ0NKwk5yUH4ROudD-lvOdysPzHlrDQIEhFta")
+				.withDataSource("tranquility")
+				.withScope("publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1")
+				.withAssetsCount(6119)
+				.withWalletBalance(2.27058387661E9)
+				.withRaceName("Minmatar")
+				.build();
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
@@ -153,7 +170,7 @@ public class AssetProcessorIT {
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
 		final List<GetCharactersCharacterIdAssets200Ok> testAssetList = this.loadAssetTestData();
-		final Credential credential = Mockito.mock( Credential.class );
+//		final Credential credential = Mockito.mock( Credential.class );
 		this.itEsiDataProvider = Mockito.mock( ESIDataAdapter.class );
 		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
 				.thenReturn( testAssetList );
@@ -177,17 +194,17 @@ public class AssetProcessorIT {
 	}
 
 	private void registerJobOnScheduler() {
-		final Credential credential = Mockito.mock( Credential.class );
-		Mockito.when( credential.getAccountId() ).thenReturn( 122345 );
-		Mockito.when( credential.getAccountName() ).thenReturn( "-TEST-" );
-		Mockito.when( credential.getAccessToken() ).thenReturn( "-ACCESS-TOKEN-" );
-		Mockito.when( credential.getRefreshToken() ).thenReturn( "-REFRESH-TOKEN-" );
-		Mockito.when( credential.getDataSource() ).thenReturn( ESIDataAdapter.DEFAULT_ESI_SERVER );
-		Mockito.when( credential.getScope() ).thenReturn( "publicData" );
-		Mockito.when( credential.getUniqueId() ).thenReturn( "tranquility/12345" );
+//		final Credential credential = Mockito.mock( Credential.class );
+//		Mockito.when( credential.getAccountId() ).thenReturn( 122345 );
+//		Mockito.when( credential.getAccountName() ).thenReturn( "-TEST-" );
+//		Mockito.when( credential.getAccessToken() ).thenReturn( "-ACCESS-TOKEN-" );
+//		Mockito.when( credential.getRefreshToken() ).thenReturn( "-REFRESH-TOKEN-" );
+//		Mockito.when( credential.getDataSource() ).thenReturn( ESIDataAdapter.DEFAULT_ESI_SERVER );
+//		Mockito.when( credential.getScope() ).thenReturn( "publicData" );
+//		Mockito.when( credential.getUniqueId() ).thenReturn( "tranquility/12345" );
 
 		final Job assetProcessorJob = new AssetDownloadProcessor.Builder()
-				.withCredential( credential )
+				.withCredential( this.itCredential )
 				.withEsiDataAdapter( this.itEsiDataProvider )
 				.withLocationCatalogService( this.itLocationService )
 				.withAssetRepository( this.itAssetRepository )

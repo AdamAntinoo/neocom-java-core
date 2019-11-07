@@ -34,6 +34,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresSt
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 import retrofit2.Response;
 
@@ -298,12 +299,12 @@ public class LocationCatalogService {
 			if (universeResponse.isSuccessful()) {
 				return universeResponse.body();
 			} else return null;
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
+		} catch (final IOException ioe) {
+			NeoComLogger.error( "[IOException]> locating public structure: ", ioe );
 			ioe.printStackTrace();
 			return null;
-		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
+		} catch (final RuntimeException rte) {
+			NeoComLogger.error( "[RuntimeException]> locating public structure: ", rte );
 			rte.printStackTrace();
 			return null;
 		}
