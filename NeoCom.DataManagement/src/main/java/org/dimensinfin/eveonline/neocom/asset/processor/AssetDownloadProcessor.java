@@ -72,19 +72,11 @@ public class AssetDownloadProcessor extends Job {
 	 */
 	public boolean downloadPilotAssetsESI() throws SQLException {
 		NeoComLogger.enter( ">> [AssetsManager.downloadPilotAssetsESI]" );
-		//		try {
-		// Clear any previous record with owner -1 from database.
-//		GlobalDataManager.getSingleton().getNeocomDBHelper().clearInvalidRecords(credential.getAccountId());
-		// Download the list of assets.
 		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataAdapter.getCharactersCharacterIdAssets(
 				credential);
 		if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
-		// Create the list for orphaned locations assets. They should be processed later.
-//		this.unlocatedAssets.clear();
-
-		this.createAssetMap( assetOkList );
-//		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
-		// Assets may be parent of other assets so process them recursively if the hierarchical mode is selected.
+		this.createAssetMap( assetOkList ); // Map of asset for easy lookup.
+		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
 		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
 			// - A S S E T   P R O C E S S I N G
 			try {
