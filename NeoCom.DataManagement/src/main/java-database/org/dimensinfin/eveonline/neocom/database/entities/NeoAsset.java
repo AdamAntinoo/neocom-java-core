@@ -143,6 +143,10 @@ public class NeoAsset extends UpdatableEntity {
 
 	public NeoAsset setItemDelegate( final NeoItem itemDelegate ) {
 		this.itemDelegate = itemDelegate;
+		if (null != this.itemDelegate) {
+			this.category = this.itemDelegate.getCategoryName();
+			this.group = this.itemDelegate.getGroupName();
+		}
 		return this;
 	}
 
