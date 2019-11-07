@@ -10,9 +10,11 @@ import java.util.List;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.junit.Rule;
 import org.mockito.Mockito;
+import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
@@ -39,6 +41,8 @@ import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 public class AssetProcessorIT {
+	private GenericContainer postgres;
+
 	private final ObjectMapper mapper = new ObjectMapper();
 	private IConfigurationProvider itConfigurationProvider;
 	private IFileSystem itFileSystemAdapter;
@@ -52,12 +56,6 @@ public class AssetProcessorIT {
 	private StoreCacheManager itStoreCacheManager;
 	private ESIDataAdapter itEsiDataProvider;
 
-	@Rule
-	public GenericContainer redis = new GenericContainer<>( "postgres:11.2" )
-			.withExposedPorts( 5432 )
-			.withEnv( "POSTGRES_DB", "postgres" )
-			.withEnv( "POSTGRES_USER", "neocom" )
-			.withEnv( "POSTGRES_PASSWORD", "01.Alpha" );
 
 	private AssetProcessorIT() {}
 
@@ -65,9 +63,11 @@ public class AssetProcessorIT {
 		NeoComLogger.enter();
 		final AssetProcessorIT application = new AssetProcessorIT();
 		try {
+//			application.startContainers();
 			application.setUpEnvironment();
 			application.registerJobOnScheduler();
 			application.itJobScheduler.runSchedule();
+//			application.stopContainers();
 		} catch (IOException ioe) {
 			NeoComLogger.info( "Application interrupted: ", ioe );
 		} catch (SQLException sqle) {
@@ -76,8 +76,29 @@ public class AssetProcessorIT {
 		NeoComLogger.exit();
 	}
 
-	//	@BeforeEach
-	void setUpEnvironment() throws IOException, SQLException {
+	private void startContainers() {
+//		this.postgres = new GenericContainer<>( "postgres:11.2" )
+//				.withExposedPorts( 5432 )
+//				.withEnv( "POSTGRES_DB", "postgres" )
+//				.withEnv( "POSTGRES_USER", "neocom" )
+//				.withEnv( "POSTGRES_PASSWORD", "01.Alpha" );
+
+		this.postgres = new PostgreSQLContainer( "postgres:9.6-alpine" )
+				.withDatabaseName( "postgres" )
+				.withPassword( "01.Alpha" )
+				.withUsername( "neocom" )
+				.withExposedPorts( 5432 )
+				.withLogConsumer( new Slf4jLogConsumer( LoggerFactory.getLogger( "🐳 " + "postgres" ) ) );
+//				.withNetwork(network);
+
+		this.postgres.start();
+	}
+
+	private void stopContainers() {
+		this.postgres.stop();
+	}
+
+	private void setUpEnvironment() throws IOException, SQLException {
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
@@ -87,12 +108,16 @@ public class AssetProcessorIT {
 				.withCronScheduleGenerator( new HourlyCronScheduleGenerator() ).build();
 		// Database setup
 		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
+//		final String containerHost = this.postgres.getContainerIpAddress();
+//		final Integer containerPort = this.postgres.getFirstMappedPort();
 		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
 		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );
 		final String databasePassword = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepassword" );
-		final String neocomDatabaseURL = databaseHostName + "/" + databasePath +
+		final String neocomDatabaseURL = databaseHostName +
+				"/" + databasePath +
 				"?user=" + databaseUser +
 				"&password=" + databasePassword;
+//		final String postgresTestContainerUrl = this.postgres.get
 		this.itNeoComIntegrationDBAdapter = new IntegrationNeoComDBAdapter.Builder()
 				.withDatabaseURLConnection( neocomDatabaseURL )
 				.build();

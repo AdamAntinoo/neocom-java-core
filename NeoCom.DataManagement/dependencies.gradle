@@ -75,7 +75,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
     // T E S T   F R A M E W O R K
-    testCompile "org.testcontainers:testcontainers:1.12.3"
+    testImplementation "org.testcontainers:testcontainers:1.12.3"
+    testImplementation "org.testcontainers:postgresql:1.9.1"
     testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'com.openpojo:openpojo:0.8.12'
     // D A T A B A S E
