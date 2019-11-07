@@ -11,8 +11,6 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.Rule;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
@@ -33,6 +31,7 @@ import org.dimensinfin.eveonline.neocom.integration.support.GetCharactersCharact
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationNeoComDBAdapter;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.HourlyCronScheduleGenerator;
 import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
@@ -60,7 +59,24 @@ public class AssetProcessorIT {
 			.withEnv( "POSTGRES_USER", "neocom" )
 			.withEnv( "POSTGRES_PASSWORD", "01.Alpha" );
 
-	@BeforeEach
+	private AssetProcessorIT() {}
+
+	public static void main( String[] args ) {
+		NeoComLogger.enter();
+		final AssetProcessorIT application = new AssetProcessorIT();
+		try {
+			application.setUpEnvironment();
+			application.registerJobOnScheduler();
+			application.itJobScheduler.runSchedule();
+		} catch (IOException ioe) {
+			NeoComLogger.info( "Application interrupted: ", ioe );
+		} catch (SQLException sqle) {
+			NeoComLogger.info( "Application interrupted: ", sqle );
+		}
+		NeoComLogger.exit();
+	}
+
+	//	@BeforeEach
 	void setUpEnvironment() throws IOException, SQLException {
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
@@ -114,7 +130,7 @@ public class AssetProcessorIT {
 		final List<GetCharactersCharacterIdAssets200Ok> testAssetList = this.loadAssetTestData();
 		final Credential credential = Mockito.mock( Credential.class );
 		this.itEsiDataProvider = Mockito.mock( ESIDataAdapter.class );
-		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any(Credential.class) ) )
+		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
 				.thenReturn( testAssetList );
 		this.itRetrofitFactory.add2MockList( "getCharactersCharacterIdAssets" );
 	}
@@ -123,11 +139,11 @@ public class AssetProcessorIT {
 //		this.mapper.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 //		ObjectMapper mapper = new ObjectMapper();
-		SimpleModule testModule = new SimpleModule("NoeComIntegrationModule",
-				Version.unknownVersion());
-		testModule.addDeserializer(GetCharactersCharacterIdAssets200Ok.class,
-				 new GetCharactersCharacterIdAssets200OkDeserializer(GetCharactersCharacterIdAssets200Ok.class));
-		mapper.registerModule(testModule);
+		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",
+				Version.unknownVersion() );
+		testModule.addDeserializer( GetCharactersCharacterIdAssets200Ok.class,
+				new GetCharactersCharacterIdAssets200OkDeserializer( GetCharactersCharacterIdAssets200Ok.class ) );
+		mapper.registerModule( testModule );
 
 		final GetCharactersCharacterIdAssets200Ok[] data = this.mapper.readValue( FileUtils.readFileToString(
 				new File( this.itFileSystemAdapter.accessResource4Path( "TestData/assetTestList.json" ) ),
@@ -156,9 +172,9 @@ public class AssetProcessorIT {
 		this.itJobScheduler.registerJob( assetProcessorJob );
 	}
 
-	@Test
-	void downloadAssets() {
-		this.registerJobOnScheduler();
-		this.itJobScheduler.runSchedule();
-	}
+//	@Test
+//	void downloadAssets() {
+//		this.registerJobOnScheduler();
+//		this.itJobScheduler.runSchedule();
+//	}
 }

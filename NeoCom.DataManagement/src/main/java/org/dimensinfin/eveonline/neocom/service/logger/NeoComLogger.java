@@ -9,15 +9,27 @@ public class NeoComLogger {
 	private NeoComLogger() {}
 
 	public static void info( final String message ) {
-		logger.info( wrapper( generateCaller() ) + "> " + message );
+		logger.info( "-- " + header() + message );
+	}
+
+	public static void info( final String message, final Exception exception ) {
+		logger.info( "-- " + header() + message + exception.getMessage() );
 	}
 
 	public static void info( final String message, String... arguments ) {
 		logger.info( "-- " + header() + message, arguments );
 	}
 
+	public static void enter() {
+		logger.info( ">> " + header() );
+	}
+
 	public static void enter( final String message, String... arguments ) {
 		logger.info( ">> " + header() + message, arguments );
+	}
+
+	public static void exit() {
+		logger.info( "<< " + header() );
 	}
 
 	public static void exit( final String message, String... arguments ) {

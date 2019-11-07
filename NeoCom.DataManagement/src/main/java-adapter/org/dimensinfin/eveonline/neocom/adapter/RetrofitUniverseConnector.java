@@ -32,18 +32,19 @@ public class RetrofitUniverseConnector {
 	}
 
 	private Retrofit generateNoAuthRetrofit() {
+		final String agent = this.configurationProvider
+				.getResourceString( "P.universe.esi.data.server.authorization.agent", "Default agent" );
+		final long timeout = TimeUnit.SECONDS
+				.toMillis( this.configurationProvider.getResourceInteger( "P.cache.retrofit.universe.timeout" ) );
 		try {
 			final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
 					+ this.configurationProvider.getResourceString( "P.cache.retrofit.universe.network" );
 			final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-			final long timeout = TimeUnit.SECONDS
-					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.retrofit.universe.timeout" ) );
 			final long cacheSize = this.configurationProvider.getResourceInteger(
 					"P.cache.retrofit.universe.size.gb", CACHE_SIZE
 			) * Units.GIGABYTES;
 			return new NeoComRetrofitNoOAuthHTTP.Builder()
-					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
+					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.universe.esi.data.server.location"
 							, "https://esi.evetech.net/latest/" ) )
 					.withAgent( agent )
 					.withCacheDataFile( cacheDataFile )
@@ -51,11 +52,8 @@ public class RetrofitUniverseConnector {
 					.withTimeout( timeout )
 					.build();
 		} catch (final IOException ioe) { // If there is an exception with the cache create the retrofit not cached.
-			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-			final long timeout = TimeUnit.SECONDS
-					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esiitem.timeout" ) );
 			return new NeoComRetrofitNoOAuthHTTP.Builder()
-					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
+					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.universe.esi.data.server.location"
 							, "https://esi.evetech.net/latest/" ) )
 					.withAgent( agent )
 					.withTimeout( timeout )
