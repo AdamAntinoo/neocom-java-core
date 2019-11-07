@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -55,6 +56,13 @@ public class IntegrationNeoComDBAdapter {
 		connectionSource.setTestBeforeGet( true );
 		return true;
 	}
+	public void onCreate( final ConnectionSource connectionSource ) {
+		try {
+			TableUtils.createTableIfNotExists( connectionSource, NeoAsset.class );
+		} catch (SQLException sqle) {
+			NeoComLogger.error( "SQL NeoComDatabase: ", sqle );
+		}
+	}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -70,8 +78,9 @@ public class IntegrationNeoComDBAdapter {
 			return this;
 		}
 
-		public IntegrationNeoComDBAdapter build() {
+		public IntegrationNeoComDBAdapter build() throws SQLException {
 			Objects.requireNonNull( this.onConstruction.localConnectionDescriptor );
+			this.onConstruction.onCreate( this.onConstruction.getConnectionSource() );
 			return this.onConstruction;
 		}
 	}

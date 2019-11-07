@@ -13,7 +13,7 @@ public class NeoComLogger {
 	}
 
 	public static void info( final String message, final Exception exception ) {
-		logger.info( "-- " + header() + message + exception.getMessage() );
+		logger.info( "-- " + header() + message + "-" + exception.getMessage() );
 	}
 
 	public static void info( final String message, String... arguments ) {
@@ -34,6 +34,14 @@ public class NeoComLogger {
 
 	public static void exit( final String message, String... arguments ) {
 		logger.info( "<< " + header() + message, arguments );
+	}
+
+	public static void error( final Exception exception ) {
+		logger.error( ">E " + header() + exception.getMessage() );
+	}
+
+	public static void error( final String message, final Exception exception ) {
+		logger.error( ">E " + header() + message + "-" + exception.getMessage() );
 	}
 
 	private static String header() {
