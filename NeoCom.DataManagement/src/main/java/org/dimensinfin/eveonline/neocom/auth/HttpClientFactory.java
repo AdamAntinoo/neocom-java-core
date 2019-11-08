@@ -25,8 +25,8 @@ public class HttpClientFactory {
 
 	private OkHttpClient clientBuilder() {
 		final String esiDataServerLocation = this.configurationProvider.getResourceString(
-				"P.esi.api.data.server.location",
-				"https://esi.evetech.net/latest/" );
+				"P.esi.tranquility.authorization.server",
+				"https://login.eveonline.com/" );
 		final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
 				"Dimensinfin Industries 2019 : NeoCom : Spring Boot 2.x backend client : Production" );
 		final String authorizationClientid = this.configurationProvider.getResourceString(
@@ -51,7 +51,8 @@ public class HttpClientFactory {
 					if (response.isSuccessful()) {
 						return response;
 					}
-					if (response.body().string().contains( "expired" )) { // Current token expired. Get a fresh one.
+					if ((response.code() == 403) ||
+							(response.body().string().contains( "expired" ))) { // Current token expired. Get a fresh one.
 						final String peckString = authorizationClientid + ":" + authorizationSecretKey;
 						String peck = Base64.getEncoder().encodeToString( peckString.getBytes() )
 								.replaceAll( "\n", "" );
@@ -60,7 +61,8 @@ public class HttpClientFactory {
 										ESI_HOST, "Basic " + peck, credential.getRefreshToken() )
 								.execute();
 						if (refreshResponse.isSuccessful()) { // Retry the connection with the new token
-							this.credential.setAccessToken( refreshResponse.body().getAccessToken() );
+							final TokenTranslationResponse refreshData = refreshResponse.body();
+							this.credential.setAccessToken( refreshData.getAccessToken() );
 							Request.Builder requestBuilder = chain.request().newBuilder()
 									.removeHeader( "Authorization" )
 //									.addHeader( "accept", "application/json" )

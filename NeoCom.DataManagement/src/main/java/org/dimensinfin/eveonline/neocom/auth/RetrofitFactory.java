@@ -40,7 +40,9 @@ public class RetrofitFactory {
 			hitConnector = new Retrofit.Builder()
 					.baseUrl( esiDataServerLocation )
 					.addConverterFactory( GSON_CONVERTER_FACTORY )
-					.client( new HttpClientFactory.Builder().withCredential( credential ).generate() )
+					.client( new HttpClientFactory.Builder()
+							.withConfigurationProvider( this.configurationProvider )
+							.withCredential( credential ).generate() )
 					.build();
 			this.connectors.put( credential.getUniqueId(), hitConnector );
 		}

@@ -117,7 +117,7 @@ public class NeoComRetrofitFactory {
 
 	private Retrofit generateMountebankRetrofit() {
 		final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-		final String esiMockServer = this.configurationProvider.getResourceString( "P.esi.authorization.mock.server");
+		final String esiMockServer = this.configurationProvider.getResourceString( "P.esi.authorization.mock.server" );
 		return new NeoComRetrofitMock.Builder()
 				.withEsiServerLocation( esiMockServer )
 				.withAgent( agent )
@@ -313,6 +313,7 @@ public class NeoComRetrofitFactory {
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}
+
 		public NeoComRetrofitFactory.Builder withFileSystemAdapter( final IFileSystem fileSystemAdapter ) {
 			Objects.requireNonNull( fileSystemAdapter );
 			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
@@ -322,7 +323,7 @@ public class NeoComRetrofitFactory {
 		public NeoComRetrofitFactory build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			this.onConstruction.activateEsiServer( ESIDataProvider.DEFAULT_ESI_SERVER);
+			this.onConstruction.activateEsiServer( ESIDataProvider.DEFAULT_ESI_SERVER );
 			return this.onConstruction;
 		}
 	}

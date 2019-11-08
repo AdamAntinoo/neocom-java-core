@@ -650,18 +650,18 @@ public class ESIDataProvider {
 	}
 
 	// - C H A R A C T E R
-	public Double getCharactersCharacterIdWallet( final int identifier, final String refreshToken, final String server ) {
+	public Double getCharactersCharacterIdWallet( final Credential credential ) {
 		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdWallet]" );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<Double> walletApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
 					.create( WalletApi.class )
-					.getCharactersCharacterIdWallet( identifier
-							, datasource.toLowerCase(), null, null )
+					.getCharactersCharacterIdWallet( credential.getAccountId()
+							,credential.getDataSource(), null, null )
 					.execute();
 			if (walletApiResponse.isSuccessful()) return walletApiResponse.body();
 		} catch (IOException ioe) {

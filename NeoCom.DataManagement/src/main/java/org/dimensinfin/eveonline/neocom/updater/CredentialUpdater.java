@@ -53,8 +53,7 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 //				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
 
 				// Get the wallet balance.
-				final Double walletBalance = esiDataProvider.getCharactersCharacterIdWallet( this.getModel().getAccountId()
-						, this.getModel().getRefreshToken(), this.getModel().getDataSource() );
+				final Double walletBalance = esiDataProvider.getCharactersCharacterIdWallet( this.getModel() );
 				if (walletBalance > 0.0) this.getModel().setWalletBalance( walletBalance );
 
 				// Get the race name. This needs access to the pilot.

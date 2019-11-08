@@ -69,7 +69,7 @@ public class AssetDownloadProcessor extends Job {
 	public boolean downloadPilotAssetsESI() throws SQLException {
 		NeoComLogger.enter( ">> [AssetsManager.downloadPilotAssetsESI]" );
 		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider.getCharactersCharacterIdAssets(
-				credential);
+				credential );
 		if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
 		this.createAssetMap( assetOkList ); // Map of asset for easy lookup.
 		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
@@ -146,7 +146,7 @@ public class AssetDownloadProcessor extends Job {
 	}
 
 	// - B U I L D E R
-	public static class Builder extends Job.Builder<AssetDownloadProcessor, AssetDownloadProcessor.Builder>{
+	public static class Builder extends Job.Builder<AssetDownloadProcessor, AssetDownloadProcessor.Builder> {
 		private AssetDownloadProcessor onConstruction;
 
 		@Override
@@ -165,11 +165,13 @@ public class AssetDownloadProcessor extends Job {
 			this.getActual().credential = credential;
 			return this;
 		}
+
 		public AssetDownloadProcessor.Builder withEsiDataProvider( final ESIDataProvider esiDataProvider ) {
 			Objects.requireNonNull( esiDataProvider );
 			this.onConstruction.esiDataProvider = esiDataProvider;
 			return this;
 		}
+
 		public AssetDownloadProcessor.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;

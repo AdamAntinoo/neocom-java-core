@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.junit.jupiter.api.Test;
 
 import org.dimensinfin.eveonline.neocom.auth.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
@@ -54,10 +55,10 @@ public class AuthenticatedRequestIT {
 		this.flow.onStartFlow( code, STATE, dataSource );
 	}
 
-//	@Test
+	@Test
 	void createAuthenticatedClient() throws IOException {
 		this.setupEnvironment();
-		this.setupAuthentication( "q9agB82y1UylehfFCAPf9Q" );
+		this.setupAuthentication( "4XUl50ZaxfBNljLSWLZOdqr1im06DWmaVJ1cvwDtkUjN8iW6Z6MMtFT2JsSvcDGC" );
 		final TokenVerification tokenStore = this.flow.onTranslationStep();
 		final Long structureId = 1031243921503L;
 		final String esiDataServerLocation = "https://esi.evetech.net/latest/";

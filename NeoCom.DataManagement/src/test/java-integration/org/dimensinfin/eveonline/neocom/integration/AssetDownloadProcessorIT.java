@@ -18,20 +18,20 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
-import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessor;
+import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.integration.support.GetCharactersCharacterIdAssets200OkDeserializer;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationNeoComDBAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -53,7 +53,7 @@ public class AssetDownloadProcessorIT {
 	private IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
 	private RetrofitUniverseConnector itRetrofitUniverseConnector;
 	private ESIUniverseDataProvider itEsiUniverseDataProvider;
-	private NeoComRetrofitFactory itRetrofitFactory;
+	private RetrofitFactory itRetrofitFactory;
 	private LocationCatalogService itLocationService;
 	private StoreCacheManager itStoreCacheManager;
 	private ESIDataProvider itEsiDataProvider;
@@ -115,9 +115,10 @@ public class AssetDownloadProcessorIT {
 				.withAccountId( 2113197470 )
 				.withAccountName( "Tip Tophane" )
 				.withAccessToken(
-						"eyJhbGciOiJSUzI1NiIsImtpZCI6IkpXVC1TaWduYXR1cmUtS2V5IiwidHlwIjoiSldUIn0.eyJqdGkiOiI0N2JlMzdlYi05MjdhLTRlZWEtOGQwYS03NjgwZDg3OTkwZjkiLCJraWQiOiJKV1QtU2lnbmF0dXJlLUtleSIsInN1YiI6IkNIQVJBQ1RFUjpFVkU6MjExMzE5NzQ3MCIsImF6cCI6Ijk4ZWI4ZDMxYzVkMjQ2NDliYTRmN2ViMDE1NTk2ZmJkIiwibmFtZSI6IlRpcCBUb3BoYW5lIiwib3duZXIiOiJYK1JkU0ZMa2VXK3dhRGtyWHNWdEZXUXZSWlk9IiwiZXhwIjoxNTczMTM4NjIzLCJpc3MiOiJsb2dpbi5ldmVvbmxpbmUuY29tIn0.LxsNGUhu4w5cnXhkJtPx6yk73ENo3r5Kl-GZB8cn4Z5Mc2gRxMTNnE5BjauZzSmcHP3XXaBFN_ViHv_3Kv3Xx4iCAqYmGN6OdyadSGr6G81jwY-HFQgSIJJVHzYrGaniZQFnF50I9VoeNKHmMLDXMg2BBP6FH5on3NWUV0qaNwbcKmaL1q7R9SR_1yR-2zpM4uhufDDCjA9nJV5EpzsQc0UZNbUZQb5FZ5OGjbLs-wM8BnGzKAKdilrRpQug9xdMfaxK2yu-b_nypQcdCvf4Po7yhHKcPaoNHAHlJyI-UgdwMzDZ5lASIrFYeWLv0yFumFoA76Puj74Lql2ORp1zHw" )
-				.withRefreshToken( "xh52x86M60yljn5U5wM0dw==" )
-				.withDataSource( "tranquility" )
+						"1|CfDJ8O+5Z0aH+aBNj61BXVSPWfgCwEtsNg3YrBCUegJlOKT2hI/acAhYwy5QIpGkt6qr70y7B5s/pxZpduUPez2/HA5G2I10JgJLB7dq2bdhzOGYFFueEG9Ll2A/R5nqqZa4iTxua2KVMb1uACLTnCJGjNsW5ZyF+uQm6rfzdf01QPWQ" )
+				.withRefreshToken(
+						"9GCryOOlRqEKT5BE-7Fw3iInmXXL-_zETkug34Cax8y_WmwLJOPG7thKoefqjW9774NMLih-QQaR2fOJI-5SvfphHqj1b62z_xErRdlxcHN4UBY0HdzdYMaGVCCKXOzj01a1aa7S_YD6r42j2KduMmVLc7N9VEGltLGrrxBUVX2qH43VzM7rnFejS_0pAz1V" )
+				.withDataSource( "Tranquility" )
 				.withScope(
 						"publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1" )
 				.withAssetsCount( 6119 )
@@ -166,9 +167,9 @@ public class AssetDownloadProcessorIT {
 				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
 				.build();
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
-		this.itRetrofitFactory = new NeoComRetrofitFactory.Builder()
+		this.itRetrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.build();
 		this.itLocationService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
@@ -182,7 +183,7 @@ public class AssetDownloadProcessorIT {
 		this.itEsiDataProvider = Mockito.mock( ESIDataProvider.class );
 		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
 				.thenReturn( testAssetList );
-		this.itRetrofitFactory.add2MockList( "getCharactersCharacterIdAssets" );
+//		this.itRetrofitFactory.add2MockList( "getCharactersCharacterIdAssets" );
 	}
 
 	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
