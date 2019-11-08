@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import org.dimensinfin.eveonline.neocom.auth.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
+import org.dimensinfin.eveonline.neocom.auth.NeoComOauth2Flow;
+import org.dimensinfin.eveonline.neocom.auth.TokenVerification;
 import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
 import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
@@ -27,32 +29,44 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthenticatedRequestIT {
-	private static final String CURRENT_TOKEN = "1|CfDJ8O+5Z0aH+aBNj61BXVSPWfiuSOW/ZVEyRif/g8GTH5L5eRfFyX4dJjkZm79N0/MJtEEfuuc5jG5MMPJwqZk82qSS/kxYIzGp+FcDwrlnBXvOVt+aEyZVAv/B68xPFaNLAm+GB9F92Nj4jv0bmJKF3htPtmCJIN9AMMVA6Xo+hrt9";
+	private static final String CURRENT_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkpXVC1TaWduYXR1cmUtS2V5IiwidHlwIjoiSldUIn0" +
+			".eyJqdGkiOiJlNDg4YTUyYi1iZWEzLTRiNzUtYTg3OC1jYTk4OWUzODA3YWQiLCJraWQiOiJKV1QtU2lnbmF0dXJlLUtleSIsInN1YiI6IkNIQVJBQ1RFUjpFVkU6MjExMzE5NzQ3MCIsImF6cCI6Ijk4ZWI4ZDMxYzVkMjQ2NDliYTRmN2ViMDE1NTk2ZmJkIiwibmFtZSI6IlRpcCBUb3BoYW5lIiwib3duZXIiOiJYK1JkU0ZMa2VXK3dhRGtyWHNWdEZXUXZSWlk9IiwiZXhwIjoxNTczMTYyMjU2LCJpc3MiOiJsb2dpbi5ldmVvbmxpbmUuY29tIn0.TfjObEi-fmMpcc_1Umzpvay_vx15EHJX1ketkM0fANsJcUHMWMp0cKp7XFaQE99BEuq-jwBZakF983JR-niDSamSrubTv9xVeDLFkkYh8QS1nMiWhBXN0SxYJFfVpWIxVcW9RVgHDSgumhpoQKFq4pz7lnkFeZypNeLD-Pot0G_byL1yCPm3D8aRNi8ERtbO5bAspCsMVNq861Ugzyg9fih4gF9yaEPxyv9rfPXIyw4Gmk5PUrwOytYxegxV8YAKfhIyJwYNh-jr_FgnY8k_U3j8ffgIAgdo4Tck8JTEm8GC97LZsQRumJxk_ny35mNWmaIdYDiic2YmEgJGXWYrFQ";
 	private static final String SCOPES = "publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1";
+	private static final Converter.Factory GSON_CONVERTER_FACTORY =
+			GsonConverterFactory.create(
+					new GsonBuilder()
+							.registerTypeAdapter( DateTime.class, new GSONDateTimeDeserializer() )
+							.registerTypeAdapter( LocalDate.class, new GSONLocalDateDeserializer() )
+							.create() );
+
 	private IConfigurationProvider configurationProvider;
+	private NeoComOauth2Flow flow;
+	private String STATE;
+
+	private void setupEnvironment() throws IOException {
+		this.configurationProvider = new SBConfigurationProvider.Builder()
+				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
+	}
+
+	private void setupAuthentication( final String code ) {
+		STATE = this.configurationProvider.getResourceString( "P.esi.authorization.state" );
+		final String dataSource = "Tranquility".toLowerCase();
+		this.flow = new NeoComOauth2Flow.Builder().withConfigurationProvider( this.configurationProvider ).build();
+		this.flow.onStartFlow( code, STATE, dataSource );
+	}
 
 	@Test
 	void createAuthenticatedClient() throws IOException {
-		final Integer characterId = 2113197470;
-		final String dataSource = "Tranquility".toLowerCase();
+		this.setupEnvironment();
+		this.setupAuthentication("BY28Ixw3xEi9JRatBMlicw");
+		final TokenVerification tokenStore = this.flow.onTranslationStep();
 		final Long structureId = 1031243921503L;
-		final String accessToken = CURRENT_TOKEN;
-		final String refreshToken = "9CZ7fZpk8xBqS3knXMJVmurr06IL-oq9S5rM-EIUF0b8sAeZOyD6NvbFkojAXzsi0rqySj8UX-Vx96ro432KnwW6FTjx-ovJEUDbojKzyZyzutMHAvMYWIPwBfAqp92jg8Fv4hTxXegBoeiqoUy-4veuEMyERES0xrsB7gJux8ZQXqOAP0fVdEZvXQyEhj5X";
 		final String esiDataServerLocation = "https://esi.evetech.net/latest/";
-		final Converter.Factory GSON_CONVERTER_FACTORY =
-				GsonConverterFactory.create(
-						new GsonBuilder()
-								.registerTypeAdapter( DateTime.class, new GSONDateTimeDeserializer() )
-								.registerTypeAdapter( LocalDate.class, new GSONLocalDateDeserializer() )
-								.create() );
-		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
 		final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.clientid" );
 		final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.secretkey" );
 		final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.callback" );
 		final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
 				"Default agent" );
-		final String STATE = this.configurationProvider.getResourceString( "P.esi.authorization.state" );
 		final NeoComOAuth20 neoComOAuth20 = new NeoComOAuth20.Builder()
 				.withClientId( CLIENT_ID )
 				.withClientKey( SECRET_KEY )
@@ -63,28 +77,34 @@ public class AuthenticatedRequestIT {
 				.withState( STATE )
 				.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.server"
 						, "https://login.eveonline.com/" ) )
-				.withAccessTokenEndpoint(
-						this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.accesstoken.url"
-								, "oauth/token" ) )
-				.withAuthorizationBaseUrl(
-						this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.authorize.url"
-								, "oauth/authorize" ) )
+				.withAccessTokenEndpoint( "oauth/token" )
+				.withAuthorizationBaseUrl( "oauth/authorize" )
 				.build();
 
 
 		final OkHttpClient httpClient = new OkHttpClient.Builder()
 				.addInterceptor( chain -> {
 					Request.Builder builder = chain.request().newBuilder()
-							.addHeader( "User-Agent", AGENT );
+							.addHeader( "accept","application/json" )
+							.addHeader( "User-Agent", AGENT )
+							.addHeader( "authorization", "Bearer " + tokenStore.getAccessToken());
 					return chain.proceed( builder.build() );
 				} )
+//				.addInterceptor( chain -> {
+//					Request.Builder builder = chain.request().newBuilder();
+//					final TokenTranslationResponse token = neoComOAuth20.fromRefresh( tokenStore.getRefreshToken() );
+//					if (null != token) {
+//						builder.addHeader( "Authorization", "Bearer " + token.getAccessToken() );
+//					}
+//					return chain.proceed( builder.build() );
+//				} )
 				.addInterceptor( chain -> {
 					okhttp3.Response r = chain.proceed( chain.request() );
 					if (r.isSuccessful()) {
 						return r;
-					} else {
-//					if (r.body().string().contains( "invalid_token" )) {
-						neoComOAuth20.fromRefresh( refreshToken );
+					}
+					if (r.body().string().contains( "invalid_token" )) {
+						neoComOAuth20.fromRefresh( tokenStore.getRefreshToken() );
 						r = chain.proceed( chain.request() );
 					}
 					return r;
@@ -97,7 +117,7 @@ public class AuthenticatedRequestIT {
 				.build();
 		// Get the data from a public structure.
 		final Response<GetUniverseStructuresStructureIdOk> dataResponse = retrofit.create( UniverseApi.class )
-				.getUniverseStructuresStructureId( structureId, dataSource, null, accessToken )
+				.getUniverseStructuresStructureId( structureId, tokenStore.getDataSource(), null, null )
 				.execute();
 		if (dataResponse.isSuccessful())
 			NeoComLogger.info( "data: " + dataResponse.body().toString() );

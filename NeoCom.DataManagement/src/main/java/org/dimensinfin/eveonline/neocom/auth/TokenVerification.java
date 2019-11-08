@@ -19,7 +19,7 @@ public class TokenVerification {
 	}
 
 	public String getDataSource() {
-		if ( null == this.dataSource) return ESIDataAdapter.DEFAULT_ESI_SERVER;
+		if (null == this.dataSource) return ESIDataAdapter.DEFAULT_ESI_SERVER;
 		return this.dataSource;
 	}
 
@@ -35,13 +35,15 @@ public class TokenVerification {
 		return verifyCharacterResponse;
 	}
 
-//	public int getAccountIdentifier() {
-//		if ( null != this.verifyCharacterResponse)
-//			return Long.valueOf(this.verifyCharacterResponse.getCharacterID()).intValue();
-//		else throw new NeoComSBException( ErrorInfo.INVALID_CREDENTIAL_IDENTIFIER );
-//	}
+	public String getAccessToken() {
+		return this.tokenTranslationResponse.getAccessToken();
+	}
 
-	public TokenVerification setAuthCode(final String authCode) {
+	public String getRefreshToken() {
+		return this.tokenTranslationResponse.getRefreshToken();
+	}
+
+	public TokenVerification setAuthCode( final String authCode ) {
 		this.authCode = authCode;
 		return this;
 	}
@@ -51,23 +53,27 @@ public class TokenVerification {
 		return this;
 	}
 
-	public TokenVerification setDataSource( final String dataSource) {
+	public TokenVerification setDataSource( final String dataSource ) {
 		this.dataSource = dataSource;
 		return this;
 	}
 
-	public TokenVerification setTokenTranslationResponse( TokenTranslationResponse tokenTranslationResponse) {
+	public TokenVerification setTokenTranslationResponse( TokenTranslationResponse tokenTranslationResponse ) {
 		this.tokenTranslationResponse = tokenTranslationResponse;
 		return this;
 	}
 
-	public TokenVerification setPeck(String peck) {
+	public TokenVerification setPeck( String peck ) {
 		this.peck = peck;
 		return this;
 	}
 
-	public TokenVerification setVerifyCharacterResponse( VerifyCharacterResponse verifyCharacterResponse) {
+	public TokenVerification setVerifyCharacterResponse( VerifyCharacterResponse verifyCharacterResponse ) {
 		this.verifyCharacterResponse = verifyCharacterResponse;
 		return this;
+	}
+
+	public String getScopes() {
+		return this.tokenTranslationResponse.getScope();
 	}
 }
