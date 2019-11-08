@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.asset;
+package org.dimensinfin.eveonline.neocom.asset.provider;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.Region;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
 public class AssetProvider implements Serializable {
@@ -135,6 +136,16 @@ public class AssetProvider implements Serializable {
 			case STATION:
 			case STRUCTURE:
 				this.add2SpaceLocation( asset );
+				break;
+			case SHIP:
+			case CONTAINER:
+				if (asset.hasParentContainer())
+					this.processAsset( asset.getParentContainer()
+							.orElseThrow(
+									() -> new NeoComRuntimeException( "The asset reconstruction failed bacause the expected " +
+											"parent container is not instantiated. Reference: " +
+											asset.getParentContainerId() ) ) );
+				this.add2ContainerLocation( asset );
 				break;
 			case UNKNOWN: // Add the asset to the UNKNOWN space location.
 				logger.info( "--[AssetProvider.processAsset]> Not accessible location coordinates: {}",
