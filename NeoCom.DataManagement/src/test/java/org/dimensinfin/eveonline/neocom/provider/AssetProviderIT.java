@@ -11,10 +11,10 @@ import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.provider.AssetProvider;
+import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
@@ -53,7 +53,7 @@ public class AssetProviderIT {
 	private ESIUniverseDataProvider itEsiUniverseDataProvider;
 	private ESIDataProvider itEsiAuthorizedDataProvider;
 	private LocationCatalogService itLocationService;
-	private NeoComRetrofitFactory itRetrofitFactory;
+	private RetrofitFactory itRetrofitFactory;
 
 	public void setUpEsiData() {
 		this.regionData = new GetUniverseRegionsRegionIdOk();
@@ -109,10 +109,9 @@ public class AssetProviderIT {
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.build();
-		this.itRetrofitFactory = new NeoComRetrofitFactory.Builder(  )
-		.withConfigurationProvider( this.itConfigurationProvider )
-		.withFileSystemAdapter( this.itFileSystemAdapter)
-		.build();
+		this.itRetrofitFactory = new RetrofitFactory.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.build();
 		this.itStoreCacheManager = new StoreCacheManager.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )

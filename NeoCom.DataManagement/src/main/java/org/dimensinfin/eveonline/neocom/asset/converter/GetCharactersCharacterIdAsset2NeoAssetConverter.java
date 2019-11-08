@@ -32,50 +32,6 @@ public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converte
 				.withLocationType( esiAsset.getLocationType() )
 				.build() );
 		return newAsset;
-
-
-//		newAsset.locationId = transformLocation( esiAsset.getLocationId(),
-//				esiAsset.getLocationFlag(),
-//				esiAsset.getLocationType() );
-//		asset.containerFlag = checkIfContainer( asset );
-//		if (esiAsset.getLocationId() > 61E6) // The asset is contained into another asset. Set the parent.
-//			asset.parentContainerId = esiAsset.getLocationId();
-
-//		private NeoComAsset convert2AssetFromESI( final GetCharactersCharacterIdAssets200Ok asset200Ok ) {
-		// Create the asset from the API asset.
-//		final NeoAsset newAsset = new NeoAsset.Builder()
-//				.fromEsiAsset( value )
-//				.build();
-//		// TODO -- Location management is done outside this transformation. This is duplicated code.
-//		Long locid = value.getLocationId();
-//		if (null == locid) {
-//			locid = (long) -2;
-//		}
-//		newAsset.setLocationId( locid )
-//				.setLocationType( asset200Ok.getLocationType() )
-//				.setQuantity( asset200Ok.getQuantity() )
-//				.setLocationFlag( asset200Ok.getLocationFlag() )
-//				.setSingleton( asset200Ok.getIsSingleton() );
-		// Get access to the Item and update the copied fields.
-//		final EveItem item = GlobalDataManager.getSingleton().searchItem4Id( newAsset.getTypeId() );
-//		if (null != item) {
-//			//			try {
-//			newAsset.setName( item.getName() );
-//			newAsset.setCategory( item.getCategoryName() );
-//			newAsset.setGroupName( item.getGroupName() );
-//			newAsset.setTech( item.getTech() );
-//			//				if (item.isBlueprint()) {
-//			//					//			newAsset.setBlueprintType(eveAsset.getRawQuantity());
-//			//				}
-//			//			} catch (RuntimeException rtex) {
-//			//			}
-//		}
-//		// Add the asset value to the database.
-//		newAsset.setIskValue( this.calculateAssetValue( newAsset ) );
-//		return newAsset;
-//		}
-//
-//		return null;
 	}
 
 	/**
@@ -99,6 +55,7 @@ public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converte
 		if (asset.isBlueprint()) return false;
 		if (asset.isShip()) return true;
 		// Use a list of types to set what is a container
+		if (asset.getTypeId() == 60) return true;
 		if (asset.getTypeId() == 11488) return true;
 		if (asset.getTypeId() == 11489) return true;
 		if (asset.getTypeId() == 11490) return true;
@@ -129,24 +86,4 @@ public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converte
 		if (asset.getName().contains( "Container" )) return true;
 		return asset.getName().contains( "Wrap" );
 	}
-
-//	private static void transform( final GetCharactersCharacterIdAssets200Ok esiAsset,
-//	                               NeoAsset asset ) {
-//	}
-
-
-//	private GetCharactersCharacterIdAsset2NeoAssetConverter() {}
-//
-//	// - B U I L D E R
-//	public static class Builder {
-//		private GetCharactersCharacterIdAsset2NeoAssetConverter onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new GetCharactersCharacterIdAsset2NeoAssetConverter();
-//		}
-//
-//		public GetCharactersCharacterIdAsset2NeoAssetConverter build() {
-//			return this.onConstruction;
-//		}
-//	}
 }

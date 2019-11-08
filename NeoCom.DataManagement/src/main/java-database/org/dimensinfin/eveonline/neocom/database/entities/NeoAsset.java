@@ -18,6 +18,7 @@ import org.dimensinfin.eveonline.neocom.database.persister.LocationIdentifierPer
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @Entity(name = "Assets")
 public class NeoAsset extends UpdatableEntity {
@@ -104,6 +105,8 @@ public class NeoAsset extends UpdatableEntity {
 	}
 
 	public boolean hasParentContainer() {
+		// Check the exception case for STRUCTURE contents.
+		if (this.locationId.getType() == LocationIdentifierType.STRUCTURE) return false;
 		if (null != this.parentContainerId) return true;
 		return false;
 	}

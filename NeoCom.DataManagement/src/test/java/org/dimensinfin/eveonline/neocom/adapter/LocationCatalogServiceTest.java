@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
@@ -15,7 +16,7 @@ public class LocationCatalogServiceTest {
 		final IConfigurationProvider configurationProvider = Mockito.mock( IConfigurationProvider.class );
 		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
-		final NeoComRetrofitFactory retrofitFactory = Mockito.mock( NeoComRetrofitFactory.class );
+		final RetrofitFactory retrofitFactory = Mockito.mock( RetrofitFactory.class );
 		final LocationCatalogService locationService = new LocationCatalogService.Builder()
 				.withFileSystemAdapter( fileSystem )
 				.withConfigurationProvider( configurationProvider )

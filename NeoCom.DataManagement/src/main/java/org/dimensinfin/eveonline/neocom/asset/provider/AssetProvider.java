@@ -10,8 +10,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -22,11 +20,11 @@ import org.dimensinfin.eveonline.neocom.domain.space.Region;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
 public class AssetProvider implements Serializable {
 	private static final long serialVersionUID = -4896485833695914012L;
-	private static final Logger logger = LoggerFactory.getLogger( AssetProvider.class );
 	private static final LocationIdentifier UNKNOWN_SPACE_LOCATION_IDENTIFIER = new LocationIdentifier.Builder()
 			.withSpaceIdentifier( 0L )
 			.build();
@@ -64,8 +62,7 @@ public class AssetProvider implements Serializable {
 				point = this.assetMap.get( key );
 			}
 		} catch (final NoSuchElementException nsee) {
-			logger.info( "<< [AssetProvider.classifyAssetsByLocation]> Classification complete: {} assets",
-					this.assetCounter );
+			NeoComLogger.info( "Classification complete: {} assets", this.assetCounter + "" );
 		}
 		this.timeStamp();
 	}
@@ -83,14 +80,6 @@ public class AssetProvider implements Serializable {
 		return new ArrayList<>( regions.values() );
 	}
 
-//	private void checks() {
-//		final Station station = new StationImplementation.Builder().build();
-//
-//		final SpaceSystem system = new SpaceSystemImplementation.Builder().build();
-//
-//		final Structure structure = new StructureImplementation.Builder().build();
-//	}
-
 	private boolean verifyTimeStamp() {
 		if (null == this.assetsReadTime) return false;
 		// TODO - verify that the time stamp has elapsed to get a new list of assets updated.
@@ -104,6 +93,7 @@ public class AssetProvider implements Serializable {
 	private void clear() {
 		this.assetCounter = 0;
 		this.assetMap.clear();
+		this.assetsReadTime = null;
 	}
 
 	/**
@@ -128,9 +118,9 @@ public class AssetProvider implements Serializable {
 	 * space location of a game station. All assets should be covered by this classification.
 	 */
 	private void processAsset( final NeoAsset asset ) {
-		logger.info( "--[AssetProvider.processAsset]> Processing asset: {}",
-				asset.getAssetId() );
+		NeoComLogger.info( "Processing asset: {}", asset.getAssetId() + "" );
 		this.assetMap.remove( asset.getAssetId() ); // Remove the asset from the pending for processing asset list.
+		this.checkIfContainer( asset );
 		switch (asset.getLocationId().getType()) {
 			case SPACE:
 			case STATION:
@@ -148,7 +138,7 @@ public class AssetProvider implements Serializable {
 				this.add2ContainerLocation( asset );
 				break;
 			case UNKNOWN: // Add the asset to the UNKNOWN space location.
-				logger.info( "--[AssetProvider.processAsset]> Not accessible location coordinates: {}",
+				NeoComLogger.info( "--[AssetProvider.processAsset]> Not accessible location coordinates: {}",
 						asset.getLocationId().toString() );
 				final LocationIdentifier spaceIdentifier = UNKNOWN_SPACE_LOCATION_IDENTIFIER;
 				AssetContainer hit = this.spaceLocationsCache.get( spaceIdentifier.getSpaceIdentifier() );
@@ -171,6 +161,19 @@ public class AssetProvider implements Serializable {
 		}
 	}
 
+	private void checkIfContainer( final NeoAsset asset ) {
+		if (asset.isShip())
+			if (!this.containersCache.containsKey( asset.getAssetId() ))
+				this.containersCache.put( asset.getAssetId(),
+						new AssetContainer.Builder()
+								.withAsset( asset ).build() );
+		if (asset.isContainer())
+			if (!this.containersCache.containsKey( asset.getAssetId() ))
+				this.containersCache.put( asset.getAssetId(),
+						new AssetContainer.Builder()
+								.withAsset( asset ).build() );
+	}
+
 	private void add2SpaceLocation( final NeoAsset asset ) {
 		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
 		AssetContainer hit = this.spaceLocationsCache.get( spaceIdentifier );
@@ -190,8 +193,8 @@ public class AssetProvider implements Serializable {
 		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
 		AssetContainer hit = this.containersCache.get( spaceIdentifier );
 		if (null == hit) { // This is an exception because container should exist.
-			logger.info( "--[AssetProvider.processAsset]> Parent container not found: {}",
-					asset.getParentContainerId() );
+			NeoComLogger.info( "--[AssetProvider.processAsset]> Parent container not found: {}",
+					asset.getParentContainerId() + "" );
 			this.unlocatedAssets.add( asset );
 		} else hit.addContent( asset );
 	}

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
+import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
@@ -57,7 +58,7 @@ public class LocationCatalogService {
 	protected IFileSystem fileSystemAdapter;
 	protected ESIUniverseDataProvider esiUniverseDataProvider;
 	protected LocationRepository locationRepository;
-	protected NeoComRetrofitFactory retrofitFactory;
+	protected RetrofitFactory retrofitFactory;
 
 	protected LocationCatalogService() { }
 
@@ -294,9 +295,9 @@ public class LocationCatalogService {
 			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
 			String datasource = ESIDataProvider.DEFAULT_ESI_SERVER;
 			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
-					.accessESIAuthRetrofit()
+					.accessAuthenticatedConnector(credential)
 					.create( UniverseApi.class )
-					.getUniverseStructuresStructureId( structureId, datasource, null, credential.getAccessToken() )
+					.getUniverseStructuresStructureId( structureId, datasource, null, null )
 					.execute();
 			if (universeResponse.isSuccessful()) {
 				return universeResponse.body();
@@ -350,7 +351,7 @@ public class LocationCatalogService {
 			return this;
 		}
 
-		public Builder withRetrofitFactory( final NeoComRetrofitFactory retrofitFactory ) {
+		public Builder withRetrofitFactory( final RetrofitFactory retrofitFactory ) {
 			Objects.requireNonNull( retrofitFactory );
 			this.onConstruction.retrofitFactory = retrofitFactory;
 			return this;

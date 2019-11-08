@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 public class AssetRepository {
@@ -146,9 +147,18 @@ public class AssetRepository {
 	}
 
 	private NeoAsset assetReconstructor( final NeoAsset target ) {
+		NeoComLogger.enter( "Reconstructing asset: " + target.getAssetId() );
 		target.setItemDelegate( new NeoItem( target.getTypeId() ) );
-		if (target.hasParentContainer())
-			target.setParentContainer( this.findAssetById( target.getParentContainerId() ).orElse( null ) );
+		if (target.hasParentContainer()) { // Search for the parent asset. If not found then report a warning.
+			final Optional<NeoAsset> parent = this.findAssetById( target.getParentContainerId() );
+			if (parent.isPresent()) target.setParentContainer( this.assetReconstructor( parent.get() ) );
+			else {
+				NeoComLogger.error( "Parent asset not found on post read action: " +
+								target.getParentContainerId(),
+						new NeoComRuntimeException( "If an asset has a parent identifier then it should have a matching asset " +
+								"instance." ) );
+			}
+		}
 		return target;
 	}
 

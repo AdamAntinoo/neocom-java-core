@@ -8,9 +8,15 @@ import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 
-public class AssetContainer /* implements Station*/ {
+public class AssetContainer {
+	public enum AssetContainerType {
+		UNDEFINED, SPACE, CONTAINER, SHIP, UNKNOWN;
+	}
+
+	private AssetContainerType type = AssetContainerType.UNDEFINED;
 	private LocationIdentifier spaceLocationIdentifier;
 	private SpaceLocation spaceLocation;
+	private NeoAsset parentContainer;
 	private List<NeoAsset> contents = new ArrayList<>();
 
 	protected AssetContainer() {}
@@ -20,62 +26,9 @@ public class AssetContainer /* implements Station*/ {
 		return this.contents.size();
 	}
 
-//	// - D E L E G A T E S
-////	@Override
-//	public Integer getRegionId() {return this.spaceLocation.getRegionId();}
-//
-////	@Override
-//	public GetUniverseRegionsRegionIdOk getRegion() {return this.spaceLocation.getRegion();}
-//
-////	@Override
-//	public String getRegionName() {return this.spaceLocation.getRegionName();}
-//
-//	public void setRegion( final GetUniverseRegionsRegionIdOk region ) {
-//		this.spaceLocation.setRegion( region );
-//	}
-//
-////	@Override
-//	public Integer getConstellationId() {
-//		return this.spaceLocation.getConstellationId();
-//	}
-//
-////	@Override
-//	public GetUniverseConstellationsConstellationIdOk getConstellation() {
-//		return this.spaceLocation.getConstellation();
-//	}
-//
-////	@Override
-//	public String getConstellationName() {return this.spaceLocation.getConstellationName();}
-//
-//	public void setConstellation( final GetUniverseConstellationsConstellationIdOk constellation ) {
-//		this.spaceLocation.setConstellation( constellation );
-//	}
-//
-////	@Override
-//	public Integer getSolarSystemId() {return this.spaceLocation.getSolarSystemId();}
-//
-////	@Override
-//	public GetUniverseSystemsSystemIdOk getSolarSystem() {return this.spaceLocation.getSolarSystem();}
-//
-////	@Override
-//	public String getSolarSystemName() {return this.spaceLocation.getSolarSystemName();}
-//
-//	public void setSolarSystem( final GetUniverseSystemsSystemIdOk solarSystem ) {
-//		this.spaceLocation.setSolarSystem( solarSystem );
-//	}
-//
-////	@Override
-//	public Integer getStationId() {return this.spaceLocation.getSolarSystemId();}
-//
-////	@Override
-//	public GetUniverseStationsStationIdOk getStation() {return this.spaceLocation.getStation();}
-//
-////	@Override
-//	public String getStationName() {return this.spaceLocation.getStationName();}
-//
-//	public void setStation( final GetUniverseStationsStationIdOk station ) {
-//		this.spaceLocation.setStation( station );
-//	}
+	public AssetContainerType getType() {
+		return this.type;
+	}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -88,12 +41,22 @@ public class AssetContainer /* implements Station*/ {
 		public AssetContainer.Builder withSpaceLocationIdentifier( final LocationIdentifier spaceLocationIdentifier ) {
 			Objects.requireNonNull( spaceLocationIdentifier );
 			this.onConstruction.spaceLocationIdentifier = spaceLocationIdentifier;
+			this.onConstruction.type = AssetContainerType.UNKNOWN;
+			return this;
+		}
+
+		public AssetContainer.Builder withAsset( final NeoAsset asset ) {
+			Objects.requireNonNull( asset );
+			this.onConstruction.parentContainer = asset;
+			if (asset.isShip()) this.onConstruction.type = AssetContainerType.SHIP;
+			if (asset.isContainer()) this.onConstruction.type = AssetContainerType.CONTAINER;
 			return this;
 		}
 
 		public AssetContainer.Builder withSpaceLocation( final SpaceLocation spaceLocation ) {
 			Objects.requireNonNull( spaceLocation );
 			this.onConstruction.spaceLocation = spaceLocation;
+			this.onConstruction.type = AssetContainerType.SPACE;
 			return this;
 		}
 
