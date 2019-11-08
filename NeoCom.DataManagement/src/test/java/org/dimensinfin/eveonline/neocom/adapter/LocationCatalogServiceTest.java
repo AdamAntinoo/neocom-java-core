@@ -11,26 +11,28 @@ import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 public class LocationCatalogServiceTest {
 	@Test
 	public void buildComplete() {
-		final IFileSystem fileSystem = Mockito.mock(IFileSystem.class);
-		final IConfigurationProvider configurationProvider=Mockito.mock(IConfigurationProvider.class);
-		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock(ESIUniverseDataProvider.class);
-		final LocationRepository locationRepository = Mockito.mock(LocationRepository.class);
-		final LocationCatalogService locationService = new LocationCatalogService.Builder(  )
+		final IFileSystem fileSystem = Mockito.mock( IFileSystem.class );
+		final IConfigurationProvider configurationProvider = Mockito.mock( IConfigurationProvider.class );
+		final ESIUniverseDataProvider esiUniverseProvider = Mockito.mock( ESIUniverseDataProvider.class );
+		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
+		final NeoComRetrofitFactory retrofitFactory = Mockito.mock( NeoComRetrofitFactory.class );
+		final LocationCatalogService locationService = new LocationCatalogService.Builder()
 				.withFileSystemAdapter( fileSystem )
 				.withConfigurationProvider( configurationProvider )
 				.withESIUniverseDataProvider( esiUniverseProvider )
 				.withLocationRepository( locationRepository )
+				.withRetrofitFactory( retrofitFactory )
 				.build();
-		Assert.assertNotNull(locationService);
+		Assert.assertNotNull( locationService );
 	}
 
 	@Test
 	public void stopService() {
-		final LocationCatalogService locationServiceSpy=Mockito.spy( LocationCatalogService.class );
+		final LocationCatalogService locationServiceSpy = Mockito.spy( LocationCatalogService.class );
 
 		locationServiceSpy.stopService();
 
-		Mockito.verify( locationServiceSpy, Mockito.times(1) ).writeLocationsDataCache();
-		Mockito.verify( locationServiceSpy, Mockito.times(1) ).cleanLocationsCache();
+		Mockito.verify( locationServiceSpy, Mockito.times( 1 ) ).writeLocationsDataCache();
+		Mockito.verify( locationServiceSpy, Mockito.times( 1 ) ).cleanLocationsCache();
 	}
 }

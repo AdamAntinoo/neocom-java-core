@@ -7,7 +7,6 @@ import java.util.List;
 import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.junit.jupiter.api.Test;
 
 import org.dimensinfin.eveonline.neocom.auth.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.NeoComOAuth20;
@@ -55,7 +54,7 @@ public class AuthenticatedRequestIT {
 		this.flow.onStartFlow( code, STATE, dataSource );
 	}
 
-	@Test
+//	@Test
 	void createAuthenticatedClient() throws IOException {
 		this.setupEnvironment();
 		this.setupAuthentication( "q9agB82y1UylehfFCAPf9Q" );

@@ -29,7 +29,7 @@ public class CredentialTest {
 	@Test
 	public void gettersContract() {
 		Assert.assertNotNull(credential4Test);
-		Assert.assertEquals(234567, credential4Test.getAccountId());
+		Assert.assertEquals(234567, credential4Test.getAccountId().intValue());
 		Assert.assertEquals("TEST CREDENTIAL", credential4Test.getAccountName());
 		Assert.assertEquals(4321987, credential4Test.getCorporationId());
 		Assert.assertEquals("-TEST INVALID ACCESS TOKEN-", credential4Test.getAccessToken());
@@ -48,7 +48,7 @@ public class CredentialTest {
 	@Test
 	public void setterContract() {
 		credential4Test.setAccountId(654321);
-		Assert.assertEquals(654321, credential4Test.getAccountId());
+		Assert.assertEquals(654321, credential4Test.getAccountId().intValue());
 		credential4Test.setDataSource("Testing");
 		Assert.assertEquals("Testing".toLowerCase(), credential4Test.getDataSource());
 		credential4Test.setWalletBalance(123456789.98);
@@ -79,9 +79,7 @@ public class CredentialTest {
 				.withRaceName("TEST RACE")
 				.build();
 		Assert.assertNotNull(credential);
-		final String expected = "{\"jsonClass\":\"Credential\",\"uniqueCredential\":\"tranquility/234567\"," +
-				"\"walletBalance\":876567.54,\"assetsCount\":98,\"miningResourcesEstimatedValue\":0.0,\"accountName\":\"TEST " +
-				"CREDENTIAL\",\"raceName\":\"TEST RACE\"}";
+		final String expected = "{\"jsonClass\":\"Credential\",\"uniqueCredential\":\"tranquility\\/234567\",\"walletBalance\":876567.54,\"assetsCount\":98,\"miningResourcesEstimatedValue\":0.0,\"accountName\":\"TEST CREDENTIAL\",\"raceName\":\"TEST RACE\"}";
 		final String obtained = credential.toString();
 		Assert.assertEquals("The instance print result should match.", expected, obtained);
 	}

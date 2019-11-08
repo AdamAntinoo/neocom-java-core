@@ -41,7 +41,7 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
-public class AssetProcessorIT {
+public class AssetDownloadProcessorIT {
 	private GenericContainer postgres;
 
 	private final ObjectMapper mapper = new ObjectMapper();
@@ -59,11 +59,11 @@ public class AssetProcessorIT {
 	private ESIDataProvider itEsiDataProvider;
 
 
-	private AssetProcessorIT() {}
+	private AssetDownloadProcessorIT() {}
 
 	public static void main( String[] args ) {
 		NeoComLogger.enter();
-		final AssetProcessorIT application = new AssetProcessorIT();
+		final AssetDownloadProcessorIT application = new AssetDownloadProcessorIT();
 		try {
 //			application.startContainers();
 			application.setUpEnvironment();
@@ -81,7 +81,7 @@ public class AssetProcessorIT {
 
 	@Test
 	void runAssetProcessorIT() {
-		AssetProcessorIT.main( null );
+		AssetDownloadProcessorIT.main( null );
 	}
 
 	private void startContainers() {

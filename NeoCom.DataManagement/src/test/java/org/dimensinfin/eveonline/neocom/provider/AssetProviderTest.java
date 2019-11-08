@@ -9,12 +9,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.asset.provider.AssetProvider;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
-import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocationImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
@@ -197,10 +197,9 @@ public class AssetProviderTest {
 		final GetUniverseRegionsRegionIdOk regionData = new GetUniverseRegionsRegionIdOk();
 		regionData.setRegionId( 1100000 );
 		regionData.setName( "-TEST-REGION-NAME-" );
-		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
-		Mockito.when( ((SpaceRegion) spaceLocation).getRegion() ).thenReturn( regionData );
+		final SpaceLocationImplementation spaceLocation = Mockito.mock( SpaceLocationImplementation.class );
+		Mockito.when( spaceLocation.getRegion() ).thenReturn( regionData );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-//		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
 		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
@@ -216,46 +215,6 @@ public class AssetProviderTest {
 		Assert.assertEquals( "-TEST-REGION-NAME-", provider.getRegionList().get( 0 ).getRegionName() );
 		Assert.assertEquals( 1, provider.getRegionList().get( 0 ).getContentCount() );
 	}
-//	@Test
-//	public void classifyAssetsByLocationStation() {
-//		final Credential credential = Mockito.mock( Credential.class );
-//		Mockito.when( credential.getAccountId() ).thenReturn( 321 );
-//		final LocationIdentifier locationIdentifier = Mockito.mock( LocationIdentifier.class );
-//		Mockito.when( locationIdentifier.getType() ).thenReturn( LocationIdentifierType.STATION );
-//		Mockito.when( locationIdentifier.getSpaceIdentifier() ).thenReturn( 60000025 );
-//		final NeoAsset asset = Mockito.mock( NeoAsset.class );
-//		Mockito.when( asset.getAssetId() ).thenReturn( 987654L );
-//		Mockito.when( asset.getLocationId() ).thenReturn( locationIdentifier );
-//		final List<NeoAsset> assetList = new ArrayList<>();
-//		assetList.add( asset );
-//		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
-//		Mockito.when( assetRepository.findAllByOwnerId( Mockito.anyInt() ) ).thenReturn( assetList );
-//		final GetUniverseRegionsRegionIdOk regionData = new GetUniverseRegionsRegionIdOk();
-//		regionData.setRegionId( 1100000 );
-//		regionData.setName( "-TEST-REGION-NAME-" );
-//		final StationLocation stationLocation = Mockito.mock( StationLocation.class );
-//		Mockito.when( stationLocation.getRegionId() ).thenReturn( 1100000 );
-//		Mockito.when( stationLocation.getRegion() ).thenReturn( regionData );
-//		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-//		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( stationLocation );
-//		final AssetProvider provider = new AssetProvider.Builder()
-//				.withCredential( credential )
-//				.withAssetRepository( assetRepository )
-//				.withLocationCatalogService( locationService )
-//				.build();
-//
-//		provider.classifyAssetsByLocation();
-//
-//		Assert.assertNotNull( provider );
-//		Assert.assertNotNull( provider.getRegionList() );
-//		Assert.assertEquals( 1, provider.getRegionList().size() );
-//		Assert.assertNotNull( provider.getRegionList().get( 0 ) );
-//		Assert.assertEquals( "-TEST-REGION-NAME-", provider.getRegionList().get( 0 ).getFacet().getName() );
-//		Assert.assertEquals( 1, provider.getRegionList().get( 0 ).getContentCount() );
-//	}
-//	@Test
-//	public void classifyAssetsByLocationExaustedList() {
-//	}
 
 	@Test
 	public void verifyTimeStamp() {
@@ -274,10 +233,9 @@ public class AssetProviderTest {
 		final GetUniverseRegionsRegionIdOk regionData = new GetUniverseRegionsRegionIdOk();
 		regionData.setRegionId( 1100000 );
 		regionData.setName( "-TEST-REGION-NAME-" );
-		final SpaceLocation spaceLocation = Mockito.mock( SpaceLocation.class );
-		Mockito.when( ((SpaceRegion) spaceLocation).getRegion() ).thenReturn( regionData );
+		final SpaceLocationImplementation spaceLocation = Mockito.mock( SpaceLocationImplementation.class );
+		Mockito.when( spaceLocation.getRegion() ).thenReturn( regionData );
 		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-//		Mockito.when( locationService.searchLocation4Id( Mockito.anyLong() ) ).thenReturn( spaceLocation );
 		final AssetProvider provider = new AssetProvider.Builder()
 				.withCredential( credential )
 				.withAssetRepository( assetRepository )
