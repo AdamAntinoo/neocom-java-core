@@ -65,6 +65,7 @@ import retrofit2.Response;
 public class ESIDataProvider {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
+	public static final String DEFAULT_CONTENT_TYPE = "application/json";
 	protected static final Logger logger = LoggerFactory.getLogger( ESIDataProvider.class );
 	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S

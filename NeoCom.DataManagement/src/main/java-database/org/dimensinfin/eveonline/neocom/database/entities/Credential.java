@@ -121,6 +121,11 @@ public class Credential extends UpdatableEntity {
 		return this.accessToken;
 	}
 
+	public Credential setAccessToken( final String accessToken ) {
+		this.accessToken = accessToken;
+		return this;
+	}
+
 	public String getRefreshToken() {
 		return this.refreshToken;
 	}
