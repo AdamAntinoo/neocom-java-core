@@ -58,7 +58,7 @@ public class AuthenticatedRequestIT {
 	@Test
 	void createAuthenticatedClient() throws IOException {
 		this.setupEnvironment();
-		this.setupAuthentication("BY28Ixw3xEi9JRatBMlicw");
+		this.setupAuthentication( "q9agB82y1UylehfFCAPf9Q" );
 		final TokenVerification tokenStore = this.flow.onTranslationStep();
 		final Long structureId = 1031243921503L;
 		final String esiDataServerLocation = "https://esi.evetech.net/latest/";
@@ -73,7 +73,7 @@ public class AuthenticatedRequestIT {
 				.withCallback( CALLBACK )
 				.withAgent( AGENT )
 				.withStore( ESIStore.DEFAULT )
-				.withScopes( this.constructScopes( SCOPES ) )
+				.withScopes( this.constructScopes( tokenStore.getScopes() ) )
 				.withState( STATE )
 				.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.server"
 						, "https://login.eveonline.com/" ) )
@@ -85,9 +85,9 @@ public class AuthenticatedRequestIT {
 		final OkHttpClient httpClient = new OkHttpClient.Builder()
 				.addInterceptor( chain -> {
 					Request.Builder builder = chain.request().newBuilder()
-							.addHeader( "accept","application/json" )
-							.addHeader( "User-Agent", AGENT )
-							.addHeader( "authorization", "Bearer " + tokenStore.getAccessToken());
+							.addHeader( "accept", "application/json" )
+							.addHeader( "User-Agent", AGENT );
+//							.addHeader( "authorization", "Bearer " + tokenStore.getAccessToken() );
 					return chain.proceed( builder.build() );
 				} )
 //				.addInterceptor( chain -> {
@@ -117,11 +117,14 @@ public class AuthenticatedRequestIT {
 				.build();
 		// Get the data from a public structure.
 		final Response<GetUniverseStructuresStructureIdOk> dataResponse = retrofit.create( UniverseApi.class )
-				.getUniverseStructuresStructureId( structureId, tokenStore.getDataSource(), null, null )
+				.getUniverseStructuresStructureId( structureId, tokenStore.getDataSource(), null,
+						tokenStore.getAccessToken() )
 				.execute();
-		if (dataResponse.isSuccessful())
+		if (dataResponse.isSuccessful()) {
+			NeoComLogger.info( "character: " + tokenStore.getVerifyCharacterResponse().toString() );
+			NeoComLogger.info( "token: " + tokenStore.getTokenTranslationResponse().toString() );
 			NeoComLogger.info( "data: " + dataResponse.body().toString() );
-		else
+		} else
 			NeoComLogger.info( "Exception: " + dataResponse.toString() );
 	}
 
@@ -133,140 +136,4 @@ public class AuthenticatedRequestIT {
 			resultScopes.add( scopes[i] );
 		return resultScopes;
 	}
-
-//	private void createClient() {
-//		OkHttpClient.Builder retrofitClient =
-//				new OkHttpClient.Builder()
-//						.addInterceptor( chain -> {
-//							Request.Builder builder = chain.request().newBuilder()
-//									.addHeader( "User-Agent", this.agent );
-//							return chain.proceed( builder.build() );
-//						} )
-//						.addInterceptor( chain -> {
-//							if (StringUtils.isBlank( getRefreshToken() )) {
-//								return chain.proceed( chain.request() );
-//							}
-//
-//							Request.Builder builder = chain.request().newBuilder();
-//							final TokenTranslationResponse token = this.neoComOAuth20.fromRefresh( getRefreshToken() );
-//							if (null != token) {
-//								builder.addHeader( "Authorization", "Bearer " + token.getAccessToken() );
-//							}
-//							return chain.proceed( builder.build() );
-//						} )
-//						.addInterceptor( chain -> {
-//							if (StringUtils.isBlank( getRefreshToken() )) {
-//								return chain.proceed( chain.request() );
-//							}
-//
-//							okhttp3.Response r = chain.proceed( chain.request() );
-//							if (r.isSuccessful()) {
-//								return r;
-//							}
-//							if (r.body().string().contains( "invalid_token" )) {
-//								this.neoComOAuth20.fromRefresh( getRefreshToken() );
-//								r = chain.proceed( chain.request() );
-//							}
-//							return r;
-//						} );
-//
-//		if (this.timeout != -1) {
-//			retrofitClient.readTimeout( this.timeout, TimeUnit.MILLISECONDS );
-//		}
-//
-//		if (null != this.cacheDataFile) {
-//			retrofitClient.cache( new Cache( this.cacheDataFile, this.cacheSize ) );
-//		}
-//
-//		OkHttpClient httpClient = retrofitClient
-//				.certificatePinner(
-//						new CertificatePinner.Builder()
-//								.add( "login.eveonline.com", "sha256/075pvb1KMqiPud6f347Lhzb0ALOY+dX5G7u+Yx+b8U4=" )
-//								.add( "login.eveonline.com", "sha256/YLh1dUR9y6Kja30RrAn7JKnbQG/uEtLMkBgFF2Fuihg=" )
-//								.add( "login.eveonline.com", "sha256/Vjs8r4z+80wjNcr1YKepWQboSIRi63WsWXhIMN+eWys=" )
-//								.build() )
-//				.build();
-//		return new Retrofit.Builder()
-//				.baseUrl( this.esiDataServerLocation )
-//				.addConverterFactory( GSON_CONVERTER_FACTORY )
-//				.client( httpClient )
-//				.build();
-//
-//	}
-//
-//	protected NeoComOAuth20 getConfiguredOAuth( final String selector ) {
-//		Objects.requireNonNull( selector );
-//		final List<String> scopes = this.constructScopes( this.configurationProvider.getResourceString( "P.esi."
-//				+ selector.toLowerCase() + ".authorization.scopes.filename" ) );
-//		NeoComOAuth20 auth = null;
-//		if ("TRANQUILITY".equalsIgnoreCase( selector )) {
-//			final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.clientid" );
-//			final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.secretkey" );
-//			final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.callback" );
-//			final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
-//					"Default agent" );
-//			// Verify that the constants have values. Otherwise launch exception.
-//			if (CLIENT_ID.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			if (SECRET_KEY.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			if (CALLBACK.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			auth = new NeoComOAuth20.Builder()
-//					.withClientId( CLIENT_ID )
-//					.withClientKey( SECRET_KEY )
-//					.withCallback( CALLBACK )
-//					.withAgent( AGENT )
-//					.withStore( ESIStore.DEFAULT )
-//					.withScopes( scopes )
-//					.withState( "NEOCOM-VERIFICATION-STATE" )
-//					.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.server"
-//							, "https://login.eveonline.com/" ) )
-//					.withAccessTokenEndpoint( this.configurationProvider.getResourceString( "P.esi.authorization.accesstoken.url"
-//							, "oauth/token" ) )
-//					.withAuthorizationBaseUrl( this.configurationProvider.getResourceString( "P.esi.authorization.authorize.url"
-//							, "oauth/authorize" ) )
-//					.build();
-//			// TODO - When new refactoring isolates scopes remove this.
-//			SCOPESTRING = this.transformScopes( scopes );
-//		}
-//		if ("SINGULARITY".equalsIgnoreCase( selector )) {
-//			final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.singularity.authorization.clientid" );
-//			final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.singularity.authorization.secretkey" );
-//			final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.singularity.authorization.callback" );
-//			final String AGENT = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-//			// Verify that the constants have values. Otherwise launch exception.
-//			if (CLIENT_ID.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			if (SECRET_KEY.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			if (CALLBACK.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			auth = new NeoComOAuth20.Builder()
-//					.withClientId( CLIENT_ID )
-//					.withClientKey( SECRET_KEY )
-//					.withCallback( CALLBACK )
-//					.withAgent( AGENT )
-//					.withStore( ESIStore.DEFAULT )
-//					.withScopes( scopes )
-//					.withState( this.configurationProvider.getResourceString( "P.esi.authorization.state"
-//							, "NEOCOM-VERIFICATION-STATE" ) )
-//					.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.singularity.authorization.server"
-//							, "https://sisilogin.testeveonline.com/" ) )
-//					.withAccessTokenEndpoint( this.configurationProvider.getResourceString( "P.esi.authorization.accesstoken.url"
-//							, "oauth/token" ) )
-//					.withAuthorizationBaseUrl( this.configurationProvider.getResourceString( "P.esi.authorization.authorize.url"
-//							, "oauth/authorize" ) )
-//					.build();
-//		}
-//		Objects.requireNonNull( auth );
-//		return auth;
-//	}
-
 }

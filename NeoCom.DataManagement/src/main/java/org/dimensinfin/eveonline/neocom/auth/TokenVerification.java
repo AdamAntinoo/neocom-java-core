@@ -43,6 +43,10 @@ public class TokenVerification {
 		return this.tokenTranslationResponse.getRefreshToken();
 	}
 
+	public String getScopes() {
+		return this.verifyCharacterResponse.getScopes();
+	}
+
 	public TokenVerification setAuthCode( final String authCode ) {
 		this.authCode = authCode;
 		return this;
@@ -71,9 +75,5 @@ public class TokenVerification {
 	public TokenVerification setVerifyCharacterResponse( VerifyCharacterResponse verifyCharacterResponse ) {
 		this.verifyCharacterResponse = verifyCharacterResponse;
 		return this;
-	}
-
-	public String getScopes() {
-		return this.tokenTranslationResponse.getScope();
 	}
 }

@@ -295,7 +295,8 @@ public class LocationCatalogService {
 			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
 					.accessESIAuthRetrofit()
 					.create( UniverseApi.class )
-					.getUniverseStructuresStructureId( structureId, datasource, null, null ).execute();
+					.getUniverseStructuresStructureId( structureId, datasource, null, credential.getAccessToken() )
+					.execute();
 			if (universeResponse.isSuccessful()) {
 				return universeResponse.body();
 			} else return null;

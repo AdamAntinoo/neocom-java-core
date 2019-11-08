@@ -1,6 +1,8 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class TokenTranslationResponse {
 	@JsonProperty("access_token")
@@ -66,5 +68,17 @@ public class TokenTranslationResponse {
 	public TokenTranslationResponse setScope( final String scope ) {
 		this.scope = scope;
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "accessToken", accessToken )
+				.append( "tokenType", tokenType )
+				.append( "expires", expires )
+				.append( "refreshToken", refreshToken )
+				.append( "created", created )
+				.append( "scope", scope )
+				.toString();
 	}
 }

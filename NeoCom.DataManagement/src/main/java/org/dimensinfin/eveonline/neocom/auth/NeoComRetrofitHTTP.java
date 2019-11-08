@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.GsonBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -57,27 +56,29 @@ public class NeoComRetrofitHTTP {
 	protected Retrofit build() {
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
-						.addInterceptor(chain -> {
+						.addInterceptor( chain -> {
 							Request.Builder builder = chain.request().newBuilder()
-									                          .addHeader("User-Agent", this.agent);
-							return chain.proceed(builder.build());
-						})
+									.addHeader( "accept", "application/json" )
+									.addHeader( "User-Agent", agent );
+//									.addHeader( "authorization", "Bearer " + tokenStore.getAccessToken() );
+							return chain.proceed( builder.build() );
+						} )
+//						.addInterceptor(chain -> {
+//							if (StringUtils.isBlank(getRefreshToken())) {
+//								return chain.proceed(chain.request());
+//							}
+//
+//							Request.Builder builder = chain.request().newBuilder();
+//							final TokenTranslationResponse token = this.neoComOAuth20.fromRefresh(getRefreshToken());
+//							if (null != token) {
+//								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
+//							}
+//							return chain.proceed(builder.build());
+//						})
 						.addInterceptor(chain -> {
-							if (StringUtils.isBlank(getRefreshToken())) {
-								return chain.proceed(chain.request());
-							}
-
-							Request.Builder builder = chain.request().newBuilder();
-							final TokenTranslationResponse token = this.neoComOAuth20.fromRefresh(getRefreshToken());
-							if (null != token) {
-								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
-							}
-							return chain.proceed(builder.build());
-						})
-						.addInterceptor(chain -> {
-							if (StringUtils.isBlank(getRefreshToken())) {
-								return chain.proceed(chain.request());
-							}
+//							if (StringUtils.isBlank(getRefreshToken())) {
+//								return chain.proceed(chain.request());
+//							}
 
 							Response r = chain.proceed(chain.request());
 							if (r.isSuccessful()) {

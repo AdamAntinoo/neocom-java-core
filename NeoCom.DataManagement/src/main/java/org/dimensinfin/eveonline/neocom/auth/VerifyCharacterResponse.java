@@ -1,6 +1,8 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class VerifyCharacterResponse {
 	@JsonProperty("CharacterID")
@@ -34,5 +36,19 @@ public class VerifyCharacterResponse {
 
 	public String getScopes() {
 		return this.scopes;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder( this , ToStringStyle.JSON_STYLE)
+				.append( "characterID", characterID )
+				.append( "characterName", characterName )
+				.append( "expiresOn", expiresOn )
+				.append( "expiresMillis", expiresMillis )
+				.append( "scopes", scopes )
+				.append( "tokenType", tokenType )
+				.append( "characterOwnerHash", characterOwnerHash )
+				.append( "intellectualProperty", intellectualProperty )
+				.toString();
 	}
 }
