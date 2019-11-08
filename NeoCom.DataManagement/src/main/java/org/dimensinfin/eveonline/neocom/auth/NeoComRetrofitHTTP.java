@@ -84,7 +84,7 @@ public class NeoComRetrofitHTTP {
 							if (r.isSuccessful()) {
 								return r;
 							}
-							if (r.body().string().contains("invalid_token")) {
+							if (r.body().string().contains("expired")) {
 								this.neoComOAuth20.fromRefresh(getRefreshToken());
 								r = chain.proceed(chain.request());
 							}

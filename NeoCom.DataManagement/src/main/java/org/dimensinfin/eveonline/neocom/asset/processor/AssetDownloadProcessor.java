@@ -33,10 +33,6 @@ public class AssetDownloadProcessor extends Job {
 	private final Map<Long, GetCharactersCharacterIdAssets200Ok> assetMap = new HashMap<>();
 	private final List<Long> id4Names = new ArrayList<>();
 
-//	public AssetDownloadProcessor( final Credential credential ) {
-//		super( credential );
-//	}
-
 	private AssetDownloadProcessor() {super();}
 
 	/**
@@ -86,7 +82,7 @@ public class AssetDownloadProcessor extends Job {
 //				if (targetAsset.isShip()) downloadAssetEveName( targetAsset.getAssetId() );
 //				if (targetAsset.isContainer()) downloadAssetEveName( targetAsset.getAssetId() );
 				// Mark the asset owner to the work in progress value.
-				targetAsset.setOwnerId( this.credential.getAccountId() * -1L );
+				targetAsset.setOwnerId( this.credential.getAccountId() * -1 );
 
 				// - L O C A T I O N   P R O C E S S I N G
 				this.locationProcessing( targetAsset );
@@ -112,7 +108,7 @@ public class AssetDownloadProcessor extends Job {
 //			this.validateLocation( asset );
 //		}
 		// Assign the assets to the pilot.
-//		this.assetRepository.replaceAssets( this.credential.getAccountId() );
+		this.assetRepository.replaceAssets( this.credential.getAccountId() );
 		// Remove from memory the managers that contain now stale data.
 		//TODO Removed until this is checked if required.
 		//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
@@ -169,7 +165,7 @@ public class AssetDownloadProcessor extends Job {
 			this.getActual().credential = credential;
 			return this;
 		}
-		public AssetDownloadProcessor.Builder withEsiDataAdapter( final ESIDataProvider esiDataProvider ) {
+		public AssetDownloadProcessor.Builder withEsiDataProvider( final ESIDataProvider esiDataProvider ) {
 			Objects.requireNonNull( esiDataProvider );
 			this.onConstruction.esiDataProvider = esiDataProvider;
 			return this;

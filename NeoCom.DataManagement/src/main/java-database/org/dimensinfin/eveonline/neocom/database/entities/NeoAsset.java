@@ -1,5 +1,6 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +20,6 @@ import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 
 @Entity(name = "Assets")
-//@DatabaseTable(tableName = "Assets")
 public class NeoAsset extends UpdatableEntity {
 	@Id
 	@GeneratedValue(generator = "UUID_generator")
@@ -32,7 +32,7 @@ public class NeoAsset extends UpdatableEntity {
 	// - A P I   C C P   F I E L D S
 	@DatabaseField(index = true)
 	@Column(name = "ownerId", nullable = false)
-	private Long ownerId; // The id of the character or corporations that own the asset.
+	private Integer ownerId; // The id of the character or corporations that own the asset.
 	@DatabaseField(index = true)
 	@Column(name = "assetId", nullable = false)
 	private Long assetId;
@@ -76,15 +76,14 @@ public class NeoAsset extends UpdatableEntity {
 	@Transient
 	private transient NeoAsset parentContainer;
 
-	public NeoAsset() {
-	}
+	public NeoAsset() { }
 
 	// - G E T T E R S   &   S E T T E R S
 	public UUID getUid() {
 		return this.uid;
 	}
 
-	public Long getOwnerId() {
+	public Integer getOwnerId() {
 		return this.ownerId;
 	}
 
@@ -100,6 +99,10 @@ public class NeoAsset extends UpdatableEntity {
 		return this.parentContainerId;
 	}
 
+	public Optional<NeoAsset> getParentContainer() {
+		return Optional.ofNullable( this.parentContainer );
+	}
+
 	public boolean hasParentContainer() {
 		if (null != this.parentContainerId) return true;
 		return false;
@@ -111,13 +114,18 @@ public class NeoAsset extends UpdatableEntity {
 		return this;
 	}
 
-	public NeoAsset setOwnerId( final Long ownerId ) {
+	public NeoAsset setOwnerId( final Integer ownerId ) {
 		this.ownerId = ownerId;
 		return this;
 	}
 
 	public NeoAsset setAssetDelegate( final GetCharactersCharacterIdAssets200Ok assetDelegate ) {
 		this.assetDelegate = assetDelegate;
+		return this;
+	}
+
+	public NeoAsset setParentContainer( final NeoAsset parentContainer ) {
+		this.parentContainer = parentContainer;
 		return this;
 	}
 
@@ -216,100 +224,4 @@ public class NeoAsset extends UpdatableEntity {
 	public boolean isStructure() {
 		return false;
 	}
-
-//	public NeoAsset setStructureIdentifier( final Long structureIdentifier ) {
-//		this.locationId.setStructureIdentifier( structureIdentifier );
-//		return this;
-//	}
-//	// - B U I L D E R
-//	public static class Builder {
-//		private NeoAsset onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new NeoAsset();
-//		}
-//
-//		public NeoAsset.Builder fromEsiAsset( final GetCharactersCharacterIdAssets200Ok esiAsset ) {
-//			Objects.requireNonNull( esiAsset );
-//			EsiAssetTransformer.transform( esiAsset, this.onConstruction );
-//			Objects.requireNonNull( this.onConstruction.itemDelegate );
-//			return this;
-//		}
-//
-//		public NeoAsset.Builder withPublicStructure( final Long structureId ) {
-//			Objects.requireNonNull( structureId );
-//			Objects.requireNonNull( this.onConstruction.itemDelegate ); // Protect the order. This should be after the esi.
-//			this.onConstruction.locationId.setType( LocationIdentifierType.STRUCTURE );
-//			this.onConstruction.locationId.setStructureIdentifier( structureId );
-//			return this;
-//		}
-//
-//		public NeoAsset build() {
-//			return this.onConstruction;
-//		}
-//	}
-
-//	private static class EsiAssetTransformer {
-//		private static void transform( final GetCharactersCharacterIdAssets200Ok esiAsset,
-//		                               NeoAsset asset ) {
-////			asset.assetId = esiAsset.getItemId();
-////			asset.typeId = esiAsset.getTypeId();
-////			asset.assetDelegate = esiAsset;
-////			asset.itemDelegate = new NeoItem( esiAsset.getTypeId() );
-////			asset.locationId = transformLocation( esiAsset.getLocationId(),
-////					esiAsset.getLocationFlag(),
-////					esiAsset.getLocationType() );
-////			if (asset.getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Ship )) {
-////				asset.shipFlag = true;
-////			}
-////			asset.containerFlag = checkIfContainer( asset );
-//			if (esiAsset.getLocationId() > 61E6) // The asset is contained into another asset. Set the parent.
-//				asset.parentContainerId = esiAsset.getLocationId();
-//		}
-
-//		private static LocationIdentifier transformLocation( final Long locationId,
-//		                                                     final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag,
-//		                                                     final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
-//			return new LocationIdentifier.Builder()
-//					.withSpaceIdentifier( locationId )
-//					.withLocationFlag( locationFlag )
-//					.withLocationType( locationType )
-//					.build();
-//		}
-
-//		private static boolean checkIfContainer( final NeoAsset asset ) {
-//			if (asset.isBlueprint()) return false;
-//			if (asset.isShip()) return true;
-//			// Use a list of types to set what is a container
-//			if (asset.getTypeId() == 11488) return true;
-//			if (asset.getTypeId() == 11489) return true;
-//			if (asset.getTypeId() == 11490) return true;
-//			if (asset.getTypeId() == 17363) return true;
-//			if (asset.getTypeId() == 17364) return true;
-//			if (asset.getTypeId() == 17365) return true;
-//			if (asset.getTypeId() == 17366) return true;
-//			if (asset.getTypeId() == 17367) return true;
-//			if (asset.getTypeId() == 17368) return true;
-//			if (asset.getTypeId() == 2263) return true;
-//			if (asset.getTypeId() == 23) return true;
-//			if (asset.getTypeId() == 24445) return true;
-//			if (asset.getTypeId() == 28570) return true;
-//			if (asset.getTypeId() == 3293) return true;
-//			if (asset.getTypeId() == 3296) return true;
-//			if (asset.getTypeId() == 3297) return true;
-//			if (asset.getTypeId() == 33003) return true;
-//			if (asset.getTypeId() == 33005) return true;
-//			if (asset.getTypeId() == 33007) return true;
-//			if (asset.getTypeId() == 33009) return true;
-//			if (asset.getTypeId() == 33011) return true;
-//			if (asset.getTypeId() == 3465) return true;
-//			if (asset.getTypeId() == 3466) return true;
-//			if (asset.getTypeId() == 3467) return true;
-//			if (asset.getTypeId() == 3468) return true;
-//			if (asset.getTypeId() == 41567) return true;
-//			if (asset.getTypeId() == 60) return true; // Asset Safety Wrap
-//			if (asset.getName().contains( "Container" )) return true;
-//			return asset.getName().contains( "Wrap" );
-//		}
-//	}
 }

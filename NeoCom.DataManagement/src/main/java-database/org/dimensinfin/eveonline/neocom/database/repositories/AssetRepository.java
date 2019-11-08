@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 public class AssetRepository {
@@ -27,7 +30,7 @@ public class AssetRepository {
 	protected Dao<NeoAsset, UUID> assetDao;
 	private ConnectionSource connection4Transaction;
 
-	private AssetRepository(){}
+	private AssetRepository() {}
 
 	/**
 	 * Get the complete list of the assets that belong to this owner.
@@ -37,10 +40,13 @@ public class AssetRepository {
 		try {
 			QueryBuilder<NeoAsset, UUID> queryBuilder = this.assetDao.queryBuilder();
 			Where<NeoAsset, UUID> where = queryBuilder.where();
-			where.eq( "ownerID", ownerId );
+			where.eq( "ownerId", ownerId );
 			final List<NeoAsset> assetList = assetDao.query( queryBuilder.prepare() );
 			logger.info( "-- Assets read: " + assetList.size() );
-			return assetList;
+			final List<NeoAsset> resultList = new ArrayList<>();
+			return Stream.of( assetList )
+					.map( this::assetReconstructor )
+					.collect( Collectors.toList() );
 		} catch (java.sql.SQLException sqle) {
 			logger.error( "SQL [AssetRepository.findAllByOwnerId]> SQL Exception: {}", sqle.getMessage() );
 			return new ArrayList<>();
@@ -137,6 +143,13 @@ public class AssetRepository {
 			this.assetDao.createOrUpdate( record );
 			NeoComLogger.info( "Wrote asset to database id [" + record.getAssetId() + "]" );
 		}
+	}
+
+	private NeoAsset assetReconstructor( final NeoAsset target ) {
+		target.setItemDelegate( new NeoItem( target.getTypeId() ) );
+		if (target.hasParentContainer())
+			target.setParentContainer( this.findAssetById( target.getParentContainerId() ).orElse( null ) );
+		return target;
 	}
 
 	// - B U I L D E R

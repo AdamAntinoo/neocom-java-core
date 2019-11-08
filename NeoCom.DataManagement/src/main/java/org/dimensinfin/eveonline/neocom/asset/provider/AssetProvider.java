@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.provider;
+package org.dimensinfin.eveonline.neocom.asset;
 
 import java.io.Serializable;
 import java.util.ArrayList;

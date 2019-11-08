@@ -10,6 +10,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
@@ -78,6 +79,11 @@ public class AssetProcessorIT {
 		NeoComLogger.exit();
 	}
 
+	@Test
+	void runAssetProcessorIT() {
+		AssetProcessorIT.main( null );
+	}
+
 	private void startContainers() {
 //		this.postgres = new GenericContainer<>( "postgres:11.2" )
 //				.withExposedPorts( 5432 )
@@ -105,16 +111,18 @@ public class AssetProcessorIT {
 	}
 
 	private void setUpEnvironment() throws IOException, SQLException {
-		this.itCredential = new Credential.Builder(2113197470)
-				.withAccountId(2113197470)
-				.withAccountName("Tip Tophane")
-				.withAccessToken("eyJhbGciOiJSUzI1NiIsImtpZCI6IkpXVC1TaWduYXR1cmUtS2V5IiwidHlwIjoiSldUIn0.eyJqdGkiOiI0N2JlMzdlYi05MjdhLTRlZWEtOGQwYS03NjgwZDg3OTkwZjkiLCJraWQiOiJKV1QtU2lnbmF0dXJlLUtleSIsInN1YiI6IkNIQVJBQ1RFUjpFVkU6MjExMzE5NzQ3MCIsImF6cCI6Ijk4ZWI4ZDMxYzVkMjQ2NDliYTRmN2ViMDE1NTk2ZmJkIiwibmFtZSI6IlRpcCBUb3BoYW5lIiwib3duZXIiOiJYK1JkU0ZMa2VXK3dhRGtyWHNWdEZXUXZSWlk9IiwiZXhwIjoxNTczMTM4NjIzLCJpc3MiOiJsb2dpbi5ldmVvbmxpbmUuY29tIn0.LxsNGUhu4w5cnXhkJtPx6yk73ENo3r5Kl-GZB8cn4Z5Mc2gRxMTNnE5BjauZzSmcHP3XXaBFN_ViHv_3Kv3Xx4iCAqYmGN6OdyadSGr6G81jwY-HFQgSIJJVHzYrGaniZQFnF50I9VoeNKHmMLDXMg2BBP6FH5on3NWUV0qaNwbcKmaL1q7R9SR_1yR-2zpM4uhufDDCjA9nJV5EpzsQc0UZNbUZQb5FZ5OGjbLs-wM8BnGzKAKdilrRpQug9xdMfaxK2yu-b_nypQcdCvf4Po7yhHKcPaoNHAHlJyI-UgdwMzDZ5lASIrFYeWLv0yFumFoA76Puj74Lql2ORp1zHw")
-				.withRefreshToken("xh52x86M60yljn5U5wM0dw==")
-				.withDataSource("tranquility")
-				.withScope("publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1")
-				.withAssetsCount(6119)
-				.withWalletBalance(2.27058387661E9)
-				.withRaceName("Minmatar")
+		this.itCredential = new Credential.Builder( 2113197470 )
+				.withAccountId( 2113197470 )
+				.withAccountName( "Tip Tophane" )
+				.withAccessToken(
+						"eyJhbGciOiJSUzI1NiIsImtpZCI6IkpXVC1TaWduYXR1cmUtS2V5IiwidHlwIjoiSldUIn0.eyJqdGkiOiI0N2JlMzdlYi05MjdhLTRlZWEtOGQwYS03NjgwZDg3OTkwZjkiLCJraWQiOiJKV1QtU2lnbmF0dXJlLUtleSIsInN1YiI6IkNIQVJBQ1RFUjpFVkU6MjExMzE5NzQ3MCIsImF6cCI6Ijk4ZWI4ZDMxYzVkMjQ2NDliYTRmN2ViMDE1NTk2ZmJkIiwibmFtZSI6IlRpcCBUb3BoYW5lIiwib3duZXIiOiJYK1JkU0ZMa2VXK3dhRGtyWHNWdEZXUXZSWlk9IiwiZXhwIjoxNTczMTM4NjIzLCJpc3MiOiJsb2dpbi5ldmVvbmxpbmUuY29tIn0.LxsNGUhu4w5cnXhkJtPx6yk73ENo3r5Kl-GZB8cn4Z5Mc2gRxMTNnE5BjauZzSmcHP3XXaBFN_ViHv_3Kv3Xx4iCAqYmGN6OdyadSGr6G81jwY-HFQgSIJJVHzYrGaniZQFnF50I9VoeNKHmMLDXMg2BBP6FH5on3NWUV0qaNwbcKmaL1q7R9SR_1yR-2zpM4uhufDDCjA9nJV5EpzsQc0UZNbUZQb5FZ5OGjbLs-wM8BnGzKAKdilrRpQug9xdMfaxK2yu-b_nypQcdCvf4Po7yhHKcPaoNHAHlJyI-UgdwMzDZ5lASIrFYeWLv0yFumFoA76Puj74Lql2ORp1zHw" )
+				.withRefreshToken( "xh52x86M60yljn5U5wM0dw==" )
+				.withDataSource( "tranquility" )
+				.withScope(
+						"publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1" )
+				.withAssetsCount( 6119 )
+				.withWalletBalance( 2.27058387661E9 )
+				.withRaceName( "Minmatar" )
 				.build();
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
@@ -205,7 +213,7 @@ public class AssetProcessorIT {
 
 		final Job assetProcessorJob = new AssetDownloadProcessor.Builder()
 				.withCredential( this.itCredential )
-				.withEsiDataAdapter( this.itEsiDataProvider )
+				.withEsiDataProvider( this.itEsiDataProvider )
 				.withLocationCatalogService( this.itLocationService )
 				.withAssetRepository( this.itAssetRepository )
 				.withNeoAssetConverter( new GetCharactersCharacterIdAsset2NeoAssetConverter() )

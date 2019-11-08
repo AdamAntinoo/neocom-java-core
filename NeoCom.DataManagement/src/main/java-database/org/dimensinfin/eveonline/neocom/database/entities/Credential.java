@@ -40,14 +40,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class Credential extends UpdatableEntity {
 	private static final long serialVersionUID = -4248173464157148843L;
 
-	public static String createUniqueIdentifier( final String server, final int identifier ) {
-		return server.toLowerCase() + "/" + identifier;
+	public static String createUniqueIdentifier( final String server, final Integer identifier ) {
+		return server.toLowerCase() + "/" + identifier.toString();
 	}
 
 	@DatabaseField(id = true, index = true)
-	private String uniqueCredential = Credential.createUniqueIdentifier( "Tranquility".toLowerCase(), -1 );
+	private String uniqueCredential = Credential.createUniqueIdentifier( "Tranquility".toLowerCase(), -2 );
 	@DatabaseField
-	private int accountId = -2;
+	private Integer accountId = -2;
 	@DatabaseField
 	private String accountName;
 	@DatabaseField
@@ -76,7 +76,7 @@ public class Credential extends UpdatableEntity {
 		super();
 	}
 
-	private Credential( final int newAccountIdentifier ) {
+	private Credential( final Integer newAccountIdentifier ) {
 		super();
 		this.accountId = newAccountIdentifier;
 		this.uniqueCredential = Credential.createUniqueIdentifier( this.dataSource, this.accountId );
@@ -94,12 +94,12 @@ public class Credential extends UpdatableEntity {
 		return this.uniqueCredential;
 	}
 
-	public int getAccountId() {
+	public Integer getAccountId() {
 		return this.accountId;
 	}
 
 	@Deprecated
-	public Credential setAccountId( final int accountId ) {
+	public Credential setAccountId( final Integer accountId ) {
 		this.accountId = accountId;
 		this.uniqueCredential = Credential.createUniqueIdentifier( this.dataSource, this.accountId );
 		return this;
@@ -239,7 +239,7 @@ public class Credential extends UpdatableEntity {
 	public static class Builder {
 		private Credential onConstruction;
 
-		public Builder( final int account ) {
+		public Builder( final Integer account ) {
 			this.onConstruction = new Credential( account );
 		}
 
