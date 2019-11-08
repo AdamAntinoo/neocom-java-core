@@ -14,12 +14,12 @@ import retrofit2.Retrofit;
 public class RetrofitUniverseConnector {
 	private static final int CACHE_SIZE = 4 * 1024 * 1024; // 4G of storage space for the ESI universe downloaded data.
 	// -  C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
 
 	private Retrofit noAuthRetrofitConnector; // HTTP client to be used on not authenticated endpoints.
 
-	private RetrofitUniverseConnector() {}
+	protected RetrofitUniverseConnector() {}
 
 	public void clear() {
 		this.noAuthRetrofitConnector = null;
@@ -67,6 +67,11 @@ public class RetrofitUniverseConnector {
 
 		public Builder() {
 			this.onConstruction = new RetrofitUniverseConnector();
+		}
+
+		public Builder( final RetrofitUniverseConnector preInstance ) {
+			if (null != preInstance) this.onConstruction = preInstance;
+			else this.onConstruction = new RetrofitUniverseConnector();
 		}
 
 		public RetrofitUniverseConnector.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {

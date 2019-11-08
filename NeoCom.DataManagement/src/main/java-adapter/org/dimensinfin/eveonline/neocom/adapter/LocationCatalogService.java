@@ -52,13 +52,13 @@ public class LocationCatalogService {
 	private LocationCacheAccessType lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
-	private ESIUniverseDataProvider esiUniverseDataProvider;
-	private LocationRepository locationRepository;
-	private NeoComRetrofitFactory retrofitFactory;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected ESIUniverseDataProvider esiUniverseDataProvider;
+	protected LocationRepository locationRepository;
+	protected NeoComRetrofitFactory retrofitFactory;
 
-	private LocationCatalogService() { }
+	protected LocationCatalogService() { }
 
 	// - C A C H E   M A N A G E M E N T
 	public void stopService() {

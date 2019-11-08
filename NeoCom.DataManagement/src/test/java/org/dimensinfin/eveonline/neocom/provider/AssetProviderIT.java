@@ -109,7 +109,7 @@ public class AssetProviderIT {
 				.build();
 		this.itStoreCacheManager = new StoreCacheManager.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystem( this.itFileSystemAdapter )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
 				.build();
 		this.itEsiUniverseDataProvider = new ESIUniverseDataProvider.Builder()

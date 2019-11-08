@@ -19,9 +19,12 @@ import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.MarketApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdIconsOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdIconsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetMarketsPrices200Ok;
@@ -43,16 +46,16 @@ public class ESIUniverseDataProvider {
 	private static final long CACHE_SIZE = 2 * Units.GIGABYTES;
 
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
-	private StoreCacheManager storeCacheManager;
-	private RetrofitUniverseConnector retrofitUniverseConnector;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected StoreCacheManager storeCacheManager;
+	protected RetrofitUniverseConnector retrofitUniverseConnector;
 	// - I N T E R N A L   C A C H E S
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 100 );
 
 //	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
 
-	private ESIUniverseDataProvider() {}
+	protected ESIUniverseDataProvider() {}
 
 	private Retrofit generateNoAuthRetrofit() {
 		try {
@@ -206,6 +209,7 @@ public class ESIUniverseDataProvider {
 		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
 		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
 	}
+
 	@TimeElapsed
 	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {
 		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", solarSystemId );
@@ -265,12 +269,63 @@ public class ESIUniverseDataProvider {
 		return null;
 	}
 
+	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
+	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
+		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
+//		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			// Use server parameter to override configuration server to use.
+//			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.retrofitUniverseConnector.getRetrofit()
+					.create( AllianceApi.class )
+					.getAlliancesAllianceId( identifier,
+							datasource,
+							null )
+					.execute();
+			if (allianceResponse.isSuccessful())
+				return allianceResponse.body();
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
+	}
+
+	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
+		logger.info( ">> [ESIDataAdapter.getAlliancesAllianceIdIcons]" );
+		try {
+			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitUniverseConnector.getRetrofit()
+					.create( AllianceApi.class )
+					.getAlliancesAllianceIdIcons(
+							identifier,
+							DEFAULT_ESI_SERVER, null )
+					.execute();
+			if (allianceResponse.isSuccessful())
+				return allianceResponse.body();
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataAdapter.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+		}
+		return null;
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private ESIUniverseDataProvider onConstruction;
 
 		public Builder() {
 			this.onConstruction = new ESIUniverseDataProvider();
+		}
+
+		public Builder( final ESIUniverseDataProvider preInstance ) {
+			if (null != preInstance) this.onConstruction = preInstance;
+			else this.onConstruction = new ESIUniverseDataProvider();
 		}
 
 		public ESIUniverseDataProvider.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {

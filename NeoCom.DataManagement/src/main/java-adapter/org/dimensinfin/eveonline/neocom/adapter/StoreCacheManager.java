@@ -56,9 +56,9 @@ public class StoreCacheManager {
 	}
 
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystem;
-	private RetrofitUniverseConnector retrofitUniverseConnector;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected RetrofitUniverseConnector retrofitUniverseConnector;
 
 	// - C A C H E S
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
@@ -89,7 +89,7 @@ public class StoreCacheManager {
 	// - S T O R E S   C R E A T I O N
 	private void createEsiItemStore() {
 		try {
-			final File cachedir = new File( this.fileSystem.accessResource4Path(
+			final File cachedir = new File( this.fileSystemAdapter.accessResource4Path(
 					this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
 							"/" + this.configurationProvider.getResourceString( "P.cache.directory.store.esiitem" ) ) );
 			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES );
@@ -152,13 +152,18 @@ public class StoreCacheManager {
 			this.onConstruction = new StoreCacheManager();
 		}
 
+		public Builder( final StoreCacheManager preInstance ) {
+			if (null != preInstance) this.onConstruction = preInstance;
+			else this.onConstruction = new StoreCacheManager();
+		}
+
 		public StoreCacheManager.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}
 
-		public StoreCacheManager.Builder withFileSystem( final IFileSystem fileSystem ) {
-			this.onConstruction.fileSystem = fileSystem;
+		public StoreCacheManager.Builder withFileSystemAdapter( final IFileSystem fileSystem ) {
+			this.onConstruction.fileSystemAdapter = fileSystem;
 			return this;
 		}
 
@@ -170,7 +175,7 @@ public class StoreCacheManager {
 
 		public StoreCacheManager build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
-			Objects.requireNonNull( this.onConstruction.fileSystem );
+			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.retrofitUniverseConnector );
 			this.onConstruction.createStores(); // Run the initialisation code.
 			return this.onConstruction;

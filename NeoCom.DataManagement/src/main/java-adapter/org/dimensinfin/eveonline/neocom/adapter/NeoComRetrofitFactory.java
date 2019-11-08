@@ -302,18 +302,10 @@ public class NeoComRetrofitFactory {
 			this.onConstruction = new NeoComRetrofitFactory();
 		}
 
-		/**
-		 * This Builder declares the mandatory components to be linked on construction so the Null validation is done as soon as
-		 * possible.
-		 */
-//		@Deprecated
-//		public Builder( final IConfigurationProvider configurationProvider, final IFileSystem fileSystemAdapter ) {
-//			Objects.requireNonNull( configurationProvider );
-//			Objects.requireNonNull( fileSystemAdapter );
-//			this.onConstruction = new NeoComRetrofitFactory();
-//			this.onConstruction.configurationProvider = configurationProvider;
-//			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
-//		}
+		public Builder( final NeoComRetrofitFactory preInstance ) {
+			if (null != preInstance) this.onConstruction = preInstance;
+			else this.onConstruction = new NeoComRetrofitFactory();
+		}
 
 		public NeoComRetrofitFactory.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );

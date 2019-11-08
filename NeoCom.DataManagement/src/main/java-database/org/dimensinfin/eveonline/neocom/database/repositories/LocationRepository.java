@@ -8,8 +8,6 @@ import java.util.Objects;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.stmt.QueryBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.database.ISDEDatabaseAdapter;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
@@ -77,12 +75,12 @@ public class LocationRepository {
 //			" FROM staStations sta" +
 //			" WHERE stationID = ? ";
 
-	protected static Logger logger = LoggerFactory.getLogger( LocationRepository.class );
+//	protected static Logger logger = LoggerFactory.getLogger( LocationRepository.class );
 
 	// - C O M P O N E N T S
-	private ESIUniverseDataProvider esiUniverseDataProvider;
-	private ISDEDatabaseAdapter sdeDatabaseAdapter;
-	private Dao<EsiLocation, Long> locationDao;
+	protected ESIUniverseDataProvider esiUniverseDataProvider;
+	protected ISDEDatabaseAdapter sdeDatabaseAdapter;
+	protected Dao<EsiLocation, Long> locationDao;
 
 //	public EsiLocation findById( final long locationId ) throws SQLException {
 //		return this.locationDao.queryForId( locationId );

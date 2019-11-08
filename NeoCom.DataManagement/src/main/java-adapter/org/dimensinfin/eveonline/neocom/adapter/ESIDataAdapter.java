@@ -17,7 +17,6 @@ import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
-import org.dimensinfin.eveonline.neocom.esiswagger.api.AllianceApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
@@ -25,8 +24,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.WalletApi;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdIconsOk;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetAlliancesAllianceIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
@@ -397,51 +394,51 @@ public class ESIDataAdapter {
 		}
 	}
 
-	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
-	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
-//		final Chrono accessFullTime = new Chrono();
-		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = DEFAULT_ESI_SERVER;
-			// Use server parameter to override configuration server to use.
-//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
-			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create( AllianceApi.class )
-					.getAlliancesAllianceId( identifier,
-							datasource,
-							null )
-					.execute();
-			if (allianceResponse.isSuccessful())
-				return allianceResponse.body();
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-//		} finally {
-//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-		}
-		return null;
-	}
-
-	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getAlliancesAllianceIdIcons]" );
-		try {
-			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
-					.create( AllianceApi.class )
-					.getAlliancesAllianceIdIcons(
-							identifier,
-							DEFAULT_ESI_SERVER, null )
-					.execute();
-			if (allianceResponse.isSuccessful())
-				return allianceResponse.body();
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-		}
-		return null;
-	}
+//	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
+//	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
+//		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
+////		final Chrono accessFullTime = new Chrono();
+//		try {
+//			// Set the refresh to be used during the request.
+////			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+//			String datasource = DEFAULT_ESI_SERVER;
+//			// Use server parameter to override configuration server to use.
+////			if (null != server) datasource = server;
+//			// Create the request to be returned so it can be called.
+//			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
+//					.create( AllianceApi.class )
+//					.getAlliancesAllianceId( identifier,
+//							datasource,
+//							null )
+//					.execute();
+//			if (allianceResponse.isSuccessful())
+//				return allianceResponse.body();
+//		} catch (IOException ioe) {
+//			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+//			ioe.printStackTrace();
+////		} finally {
+////			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+//		}
+//		return null;
+//	}
+//
+//	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
+//		logger.info( ">> [ESIDataAdapter.getAlliancesAllianceIdIcons]" );
+//		try {
+//			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
+//					.create( AllianceApi.class )
+//					.getAlliancesAllianceIdIcons(
+//							identifier,
+//							DEFAULT_ESI_SERVER, null )
+//					.execute();
+//			if (allianceResponse.isSuccessful())
+//				return allianceResponse.body();
+//		} catch (IOException ioe) {
+//			logger.error( "EX [ESIDataAdapter.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+//			ioe.printStackTrace();
+//		}
+//		return null;
+//	}
 
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
 	@TimeElapsed

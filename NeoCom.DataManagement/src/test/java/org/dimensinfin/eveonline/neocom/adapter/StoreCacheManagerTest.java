@@ -30,7 +30,7 @@ public class StoreCacheManagerTest {
 				.build();
 		this.storeCacheManager4test = new StoreCacheManager.Builder()
 				.withConfigurationProvider( configurationProvider )
-				.withFileSystem( fileSystemAdapter )
+				.withFileSystemAdapter( fileSystemAdapter )
 				.withRetrofitUniverseConnector( retrofitUniverseConnector )
 				.build();
 	}
@@ -46,7 +46,7 @@ public class StoreCacheManagerTest {
 				.build();
 		final StoreCacheManager storeCacheManager = new StoreCacheManager.Builder()
 				.withConfigurationProvider( configurationProvider )
-				.withFileSystem( fileSystemAdapter )
+				.withFileSystemAdapter( fileSystemAdapter )
 				.withRetrofitUniverseConnector( retrofitUniverseConnector )
 				.build();
 		Assert.assertNotNull( storeCacheManager );
