@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 
 public class TokenVerification {
 	private String authCode;
@@ -19,7 +19,7 @@ public class TokenVerification {
 	}
 
 	public String getDataSource() {
-		if (null == this.dataSource) return ESIDataAdapter.DEFAULT_ESI_SERVER;
+		if (null == this.dataSource) return ESIDataProvider.DEFAULT_ESI_SERVER;
 		return this.dataSource;
 	}
 

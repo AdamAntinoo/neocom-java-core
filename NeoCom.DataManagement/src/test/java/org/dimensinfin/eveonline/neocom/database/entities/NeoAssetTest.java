@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
@@ -13,7 +13,7 @@ public class NeoAssetTest {
 	private GetUniverseTypesTypeIdOk esiItem;
 	private GetUniverseGroupsGroupIdOk esiGroup;
 	private GetUniverseCategoriesCategoryIdOk esiCategory;
-	private ESIDataAdapter esiDataAdapter;
+	private ESIDataProvider esiDataProvider;
 
 	@Before
 	public void setUp() throws Exception {
@@ -22,17 +22,17 @@ public class NeoAssetTest {
 		this.esiGroup = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
 		Mockito.when( this.esiGroup.getCategoryId() ).thenReturn( 654 );
 		this.esiCategory = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
-		this.esiDataAdapter = Mockito.mock( ESIDataAdapter.class );
-		Mockito.when( this.esiDataAdapter.searchEsiItem4Id( Mockito.anyInt() ) ).thenReturn( this.esiItem );
-		Mockito.when( this.esiDataAdapter.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( this.esiGroup );
-		Mockito.when( this.esiDataAdapter.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( this.esiCategory );
-//		NeoItem.injectEsiUniverseDataAdapter( this.esiDataAdapter );
+		this.esiDataProvider = Mockito.mock( ESIDataProvider.class );
+		Mockito.when( this.esiDataProvider.searchEsiItem4Id( Mockito.anyInt() ) ).thenReturn( this.esiItem );
+		Mockito.when( this.esiDataProvider.searchItemGroup4Id( Mockito.anyInt() ) ).thenReturn( this.esiGroup );
+		Mockito.when( this.esiDataProvider.searchItemCategory4Id( Mockito.anyInt() ) ).thenReturn( this.esiCategory );
+//		NeoItem.injectEsiUniverseDataAdapter( this.esiDataProvider );
 	}
 
 	/**
-	 * The test required the instantiation of a new EsiItem and that cannot be mocked. I need a mock ESIDataAdapter to generate
+	 * The test required the instantiation of a new EsiItem and that cannot be mocked. I need a mock ESIDataProvider to generate
 	 * the requested esi item from the esi server.
-	 * Also EsiItems should be connected to the ESIDataAdapter on initialization.
+	 * Also EsiItems should be connected to the ESIDataProvider on initialization.
 	 */
 	@Test
 	public void buildFromItem() {
@@ -45,7 +45,7 @@ public class NeoAssetTest {
 
 	//		@Test
 	public void gettersContract() {
-//		NeoItem.injectEsiUniverseDataAdapter( this.esiDataAdapter );
+//		NeoItem.injectEsiUniverseDataAdapter( this.esiDataProvider );
 //		final GetCharactersCharacterIdAssets200Ok esiAsset = new GetCharactersCharacterIdAssets200Ok();
 //		esiAsset.setItemId( 1234567L );
 //		esiAsset.setTypeId( 34 );

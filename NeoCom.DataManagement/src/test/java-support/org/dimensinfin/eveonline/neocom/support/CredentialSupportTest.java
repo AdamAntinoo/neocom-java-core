@@ -6,7 +6,7 @@ import org.junit.Before;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 
-public class CredentialSupportTest extends ESIDataAdapterSupportTest {
+public class CredentialSupportTest extends ESIDataProviderSupportTest {
 	protected Credential credential;
 
 	@Override

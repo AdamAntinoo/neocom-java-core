@@ -4,15 +4,15 @@ package org.dimensinfin.eveonline.neocom.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
-import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
+import org.dimensinfin.eveonline.neocom.support.ESIDataProviderSupportTest;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class EsiLocationTest extends ESIDataAdapterSupportTest {
+public class EsiLocationTest extends ESIDataProviderSupportTest {
 	@Test
 	public void getterContract() {
-		final EsiLocation location = this.esiDataAdapter.searchLocation4Id( 30003283 );
+		final EsiLocation location = this.esiDataProvider.searchLocation4Id( 30003283 );
 		Assert.assertEquals( 10000041, location.getRegionId().intValue() );
 		Assert.assertEquals( "Syndicate", location.getRegion() );
 		Assert.assertEquals( 20000479, location.getConstellationId().intValue() );
@@ -31,7 +31,7 @@ public class EsiLocationTest extends ESIDataAdapterSupportTest {
 
 	@Test
 	public void isRegion() {
-		final EsiLocation locationSystem = this.esiDataAdapter.searchLocation4Id( 30003283 );
+		final EsiLocation locationSystem = this.esiDataProvider.searchLocation4Id( 30003283 );
 		Assert.assertFalse( locationSystem.isRegion() );
 		final EsiLocation regionLocation = new EsiLocation.Builder()
 				.withClassType( LocationClass.REGION )
@@ -40,7 +40,7 @@ public class EsiLocationTest extends ESIDataAdapterSupportTest {
 				.build();
 //		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( regionLocation );
 
-		final EsiLocation locationRegion = this.esiDataAdapter.searchLocation4Id( 10000041 );
+		final EsiLocation locationRegion = this.esiDataProvider.searchLocation4Id( 10000041 );
 		Assert.assertTrue( "This should be a region.",locationRegion.isRegion() );
 	}
 
@@ -57,12 +57,12 @@ public class EsiLocationTest extends ESIDataAdapterSupportTest {
 	@Test
 	public void toStringContract() {
 		final String expected = "{\"id\":30003283,\"classType\":\"SYSTEM\",\"station\":\"SPACE\",\"system\":\"PVH8-0\",\"region\":\"Syndicate\",\"security\":\"0.0\"}";
-		final EsiLocation location = this.esiDataAdapter.searchLocation4Id( 30003283 );
+		final EsiLocation location = this.esiDataProvider.searchLocation4Id( 30003283 );
 		Assert.assertEquals( expected,location.toString() );
 	}
 	@Test
 	public void esiLocationBuilder() {
-		final EsiLocation location = this.esiDataAdapter.searchLocation4Id( 30003283 );
+		final EsiLocation location = this.esiDataProvider.searchLocation4Id( 30003283 );
 		Assert.assertNotNull(location);
 	}
 }

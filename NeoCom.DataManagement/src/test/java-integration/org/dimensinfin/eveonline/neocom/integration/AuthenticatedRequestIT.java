@@ -87,17 +87,8 @@ public class AuthenticatedRequestIT {
 					Request.Builder builder = chain.request().newBuilder()
 							.addHeader( "accept", "application/json" )
 							.addHeader( "User-Agent", AGENT );
-//							.addHeader( "authorization", "Bearer " + tokenStore.getAccessToken() );
 					return chain.proceed( builder.build() );
 				} )
-//				.addInterceptor( chain -> {
-//					Request.Builder builder = chain.request().newBuilder();
-//					final TokenTranslationResponse token = neoComOAuth20.fromRefresh( tokenStore.getRefreshToken() );
-//					if (null != token) {
-//						builder.addHeader( "Authorization", "Bearer " + token.getAccessToken() );
-//					}
-//					return chain.proceed( builder.build() );
-//				} )
 				.addInterceptor( chain -> {
 					okhttp3.Response r = chain.proceed( chain.request() );
 					if (r.isSuccessful()) {

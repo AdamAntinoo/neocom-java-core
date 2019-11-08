@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 import org.dimensinfin.core.domain.EEvents;
 import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventReceiver;
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
@@ -21,13 +21,13 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import static org.mockito.ArgumentMatchers.any;
 
 public class NeoComUpdaterTest {
-	private ESIDataAdapter esiDataAdapter;
+	private ESIDataProvider esiDataProvider;
 	private UpdaterUnderTest updaterUnderTest;
 
 	@Before
 	public void setUp() throws Exception {
-		this.esiDataAdapter = Mockito.mock( ESIDataAdapter.class );
-		NeoComUpdater.injectsEsiDataAdapter( this.esiDataAdapter );
+		this.esiDataProvider = Mockito.mock( ESIDataProvider.class );
+		NeoComUpdater.injectsEsiDataAdapter( this.esiDataProvider );
 		this.updaterUnderTest = new UpdaterUnderTest( new TestPayload() );
 		Assert.assertNotNull( updaterUnderTest );
 	}

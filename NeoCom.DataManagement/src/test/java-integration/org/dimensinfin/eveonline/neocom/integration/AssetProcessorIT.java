@@ -17,7 +17,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
@@ -55,7 +55,7 @@ public class AssetProcessorIT {
 	private NeoComRetrofitFactory itRetrofitFactory;
 	private LocationCatalogService itLocationService;
 	private StoreCacheManager itStoreCacheManager;
-	private ESIDataAdapter itEsiDataProvider;
+	private ESIDataProvider itEsiDataProvider;
 
 
 	private AssetProcessorIT() {}
@@ -171,7 +171,7 @@ public class AssetProcessorIT {
 				.build();
 		final List<GetCharactersCharacterIdAssets200Ok> testAssetList = this.loadAssetTestData();
 //		final Credential credential = Mockito.mock( Credential.class );
-		this.itEsiDataProvider = Mockito.mock( ESIDataAdapter.class );
+		this.itEsiDataProvider = Mockito.mock( ESIDataProvider.class );
 		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
 				.thenReturn( testAssetList );
 		this.itRetrofitFactory.add2MockList( "getCharactersCharacterIdAssets" );
@@ -199,7 +199,7 @@ public class AssetProcessorIT {
 //		Mockito.when( credential.getAccountName() ).thenReturn( "-TEST-" );
 //		Mockito.when( credential.getAccessToken() ).thenReturn( "-ACCESS-TOKEN-" );
 //		Mockito.when( credential.getRefreshToken() ).thenReturn( "-REFRESH-TOKEN-" );
-//		Mockito.when( credential.getDataSource() ).thenReturn( ESIDataAdapter.DEFAULT_ESI_SERVER );
+//		Mockito.when( credential.getDataSource() ).thenReturn( ESIDataProvider.DEFAULT_ESI_SERVER );
 //		Mockito.when( credential.getScope() ).thenReturn( "publicData" );
 //		Mockito.when( credential.getUniqueId() ).thenReturn( "tranquility/12345" );
 

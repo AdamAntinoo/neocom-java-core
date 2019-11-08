@@ -21,6 +21,7 @@ import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 import org.dimensinfin.eveonline.neocom.auth.mock.NeoComRetrofitMock;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 import retrofit2.Retrofit;
@@ -321,7 +322,7 @@ public class NeoComRetrofitFactory {
 		public NeoComRetrofitFactory build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			this.onConstruction.activateEsiServer(ESIDataAdapter.DEFAULT_ESI_SERVER);
+			this.onConstruction.activateEsiServer( ESIDataProvider.DEFAULT_ESI_SERVER);
 			return this.onConstruction;
 		}
 	}

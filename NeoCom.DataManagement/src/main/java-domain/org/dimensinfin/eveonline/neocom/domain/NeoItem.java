@@ -379,7 +379,7 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 //	 * @return a <code>Future</code> with the whole market data values.
 //	 */
 //	private Future<MarketDataSet> retrieveMarketData( final int itemId, final EMarketSide side ) {
-//		return esiDataAdapter.searchMarketData(itemId, side);
+//		return esiDataProvider.searchMarketData(itemId, side);
 //	}
 //
 //	/**

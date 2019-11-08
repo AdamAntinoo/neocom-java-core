@@ -31,6 +31,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStat
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 import io.reactivex.Maybe;
@@ -206,8 +207,8 @@ public class StoreCacheManager {
 			final Response<GetUniverseTypesTypeIdOk> itemListResponse = this.neocomRetrofitNoAuth
 					.create( UniverseApi.class )
 					.getUniverseTypesTypeId( typeId,
-							ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE,
-							ESIDataAdapter.DEFAULT_ESI_SERVER, null, null )
+							ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE,
+							ESIDataProvider.DEFAULT_ESI_SERVER, null, null )
 					.execute();
 			if (itemListResponse.isSuccessful()) {
 				logger.info( "-- [StoreCacheManager.getUniverseTypeById]> Downloading: {}-{}"
@@ -240,8 +241,8 @@ public class StoreCacheManager {
 			final Response<GetUniverseGroupsGroupIdOk> groupResponse = this.neocomRetrofitNoAuth
 					.create( UniverseApi.class )
 					.getUniverseGroupsGroupId( groupId,
-							ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE,
-							ESIDataAdapter.DEFAULT_ESI_SERVER, null, null )
+							ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE,
+							ESIDataProvider.DEFAULT_ESI_SERVER, null, null )
 					.execute();
 			if (groupResponse.isSuccessful())
 				return groupResponse.body();
@@ -270,8 +271,8 @@ public class StoreCacheManager {
 			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = this.neocomRetrofitNoAuth
 					.create( UniverseApi.class )
 					.getUniverseCategoriesCategoryId( categoryId,
-							ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE,
-							ESIDataAdapter.DEFAULT_ESI_SERVER, null, null )
+							ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE,
+							ESIDataProvider.DEFAULT_ESI_SERVER, null, null )
 					.execute();
 			if (groupResponse.isSuccessful())
 				return groupResponse.body();

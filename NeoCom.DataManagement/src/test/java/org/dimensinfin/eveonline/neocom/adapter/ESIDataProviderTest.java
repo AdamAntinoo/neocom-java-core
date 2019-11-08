@@ -11,99 +11,100 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCa
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRaces200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
+import org.dimensinfin.eveonline.neocom.support.ESIDataProviderSupportTest;
 
-public class ESIDataAdapterTest extends ESIDataAdapterSupportTest {
+public class ESIDataProviderTest extends ESIDataProviderSupportTest {
 	@Test
 	public void builder_complete() {
-		final ESIDataAdapter adapter = new ESIDataAdapter.Builder()
+		final ESIDataProvider adapter = new ESIDataProvider.Builder()
 				.withConfigurationProvider( this.configurationProvider )
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( this.locationCatalogService )
 				.build();
-		Assert.assertNotNull( this.esiDataAdapter );
+		Assert.assertNotNull( this.esiDataProvider );
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void builder_failure() {
-		final ESIDataAdapter adapter = new ESIDataAdapter.Builder()
+		final ESIDataProvider adapter = new ESIDataProvider.Builder()
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( this.locationCatalogService )
 				.build();
-		Assert.assertNotNull( this.esiDataAdapter );
+		Assert.assertNotNull( this.esiDataProvider );
 	}
 
 
 	@Test
 	public void downloadPilotFamilyData() {
-//		final GetUniverseRaces200Ok raceNotFound = this.esiDataAdapter.searchSDERace( 1 );
+//		final GetUniverseRaces200Ok raceNotFound = this.esiDataProvider.searchSDERace( 1 );
 //		Assert.assertNull( "the race should not be found.", raceNotFound );
-		this.esiDataAdapter.downloadPilotFamilyData();
-		final GetUniverseRaces200Ok race = this.esiDataAdapter.searchSDERace( 1 );
+		this.esiDataProvider.downloadPilotFamilyData();
+		final GetUniverseRaces200Ok race = this.esiDataProvider.searchSDERace( 1 );
 		Assert.assertEquals( "the race name should match.", "Caldari", race.getName() );
-		Assert.assertNotNull( this.esiDataAdapter.searchSDERace( 1 ) );
-		Assert.assertNotNull( this.esiDataAdapter.searchSDEAncestry( 1 ) );
-		Assert.assertNotNull( this.esiDataAdapter.searchSDEBloodline( 8 ) );
+		Assert.assertNotNull( this.esiDataProvider.searchSDERace( 1 ) );
+		Assert.assertNotNull( this.esiDataProvider.searchSDEAncestry( 1 ) );
+		Assert.assertNotNull( this.esiDataProvider.searchSDEBloodline( 8 ) );
 	}
 
 	@Test
 	public void searchItemGroup4Id() {
-		final GetUniverseGroupsGroupIdOk group = this.esiDataAdapter.searchItemGroup4Id( 10 );
+		final GetUniverseGroupsGroupIdOk group = this.esiDataProvider.searchItemGroup4Id( 10 );
 		Assert.assertEquals( "the group name should match.", "Stargate", group.getName() );
 	}
 
 	@Test
 	public void searchItemCategory4Id() {
-		final GetUniverseCategoriesCategoryIdOk category = this.esiDataAdapter.searchItemCategory4Id( 20 );
+		final GetUniverseCategoriesCategoryIdOk category = this.esiDataProvider.searchItemCategory4Id( 20 );
 		Assert.assertEquals( "the category name should match.", "Implant", category.getName() );
 	}
 
 	@Test
 	public void getUniverseStatus() {
-		final GetStatusOk status = this.esiDataAdapter.getUniverseStatus( "Tranquility" );
+		final GetStatusOk status = this.esiDataProvider.getUniverseStatus( "Tranquility" );
 		Assert.assertEquals( 19086, status.getPlayers().intValue() );
 	}
 
 	//	@Test
 	public void fetchItem_notcached() {
-//		final ESIDataAdapter adapter = this.setupRealAdapter();
-		final GetUniverseTypesTypeIdOk item = this.esiDataAdapter.searchEsiItem4Id( 34 );
+//		final ESIDataProvider adapter = this.setupRealAdapter();
+		final GetUniverseTypesTypeIdOk item = this.esiDataProvider.searchEsiItem4Id( 34 );
 		Assert.assertNotNull( item );
 	}
 
 //	@Test
 //	public void searchSDEMarketPriceSuccess() {
-//		final Double price = this.esiDataAdapter.searchSDEMarketPrice( 34 );
+//		final Double price = this.esiDataProvider.searchSDEMarketPrice( 34 );
 //		Assert.assertNotNull( price );
 //		Assert.assertEquals( 885055.23, price, 0.01 );
 //	}
 //
 //	@Test
 //	public void searchSDEMarketPriceNotFound() {
-//		final Double price = this.esiDataAdapter.searchSDEMarketPrice( 80 );
+//		final Double price = this.esiDataProvider.searchSDEMarketPrice( 80 );
 //		Assert.assertEquals( -1.0D, price, 0.01 );
 //	}
 
 	@Test
 	public void searchLocation4IdSuccess() {
-		EsiLocation location = this.esiDataAdapter.searchLocation4Id( 100 );
+		EsiLocation location = this.esiDataProvider.searchLocation4Id( 100 );
 		Assert.assertNotNull( location );
 		Assert.assertEquals( LocationClass.SYSTEM, location.getClassType() );
-		location = this.esiDataAdapter.searchLocation4Id( 1000L );
+		location = this.esiDataProvider.searchLocation4Id( 1000L );
 		Assert.assertNotNull( location );
 		Assert.assertEquals( LocationClass.SYSTEM, location.getClassType() );
 	}
 
 //	@Test
 //	public void getCorporationsCorporationId() {
-//		final GetCorporationsCorporationIdOk corporation = this.esiDataAdapter.getCorporationsCorporationId( 98384726 );
+//		final GetCorporationsCorporationIdOk corporation = this.esiDataProvider.getCorporationsCorporationId( 98384726 );
 //		Assert.assertNotNull( corporation );
 //		Assert.assertEquals( "Industrias Machaque", corporation.getName() );
 //	}
 
 	@Test
 	public void getCharactersCharacterId() {
-		final GetCharactersCharacterIdOk pilot = this.esiDataAdapter.getCharactersCharacterId( 93813310 );
+		final GetCharactersCharacterIdOk pilot = this.esiDataProvider.getCharactersCharacterId( 93813310 );
 		Assert.assertNotNull( pilot );
 		Assert.assertEquals( "Beth Ripley", pilot.getName() );
 	}

@@ -36,10 +36,10 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 	 */
 	@Override
 	public void onRun() {
-		if (null != esiDataAdapter) {
+		if (null != esiDataProvider) {
 			if (this.getModel().isValid()) {
 				// Count the number of assets.
-				final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataAdapter.getCharactersCharacterIdAssets(
+				final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataProvider.getCharactersCharacterIdAssets(
 						this.getModel() );
 				this.getModel().setAssetsCount( assetList.size() );
 
@@ -53,14 +53,14 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 //				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
 
 				// Get the wallet balance.
-				final Double walletBalance = esiDataAdapter.getCharactersCharacterIdWallet( this.getModel().getAccountId()
+				final Double walletBalance = esiDataProvider.getCharactersCharacterIdWallet( this.getModel().getAccountId()
 						, this.getModel().getRefreshToken(), this.getModel().getDataSource() );
 				if (walletBalance > 0.0) this.getModel().setWalletBalance( walletBalance );
 
 				// Get the race name. This needs access to the pilot.
-				final GetCharactersCharacterIdOk pilotPublicData = esiDataAdapter
+				final GetCharactersCharacterIdOk pilotPublicData = esiDataProvider
 						.getCharactersCharacterId( this.getModel().getAccountId() );
-				final GetUniverseRaces200Ok raceData = esiDataAdapter.searchSDERace( pilotPublicData.getRaceId() );
+				final GetUniverseRaces200Ok raceData = esiDataProvider.searchSDERace( pilotPublicData.getRaceId() );
 				if (null != raceData) this.getModel().setRaceName( raceData.getName() );
 			}
 			this.getModel().timeStamp(); // Mark the model as updated.

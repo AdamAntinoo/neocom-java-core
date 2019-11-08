@@ -5,19 +5,19 @@ import java.io.IOException;
 import org.junit.Before;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.LocationClass;
 
-public class ESIDataAdapterSupportTest {
+public class ESIDataProviderSupportTest {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
 	protected SupportNeoComRetrofitFactory.Builder retrofitFactoryBuilder;
-	protected ESIDataAdapter esiDataAdapter;
+	protected ESIDataProvider esiDataProvider;
 	private EsiLocation defaultLocation;
 
 	@Before
@@ -40,11 +40,11 @@ public class ESIDataAdapterSupportTest {
 		this.locationCatalogService = Mockito.mock( LocationCatalogService.class );
 //		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( defaultLocation );
 		this.retrofitFactoryBuilder = new SupportNeoComRetrofitFactory.Builder();
-		this.esiDataAdapter = new ESIDataAdapter.Builder() // Use an special configuration to call the mock server
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withLocationCatalogService( this.locationCatalogService )
+		this.esiDataProvider = new ESIDataProvider.Builder() // Use an special configuration to call the mock server
+		                                                     .withConfigurationProvider( this.configurationProvider )
+		                                                     .withFileSystemAdapter( this.fileSystemAdapter )
+		                                                     .withLocationCatalogService( this.locationCatalogService )
 //				.testingRetrofitFactory( this.retrofitFactoryBuilder ) // This is not longer required
-				.build();
+                                                             .build();
 	}
 }

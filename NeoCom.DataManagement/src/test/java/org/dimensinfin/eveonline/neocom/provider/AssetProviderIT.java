@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
 import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
@@ -50,7 +49,7 @@ public class AssetProviderIT {
 	private StoreCacheManager itStoreCacheManager;
 	private RetrofitUniverseConnector itRetrofitUniverseConnector;
 	private ESIUniverseDataProvider itEsiUniverseDataProvider;
-	private ESIDataAdapter itEsiAuthorizedDataProvider;
+	private ESIDataProvider itEsiAuthorizedDataProvider;
 	private LocationCatalogService itLocationService;
 
 	public void setUpEsiData() {
@@ -118,7 +117,7 @@ public class AssetProviderIT {
 				.withStoreCacheManager( this.itStoreCacheManager )
 				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
 				.build();
-//		this.itEsiAuthorizedDataProvider = new ESIDataAdapter.Builder()
+//		this.itEsiAuthorizedDataProvider = new ESIDataProvider.Builder()
 //				.withConfigurationProvider( this.itConfigurationProvider )
 //				.withFileSystemAdapter( this.itFileSystemAdapter )
 //				.withStoreCacheManager( this.itStoreCacheManager )
@@ -129,7 +128,7 @@ public class AssetProviderIT {
 		structureData.setOwnerId( 98035995 );
 		structureData.setSolarSystemId( 30001647 );
 		structureData.setTypeId( 35835 );
-		this.itEsiAuthorizedDataProvider = Mockito.mock( ESIDataAdapter.class );
+		this.itEsiAuthorizedDataProvider = Mockito.mock( ESIDataProvider.class );
 		Mockito.when( this.itEsiAuthorizedDataProvider.searchStructureById( Mockito.anyLong(), Mockito.any( Credential.class ) ) )
 				.thenReturn( structureData );
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );

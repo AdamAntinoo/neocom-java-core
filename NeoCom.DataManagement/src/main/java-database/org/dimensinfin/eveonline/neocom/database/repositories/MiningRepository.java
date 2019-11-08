@@ -6,7 +6,7 @@ import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
@@ -23,7 +23,7 @@ import java.util.Objects;
 public class MiningRepository {
 	protected static Logger logger = LoggerFactory.getLogger(MiningRepository.class);
 	// - C O M P O N E N T S
-	protected ESIDataAdapter esiDataAdapter;
+	protected ESIDataProvider esiDataProvider;
 	protected Dao<MiningExtraction, String> miningExtractionDao;
 
 	/**
@@ -84,7 +84,7 @@ public class MiningRepository {
 	 */
 	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
 		extraction.setResourceItem(new NeoItem(extraction.getTypeId()));
-		extraction.setSolarSystemLocation(this.esiDataAdapter.searchLocation4Id(extraction.getSolarSystemId()));
+		extraction.setSolarSystemLocation(this.esiDataProvider.searchLocation4Id(extraction.getSolarSystemId()));
 		return extraction;
 	}
 
@@ -154,8 +154,8 @@ public class MiningRepository {
 			this.onConstruction = new MiningRepository();
 		}
 
-		public MiningRepository.Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
-			this.onConstruction.esiDataAdapter = esiDataAdapter;
+		public MiningRepository.Builder withEsiDataAdapter( final ESIDataProvider esiDataProvider ) {
+			this.onConstruction.esiDataProvider = esiDataProvider;
 			return this;
 		}
 
@@ -165,7 +165,7 @@ public class MiningRepository {
 		}
 
 		public MiningRepository build() {
-			Objects.requireNonNull(this.onConstruction.esiDataAdapter);
+			Objects.requireNonNull(this.onConstruction.esiDataProvider );
 			Objects.requireNonNull(this.onConstruction.miningExtractionDao);
 			return this.onConstruction;
 		}

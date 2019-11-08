@@ -10,8 +10,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSyste
 import io.reactivex.Single;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import static org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE;
-import static org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter.DEFAULT_ESI_SERVER;
+import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE;
+import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ESI_SERVER;
 
 public class UniverseSystemFetcher implements Fetcher<GetUniverseSystemsSystemIdOk, Integer> {
 	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.

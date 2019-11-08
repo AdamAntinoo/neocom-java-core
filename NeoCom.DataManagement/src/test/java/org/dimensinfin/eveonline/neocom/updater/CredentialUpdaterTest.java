@@ -7,11 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.support.ESIDataAdapterSupportTest;
+import org.dimensinfin.eveonline.neocom.support.ESIDataProviderSupportTest;
 
-public class CredentialUpdaterTest extends ESIDataAdapterSupportTest {
+public class CredentialUpdaterTest extends ESIDataProviderSupportTest {
 	private Credential model2Test;
 	private  CredentialUpdater updater2Test;
 
@@ -66,13 +66,13 @@ public class CredentialUpdaterTest extends ESIDataAdapterSupportTest {
 				                              .withWalletBalance(6.309543632E8)
 				                              .withRaceName("Amarr")
 				                              .build();
-		final ESIDataAdapter realEsiDataAdapter = new ESIDataAdapter.Builder() // Create a ESI adapter with not retrofit mocked
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withLocationCatalogService( this.locationCatalogService )
-				.build();
+		final ESIDataProvider realEsiDataProvider = new ESIDataProvider.Builder() // Create a ESI adapter with not retrofit mocked
+		                                                                          .withConfigurationProvider( this.configurationProvider )
+		                                                                          .withFileSystemAdapter( this.fileSystemAdapter )
+		                                                                          .withLocationCatalogService( this.locationCatalogService )
+		                                                                          .build();
 //		NeoComRetrofitFactory.add2MockList("getCharactersCharacterIdAssets"); // Use ESI call deviation to mock service.
-		NeoComUpdater.injectsEsiDataAdapter(realEsiDataAdapter);
+		NeoComUpdater.injectsEsiDataAdapter( realEsiDataProvider );
 		final CredentialUpdater updater = new CredentialUpdater(credential);
 		updater.onRun();
 		Assert.assertEquals("Check the number of assets.", 5, updater.getModel().getAssetsCount());

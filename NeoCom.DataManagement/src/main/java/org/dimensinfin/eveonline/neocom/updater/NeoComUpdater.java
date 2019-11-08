@@ -15,7 +15,7 @@ import org.dimensinfin.core.domain.EventEmitter;
 import org.dimensinfin.core.domain.IntercommunicationEvent;
 import org.dimensinfin.core.interfaces.IEventEmitter;
 import org.dimensinfin.core.interfaces.IEventReceiver;
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.UpdaterJobManager;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
 
@@ -23,10 +23,10 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	protected static final Logger logger = LoggerFactory.getLogger( NeoComUpdater.class );
 
 	// - C O M P O N E N T S
-	protected static ESIDataAdapter esiDataAdapter;
+	protected static ESIDataProvider esiDataProvider;
 
-	public static void injectsEsiDataAdapter( final ESIDataAdapter newesiDataAdapter ) {
-		esiDataAdapter = newesiDataAdapter;
+	public static void injectsEsiDataAdapter( final ESIDataProvider newesiDataProvider ) {
+		esiDataProvider = newesiDataProvider;
 	}
 
 	private M model;
@@ -69,7 +69,7 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	public abstract void onRun();
 
 	public void onPrepare() {
-		Objects.requireNonNull(esiDataAdapter);
+		Objects.requireNonNull( esiDataProvider );
 		this.status = JobStatus.RUNNING;
 		this.startTime = DateTime.now();
 	}

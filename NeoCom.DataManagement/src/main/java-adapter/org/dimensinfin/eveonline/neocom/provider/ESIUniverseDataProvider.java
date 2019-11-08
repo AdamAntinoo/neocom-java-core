@@ -38,8 +38,8 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import static org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter.DEFAULT_ACCEPT_LANGUAGE;
-import static org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter.DEFAULT_ESI_SERVER;
+import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE;
+import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ESI_SERVER;
 
 public class ESIUniverseDataProvider {
 	private static final Logger logger = LoggerFactory.getLogger( ESIUniverseDataProvider.class );
@@ -156,7 +156,7 @@ public class ESIUniverseDataProvider {
 
 	// - S D E   I N T E R N A L   D A T A
 	public double searchSDEMarketPrice( final int typeId ) {
-		logger.info( "-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId );
+		logger.info( "-- [ESIDataProvider.searchSDEMarketPrice]> price for: {}", typeId );
 		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
 		else return -1.0;
 	}
@@ -164,7 +164,7 @@ public class ESIUniverseDataProvider {
 	private void downloadItemPrices() {
 		// Initialize and process the list of market process form the ESI full market data.
 		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
-		logger.info( ">> [ESIDataAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
+		logger.info( ">> [ESIDataProvider.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
 		for (GetMarketsPrices200Ok price : marketPrices) {
 			marketDefaultPrices.put( price.getTypeId(), price );
 		}
@@ -218,7 +218,7 @@ public class ESIUniverseDataProvider {
 
 	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
 	public GetCorporationsCorporationIdOk getCorporationsCorporationId( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
+		logger.info( ">> [ESIDataProvider.getCorporationsCorporationId]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
@@ -235,7 +235,7 @@ public class ESIUniverseDataProvider {
 			if (corporationResponse.isSuccessful())
 				return corporationResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 //		} finally {
 //			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -244,7 +244,7 @@ public class ESIUniverseDataProvider {
 	}
 
 	public GetCorporationsCorporationIdIconsOk getCorporationsCorporationIdIcons( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationIdIcons]" );
+		logger.info( ">> [ESIDataProvider.getCorporationsCorporationIdIcons]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
@@ -261,7 +261,7 @@ public class ESIUniverseDataProvider {
 			if (corporationResponse.isSuccessful())
 				return corporationResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCorporationsCorporationIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 //		} finally {
 //			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -271,7 +271,7 @@ public class ESIUniverseDataProvider {
 
 	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
 	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
+		logger.info( ">> [ESIDataProvider.getCorporationsCorporationId]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
@@ -289,7 +289,7 @@ public class ESIUniverseDataProvider {
 			if (allianceResponse.isSuccessful())
 				return allianceResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 //		} finally {
 //			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -298,7 +298,7 @@ public class ESIUniverseDataProvider {
 	}
 
 	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
-		logger.info( ">> [ESIDataAdapter.getAlliancesAllianceIdIcons]" );
+		logger.info( ">> [ESIDataProvider.getAlliancesAllianceIdIcons]" );
 		try {
 			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitUniverseConnector.getRetrofit()
 					.create( AllianceApi.class )
@@ -309,7 +309,7 @@ public class ESIUniverseDataProvider {
 			if (allianceResponse.isSuccessful())
 				return allianceResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 		}
 		return null;

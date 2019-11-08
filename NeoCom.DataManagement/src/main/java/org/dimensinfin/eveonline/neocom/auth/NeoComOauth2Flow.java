@@ -53,7 +53,7 @@ public class NeoComOauth2Flow {
 ////		this.validateStateMatch( validateAuthorizationTokenRequest.getState() );
 //
 //		// Create the authentication process data store
-////		String dataSource = ESIDataAdapter.DEFAULT_ESI_SERVER; // Set the default server identifier.
+////		String dataSource = ESIDataProvider.DEFAULT_ESI_SERVER; // Set the default server identifier.
 ////		if (validateAuthorizationTokenRequest.getDataSource().isPresent())
 ////			dataSource = validateAuthorizationTokenRequest.getDataSource().get();
 ////		final TokenVerification tokenVerificationStore = new TokenVerification()
@@ -66,7 +66,7 @@ public class NeoComOauth2Flow {
 ////		tokenVerificationStore.setTokenTranslationResponse( this.getTokenTranslationResponse( tokenVerificationStore ) );
 //		// Create a security verification instance.
 ////		tokenVerificationStore.setVerifyCharacterResponse( this.getVerifyCharacterResponse( tokenVerificationStore ) );
-////		final GetCharactersCharacterIdOk pilotData = this.esiDataAdapter.getCharactersCharacterId(
+////		final GetCharactersCharacterIdOk pilotData = this.esiDataProvider.getCharactersCharacterId(
 ////				tokenVerificationStore.getAccountIdentifier() );
 //
 ////		logger.info( "-- [AuthorizationService.validateAuthorizationToken]> Creating Credential..." );

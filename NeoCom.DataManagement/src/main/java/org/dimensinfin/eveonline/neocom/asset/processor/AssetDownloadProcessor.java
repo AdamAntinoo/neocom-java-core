@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -27,7 +27,7 @@ public class AssetDownloadProcessor extends Job {
 	private Credential credential;
 	private AssetRepository assetRepository;
 	private GetCharactersCharacterIdAsset2NeoAssetConverter neoAssetConverter;
-	private ESIDataAdapter esiDataAdapter;
+	private ESIDataProvider esiDataProvider;
 	private LocationCatalogService locationCatalogService;
 	// - I N T E R N A L   W O R K   F I E L D S
 	private final Map<Long, GetCharactersCharacterIdAssets200Ok> assetMap = new HashMap<>();
@@ -72,7 +72,7 @@ public class AssetDownloadProcessor extends Job {
 	 */
 	public boolean downloadPilotAssetsESI() throws SQLException {
 		NeoComLogger.enter( ">> [AssetsManager.downloadPilotAssetsESI]" );
-		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataAdapter.getCharactersCharacterIdAssets(
+		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider.getCharactersCharacterIdAssets(
 				credential);
 		if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
 		this.createAssetMap( assetOkList ); // Map of asset for easy lookup.
@@ -169,9 +169,9 @@ public class AssetDownloadProcessor extends Job {
 			this.getActual().credential = credential;
 			return this;
 		}
-		public AssetDownloadProcessor.Builder withEsiDataAdapter( final ESIDataAdapter esiDataAdapter ) {
-			Objects.requireNonNull( esiDataAdapter );
-			this.onConstruction.esiDataAdapter = esiDataAdapter;
+		public AssetDownloadProcessor.Builder withEsiDataAdapter( final ESIDataProvider esiDataProvider ) {
+			Objects.requireNonNull( esiDataProvider );
+			this.onConstruction.esiDataProvider = esiDataProvider;
 			return this;
 		}
 		public AssetDownloadProcessor.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
@@ -195,7 +195,7 @@ public class AssetDownloadProcessor extends Job {
 		public AssetDownloadProcessor build() {
 			final AssetDownloadProcessor instance = super.build();
 			Objects.requireNonNull( instance.credential );
-			Objects.requireNonNull( instance.esiDataAdapter );
+			Objects.requireNonNull( instance.esiDataProvider );
 			Objects.requireNonNull( instance.locationCatalogService );
 			Objects.requireNonNull( instance.assetRepository );
 			Objects.requireNonNull( instance.neoAssetConverter );

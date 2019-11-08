@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.adapter;
+package org.dimensinfin.eveonline.neocom.provider;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +12,10 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
+import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
@@ -42,7 +46,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSc
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
 import retrofit2.Response;
@@ -59,10 +62,10 @@ import retrofit2.Response;
  * persisted on disk.
  */
 @NeoComAdapter
-public class ESIDataAdapter {
+public class ESIDataProvider {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
-	protected static final Logger logger = LoggerFactory.getLogger( ESIDataAdapter.class );
+	protected static final Logger logger = LoggerFactory.getLogger( ESIDataProvider.class );
 	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 100 );
@@ -77,7 +80,7 @@ public class ESIDataAdapter {
 	protected StoreCacheManager storeCacheManager;
 
 	// - C O N S T R U C T O R S
-	protected ESIDataAdapter() {}
+	protected ESIDataProvider() {}
 
 	/**
 	 * Allows the selection of the ESI server. Changes the retrofit factory to discard current retrofit instances and create
@@ -104,7 +107,7 @@ public class ESIDataAdapter {
 //	public void downloadItemPrices() {
 //		// Initialize and process the list of market process form the ESI full market data.
 //		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
-//		logger.info( ">> [ESIDataAdapter.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
+//		logger.info( ">> [ESIDataProvider.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
 //		for (GetMarketsPrices200Ok price : marketPrices) {
 //			marketDefaultPrices.put( price.getTypeId(), price );
 //		}
@@ -113,19 +116,19 @@ public class ESIDataAdapter {
 	public void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( DEFAULT_ESI_SERVER );
-		logger.info( "-- [ESIDataAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
+		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
 		for (GetUniverseRaces200Ok race : racesList) {
 			racesCache.put( race.getRaceId(), race );
 		}
 		final List<GetUniverseAncestries200Ok> ancestriesList = this.getUniverseAncestries(
 				DEFAULT_ESI_SERVER );
-		logger.info( "-- [ESIDataAdapter.downloadPilotFamilyData]> Download ancestries: {} items", ancestriesList.size() );
+		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download ancestries: {} items", ancestriesList.size() );
 		for (GetUniverseAncestries200Ok ancestry : ancestriesList) {
 			ancestriesCache.put( ancestry.getId(), ancestry );
 		}
 		final List<GetUniverseBloodlines200Ok> bloodLineList = this.getUniverseBloodlines(
 				DEFAULT_ESI_SERVER );
-		logger.info( "-- [ESIDataAdapter.downloadPilotFamilyData]> Download blood lines: {} items", bloodLineList.size() );
+		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download blood lines: {} items", bloodLineList.size() );
 		for (GetUniverseBloodlines200Ok bloodLine : bloodLineList) {
 			bloodLinesCache.put( bloodLine.getBloodlineId(), bloodLine );
 		}
@@ -148,18 +151,18 @@ public class ESIDataAdapter {
 				return universeResponse.body();
 			} else return null;
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 			return null;
 		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
 			rte.printStackTrace();
 			return null;
 		}
 //		return null;
 	}
 //	public double searchSDEMarketPrice( final int typeId ) {
-//		logger.info( "-- [ESIDataAdapter.searchSDEMarketPrice]> price for: {}", typeId );
+//		logger.info( "-- [ESIDataProvider.searchSDEMarketPrice]> price for: {}", typeId );
 ////		if (0 == marketDefaultPrices.size()) this.downloadItemPrices();
 //		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
 //		else return -1.0;
@@ -170,13 +173,13 @@ public class ESIDataAdapter {
 	}
 
 	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
-		logger.info( "-- [ESIDataAdapter.searchItemGroup4Id]> targetGroupId: {}", groupId );
+		logger.info( "-- [ESIDataProvider.searchItemGroup4Id]> targetGroupId: {}", groupId );
 		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
 	}
 
 	@TimeElapsed
 	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
-		logger.info( "-- [ESIDataAdapter.searchItemCategory4Id]> categoryId: {}", categoryId );
+		logger.info( "-- [ESIDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
 		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
 	}
 
@@ -215,7 +218,7 @@ public class ESIDataAdapter {
 //		if (racesCache.size() < 1) {
 //			// Download race, bloodline and other pilot data.
 //			final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( GlobalDataManager.TRANQUILITY_DATASOURCE );
-//			logger.info( ">> [ESIDataAdapter.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
+//			logger.info( ">> [ESIDataProvider.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
 //			for (GetUniverseRaces200Ok race : racesList) {
 //				racesCache.put( race.getRaceId(), race );
 //			}
@@ -225,7 +228,7 @@ public class ESIDataAdapter {
 	// - U N I V E R S E
 //	@TimeElapsed
 	public GetStatusOk getUniverseStatus( final String server ) {
-		//		logger.info(">> [ESIDataAdapter.getUniverseStatus]");
+		//		logger.info(">> [ESIDataProvider.getUniverseStatus]");
 		// Store the response at the cache or if there is a network failure return the last access if available
 		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
 		//		final Chrono accessFullTime = new Chrono();
@@ -244,7 +247,7 @@ public class ESIDataAdapter {
 		} catch (IOException ioe) {
 //			ioe.printStackTrace();
 			//		} finally {
-			//			logger.info("<< [ESIDataAdapter.getUniverseStatus]> [TIMING] Full elapsed: {}"
+			//			logger.info("<< [ESIDataProvider.getUniverseStatus]> [TIMING] Full elapsed: {}"
 			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
 		return null;
@@ -314,7 +317,7 @@ public class ESIDataAdapter {
 //	}
 
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
-		logger.info( ">> [ESIDataAdapter.getUniverseRaces]" );
+		logger.info( ">> [ESIDataProvider.getUniverseRaces]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit()
@@ -327,14 +330,14 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-//			logger.info("<< [ESIDataAdapter.getUniverseRaces]> [TIMING] Full elapsed: {}",
+//			logger.info("<< [ESIDataProvider.getUniverseRaces]> [TIMING] Full elapsed: {}",
 //			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
 	private List<GetUniverseAncestries200Ok> getUniverseAncestries( final String datasource ) {
-		logger.info( ">> [ESIDataAdapter.getUniverseAncestries]" );
+		logger.info( ">> [ESIDataProvider.getUniverseAncestries]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit()
@@ -348,14 +351,14 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-//			logger.info("<< [ESIDataAdapter.getUniverseAncestries]> [TIMING] Full elapsed: {}",
+//			logger.info("<< [ESIDataProvider.getUniverseAncestries]> [TIMING] Full elapsed: {}",
 //			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
 	}
 
 	private List<GetUniverseBloodlines200Ok> getUniverseBloodlines( final String datasource ) {
-		logger.info( ">> [ESIDataAdapter.getUniverseBloodlines]" );
+		logger.info( ">> [ESIDataProvider.getUniverseBloodlines]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
 			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = retrofitFactory.accessNoAuthRetrofit().create(
@@ -369,7 +372,7 @@ public class ESIDataAdapter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-//			logger.info("<< [ESIDataAdapter.getUniverseBloodlines]> [TIMING] Full elapsed: {}",
+//			logger.info("<< [ESIDataProvider.getUniverseBloodlines]> [TIMING] Full elapsed: {}",
 //			            accessFullTime.printElapsed(Chrono.ChronoOptions.SHOWMILLIS));
 		}
 		return new ArrayList<>();
@@ -396,7 +399,7 @@ public class ESIDataAdapter {
 
 //	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
 //	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
-//		logger.info( ">> [ESIDataAdapter.getCorporationsCorporationId]" );
+//		logger.info( ">> [ESIDataProvider.getCorporationsCorporationId]" );
 ////		final Chrono accessFullTime = new Chrono();
 //		try {
 //			// Set the refresh to be used during the request.
@@ -414,7 +417,7 @@ public class ESIDataAdapter {
 //			if (allianceResponse.isSuccessful())
 //				return allianceResponse.body();
 //		} catch (IOException ioe) {
-//			logger.error( "EX [ESIDataAdapter.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+//			logger.error( "EX [ESIDataProvider.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
 //			ioe.printStackTrace();
 ////		} finally {
 ////			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
@@ -423,7 +426,7 @@ public class ESIDataAdapter {
 //	}
 //
 //	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
-//		logger.info( ">> [ESIDataAdapter.getAlliancesAllianceIdIcons]" );
+//		logger.info( ">> [ESIDataProvider.getAlliancesAllianceIdIcons]" );
 //		try {
 //			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
 //					.create( AllianceApi.class )
@@ -434,7 +437,7 @@ public class ESIDataAdapter {
 //			if (allianceResponse.isSuccessful())
 //				return allianceResponse.body();
 //		} catch (IOException ioe) {
-//			logger.error( "EX [ESIDataAdapter.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+//			logger.error( "EX [ESIDataProvider.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
 //			ioe.printStackTrace();
 //		}
 //		return null;
@@ -443,7 +446,7 @@ public class ESIDataAdapter {
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
 	@TimeElapsed
 	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier ) {
-		logger.info( "-- [ESIDataAdapter.getCharactersCharacterId]> Character identifier: {}", identifier );
+		logger.info( "-- [ESIDataProvider.getCharactersCharacterId]> Character identifier: {}", identifier );
 		try {
 			final Response<GetCharactersCharacterIdOk> characterResponse = this.retrofitFactory.accessNoAuthRetrofit()
 					.create( CharacterApi.class )
@@ -453,10 +456,10 @@ public class ESIDataAdapter {
 					.execute();
 			if (characterResponse.isSuccessful()) return characterResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterId]> [EXCEPTION]: {}", rte.getMessage() );
 			rte.printStackTrace();
 		}
 		return null;
@@ -490,12 +493,12 @@ public class ESIDataAdapter {
 				return planetaryApiResponse.body();
 			} else return new ArrayList<>();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 			// Return cached response if available
 			return new ArrayList<>();
 		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
 			rte.printStackTrace();
 			// Return cached response if available
 			return new ArrayList<>();
@@ -534,12 +537,12 @@ public class ESIDataAdapter {
 				return planetaryApiResponse.body();
 			} else return null;
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 			// Return cached response if available
 			return null;
 		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataAdapter.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
+			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
 			rte.printStackTrace();
 			// Return cached response if available
 			return null;
@@ -553,7 +556,7 @@ public class ESIDataAdapter {
 	// - P L A N E T A R Y   I N T E R A C T I O N   P U B L I C   I N F O R M A T I O N
 	@TimeElapsed
 	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
-		logger.info( ">> [ESIDataAdapter.getUniversePlanetarySchematicsById]" );
+		logger.info( ">> [ESIDataProvider.getUniversePlanetarySchematicsById]" );
 		final DateTime startTimePoint = DateTime.now();
 		try {
 			// Create the request to be returned so it can be called.
@@ -572,7 +575,7 @@ public class ESIDataAdapter {
 		} catch (RuntimeException runtime) {
 			runtime.printStackTrace();
 		} finally {
-			logger.info( "<< [ESIDataAdapter.getUniverseMarketsPrices]> [TIMING] Full elapsed: {}"
+			logger.info( "<< [ESIDataProvider.getUniverseMarketsPrices]> [TIMING] Full elapsed: {}"
 					, new Duration( startTimePoint, DateTime.now() ).getMillis() + "ms" );
 		}
 		return null;
@@ -598,7 +601,7 @@ public class ESIDataAdapter {
 	@TimeElapsed
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
 			, final String refreshToken, final String server ) {
-		logger.info( ">> [ESIDataAdapter.getCharactersCharacterIdMining]" );
+		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdMining]" );
 		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
@@ -635,7 +638,7 @@ public class ESIDataAdapter {
 			// Check if the problem is a connection reset.
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
 				// Recreate the retrofit.
-				logger.info( "EX [ESIDataAdapter.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage() );
+				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage() );
 				this.retrofitFactory.reset();
 				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
@@ -647,7 +650,7 @@ public class ESIDataAdapter {
 
 	// - C H A R A C T E R
 	public Double getCharactersCharacterIdWallet( final int identifier, final String refreshToken, final String server ) {
-		logger.info( ">> [ESIDataAdapter.getCharactersCharacterIdWallet]" );
+		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdWallet]" );
 		try {
 			// Set the refresh to be used during the request.
 			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
@@ -665,11 +668,11 @@ public class ESIDataAdapter {
 		} catch (RuntimeException rtex) {
 			rtex.printStackTrace();
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
-				logger.info( "EX [ESIDataAdapter.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
+				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
 				this.retrofitFactory.reset();
 			}
 			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
-				logger.info( "EX [ESIDataAdapter.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
+				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
 				this.retrofitFactory.reset();
 			}
 		}
@@ -681,7 +684,7 @@ public class ESIDataAdapter {
 			/*final int identifier
 			, final String refreshToken
 			, final String server */ ) {
-		logger.info( ">> [ESIDataAdapter.getCharactersCharacterIdAssets]" );
+		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdAssets]" );
 		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
@@ -714,11 +717,11 @@ public class ESIDataAdapter {
 		} catch (RuntimeException rtex) {
 			// Check if the problem is a connection reset.
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
-				logger.info( "EX [ESIDataAdapter.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
+				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
 				this.retrofitFactory.reset();
 			}
 			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
-				logger.info( "EX [ESIDataAdapter.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
+				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
 				this.retrofitFactory.reset();
 			}
 		}
@@ -728,7 +731,7 @@ public class ESIDataAdapter {
 	public List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final int identifier
 			, final String refreshToken
 			, final String server ) {
-		logger.info( ">> [ESIDataAdapter.getCharactersCharacterIdBlueprints]" );
+		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdBlueprints]" );
 		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>( 1000 );
 		try {
@@ -802,7 +805,7 @@ public class ESIDataAdapter {
 //			if (!itemListResponse.isSuccessful()) {
 //				return null;
 //			} else {
-//				logger.info( "-- [ESIDataAdapter.getUniverseTypeById]> Downloading: {}-{}"
+//				logger.info( "-- [ESIDataProvider.getUniverseTypeById]> Downloading: {}-{}"
 //						, itemListResponse.body().getTypeId()
 //						, itemListResponse.body().getName() );
 //				return itemListResponse.body();
@@ -894,48 +897,48 @@ public class ESIDataAdapter {
 
 	// - B U I L D E R
 	public static class Builder {
-		private ESIDataAdapter onConstruction;
+		private ESIDataProvider onConstruction;
 		private NeoComRetrofitFactory.Builder retrofitFactoryBuilder = new NeoComRetrofitFactory.Builder();
 
 		public Builder() {
-			this.onConstruction = new ESIDataAdapter();
+			this.onConstruction = new ESIDataProvider();
 		}
 
-		public Builder( final ESIDataAdapter preInstance ) {
+		public Builder( final ESIDataProvider preInstance ) {
 			if (null != preInstance) this.onConstruction = preInstance;
-			else this.onConstruction = new ESIDataAdapter();
+			else this.onConstruction = new ESIDataProvider();
 		}
 
-		public ESIDataAdapter.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public ESIDataProvider.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}
 
-		public ESIDataAdapter.Builder withFileSystemAdapter( final IFileSystem fileSystemAdapter ) {
+		public ESIDataProvider.Builder withFileSystemAdapter( final IFileSystem fileSystemAdapter ) {
 			Objects.requireNonNull( fileSystemAdapter );
 			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
 			return this;
 		}
 
-		public ESIDataAdapter.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
+		public ESIDataProvider.Builder withLocationCatalogService( final LocationCatalogService locationCatalogService ) {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
 		}
 
-		public ESIDataAdapter.Builder withStoreCacheManager( final StoreCacheManager storeCacheManager ) {
+		public ESIDataProvider.Builder withStoreCacheManager( final StoreCacheManager storeCacheManager ) {
 			Objects.requireNonNull( storeCacheManager );
 			this.onConstruction.storeCacheManager = storeCacheManager;
 			return this;
 		}
 
-//		public ESIDataAdapter.Builder testingRetrofitFactory( final NeoComRetrofitFactory.Builder retrofitFactoryBuilder ) {
+//		public ESIDataProvider.Builder testingRetrofitFactory( final NeoComRetrofitFactory.Builder retrofitFactoryBuilder ) {
 //			this.retrofitFactoryBuilder = retrofitFactoryBuilder;
 //			return this;
 //		}
 
-		public ESIDataAdapter build() {
+		public ESIDataProvider build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.locationCatalogService );
@@ -956,7 +959,7 @@ public class ESIDataAdapter {
 //			NeoItem.injectEsiUniverseDataAdapter( this.onConstruction );
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );
 			// TODO - Add this when the market data is back present.
-//			MarketDataSet.injectEsiDataAdapter(this.esiDataAdapter);
+//			MarketDataSet.injectEsiDataAdapter(this.esiDataProvider);
 
 			// Preload the esi caches with SDE data.
 //			this.onConstruction.downloadItemPrices();

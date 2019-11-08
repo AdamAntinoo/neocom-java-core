@@ -32,6 +32,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
@@ -291,7 +292,7 @@ public class LocationCatalogService {
 		final int identifier = credential.getAccountId();
 		try {
 			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = ESIDataAdapter.DEFAULT_ESI_SERVER;
+			String datasource = ESIDataProvider.DEFAULT_ESI_SERVER;
 			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
 					.accessESIAuthRetrofit()
 					.create( UniverseApi.class )
