@@ -58,7 +58,7 @@ public class AuthenticatedRequestIT {
 	@Test
 	void createAuthenticatedClient() throws IOException {
 		this.setupEnvironment();
-		this.setupAuthentication( "TM-6IwiuTkKqHnzm1Cdtyg" );
+		this.setupAuthentication( "0Cw8DQXo_0C3OgPYQPMnHg" );
 		final TokenVerification tokenStore = this.flow.onTranslationStep();
 		final Long structureId = 1031243921503L;
 		final String esiDataServerLocation = "https://esi.evetech.net/latest/";

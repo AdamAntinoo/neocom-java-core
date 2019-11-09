@@ -73,8 +73,9 @@ public class NeoComOauth2Flow {
 		String peck = Base64.getEncoder().encodeToString( peckString.getBytes() ).replaceAll( "\n", "" );
 		store.setPeck( peck );
 		final Call<TokenTranslationResponse> request = serviceGetAccessToken.getAccessToken(
-				"Basic " + peck, authorizationContentType,
+				authorizationContentType,
 				esiServerLoginUrl,
+				"Basic " + peck,
 				tokenRequestBody
 		);
 		// Getting the request response to be stored if valid.

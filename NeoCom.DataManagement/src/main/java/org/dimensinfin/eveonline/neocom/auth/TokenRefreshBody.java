@@ -2,27 +2,19 @@ package org.dimensinfin.eveonline.neocom.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TokenRequestBody {
+public class TokenRefreshBody {
 	@JsonProperty("grant_type")
-	public String grant_type = "authorization_code";
+	public String grant_type = "refresh_token";
 	@JsonProperty("code")
-	public String code;
+	public String refresh_token;
 
 	// - C O N S T R U C T O R S
-	public TokenRequestBody() {
+	public TokenRefreshBody() {
 		super();
 	}
 
-	public String getGrant_type() {
-		return "authorization_code";
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public TokenRequestBody setCode( final String code ) {
-		this.code = code;
+	public TokenRefreshBody setRefreshToken( final String refresh_token ) {
+		this.refresh_token = refresh_token;
 		return this;
 	}
 }

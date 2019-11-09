@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,7 +19,7 @@ public class HttpClientFactory {
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private Credential credential;
-	private PostRefreshAccessToken refreshService;
+	private Retrofit refreshRetrofit;
 	private OkHttpClient httpClient;
 
 	private HttpClientFactory() {}
@@ -33,13 +34,16 @@ public class HttpClientFactory {
 				"P.esi.tranquility.authorization.clientid" );
 		final String authorizationSecretKey = this.configurationProvider.getResourceString(
 				"P.esi.tranquility.authorization.secretkey" );
-		this.refreshService = new Retrofit.Builder()
+		final String peckString = authorizationClientid + ":" + authorizationSecretKey;
+		String peck = Base64.getEncoder().encodeToString( peckString.getBytes() )
+				.replaceAll( "\n", "" );
+		this.refreshRetrofit = new Retrofit.Builder()
 				.baseUrl( esiDataServerLocation )
 				.addConverterFactory( GSON_CONVERTER_FACTORY )
-				.build()
-				.create( PostRefreshAccessToken.class );
+				.build();
 		this.httpClient = new OkHttpClient.Builder()
 				.addInterceptor( chain -> { // Add the headers
+					NeoComLogger.info( "Retrofit processing request. {}", chain.request().toString() );
 					Request.Builder requestBuilder = chain.request().newBuilder()
 							.addHeader( "accept", "application/json" )
 							.addHeader( "User-Agent", AGENT )
@@ -53,23 +57,30 @@ public class HttpClientFactory {
 					}
 					if ((response.code() == 403) ||
 							(response.body().string().contains( "expired" ))) { // Current token expired. Get a fresh one.
-						final String peckString = authorizationClientid + ":" + authorizationSecretKey;
-						String peck = Base64.getEncoder().encodeToString( peckString.getBytes() )
-								.replaceAll( "\n", "" );
-						final retrofit2.Response<TokenTranslationResponse> refreshResponse = this.refreshService
+						NeoComLogger.info( "Authenticated request failed. {}", response.body().string() );
+						NeoComLogger.info( "Response code: {} ", response.code() + "" );
+						NeoComLogger.info( "Refresh token: {} ", credential.getRefreshToken() );
+						final TokenRefreshBody tokenRefreshBody = new TokenRefreshBody()
+								.setRefreshToken( this.credential.getAccessToken() );
+						final retrofit2.Response<TokenTranslationResponse> refreshResponse = this.refreshRetrofit
+								.create( PostRefreshAccessToken.class )
 								.getNewAccessToken( ESIDataProvider.DEFAULT_CONTENT_TYPE,
-										ESI_HOST, "Basic " + peck, credential.getRefreshToken() )
+										ESI_HOST,
+										"Basic " + peck,
+										authorizationClientid,
+										credential.getRefreshToken(),
+										tokenRefreshBody)
 								.execute();
 						if (refreshResponse.isSuccessful()) { // Retry the connection with the new token
 							final TokenTranslationResponse refreshData = refreshResponse.body();
+							NeoComLogger.info( "Refresh data. {}", refreshData.toString() );
 							this.credential.setAccessToken( refreshData.getAccessToken() );
 							Request.Builder requestBuilder = chain.request().newBuilder()
 									.removeHeader( "Authorization" )
-//									.addHeader( "accept", "application/json" )
-//									.addHeader( "User-Agent", AGENT )
 									.addHeader( "Authorization", "Bearer " + this.credential.getAccessToken() );
 							return chain.proceed( requestBuilder.build() );
-						}
+						} else
+							NeoComLogger.info( "Refresh operation failure. {}", refreshResponse.errorBody().string() );
 					}
 					return response;
 				} )
