@@ -54,7 +54,7 @@ public class NeoComLogger {
 
 	private static String generateCaller() {
 		StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
-		final StackTraceElement element = traceElements[3];
+		final StackTraceElement element = traceElements[4];
 		return element.getClassName().substring( element.getClassName().lastIndexOf( '.' ) ) + "." +
 				element.getMethodName();
 	}

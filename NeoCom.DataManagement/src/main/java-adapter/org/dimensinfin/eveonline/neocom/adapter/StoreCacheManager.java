@@ -34,6 +34,7 @@ import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -60,7 +61,7 @@ public class StoreCacheManager {
 	// - C O M P O N E N T S
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
-	protected RetrofitUniverseConnector retrofitUniverseConnector;
+	protected RetrofitFactory retrofitFactory;
 
 	// - C A C H E S
 	private Store<GetUniverseTypesTypeIdOk, Integer> esiItemStore;
@@ -94,9 +95,10 @@ public class StoreCacheManager {
 			final File cachedir = new File( this.fileSystemAdapter.accessResource4Path(
 					this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
 							"/" + this.configurationProvider.getResourceString( "P.cache.directory.store.esiitem" ) ) );
-			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER, 2 * StorageUnits.GIGABYTES );
+			this.esiItemPersistentStore = DiskLruCache.open( cachedir, CACHE_VERSION, CACHE_COUNTER,
+					StorageUnits.GIGABYTES.toBytes( 2 ) );
 			this.esiItemStore = StoreBuilder.<Integer, GetUniverseTypesTypeIdOk>key()
-					.fetcher( new UniverseTypeFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
+					.fetcher( new UniverseTypeFetcher( this.retrofitFactory.accessUniverseConnector() ) )
 					.persister( new EsiItemPersister( esiItemPersistentStore ) )
 					.networkBeforeStale()
 					.open();
@@ -108,19 +110,19 @@ public class StoreCacheManager {
 
 	private void createItemGroupStore() {
 		this.itemGroupStore = StoreBuilder.<Integer, GetUniverseGroupsGroupIdOk>key()
-				.fetcher( new UniverseItemGroupFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
+				.fetcher( new UniverseItemGroupFetcher( this.retrofitFactory.accessUniverseConnector() ) )
 				.open();
 	}
 
 	private void createItemCategoryStore() {
 		this.categoryStore = StoreBuilder.<Integer, GetUniverseCategoriesCategoryIdOk>key()
-				.fetcher( new UniverseItemCategoryFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
+				.fetcher( new UniverseItemCategoryFetcher( this.retrofitFactory.accessUniverseConnector() ) )
 				.open();
 	}
 
 	private void createSystemsStore() {
 		this.systemsStoreCache = StoreBuilder.<Integer, GetUniverseSystemsSystemIdOk>key()
-				.fetcher( new UniverseSystemFetcher( this.retrofitUniverseConnector.getRetrofit() ) )
+				.fetcher( new UniverseSystemFetcher( this.retrofitFactory.accessUniverseConnector() ) )
 				.open();
 	}
 
@@ -169,16 +171,16 @@ public class StoreCacheManager {
 			return this;
 		}
 
-		public StoreCacheManager.Builder withRetrofitUniverseConnector( final RetrofitUniverseConnector retrofitUniverseConnector ) {
-			Objects.requireNonNull( retrofitUniverseConnector );
-			this.onConstruction.retrofitUniverseConnector = retrofitUniverseConnector;
+		public StoreCacheManager.Builder withRetrofitFactory( final RetrofitFactory retrofitFactory ) {
+			Objects.requireNonNull( retrofitFactory );
+			this.onConstruction.retrofitFactory = retrofitFactory;
 			return this;
 		}
 
 		public StoreCacheManager build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			Objects.requireNonNull( this.onConstruction.retrofitUniverseConnector );
+			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 			this.onConstruction.createStores(); // Run the initialisation code.
 			return this.onConstruction;
 		}

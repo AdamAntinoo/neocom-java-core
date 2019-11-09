@@ -13,8 +13,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 
 /**
@@ -40,9 +40,9 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	@DatabaseField(id = true)
 	private String id = "YYYY-MM-DD:HH-SYSTEMID-TYPEID-OWNERID";
 	@DatabaseField
-	private int typeId = -1;
+	private Integer typeId;
 	@DatabaseField
-	private int solarSystemId = -2;
+	private Integer solarSystemId;
 	@DatabaseField
 	private int quantity = 0;
 	@DatabaseField
@@ -52,10 +52,10 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 	@DatabaseField
 	private int extractionHour = 24;
 	@DatabaseField(index = true)
-	private long ownerId = -1;
+	private Integer ownerId;
 
 	private transient NeoItem resourceItem;
-	private transient EsiLocation solarSystemLocation;
+	private transient SpaceSystem solarSystemLocation;
 	// - C O N S T R U C T O R S
 	private MiningExtraction() {
 		super();
@@ -144,18 +144,19 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 		return this;
 	}
 
-	public int getSolarSystemId() {
+	public Integer getSolarSystemId() {
 		return this.solarSystemId;
 	}
 
-	public MiningExtraction setSolarSystemLocation( final EsiLocation solarSystemLocation ) {
+	public MiningExtraction setSolarSystemLocation( final SpaceSystem solarSystemLocation ) {
 		Objects.requireNonNull(solarSystemLocation);
 		this.solarSystemLocation = solarSystemLocation;
-		//this.solarSystemId=this.solarSystemLocation.getSystemId(); // This can change the extraction identifier so do not change
 		return this;
 	}
 
-	public String getSystemName() {return this.solarSystemLocation.getSystemName();}
+	public String getSystemName() {
+		return this.solarSystemLocation.getSolarSystemName();
+	}
 
 	public long getDelta() {
 		return this.delta;
@@ -261,10 +262,10 @@ public class MiningExtraction extends UpdatableEntity implements IAggregableItem
 			return this;
 		}
 
-		public Builder withSolarSystemLocation( final EsiLocation solarSystemLocation ) {
+		public Builder withSolarSystemLocation( final SpaceSystem solarSystemLocation ) {
 			Objects.requireNonNull(solarSystemLocation);
 			this.onConstruction.solarSystemLocation = solarSystemLocation;
-			this.onConstruction.solarSystemId = this.onConstruction.solarSystemLocation.getSystemId();
+			this.onConstruction.solarSystemId = this.onConstruction.solarSystemLocation.getSolarSystemId();
 			return this;
 		}
 

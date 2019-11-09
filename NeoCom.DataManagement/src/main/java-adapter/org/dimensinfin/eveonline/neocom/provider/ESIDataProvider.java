@@ -113,7 +113,7 @@ public class ESIDataProvider {
 //		}
 //	}
 
-	public void downloadPilotFamilyData() {
+	private void downloadPilotFamilyData() {
 		// Download race, bloodline and other pilot data.
 		final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( DEFAULT_ESI_SERVER );
 		logger.info( "-- [ESIDataProvider.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
@@ -932,23 +932,11 @@ public class ESIDataProvider {
 			this.onConstruction.storeCacheManager = storeCacheManager;
 			return this;
 		}
-
-//		public ESIDataProvider.Builder testingRetrofitFactory( final NeoComRetrofitFactory.Builder retrofitFactoryBuilder ) {
-//			this.retrofitFactoryBuilder = retrofitFactoryBuilder;
-//			return this;
-//		}
-
 		public ESIDataProvider build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.locationCatalogService );
 			Objects.requireNonNull( this.onConstruction.storeCacheManager );
-//			this.onConstruction.storeCacheManager = new StoreCacheManager.Builder()
-//					.withEsiDataAdapter( this.onConstruction )
-//					.withConfigurationProvider( this.onConstruction.configurationProvider )
-//					.withFileSystem( this.onConstruction.fileSystemAdapter )
-//					.build();
-//			Objects.requireNonNull( this.onConstruction.storeCacheManager );
 			this.onConstruction.retrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
 					.withConfigurationProvider( this.onConstruction.configurationProvider )
 					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
@@ -956,10 +944,7 @@ public class ESIDataProvider {
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 
 			// Inject the new adapter to the classes that depend on it.
-//			NeoItem.injectEsiUniverseDataAdapter( this.onConstruction );
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );
-			// TODO - Add this when the market data is back present.
-//			MarketDataSet.injectEsiDataAdapter(this.esiDataProvider);
 
 			// Preload the esi caches with SDE data.
 //			this.onConstruction.downloadItemPrices();

@@ -19,7 +19,6 @@ import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceConstellationImplementation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegionImplementation;
@@ -58,8 +57,8 @@ public class LocationCatalogService {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected ESIUniverseDataProvider esiUniverseDataProvider;
-	protected LocationRepository locationRepository;
 	protected RetrofitFactory retrofitFactory;
+//	protected LocationRepository locationRepository;
 
 	protected LocationCatalogService() { }
 
@@ -346,12 +345,12 @@ public class LocationCatalogService {
 			return this;
 		}
 
-		public Builder withLocationRepository( final LocationRepository locationRepository ) {
-			Objects.requireNonNull( locationRepository );
-			this.onConstruction.locationRepository = locationRepository;
-			return this;
-		}
-
+//		public Builder withLocationRepository( final LocationRepository locationRepository ) {
+//			Objects.requireNonNull( locationRepository );
+//			this.onConstruction.locationRepository = locationRepository;
+//			return this;
+//		}
+//
 		public Builder withRetrofitFactory( final RetrofitFactory retrofitFactory ) {
 			Objects.requireNonNull( retrofitFactory );
 			this.onConstruction.retrofitFactory = retrofitFactory;
@@ -362,8 +361,8 @@ public class LocationCatalogService {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.esiUniverseDataProvider );
-			Objects.requireNonNull( this.onConstruction.locationRepository );
-			Objects.requireNonNull( this.onConstruction.retrofitFactory );
+//			Objects.requireNonNull( this.onConstruction.locationRepository );
+//			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 			this.onConstruction.startService();
 			return this.onConstruction;
 		}

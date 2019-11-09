@@ -6,6 +6,7 @@ public class NeoComRuntimeException extends RuntimeException {
 	private String sourceClass;
 	private String sourceMethod;
 	private Exception rootException;
+	private ErrorInfoCatalog error;
 
 	// - C O N S T R U C T O R S
 	public NeoComRuntimeException() {
@@ -14,6 +15,10 @@ public class NeoComRuntimeException extends RuntimeException {
 		final StackTraceElement stackElement = stacktrace[3]; // This is to check if we are using Dalvik
 		this.sourceMethod = stackElement.getMethodName();
 		this.sourceClass = stackElement.getClassName();
+	}
+
+	public NeoComRuntimeException( final ErrorInfoCatalog error ) {
+		this.error = error;
 	}
 
 	public NeoComRuntimeException( final String message ) {
