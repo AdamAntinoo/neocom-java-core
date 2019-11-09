@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.dimensinfin.core.domain.Units;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitNoOAuthHTTP;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 
 import retrofit2.Retrofit;
 

@@ -13,7 +13,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 
 public class SupportFileSystem implements IFileSystem {
 	private static final Logger logger = LoggerFactory.getLogger( SupportFileSystem.class );

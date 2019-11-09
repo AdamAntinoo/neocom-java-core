@@ -23,6 +23,7 @@ import org.dimensinfin.eveonline.neocom.auth.mock.NeoComRetrofitMock;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 
 import retrofit2.Retrofit;
 

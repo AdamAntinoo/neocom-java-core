@@ -1,6 +1,16 @@
 package org.dimensinfin.eveonline.neocom.core;
 
-public class StorageUnits {
-	public static long MEGABYTES = 1024 * 1024;
-	public static long GIGABYTES = MEGABYTES * 1024;
+public enum StorageUnits {
+	KILOBYTES( 1024L ),
+	MEGABYTES( KILOBYTES.toBytes(1) * 1024L ),
+	GIGABYTES( MEGABYTES.toBytes(1) * 1024L );
+	private Long bytes;
+
+	StorageUnits( final Long bytes ) {
+		this.bytes = bytes;
+	}
+
+	public Long toBytes( final int multiplier ) {
+		return this.bytes * multiplier;
+	}
 }

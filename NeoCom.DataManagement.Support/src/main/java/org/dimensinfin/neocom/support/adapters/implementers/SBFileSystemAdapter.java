@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.adapter.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 
 /**
  * Spring boot implementation for the File System isolation interface. We can get access to the application generated data
