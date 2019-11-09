@@ -11,6 +11,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.SupportConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
 
@@ -25,14 +26,14 @@ public class StoreCacheManagerTest {
 		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
-		final RetrofitUniverseConnector retrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+		final RetrofitFactory retrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( configurationProvider )
 				.withFileSystemAdapter( fileSystemAdapter )
 				.build();
 		this.storeCacheManager4test = new StoreCacheManager.Builder()
 				.withConfigurationProvider( configurationProvider )
 				.withFileSystemAdapter( fileSystemAdapter )
-				.withRetrofitUniverseConnector( retrofitUniverseConnector )
+				.withRetrofitFactory( retrofitFactory)
 				.build();
 	}
 	@Test
@@ -41,14 +42,14 @@ public class StoreCacheManagerTest {
 		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
-		final RetrofitUniverseConnector retrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+		final RetrofitFactory retrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( configurationProvider )
 				.withFileSystemAdapter( fileSystemAdapter )
 				.build();
 		final StoreCacheManager storeCacheManager = new StoreCacheManager.Builder()
 				.withConfigurationProvider( configurationProvider )
 				.withFileSystemAdapter( fileSystemAdapter )
-				.withRetrofitUniverseConnector( retrofitUniverseConnector )
+				.withRetrofitFactory( retrofitFactory)
 				.build();
 		Assert.assertNotNull( storeCacheManager );
 	}

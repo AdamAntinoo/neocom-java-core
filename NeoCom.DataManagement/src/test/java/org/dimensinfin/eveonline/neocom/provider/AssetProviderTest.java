@@ -128,57 +128,6 @@ public class AssetProviderTest {
 		Assert.assertNotNull( this.provider4Test );
 	}
 
-	@Test
-	public void buildComplete() {
-		final Credential credential = Mockito.mock( Credential.class );
-		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetProvider provider = new AssetProvider.Builder()
-				.withCredential( credential )
-				.withAssetRepository( assetRepository )
-				.withLocationCatalogService( locationService )
-				.build();
-		Assert.assertNotNull( provider );
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void buildFailureA() {
-		final Credential credential = Mockito.mock( Credential.class );
-		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetProvider provider = new AssetProvider.Builder()
-				.withCredential( null )
-				.withAssetRepository( assetRepository )
-				.withLocationCatalogService( locationService )
-				.build();
-		Assert.assertNotNull( provider );
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void buildFailureB() {
-		final Credential credential = Mockito.mock( Credential.class );
-		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetProvider provider = new AssetProvider.Builder()
-				.withCredential( credential )
-				.withAssetRepository( null )
-				.withLocationCatalogService( locationService )
-				.build();
-		Assert.assertNotNull( provider );
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void buildFailureC() {
-		final Credential credential = Mockito.mock( Credential.class );
-		final AssetRepository assetRepository = Mockito.mock( AssetRepository.class );
-		final LocationCatalogService locationService = Mockito.mock( LocationCatalogService.class );
-		final AssetProvider provider = new AssetProvider.Builder()
-				.withCredential( credential )
-				.withAssetRepository( assetRepository )
-				.withLocationCatalogService( null )
-				.build();
-		Assert.assertNotNull( provider );
-	}
 
 	@Test
 	public void classifyAssetsByLocationSpace() {

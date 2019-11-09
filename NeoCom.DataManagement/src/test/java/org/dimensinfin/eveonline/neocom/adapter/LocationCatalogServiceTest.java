@@ -22,7 +22,7 @@ public class LocationCatalogServiceTest {
 				.withFileSystemAdapter( fileSystem )
 				.withConfigurationProvider( configurationProvider )
 				.withESIUniverseDataProvider( esiUniverseProvider )
-				.withLocationRepository( locationRepository )
+//				.withLocationRepository( locationRepository )
 				.withRetrofitFactory( retrofitFactory )
 				.build();
 		Assert.assertNotNull( locationService );

@@ -12,35 +12,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
-import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessor;
-import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
-import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
-import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.integration.support.GetCharactersCharacterIdAssets200OkDeserializer;
 import org.dimensinfin.eveonline.neocom.integration.support.GroupCount;
+import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationNeoComDBAdapter;
 import org.dimensinfin.eveonline.neocom.integration.support.SupportIntegrationCredential;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
-import org.dimensinfin.eveonline.neocom.service.scheduler.HourlyCronScheduleGenerator;
 import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
-public class AssetDownloadProcessorIT {
+public class AssetDownloadProcessorIT extends IntegrationEnvironmentDefinition {
 	private final ObjectMapper mapper = new ObjectMapper();
 	private IConfigurationProvider itConfigurationProvider;
 	private IFileSystem itFileSystemAdapter;
@@ -63,7 +58,7 @@ public class AssetDownloadProcessorIT {
 		NeoComLogger.enter();
 		final AssetDownloadProcessorIT application = new AssetDownloadProcessorIT();
 		try {
-			application.setUpEnvironment();
+			application.setupEnvironment();
 			application.registerJobOnScheduler();
 			application.itJobScheduler.runSchedule();
 			application.waitSchedulerCompletion();
@@ -116,61 +111,61 @@ public class AssetDownloadProcessorIT {
 		this.itJobScheduler.wait4Completion();
 	}
 
-	private void setUpEnvironment() throws IOException, SQLException {
-		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
-		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
-				.build();
-		this.itJobScheduler = new JobScheduler.Builder()
-				.withCronScheduleGenerator( new HourlyCronScheduleGenerator() ).build();
-		// Database setup
-		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
-		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
-		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );
-		final String databasePassword = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepassword" );
-		final String neocomDatabaseURL = databaseHostName +
-				"/" + databasePath +
-				"?user=" + databaseUser +
-				"&password=" + databasePassword;
-		this.itNeoComIntegrationDBAdapter = new IntegrationNeoComDBAdapter.Builder()
-				.withDatabaseURLConnection( neocomDatabaseURL )
-				.build();
-		this.itAssetRepository = new AssetRepository.Builder()
-				.withAssetDao( this.itNeoComIntegrationDBAdapter.getAssetDao() )
-				.withConnection4Transaction( this.itNeoComIntegrationDBAdapter.getConnectionSource() )
-				.build();
-		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.build();
-		this.itStoreCacheManager = new StoreCacheManager.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
-				.build();
-		this.itEsiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.withStoreCacheManager( this.itStoreCacheManager )
-				.withRetrofitUniverseConnector( this.itRetrofitUniverseConnector )
-				.build();
-		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
-		this.itRetrofitFactory = new RetrofitFactory.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.build();
-		this.itLocationService = new LocationCatalogService.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.withLocationRepository( locationRepository )
-				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
-				.withRetrofitFactory( this.itRetrofitFactory )
-				.build();
-		final List<GetCharactersCharacterIdAssets200Ok> testAssetList = this.loadAssetTestData();
-		this.itEsiDataProvider = Mockito.mock( ESIDataProvider.class );
-		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
-				.thenReturn( testAssetList );
-	}
+//	private void setUpEnvironment() throws IOException, SQLException {
+//		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
+//				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
+//		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
+//				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
+//				.build();
+//		this.itJobScheduler = new JobScheduler.Builder()
+//				.withCronScheduleGenerator( new HourlyCronScheduleGenerator() ).build();
+//		// Database setup
+//		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
+//		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
+//		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );
+//		final String databasePassword = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepassword" );
+//		final String neocomDatabaseURL = databaseHostName +
+//				"/" + databasePath +
+//				"?user=" + databaseUser +
+//				"&password=" + databasePassword;
+//		this.itNeoComIntegrationDBAdapter = new IntegrationNeoComDBAdapter.Builder()
+//				.withDatabaseURLConnection( neocomDatabaseURL )
+//				.build();
+//		this.itAssetRepository = new AssetRepository.Builder()
+//				.withAssetDao( this.itNeoComIntegrationDBAdapter.getAssetDao() )
+//				.withConnection4Transaction( this.itNeoComIntegrationDBAdapter.getConnectionSource() )
+//				.build();
+//		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.build();
+//		this.itStoreCacheManager = new StoreCacheManager.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.withRetrofitFactory( this.itRetrofitFactory )
+//				.build();
+//		this.itEsiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.withStoreCacheManager( this.itStoreCacheManager )
+//				.withRetrofitFactory( this.itRetrofitFactory)
+//				.build();
+//		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
+//		this.itRetrofitFactory = new RetrofitFactory.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.build();
+//		this.itLocationService = new LocationCatalogService.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.withLocationRepository( locationRepository )
+//				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
+//				.withRetrofitFactory( this.itRetrofitFactory )
+//				.build();
+//		final List<GetCharactersCharacterIdAssets200Ok> testAssetList = this.loadAssetTestData();
+//		this.itEsiDataProvider = Mockito.mock( ESIDataProvider.class );
+//		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
+//				.thenReturn( testAssetList );
+//	}
 
 	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
 		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",

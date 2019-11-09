@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.adapter.ESIDataAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
-import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.neocom.support.adapters.implementers.SBConfigurationProvider;
 import org.dimensinfin.neocom.support.adapters.implementers.SBFileSystemAdapter;
 import org.dimensinfin.neocom.support.adapters.implementers.SBNeoComDBAdapter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is a singleton with global access that will contain application component references so they can be injected to other
@@ -29,7 +29,7 @@ public class NeoComComponentFactory {
 
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
-	private ESIDataAdapter esiDataAdapter;
+	private ESIDataProvider esiDataAdapter;
 	private SBNeoComDBAdapter neocomDBAdapter;
 	private CredentialRepository credentialRepository;
 
