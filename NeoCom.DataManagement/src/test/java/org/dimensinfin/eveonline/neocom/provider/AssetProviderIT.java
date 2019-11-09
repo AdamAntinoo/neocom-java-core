@@ -14,7 +14,6 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.provider.AssetProvider;
-import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;

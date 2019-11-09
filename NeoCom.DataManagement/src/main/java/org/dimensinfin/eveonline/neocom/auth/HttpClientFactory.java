@@ -12,7 +12,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import retrofit2.Retrofit;
-import static org.dimensinfin.eveonline.neocom.auth.RetrofitFactory.GSON_CONVERTER_FACTORY;
+import static org.dimensinfin.eveonline.neocom.provider.RetrofitFactory.GSON_CONVERTER_FACTORY;
 
 public class HttpClientFactory {
 	private static final String ESI_HOST = "login.eveonline.com";

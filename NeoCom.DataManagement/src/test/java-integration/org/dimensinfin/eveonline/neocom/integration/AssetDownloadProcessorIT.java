@@ -21,7 +21,7 @@ import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessor;
-import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;

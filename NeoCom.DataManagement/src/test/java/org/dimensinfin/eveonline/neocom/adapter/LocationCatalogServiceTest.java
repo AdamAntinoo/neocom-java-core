@@ -4,10 +4,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 
 public class LocationCatalogServiceTest {
 	@Test

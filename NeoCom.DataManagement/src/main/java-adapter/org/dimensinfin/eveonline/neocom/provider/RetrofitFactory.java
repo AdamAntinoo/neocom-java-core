@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.auth;
+package org.dimensinfin.eveonline.neocom.provider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,10 +8,10 @@ import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import org.dimensinfin.eveonline.neocom.auth.HttpClientFactory;
 import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
 import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 
 import retrofit2.Converter;
 import retrofit2.Retrofit;

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
-import org.dimensinfin.eveonline.neocom.auth.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
@@ -36,6 +35,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSyste
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 import retrofit2.Response;

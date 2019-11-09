@@ -53,8 +53,6 @@ public class ESIUniverseDataProvider {
 	// - I N T E R N A L   C A C H E S
 	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 100 );
 
-//	private Retrofit neocomRetrofitNoAuth; // HTTP client to be used on not authenticated endpoints.
-
 	protected ESIUniverseDataProvider() {}
 
 	private Retrofit generateNoAuthRetrofit() {
