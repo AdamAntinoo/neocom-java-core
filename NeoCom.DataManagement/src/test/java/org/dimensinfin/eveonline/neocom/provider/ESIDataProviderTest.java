@@ -87,7 +87,7 @@ public class ESIDataProviderTest {
 				.build();
 
 		final GetStatusOk status = provider.getUniverseStatus( "Tranquility" );
-		Assert.assertEquals( 28184, status.getPlayers().intValue() );
+		Assert.assertTrue( Math.abs( 28184 - status.getPlayers() ) < 1000 );
 	}
 
 //	//	@Test

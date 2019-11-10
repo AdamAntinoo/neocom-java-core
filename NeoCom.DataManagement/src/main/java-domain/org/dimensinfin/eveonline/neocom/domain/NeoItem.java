@@ -255,9 +255,9 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 		return this.category.getName();
 	}
 
-	public NeoItem setCategoryName( final String dummy ) {
-		return this;
-	}
+//	public NeoItem setCategoryName( final String dummy ) {
+//		return this;
+//	}
 
 	@RequiresNetwork
 	public String getGroupName() {
@@ -265,9 +265,9 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 		return this.group.getName();
 	}
 
-	public NeoItem setGroupName( final String dummy ) {
-		return this;
-	}
+//	public NeoItem setGroupName( final String dummy ) {
+//		return this;
+//	}
 
 	// - I I T E M F A C E T
 	public String getURLForItem() {

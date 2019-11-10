@@ -66,9 +66,6 @@ public class MiningRepositoryIT {
 	private MiningRepository miningRepository;
 	private LocationCatalogService locationCatalogService;
 
-//	private static final List<MiningExtraction> miningExtractionList = new ArrayList();
-//	private static Dao<MiningExtraction, String> dao;
-
 	@Rule
 	public PostgreSQLContainer postgres = new PostgreSQLContainer( "postgres:9.6.8" )
 			.withDatabaseName( "postgres" )
@@ -221,7 +218,8 @@ public class MiningRepositoryIT {
 		final Dao dao = Mockito.mock( Dao.class );
 		Mockito.when( dao.queryForId( ArgumentMatchers.any( String.class ) ) ).thenThrow( SQLException.class );
 		final MiningRepository repository = new MiningRepository.Builder()
-				.withMiningExtractionDao( miningDao )
+				.withMiningExtractionDao( dao )
+				.withLocationCatalogService( this.locationCatalogService )
 				.build();
 		final Optional<MiningExtraction> miningRecord = repository.accessMiningExtractionFindById( "TEST-LOCATOR" );
 	}

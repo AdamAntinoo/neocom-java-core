@@ -2,45 +2,59 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import java.io.IOException;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseGroupsGroupIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.support.ESIDataProviderSupportTest;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
+import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class NeoItemTest extends ESIDataProviderSupportTest {
-	private ESIDataProvider realEsiDataProvider;
+public class NeoItemTest {
+	private NeoItem item4Test;
+	private ESIUniverseDataProvider esiUniverseDataProvider;
 
-//	@Before
-	public void setUp()throws IOException {
-		super.setUp();
-		this.realEsiDataProvider = new ESIDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withLocationCatalogService( this.locationCatalogService )
-				.build();
-//		NeoItem.injectEsiUniverseDataAdapter(realEsiDataProvider);
+	@BeforeEach
+	void setUp() {
+		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
+		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
+		Mockito.when( group.getGroupId() ).thenReturn( 18 );
+		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
+		Mockito.when( category.getCategoryId() ).thenReturn( 4 );
+		this.esiUniverseDataProvider = Mockito.mock( ESIUniverseDataProvider.class );
+		Mockito.when( esiUniverseDataProvider.searchEsiItem4Id( Mockito.anyInt() ) )
+				.thenReturn( esiItem );
+		Mockito.when( esiUniverseDataProvider.searchItemGroup4Id( Mockito.anyInt() ) )
+				.thenReturn( group );
+		Mockito.when( esiUniverseDataProvider.searchItemCategory4Id( Mockito.anyInt() ) )
+				.thenReturn( category );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
+		this.item4Test = new NeoItem( 34 );
 	}
 
 	@Test
-	public void constructor_GetUniverseTypesTypeIdOk() {
-		final GetUniverseTypesTypeIdOk type = new GetUniverseTypesTypeIdOk();
-		type.setTypeId( 34 );
-		type.setGroupId( 18 );
-		type.setName( "Tritanium" );
-		type.setVolume( 0.01F );
-		type.setCapacity( 10.0F );
-		final NeoItem item = new NeoItem( type );
-		Assert.assertNotNull( item );
+	public void constructorTypeId() {
+		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
+		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
+		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
+		final ESIUniverseDataProvider esiUniverseDataProvider = Mockito.mock( ESIUniverseDataProvider.class );
+		Mockito.when( esiUniverseDataProvider.searchEsiItem4Id( Mockito.anyInt() ) )
+				.thenReturn( esiItem );
+		Mockito.when( esiUniverseDataProvider.searchItemGroup4Id( Mockito.anyInt() ) )
+				.thenReturn( group );
+		Mockito.when( esiUniverseDataProvider.searchItemCategory4Id( Mockito.anyInt() ) )
+				.thenReturn( category );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
+		final NeoItem item = new NeoItem( 34 );
+		Assertions.assertNotNull( item );
 	}
 
-//	@Test
+	//	@Test
 	public void equalsContract() {
 		EqualsVerifier.forClass( NeoItem.class )
 				.usingGetClass().verify();
@@ -48,100 +62,83 @@ public class NeoItemTest extends ESIDataProviderSupportTest {
 
 	@Test
 	public void getterContract() {
-//		final GetUniverseTypesTypeIdOk type = new GetUniverseTypesTypeIdOk();
-//		type.setTypeId( 34 );
-//		type.setGroupId( 18 );
-//		type.setName( "Tritanium" );
-//		type.setVolume( 0.01F );
-//		type.setCapacity( 10.0F );
-//		final GetUniverseTypesTypeIdOk item = this.esiDataProvider.searchEsiItem4Id( 34 );
+		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
+		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
+		Mockito.when( group.getGroupId() ).thenReturn( 18 );
+		Mockito.when( group.getName() ).thenReturn( "Tool");
+		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
+		Mockito.when( category.getCategoryId() ).thenReturn( 4 );
+		Mockito.when( category.getName() ).thenReturn( "Tool");
+		final ESIUniverseDataProvider esiUniverseDataProvider = Mockito.mock( ESIUniverseDataProvider.class );
+		Mockito.when( esiUniverseDataProvider.searchEsiItem4Id( Mockito.anyInt() ) )
+				.thenReturn( esiItem );
+		Mockito.when( esiUniverseDataProvider.searchItemGroup4Id( Mockito.anyInt() ) )
+				.thenReturn( group );
+		Mockito.when( esiUniverseDataProvider.searchItemCategory4Id( Mockito.anyInt() ) )
+				.thenReturn( category );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		final NeoItem item = new NeoItem( 34 );
-		Assert.assertNotNull( item );
-		Assert.assertEquals( 34, item.getTypeId());
-		Assert.assertEquals( 18, item.getGroupId());
-		Assert.assertEquals( 4, item.getCategoryId());
-//		Assert.assertEquals( 0.1F, item.getCapacity().floatValue() , 0.1   );
-		Assert.assertNotNull( item.getDogmaAttributes() );
-		Assert.assertEquals( "not-applies", item.getHullGroup() );
-		Assert.assertEquals( NeoItem.IndustryGroup.REFINEDMATERIAL, item.getIndustryGroup());
+
+		Assertions.assertNotNull( item );
+		Assertions.assertEquals( 34, item.getTypeId() );
+		Assertions.assertEquals( 18, item.getGroupId() );
+		Assertions.assertEquals( 4, item.getCategoryId() );
+		Assertions.assertEquals( "not-applies", item.getHullGroup() );
+		Assertions.assertEquals( NeoItem.IndustryGroup.ITEMS, item.getIndustryGroup() );
 	}
 
-//	@Test
-//	public void accessorContract() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiDataAdapter(esiDataProvider);
-//		PojoTestUtils.validateAccessors(NeoItem.class);
-//	}
+	@Test
+	public void setterContract() {
+		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
+		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
+		Mockito.when( group.getGroupId() ).thenReturn( 18 );
+		final GetUniverseCategoriesCategoryIdOk category = Mockito.mock( GetUniverseCategoriesCategoryIdOk.class );
+		Mockito.when( category.getCategoryId() ).thenReturn( 4 );
+		final ESIUniverseDataProvider esiUniverseDataProvider = Mockito.mock( ESIUniverseDataProvider.class );
+		Mockito.when( esiUniverseDataProvider.searchEsiItem4Id( Mockito.anyInt() ) )
+				.thenReturn( esiItem );
+		Mockito.when( esiUniverseDataProvider.searchItemGroup4Id( Mockito.anyInt() ) )
+				.thenReturn( group );
+		Mockito.when( esiUniverseDataProvider.searchItemCategory4Id( Mockito.anyInt() ) )
+				.thenReturn( category );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
+		final NeoItem item = new NeoItem( 34 );
+
+		item.setTypeId( 35 );
+		Assertions.assertEquals( 35, item.getTypeId() );
+	}
 
 	@Test
-	public void getName() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiUniverseDataAdapter( esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
-		final NeoItem item = new NeoItem( 34 );
+	public void getName() {
 		final String expected = "Tritanium";
-		final String obtained = item.getName();
-		Assert.assertNotNull( item );
-		Assert.assertEquals( expected, obtained );
-	}
-
-	@Test
-	public void getTypeId() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiUniverseDataAdapter( esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
-		final NeoItem item = new NeoItem()
-				.setTypeId( 34 );
-		final int obtained = item.getTypeId();
-		Assert.assertNotNull( item );
-		Assert.assertEquals( "The type should be the type set.", 34, obtained );
-	}
-
-	@Test
-	public void getGroupId() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiDataAdapter( esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
-		final NeoItem item = new NeoItem(34 );
-		final int obtained = item.getGroupId();
-		Assert.assertNotNull( item );
-		Assert.assertEquals( "The group should be valid.", 18, obtained );
-	}
-
-	@Test
-	public void getCategoryId() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiDataAdapter( esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
+		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
+		Mockito.when( esiItem.getName() ).thenReturn( expected );
+		Mockito.when( esiUniverseDataProvider.searchEsiItem4Id( Mockito.anyInt() ) )
+				.thenReturn( esiItem );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		final NeoItem item = new NeoItem( 34 );
-		final int obtained = item.getCategoryId();
-		Assert.assertNotNull( item );
-		Assert.assertEquals( "The category should be valid.", 4, obtained );
+
+		final String obtained = item.getName();
+		Assertions.assertNotNull( item );
+		Assertions.assertEquals( expected, obtained );
 	}
 
 	@Test
 	public void getVolume() {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiDataAdapter( this.esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
+		final float expected = 34.5F;
+		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
+		Mockito.when( esiItem.getVolume() ).thenReturn( expected );
+		Mockito.when( esiUniverseDataProvider.searchEsiItem4Id( Mockito.anyInt() ) )
+				.thenReturn( esiItem );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		final NeoItem item = new NeoItem( 34 );
+
 		final double obtained = item.getVolume();
-		Assert.assertNotNull( item );
-		Assert.assertEquals( "The volume should match.", 0.01, obtained, 0.001 );
+		Assertions.assertNotNull( item );
+		Assertions.assertEquals( expected, obtained, 0.001, "The volume should match." );
 	}
 
-	@Test
-	public void getIndustryGroup() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiDataAdapter( esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
-		final NeoItem item = new NeoItem( 34 );
-		final NeoItem.IndustryGroup obtained = item.getIndustryGroup();
-		Assert.assertNotNull( item );
-		Assert.assertEquals( "The volume should match.", NeoItem.IndustryGroup.REFINEDMATERIAL, obtained );
-	}
-
-	@Test
+	//	@Test
 	public void isBlueprint_false() {
 		final ESIDataProvider esiDataProvider = Mockito.mock( ESIDataProvider.class );
 		final GetUniverseTypesTypeIdOk eveItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
@@ -153,11 +150,11 @@ public class NeoItemTest extends ESIDataProviderSupportTest {
 		Mockito.when( category.getName() ).thenReturn( "Capsuleer Bases" );
 //		NeoItem.injectEsiUniverseDataAdapter( esiDataProvider );
 		final NeoItem item = new NeoItem( 34 );
-		Assert.assertNotNull( item );
-		Assert.assertFalse( item.isBlueprint() );
+		Assertions.assertNotNull( item );
+		Assertions.assertFalse( item.isBlueprint() );
 	}
 
-	@Test
+	//	@Test
 	public void isBlueprint_true() {
 		final ESIDataProvider esiDataProvider = Mockito.mock( ESIDataProvider.class );
 		final GetUniverseTypesTypeIdOk eveItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
@@ -169,34 +166,19 @@ public class NeoItemTest extends ESIDataProviderSupportTest {
 		Mockito.when( category.getName() ).thenReturn( "Energy Neutralizer Blueprint" );
 //		NeoItem.injectEsiUniverseDataAdapter( esiDataProvider );
 		final NeoItem item = new NeoItem( 15799 );
-		Assert.assertNotNull( item );
-		Assert.assertFalse( item.isBlueprint() );
+		Assertions.assertNotNull( item );
+		Assertions.assertFalse( item.isBlueprint() );
 	}
 
 	@Test
 	public void getPrice() throws IOException {
-//		final ESIDataProvider esiDataProvider = this.setupRealAdapter();
-//		NeoItem.injectEsiUniverseDataAdapter( esiDataProvider );
-//		MarketDataSet.injectEsiDataAdapter(esiDataProvider);
+		final double expected = 34.5F;
+		Mockito.when( esiUniverseDataProvider.searchSDEMarketPrice( Mockito.anyInt() ) )
+				.thenReturn( expected );
+		NeoItem.injectEsiUniverseDataAdapter( esiUniverseDataProvider );
 		final NeoItem item = new NeoItem( 34 );
-		double obtained = item.getPrice();
-		Assert.assertTrue( "Price expected to be positive value.", obtained > 3.0 );
-	}
 
-	//	@Test
-	public void signalCompletion_itemData() {
-//		final EventEmitter emitter = Mockito.mock(EventEmitter.class);
-//		final GetUniverseTypesTypeIdOk universeItem = Mockito.mock(GetUniverseTypesTypeIdOk.class);
-//		final NeoItem item = new NeoItem(34);
-//		Mockito.doAnswer(( call ) -> {
-//			final PropertyChangeEvent event = call.getArgument(0);
-//			Assert.assertNotNull(event);
-//			Assert.assertEquals(EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name(), event.getPropertyName());
-//			Assert.assertEquals(universeItem, event.getNewValue());
-//			return null;
-//		}).when(emitter).sendChangeEvent(new PropertyChangeEvent(item
-//				, EEvents.EVENTCONTENTS_ACTIONMODIFYDATA.name()
-//				, null, universeItem));
-//		//		item.signalCompletion(DataDownloaderService.EsiItemSections.ESIITEM_DATA, universeItem);
+		double obtained = item.getPrice();
+		Assertions.assertEquals( expected, obtained, 0.1, "Price expected to be positive value." );
 	}
 }
