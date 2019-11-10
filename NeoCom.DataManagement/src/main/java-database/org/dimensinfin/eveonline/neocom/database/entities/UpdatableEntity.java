@@ -1,16 +1,19 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DatabaseField;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 import org.joda.time.DateTime;
+
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 
 public abstract class UpdatableEntity extends NeoComNode {
 	@DatabaseField
+	@JsonIgnore
 	private DateTime creationTime;
 	@DatabaseField
+	@JsonIgnore
 	private DateTime lastUpdateTime;
 
 	protected UpdatableEntity() {

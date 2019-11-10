@@ -119,8 +119,8 @@ public class MiningRepository {
 		}
 	}
 
-	public MiningExtraction accessMiningExtractionFindById( final String recordIdentifier ) throws SQLException {
-		return this.miningExtractionDao.queryForId( recordIdentifier );
+	public Optional<MiningExtraction> accessMiningExtractionFindById( final String recordIdentifier ) throws SQLException {
+		return Optional.ofNullable( this.miningExtractionDao.queryForId( recordIdentifier ) );
 	}
 
 	public void persist( final MiningExtraction record ) throws SQLException {

@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.database.entities;
 import java.util.Objects;
 import javax.persistence.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -83,6 +84,7 @@ public class Credential extends UpdatableEntity {
 	}
 
 	// - G E T T E R S   &   S E T T E R S
+	@JsonIgnore
 	public boolean isValid() {
 		if (StringUtils.isEmpty( this.dataSource )) return false;
 		if (StringUtils.isEmpty( this.accessToken )) return false;

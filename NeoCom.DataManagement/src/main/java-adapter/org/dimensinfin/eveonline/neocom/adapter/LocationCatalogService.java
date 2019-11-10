@@ -228,7 +228,7 @@ public class LocationCatalogService {
 		}
 		if (locationId < 40000000) { // Can be a system
 			final GetUniverseSystemsSystemIdOk solarSystem = this.esiUniverseDataProvider
-					.searchSolarSystem4Id( locationId.intValue() );
+					.getUniverseSystemById( locationId.intValue() );
 			Objects.requireNonNull( solarSystem );
 			final GetUniverseConstellationsConstellationIdOk constellation = this.esiUniverseDataProvider
 					.getUniverseConstellationById( solarSystem.getConstellationId() );
@@ -248,7 +248,7 @@ public class LocationCatalogService {
 					.getUniverseStationById( locationId.intValue() );
 			Objects.requireNonNull( station );
 			final GetUniverseSystemsSystemIdOk solarSystem = this.esiUniverseDataProvider
-					.searchSolarSystem4Id( station.getSystemId() );
+					.getUniverseSystemById( station.getSystemId() );
 			Objects.requireNonNull( solarSystem );
 			final GetUniverseConstellationsConstellationIdOk constellation = this.esiUniverseDataProvider
 					.getUniverseConstellationById( solarSystem.getConstellationId() );
