@@ -100,9 +100,9 @@ public class MiningRepository {
 			where.eq( "ownerId", credential.getAccountId() )
 					.and()
 					.eq( "extractionDateName", filterDate.toString( "YYYY-MM-dd" ) );
-			builder.selectRaw( "id", "typeId", "MAX(quantity)" );
+			builder.selectRaw( "\"typeId\"", "MAX(\"quantity\")" );
 			builder.groupBy( "typeId" );
-			NeoComLogger.info( "-- [MiningRepository.accessTodayMiningExtractions4Pilot]> SELECT: {}",
+			NeoComLogger.info( "SELECT: {}",
 					builder.prepareStatementString() );
 			final GenericRawResults<String[]> dataList = this.miningExtractionDao.queryRaw(
 					builder.prepareStatementString() );
@@ -113,7 +113,8 @@ public class MiningRepository {
 			NeoComLogger.info( "Records read: {}", results.size() + "" );
 			return results;
 		} catch (SQLException sqle) {
-			NeoComLogger.error( "SQL [MiningRepository.accessResources4Date]> SQL Exception: {}", sqle );
+			NeoComLogger.error( "SQL Exception: {}", sqle );
+			sqle.printStackTrace();
 			return new ArrayList<>();
 		}
 	}
