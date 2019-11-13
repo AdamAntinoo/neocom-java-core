@@ -1,5 +1,6 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -16,7 +17,12 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Entity(name = "Version")
 @DatabaseTable(tableName = "Version")
 public class DatabaseVersion {
+	private static final String DATABASE_SINGLETON_RECORD_ID = "-DATABASE_SINGLETON_RECORD_ID-";
 	@DatabaseField(id = true)
+	@Column(name = "id", updatable = false, nullable = false)
+	public String id = DATABASE_SINGLETON_RECORD_ID;
+	@DatabaseField
+	@Column(name = "versionNumber", updatable = true, nullable = false)
 	public Integer versionNumber;
 
 	// - C O N S T R U C T O R S
@@ -29,6 +35,11 @@ public class DatabaseVersion {
 
 	public int getVersionNumber() {
 		return this.versionNumber;
+	}
+
+	public DatabaseVersion setVersionNumber( final Integer versionNumber ) {
+		this.versionNumber = versionNumber;
+		return this;
 	}
 
 	// - C O R E

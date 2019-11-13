@@ -14,6 +14,8 @@ public class DatabaseVersionRepository {
 	protected static Logger logger = LoggerFactory.getLogger( DatabaseVersionRepository.class );
 	protected Dao<DatabaseVersion, Integer> databaseVersionDao;
 
+	protected DatabaseVersionRepository() {}
+
 	public DatabaseVersion accessVersion() {
 		try {
 			final List<DatabaseVersion> versionData = this.databaseVersionDao.queryForAll();
