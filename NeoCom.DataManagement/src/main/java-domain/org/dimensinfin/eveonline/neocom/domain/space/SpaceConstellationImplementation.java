@@ -2,10 +2,11 @@ package org.dimensinfin.eveonline.neocom.domain.space;
 
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 
-public class SpaceConstellationImplementation /*extends LocationContainer*/ implements SpaceConstellation {
+public class SpaceConstellationImplementation extends NeoComNode implements SpaceConstellation {
 	private static final long serialVersionUID = -9105742282576579945L;
 	private SpaceLocationImplementation spaceLocation;
 

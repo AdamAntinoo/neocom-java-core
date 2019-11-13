@@ -65,23 +65,4 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 				       .append(this.getJsonClass(), that.getJsonClass())
 				       .isEquals();
 	}
-
-//	// - B U I L D E R
-//	public static abstract class Builder<T, B extends Builder> {
-//		protected T actualClass;
-//		protected B actualClassBuilder;
-//
-//		public Builder() {
-//			this.actualClass = this.getActual();
-//			this.actualClassBuilder = this.getActualBuilder();
-//		}
-//
-//		protected abstract T getActual();
-//
-//		protected abstract B getActualBuilder();
-//
-//		public T build() {
-//			return this.getActual();
-//		}
-//	}
 }

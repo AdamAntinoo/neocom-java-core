@@ -1,5 +1,9 @@
 package org.dimensinfin.eveonline.neocom.domain.space;
 
-public interface SpaceLocation {
+import java.io.Serializable;
+
+import org.dimensinfin.core.interfaces.ICollaboration;
+
+public interface SpaceLocation extends Serializable, ICollaboration {
 	Long getLocationId();
 }

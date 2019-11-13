@@ -2,12 +2,13 @@ package org.dimensinfin.eveonline.neocom.domain.space;
 
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 
-public class StationImplementation /*extends AssetContainer*/ implements Station {
+public class StationImplementation extends NeoComNode implements Station {
 	private static final long serialVersionUID = -646550210810227292L;
 	private SpaceLocationImplementation spaceLocation;
 

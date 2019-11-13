@@ -1,10 +1,8 @@
 package org.dimensinfin.eveonline.neocom.domain.space;
 
-import java.io.Serializable;
-
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 
-public interface SpaceRegion extends SpaceLocation, Serializable {
+public interface SpaceRegion extends SpaceLocation {
 	Integer getRegionId();
 
 	GetUniverseRegionsRegionIdOk getRegion();

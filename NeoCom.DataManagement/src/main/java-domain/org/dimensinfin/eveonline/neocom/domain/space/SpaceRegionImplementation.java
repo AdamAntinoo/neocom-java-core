@@ -2,9 +2,11 @@ package org.dimensinfin.eveonline.neocom.domain.space;
 
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 
-public class SpaceRegionImplementation /* extends LocationContainer*/ implements SpaceRegion {
+public class SpaceRegionImplementation extends NeoComNode implements SpaceRegion {
+	private static final long serialVersionUID = 3308318591307148073L;
 	private SpaceLocationImplementation spaceLocation;
 
 	private SpaceRegionImplementation() {super();}

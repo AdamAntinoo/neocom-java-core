@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class Region implements SpaceRegion {
+public class Region extends NeoComNode implements SpaceRegion {
+	private static final long serialVersionUID = 6515264332647090482L;
 	private Integer regionId;
 	private GetUniverseRegionsRegionIdOk region;
 	private List<AssetContainer> contents = new ArrayList<>();
