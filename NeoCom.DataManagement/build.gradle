@@ -43,6 +43,7 @@ sourceSets {
         srcDirs += 'src/main/java-domain'
         srcDirs += 'src/main/java-database'
         srcDirs += 'src/main/java-android'
+        srcDirs += 'src/main/base64'
     }
     test.java {
         srcDirs += 'src/test/java'
