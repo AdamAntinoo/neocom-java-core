@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 public class NeoComLogger {
 	private static final Logger logger = LoggerFactory.getLogger( NeoComLogger.class );
 
-	private NeoComLogger() {}
+	protected NeoComLogger() {}
 
 	public static void info( final String message ) {
 		logger.info( "-- " + header() + message );

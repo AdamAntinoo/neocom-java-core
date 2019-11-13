@@ -35,7 +35,7 @@ task clean(type: Delete) {
 // - P R O D U C T   V E R S I O N S
 ext {
     supportLibraryVersion = '28.0.0'
-    jodaTimeVersion = '2.3'
+    jodaTimeVersion = '2.9.9'
     jacksonVersion = '2.9.4'
     fasterxmlJackson = '2.9.4'
     ormliteVersion = '4.48'

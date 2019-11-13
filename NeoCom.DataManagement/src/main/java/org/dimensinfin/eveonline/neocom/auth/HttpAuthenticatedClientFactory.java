@@ -1,7 +1,6 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.File;
-import java.util.Base64;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +9,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.eveonline.neocom.utility.Base64;
 
 import okhttp3.Cache;
 import okhttp3.CertificatePinner;
@@ -44,7 +44,7 @@ public class HttpAuthenticatedClientFactory {
 		final String authorizationSecretKey = this.configurationProvider.getResourceString(
 				"P.esi.tranquility.authorization.secretkey" );
 		final String peckString = authorizationClientid + ":" + authorizationSecretKey;
-		final String peck = Base64.getEncoder().encodeToString( peckString.getBytes() )
+		final String peck = Base64.encodeBytes( peckString.getBytes() )
 				.replaceAll( "\n", "" );
 		this.refreshRetrofit = new Retrofit.Builder()
 				.baseUrl( esiDataServerLocation )

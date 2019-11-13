@@ -1,9 +1,8 @@
 package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Objects;
-
+import org.dimensinfin.eveonline.neocom.utility.Base64;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -41,8 +40,8 @@ public class NeoComOauth2Flow {
 	 *
 	 * @param state the state data received. Needs to mah the state generated locally.
 	 */
-	private boolean validateStateMatch( final String state ) {
-		final String testState = Base64.getEncoder().encodeToString(
+	public  boolean verifyState( final String state ) {
+		final String testState = Base64.encodeBytes(
 				this.configurationProvider.getResourceString( "P.esi.authorization.state" ).getBytes()
 		).replaceAll( "\n", "" );
 		return state.equals( testState );
@@ -70,7 +69,7 @@ public class NeoComOauth2Flow {
 		final TokenRequestBody tokenRequestBody = new TokenRequestBody().setCode( store.getAuthCode() );
 		NeoComLogger.info( "Creating request call." );
 		final String peckString = authorizationClientid + ":" + authorizationSecretKey;
-		String peck = Base64.getEncoder().encodeToString( peckString.getBytes() ).replaceAll( "\n", "" );
+		String peck = Base64.encodeBytes( peckString.getBytes() ).replaceAll( "\n", "" );
 		store.setPeck( peck );
 		final Call<TokenTranslationResponse> request = serviceGetAccessToken.getAccessToken(
 				authorizationContentType,

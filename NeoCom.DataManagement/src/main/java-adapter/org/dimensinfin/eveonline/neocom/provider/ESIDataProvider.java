@@ -76,8 +76,9 @@ public class ESIDataProvider {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
-	protected NeoComRetrofitFactory retrofitFactory;
+	protected NeoComRetrofitFactory neocomRetrofitFactory;
 	protected StoreCacheManager storeCacheManager;
+	protected RetrofitFactory retrofitFactory;
 
 	// - C O N S T R U C T O R S
 	protected ESIDataProvider() {}
@@ -90,7 +91,7 @@ public class ESIDataProvider {
 	 */
 	@Deprecated
 	public void activateEsiServer( final String esiServer ) {
-		this.retrofitFactory.activateEsiServer( esiServer );
+		this.neocomRetrofitFactory.activateEsiServer( esiServer );
 	}
 
 	/**
@@ -100,7 +101,7 @@ public class ESIDataProvider {
 	 * @return the current authrorization url.
 	 */
 	public String getAuthorizationUrl4Server( final String esiServer ) {
-		return this.retrofitFactory.getAuthorizationUrl4Server( esiServer );
+		return this.neocomRetrofitFactory.getAuthorizationUrl4Server( esiServer );
 	}
 
 	// - D O W N L O A D   S T A R T E R S
@@ -141,11 +142,11 @@ public class ESIDataProvider {
 		try {
 			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
 			String datasource = DEFAULT_ESI_SERVER;
-			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
+			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.neocomRetrofitFactory
 					.accessESIAuthRetrofit()
 					.create( UniverseApi.class )
 					.getUniverseStructuresStructureId( structureId, datasource, null,
-							credential.getAccessToken())
+							credential.getAccessToken() )
 					.execute();
 			if (universeResponse.isSuccessful()) {
 				return universeResponse.body();
@@ -235,7 +236,7 @@ public class ESIDataProvider {
 		try {
 			String datasource = DEFAULT_ESI_SERVER; // Set the server to the default or to the selected server.
 			if (null != server) datasource = server;
-			final Response<GetStatusOk> statusApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
+			final Response<GetStatusOk> statusApiResponse = this.neocomRetrofitFactory.accessNoAuthRetrofit()
 					.create( StatusApi.class )
 					.getStatus( datasource.toLowerCase(), null ).execute();
 			if (statusApiResponse.isSuccessful())
@@ -320,7 +321,7 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getUniverseRaces]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseRaces200Ok>> racesList = retrofitFactory.accessNoAuthRetrofit()
+			final Response<List<GetUniverseRaces200Ok>> racesList = neocomRetrofitFactory.accessNoAuthRetrofit()
 					.create( UniverseApi.class )
 					.getUniverseRaces( DEFAULT_ACCEPT_LANGUAGE,
 							datasource, null, "en-us" )
@@ -340,7 +341,7 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getUniverseAncestries]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = retrofitFactory.accessNoAuthRetrofit()
+			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = neocomRetrofitFactory.accessNoAuthRetrofit()
 					.create( UniverseApi.class )
 					.getUniverseAncestries(
 							DEFAULT_ACCEPT_LANGUAGE,
@@ -361,7 +362,7 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getUniverseBloodlines]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = retrofitFactory.accessNoAuthRetrofit().create(
+			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = neocomRetrofitFactory.accessNoAuthRetrofit().create(
 					UniverseApi.class )
 					.getUniverseBloodlines(
 							DEFAULT_ACCEPT_LANGUAGE,
@@ -381,7 +382,7 @@ public class ESIDataProvider {
 	//	@TimeElapsed
 	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier ) {
 		try {
-			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory.accessNoAuthRetrofit()
+			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.neocomRetrofitFactory.accessNoAuthRetrofit()
 					.create( UniverseApi.class )
 					.getUniversePlanetsPlanetId(
 							identifier,
@@ -448,11 +449,12 @@ public class ESIDataProvider {
 	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier ) {
 		logger.info( "-- [ESIDataProvider.getCharactersCharacterId]> Character identifier: {}", identifier );
 		try {
-			final Response<GetCharactersCharacterIdOk> characterResponse = this.retrofitFactory.accessNoAuthRetrofit()
+			final Response<GetCharactersCharacterIdOk> characterResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( CharacterApi.class )
 					.getCharactersCharacterId(
-							identifier
-							, DEFAULT_ESI_SERVER, null )
+							identifier,
+							DEFAULT_ESI_SERVER, null )
 					.execute();
 			if (characterResponse.isSuccessful()) return characterResponse.body();
 		} catch (IOException ioe) {
@@ -480,7 +482,7 @@ public class ESIDataProvider {
 			String datasource = DEFAULT_ESI_SERVER;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory
+			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.neocomRetrofitFactory
 					.accessESIAuthRetrofit()
 					.create( PlanetaryInteractionApi.class )
 					.getCharactersCharacterIdPlanets(
@@ -524,7 +526,7 @@ public class ESIDataProvider {
 			String datasource = DEFAULT_ESI_SERVER;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory
+			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.neocomRetrofitFactory
 					.accessESIAuthRetrofit()
 					.create( PlanetaryInteractionApi.class )
 					.getCharactersCharacterIdPlanetsPlanetId(
@@ -560,7 +562,8 @@ public class ESIDataProvider {
 		final DateTime startTimePoint = DateTime.now();
 		try {
 			// Create the request to be returned so it can be called.
-			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.retrofitFactory.accessNoAuthRetrofit()
+			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.neocomRetrofitFactory
+					.accessNoAuthRetrofit()
 					.create( PlanetaryInteractionApi.class )
 					.getUniverseSchematicsSchematicId(
 							schematicId
@@ -613,7 +616,7 @@ public class ESIDataProvider {
 			boolean morePages = true;
 			int pageCounter = 1;
 			while (morePages) {
-				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = this.retrofitFactory
+				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = this.neocomRetrofitFactory
 						.accessESIAuthRetrofit()
 						.create( IndustryApi.class )
 						.getCharactersCharacterIdMining(
@@ -639,7 +642,7 @@ public class ESIDataProvider {
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
 				// Recreate the retrofit.
 				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage() );
-				this.retrofitFactory.reset();
+				this.neocomRetrofitFactory.reset();
 				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
 			//		} finally {
@@ -657,10 +660,11 @@ public class ESIDataProvider {
 //			String datasource = DEFAULT_ESI_SERVER;
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<Double> walletApiResponse = this.retrofitFactory.accessESIAuthRetrofit()
+			final Response<Double> walletApiResponse = this.retrofitFactory
+					.accessAuthenticatedConnector(credential)
 					.create( WalletApi.class )
 					.getCharactersCharacterIdWallet( credential.getAccountId()
-							,credential.getDataSource(), null, null )
+							, credential.getDataSource(), null, null )
 					.execute();
 			if (walletApiResponse.isSuccessful()) return walletApiResponse.body();
 		} catch (IOException ioe) {
@@ -669,11 +673,11 @@ public class ESIDataProvider {
 			rtex.printStackTrace();
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
 				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
-				this.retrofitFactory.reset();
+				this.neocomRetrofitFactory.reset();
 			}
 			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
 				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
-				this.retrofitFactory.reset();
+				this.neocomRetrofitFactory.reset();
 			}
 		}
 		return -1.0;
@@ -689,7 +693,7 @@ public class ESIDataProvider {
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
+//			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
 //			String datasource = DEFAULT_ESI_SERVER;
 //			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -697,7 +701,7 @@ public class ESIDataProvider {
 			int pageCounter = 1;
 			while (morePages) {
 				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = this.retrofitFactory
-						.accessESIAuthRetrofit()
+						.accessAuthenticatedConnector(credential)
 						.create( AssetsApi.class )
 						.getCharactersCharacterIdAssets( credential.getAccountId(),
 								credential.getDataSource().toLowerCase(),
@@ -718,11 +722,11 @@ public class ESIDataProvider {
 			// Check if the problem is a connection reset.
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
 				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
-				this.retrofitFactory.reset();
+				this.neocomRetrofitFactory.reset();
 			}
 			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
 				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
-				this.retrofitFactory.reset();
+				this.neocomRetrofitFactory.reset();
 			}
 		}
 		return returnAssetList;
@@ -743,7 +747,7 @@ public class ESIDataProvider {
 			boolean morePages = true;
 			int pageCounter = 1;
 			while (morePages) {
-				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = this.retrofitFactory
+				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = this.neocomRetrofitFactory
 						.accessESIAuthRetrofit()
 						.create( CharacterApi.class )
 						.getCharactersCharacterIdBlueprints(
@@ -830,7 +834,7 @@ public class ESIDataProvider {
 			String datasource = DEFAULT_ESI_SERVER;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory
+			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.neocomRetrofitFactory
 					.accessESIAuthRetrofit()
 					.create( AssetsApi.class )
 					.postCharactersCharacterIdAssetsNames(
@@ -932,16 +936,24 @@ public class ESIDataProvider {
 			this.onConstruction.storeCacheManager = storeCacheManager;
 			return this;
 		}
+
+		public ESIDataProvider.Builder withRetrofitFactory( final RetrofitFactory retrofitFactory ) {
+			Objects.requireNonNull( retrofitFactory );
+			this.onConstruction.retrofitFactory = retrofitFactory;
+			return this;
+		}
+
 		public ESIDataProvider build() {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.locationCatalogService );
 			Objects.requireNonNull( this.onConstruction.storeCacheManager );
-			this.onConstruction.retrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
+			Objects.requireNonNull( this.onConstruction.retrofitFactory );
+			this.onConstruction.neocomRetrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
 					.withConfigurationProvider( this.onConstruction.configurationProvider )
 					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
 					.build();
-			Objects.requireNonNull( this.onConstruction.retrofitFactory );
+			Objects.requireNonNull( this.onConstruction.neocomRetrofitFactory );
 
 			// Inject the new adapter to the classes that depend on it.
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );

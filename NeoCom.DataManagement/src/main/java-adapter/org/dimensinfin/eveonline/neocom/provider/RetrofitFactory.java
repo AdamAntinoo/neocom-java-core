@@ -54,7 +54,7 @@ public class RetrofitFactory {
 			final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
 					+ this.configurationProvider.getResourceString( "P.authenticated.retrofit.cache.directory.name" );
 			final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-			final long cacheSize = this.configurationProvider.getResourceInteger(
+			final Integer cacheSize = this.configurationProvider.getResourceInteger(
 					"P.authenticated.retrofit.cache.size.gb" );
 			hitConnector = new Retrofit.Builder()
 					.baseUrl( esiDataServerLocation )
@@ -65,7 +65,7 @@ public class RetrofitFactory {
 							.withAgent( agent )
 							.withTimeout( timeout.intValue() )
 							.withCacheFile( cacheDataFile )
-							.withCacheSize( 2, StorageUnits.GIGABYTES )
+							.withCacheSize( cacheSize, StorageUnits.GIGABYTES )
 							.generate() )
 					.build();
 			this.connectors.put( credential.getUniqueId(), hitConnector );

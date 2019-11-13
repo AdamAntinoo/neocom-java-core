@@ -12,6 +12,8 @@
       <module name="neocom-datamanagement-infinity.NeoCom.DataManagement.test" target="1.8" />
       <module name="neocom-datamanagement.ESI.SwaggerApi.main" target="1.8" />
       <module name="neocom-datamanagement.ESI.SwaggerApi.test" target="1.8" />
+      <module name="neocom-datamanagement.NeoCom.Annotations.main" target="1.8" />
+      <module name="neocom-datamanagement.NeoCom.Annotations.test" target="1.8" />
       <module name="neocom-datamanagement.NeoCom.DataManagement.main" target="1.8" />
       <module name="neocom-datamanagement.NeoCom.DataManagement.Support.main" target="1.8" />
       <module name="neocom-datamanagement.NeoCom.DataManagement.Support.test" target="1.8" />

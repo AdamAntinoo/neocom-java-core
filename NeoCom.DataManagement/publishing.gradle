@@ -12,7 +12,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives jar
     archives sourcesJar
-    archives javadocJar
+//    archives javadocJar
 }
 publishing {
     publications {
@@ -21,7 +21,7 @@ publishing {
             version = '0.17.0'
             artifactId = 'NeoCom.DataManagement'
             artifact(sourcesJar)
-            artifact(javadocJar)
+//            artifact(javadocJar)
 
             from components.java
             pom {
