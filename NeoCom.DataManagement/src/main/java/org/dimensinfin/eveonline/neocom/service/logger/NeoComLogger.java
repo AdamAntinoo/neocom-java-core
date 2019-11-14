@@ -13,7 +13,7 @@ public class NeoComLogger {
 	}
 
 	public static void info( final String message, final Exception exception ) {
-		logger.info( "-- " + header() + message + "-" + exception.getMessage() );
+		logger.info( "-- " + header() + "> " + message + "-" + exception.getMessage() );
 	}
 
 	public static void info( final String message, String... arguments ) {
@@ -25,7 +25,7 @@ public class NeoComLogger {
 	}
 
 	public static void enter( final String message, String... arguments ) {
-		logger.info( ">> " + header() + message, arguments );
+		logger.info( ">> " + header() + "> "+ message, arguments );
 	}
 
 	public static void exit() {
@@ -45,7 +45,7 @@ public class NeoComLogger {
 	}
 
 	private static String header() {
-		return wrapper( generateCaller() ) + "> ";
+		return wrapper( generateCaller() );
 	}
 
 	private static String wrapper( final String data ) {
@@ -54,8 +54,11 @@ public class NeoComLogger {
 
 	private static String generateCaller() {
 		StackTraceElement[] traceElements = Thread.currentThread().getStackTrace();
-		final StackTraceElement element = traceElements[4];
-		return element.getClassName().substring( element.getClassName().lastIndexOf( '.' ) ) + "." +
+		int androidDisplacement = 0;
+		if (traceElements[0].getMethodName().equalsIgnoreCase( "getThreadStackTrace" ))
+			androidDisplacement = 1;
+		final StackTraceElement element = traceElements[4 + androidDisplacement];
+		return element.getClassName().substring( element.getClassName().lastIndexOf( '.' ) + 1 ) + "." +
 				element.getMethodName();
 	}
 }

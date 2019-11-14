@@ -18,6 +18,32 @@ repositories {
 //    jcenter()
 //    maven { url 'https://jitpack.io' }
 }
+//artifacts {
+//    archives jar
+////    archives sourcesJar
+////    archives javadocJar
+//}
+publishing {
+    publications {
+        jar(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+//            artifact(sourcesJar)
+//            artifact(javadocJar)
+            artifact("$buildDir/libs/${archivesBaseName}-${version}.jar")
+        }
+    }
+    repositories {
+        mavenLocal()
+        maven {
+            url "$buildDir/repo"
+        }
+        maven {
+            url "production"
+        }
+    }
+}
 
 // - P R O D U C T   V E R S I O N S
 ext {

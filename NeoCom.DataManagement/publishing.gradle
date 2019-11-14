@@ -12,16 +12,16 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives jar
     archives sourcesJar
-//    archives javadocJar
+    archives javadocJar
 }
 publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'org.dimensinfin'
-            version = '0.17.0'
+            version = '0.17.1'
             artifactId = 'NeoCom.DataManagement'
             artifact(sourcesJar)
-//            artifact(javadocJar)
+            artifact(javadocJar)
 
             from components.java
             pom {
@@ -51,14 +51,6 @@ publishing {
                 }
             }
         }
-//        jar(MavenPublication) {
-//            groupId project.group
-//            artifactId project.archivesBaseName
-//            version project.version
-//            artifact(sourcesJar)
-//            artifact(javadocJar)
-//            artifact("$buildDir/libs/${archivesBaseName}-${version}.jar")
-//        }
     }
     repositories {
         mavenLocal()

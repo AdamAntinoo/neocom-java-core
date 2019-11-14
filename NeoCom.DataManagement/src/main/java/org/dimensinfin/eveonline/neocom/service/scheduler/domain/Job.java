@@ -1,19 +1,21 @@
 package org.dimensinfin.eveonline.neocom.service.scheduler.domain;
 
 import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public abstract class Job implements Callable<Boolean> {
-	private UUID identifier;
+//	private String identifier;
 	private String schedule;
 	private JobStatus status = JobStatus.READY;
 
 	protected Job() {}
 
-	public UUID getIdentifier() {
-		return this.identifier;
-	}
+//	public String getIdentifier() {
+//		return this.identifier;
+//	}
 
 	public String getSchedule() {
 		return this.schedule;
@@ -28,22 +30,34 @@ public abstract class Job implements Callable<Boolean> {
 		return this;
 	}
 
-	protected Job setIdentifier( final UUID identifier ) {
-		this.identifier = identifier;
-		return this;
-	}
+//	protected Job setIdentifier( final String identifier ) {
+//		this.identifier = identifier;
+//		return this;
+//	}
 
 	protected Job setSchedule( final String schedule ) {
 		this.schedule = schedule;
 		return this;
 	}
-//	//	@Override
-//	public abstract Boolean call( final Credential credential ) throws NeoComRuntimeException;
-//
-//	@Override
-//	public Boolean call() throws Exception {
-//		return null;
-//	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final Job job = (Job) o;
+		return new EqualsBuilder()
+//				.append( this.identifier, job.identifier )
+				.append( this.schedule, job.schedule )
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+//				.append( this.identifier )
+				.append( this.schedule )
+				.toHashCode();
+	}
 
 	// - B U I L D E R
 	public abstract static class Builder<T extends Job, B extends Job.Builder> {
@@ -64,9 +78,10 @@ public abstract class Job implements Callable<Boolean> {
 		}
 
 		public T build() {
-			this.getActual().setIdentifier( UUID.randomUUID());
+//			this.getActual().setIdentifier( this.getClass().getSimpleName() +
+//					"." + UUID.randomUUID() );
 			Objects.requireNonNull( this.getActual().getSchedule() );
-			Objects.requireNonNull( this.getActual().getIdentifier() );
+//			Objects.requireNonNull( this.getActual().getIdentifier() );
 			return this.getActual();
 		}
 	}

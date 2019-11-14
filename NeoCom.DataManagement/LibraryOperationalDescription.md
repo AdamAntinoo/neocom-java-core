@@ -183,3 +183,16 @@ is not so clear.
 Probably the right place is an initialization task that
 will run the list of Credentials and generate the jobs
 registrations.
+
+### Job instance duplication
+Jobs can be created from a base clas and do almost anything so their
+have many different internal unique identifiers. Because there is
+no enought data on the base class to create such differentiation
+I have to search for a pattern to create unique enough job identification
+so to detect when at job registration there a exact job already
+registered.
+
+Jobs start from the Job class and have their own classname. Apart
+from that information there no other coincidences or fields that can
+be used to differentiate jobs. So the only element left for that
+duplicate detection is only the job object instance itself.
