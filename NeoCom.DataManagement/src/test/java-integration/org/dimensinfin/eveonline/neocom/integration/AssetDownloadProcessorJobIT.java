@@ -17,8 +17,7 @@ import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
-import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
-import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessor;
+import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessorJob;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -35,7 +34,7 @@ import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 
-public class AssetDownloadProcessorIT extends IntegrationEnvironmentDefinition {
+public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinition {
 	private final ObjectMapper mapper = new ObjectMapper();
 	private IConfigurationProvider itConfigurationProvider;
 	private IFileSystem itFileSystemAdapter;
@@ -49,14 +48,14 @@ public class AssetDownloadProcessorIT extends IntegrationEnvironmentDefinition {
 	private StoreCacheManager itStoreCacheManager;
 	private ESIDataProvider itEsiDataProvider;
 
-	private AssetDownloadProcessor assetProcessorJob;
+	private AssetDownloadProcessorJob assetProcessorJob;
 	private List<GroupCount> groupCounts;
 
-	private AssetDownloadProcessorIT() {}
+	private AssetDownloadProcessorJobIT() {}
 
 	public static void main( String[] args ) {
 		NeoComLogger.enter();
-		final AssetDownloadProcessorIT application = new AssetDownloadProcessorIT();
+		final AssetDownloadProcessorJobIT application = new AssetDownloadProcessorJobIT();
 		try {
 			application.setupEnvironment();
 			application.registerJobOnScheduler();
@@ -73,7 +72,7 @@ public class AssetDownloadProcessorIT extends IntegrationEnvironmentDefinition {
 
 	@Test
 	void runAssetProcessorIT() {
-		AssetDownloadProcessorIT.main( null );
+		AssetDownloadProcessorJobIT.main( null );
 	}
 
 	private void checkAssertions() throws IOException {
@@ -181,12 +180,12 @@ public class AssetDownloadProcessorIT extends IntegrationEnvironmentDefinition {
 	}
 
 	private void registerJobOnScheduler() {
-		this.assetProcessorJob = new AssetDownloadProcessor.Builder()
+		this.assetProcessorJob = new AssetDownloadProcessorJob.Builder()
 				.withCredential( SupportIntegrationCredential.itCredential )
 				.withEsiDataProvider( this.itEsiDataProvider )
 				.withLocationCatalogService( this.itLocationService )
 				.withAssetRepository( this.itAssetRepository )
-				.withNeoAssetConverter( new GetCharactersCharacterIdAsset2NeoAssetConverter() )
+//				.withNeoAssetConverter( new GetCharactersCharacterIdAsset2NeoAssetConverter() )
 				.addCronSchedule( "* - *" )
 				.build();
 		this.itJobScheduler.registerJob( this.assetProcessorJob );
