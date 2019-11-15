@@ -468,8 +468,7 @@ public class ESIDataProvider {
 	}
 
 	@TimeElapsed
-	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final int identifier
-			, final String refreshToken, final String server ) {
+	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final Credential credential ) {
 		//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
 		//		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
@@ -478,36 +477,34 @@ public class ESIDataProvider {
 		//		if ( allowDownloadPass() ) {
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.neocomRetrofitFactory
-					.accessESIAuthRetrofit()
+			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
 					.create( PlanetaryInteractionApi.class )
 					.getCharactersCharacterIdPlanets(
-							identifier,
-							datasource, null,
-							null ).execute();
-			if (planetaryApiResponse.isSuccessful()) {
-				// Store results on the cache.
-				//				okResponseCache.put(reference, planetaryApiResponse);
+							credential.getAccountId(),
+							credential.getDataSource().toLowerCase(), null, null )
+					.execute();
+			if (planetaryApiResponse.isSuccessful())
 				return planetaryApiResponse.body();
-			} else return new ArrayList<>();
 		} catch (IOException ioe) {
 			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
 			ioe.printStackTrace();
 			// Return cached response if available
-			return new ArrayList<>();
+//			return new ArrayList<>();
 		} catch (RuntimeException rte) {
 			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
 			rte.printStackTrace();
 			// Return cached response if available
-			return new ArrayList<>();
+//			return new ArrayList<>();
 			//		} finally {
 			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanets]> [TIMING] Full elapsed: {}"
 			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
 		}
+		return new ArrayList<>();
 		//		} else return (List<GetCharactersCharacterIdPlanets200Ok>) okResponseCache.get(reference).body();
 	}
 
@@ -661,7 +658,7 @@ public class ESIDataProvider {
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<Double> walletApiResponse = this.retrofitFactory
-					.accessAuthenticatedConnector(credential)
+					.accessAuthenticatedConnector( credential )
 					.create( WalletApi.class )
 					.getCharactersCharacterIdWallet( credential.getAccountId()
 							, credential.getDataSource(), null, null )
@@ -701,7 +698,7 @@ public class ESIDataProvider {
 			int pageCounter = 1;
 			while (morePages) {
 				final Response<List<GetCharactersCharacterIdAssets200Ok>> assetsApiResponse = this.retrofitFactory
-						.accessAuthenticatedConnector(credential)
+						.accessAuthenticatedConnector( credential )
 						.create( AssetsApi.class )
 						.getCharactersCharacterIdAssets( credential.getAccountId(),
 								credential.getDataSource().toLowerCase(),

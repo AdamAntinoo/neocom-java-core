@@ -11,6 +11,7 @@ import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
@@ -27,6 +28,7 @@ public class IntegrationEnvironmentDefinition {
 	protected StoreCacheManager itStoreCacheManager;
 	protected NeoComRetrofitFactory itNeoComRetrofitFactory;
 	protected ESIUniverseDataProvider itEsiUniverseDataProvider;
+	protected ESIDataProvider esiDataProvider;
 	protected LocationCatalogService itLocationService;
 	protected RetrofitFactory itRetrofitFactory;
 
@@ -55,6 +57,10 @@ public class IntegrationEnvironmentDefinition {
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.build();
+		this.itRetrofitFactory = new RetrofitFactory.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.build();
 		this.itStoreCacheManager = new StoreCacheManager.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
@@ -71,15 +77,18 @@ public class IntegrationEnvironmentDefinition {
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.build();
-		this.itRetrofitFactory = new RetrofitFactory.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.build();
 		this.itLocationService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.withLocationRepository( locationRepository )
 				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
 				.withRetrofitFactory( this.itRetrofitFactory )
+				.build();
+		this.esiDataProvider = new ESIDataProvider.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.withLocationCatalogService( this.itLocationService )
+				.withRetrofitFactory( this.itRetrofitFactory )
+				.withStoreCacheManager( this.itStoreCacheManager )
 				.build();
 	}
 }

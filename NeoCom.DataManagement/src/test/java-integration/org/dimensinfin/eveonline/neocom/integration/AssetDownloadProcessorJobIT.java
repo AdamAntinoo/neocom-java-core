@@ -14,39 +14,18 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
-import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
-import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessorJob;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
-import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.integration.support.GetCharactersCharacterIdAssets200OkDeserializer;
 import org.dimensinfin.eveonline.neocom.integration.support.GroupCount;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationNeoComDBAdapter;
 import org.dimensinfin.eveonline.neocom.integration.support.SupportIntegrationCredential;
-import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
-import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 
 public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinition {
 	private final ObjectMapper mapper = new ObjectMapper();
-	private IConfigurationProvider itConfigurationProvider;
-	private IFileSystem itFileSystemAdapter;
-	private JobScheduler itJobScheduler;
-	private AssetRepository itAssetRepository;
-	private IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
-	private RetrofitUniverseConnector itRetrofitUniverseConnector;
-	private ESIUniverseDataProvider itEsiUniverseDataProvider;
-	private RetrofitFactory itRetrofitFactory;
-	private LocationCatalogService itLocationService;
-	private StoreCacheManager itStoreCacheManager;
-	private ESIDataProvider itEsiDataProvider;
 
 	private AssetDownloadProcessorJob assetProcessorJob;
 	private List<GroupCount> groupCounts;
@@ -59,7 +38,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		try {
 			application.setupEnvironment();
 			application.registerJobOnScheduler();
-			application.itJobScheduler.runSchedule();
+			JobScheduler.getJobScheduler().runSchedule();
 			application.waitSchedulerCompletion();
 			application.checkAssertions();
 		} catch (IOException ioe) {
@@ -76,7 +55,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 	}
 
 	private void checkAssertions() throws IOException {
-		Assertions.assertNotNull( this.itJobScheduler );
+		Assertions.assertNotNull( JobScheduler.getJobScheduler() );
 		Assertions.assertNotNull( this.assetProcessorJob );
 
 		final List<NeoAsset> assets = this.itAssetRepository
@@ -90,8 +69,6 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 			if (asset.getGroupName().equalsIgnoreCase( "Mining Laser" )) miningLasertCount++;
 			if (asset.getGroupName().equalsIgnoreCase( "Propulsion Module" )) propulsionCount++;
 		}
-//		Assertions.assertEquals( 4, miningLasertCount );
-//		Assertions.assertEquals( 5, propulsionCount );
 		for (GroupCount count : this.groupCounts) {
 			if (count.getGroup().equalsIgnoreCase( "Mining Laser" ))
 				Assertions.assertEquals( miningLasertCount, count.getCount() );
@@ -107,64 +84,8 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 	}
 
 	private void waitSchedulerCompletion() {
-		this.itJobScheduler.wait4Completion();
+		JobScheduler.getJobScheduler().wait4Completion();
 	}
-
-//	private void setUpEnvironment() throws IOException, SQLException {
-//		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
-//				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
-//		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
-//				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
-//				.build();
-//		this.itJobScheduler = new JobScheduler.Builder()
-//				.withCronScheduleGenerator( new HourlyCronScheduleGenerator() ).build();
-//		// Database setup
-//		final String databaseHostName = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasehost" );
-//		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
-//		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );
-//		final String databasePassword = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepassword" );
-//		final String neocomDatabaseURL = databaseHostName +
-//				"/" + databasePath +
-//				"?user=" + databaseUser +
-//				"&password=" + databasePassword;
-//		this.itNeoComIntegrationDBAdapter = new IntegrationNeoComDBAdapter.Builder()
-//				.withDatabaseURLConnection( neocomDatabaseURL )
-//				.build();
-//		this.itAssetRepository = new AssetRepository.Builder()
-//				.withAssetDao( this.itNeoComIntegrationDBAdapter.getAssetDao() )
-//				.withConnection4Transaction( this.itNeoComIntegrationDBAdapter.getConnectionSource() )
-//				.build();
-//		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.build();
-//		this.itStoreCacheManager = new StoreCacheManager.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.withRetrofitFactory( this.itRetrofitFactory )
-//				.build();
-//		this.itEsiUniverseDataProvider = new ESIUniverseDataProvider.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.withStoreCacheManager( this.itStoreCacheManager )
-//				.withRetrofitFactory( this.itRetrofitFactory)
-//				.build();
-//		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
-//		this.itRetrofitFactory = new RetrofitFactory.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.build();
-//		this.itLocationService = new LocationCatalogService.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.withLocationRepository( locationRepository )
-//				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
-//				.withRetrofitFactory( this.itRetrofitFactory )
-//				.build();
-//		final List<GetCharactersCharacterIdAssets200Ok> testAssetList = this.loadAssetTestData();
-//		this.itEsiDataProvider = Mockito.mock( ESIDataProvider.class );
-//		Mockito.when( this.itEsiDataProvider.getCharactersCharacterIdAssets( Mockito.any( Credential.class ) ) )
-//				.thenReturn( testAssetList );
-//	}
 
 	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
 		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",
@@ -182,12 +103,11 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 	private void registerJobOnScheduler() {
 		this.assetProcessorJob = new AssetDownloadProcessorJob.Builder()
 				.withCredential( SupportIntegrationCredential.itCredential )
-				.withEsiDataProvider( this.itEsiDataProvider )
+				.withEsiDataProvider( this.esiDataProvider )
 				.withLocationCatalogService( this.itLocationService )
 				.withAssetRepository( this.itAssetRepository )
-//				.withNeoAssetConverter( new GetCharactersCharacterIdAsset2NeoAssetConverter() )
 				.addCronSchedule( "* - *" )
 				.build();
-		this.itJobScheduler.registerJob( this.assetProcessorJob );
+		JobScheduler.getJobScheduler().registerJob( this.assetProcessorJob );
 	}
 }
