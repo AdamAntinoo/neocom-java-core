@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.annotation;
+package org.dimensinfin.eveonline.neocom.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

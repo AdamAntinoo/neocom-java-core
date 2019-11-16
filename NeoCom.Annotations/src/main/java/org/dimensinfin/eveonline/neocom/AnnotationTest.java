@@ -1,6 +1,7 @@
-package org.dimensinfin.neocom;
+package org.dimensinfin.eveonline.neocom;
 
-import org.dimensinfin.neocom.annotation.LogEnterExit;
+import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 public class AnnotationTest {
 	private AnnotationTest() {}

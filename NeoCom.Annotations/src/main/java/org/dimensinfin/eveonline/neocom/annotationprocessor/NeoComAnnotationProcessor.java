@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.annotationprocessor;
+package org.dimensinfin.eveonline.neocom.annotationprocessor;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -16,15 +16,13 @@ import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.neocom.NeoComLogger;
-import org.dimensinfin.neocom.annotation.LogEnterExit;
+import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 @AutoService(Processor.class)
 public class NeoComAnnotationProcessor extends AbstractProcessor {
-	private static Logger logger = LoggerFactory.getLogger( NeoComAnnotationProcessor.class );
+//	private static Logger logger = LoggerFactory.getLogger( NeoComAnnotationProcessor.class );
 	private static final Set<String> supported = new LinkedHashSet<>();
 
 	static {
@@ -50,7 +48,7 @@ public class NeoComAnnotationProcessor extends AbstractProcessor {
 		while (it.hasNext()) {
 			final Element targetMethod = it.next();
 			try {
-				logger.info( "targetMethod.getSimpleName().toString(): {}", targetMethod.getSimpleName().toString() );
+				NeoComLogger.info( "targetMethod.getSimpleName().toString(): {}", targetMethod.getSimpleName().toString() );
 				this.generateLogEnterExitWrapper( targetMethod.getSimpleName().toString(), targetMethod );
 			} catch (final IOException ioe) {
 				ioe.printStackTrace();
