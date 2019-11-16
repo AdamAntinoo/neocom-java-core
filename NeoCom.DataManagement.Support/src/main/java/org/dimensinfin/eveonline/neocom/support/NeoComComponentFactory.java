@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.support;
+package org.dimensinfin.eveonline.neocom.support;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -11,9 +11,9 @@ import org.dimensinfin.eveonline.neocom.database.repositories.CredentialReposito
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
-import org.dimensinfin.neocom.support.adapters.implementers.SBConfigurationProvider;
-import org.dimensinfin.neocom.support.adapters.implementers.SBFileSystemAdapter;
-import org.dimensinfin.neocom.support.adapters.implementers.SBNeoComDBAdapter;
+import org.dimensinfin.eveonline.neocom.support.adapters.implementers.SBConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.adapters.implementers.SBFileSystemAdapter;
+import org.dimensinfin.eveonline.neocom.support.adapters.implementers.SBNeoComDBAdapter;
 
 /**
  * This is a singleton with global access that will contain application component references so they can be injected to other

@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.support.adapters;
+package org.dimensinfin.eveonline.neocom.support.adapters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

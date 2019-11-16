@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.support;
+package org.dimensinfin.eveonline.neocom.support;
 
 import java.io.IOException;
 

@@ -1,6 +1,7 @@
 # - Ignore compilation and generated files
 build/
 coverage/
+out/
 
 # - Test caches and generated test data to be ignored
 src/test/NeoCom.UnitTest

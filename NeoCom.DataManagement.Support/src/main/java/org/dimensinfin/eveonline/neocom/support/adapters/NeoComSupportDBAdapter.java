@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.support.adapters;
+package org.dimensinfin.eveonline.neocom.support.adapters;
 
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;

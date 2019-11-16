@@ -1,4 +1,4 @@
-package org.dimensinfin.neocom.support.adapters.implementers;
+package org.dimensinfin.eveonline.neocom.support.adapters.implementers;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

@@ -15,5 +15,7 @@ public interface IFileSystem {
 
 	String accessResource4Path( final String filePath ) throws IOException;
 
+	String accessPublicResource4Path( final String filePath ) throws IOException;
+
 	void copyFromAssets( final String sourceFileName, final String destinationDirectory );
 }
