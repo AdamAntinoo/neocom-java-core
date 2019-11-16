@@ -12,18 +12,22 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
-import org.dimensinfin.eveonline.neocom.support.SupportConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
 
 import io.reactivex.Single;
 
 public class StoreCacheManagerTest {
 	private StoreCacheManager storeCacheManager4test;
+	private IConfigurationProvider configurationProvider;
+	private IFileSystem fileSystemAdapter;
 
 	@Before
 	public void setUp() throws Exception {
-		final IConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder().build();
-		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
+		this.configurationProvider = new SBConfigurationProvider.Builder()
+				.withPropertiesDirectory( "/src/test/resources/properties.unittest" )
+				.build();
+		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();
 		final RetrofitFactory retrofitFactory = new RetrofitFactory.Builder()
@@ -33,23 +37,24 @@ public class StoreCacheManagerTest {
 		this.storeCacheManager4test = new StoreCacheManager.Builder()
 				.withConfigurationProvider( configurationProvider )
 				.withFileSystemAdapter( fileSystemAdapter )
-				.withRetrofitFactory( retrofitFactory)
+				.withRetrofitFactory( retrofitFactory )
 				.build();
 	}
+
 	@Test
 	public void buildComplete() throws IOException {
-		final IConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder().build();
-		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
-				.build();
+//		final IConfigurationProvider configurationProvider = new SupportConfigurationProvider.Builder().build();
+//		final IFileSystem fileSystemAdapter = new SupportFileSystem.Builder()
+//				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
+//				.build();
 		final RetrofitFactory retrofitFactory = new RetrofitFactory.Builder()
-				.withConfigurationProvider( configurationProvider )
-				.withFileSystemAdapter( fileSystemAdapter )
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
 				.build();
 		final StoreCacheManager storeCacheManager = new StoreCacheManager.Builder()
-				.withConfigurationProvider( configurationProvider )
-				.withFileSystemAdapter( fileSystemAdapter )
-				.withRetrofitFactory( retrofitFactory)
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withRetrofitFactory( retrofitFactory )
 				.build();
 		Assert.assertNotNull( storeCacheManager );
 	}

@@ -57,6 +57,7 @@ public class MiningRepositoryIT {
 	private String connectionUrl;
 	private JdbcConnectionSource connectionSource;
 	private Dao<MiningExtraction, String> miningDao;
+	private String expectedVerifiedId;
 	// - C O M P O N E N T S
 	private IntegrationCredentialStore integrationCredentialStore;
 	private IConfigurationProvider configurationProvider;
@@ -202,7 +203,7 @@ public class MiningRepositoryIT {
 		final Credential credential = Mockito.mock( Credential.class );
 		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
 		Optional<MiningExtraction> miningRecord = this.miningRepository
-				.accessMiningExtractionFindById( "2019-11-10:24-30002764-35-2113197470" );
+				.accessMiningExtractionFindById( this.expectedVerifiedId );
 
 		Assertions.assertTrue( miningRecord.isPresent() );
 		Assertions.assertEquals( characterId.longValue(), miningRecord.get().getOwnerId() );
@@ -260,6 +261,7 @@ public class MiningRepositoryIT {
 				.build();
 		this.miningRepository.persist( miningExtractionA );
 		NeoComLogger.info("Extraction id: {}",miningExtractionA.getId());
+		this.expectedVerifiedId=miningExtractionA.getId();
 		this.miningRepository.persist( miningExtractionB );
 		NeoComLogger.info("Extraction id: {}",miningExtractionB.getId());
 		final List<MiningExtraction> result = this.miningDao.queryForAll();

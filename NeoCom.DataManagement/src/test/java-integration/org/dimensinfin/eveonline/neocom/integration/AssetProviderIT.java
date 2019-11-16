@@ -9,32 +9,24 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
-import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
-import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.asset.provider.AssetProvider;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
-import org.dimensinfin.eveonline.neocom.integration.support.IntegrationNeoComDBAdapter;
 import org.dimensinfin.eveonline.neocom.integration.support.SupportIntegrationCredential;
-import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
-import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 
 public class AssetProviderIT extends IntegrationEnvironmentDefinition {
-//	private Credential itCredential;
-	private IConfigurationProvider itConfigurationProvider;
-	private IFileSystem itFileSystemAdapter;
-	private IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
-	private AssetRepository itAssetRepository;
-	private RetrofitUniverseConnector itRetrofitUniverseConnector;
-	private StoreCacheManager itStoreCacheManager;
-	private NeoComRetrofitFactory itNeoComRetrofitFactory;
-	private ESIUniverseDataProvider itEsiUniverseDataProvider;
-	private LocationCatalogService itLocationService;
-	private RetrofitFactory itRetrofitFactory;
+	//	private Credential itCredential;
+//	private IConfigurationProvider itConfigurationProvider;
+//	private IFileSystem itFileSystemAdapter;
+//	private IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
+//	private AssetRepository itAssetRepository;
+//	private RetrofitUniverseConnector itRetrofitUniverseConnector;
+//	private StoreCacheManager itStoreCacheManager;
+//	private NeoComRetrofitFactory itNeoComRetrofitFactory;
+//	private ESIUniverseDataProvider itEsiUniverseDataProvider;
+//	private LocationCatalogService itLocationService;
+//	private RetrofitFactory itRetrofitFactory;
 
 	@Test
 	void runAssetProviderIT() throws SQLException, IOException {
@@ -48,6 +40,7 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 
 		provider.classifyAssetsByLocation();
 	}
+
 	@org.junit.Test
 	public void buildComplete() {
 		final Credential credential = Mockito.mock( Credential.class );

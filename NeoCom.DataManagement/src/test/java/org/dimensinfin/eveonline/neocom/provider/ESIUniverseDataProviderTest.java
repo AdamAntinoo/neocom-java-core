@@ -38,7 +38,7 @@ public class ESIUniverseDataProviderTest {
 	@BeforeEach
 	void setUp() throws IOException {
 		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.ut" ).build();
+				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
 				.build();

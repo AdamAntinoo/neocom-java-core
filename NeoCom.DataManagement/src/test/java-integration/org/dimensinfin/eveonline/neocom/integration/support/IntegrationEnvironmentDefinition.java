@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
-import org.dimensinfin.eveonline.neocom.adapter.RetrofitUniverseConnector;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
@@ -24,9 +22,7 @@ public class IntegrationEnvironmentDefinition {
 	protected IFileSystem itFileSystemAdapter;
 	protected IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
 	protected AssetRepository itAssetRepository;
-	protected RetrofitUniverseConnector itRetrofitUniverseConnector;
 	protected StoreCacheManager itStoreCacheManager;
-	protected NeoComRetrofitFactory itNeoComRetrofitFactory;
 	protected ESIUniverseDataProvider itEsiUniverseDataProvider;
 	protected ESIDataProvider esiDataProvider;
 	protected LocationCatalogService itLocationService;
@@ -53,10 +49,10 @@ public class IntegrationEnvironmentDefinition {
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
 				.build();
-		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.build();
+//		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.build();
 		this.itRetrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
@@ -73,10 +69,10 @@ public class IntegrationEnvironmentDefinition {
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
-		this.itNeoComRetrofitFactory = new NeoComRetrofitFactory.Builder()
-				.withConfigurationProvider( this.itConfigurationProvider )
-				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.build();
+//		this.itNeoComRetrofitFactory = new NeoComRetrofitFactory.Builder()
+//				.withConfigurationProvider( this.itConfigurationProvider )
+//				.withFileSystemAdapter( this.itFileSystemAdapter )
+//				.build();
 		this.itLocationService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )

@@ -18,11 +18,7 @@ repositories {
 //    jcenter()
 //    maven { url 'https://jitpack.io' }
 }
-//artifacts {
-//    archives jar
-////    archives sourcesJar
-////    archives javadocJar
-//}
+
 publishing {
     publications {
         jar(MavenPublication) {

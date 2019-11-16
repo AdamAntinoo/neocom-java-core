@@ -56,6 +56,7 @@ public class DatabaseVersion {
 		if (!(o instanceof DatabaseVersion)) return false;
 		final DatabaseVersion that = (DatabaseVersion) o;
 		return new EqualsBuilder()
+				.append( this.id, that.id )
 				.append( this.versionNumber, that.versionNumber )
 				.isEquals();
 	}
@@ -63,6 +64,7 @@ public class DatabaseVersion {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
+				.append( this.id )
 				.append( this.versionNumber )
 				.toHashCode();
 	}

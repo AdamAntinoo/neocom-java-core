@@ -16,7 +16,6 @@ public class ESIDataProviderSupportTest {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
-	protected SupportNeoComRetrofitFactory.Builder retrofitFactoryBuilder;
 	protected ESIDataProvider esiDataProvider;
 	private EsiLocation defaultLocation;
 
@@ -39,7 +38,7 @@ public class ESIDataProviderSupportTest {
 				.build();
 		this.locationCatalogService = Mockito.mock( LocationCatalogService.class );
 //		Mockito.when( this.locationCatalogService.searchLocation4Id( anyLong() ) ).thenReturn( defaultLocation );
-		this.retrofitFactoryBuilder = new SupportNeoComRetrofitFactory.Builder();
+//		this.retrofitFactoryBuilder = new SupportNeoComRetrofitFactory.Builder();
 		this.esiDataProvider = new ESIDataProvider.Builder() // Use an special configuration to call the mock server
 		                                                     .withConfigurationProvider( this.configurationProvider )
 		                                                     .withFileSystemAdapter( this.fileSystemAdapter )

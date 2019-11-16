@@ -17,7 +17,7 @@ public class NeoComLogger {
 	}
 
 	public static void info( final String message, String... arguments ) {
-		logger.info( "-- " + header() + message, arguments );
+		logger.info( "-- " + header() + "> " + message, arguments );
 	}
 
 	public static void enter() {
@@ -25,7 +25,7 @@ public class NeoComLogger {
 	}
 
 	public static void enter( final String message, String... arguments ) {
-		logger.info( ">> " + header() + "> "+ message, arguments );
+		logger.info( ">> " + header() + "> " + message, arguments );
 	}
 
 	public static void exit() {

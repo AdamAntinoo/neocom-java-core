@@ -1,10 +1,8 @@
 package org.dimensinfin.eveonline.neocom.provider;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
@@ -13,17 +11,21 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SupportFileSystem;
 
-@RunWith(JUnit4.class)
 public class ESIDataProviderTest {
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
+	private RetrofitFactory retrofitFactory;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.ut" ).build();
+				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 		this.fileSystemAdapter = new SupportFileSystem.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest" )
+				.build();
+		this.retrofitFactory = new RetrofitFactory.Builder()
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
 				.build();
 	}
 
@@ -31,25 +33,27 @@ public class ESIDataProviderTest {
 	public void buildComplete() {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
+//		final RetrofitFactory retrofitFactory = Mockito.mock( RetrofitFactory.class );
 		final ESIDataProvider provider = new ESIDataProvider.Builder()
 				.withConfigurationProvider( this.configurationProvider )
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( locationCatalogService )
 				.withStoreCacheManager( storeCacheManager )
+				.withRetrofitFactory( retrofitFactory )
 				.build();
 
-		Assert.assertNotNull( provider );
+		Assertions.assertNotNull( provider );
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
 	public void builderFailure() {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
-		final ESIDataProvider provider = new ESIDataProvider.Builder()
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withLocationCatalogService( locationCatalogService )
-				.build();
-
-		Assert.assertNotNull( provider );
+		Assertions.assertThrows( NullPointerException.class, () -> {
+			final ESIDataProvider provider = new ESIDataProvider.Builder()
+					.withFileSystemAdapter( this.fileSystemAdapter )
+					.withLocationCatalogService( locationCatalogService )
+					.build();
+		} );
 	}
 
 
@@ -84,10 +88,12 @@ public class ESIDataProviderTest {
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( locationCatalogService )
 				.withStoreCacheManager( storeCacheManager )
+				.withRetrofitFactory( this.retrofitFactory )
 				.build();
 
 		final GetStatusOk status = provider.getUniverseStatus( "Tranquility" );
-		Assert.assertTrue( Math.abs( 28184 - status.getPlayers() ) < 1000 );
+		Assertions.assertNotNull( status );
+		Assertions.assertTrue( Math.abs( 28184 - status.getPlayers() ) < 10000 );
 	}
 
 //	//	@Test
