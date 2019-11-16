@@ -150,7 +150,7 @@ public class NeoComOauth2Flow {
 			this.onConstruction = new NeoComOauth2Flow();
 		}
 
-		public NeoComOauth2Flow.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
+		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;

@@ -3,13 +3,16 @@ package org.dimensinfin.eveonline.neocom.auth;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import com.google.gson.GsonBuilder;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import org.dimensinfin.eveonline.neocom.core.support.GSONDateTimeDeserializer;
 import org.dimensinfin.eveonline.neocom.core.support.GSONLocalDateDeserializer;
 
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.GsonBuilder;
 import okhttp3.Cache;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -23,6 +26,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by Adam on 15/01/2018.
  */
 public class NeoComRetrofitHTTP {
+	// - S T A T I C - S E C T I O N
+	private static Logger logger = LoggerFactory.getLogger(NeoComRetrofitHTTP.class);
+
 	protected static final Converter.Factory GSON_CONVERTER_FACTORY =
 			GsonConverterFactory.create(
 					new GsonBuilder()
@@ -40,6 +46,7 @@ public class NeoComRetrofitHTTP {
 	}
 
 	// - F I E L D S
+	//	protected IConfigurationProvider configurationProvider;
 	protected NeoComOAuth20 neoComOAuth20;
 	protected String esiDataServerLocation;
 	protected String agent;
@@ -56,35 +63,33 @@ public class NeoComRetrofitHTTP {
 	protected Retrofit build() {
 		OkHttpClient.Builder retrofitClient =
 				new OkHttpClient.Builder()
-						.addInterceptor( chain -> {
-							Request.Builder builder = chain.request().newBuilder()
-									.addHeader( "accept", "application/json" )
-									.addHeader( "User-Agent", agent );
-//									.addHeader( "authorization", "Bearer " + tokenStore.getAccessToken() );
-							return chain.proceed( builder.build() );
-						} )
-//						.addInterceptor(chain -> {
-//							if (StringUtils.isBlank(getRefreshToken())) {
-//								return chain.proceed(chain.request());
-//							}
-//
-//							Request.Builder builder = chain.request().newBuilder();
-//							final TokenTranslationResponse token = this.neoComOAuth20.fromRefresh(getRefreshToken());
-//							if (null != token) {
-//								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
-//							}
-//							return chain.proceed(builder.build());
-//						})
 						.addInterceptor(chain -> {
-//							if (StringUtils.isBlank(getRefreshToken())) {
-//								return chain.proceed(chain.request());
-//							}
+							Request.Builder builder = chain.request().newBuilder()
+									                          .addHeader("User-Agent", this.agent);
+							return chain.proceed(builder.build());
+						})
+						.addInterceptor(chain -> {
+							if (StringUtils.isBlank(getRefreshToken())) {
+								return chain.proceed(chain.request());
+							}
+
+							Request.Builder builder = chain.request().newBuilder();
+							final TokenTranslationResponse token = this.neoComOAuth20.fromRefresh(getRefreshToken());
+							if (null != token) {
+								builder.addHeader("Authorization", "Bearer " + token.getAccessToken());
+							}
+							return chain.proceed(builder.build());
+						})
+						.addInterceptor(chain -> {
+							if (StringUtils.isBlank(getRefreshToken())) {
+								return chain.proceed(chain.request());
+							}
 
 							Response r = chain.proceed(chain.request());
 							if (r.isSuccessful()) {
 								return r;
 							}
-							if (r.body().string().contains("expired")) {
+							if (r.body().string().contains("invalid_token")) {
 								this.neoComOAuth20.fromRefresh(getRefreshToken());
 								r = chain.proceed(chain.request());
 							}
