@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
-import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceConstellationImplementation;
@@ -292,7 +291,7 @@ public class LocationCatalogService {
 		final String refreshToken = credential.getRefreshToken();
 		final int identifier = credential.getAccountId();
 		try {
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
 			String datasource = ESIDataProvider.DEFAULT_ESI_SERVER;
 			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
 					.accessAuthenticatedConnector(credential)

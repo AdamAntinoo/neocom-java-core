@@ -84,11 +84,13 @@ public class NeoComOAuth20 {
 				                         .state(this.state);
 		if (StringUtils.isNotBlank(this.callback)) builder.callback(this.callback);
 		if (!scopes.isEmpty()) builder.scope(transformScopes(this.scopes));
+
 		this.oAuth20Service = builder.build(new NeoComAuthApi20.Builder()
 				                                    .withAccessServer(this.baseUrl)
 				                                    .withAccessTokenEndpoint(this.accessTokenEndpoint)
 				                                    .withAuthorizationBaseUrl(this.authorizationBaseUrl)
 				                                    .build());
+
 		OkHttpClient.Builder verifyClient =
 				new OkHttpClient.Builder()
 						.protocols(Arrays.asList(Protocol.HTTP_1_1))

@@ -519,7 +519,7 @@ public class ESIDataProvider {
 		//		if (allowDownloadPass()) {
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
 			String datasource = DEFAULT_ESI_SERVER;
 			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
@@ -606,7 +606,7 @@ public class ESIDataProvider {
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
 			String datasource = DEFAULT_ESI_SERVER;
 			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
