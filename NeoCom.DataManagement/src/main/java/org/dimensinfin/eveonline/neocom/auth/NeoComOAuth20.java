@@ -2,64 +2,59 @@ package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.exceptions.OAuthException;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
-import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
 
 public class NeoComOAuth20 {
 	private static Logger logger = LoggerFactory.getLogger(NeoComOAuth20.class);
 
-	public interface VerifyModelCharacter {
-		@GET("/oauth/verify")
-		Call<VerifyCharacterResponse> getVerification( @Header("Authorization") String token );
-	}
+//	public interface VerifyModelCharacter {
+//		@GET("/oauth/verify")
+//		Call<VerifyCharacterResponse> getVerification( @Header("Authorization") String token );
+//	}
 
-	public interface ESIStore {
-		ESIStore DEFAULT = new ESIStore() {
-			private Map<String, TokenTranslationResponse> map = new HashMap<>();
-
-			@Override
-			public void save( TokenTranslationResponse token ) {
-				this.map.put(token.getRefreshToken(), token);
-			}
-
-			@Override
-			public void delete( String refresh ) {
-				this.map.remove(refresh);
-			}
-
-			@Override
-			public TokenTranslationResponse get( String refresh ) {
-				return this.map.get(refresh);
-			}
-		};
-
-
-		void save( final TokenTranslationResponse token );
-
-		void delete( final String refresh );
-
-		TokenTranslationResponse get( final String refresh );
-	}
+//	public interface ESIStore {
+//		ESIStore DEFAULT = new ESIStore() {
+//			private Map<String, TokenTranslationResponse> map = new HashMap<>();
+//
+//			@Override
+//			public void save( TokenTranslationResponse token ) {
+//				this.map.put(token.getRefreshToken(), token);
+//			}
+//
+//			@Override
+//			public void delete( String refresh ) {
+//				this.map.remove(refresh);
+//			}
+//
+//			@Override
+//			public TokenTranslationResponse get( String refresh ) {
+//				return this.map.get(refresh);
+//			}
+//		};
+//
+//
+//		void save( final TokenTranslationResponse token );
+//
+//		void delete( final String refresh );
+//
+//		TokenTranslationResponse get( final String refresh );
+//	}
 
 	// - F I E L D - S E C T I O N
 	private String clientId;
@@ -74,7 +69,7 @@ public class NeoComOAuth20 {
 	private String authorizationBaseUrl;
 
 	private OAuth20Service oAuth20Service;
-	private VerifyModelCharacter verify;
+	private VerifyCharacter verify;
 
 	// - C O N S T R U C T O R S
 	private NeoComOAuth20() {
@@ -114,7 +109,7 @@ public class NeoComOAuth20 {
 						.addConverterFactory(JacksonConverterFactory.create())
 						.client(verifyClient.build())
 						.build()
-						.create(VerifyModelCharacter.class);
+						.create(VerifyCharacter.class);
 	}
 
 	public String getAuthorizationUrl() {

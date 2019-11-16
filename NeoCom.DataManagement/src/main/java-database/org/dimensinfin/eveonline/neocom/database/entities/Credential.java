@@ -51,7 +51,7 @@ public class Credential extends UpdatableEntity {
 	private Integer accountId = -2;
 	@DatabaseField
 	private String accountName;
-	@DatabaseField
+//	@DatabaseField
 	private int corporationId = -3; // Store the pilot's corporation identifier to be used on the UI.
 	@DatabaseField
 	private String dataSource = "Tranquility".toLowerCase();

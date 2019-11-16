@@ -3,8 +3,6 @@ package org.dimensinfin.eveonline.neocom.auth;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import org.dimensinfin.eveonline.neocom.interfaces.IConfigurationProvider;
-
 import org.apache.commons.lang3.StringUtils;
 
 import okhttp3.Cache;

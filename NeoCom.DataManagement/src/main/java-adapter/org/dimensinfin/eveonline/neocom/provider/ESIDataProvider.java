@@ -690,7 +690,7 @@ public class ESIDataProvider {
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
+			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
 //			String datasource = DEFAULT_ESI_SERVER;
 //			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
