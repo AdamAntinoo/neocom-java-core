@@ -13,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
-import org.dimensinfin.eveonline.neocom.adapter.NeoComRetrofitFactory;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
-import org.dimensinfin.eveonline.neocom.auth.NeoComRetrofitHTTP;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
@@ -76,33 +74,33 @@ public class ESIDataProvider {
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
-	protected NeoComRetrofitFactory neocomRetrofitFactory;
+	//	protected NeoComRetrofitFactory neocomRetrofitFactory;
 	protected StoreCacheManager storeCacheManager;
 	protected RetrofitFactory retrofitFactory;
 
 	// - C O N S T R U C T O R S
 	protected ESIDataProvider() {}
 
-	/**
-	 * Allows the selection of the ESI server. Changes the retrofit factory to discard current retrofit instances and create
-	 * new ones but related to the new server configuration.
-	 *
-	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
-	 */
-	@Deprecated
-	public void activateEsiServer( final String esiServer ) {
-		this.neocomRetrofitFactory.activateEsiServer( esiServer );
-	}
+//	/**
+//	 * Allows the selection of the ESI server. Changes the retrofit factory to discard current retrofit instances and create
+//	 * new ones but related to the new server configuration.
+//	 *
+//	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
+//	 */
+//	@Deprecated
+//	public void activateEsiServer( final String esiServer ) {
+//		this.neocomRetrofitFactory.activateEsiServer( esiServer );
+//	}
 
-	/**
-	 * Method to export the current retrofit factory authorization URL being in use by the current server configuration.
-	 *
-	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
-	 * @return the current authrorization url.
-	 */
-	public String getAuthorizationUrl4Server( final String esiServer ) {
-		return this.neocomRetrofitFactory.getAuthorizationUrl4Server( esiServer );
-	}
+//	/**
+//	 * Method to export the current retrofit factory authorization URL being in use by the current server configuration.
+//	 *
+//	 * @param esiServer the esi server name, be it the production (Tranquility) or development (Singularity).
+//	 * @return the current authrorization url.
+//	 */
+//	public String getAuthorizationUrl4Server( final String esiServer ) {
+//		return this.neocomRetrofitFactory.getAuthorizationUrl4Server( esiServer );
+//	}
 
 	// - D O W N L O A D   S T A R T E R S
 //	public void downloadItemPrices() {
@@ -140,10 +138,10 @@ public class ESIDataProvider {
 		final String refreshToken = credential.getRefreshToken();
 		final int identifier = credential.getAccountId();
 		try {
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
 			String datasource = DEFAULT_ESI_SERVER;
-			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.neocomRetrofitFactory
-					.accessESIAuthRetrofit()
+			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
 					.create( UniverseApi.class )
 					.getUniverseStructuresStructureId( structureId, datasource, null,
 							credential.getAccessToken() )
@@ -236,7 +234,8 @@ public class ESIDataProvider {
 		try {
 			String datasource = DEFAULT_ESI_SERVER; // Set the server to the default or to the selected server.
 			if (null != server) datasource = server;
-			final Response<GetStatusOk> statusApiResponse = this.neocomRetrofitFactory.accessNoAuthRetrofit()
+			final Response<GetStatusOk> statusApiResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( StatusApi.class )
 					.getStatus( datasource.toLowerCase(), null ).execute();
 			if (statusApiResponse.isSuccessful())
@@ -321,7 +320,8 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getUniverseRaces]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseRaces200Ok>> racesList = neocomRetrofitFactory.accessNoAuthRetrofit()
+			final Response<List<GetUniverseRaces200Ok>> racesList = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( UniverseApi.class )
 					.getUniverseRaces( DEFAULT_ACCEPT_LANGUAGE,
 							datasource, null, "en-us" )
@@ -341,7 +341,8 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getUniverseAncestries]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = neocomRetrofitFactory.accessNoAuthRetrofit()
+			final Response<List<GetUniverseAncestries200Ok>> ancestriesList = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( UniverseApi.class )
 					.getUniverseAncestries(
 							DEFAULT_ACCEPT_LANGUAGE,
@@ -362,8 +363,10 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getUniverseBloodlines]" );
 //		final Chrono accessFullTime = new Chrono();
 		try {
-			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = neocomRetrofitFactory.accessNoAuthRetrofit().create(
-					UniverseApi.class )
+			final Response<List<GetUniverseBloodlines200Ok>> bloodLinesList = this.retrofitFactory
+					.accessUniverseConnector()
+					.create(
+							UniverseApi.class )
 					.getUniverseBloodlines(
 							DEFAULT_ACCEPT_LANGUAGE,
 							datasource, null, "en-us" )
@@ -382,7 +385,8 @@ public class ESIDataProvider {
 	//	@TimeElapsed
 	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier ) {
 		try {
-			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.neocomRetrofitFactory.accessNoAuthRetrofit()
+			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( UniverseApi.class )
 					.getUniversePlanetsPlanetId(
 							identifier,
@@ -509,8 +513,8 @@ public class ESIDataProvider {
 	}
 
 	@TimeElapsed
-	public GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final int identifier
-			, final int planetid, final String refreshToken, final String server ) {
+	public GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final Integer planetId,
+	                                                                                          final Credential credential ) {
 		//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
 		//		final Chrono accessFullTime = new Chrono();
 		// Store the response at the cache or if there is a network failure return the last access if available
@@ -520,15 +524,16 @@ public class ESIDataProvider {
 		try {
 			// Set the refresh to be used during the request.
 //			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.neocomRetrofitFactory
-					.accessESIAuthRetrofit()
+			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
 					.create( PlanetaryInteractionApi.class )
 					.getCharactersCharacterIdPlanetsPlanetId(
-							identifier, planetid,
-							datasource, null,
+							credential.getAccountId(),
+							planetId,
+							credential.getDataSource().toLowerCase(), null,
 							null ).execute();
 			if (planetaryApiResponse.isSuccessful()) {
 				// Store results on the cache.
@@ -559,8 +564,8 @@ public class ESIDataProvider {
 		final DateTime startTimePoint = DateTime.now();
 		try {
 			// Create the request to be returned so it can be called.
-			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.neocomRetrofitFactory
-					.accessNoAuthRetrofit()
+			final Response<GetUniverseSchematicsSchematicIdOk> schematicistResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( PlanetaryInteractionApi.class )
 					.getUniverseSchematicsSchematicId(
 							schematicId
@@ -592,33 +597,31 @@ public class ESIDataProvider {
 	 * @param credential the credential to be used when composing the ESI call.
 	 * @return the list of mining actions performed during the last 30 days.
 	 */
-	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
-		return this.getCharactersCharacterIdMining( credential.getAccountId(),
-				credential.getRefreshToken(),
-				credential.getDataSource() );
-	}
-
+//	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
+//		return this.getCharactersCharacterIdMining( credential.getAccountId(),
+//				credential.getRefreshToken(),
+//				credential.getDataSource() );
+//	}
 	@TimeElapsed
-	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final int identifier
-			, final String refreshToken, final String server ) {
+	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
 		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdMining]" );
 		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
 //			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
 			while (morePages) {
-				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = this.neocomRetrofitFactory
-						.accessESIAuthRetrofit()
+				final Response<List<GetCharactersCharacterIdMining200Ok>> industryApiResponse = this.retrofitFactory
+						.accessAuthenticatedConnector( credential )
 						.create( IndustryApi.class )
 						.getCharactersCharacterIdMining(
-								identifier,
-								datasource, null,
+								credential.getAccountId(),
+								credential.getDataSource().toLowerCase(), null,
 								pageCounter, null )
 						.execute();
 				if (!industryApiResponse.isSuccessful()) {
@@ -639,7 +642,7 @@ public class ESIDataProvider {
 			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
 				// Recreate the retrofit.
 				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdMining]> Exception: {}", rtex.getMessage() );
-				this.neocomRetrofitFactory.reset();
+//				this.neocomRetrofitFactory.reset();
 				//				neocomRetrofit = NeoComRetrofitHTTP.build(neocomAuth20, AGENT, cacheDataFile, cacheSize, timeout);
 			}
 			//		} finally {
@@ -653,7 +656,7 @@ public class ESIDataProvider {
 		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdWallet]" );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
+//			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
 //			String datasource = DEFAULT_ESI_SERVER;
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
@@ -668,14 +671,14 @@ public class ESIDataProvider {
 			ioe.printStackTrace();
 		} catch (RuntimeException rtex) {
 			rtex.printStackTrace();
-			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
-				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
-				this.neocomRetrofitFactory.reset();
-			}
-			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
-				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
-				this.neocomRetrofitFactory.reset();
-			}
+//			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
+//				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
+//				this.neocomRetrofitFactory.reset();
+//			}
+//			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
+//				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
+//				this.neocomRetrofitFactory.reset();
+//			}
 		}
 		return -1.0;
 	}
@@ -690,7 +693,7 @@ public class ESIDataProvider {
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
+//			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
 //			String datasource = DEFAULT_ESI_SERVER;
 //			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -717,39 +720,37 @@ public class ESIDataProvider {
 			ioe.printStackTrace();
 		} catch (RuntimeException rtex) {
 			// Check if the problem is a connection reset.
-			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
-				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
-				this.neocomRetrofitFactory.reset();
-			}
-			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
-				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
-				this.neocomRetrofitFactory.reset();
-			}
+//			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
+//				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
+//				this.neocomRetrofitFactory.reset();
+//			}
+//			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
+//				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdAssets]> Exception: {}", rtex.getMessage() );
+//				this.neocomRetrofitFactory.reset();
+//			}
 		}
 		return returnAssetList;
 	}
 
-	public List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final int identifier
-			, final String refreshToken
-			, final String server ) {
+	public List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final Credential credential ) {
 		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdBlueprints]" );
 		//		final Chrono accessFullTime = new Chrono();
 		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>( 1000 );
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
 			boolean morePages = true;
 			int pageCounter = 1;
 			while (morePages) {
-				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = this.neocomRetrofitFactory
-						.accessESIAuthRetrofit()
+				final Response<List<GetCharactersCharacterIdBlueprints200Ok>> characterApiResponse = this.retrofitFactory
+						.accessAuthenticatedConnector( credential )
 						.create( CharacterApi.class )
 						.getCharactersCharacterIdBlueprints(
-								identifier,
-								datasource,
+								credential.getAccountId(),
+								credential.getDataSource().toLowerCase(),
 								null,
 								pageCounter,
 								null )
@@ -822,23 +823,23 @@ public class ESIDataProvider {
 //		return null;
 //	}
 
-	public List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final int identifier, final List<Long> listItemIds, final String refreshToken, final String server ) {
+	public List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final List<Long> listItemIds,
+	                                                                                             final Credential credential ) {
 		logger.info( ">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]" );
 		//		final Chrono accessFullTime = new Chrono();
 		try {
 			// Set the refresh to be used during the request.
-			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = DEFAULT_ESI_SERVER;
-			if (null != server) datasource = server;
+//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
+//			String datasource = DEFAULT_ESI_SERVER;
+//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.neocomRetrofitFactory
-					.accessESIAuthRetrofit()
+			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
 					.create( AssetsApi.class )
 					.postCharactersCharacterIdAssetsNames(
-							identifier,
+							credential.getAccountId(),
 							listItemIds,
-							datasource
-									.toLowerCase(),
+							credential.getDataSource().toLowerCase(),
 							null ).execute();
 			if (!assetsApiResponse.isSuccessful()) {
 				return null;
@@ -899,7 +900,7 @@ public class ESIDataProvider {
 	// - B U I L D E R
 	public static class Builder {
 		private ESIDataProvider onConstruction;
-		private NeoComRetrofitFactory.Builder retrofitFactoryBuilder = new NeoComRetrofitFactory.Builder();
+//		private NeoComRetrofitFactory.Builder retrofitFactoryBuilder = new NeoComRetrofitFactory.Builder();
 
 		public Builder() {
 			this.onConstruction = new ESIDataProvider();
@@ -946,11 +947,11 @@ public class ESIDataProvider {
 			Objects.requireNonNull( this.onConstruction.locationCatalogService );
 			Objects.requireNonNull( this.onConstruction.storeCacheManager );
 			Objects.requireNonNull( this.onConstruction.retrofitFactory );
-			this.onConstruction.neocomRetrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
-					.withConfigurationProvider( this.onConstruction.configurationProvider )
-					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
-					.build();
-			Objects.requireNonNull( this.onConstruction.neocomRetrofitFactory );
+//			this.onConstruction.neocomRetrofitFactory = this.retrofitFactoryBuilder // Allow mocking for the retrofit factory.
+//					.withConfigurationProvider( this.onConstruction.configurationProvider )
+//					.withFileSystemAdapter( this.onConstruction.fileSystemAdapter )
+//					.build();
+//			Objects.requireNonNull( this.onConstruction.neocomRetrofitFactory );
 
 			// Inject the new adapter to the classes that depend on it.
 			NeoComUpdater.injectsEsiDataAdapter( this.onConstruction );

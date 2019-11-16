@@ -45,14 +45,13 @@ public class RetrofitFactory {
 
 	private Map<String, Retrofit> connectors = new HashMap<>();
 	private String SCOPESTRING;
-	private Long CACHE_SIZE=StorageUnits.GIGABYTES.toBytes( 2 );
+	private Long CACHE_SIZE = StorageUnits.GIGABYTES.toBytes( 2 );
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
 
 	private RetrofitFactory() {}
 
-	@Deprecated
 	public Retrofit accessAuthenticatedConnector( final Credential credential ) throws IOException {
 		Retrofit hitConnector = this.connectors.get( credential.getUniqueId() );
 		if (null == hitConnector) { // Create a new connector for this credential.
@@ -86,107 +85,46 @@ public class RetrofitFactory {
 		return hitConnector;
 	}
 
-//	private Retrofit generateESIAuthRetrofit( final String esiServer ) {
-//		try {
-//			final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
-//					+ this.configurationProvider.getResourceString( "P.cache.esinetwork.filename" );
-//			final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-//			return new NeoComRetrofitHTTP.Builder()
-//					.withNeoComOAuth20( this.getConfiguredOAuth( esiServer.toLowerCase() ) )
-//					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
-//							, "https://esi.evetech.net/latest/" ) )
-//					.withAgent( agent )
-//					.withCacheDataFile( cacheDataFile )
-//					.withCacheSize( CACHE_SIZE )
-//					.withTimeout( timeout )
-//					.build();
-//		} catch (final IOException ioe) { // If there is an exception with the cache create the retrofit not cached.
-//			return new NeoComRetrofitHTTP.Builder()
-//					.withNeoComOAuth20( this.getConfiguredOAuth( esiServer.toLowerCase() ) )
-//					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
-//							, "https://esi.evetech.net/latest/" ) )
-//					.withAgent( agent )
-//					.withTimeout( timeout )
-//					.build();
-//		}
-//	}
-
 	protected NeoComOAuth20 getConfiguredOAuth( final String selector ) {
 		Objects.requireNonNull( selector );
 		final List<String> scopes = this.constructScopes( this.configurationProvider.getResourceString( "P.esi."
 				+ selector.toLowerCase() + ".authorization.scopes.filename" ) );
 		NeoComOAuth20 auth = null;
-//		if ("TRANQUILITY".equalsIgnoreCase( selector )) {
-			final String SERVER_LOGIN_BASE = this.configurationProvider.getResourceString(
-					"P.esi.tranquility.authorization.server.login.base",
-					"https://login.eveonline.com/");
-			final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.clientid" );
-			final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.secretkey" );
-			final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.callback" );
-			final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
-					"Default agent" );
-			final String STATE=this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.state" );
-			// Verify that the constants have values. Otherwise launch exception.
-			if (CLIENT_ID.isEmpty())
-				throw new NeoComRuntimeException(
-						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-			if (SECRET_KEY.isEmpty())
-				throw new NeoComRuntimeException(
-						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-			if (CALLBACK.isEmpty())
-				throw new NeoComRuntimeException(
-						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-			auth = new NeoComOAuth20.Builder()
-					.withClientId( CLIENT_ID )
-					.withClientKey( SECRET_KEY )
-					.withCallback( CALLBACK )
-					.withAgent( AGENT )
-					.withStore( ESIStore.DEFAULT )
-					.withScopes( scopes )
-					.withState( STATE )
-					.withBaseUrl( SERVER_LOGIN_BASE )
-					.withAccessTokenEndpoint( this.configurationProvider.getResourceString(
-							"P.esi.tranquility.authorization.accesstoken.url",
-							"oauth/token" ) )
-					.withAuthorizationBaseUrl( this.configurationProvider.getResourceString(
-							"P.esi.tranquility.authorization.authorize.url",
-							"oauth/authorize" ) )
-					.build();
-			// TODO - When new refactoring isolates scopes remove this.
-//			SCOPESTRING = this.transformScopes( scopes );
-//		}
-//		if ("SINGULARITY".equalsIgnoreCase( selector )) {
-//			final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.singularity.authorization.clientid" );
-//			final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.singularity.authorization.secretkey" );
-//			final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.singularity.authorization.callback" );
-//			final String AGENT = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-//			// Verify that the constants have values. Otherwise launch exception.
-//			if (CLIENT_ID.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			if (SECRET_KEY.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			if (CALLBACK.isEmpty())
-//				throw new NeoComRuntimeException(
-//						"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
-//			auth = new NeoComOAuth20.Builder()
-//					.withClientId( CLIENT_ID )
-//					.withClientKey( SECRET_KEY )
-//					.withCallback( CALLBACK )
-//					.withAgent( AGENT )
-//					.withStore( ESIStore.DEFAULT )
-//					.withScopes( scopes )
-//					.withState( this.configurationProvider.getResourceString( "P.esi.authorization.state"
-//							, "NEOCOM-VERIFICATION-STATE" ) )
-//					.withBaseUrl( this.configurationProvider.getResourceString( "P.esi.singularity.authorization.server"
-//							, "https://sisilogin.testeveonline.com/" ) )
-//					.withAccessTokenEndpoint( this.configurationProvider.getResourceString( "P.esi.authorization.accesstoken.url"
-//							, "oauth/token" ) )
-//					.withAuthorizationBaseUrl( this.configurationProvider.getResourceString( "P.esi.authorization.authorize.url"
-//							, "oauth/authorize" ) )
-//					.build();
-//		}
+		final String SERVER_LOGIN_BASE = this.configurationProvider.getResourceString(
+				"P.esi.tranquility.authorization.server.login.base",
+				"https://login.eveonline.com/" );
+		final String CLIENT_ID = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.clientid" );
+		final String SECRET_KEY = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.secretkey" );
+		final String CALLBACK = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.callback" );
+		final String AGENT = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.agent",
+				"Default agent" );
+		final String STATE = this.configurationProvider.getResourceString( "P.esi.tranquility.authorization.state" );
+		// Verify that the constants have values. Otherwise launch exception.
+		if (CLIENT_ID.isEmpty())
+			throw new NeoComRuntimeException(
+					"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
+		if (SECRET_KEY.isEmpty())
+			throw new NeoComRuntimeException(
+					"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
+		if (CALLBACK.isEmpty())
+			throw new NeoComRuntimeException(
+					"RT [NeoComRetrofitFactory.getConfiguredOAuth]> ESI configuration property is empty." );
+		auth = new NeoComOAuth20.Builder()
+				.withClientId( CLIENT_ID )
+				.withClientKey( SECRET_KEY )
+				.withCallback( CALLBACK )
+				.withAgent( AGENT )
+				.withStore( ESIStore.DEFAULT )
+				.withScopes( scopes )
+				.withState( STATE )
+				.withBaseUrl( SERVER_LOGIN_BASE )
+				.withAccessTokenEndpoint( this.configurationProvider.getResourceString(
+						"P.esi.tranquility.authorization.accesstoken.url",
+						"oauth/token" ) )
+				.withAuthorizationBaseUrl( this.configurationProvider.getResourceString(
+						"P.esi.tranquility.authorization.authorize.url",
+						"oauth/authorize" ) )
+				.build();
 		Objects.requireNonNull( auth );
 		return auth;
 	}

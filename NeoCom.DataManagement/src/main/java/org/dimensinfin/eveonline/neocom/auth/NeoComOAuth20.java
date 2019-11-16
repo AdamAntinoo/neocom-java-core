@@ -3,6 +3,7 @@ package org.dimensinfin.eveonline.neocom.auth;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import com.github.scribejava.core.builder.ServiceBuilder;
@@ -22,40 +23,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class NeoComOAuth20 {
 	private static Logger logger = LoggerFactory.getLogger(NeoComOAuth20.class);
-
-//	public interface VerifyModelCharacter {
-//		@GET("/oauth/verify")
-//		Call<VerifyCharacterResponse> getVerification( @Header("Authorization") String token );
-//	}
-
-//	public interface ESIStore {
-//		ESIStore DEFAULT = new ESIStore() {
-//			private Map<String, TokenTranslationResponse> map = new HashMap<>();
-//
-//			@Override
-//			public void save( TokenTranslationResponse token ) {
-//				this.map.put(token.getRefreshToken(), token);
-//			}
-//
-//			@Override
-//			public void delete( String refresh ) {
-//				this.map.remove(refresh);
-//			}
-//
-//			@Override
-//			public TokenTranslationResponse get( String refresh ) {
-//				return this.map.get(refresh);
-//			}
-//		};
-//
-//
-//		void save( final TokenTranslationResponse token );
-//
-//		void delete( final String refresh );
-//
-//		TokenTranslationResponse get( final String refresh );
-//	}
-
 	// - F I E L D - S E C T I O N
 	private String clientId;
 	private String clientKey;
@@ -90,7 +57,6 @@ public class NeoComOAuth20 {
 				                                    .withAccessTokenEndpoint(this.accessTokenEndpoint)
 				                                    .withAuthorizationBaseUrl(this.authorizationBaseUrl)
 				                                    .build());
-
 		OkHttpClient.Builder verifyClient =
 				new OkHttpClient.Builder()
 						.protocols(Arrays.asList(Protocol.HTTP_1_1))
@@ -105,8 +71,7 @@ public class NeoComOAuth20 {
 										.newBuilder()
 										.addHeader("User-Agent", this.agent)
 										.build()));
-		this.verify =
-				new Retrofit.Builder()
+		this.verify = new Retrofit.Builder()
 						.baseUrl(this.baseUrl)
 						.addConverterFactory(JacksonConverterFactory.create())
 						.client(verifyClient.build())
@@ -190,16 +155,19 @@ public class NeoComOAuth20 {
 		}
 
 		public Builder withClientId( final String clientId ) {
+			Objects.requireNonNull( clientId );
 			this.onConstruction.clientId = clientId;
 			return this;
 		}
 
 		public Builder withClientKey( final String clientKey ) {
+			Objects.requireNonNull( clientKey );
 			this.onConstruction.clientKey = clientKey;
 			return this;
 		}
 
 		public Builder withCallback( final String callback ) {
+			Objects.requireNonNull( callback );
 			this.onConstruction.callback = callback;
 			return this;
 		}
