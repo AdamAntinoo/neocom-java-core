@@ -56,9 +56,13 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 	}
 
 	public void update() {
-		if (this.needsRefresh()) {
-			UpdaterJobManager.submit(this);
-		}
+		this.update( false );
+	}
+
+	public void update( final boolean force ) {
+		if (force) UpdaterJobManager.submit( this );
+		else if (this.needsRefresh())
+			UpdaterJobManager.submit( this );
 	}
 
 	// - N E O C O M U P D A T E R
@@ -76,44 +80,44 @@ public abstract class NeoComUpdater<M> implements IEventEmitter {
 
 	public void onException( final Exception exception ) {
 		this.lastException = exception;
-		this.status=JobStatus.EXCEPTION;
-		UpdaterJobManager.logger.info("EX [NeoComUpdater.onException]> Message: {}", exception.getMessage());
+		this.status = JobStatus.EXCEPTION;
+		UpdaterJobManager.logger.info( "EX [NeoComUpdater.onException]> Message: {}", exception.getMessage() );
 	}
 
 	public void onComplete() {
 		this.status = JobStatus.COMPLETED;
-		this.eventEmitter.sendChangeEvent(EEvents.EVENT_REFRESHDATA.name());
+		this.eventEmitter.sendChangeEvent( EEvents.EVENT_REFRESHDATA.name() );
 	}
 
 	// - D E L E G A T E D
 	@Override
 	public void addEventListener( final IEventReceiver listener ) {
-		this.eventEmitter.addEventListener(listener);
+		this.eventEmitter.addEventListener( listener );
 	}
 
 	@Override
 	public void removeEventListener( final IEventReceiver listener ) {
-		this.eventEmitter.removeEventListener(listener);
+		this.eventEmitter.removeEventListener( listener );
 	}
 
 	@Override
 	public boolean sendChangeEvent( final String eventName ) {
-		return this.eventEmitter.sendChangeEvent(eventName);
+		return this.eventEmitter.sendChangeEvent( eventName );
 	}
 
 	@Override
 	public boolean sendChangeEvent( final IntercommunicationEvent event ) {
-		return this.eventEmitter.sendChangeEvent(event.getPropertyName());
+		return this.eventEmitter.sendChangeEvent( event.getPropertyName() );
 	}
 
 	@Override
 	public boolean sendChangeEvent( final String eventName, final Object origin ) {
-		return this.eventEmitter.sendChangeEvent(eventName, origin);
+		return this.eventEmitter.sendChangeEvent( eventName, origin );
 	}
 
 	@Override
 	public boolean sendChangeEvent( final String eventName, final Object origin, final Object oldValue, final Object newValue ) {
-		return this.eventEmitter.sendChangeEvent(eventName, origin, oldValue, newValue);
+		return this.eventEmitter.sendChangeEvent( eventName, origin, oldValue, newValue );
 	}
 	// - C O R E
 

@@ -91,18 +91,10 @@ public class AssetDownloadProcessorJob extends Job {
 				this.locationProcessing( targetAsset );
 				// With assets separate the update from the creation because they use a generated unique key.
 				this.assetRepository.persist( targetAsset );
-			} catch (final SQLException sqle) {
+			} catch (final SQLException | IOException | RuntimeException sqle) {
 				NeoComLogger.info( "RTEX ´[AssetsManager.downloadPilotAssetsESI]> Processing asset: {} - {}"
 						, assetOk.getItemId().toString(), sqle.getMessage() );
 				sqle.printStackTrace();
-			} catch (final IOException ioe) {
-				NeoComLogger.info( "RTEX ´[AssetsManager.downloadPilotAssetsESI]> Processing asset: {} - {}"
-						, assetOk.getItemId().toString(), ioe.getMessage() );
-				ioe.printStackTrace();
-			} catch (final RuntimeException rtex) {
-				NeoComLogger.info( "RTEX ´[AssetsManager.downloadPilotAssetsESI]> Processing asset: {} - {}"
-						, assetOk.getItemId().toString(), rtex.getMessage() );
-				rtex.printStackTrace();
 			}
 		}
 		//--- O R P H A N   L O C A T I O N   A S S E T S

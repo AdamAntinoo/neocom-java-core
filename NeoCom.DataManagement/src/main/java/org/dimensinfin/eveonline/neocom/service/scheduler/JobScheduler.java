@@ -12,7 +12,7 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGenerator;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
-import org.dimensinfin.neocom.annotation.Singleton;
+import org.dimensinfin.eveonline.neocom.annotation.Singleton;
 
 /**
  * The JobScheduler is a singleton instance. It should have a single instance on the while system where the jobs are registered
@@ -37,7 +37,7 @@ public class JobScheduler {
 		return singleton;
 	}
 
-//	private Set<String> jobsKeys = new LinkedHashSet<>();
+	//	private Set<String> jobsKeys = new LinkedHashSet<>();
 	private Set<Job> jobsRegistered = new LinkedHashSet<>();
 	// - C O M P O N E N T S
 	private CronScheduleGenerator cronScheduleGenerator = new HourlyCronScheduleGenerator.Builder().build();
@@ -58,10 +58,18 @@ public class JobScheduler {
 		return this.jobsRegistered.size();
 	}
 
+	public boolean needsNetwork() {
+		return true;
+	}
+
+	public boolean needsStorage() {
+		return true;
+	}
+
 	public int registerJob( final Job job2Register ) {
 //		if (!this.alreadyRegistered( job2Register )) {
 //			this.jobsKeys.add( job2Register.getIdentifier() );
-			this.jobsRegistered.add( job2Register );
+		this.jobsRegistered.add( job2Register );
 //		} else { // Replace the old job registration.
 //			this.removeJob( job2Register.getIdentifier() );
 //			return this.registerJob( job2Register );
