@@ -1,6 +1,5 @@
 package org.dimensinfin.eveonline.neocom.database.entities;
 
-import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,8 +99,8 @@ public class NeoAsset extends UpdatableEntity {
 		return this.parentContainerId;
 	}
 
-	public Optional<NeoAsset> getParentContainer() {
-		return Optional.ofNullable( this.parentContainer );
+	public NeoAsset getParentContainer() {
+		return this.parentContainer;
 	}
 
 	public boolean hasParentContainer() {

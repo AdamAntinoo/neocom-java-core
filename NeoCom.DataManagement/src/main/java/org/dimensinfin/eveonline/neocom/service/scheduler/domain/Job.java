@@ -7,16 +7,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public abstract class Job implements Callable<Boolean> {
-//	private String identifier;
-	private String schedule;
+	private String schedule= "* - *";
 	private JobStatus status = JobStatus.READY;
 
 	protected Job() {}
-
-//	public String getIdentifier() {
-//		return this.identifier;
-//	}
-
 	public String getSchedule() {
 		return this.schedule;
 	}
@@ -29,12 +23,6 @@ public abstract class Job implements Callable<Boolean> {
 		this.status = status;
 		return this;
 	}
-
-//	protected Job setIdentifier( final String identifier ) {
-//		this.identifier = identifier;
-//		return this;
-//	}
-
 	protected Job setSchedule( final String schedule ) {
 		this.schedule = schedule;
 		return this;
@@ -46,7 +34,6 @@ public abstract class Job implements Callable<Boolean> {
 		if (o == null || getClass() != o.getClass()) return false;
 		final Job job = (Job) o;
 		return new EqualsBuilder()
-//				.append( this.identifier, job.identifier )
 				.append( this.schedule, job.schedule )
 				.isEquals();
 	}
@@ -54,7 +41,6 @@ public abstract class Job implements Callable<Boolean> {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
-//				.append( this.identifier )
 				.append( this.schedule )
 				.toHashCode();
 	}
@@ -78,10 +64,7 @@ public abstract class Job implements Callable<Boolean> {
 		}
 
 		public T build() {
-//			this.getActual().setIdentifier( this.getClass().getSimpleName() +
-//					"." + UUID.randomUUID() );
 			Objects.requireNonNull( this.getActual().getSchedule() );
-//			Objects.requireNonNull( this.getActual().getIdentifier() );
 			return this.getActual();
 		}
 	}

@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
@@ -87,9 +86,9 @@ public class MiningRepository {
 	 */
 	private MiningExtraction postProcessExtraction( final MiningExtraction extraction ) {
 		extraction.setResourceItem( new NeoItem( extraction.getTypeId() ) );
-		final Optional<SpaceLocation> location = this.locationCatalogService
-				.searchLocation4Id( extraction.getSolarSystemId().longValue() );
-		location.ifPresent( spaceLocation -> extraction.setSolarSystemLocation( (SpaceSystem) spaceLocation ) );
+		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( extraction.getSolarSystemId().longValue() );
+		if (null != location)
+			extraction.setSolarSystemLocation( (SpaceSystem) location );
 		return extraction;
 	}
 
@@ -119,8 +118,8 @@ public class MiningRepository {
 		}
 	}
 
-	public Optional<MiningExtraction> accessMiningExtractionFindById( final String recordIdentifier ) throws SQLException {
-		return Optional.ofNullable( this.miningExtractionDao.queryForId( recordIdentifier ) );
+	public MiningExtraction accessMiningExtractionFindById( final String recordIdentifier ) throws SQLException {
+		return this.miningExtractionDao.queryForId( recordIdentifier );
 	}
 
 	public void persist( final MiningExtraction record ) throws SQLException {

@@ -1,7 +1,6 @@
 package org.dimensinfin.eveonline.neocom.provider;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,11 +62,10 @@ public class ESIUniverseDataProviderTest {
 
 	@Test
 	public void getUniverseStationById() {
-		final Optional<GetUniverseStationsStationIdOk> stationPromise = this.provider4Test.getUniverseStationByIdOp( stationId );
+		final GetUniverseStationsStationIdOk stationPromise = this.provider4Test.getUniverseStationById( stationId );
 
 		Assertions.assertNotNull( stationPromise );
-		Assertions.assertTrue( stationPromise.isPresent() );
-		final GetUniverseStationsStationIdOk station = stationPromise.get();
+		final GetUniverseStationsStationIdOk station = stationPromise;
 		Assertions.assertNotNull( station );
 		Assertions.assertEquals( stationId, station.getStationId() );
 		Assertions.assertEquals( systemId, station.getSystemId() );
@@ -85,7 +83,7 @@ public class ESIUniverseDataProviderTest {
 				.withStoreCacheManager( storeCacheManager )
 				.build();
 		Assertions.assertThrows( NeoComRuntimeException.class, () -> {
-			this.provider4Test.getUniverseStationByIdOp( stationId );
+			this.provider4Test.getUniverseStationById( stationId );
 		} );
 	}
 

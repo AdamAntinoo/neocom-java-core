@@ -7,12 +7,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.dimensinfin.eveonline.neocom.annotation.Singleton;
 import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGenerator;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.JobStatus;
-import org.dimensinfin.eveonline.neocom.annotation.Singleton;
 
 /**
  * The JobScheduler is a singleton instance. It should have a single instance on the while system where the jobs are registered
@@ -37,7 +37,6 @@ public class JobScheduler {
 		return singleton;
 	}
 
-	//	private Set<String> jobsKeys = new LinkedHashSet<>();
 	private Set<Job> jobsRegistered = new LinkedHashSet<>();
 	// - C O M P O N E N T S
 	private CronScheduleGenerator cronScheduleGenerator = new HourlyCronScheduleGenerator.Builder().build();
@@ -51,7 +50,6 @@ public class JobScheduler {
 
 	public void clear() {
 		this.jobsRegistered.clear();
-//		this.jobsKeys.clear();
 	}
 
 	public int getJobCount() {
@@ -67,29 +65,12 @@ public class JobScheduler {
 	}
 
 	public int registerJob( final Job job2Register ) {
-//		if (!this.alreadyRegistered( job2Register )) {
-//			this.jobsKeys.add( job2Register.getIdentifier() );
 		this.jobsRegistered.add( job2Register );
-//		} else { // Replace the old job registration.
-//			this.removeJob( job2Register.getIdentifier() );
-//			return this.registerJob( job2Register );
-////			NeoComLogger.info( "The job {} is already registered on the scheduler.",
-////					job2Register.getIdentifier() );
-//		}
 		return this.jobsRegistered.size();
 	}
 
 	public void removeJob( final Job jobInstance ) {
 		this.jobsRegistered.remove( jobInstance );
-//		final Iterator<Job> it = this.jobsRegistered.iterator();
-//		while (it.hasNext()) {
-//			final Job target = it.next();
-//			if (target.getIdentifier().equalsIgnoreCase( jobReference )) {
-//				this.jobsRegistered.remove( target );
-//				return target;
-//			}
-//		}
-//		return null;
 	}
 
 	/**
@@ -116,7 +97,6 @@ public class JobScheduler {
 	}
 
 	protected void scheduleJob( final Job job ) {
-//		NeoComLogger.info( "-- [JobScheduler.submit]> Scheduling job {}", job.getIdentifier() );
 		job.setStatus( JobStatus.SCHEDULED );
 		try {
 			schedulerExecutor.submit( job );
@@ -125,30 +105,4 @@ public class JobScheduler {
 			NeoComLogger.info( "RT [JobScheduler.submit]> Stack Trace: {}", neoe.toString() );
 		}
 	}
-
-//	private boolean alreadyRegistered( final Job job2Register ) {
-//		return this.jobsKeys.contains( job2Register.getIdentifier() );
-//	}
-
-//	// - B U I L D E R
-//	public static class Builder {
-//		private JobScheduler onConstruction;
-//
-//		public Builder() {
-//			if (null != singleton) this.onConstruction = singleton;
-//			else this.onConstruction = new JobScheduler();
-//		}
-//
-//		public JobScheduler.Builder withCronScheduleGenerator( final CronScheduleGenerator cronScheduleGenerator ) {
-//			Objects.requireNonNull( cronScheduleGenerator );
-//			this.onConstruction.cronScheduleGenerator = cronScheduleGenerator;
-//			return this;
-//		}
-//
-//		public JobScheduler build() {
-//			Objects.requireNonNull( this.onConstruction.cronScheduleGenerator );
-//			singleton = this.onConstruction;
-//			return this.onConstruction;
-//		}
-//	}
 }

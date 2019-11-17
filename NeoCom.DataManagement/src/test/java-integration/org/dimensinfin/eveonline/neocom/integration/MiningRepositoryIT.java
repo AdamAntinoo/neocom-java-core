@@ -3,7 +3,6 @@ package org.dimensinfin.eveonline.neocom.integration;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -202,16 +201,16 @@ public class MiningRepositoryIT {
 
 		final Credential credential = Mockito.mock( Credential.class );
 		Mockito.when( credential.getAccountId() ).thenReturn( 2113197470 );
-		Optional<MiningExtraction> miningRecord = this.miningRepository
+		MiningExtraction miningRecord = this.miningRepository
 				.accessMiningExtractionFindById( this.expectedVerifiedId );
 
-		Assertions.assertTrue( miningRecord.isPresent() );
-		Assertions.assertEquals( characterId.longValue(), miningRecord.get().getOwnerId() );
+		Assertions.assertNotNull( miningRecord );
+		Assertions.assertEquals( characterId.longValue(), miningRecord.getOwnerId() );
 
 		miningRecord = this.miningRepository
 				.accessMiningExtractionFindById( "2019-11-10:24-30002764-35-2113197400" );
 
-		Assertions.assertFalse( miningRecord.isPresent() );
+		Assertions.assertNotNull( miningRecord );
 	}
 
 	@Test(expected = SQLException.class)
@@ -222,7 +221,7 @@ public class MiningRepositoryIT {
 				.withMiningExtractionDao( dao )
 				.withLocationCatalogService( this.locationCatalogService )
 				.build();
-		final Optional<MiningExtraction> miningRecord = repository.accessMiningExtractionFindById( "TEST-LOCATOR" );
+		final MiningExtraction miningRecord = repository.accessMiningExtractionFindById( "TEST-LOCATOR" );
 	}
 
 	private void onCreate() throws SQLException {
@@ -260,10 +259,10 @@ public class MiningRepositoryIT {
 				.withExtractionDate( new LocalDate() )
 				.build();
 		this.miningRepository.persist( miningExtractionA );
-		NeoComLogger.info("Extraction id: {}",miningExtractionA.getId());
-		this.expectedVerifiedId=miningExtractionA.getId();
+		NeoComLogger.info( "Extraction id: {}", miningExtractionA.getId() );
+		this.expectedVerifiedId = miningExtractionA.getId();
 		this.miningRepository.persist( miningExtractionB );
-		NeoComLogger.info("Extraction id: {}",miningExtractionB.getId());
+		NeoComLogger.info( "Extraction id: {}", miningExtractionB.getId() );
 		final List<MiningExtraction> result = this.miningDao.queryForAll();
 		Assert.assertEquals( 2, result.size() );
 	}

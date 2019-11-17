@@ -7,12 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -21,6 +19,7 @@ import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
@@ -121,22 +120,27 @@ public class AssetDownloadProcessorJob extends Job {
 	}
 
 	private void locationProcessing( final NeoAsset targetAsset ) {
-		// If the preliminary calculation returns UNKNOWN then search if the location is reachable.
-		if (targetAsset.getLocationId().getType() == LocationIdentifierType.UNKNOWN) {
-			final LocationIdentifier workLocationId = targetAsset.getLocationId();
-			// Check if location is a user asset.
-			if (this.assetMap.containsKey( workLocationId.getSpaceIdentifier() ))
-				workLocationId.setType( LocationIdentifierType.CONTAINER );
-			else {
-				// Check if the location is a public reachable structure.
-				final Optional<SpaceLocation> structure = this.locationCatalogService
-						.searchStructure4Id( targetAsset.getLocationId().getSpaceIdentifier(),
-								this.credential );
-				if (structure.isPresent()) {
-					workLocationId.setType( LocationIdentifierType.STRUCTURE );
-					workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
+		try {
+			// If the preliminary calculation returns UNKNOWN then search if the location is reachable.
+			if (targetAsset.getLocationId().getType() == LocationIdentifierType.UNKNOWN) {
+				final LocationIdentifier workLocationId = targetAsset.getLocationId();
+				// Check if location is a user asset.
+				if (this.assetMap.containsKey( workLocationId.getSpaceIdentifier() ))
+					workLocationId.setType( LocationIdentifierType.CONTAINER );
+				else {
+					// Check if the location is a public reachable structure.
+					final SpaceLocation structure = this.locationCatalogService
+							.searchStructure4Id( targetAsset.getLocationId().getSpaceIdentifier(),
+									this.credential );
+					if (null != structure) {
+//						if (structure.isPresent()) {
+						workLocationId.setType( LocationIdentifierType.STRUCTURE );
+						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
+					}
 				}
 			}
+		} catch (final  RuntimeException rte){
+			rte.printStackTrace();
 		}
 	}
 

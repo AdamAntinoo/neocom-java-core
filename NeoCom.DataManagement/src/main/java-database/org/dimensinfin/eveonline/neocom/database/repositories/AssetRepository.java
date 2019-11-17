@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -43,7 +42,7 @@ public class AssetRepository {
 			Where<NeoAsset, UUID> where = queryBuilder.where();
 			where.eq( "ownerId", ownerId );
 			final List<NeoAsset> assetList = assetDao.query( queryBuilder.prepare() );
-			logger.info( "-- Assets read: " + assetList.size() );
+			NeoComLogger.info( "Assets read: {}", assetList.size() + "" );
 			final List<NeoAsset> resultList = new ArrayList<>();
 			return Stream.of( assetList )
 					.map( this::assetReconstructor )
@@ -54,16 +53,16 @@ public class AssetRepository {
 		}
 	}
 
-	public Optional<NeoAsset> findAssetById( final Long assetId ) {
+	public NeoAsset findAssetById( final Long assetId ) {
 		Objects.requireNonNull( assetId );
 		try {
 			final List<NeoAsset> assetList = this.assetDao.queryForEq( "assetId", assetId );
-			logger.info( "-- Assets read: " + assetList.size() );
-			if (assetList.size() > 0) return Optional.ofNullable( assetList.get( 0 ) );
-			else return Optional.empty();
+			NeoComLogger.info( "Assets read: {}", assetList.size() + "" );
+			if (!assetList.isEmpty()) return assetList.get( 0 );
+			else return null;
 		} catch (java.sql.SQLException sqle) {
 			logger.error( "SQL [AssetRepository.findAllByOwnerId]> SQL Exception: {}", sqle.getMessage() );
-			return Optional.empty();
+			return null;
 		}
 	}
 
@@ -73,7 +72,7 @@ public class AssetRepository {
 	 * new download.
 	 */
 	public synchronized void clearInvalidRecords( final long pilotIdentifier ) {
-		NeoComLogger.enter( "pilotIdentifier: {}", Long.valueOf( pilotIdentifier ).toString() );
+		NeoComLogger.enter( "pilotIdentifier: {}", Long.toString( pilotIdentifier ) );
 		synchronized (this.connection4Transaction) {
 			try {
 				TransactionManager.callInTransaction( this.connection4Transaction, (Callable<Void>) () -> {
@@ -150,8 +149,8 @@ public class AssetRepository {
 		NeoComLogger.enter( "Reconstructing asset: " + target.getAssetId() );
 		target.setItemDelegate( new NeoItem( target.getTypeId() ) );
 		if (target.hasParentContainer()) { // Search for the parent asset. If not found then report a warning.
-			final Optional<NeoAsset> parent = this.findAssetById( target.getParentContainerId() );
-			if (parent.isPresent()) target.setParentContainer( this.assetReconstructor( parent.get() ) );
+			final NeoAsset parent = this.findAssetById( target.getParentContainerId() );
+			if (null != parent) target.setParentContainer( this.assetReconstructor( parent ) );
 			else {
 				NeoComLogger.error( "Parent asset not found on post read action: " +
 								target.getParentContainerId(),

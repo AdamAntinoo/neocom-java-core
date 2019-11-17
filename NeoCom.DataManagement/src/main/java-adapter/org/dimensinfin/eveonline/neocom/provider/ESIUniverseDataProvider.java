@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
@@ -31,8 +29,6 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
-import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 import retrofit2.Response;
@@ -56,7 +52,7 @@ public class ESIUniverseDataProvider {
 	private Retrofit accessUniverseRetrofit() {
 		if (null == this.universeRetrofit) {
 //			try {
-				this.universeRetrofit = this.retrofitFactory.accessUniverseConnector();
+			this.universeRetrofit = this.retrofitFactory.accessUniverseConnector();
 //			} catch (final IOException ioe) {
 //				NeoComLogger.error( ioe );
 //				throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
@@ -64,37 +60,9 @@ public class ESIUniverseDataProvider {
 		}
 		return this.universeRetrofit;
 	}
-//	private Retrofit generateNoAuthRetrofit() {
-//		try {
-//			final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
-//					+ this.configurationProvider.getResourceString( "P.cache.esinetwork.filename" );
-//			final File cacheDataFile = new File( fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-//			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-//			final long timeout = TimeUnit.SECONDS
-//					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esinetwork.timeout" ) );
-//			return new NeoComRetrofitNoOAuthHTTP.Builder()
-//					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
-//							, "https://esi.evetech.net/latest/" ) )
-//					.withAgent( agent )
-//					.withCacheDataFile( cacheDataFile )
-//					.withCacheSize( CACHE_SIZE )
-//					.withTimeout( timeout )
-//					.build();
-//		} catch (final IOException ioe) { // If there is an exception with the cache create the retrofit not cached.
-//			final String agent = this.configurationProvider.getResourceString( "P.esi.authorization.agent", "Default agent" );
-//			final long timeout = TimeUnit.SECONDS
-//					.toMillis( this.configurationProvider.getResourceInteger( "P.cache.esiitem.timeout" ) );
-//			return new NeoComRetrofitNoOAuthHTTP.Builder()
-//					.withEsiServerLocation( this.configurationProvider.getResourceString( "P.esi.data.server.location"
-//							, "https://esi.evetech.net/latest/" ) )
-//					.withAgent( agent )
-//					.withTimeout( timeout )
-//					.build();
-//		}
-//	}
 
 	// - P R O V I D E R   A P I
-	public Optional<GetUniverseStationsStationIdOk> getUniverseStationByIdOp( final Integer stationId ) {
+	public GetUniverseStationsStationIdOk getUniverseStationById( final Integer stationId ) {
 		NeoComLogger.enter( "stationId: {}", stationId.toString() );
 		try {
 			final Response<GetUniverseStationsStationIdOk> stationResponse = this.accessUniverseRetrofit()
@@ -102,15 +70,11 @@ public class ESIUniverseDataProvider {
 					.getUniverseStationsStationId( stationId
 							, DEFAULT_ESI_SERVER.toLowerCase(), null )
 					.execute();
-			if (stationResponse.isSuccessful()) return Optional.of( stationResponse.body() );
+			if (stationResponse.isSuccessful()) return stationResponse.body();
 		} catch (final IOException ioe) {
 			NeoComLogger.error( "IOException during ESI data access.", ioe );
 		}
-		return Optional.empty();
-	}
-
-	public GetUniverseStationsStationIdOk getUniverseStationById( final Integer stationId ) {
-		return this.getUniverseStationByIdOp( stationId ).get();
+		return null;
 	}
 
 	public GetUniverseSystemsSystemIdOk getUniverseSystemById( final Integer systemId ) {
