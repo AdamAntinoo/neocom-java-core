@@ -1,8 +1,5 @@
 package org.dimensinfin.eveonline.neocom.support.adapters;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -11,6 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 
@@ -24,7 +24,7 @@ import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
  * @author Adam Antinoo
  */
 public class FileSystemSBImplementation implements IFileSystem {
-	private static Logger logger = LoggerFactory.getLogger(FileSystemSBImplementation.class);
+	private static Logger logger = LoggerFactory.getLogger( FileSystemSBImplementation.class );
 	private static ClassLoader classLoader = null;
 
 	private String applicationFolder;
@@ -34,48 +34,48 @@ public class FileSystemSBImplementation implements IFileSystem {
 	}
 
 	public FileSystemSBImplementation( final String applicationStoreDirectory ) {
-		logger.info(">< [FileSystemSBImplementation.constructor]> applicationStoreDirectory: {}", applicationStoreDirectory);
+		logger.info( ">< [FileSystemSBImplementation.constructor]> applicationStoreDirectory: {}", applicationStoreDirectory );
 		if (null != applicationStoreDirectory)
 			this.applicationFolder = applicationStoreDirectory;
-		logger.info("-- [FileSystemSBImplementation.constructor]> applicationFolder: {}", this.applicationFolder);
+		logger.info( "-- [FileSystemSBImplementation.constructor]> applicationFolder: {}", this.applicationFolder );
 	}
 
 	// - M E T H O D - S E C T I O N ..........................................................................
 	@Override
 	public InputStream openResource4Input( final String filePath ) throws IOException {
-		return new FileInputStream(new File(applicationFolder + "/" + filePath));
+		return new FileInputStream( new File( applicationFolder + "/" + filePath ) );
 	}
 
 	@Override
 	public OutputStream openResource4Output( final String filePath ) throws IOException {
-		return new FileOutputStream(new File(applicationFolder + "/" + filePath));
+		return new FileOutputStream( new File( applicationFolder + "/" + filePath ) );
 	}
 
 	@Override
 	public InputStream openAsset4Input( final String filePath ) throws IOException {
 		URI propertyURI = null;
 		try {
-			final String executionDirectory = new File(".").getCanonicalPath() + "/build/resources/main/";
+			final String executionDirectory = new File( "." ).getCanonicalPath() + "/build/resources/main/";
 			//			final URL resource = getClassLoader().getResource(filePath);
 			//			if (null == resource) throw new IOException("[FileSystemSBImplementation.openAsset4Input]> Resource file " + filePath + "" +
 			//					" not found with classloader.");
-			propertyURI = new URI(executionDirectory + filePath);
-			logger.info("DD [FileSystemSBImplementation.openAsset4Input]> Processing file: {}", propertyURI);
+			propertyURI = new URI( executionDirectory + filePath );
+			logger.info( "DD [FileSystemSBImplementation.openAsset4Input]> Processing file: {}", propertyURI );
 		} catch (URISyntaxException use) {
 		}
-		return new FileInputStream(propertyURI.getPath());
+		return new FileInputStream( propertyURI.getPath() );
 	}
 
 	@Override
 	public String accessAsset4Path( final String filePath ) throws IOException {
 		URI propertyURI = null;
 		try {
-			final String executionDirectory = new java.io.File(".").getCanonicalPath() + "/build/resources/main/";
+			final String executionDirectory = new java.io.File( "." ).getCanonicalPath() + "/build/resources/main/";
 			//			final URL resource = getClassLoader().getResource(filePath);
 			//			if (null == resource) throw new IOException("[FileSystemSBImplementation.openAsset4Input]> Resource file " + filePath + "" +
 			//					" not found with classloader.");
-			propertyURI = new URI(executionDirectory + filePath);
-			logger.info("DD [FileSystemSBImplementation.accessAsset4Path]> Processing file: {}", propertyURI);
+			propertyURI = new URI( executionDirectory + filePath );
+			logger.info( "DD [FileSystemSBImplementation.accessAsset4Path]> Processing file: {}", propertyURI );
 		} catch (URISyntaxException e) {
 		}
 		return propertyURI.getPath();
@@ -84,6 +84,11 @@ public class FileSystemSBImplementation implements IFileSystem {
 	@Override
 	public String accessResource4Path( final String filePath ) {
 		return applicationFolder + "/" + filePath;
+	}
+
+	@Override
+	public String accessPublicResource4Path( final String filePath ) throws IOException {
+		return this.accessResource4Path( filePath );
 	}
 
 	@Override
@@ -110,15 +115,15 @@ public class FileSystemSBImplementation implements IFileSystem {
 	// --- D E L E G A T E D   M E T H O D S
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("FileSystemSBImplementation [ ")
-				                            .append("applicationFolder:").append(applicationFolder).append(" ");
+		final StringBuffer buffer = new StringBuffer( "FileSystemSBImplementation [ " )
+				.append( "applicationFolder:" ).append( applicationFolder ).append( " " );
 		try {
-			buffer.append("assetsFolder:").append(accessAsset4Path("")).append(" ");
+			buffer.append( "assetsFolder:" ).append( accessAsset4Path( "" ) ).append( " " );
 		} catch (IOException ioe) {
 		}
-		return buffer.append("]")
-				       //				.append("->").append(super.toString())
-				       .toString();
+		return buffer.append( "]" )
+				//				.append("->").append(super.toString())
+				.toString();
 	}
 
 	// - B U I L D E R

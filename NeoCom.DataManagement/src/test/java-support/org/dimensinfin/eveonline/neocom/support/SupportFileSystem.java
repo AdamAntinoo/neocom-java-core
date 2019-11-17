@@ -18,19 +18,11 @@ import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 public class SupportFileSystem implements IFileSystem {
 	private static final Logger logger = LoggerFactory.getLogger( SupportFileSystem.class );
 	private static final String DEFAULT_APPLICATION_FOLDER = "./src/test/NeoCom.UnitTest";
-//	private static ClassLoader classLoader = null;
 
 	private String applicationDirectory = DEFAULT_APPLICATION_FOLDER;
 
 	// - C O N S T R U C T O R S
 	private SupportFileSystem() {}
-
-//	public SupportFileSystem( final String applicationStoreDirectory ) {
-//		logger.info(">< [FileSystemSBImplementation.constructor]> applicationStoreDirectory: {}", applicationStoreDirectory);
-//		if (null != applicationStoreDirectory)
-//			this.applicationFolder = applicationStoreDirectory;
-//		logger.info("-- [FileSystemSBImplementation.constructor]> applicationFolder: {}", this.applicationFolder);
-//	}
 
 	@Override
 	public InputStream openResource4Input( final String filePath ) throws IOException {
@@ -69,6 +61,11 @@ public class SupportFileSystem implements IFileSystem {
 	@Override
 	public String accessResource4Path( final String filePath ) {
 		return applicationDirectory + "/" + filePath;
+	}
+
+	@Override
+	public String accessPublicResource4Path( final String filePath ) throws IOException {
+		return this.accessResource4Path( filePath );
 	}
 
 	@Override

@@ -22,16 +22,17 @@ import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
  *
  * The Assets api will access the readonly application deployed files while the Resource api will deal with the temporary
  * application storage files like cache or running stored local data.
+ *
  * @author Adam Antinoo
  */
 public class SBFileSystemAdapter implements IFileSystem {
-	private static Logger logger = LoggerFactory.getLogger( SBFileSystemAdapter.class);
+	private static Logger logger = LoggerFactory.getLogger( SBFileSystemAdapter.class );
 //	private static ClassLoader classLoader = null;
 
 	protected String applicationDirectory = "./NeoCom.Infinity";
 
 	// - C O N S T R U C T O R S
-	protected SBFileSystemAdapter(){}
+	protected SBFileSystemAdapter() {}
 //	@Deprecated
 //	public FileSystemSBAdapter(final String applicationStoreDirectory ) {
 //		logger.info(">< [FileSystemSBImplementation.constructor]> applicationStoreDirectory: {}", applicationStoreDirectory);
@@ -42,33 +43,33 @@ public class SBFileSystemAdapter implements IFileSystem {
 
 	@Override
 	public InputStream openResource4Input( final String filePath ) throws IOException {
-		return new FileInputStream(new File( applicationDirectory + "/" + filePath));
+		return new FileInputStream( new File( applicationDirectory + "/" + filePath ) );
 	}
 
 	@Override
 	public OutputStream openResource4Output( final String filePath ) throws IOException {
-		return new FileOutputStream(new File( applicationDirectory + "/" + filePath));
+		return new FileOutputStream( new File( applicationDirectory + "/" + filePath ) );
 	}
 
 	@Override
 	public InputStream openAsset4Input( final String filePath ) throws IOException {
 		URI propertyURI = null;
 		try {
-			final String executionDirectory = new java.io.File(".").getCanonicalPath() + "/build/resources/main/";
-			propertyURI = new URI(executionDirectory + filePath);
-			logger.info("DD [FileSystemSBImplementation.openAsset4Input]> Processing file: {}", propertyURI);
+			final String executionDirectory = new java.io.File( "." ).getCanonicalPath() + "/build/resources/main/";
+			propertyURI = new URI( executionDirectory + filePath );
+			logger.info( "DD [FileSystemSBImplementation.openAsset4Input]> Processing file: {}", propertyURI );
 		} catch (URISyntaxException use) {
 		}
-		return new FileInputStream(propertyURI.getPath());
+		return new FileInputStream( propertyURI.getPath() );
 	}
 
 	@Override
 	public String accessAsset4Path( final String filePath ) throws IOException {
 		URI propertyURI = null;
 		try {
-			final String executionDirectory = new java.io.File(".").getCanonicalPath() + "/build/resources/main/";
-			propertyURI = new URI(executionDirectory + filePath);
-			logger.info("DD [FileSystemSBImplementation.accessAsset4Path]> Processing file: {}", propertyURI);
+			final String executionDirectory = new java.io.File( "." ).getCanonicalPath() + "/build/resources/main/";
+			propertyURI = new URI( executionDirectory + filePath );
+			logger.info( "DD [FileSystemSBImplementation.accessAsset4Path]> Processing file: {}", propertyURI );
 		} catch (URISyntaxException e) {
 		}
 		return propertyURI.getPath();
@@ -80,8 +81,13 @@ public class SBFileSystemAdapter implements IFileSystem {
 	}
 
 	@Override
-	public void copyFromAssets(final String sourceFileName, final String destinationDirectory) {
- // TODO - Implement the copy fom one place to another
+	public String accessPublicResource4Path( final String filePath ) throws IOException {
+		return this.accessResource4Path( filePath );
+	}
+
+	@Override
+	public void copyFromAssets( final String sourceFileName, final String destinationDirectory ) {
+		// TODO - Implement the copy fom one place to another
 	}
 
 //	/**
@@ -101,6 +107,7 @@ public class SBFileSystemAdapter implements IFileSystem {
 				.append( "applicationFolder", applicationDirectory )
 				.toString();
 	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private SBFileSystemAdapter onConstruction;

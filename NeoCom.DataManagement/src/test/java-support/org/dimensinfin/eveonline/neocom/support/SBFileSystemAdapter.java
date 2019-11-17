@@ -74,6 +74,11 @@ public class SBFileSystemAdapter implements IFileSystem {
 	}
 
 	@Override
+	public String accessPublicResource4Path( final String filePath ) throws IOException {
+		return this.accessResource4Path( filePath );
+	}
+
+	@Override
 	public void copyFromAssets( final String sourceFileName, final String destinationDirectory ) {
 		// TODO - Implement the copy fom one place to another
 	}
