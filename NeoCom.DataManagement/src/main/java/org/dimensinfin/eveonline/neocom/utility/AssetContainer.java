@@ -30,6 +30,10 @@ public class AssetContainer {
 		return this.type;
 	}
 
+	public SpaceLocation getSpaceLocation() {
+		return this.spaceLocation;
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private AssetContainer onConstruction;

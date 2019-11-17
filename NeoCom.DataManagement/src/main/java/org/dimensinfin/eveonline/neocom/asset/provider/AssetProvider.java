@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.joda.time.DateTime;
 
@@ -19,7 +18,6 @@ import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.Region;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegion;
-import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
@@ -63,19 +61,26 @@ public class AssetProvider implements Serializable {
 			}
 		} catch (final NoSuchElementException nsee) {
 			NeoComLogger.info( "Classification complete: {} assets", this.assetCounter + "" );
+		} catch (final RuntimeException rte) {
+			rte.printStackTrace();
 		}
 		this.timeStamp();
 	}
 
 	public List<Region> getRegionList() {
 		final Map<Integer, Region> regions = new HashMap<>();
-		for (AssetContainer spaceLocation : this.spaceLocationsCache.values()) {
-			Region hit = regions.get( ((SpaceRegion) spaceLocation).getRegionId() );
-			if (null == hit) {
-				hit = new Region.Builder().withRegion( ((SpaceRegion) spaceLocation).getRegion() ).build();
-				regions.put( ((SpaceRegion) spaceLocation).getRegionId(), hit );
+		try {
+			for (AssetContainer spaceLocation : this.spaceLocationsCache.values()) {
+				final Integer regionId = ((SpaceRegion) spaceLocation.getSpaceLocation()).getRegionId();
+				Region hit = regions.get( regionId );
+				if (null == hit) {
+					hit = new Region.Builder().withRegion( ((SpaceRegion) spaceLocation.getSpaceLocation()).getRegion() ).build();
+					regions.put( regionId, hit );
+				}
+				hit.addContent( spaceLocation );
 			}
-			hit.addContent( spaceLocation );
+		} catch (final RuntimeException rte) {
+			rte.printStackTrace();
 		}
 		return new ArrayList<>( regions.values() );
 	}
@@ -129,16 +134,19 @@ public class AssetProvider implements Serializable {
 				break;
 			case SHIP:
 			case CONTAINER:
-				if (asset.hasParentContainer())
-					this.processAsset( asset.getParentContainer()
-							.orElseThrow(
-									() -> new NeoComRuntimeException( "The asset reconstruction failed bacause the expected " +
-											"parent container is not instantiated. Reference: " +
-											asset.getParentContainerId() ) ) );
+				if (asset.hasParentContainer()) {
+					final NeoAsset hit = asset.getParentContainer();
+					if (null != hit) this.processAsset( hit );
+					else
+						this.unlocatedAssets.add( asset );
+//						throw new NeoComRuntimeException( "The asset reconstruction failed because the expected " +
+//								"parent container is not instantiated. Reference: " +
+//								asset.getParentContainerId() );
+				}
 				this.add2ContainerLocation( asset );
 				break;
 			case UNKNOWN: // Add the asset to the UNKNOWN space location.
-				NeoComLogger.info( "--[AssetProvider.processAsset]> Not accessible location coordinates: {}",
+				NeoComLogger.info( "Not accessible location coordinates: {}",
 						asset.getLocationId().toString() );
 				final LocationIdentifier spaceIdentifier = UNKNOWN_SPACE_LOCATION_IDENTIFIER;
 				AssetContainer hit = this.spaceLocationsCache.get( spaceIdentifier.getSpaceIdentifier() );
@@ -149,14 +157,6 @@ public class AssetProvider implements Serializable {
 					this.spaceLocationsCache.put( spaceIdentifier.getSpaceIdentifier(), hit );
 				}
 				hit.addContent( asset );
-//
-//
-//				if (asset.hasParentContainer()) { // Read the asset from the database with a new call.
-//					final Optional<NeoAsset> parentAsset = this.assetRepository
-//							.findAssetById( asset.getParentContainerId() );
-//					parentAsset.ifPresent( this::processAsset );
-//				}
-//				this.add2ContainerLocation( asset ); // The container should be present because the processing of the parent.
 				break;
 		}
 	}
@@ -178,9 +178,9 @@ public class AssetProvider implements Serializable {
 		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
 		AssetContainer hit = this.spaceLocationsCache.get( spaceIdentifier );
 		if (null == hit) {
-			final Optional<SpaceLocation> location = this.searchSpaceLocation( spaceIdentifier );
-			if (location.isPresent()) { // The location is a public accessible structure and we can add it to the list
-				hit = new AssetContainer.Builder().withSpaceLocation( location.get() ).build();
+			final SpaceLocation location = this.searchSpaceLocation( spaceIdentifier );
+			if (null != location) { // The location is a public accessible structure and we can add it to the list
+				hit = new AssetContainer.Builder().withSpaceLocation( location ).build();
 				this.spaceLocationsCache.put( spaceIdentifier, hit );
 				hit.addContent( asset );
 			} else { // This should be a container and so we add it to the list of container
@@ -199,18 +199,18 @@ public class AssetProvider implements Serializable {
 		} else hit.addContent( asset );
 	}
 
-	private Optional<SpaceLocation> searchSpaceLocation( final Long spaceIdentifier ) {
+	private SpaceLocation searchSpaceLocation( final Long spaceIdentifier ) {
 		// Search on the universe list of space locations and stations.
-		final Optional<SpaceLocation> location = this.locationCatalogService.searchLocation4Id( spaceIdentifier );
-		if (location.isPresent()) // The location is a station or space location
+		final SpaceLocation location = this.locationCatalogService.searchLocation4Id( spaceIdentifier );
+		if (null != location) // The location is a station or space location
 			return location;
 
 		// Search on the authenticated list of public structures.
-		final Optional<SpaceLocation> structure = this.locationCatalogService.searchStructure4Id( spaceIdentifier,
+		final SpaceLocation structure = this.locationCatalogService.searchStructure4Id( spaceIdentifier,
 				this.credential );
-		if (structure.isPresent()) // The location is a public accessible structure and we can add it to the list
+		if (null != structure) // The location is a public accessible structure and we can add it to the list
 			return location;
-		return Optional.empty();
+		return null;
 	}
 
 	// - B U I L D E R
@@ -241,6 +241,8 @@ public class AssetProvider implements Serializable {
 
 		public AssetProvider build() {
 			Objects.requireNonNull( this.onConstruction.credential );
+			Objects.requireNonNull( this.onConstruction.assetRepository );
+			Objects.requireNonNull( this.onConstruction.locationCatalogService );
 			return this.onConstruction;
 		}
 	}
