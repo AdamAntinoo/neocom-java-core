@@ -10,7 +10,6 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +29,13 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegio
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStationsStationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
-import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
+import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 
 import retrofit2.Response;
 
@@ -129,24 +129,20 @@ public class LocationCatalogService {
 							locationCache.size() );
 				}
 			} catch (final FileNotFoundException fnfe) {
-				logger.warn( "W> [LocationCatalogService.writeLocationsDataCache]> FileNotFoundException." );
-			} catch (final IOException ex) {
-				logger.warn( "W> [LocationCatalogService.writeLocationsDataCache]> IOException." );
+				NeoComLogger.error( "FileNotFoundException.", fnfe );
+			} catch (final IOException ioe) {
+				NeoComLogger.error( "IOException.", ioe );
 			} finally {
 				logger.info( "<< [LocationCatalogService.writeLocationsDataCache]" );
 			}
 		}
 	}
 
-//	public void verifySDERepository() {
-//		this.locationTypeCounters = this.locationRepository.getCounters();
-//	}
-
 	// - S E A R C H   L O C A T I O N   A P I
-	public Optional<SpaceLocation> searchLocation4Id( final Long locationId ) {
+	public SpaceLocation searchLocation4Id( final Long locationId ) {
 		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 		if (locationCache.containsKey( locationId ))
-			return Optional.ofNullable( this.searchOnMemoryCache( locationId ) );
+			return this.searchOnMemoryCache( locationId );
 		final int access = locationsCacheStatistics.accountAccess( false );
 		final int hits = locationsCacheStatistics.getHits();
 		SpaceLocation hit = this.buildUpLocation( locationId );
@@ -155,14 +151,14 @@ public class LocationCatalogService {
 			this.storeOnCacheLocation( hit );
 			logger.info( ">< [LocationCatalogService.searchLocation4Id]> [HIT-{}/{} ] Location {} generated from ESI data.",
 					hits, access, locationId );
-			return Optional.of( hit );
-		} else return Optional.empty();
+			return hit;
+		} else return null;
 	}
 
-	public Optional<SpaceLocation> searchStructure4Id( final Long locationId, final Credential credential ) {
+	public SpaceLocation searchStructure4Id( final Long locationId, final Credential credential ) {
 		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 		if (locationCache.containsKey( locationId ))
-			return Optional.ofNullable( this.searchOnMemoryCache( locationId ) );
+			return this.searchOnMemoryCache( locationId );
 		final int access = locationsCacheStatistics.accountAccess( false );
 		final int hits = locationsCacheStatistics.getHits();
 		SpaceLocation hit = this.buildUpStructure( locationId, credential );
@@ -172,8 +168,8 @@ public class LocationCatalogService {
 			logger.info( ">< [LocationCatalogService.searchStructure4Id]> [HIT-{}/{} ] Location {} generated from Public " +
 							"Structure Data.",
 					hits, access, locationId );
-			return Optional.of( hit );
-		} else return Optional.empty();
+			return hit;
+		} else return null;
 	}
 
 	public Map<String, Integer> getLocationTypeCounters() {
@@ -202,7 +198,13 @@ public class LocationCatalogService {
 	}
 
 	private void registerOnScheduler() {
-		// TODO - register this on the future scheduler
+		JobScheduler.getJobScheduler().registerJob( new Job() {
+			@Override
+			public Boolean call() throws Exception {
+				writeLocationsDataCache();
+				return true;
+			}
+		} );
 	}
 
 	private SpaceLocation buildUpLocation( final Long locationId ) {
@@ -288,29 +290,24 @@ public class LocationCatalogService {
 	}
 
 	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
-		final String refreshToken = credential.getRefreshToken();
-		final int identifier = credential.getAccountId();
 		try {
-//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-			String datasource = ESIDataProvider.DEFAULT_ESI_SERVER;
 			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
-					.accessAuthenticatedConnector(credential)
+					.accessAuthenticatedConnector( credential )
 					.create( UniverseApi.class )
-					.getUniverseStructuresStructureId( structureId, datasource, null, null )
+					.getUniverseStructuresStructureId( structureId,
+							credential.getDataSource().toLowerCase(), null, null )
 					.execute();
 			if (universeResponse.isSuccessful()) {
 				return universeResponse.body();
-			} else return null;
+			}
 		} catch (final IOException ioe) {
 			NeoComLogger.error( "[IOException]> locating public structure: ", ioe );
 			ioe.printStackTrace();
-			return null;
 		} catch (final RuntimeException rte) {
 			NeoComLogger.error( "[RuntimeException]> locating public structure: ", rte );
 			rte.printStackTrace();
-			return null;
 		}
-//		return null;
+		return null;
 	}
 
 	// - B U I L D E R
@@ -344,12 +341,6 @@ public class LocationCatalogService {
 			return this;
 		}
 
-//		public Builder withLocationRepository( final LocationRepository locationRepository ) {
-//			Objects.requireNonNull( locationRepository );
-//			this.onConstruction.locationRepository = locationRepository;
-//			return this;
-//		}
-//
 		public Builder withRetrofitFactory( final RetrofitFactory retrofitFactory ) {
 			Objects.requireNonNull( retrofitFactory );
 			this.onConstruction.retrofitFactory = retrofitFactory;
@@ -360,8 +351,6 @@ public class LocationCatalogService {
 			Objects.requireNonNull( this.onConstruction.configurationProvider );
 			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
 			Objects.requireNonNull( this.onConstruction.esiUniverseDataProvider );
-//			Objects.requireNonNull( this.onConstruction.locationRepository );
-//			Objects.requireNonNull( this.onConstruction.retrofitFactory );
 			this.onConstruction.startService();
 			return this.onConstruction;
 		}
