@@ -9,7 +9,7 @@ public class ExpandableContainer<M extends ICollaboration> extends NeoComExpanda
 	private static final long serialVersionUID = -3759714638563369946L;
 	private List<M> contents = new ArrayList<>();
 
-	protected ExpandableContainer() {}
+	public ExpandableContainer() {}
 
 	// -  C O N T E N T
 	public int addContent( final M item ) {
@@ -34,16 +34,16 @@ public class ExpandableContainer<M extends ICollaboration> extends NeoComExpanda
 		return collaboration;
 	}
 
-	// - B U I L D E R
-	public static class Builder {
-		private ExpandableContainer onConstruction;
-
-		public Builder() {
-			this.onConstruction = new ExpandableContainer();
-		}
-
-		public ExpandableContainer build() {
-			return this.onConstruction;
-		}
-	}
+//	// - B U I L D E R
+//	public static class Builder {
+//		private ExpandableContainer onConstruction;
+//
+//		public Builder() {
+//			this.onConstruction = new ExpandableContainer();
+//		}
+//
+//		public ExpandableContainer build() {
+//			return this.onConstruction;
+//		}
+//	}
 }
