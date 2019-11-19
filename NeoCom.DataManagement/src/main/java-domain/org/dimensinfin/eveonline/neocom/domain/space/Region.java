@@ -1,21 +1,20 @@
 package org.dimensinfin.eveonline.neocom.domain.space;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
+import org.dimensinfin.eveonline.neocom.domain.ExpandableContainer;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class Region extends NeoComNode implements SpaceRegion {
+public class Region extends ExpandableContainer<AssetContainer> implements SpaceRegion {
 	private static final long serialVersionUID = 6515264332647090482L;
 	private Integer regionId;
 	private GetUniverseRegionsRegionIdOk region;
-	private List<AssetContainer> contents = new ArrayList<>();
+//	private List<AssetContainer> contents = new ArrayList<>();
 //	private AssetAggregator aggregator = new AssetAggregator();
 
 	private Region() {}
+
 
 	// - S P A C E R E G I O N
 	@Override
@@ -34,21 +33,6 @@ public class Region extends NeoComNode implements SpaceRegion {
 	@Override
 	public String getRegionName() {
 		return this.region.getName();
-	}
-
-	// -  C O N T E N T
-	public int addContent( final AssetContainer item ) {
-		this.contents.add( item );
-//		this.aggregator.aggregate(item);
-		return this.contents.size();
-	}
-
-	public int getContentCount() {
-		return this.contents.size();
-	}
-
-	public boolean isEmpty() {
-		return this.contents.size() > 0;
 	}
 
 	// - B U I L D E R

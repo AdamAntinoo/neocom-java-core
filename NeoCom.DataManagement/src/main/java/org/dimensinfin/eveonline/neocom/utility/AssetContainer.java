@@ -1,14 +1,13 @@
 package org.dimensinfin.eveonline.neocom.utility;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
+import org.dimensinfin.eveonline.neocom.domain.ExpandableContainer;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 
-public class AssetContainer {
+public class AssetContainer extends ExpandableContainer<NeoAsset> {
 	public enum AssetContainerType {
 		UNDEFINED, SPACE, CONTAINER, SHIP, UNKNOWN;
 	}
@@ -17,14 +16,14 @@ public class AssetContainer {
 	private LocationIdentifier spaceLocationIdentifier;
 	private SpaceLocation spaceLocation;
 	private NeoAsset parentContainer;
-	private List<NeoAsset> contents = new ArrayList<>();
+//	private List<NeoAsset> contents = new ArrayList<>();
 
-	protected AssetContainer() {}
+	protected AssetContainer() {super();}
 
-	public int addContent( final NeoAsset item ) {
-		this.contents.add( item );
-		return this.contents.size();
-	}
+//	public int addContent( final NeoAsset item ) {
+//		this.contents.add( item );
+//		return this.contents.size();
+//	}
 
 	public AssetContainerType getType() {
 		return this.type;
@@ -65,7 +64,6 @@ public class AssetContainer {
 		}
 
 		public AssetContainer build() {
-//			Objects.requireNonNull( this.onConstruction.spaceLocation );
 			return this.onConstruction;
 		}
 	}

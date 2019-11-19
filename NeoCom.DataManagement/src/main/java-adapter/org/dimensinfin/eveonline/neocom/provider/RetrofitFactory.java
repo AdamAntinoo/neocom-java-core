@@ -160,7 +160,7 @@ public class RetrofitFactory {
 	}
 
 	public Retrofit accessUniverseConnector() {
-		NeoComLogger.enter();
+//		NeoComLogger.enter();
 		Retrofit hitConnector = this.connectors.get( UNIVERSE_CONNECTOR_IDENTIFIER );
 		try {
 			if (null == hitConnector) { // Create a new connector for this credential.
@@ -193,7 +193,7 @@ public class RetrofitFactory {
 			NeoComLogger.error( ioe );
 			throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
 		}
-		NeoComLogger.exit();
+//		NeoComLogger.exit();
 		return hitConnector;
 	}
 

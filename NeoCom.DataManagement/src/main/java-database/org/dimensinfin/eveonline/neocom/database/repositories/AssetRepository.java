@@ -30,7 +30,7 @@ public class AssetRepository {
 	protected Dao<NeoAsset, UUID> assetDao;
 	private ConnectionSource connection4Transaction;
 
-	private AssetRepository() {}
+	protected AssetRepository() {}
 
 	/**
 	 * Get the complete list of the assets that belong to this owner.
