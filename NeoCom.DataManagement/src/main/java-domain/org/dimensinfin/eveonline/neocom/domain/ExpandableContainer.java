@@ -11,19 +11,23 @@ public class ExpandableContainer<M extends ICollaboration> extends NeoComExpanda
 
 	public ExpandableContainer() {}
 
-	// -  C O N T E N T
-	public int addContent( final M item ) {
-		this.contents.add( item );
+	public int getContentCount() {
 		return this.contents.size();
 	}
 
-	public int getContentCount() {
-		return this.contents.size();
+	public List<M> getContents() {
+		return contents;
 	}
 
 	// - I E X P A N D A B L E
 	public boolean isEmpty() {
 		return this.contents.isEmpty();
+	}
+
+	// -  C O N T E N T
+	public int addContent( final M item ) {
+		this.contents.add( item );
+		return this.contents.size();
 	}
 
 	// - I C O L L A B O R A T I O N
@@ -33,17 +37,4 @@ public class ExpandableContainer<M extends ICollaboration> extends NeoComExpanda
 		collaboration.addAll( this.contents );
 		return collaboration;
 	}
-
-//	// - B U I L D E R
-//	public static class Builder {
-//		private ExpandableContainer onConstruction;
-//
-//		public Builder() {
-//			this.onConstruction = new ExpandableContainer();
-//		}
-//
-//		public ExpandableContainer build() {
-//			return this.onConstruction;
-//		}
-//	}
 }

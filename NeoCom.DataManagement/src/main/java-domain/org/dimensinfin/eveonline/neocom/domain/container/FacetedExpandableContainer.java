@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.dimensinfin.core.interfaces.ICollaboration;
 import org.dimensinfin.eveonline.neocom.domain.ExpandableContainer;
-import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
 
 /**
  * This class of containers have two faces. By one side the type of the elements contained. This is a generic with the generic
@@ -17,9 +16,9 @@ import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
  * faceted container that behaves as a Region but that internally has a set of other containers like Stations or Structures or
  * even SolarSystem contents.
  *
- * The <b>F</b> stands for the faceted type of the assembly and the <b>C</b> for the contents type.
+ * The <b>F</bFacetedExpandableContainer> stands for the faceted type of the assembly and the <b>C</b> for the contents type.
  */
-public class FacetedExpandableContainer<F extends NeoComNode, C extends ICollaboration> extends ExpandableContainer<C> {
+public class FacetedExpandableContainer<F extends ICollaboration, C extends ICollaboration> extends ExpandableContainer<C> {
 	private F facet;
 
 	protected FacetedExpandableContainer() {}
@@ -29,7 +28,7 @@ public class FacetedExpandableContainer<F extends NeoComNode, C extends ICollabo
 	}
 
 	// - B U I L D E R
-	public static class Builder<F extends NeoComNode, C extends ICollaboration> {
+	public static class Builder<F extends ICollaboration, C extends ICollaboration> {
 		private FacetedExpandableContainer onConstruction;
 
 		public Builder() {

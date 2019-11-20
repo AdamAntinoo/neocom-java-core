@@ -49,10 +49,6 @@ public class IntegrationEnvironmentDefinition {
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )
 				.build();
-//		this.itRetrofitUniverseConnector = new RetrofitUniverseConnector.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.build();
 		this.itRetrofitFactory = new RetrofitFactory.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
@@ -69,10 +65,6 @@ public class IntegrationEnvironmentDefinition {
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
 		final LocationRepository locationRepository = Mockito.mock( LocationRepository.class );
-//		this.itNeoComRetrofitFactory = new NeoComRetrofitFactory.Builder()
-//				.withConfigurationProvider( this.itConfigurationProvider )
-//				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.build();
 		this.itLocationService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )

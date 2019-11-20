@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -56,7 +55,6 @@ class JobSchedulerTest {
 	void runSchedule() {
 		final String identifier = UUID.fromString( "10596477-3376-4d11-9b68-6213b1cf9bf4" ) + "-TEST-";
 		final Job job = Mockito.mock( Job.class );
-//		Mockito.when( job.getIdentifier() ).thenReturn( identifier );
 		Mockito.when( job.getSchedule() ).thenReturn( "* - *" );
 
 		JobScheduler.getJobScheduler().clear();
@@ -91,9 +89,9 @@ class JobSchedulerTest {
 		final Job job = Mockito.mock( Job.class );
 //		Mockito.when( job.getIdentifier() ).thenReturn( "-TEST-JOB-IDENTIFIER-" );
 		JobScheduler.getJobScheduler().clear();
-		Assert.assertEquals( 0, JobScheduler.getJobScheduler().getJobCount() );
+		Assertions.assertEquals( 0, JobScheduler.getJobScheduler().getJobCount() );
 		JobScheduler.getJobScheduler().registerJob( job );
-		Assert.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
+		Assertions.assertEquals( 1, JobScheduler.getJobScheduler().getJobCount() );
 	}
 
 	@Test

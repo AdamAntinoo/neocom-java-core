@@ -149,8 +149,8 @@ public class SpaceLocationImplementation extends NeoComNode implements SpaceLoca
 
 		public SpaceLocationImplementation build() {
 			Objects.requireNonNull( this.onConstruction.region );
-			Objects.requireNonNull( this.onConstruction.constellation );
-			Objects.requireNonNull( this.onConstruction.solarSystem );
+//			Objects.requireNonNull( this.onConstruction.constellation );
+//			Objects.requireNonNull( this.onConstruction.solarSystem );
 			return this.onConstruction;
 		}
 	}
