@@ -2,9 +2,10 @@ package org.dimensinfin.eveonline.neocom.auth;
 
 import java.io.IOException;
 import java.util.Objects;
-import org.dimensinfin.eveonline.neocom.utility.Base64;
+
 import org.dimensinfin.eveonline.neocom.provider.IConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+import org.dimensinfin.eveonline.neocom.utility.Base64;
 
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
@@ -14,11 +15,27 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class NeoComOauth2Flow {
+	private static final String V1_OAUTH = "oauth/authorize/";
+	private static final String V2_OAUTH = "v2/oauth/authorize/";
+	private static final String LOGIN_URL = "https://login.eveonline.com/" + V1_OAUTH +
+			"?response_type=code&" +
+			"redirect_uri=eveauth-neocom%3A%2F%2Fesiauthentication&" +
+			"scope=publicData esi-location.read_location.v1 esi-location.read_ship_type.v1 esi-mail.read_mail.v1 esi-skills.read_skills.v1 esi-skills.read_skillqueue.v1 esi-wallet.read_character_wallet.v1 esi-wallet.read_corporation_wallet.v1 esi-search.search_structures.v1 esi-clones.read_clones.v1 esi-universe.read_structures.v1 esi-assets.read_assets.v1 esi-planets.manage_planets.v1 esi-fittings.read_fittings.v1 esi-industry.read_character_jobs.v1 esi-markets.read_character_orders.v1 esi-characters.read_blueprints.v1 esi-contracts.read_character_contracts.v1 esi-clones.read_implants.v1 esi-wallet.read_corporation_wallets.v1 esi-characters.read_notifications.v1 esi-corporations.read_divisions.v1 esi-assets.read_corporation_assets.v1 esi-corporations.read_blueprints.v1 esi-contracts.read_corporation_contracts.v1 esi-industry.read_corporation_jobs.v1 esi-markets.read_corporation_orders.v1 esi-industry.read_character_mining.v1 esi-industry.read_corporation_mining.v1";
+
 	private TokenVerification tokenVerificationStore;
 	// - C O M P O N E N T S
 	private IConfigurationProvider configurationProvider;
 
 	private NeoComOauth2Flow() {}
+
+	public String generateLoginUrl( final String esiServer ) {
+		final String state = Base64.encodeBytes(
+				this.configurationProvider.getResourceString( "P.esi.authorization.state" ).getBytes() );
+		final String clientId = this.configurationProvider.getResourceString( "P.esi." +
+				esiServer.toLowerCase() +
+				".authorization.clientid" );
+		return LOGIN_URL + "&client_id=" + clientId + "&state=" + state;
+	}
 
 	public void onStartFlow( final String code, final String state, final String dataSource ) {
 		this.tokenVerificationStore = new TokenVerification()
@@ -40,7 +57,7 @@ public class NeoComOauth2Flow {
 	 *
 	 * @param state the state data received. Needs to mah the state generated locally.
 	 */
-	public  boolean verifyState( final String state ) {
+	public boolean verifyState( final String state ) {
 		final String testState = Base64.encodeBytes(
 				this.configurationProvider.getResourceString( "P.esi.authorization.state" ).getBytes()
 		).replaceAll( "\n", "" );
@@ -150,15 +167,15 @@ public class NeoComOauth2Flow {
 			this.onConstruction = new NeoComOauth2Flow();
 		}
 
+		public NeoComOauth2Flow build() {
+			Objects.requireNonNull( this.onConstruction.configurationProvider );
+			return this.onConstruction;
+		}
+
 		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
-		}
-
-		public NeoComOauth2Flow build() {
-			Objects.requireNonNull( this.onConstruction.configurationProvider );
-			return this.onConstruction;
 		}
 	}
 }

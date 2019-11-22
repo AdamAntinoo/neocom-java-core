@@ -16,7 +16,7 @@ import org.dimensinfin.eveonline.neocom.domain.ExpandableContainer;
  * faceted container that behaves as a Region but that internally has a set of other containers like Stations or Structures or
  * even SolarSystem contents.
  *
- * The <b>F</bFacetedExpandableContainer> stands for the faceted type of the assembly and the <b>C</b> for the contents type.
+ * The <b>F</b> stands for the faceted type of the assembly and the <b>C</b> for the contents type.
  */
 public class FacetedExpandableContainer<F extends ICollaboration, C extends ICollaboration> extends ExpandableContainer<C> {
 	private F facet;
