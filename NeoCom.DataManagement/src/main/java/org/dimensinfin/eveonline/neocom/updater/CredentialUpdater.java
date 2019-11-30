@@ -42,16 +42,6 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 				final List<GetCharactersCharacterIdAssets200Ok> assetList = esiDataProvider.getCharactersCharacterIdAssets(
 						this.getModel() );
 				this.getModel().setAssetsCount( assetList.size() );
-
-				// Estimate the mining resources value.
-				// TODO - Do this but form a directed wuery to the asset repository.
-//				final Double miningResourcesValue = Stream.of( assetList )
-//						.filter( asset -> this.isMiningResource( asset ) )
-//						.map( asset -> new NeoAsset.Builder().fromEsiAsset( asset ) )
-//						.mapToDouble( asset -> asset.getPrice() * asset.getQuantity() )
-//						.sum();
-//				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
-
 				// Get the wallet balance.
 				final Double walletBalance = esiDataProvider.getCharactersCharacterIdWallet( this.getModel() );
 				if (walletBalance > 0.0) this.getModel().setWalletBalance( walletBalance );
@@ -64,12 +54,5 @@ public class CredentialUpdater extends NeoComUpdater<Credential> {
 			}
 			this.getModel().timeStamp(); // Mark the model as updated.
 		}
-	}
-
-	private boolean isMiningResource( final GetCharactersCharacterIdAssets200Ok asset2Test ) {
-//		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
-//		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
-//				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
-		return false;
 	}
 }

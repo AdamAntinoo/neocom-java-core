@@ -11,6 +11,7 @@ import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
@@ -20,7 +21,8 @@ public class IntegrationNeoComDBAdapter {
 	private boolean isOpen = false;
 	private JdbcPooledConnectionSource connectionSource;
 
-	private Dao<NeoAsset, UUID> assetDao = null;
+	private Dao<NeoAsset, UUID> assetDao;
+	private Dao<Credential, String> credentialDao;
 
 	private IntegrationNeoComDBAdapter() {}
 
@@ -37,13 +39,19 @@ public class IntegrationNeoComDBAdapter {
 		return this.assetDao;
 	}
 
-	private boolean openNeoComDB() throws SQLException {
-		NeoComLogger.info( ">> [SBNeoComDBHelper.openNeoComDB]" );
-		if (!this.isOpen) if (null == this.connectionSource) {
-			this.isOpen = this.createConnectionSource();
+	public Dao<Credential, String> getCredentialDao() throws SQLException {
+		if (null == this.credentialDao) {
+			this.credentialDao = DaoManager.createDao( this.getConnectionSource(), Credential.class );
 		}
-		NeoComLogger.info( "<< [SBNeoComDBHelper.openNeoComDB]" );
-		return isOpen;
+		return this.credentialDao;
+	}
+
+	public void onCreate( final ConnectionSource connectionSource ) {
+		try {
+			TableUtils.createTableIfNotExists( connectionSource, NeoAsset.class );
+		} catch (SQLException sqle) {
+			NeoComLogger.error( "SQL NeoComDatabase: ", sqle );
+		}
 	}
 
 	private boolean createConnectionSource() throws SQLException {
@@ -56,12 +64,14 @@ public class IntegrationNeoComDBAdapter {
 		connectionSource.setTestBeforeGet( true );
 		return true;
 	}
-	public void onCreate( final ConnectionSource connectionSource ) {
-		try {
-			TableUtils.createTableIfNotExists( connectionSource, NeoAsset.class );
-		} catch (SQLException sqle) {
-			NeoComLogger.error( "SQL NeoComDatabase: ", sqle );
+
+	private boolean openNeoComDB() throws SQLException {
+		NeoComLogger.info( ">> [SBNeoComDBHelper.openNeoComDB]" );
+		if (!this.isOpen) if (null == this.connectionSource) {
+			this.isOpen = this.createConnectionSource();
 		}
+		NeoComLogger.info( "<< [SBNeoComDBHelper.openNeoComDB]" );
+		return isOpen;
 	}
 
 	// - B U I L D E R
@@ -72,16 +82,16 @@ public class IntegrationNeoComDBAdapter {
 			this.onConstruction = new IntegrationNeoComDBAdapter();
 		}
 
-		public IntegrationNeoComDBAdapter.Builder withDatabaseURLConnection( final String databaseURLConnection ) {
-			Objects.requireNonNull( databaseURLConnection );
-			this.onConstruction.localConnectionDescriptor = databaseURLConnection;
-			return this;
-		}
-
 		public IntegrationNeoComDBAdapter build() throws SQLException {
 			Objects.requireNonNull( this.onConstruction.localConnectionDescriptor );
 			this.onConstruction.onCreate( this.onConstruction.getConnectionSource() );
 			return this.onConstruction;
+		}
+
+		public IntegrationNeoComDBAdapter.Builder withDatabaseURLConnection( final String databaseURLConnection ) {
+			Objects.requireNonNull( databaseURLConnection );
+			this.onConstruction.localConnectionDescriptor = databaseURLConnection;
+			return this;
 		}
 	}
 }

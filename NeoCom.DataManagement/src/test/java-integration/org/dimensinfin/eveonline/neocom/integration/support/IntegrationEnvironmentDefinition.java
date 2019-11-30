@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
+import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.database.repositories.LocationRepository;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.ESIUniverseDataProvider;
@@ -22,6 +23,7 @@ public class IntegrationEnvironmentDefinition {
 	protected IFileSystem itFileSystemAdapter;
 	protected IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
 	protected AssetRepository itAssetRepository;
+	protected CredentialRepository itCredentialRepository;
 	protected StoreCacheManager itStoreCacheManager;
 	protected ESIUniverseDataProvider itEsiUniverseDataProvider;
 	protected ESIDataProvider esiDataProvider;
@@ -45,6 +47,9 @@ public class IntegrationEnvironmentDefinition {
 		this.itAssetRepository = new AssetRepository.Builder()
 				.withAssetDao( this.itNeoComIntegrationDBAdapter.getAssetDao() )
 				.withConnection4Transaction( this.itNeoComIntegrationDBAdapter.getConnectionSource() )
+				.build();
+		this.itCredentialRepository = new CredentialRepository.Builder()
+				.withCredentialDao( this.itNeoComIntegrationDBAdapter.getCredentialDao() )
 				.build();
 		this.itFileSystemAdapter = new SBFileSystemAdapter.Builder()
 				.optionalApplicationDirectory( "./src/test/NeoCom.IntegrationTest/" )

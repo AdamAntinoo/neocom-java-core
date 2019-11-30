@@ -25,13 +25,6 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.JobScheduler;
 
 public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinition {
-	private final ObjectMapper mapper = new ObjectMapper();
-
-	private AssetDownloadProcessorJob assetProcessorJob;
-	private List<GroupCount> groupCounts;
-
-	private AssetDownloadProcessorJobIT() {}
-
 	public static void main( String[] args ) {
 		NeoComLogger.enter();
 		final AssetDownloadProcessorJobIT application = new AssetDownloadProcessorJobIT();
@@ -48,13 +41,13 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		}
 		NeoComLogger.exit();
 	}
+	private final ObjectMapper mapper = new ObjectMapper();
+	private AssetDownloadProcessorJob assetProcessorJob;
+	private List<GroupCount> groupCounts;
 
-	@Test
-	void runAssetProcessorIT() {
-		AssetDownloadProcessorJobIT.main( null );
-	}
+	private AssetDownloadProcessorJobIT() {}
 
-	private void checkAssertions() throws IOException {
+	private void checkAssertions() throws IOException, SQLException {
 		Assertions.assertNotNull( JobScheduler.getJobScheduler() );
 		Assertions.assertNotNull( this.assetProcessorJob );
 
@@ -75,16 +68,10 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 			if (count.getGroup().equalsIgnoreCase( "Propulsion Module" ))
 				Assertions.assertEquals( propulsionCount, count.getCount() );
 		}
-	}
-
-	private void readGroupCounts() throws IOException {
-		final File groupCountsFile = new File( this.itFileSystemAdapter.accessResource4Path( "/TestData/groupsCounts.json" ) );
-		this.groupCounts = mapper.readValue( groupCountsFile,
-				mapper.getTypeFactory().constructCollectionType( List.class, GroupCount.class ) );
-	}
-
-	private void waitSchedulerCompletion() {
-		JobScheduler.getJobScheduler().wait4Completion();
+		Assertions.assertTrue(
+				this.itCredentialRepository.findCredentialById( SupportIntegrationCredential.itCredential.getUniqueId() )
+						.getMiningResourcesEstimatedValue() > 0.0
+		);
 	}
 
 	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
@@ -100,14 +87,30 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		return new ArrayList<>( Arrays.asList( data ) );
 	}
 
+	private void readGroupCounts() throws IOException {
+		final File groupCountsFile = new File( this.itFileSystemAdapter.accessResource4Path( "/TestData/groupsCounts.json" ) );
+		this.groupCounts = mapper.readValue( groupCountsFile,
+				mapper.getTypeFactory().constructCollectionType( List.class, GroupCount.class ) );
+	}
+
 	private void registerJobOnScheduler() {
 		this.assetProcessorJob = new AssetDownloadProcessorJob.Builder()
 				.withCredential( SupportIntegrationCredential.itCredential )
 				.withEsiDataProvider( this.esiDataProvider )
 				.withLocationCatalogService( this.itLocationService )
 				.withAssetRepository( this.itAssetRepository )
+				.withCredentialRepository( this.itCredentialRepository )
 				.addCronSchedule( "* - *" )
 				.build();
 		JobScheduler.getJobScheduler().registerJob( this.assetProcessorJob );
+	}
+
+	private void waitSchedulerCompletion() {
+		JobScheduler.getJobScheduler().wait4Completion();
+	}
+
+	@Test
+	void runAssetProcessorIT() {
+		AssetDownloadProcessorJobIT.main( null );
 	}
 }

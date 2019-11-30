@@ -16,6 +16,7 @@ import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterId
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
+import org.dimensinfin.eveonline.neocom.database.repositories.CredentialRepository;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -25,15 +26,16 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 public class AssetDownloadProcessorJob extends Job {
-	// -  C O M P O N E N T S
-	private Credential credential;
-	private AssetRepository assetRepository;
-//	private GetCharactersCharacterIdAsset2NeoAssetConverter neoAssetConverter;
-	private ESIDataProvider esiDataProvider;
-	private LocationCatalogService locationCatalogService;
 	// - I N T E R N A L   W O R K   F I E L D S
 	private final Map<Long, GetCharactersCharacterIdAssets200Ok> assetMap = new HashMap<>();
 	private final List<Long> id4Names = new ArrayList<>();
+	private double miningResourceValue = 0.0;
+	// -  C O M P O N E N T S
+	private Credential credential;
+	private AssetRepository assetRepository;
+	private CredentialRepository credentialRepository;
+	private ESIDataProvider esiDataProvider;
+	private LocationCatalogService locationCatalogService;
 
 	private AssetDownloadProcessorJob() {super();}
 
@@ -43,14 +45,8 @@ public class AssetDownloadProcessorJob extends Job {
 	 *
 	 * @return true if the process completes successfully.
 	 */
-//	@Override
 	public Boolean call() throws Exception {
 		return this.processCharacterAssets();
-	}
-
-	private Boolean processCharacterAssets() throws SQLException {
-		this.downloadPilotAssetsESI();
-		return true;
 	}
 
 	/**
@@ -69,10 +65,11 @@ public class AssetDownloadProcessorJob extends Job {
 	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
 	 */
 	public boolean downloadPilotAssetsESI() throws SQLException {
-		NeoComLogger.enter( ">> [AssetsManager.downloadPilotAssetsESI]" );
-		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider.getCharactersCharacterIdAssets(
-				credential );
-		if ((null == assetOkList) || (assetOkList.size() < 1)) return false;
+		NeoComLogger.enter();
+		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider
+				.getCharactersCharacterIdAssets( credential );
+		if (null == assetOkList) return false;
+		if (assetOkList.isEmpty()) return false;
 		this.createAssetMap( assetOkList ); // Map of asset for easy lookup.
 		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
 		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
@@ -85,38 +82,81 @@ public class AssetDownloadProcessorJob extends Job {
 //				if (targetAsset.isContainer()) downloadAssetEveName( targetAsset.getAssetId() );
 				// Mark the asset owner to the work in progress value.
 				targetAsset.setOwnerId( this.credential.getAccountId() * -1 );
+				// Do asset calculations like add the value is a mining resource.
+				if (this.isMiningResource( targetAsset ))
+					this.miningResourceValue += targetAsset.getQuantity() * targetAsset.getPrice();
 
 				// - L O C A T I O N   P R O C E S S I N G
 				this.locationProcessing( targetAsset );
 				// With assets separate the update from the creation because they use a generated unique key.
 				this.assetRepository.persist( targetAsset );
 			} catch (final SQLException | IOException | RuntimeException sqle) {
-				NeoComLogger.info( "RTEX ´[AssetsManager.downloadPilotAssetsESI]> Processing asset: {} - {}"
-						, assetOk.getItemId().toString(), sqle.getMessage() );
+				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", sqle );
 				sqle.printStackTrace();
 			}
 		}
-		//--- O R P H A N   L O C A T I O N   A S S E T S
+		// - O R P H A N   L O C A T I O N   A S S E T S
 		// Second pass. All the assets in unknown locations should be readjusted for hierarchy changes.
 //		for (NeoComAsset asset : this.unlocatedAssets) {
 //			this.validateLocation( asset );
 //		}
 		// Assign the assets to the pilot.
 		this.assetRepository.replaceAssets( this.credential.getAccountId() );
-		// Remove from memory the managers that contain now stale data.
-		//TODO Removed until this is checked if required.
-		//			GlobalDataManager.dropAssetsManager(credential.getAccountId());
-		//		} catch (final Exception ex) {
-		//			ex.printStackTrace();
-		//			return false;
-		//		}
-		NeoComLogger.info( "<< [AssetsManager.downloadPilotAssetsESI]" );
+		// Update the mining value on the Credential.
+		this.credential.setMiningResourcesEstimatedValue( this.miningResourceValue );
+		this.credentialRepository.persist( this.credential );
+		NeoComLogger.exit();
 		return true;
 	}
 
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final AssetDownloadProcessorJob that = (AssetDownloadProcessorJob) o;
+		return new EqualsBuilder()
+				.appendSuper( super.equals( o ) )
+				.append( this.credential, that.credential )
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( credential )
+				.toHashCode();
+	}
+
+	/**
+	 * This method iterates the list of assets from the esi server and stores them into a map.
+	 *
+	 * @param assetList list of assets from the esi server.
+	 */
 	private void createAssetMap( final List<GetCharactersCharacterIdAssets200Ok> assetList ) {
 		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
 			this.assetMap.put( assetOk.getItemId(), assetOk );
+	}
+
+//	private void calculateMiningResourceValue() {
+//
+//
+//		// Estimate the mining resources value.
+//		// TODO - Do this but form a directed query to the asset repository.
+//
+////				final Double miningResourcesValue = Stream.of( assetList )
+////						.filter( asset -> this.isMiningResource( asset ) )
+////						.map( asset -> new NeoAsset.Builder().fromEsiAsset( asset ) )
+////						.mapToDouble( asset -> asset.getPrice() * asset.getQuantity() )
+////						.sum();
+////				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
+//	}
+
+	private boolean isMiningResource( final NeoAsset asset2Test ) {
+		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
+		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
+				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
+		return false;
 	}
 
 	private void locationProcessing( final NeoAsset targetAsset ) {
@@ -139,28 +179,15 @@ public class AssetDownloadProcessorJob extends Job {
 					}
 				}
 			}
-		} catch (final  RuntimeException rte){
+		} catch (final RuntimeException rte) {
 			rte.printStackTrace();
 		}
 	}
 
-	@Override
-	public boolean equals( final Object o ) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		final AssetDownloadProcessorJob that = (AssetDownloadProcessorJob) o;
-		return new EqualsBuilder()
-				.appendSuper( super.equals( o ) )
-				.append( this.credential, that.credential )
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.appendSuper( super.hashCode() )
-				.append( credential )
-				.toHashCode();
+	private Boolean processCharacterAssets() throws SQLException {
+		this.downloadPilotAssetsESI();
+//		this.calculateMiningResourceValue();
+		return true;
 	}
 
 	// - B U I L D E R
@@ -178,9 +205,30 @@ public class AssetDownloadProcessorJob extends Job {
 			return this;
 		}
 
+		public AssetDownloadProcessorJob build() {
+			final AssetDownloadProcessorJob instance = super.build();
+			Objects.requireNonNull( instance.credential );
+			Objects.requireNonNull( instance.esiDataProvider );
+			Objects.requireNonNull( instance.locationCatalogService );
+			Objects.requireNonNull( instance.assetRepository );
+			return instance;
+		}
+
+		public AssetDownloadProcessorJob.Builder withAssetRepository( final AssetRepository assetRepository ) {
+			Objects.requireNonNull( assetRepository );
+			this.getActual().assetRepository = assetRepository;
+			return this;
+		}
+
 		public AssetDownloadProcessorJob.Builder withCredential( final Credential credential ) {
 			Objects.requireNonNull( credential );
 			this.getActual().credential = credential;
+			return this;
+		}
+
+		public AssetDownloadProcessorJob.Builder withCredentialRepository( final CredentialRepository credentialRepository ) {
+			Objects.requireNonNull( credentialRepository );
+			this.getActual().credentialRepository = credentialRepository;
 			return this;
 		}
 
@@ -194,28 +242,6 @@ public class AssetDownloadProcessorJob extends Job {
 			Objects.requireNonNull( locationCatalogService );
 			this.onConstruction.locationCatalogService = locationCatalogService;
 			return this;
-		}
-
-		public AssetDownloadProcessorJob.Builder withAssetRepository( final AssetRepository assetRepository ) {
-			Objects.requireNonNull( assetRepository );
-			this.getActual().assetRepository = assetRepository;
-			return this;
-		}
-
-//		public AssetDownloadProcessorJob.Builder withNeoAssetConverter( final GetCharactersCharacterIdAsset2NeoAssetConverter neoAssetConverter ) {
-//			Objects.requireNonNull( neoAssetConverter );
-//			this.getActual().neoAssetConverter = neoAssetConverter;
-//			return this;
-//		}
-
-		public AssetDownloadProcessorJob build() {
-			final AssetDownloadProcessorJob instance = super.build();
-			Objects.requireNonNull( instance.credential );
-			Objects.requireNonNull( instance.esiDataProvider );
-			Objects.requireNonNull( instance.locationCatalogService );
-			Objects.requireNonNull( instance.assetRepository );
-//			Objects.requireNonNull( instance.neoAssetConverter );
-			return instance;
 		}
 	}
 }
