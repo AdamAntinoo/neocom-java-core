@@ -32,118 +32,20 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdO
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 import retrofit2.Response;
-import retrofit2.Retrofit;
 import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ACCEPT_LANGUAGE;
 import static org.dimensinfin.eveonline.neocom.provider.ESIDataProvider.DEFAULT_ESI_SERVER;
 
 public class ESIUniverseDataProvider {
-	protected static final Logger logger = LoggerFactory.getLogger( ESIDataProvider.class );
-	private Retrofit universeRetrofit;
+	protected static final Logger logger = LoggerFactory.getLogger( ESIUniverseDataProvider.class );
+	// - I N T E R N A L   C A C H E S
+	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 1200 );
 	// - C O M P O N E N T S
 	protected IConfigurationProvider configurationProvider;
 	protected IFileSystem fileSystemAdapter;
-	private RetrofitFactory retrofitFactory;
 	protected StoreCacheManager storeCacheManager;
-	// - I N T E R N A L   C A C H E S
-	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 1200 );
+	protected RetrofitFactory retrofitFactory;
 
 	protected ESIUniverseDataProvider() {}
-
-	private Retrofit accessUniverseRetrofit() {
-		if (null == this.universeRetrofit) {
-//			try {
-			this.universeRetrofit = this.retrofitFactory.accessUniverseConnector();
-//			} catch (final IOException ioe) {
-//				NeoComLogger.error( ioe );
-//				throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
-//			}
-		}
-		return this.universeRetrofit;
-	}
-
-	// - P R O V I D E R   A P I
-	public GetUniverseStationsStationIdOk getUniverseStationById( final Integer stationId ) {
-		NeoComLogger.enter( "stationId: {}", stationId.toString() );
-		try {
-			final Response<GetUniverseStationsStationIdOk> stationResponse = this.accessUniverseRetrofit()
-					.create( UniverseApi.class )
-					.getUniverseStationsStationId( stationId
-							, DEFAULT_ESI_SERVER.toLowerCase(), null )
-					.execute();
-			if (stationResponse.isSuccessful()) return stationResponse.body();
-		} catch (final IOException ioe) {
-			NeoComLogger.error( "IOException during ESI data access.", ioe );
-		}
-		return null;
-	}
-
-	public GetUniverseSystemsSystemIdOk getUniverseSystemById( final Integer systemId ) {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseSystemsSystemIdOk> systemResponse = this.accessUniverseRetrofit()
-					.create( UniverseApi.class )
-					.getUniverseSystemsSystemId( systemId
-							, DEFAULT_ACCEPT_LANGUAGE
-							, DEFAULT_ESI_SERVER.toLowerCase(), null, null )
-					.execute();
-			if (systemResponse.isSuccessful()) return systemResponse.body();
-		} catch (IOException ioe) {
-			logger.info( "EX [ESIUniverseDataProvider.getUniverseSystemById]> IOException during ESI data access: {}",
-					ioe.getMessage() );
-		}
-		return null;
-	}
-
-	public GetUniverseConstellationsConstellationIdOk getUniverseConstellationById( final Integer constellationId ) {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseConstellationsConstellationIdOk> systemResponse = this.accessUniverseRetrofit()
-					.create( UniverseApi.class )
-					.getUniverseConstellationsConstellationId( constellationId,
-							DEFAULT_ACCEPT_LANGUAGE,
-							DEFAULT_ESI_SERVER.toLowerCase(), null, null )
-					.execute();
-			if (systemResponse.isSuccessful()) return systemResponse.body();
-		} catch (IOException ioe) {
-			NeoComLogger
-					.info( "EX [ESIUniverseDataProvider.getUniverseConstellationById]> IOException during ESI data access: {}",
-							ioe.getMessage() );
-		}
-		return null;
-	}
-
-	public GetUniverseRegionsRegionIdOk getUniverseRegionById( final Integer regionId ) {
-		try {
-			// Create the request to be returned so it can be called.
-			final Response<GetUniverseRegionsRegionIdOk> systemResponse = this.accessUniverseRetrofit()
-					.create( UniverseApi.class )
-					.getUniverseRegionsRegionId( regionId,
-							DEFAULT_ACCEPT_LANGUAGE,
-							DEFAULT_ESI_SERVER.toLowerCase(), null, null )
-					.execute();
-			if (systemResponse.isSuccessful()) return systemResponse.body();
-		} catch (IOException ioe) {
-			NeoComLogger.info( "EX [ESIUniverseDataProvider.getUniverseRegionById]> IOException during ESI data access: {}",
-					ioe.getMessage() );
-		}
-		return null;
-	}
-
-	// - S D E   I N T E R N A L   D A T A
-	public double searchSDEMarketPrice( final int typeId ) {
-		logger.info( "-- [ESIDataProvider.searchSDEMarketPrice]> price for: {}", typeId );
-		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
-		else return -1.0;
-	}
-
-	private void downloadItemPrices() {
-		// Initialize and process the list of market process form the ESI full market data.
-		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
-		logger.info( ">> [ESIDataProvider.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
-		for (GetMarketsPrices200Ok price : marketPrices) {
-			marketDefaultPrices.put( price.getTypeId(), price );
-		}
-	}
 
 	/**
 	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
@@ -154,7 +56,8 @@ public class ESIUniverseDataProvider {
 	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
 		try {
 			// Create the request to be returned so it can be called.
-			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = this.accessUniverseRetrofit()
+			final Response<List<GetMarketsPrices200Ok>> marketApiResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( MarketApi.class )
 					.getMarketsPrices( DEFAULT_ESI_SERVER.toLowerCase(), null )
 					.execute();
@@ -170,26 +73,52 @@ public class ESIUniverseDataProvider {
 		}
 	}
 
-	// - C A C H E D   A P I
-	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
-		return this.storeCacheManager.accessItem( itemId ).blockingGet();
+	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
+	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
+		logger.info( ">> [ESIDataProvider.getCorporationsCorporationId]" );
+//		final Chrono accessFullTime = new Chrono();
+		try {
+			// Set the refresh to be used during the request.
+//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
+			String datasource = DEFAULT_ESI_SERVER;
+			// Use server parameter to override configuration server to use.
+//			if (null != server) datasource = server;
+			// Create the request to be returned so it can be called.
+			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( AllianceApi.class )
+					.getAlliancesAllianceId( identifier,
+							datasource,
+							null )
+					.execute();
+			if (allianceResponse.isSuccessful())
+				return allianceResponse.body();
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataProvider.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+//		} finally {
+//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+		}
+		return null;
 	}
 
-	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
-		logger.info( "-- [ESIUniverseDataProvider.searchItemGroup4Id]> targetGroupId: {}", groupId );
-		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
-	}
-
-	@TimeElapsed
-	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
-		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
-		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
-	}
-
-	@TimeElapsed
-	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {
-		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", solarSystemId );
-		return this.storeCacheManager.accessSolarSystem( solarSystemId ).blockingGet();
+	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
+		logger.info( ">> [ESIDataProvider.getAlliancesAllianceIdIcons]" );
+		try {
+			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( AllianceApi.class )
+					.getAlliancesAllianceIdIcons(
+							identifier,
+							DEFAULT_ESI_SERVER, null )
+					.execute();
+			if (allianceResponse.isSuccessful())
+				return allianceResponse.body();
+		} catch (IOException ioe) {
+			logger.error( "EX [ESIDataProvider.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
+			ioe.printStackTrace();
+		}
+		return null;
 	}
 
 	// - C O R P O R A T I O N   P U B L I C   I N F O R M A T I O N
@@ -202,7 +131,8 @@ public class ESIUniverseDataProvider {
 			// Use server parameter to override configuration server to use.
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<GetCorporationsCorporationIdOk> corporationResponse = this.accessUniverseRetrofit()
+			final Response<GetCorporationsCorporationIdOk> corporationResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( CorporationApi.class )
 					.getCorporationsCorporationId(
 							identifier,
@@ -229,7 +159,8 @@ public class ESIUniverseDataProvider {
 			// Use server parameter to override configuration server to use.
 //			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<GetCorporationsCorporationIdIconsOk> corporationResponse = this.accessUniverseRetrofit()
+			final Response<GetCorporationsCorporationIdIconsOk> corporationResponse = this.retrofitFactory
+					.accessUniverseConnector()
 					.create( CorporationApi.class )
 					.getCorporationsCorporationIdIcons( identifier,
 							DEFAULT_ESI_SERVER.toLowerCase(), null )
@@ -245,50 +176,126 @@ public class ESIUniverseDataProvider {
 		return null;
 	}
 
-	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
-	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
-		logger.info( ">> [ESIDataProvider.getCorporationsCorporationId]" );
-//		final Chrono accessFullTime = new Chrono();
+	public GetUniverseConstellationsConstellationIdOk getUniverseConstellationById( final Integer constellationId ) {
 		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-			String datasource = DEFAULT_ESI_SERVER;
-			// Use server parameter to override configuration server to use.
-//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
-			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.accessUniverseRetrofit()
-					.create( AllianceApi.class )
-					.getAlliancesAllianceId( identifier,
-							datasource,
-							null )
+			final Response<GetUniverseConstellationsConstellationIdOk> systemResponse = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( UniverseApi.class )
+					.getUniverseConstellationsConstellationId( constellationId,
+							DEFAULT_ACCEPT_LANGUAGE,
+							DEFAULT_ESI_SERVER.toLowerCase(), null, null )
 					.execute();
-			if (allianceResponse.isSuccessful())
-				return allianceResponse.body();
+			if (systemResponse.isSuccessful()) return systemResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataProvider.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-//		} finally {
-//			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			NeoComLogger
+					.info( "EX [ESIUniverseDataProvider.getUniverseConstellationById]> IOException during ESI data access: {}",
+							ioe.getMessage() );
 		}
 		return null;
 	}
 
-	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
-		logger.info( ">> [ESIDataProvider.getAlliancesAllianceIdIcons]" );
+	public GetUniverseRegionsRegionIdOk getUniverseRegionById( final Integer regionId ) {
 		try {
-			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.accessUniverseRetrofit()
-					.create( AllianceApi.class )
-					.getAlliancesAllianceIdIcons(
-							identifier,
-							DEFAULT_ESI_SERVER, null )
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseRegionsRegionIdOk> systemResponse = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( UniverseApi.class )
+					.getUniverseRegionsRegionId( regionId,
+							DEFAULT_ACCEPT_LANGUAGE,
+							DEFAULT_ESI_SERVER.toLowerCase(), null, null )
 					.execute();
-			if (allianceResponse.isSuccessful())
-				return allianceResponse.body();
+			if (systemResponse.isSuccessful()) return systemResponse.body();
 		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataProvider.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
+			NeoComLogger.info( "EX [ESIUniverseDataProvider.getUniverseRegionById]> IOException during ESI data access: {}",
+					ioe.getMessage() );
 		}
 		return null;
+	}
+
+	// - P R O V I D E R   A P I
+	public GetUniverseStationsStationIdOk getUniverseStationById( final Integer stationId ) {
+		NeoComLogger.enter( "stationId: {}", stationId.toString() );
+		try {
+			final Response<GetUniverseStationsStationIdOk> stationResponse = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( UniverseApi.class )
+					.getUniverseStationsStationId( stationId
+							, DEFAULT_ESI_SERVER.toLowerCase(), null )
+					.execute();
+			if (stationResponse.isSuccessful()) return stationResponse.body();
+		} catch (final IOException ioe) {
+			NeoComLogger.error( "IOException during ESI data access.", ioe );
+		}
+		return null;
+	}
+
+	public GetUniverseSystemsSystemIdOk getUniverseSystemById( final Integer systemId ) {
+		try {
+			// Create the request to be returned so it can be called.
+			final Response<GetUniverseSystemsSystemIdOk> systemResponse = this.retrofitFactory
+					.accessUniverseConnector()
+					.create( UniverseApi.class )
+					.getUniverseSystemsSystemId( systemId
+							, DEFAULT_ACCEPT_LANGUAGE
+							, DEFAULT_ESI_SERVER.toLowerCase(), null, null )
+					.execute();
+			if (systemResponse.isSuccessful()) return systemResponse.body();
+		} catch (IOException ioe) {
+			logger.info( "EX [ESIUniverseDataProvider.getUniverseSystemById]> IOException during ESI data access: {}",
+					ioe.getMessage() );
+		}
+		return null;
+	}
+
+	// - C A C H E D   A P I
+	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
+		return this.storeCacheManager.accessItem( itemId ).blockingGet();
+	}
+
+	@TimeElapsed
+	public GetUniverseCategoriesCategoryIdOk searchItemCategory4Id( final int categoryId ) {
+		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", categoryId );
+		return this.storeCacheManager.accessCategory( categoryId ).blockingGet();
+	}
+
+	public GetUniverseGroupsGroupIdOk searchItemGroup4Id( final int groupId ) {
+		logger.info( "-- [ESIUniverseDataProvider.searchItemGroup4Id]> targetGroupId: {}", groupId );
+		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
+	}
+
+	// - S D E   I N T E R N A L   D A T A
+	public double searchSDEMarketPrice( final int typeId ) {
+		logger.info( "-- [ESIDataProvider.searchSDEMarketPrice]> price for: {}", typeId );
+		if (marketDefaultPrices.containsKey( typeId )) return marketDefaultPrices.get( typeId ).getAdjustedPrice();
+		else return -1.0;
+	}
+
+	@TimeElapsed
+	public GetUniverseSystemsSystemIdOk searchSolarSystem4Id( final int solarSystemId ) {
+		logger.info( "-- [ESIUniverseDataProvider.searchItemCategory4Id]> categoryId: {}", solarSystemId );
+		return this.storeCacheManager.accessSolarSystem( solarSystemId ).blockingGet();
+	}
+
+//	private Retrofit accessUniverseRetrofit() {
+//		if (null == this.universeRetrofit) {
+////			try {
+//			this.universeRetrofit = this.retrofitFactory.accessUniverseConnector();
+////			} catch (final IOException ioe) {
+////				NeoComLogger.error( ioe );
+////				throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
+////			}
+//		}
+//		return this.universeRetrofit;
+//	}
+
+	private void downloadItemPrices() {
+		// Initialize and process the list of market process form the ESI full market data.
+		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
+		logger.info( ">> [ESIDataProvider.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
+		for (GetMarketsPrices200Ok price : marketPrices) {
+			marketDefaultPrices.put( price.getTypeId(), price );
+		}
 	}
 
 	// - B U I L D E R
@@ -302,6 +309,16 @@ public class ESIUniverseDataProvider {
 		public Builder( final ESIUniverseDataProvider preInstance ) {
 			if (null != preInstance) this.onConstruction = preInstance;
 			else this.onConstruction = new ESIUniverseDataProvider();
+		}
+
+		public ESIUniverseDataProvider build() {
+			Objects.requireNonNull( this.onConstruction.configurationProvider );
+			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
+			Objects.requireNonNull( this.onConstruction.retrofitFactory );
+			Objects.requireNonNull( this.onConstruction.storeCacheManager );
+			NeoItem.injectEsiUniverseDataAdapter( this.onConstruction );
+			this.onConstruction.downloadItemPrices(); // Do it on a background thread to avoid run it on Android main UI thread.
+			return this.onConstruction;
 		}
 
 		public ESIUniverseDataProvider.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
@@ -326,22 +343,6 @@ public class ESIUniverseDataProvider {
 			Objects.requireNonNull( storeCacheManager );
 			this.onConstruction.storeCacheManager = storeCacheManager;
 			return this;
-		}
-//
-//		public ESIUniverseDataProvider.Builder withRetrofitUniverseConnector( final RetrofitUniverseConnector retrofitUniverseConnector ) {
-//			Objects.requireNonNull( retrofitUniverseConnector );
-//			this.onConstruction.retrofitUniverseConnector = retrofitUniverseConnector;
-//			return this;
-//		}
-
-		public ESIUniverseDataProvider build() {
-			Objects.requireNonNull( this.onConstruction.configurationProvider );
-			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			Objects.requireNonNull( this.onConstruction.retrofitFactory );
-			Objects.requireNonNull( this.onConstruction.storeCacheManager );
-			NeoItem.injectEsiUniverseDataAdapter( this.onConstruction );
-			this.onConstruction.downloadItemPrices();
-			return this.onConstruction;
 		}
 	}
 }

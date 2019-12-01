@@ -6,13 +6,13 @@ import org.junit.Before;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 
-public class CredentialSupportTest extends ESIDataProviderSupportTest {
+public class CredentialSupportTest /*extends ESIDataProviderSupportTest*/ {
 	protected Credential credential;
 
-	@Override
+//	@Override
 	@Before
 	public void setUp() throws IOException {
-		super.setUp();
+//		super.setUp();
 		this.credential = new Credential.Builder(93813310)
 				.withAccountId(93813310)
 				.withAccountName("TEST CREDENTIAL")
