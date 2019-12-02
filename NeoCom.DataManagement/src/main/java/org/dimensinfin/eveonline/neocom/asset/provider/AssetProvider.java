@@ -1,14 +1,11 @@
 package org.dimensinfin.eveonline.neocom.asset.provider;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-
-import org.joda.time.DateTime;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -25,8 +22,8 @@ import org.dimensinfin.eveonline.neocom.domain.space.Structure;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class AssetProvider implements Serializable {
-	private static final long serialVersionUID = -4896485833695914012L;
+public class AssetProvider /*implements Serializable*/ {
+	//	private static final long serialVersionUID = -4896485833695914012L;
 	private static final LocationIdentifier UNKNOWN_SPACE_LOCATION_IDENTIFIER = new LocationIdentifier.Builder()
 			.withSpaceIdentifier( 0L )
 			.build();
@@ -37,7 +34,7 @@ public class AssetProvider implements Serializable {
 	private transient HashMap<Long, NeoAsset> assetMap = new HashMap<>();
 	private Map<Long, AssetContainer> spaceLocationsCache = new HashMap<>();
 	private Map<Long, AssetContainer> containersCache = new HashMap<>();
-	private DateTime assetsReadTime;
+	//	private DateTime assetsReadTime;
 	private int assetCounter = 0;
 	private List<NeoAsset> unlocatedAssets = new ArrayList<>();
 
@@ -95,10 +92,12 @@ public class AssetProvider implements Serializable {
 		return new ArrayList<>( regions.values() );
 	}
 
-	public void classifyAssetsByLocation() {
-		if (this.verifyTimeStamp()) return;
+	public int classifyAssetsByLocation() {
 		this.clear();
-		for (NeoAsset asset : this.assetRepository.findAllByOwnerId( this.credential.getAccountId() ))
+		final List<NeoAsset> sourceAssetList = this.assetRepository.findAllByOwnerId( this.credential.getAccountId() );
+		this.assetCounter = sourceAssetList.size();
+		if (sourceAssetList.isEmpty()) return this.assetCounter;
+		for (NeoAsset asset : sourceAssetList)
 			this.assetMap.put( asset.getAssetId(), asset );
 		// Process the map until all elements are removed.
 		Long key = this.assetMap.keySet().iterator().next();
@@ -115,7 +114,7 @@ public class AssetProvider implements Serializable {
 		} catch (final RuntimeException rte) {
 			rte.printStackTrace();
 		}
-		this.timeStamp();
+		return this.assetCounter;
 	}
 
 	private void add2ContainerLocation( final NeoAsset asset ) {
@@ -159,7 +158,7 @@ public class AssetProvider implements Serializable {
 	private void clear() {
 		this.assetCounter = 0;
 		this.assetMap.clear();
-		this.assetsReadTime = null;
+//		this.assetsReadTime = null;
 	}
 
 	/**
@@ -236,15 +235,15 @@ public class AssetProvider implements Serializable {
 		return null;
 	}
 
-	private void timeStamp() {
-		this.assetsReadTime = DateTime.now();
-	}
-
-	private boolean verifyTimeStamp() {
-		if (null == this.assetsReadTime) return false;
-		// TODO - verify that the time stamp has elapsed to get a new list of assets updated.
-		return false;
-	}
+//	private void timeStamp() {
+//		this.assetsReadTime = DateTime.now();
+//	}
+//
+//	private boolean verifyTimeStamp() {
+//		if (null == this.assetsReadTime) return false;
+//		// TODO - verify that the time stamp has elapsed to get a new list of assets updated.
+//		return false;
+//	}
 
 	// - B U I L D E R
 	public static class Builder {

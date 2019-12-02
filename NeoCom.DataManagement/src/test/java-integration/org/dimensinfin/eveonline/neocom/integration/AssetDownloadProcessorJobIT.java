@@ -3,21 +3,14 @@ package org.dimensinfin.eveonline.neocom.integration;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 
 import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessorJob;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
-import org.dimensinfin.eveonline.neocom.integration.support.GetCharactersCharacterIdAssets200OkDeserializer;
 import org.dimensinfin.eveonline.neocom.integration.support.GroupCount;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
 import org.dimensinfin.eveonline.neocom.integration.support.SupportIntegrationCredential;
@@ -74,18 +67,18 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		);
 	}
 
-	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
-		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",
-				Version.unknownVersion() );
-		testModule.addDeserializer( GetCharactersCharacterIdAssets200Ok.class,
-				new GetCharactersCharacterIdAssets200OkDeserializer( GetCharactersCharacterIdAssets200Ok.class ) );
-		mapper.registerModule( testModule );
-
-		final GetCharactersCharacterIdAssets200Ok[] data = this.mapper.readValue( FileUtils.readFileToString(
-				new File( this.itFileSystemAdapter.accessResource4Path( "TestData/assetTestList.json" ) ),
-				"utf-8" ), GetCharactersCharacterIdAssets200Ok[].class );
-		return new ArrayList<>( Arrays.asList( data ) );
-	}
+//	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
+//		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",
+//				Version.unknownVersion() );
+//		testModule.addDeserializer( GetCharactersCharacterIdAssets200Ok.class,
+//				new GetCharactersCharacterIdAssets200OkDeserializer( GetCharactersCharacterIdAssets200Ok.class ) );
+//		mapper.registerModule( testModule );
+//
+//		final GetCharactersCharacterIdAssets200Ok[] data = this.mapper.readValue( FileUtils.readFileToString(
+//				new File( this.itFileSystemAdapter.accessResource4Path( "TestData/assetTestList.json" ) ),
+//				"utf-8" ), GetCharactersCharacterIdAssets200Ok[].class );
+//		return new ArrayList<>( Arrays.asList( data ) );
+//	}
 
 	private void readGroupCounts() throws IOException {
 		final File groupCountsFile = new File( this.itFileSystemAdapter.accessResource4Path( "/TestData/groupsCounts.json" ) );

@@ -12,6 +12,7 @@ import org.joda.time.Duration;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
@@ -178,8 +179,9 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	 * @return the list of mining actions performed during the last 30 days.
 	 */
 	@TimeElapsed
+	@LogEnterExit
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
-		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdMining]" );
+		NeoComLogger.enter();
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -196,31 +198,24 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 						.execute();
 				if (industryApiResponse.isSuccessful()) {
 					// Copy the assets to the result list.
-					returnMiningList.addAll( Objects.requireNonNull(industryApiResponse.body()) );
+					returnMiningList.addAll( Objects.requireNonNull( industryApiResponse.body() ) );
 					pageCounter++;
 					// Check for out of page running.
-					if (Objects.requireNonNull(industryApiResponse.body()).isEmpty()) morePages = false;
+					if (Objects.requireNonNull( industryApiResponse.body() ).isEmpty()) morePages = false;
 				}
 			}
-		} catch (IOException | RuntimeException e) {
-			e.printStackTrace();
+		} catch (IOException | RuntimeException ex) {
+			ex.printStackTrace();
+		} finally {
+			NeoComLogger.exit();
 		}
 		return returnMiningList;
 	}
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final Credential credential ) {
-		//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanets]");
-		//		final Chrono accessFullTime = new Chrono();
-		// Store the response at the cache or if there is a network failure return the last access if available
-		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.CHARACTER_COLONIES, identifier);
-		// Check if network is available and we have configured allowed access to download data.
-		//		if ( allowDownloadPass() ) {
+		NeoComLogger.enter();
 		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-//			String datasource = DEFAULT_ESI_SERVER;
-//			if (null != server) datasource = server;
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
@@ -229,24 +224,13 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 							credential.getAccountId(),
 							credential.getDataSource().toLowerCase(), null, null )
 					.execute();
-			if (planetaryApiResponse.isSuccessful())
-				return planetaryApiResponse.body();
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-			// Return cached response if available
-//			return new ArrayList<>();
-		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
-			rte.printStackTrace();
-			// Return cached response if available
-//			return new ArrayList<>();
-			//		} finally {
-			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanets]> [TIMING] Full elapsed: {}"
-			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			if (planetaryApiResponse.isSuccessful()) return planetaryApiResponse.body();
+		} catch (IOException | RuntimeException ex) {
+			ex.printStackTrace();
+		} finally {
+			NeoComLogger.exit();
 		}
 		return new ArrayList<>();
-		//		} else return (List<GetCharactersCharacterIdPlanets200Ok>) okResponseCache.get(reference).body();
 	}
 
 	@TimeElapsed

@@ -112,3 +112,20 @@ response:
     - "Content-Type: application/json"
   body: |+
     []
+
+---
+
+simlet: character-planets
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/characters/{characterId}/planets/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/planets.json"

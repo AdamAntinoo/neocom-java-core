@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.provider;
+package org.dimensinfin.eveonline.neocom.integration;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,13 +20,17 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
+import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
+import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
 import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
-public class ESIDataProviderTest {
+public class ESIDataProviderIT {
 	private static final int ESI_UNITTESTING_PORT = 6090;
-	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderTest.class );
+	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
 	private static final GenericContainer<?> esisimulator;
 
 	static {
@@ -41,6 +45,7 @@ public class ESIDataProviderTest {
 		esisimulator.followOutput( logConsumer );
 	}
 
+	// -  C O M P O N E N T S
 	private SBConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
 	private RetrofitFactory retrofitFactory;
@@ -124,6 +129,16 @@ public class ESIDataProviderTest {
 		final List<GetCharactersCharacterIdMining200Ok> extractions = this.esiDataProvider.getCharactersCharacterIdMining( credential );
 		Assertions.assertNotNull( extractions );
 		Assertions.assertEquals( 6, extractions.size() );
+	}
+
+	@Test
+	public void getCharactersCharacterIdPlanets() {
+		final Credential credential = Mockito.mock( Credential.class );
+		Mockito.when( credential.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential.getDataSource() ).thenReturn( "tranquility" );
+		final List<GetCharactersCharacterIdPlanets200Ok> planets = this.esiDataProvider.getCharactersCharacterIdPlanets( credential );
+		Assertions.assertNotNull( planets );
+		Assertions.assertEquals( 6, planets.size() );
 	}
 
 	@Test

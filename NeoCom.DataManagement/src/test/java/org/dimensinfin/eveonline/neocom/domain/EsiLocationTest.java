@@ -3,12 +3,13 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import org.junit.Assert;
 
-import org.dimensinfin.eveonline.neocom.support.ESIDataProviderSupportTest;
+import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.support.PojoTestUtils;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-public class EsiLocationTest extends ESIDataProviderSupportTest {
+public class EsiLocationTest /*extends ESIDataProviderSupportTest*/ {
+	private ESIDataProvider esiDataProvider;
 //	@Test
 	public void getterContract() {
 		final EsiLocation location = this.esiDataProvider.searchLocation4Id( 30003283 );
