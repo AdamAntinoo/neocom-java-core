@@ -14,9 +14,9 @@ public class FittingItem extends NeoComNode {
 	// - G E T T E R S   &   S E T T E R S
 	public CharacterscharacterIdfittingsItems.FlagEnum getFlag() {return fittingDefinition.getFlag();}
 
-	public Integer getQuantity() {return fittingDefinition.getQuantity();}
+	public Integer getQuantity() {return this.fittingDefinition.getQuantity();}
 
-	public Integer getTypeId() {return fittingDefinition.getTypeId();}
+	public Integer getTypeId() {return this.fittingDefinition.getTypeId();}
 
 	private void downloadItem() {
 		Objects.requireNonNull( this.fittingDefinition );
@@ -27,10 +27,13 @@ public class FittingItem extends NeoComNode {
 	public static class Builder {
 		private FittingItem onConstruction;
 
-		public Builder( final CharacterscharacterIdfittingsItems fittingItem ) {
-			Objects.requireNonNull( fittingItem );
+		public Builder( ) {
 			this.onConstruction = new FittingItem();
+		}
+		public FittingItem.Builder withFittingItem ( final  CharacterscharacterIdfittingsItems fittingItem  ){
+			Objects.requireNonNull( fittingItem );
 			this.onConstruction.fittingDefinition = fittingItem;
+			return this;
 		}
 
 		public FittingItem build() {

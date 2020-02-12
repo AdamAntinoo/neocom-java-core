@@ -11,10 +11,6 @@ public class Fitting extends NeoComNode {
 	private static final long serialVersionUID = 2267335283642321303L;
 
 	private GetCharactersCharacterIdFittings200Ok fittingDescription;
-
-	//	private int fittingId = -1;
-//	private String name = null;
-//	private String description = null;
 	private int shipTypeId = -1;
 	private List<FittingItem> items = new ArrayList<>();
 	private transient NeoItem shipItem = null;
@@ -34,21 +30,10 @@ public class Fitting extends NeoComNode {
 	private void downloadFittingItems( final GetCharactersCharacterIdFittings200Ok fittingData ) {
 		this.items.clear();
 		for (CharacterscharacterIdfittingsItems item : fittingData.getItems()) {
-			final FittingItem newitem = new FittingItem.Builder( item ).build();
+			final FittingItem newitem = new FittingItem.Builder().withFittingItem( item ).build();
 			this.items.add( newitem );
 		}
 	}
-
-
-//	@Override
-//	public String toString() {
-//		return new StringBuffer("Fitting [")
-//				.append("id: ").append(fittingId).append(" ")
-//				.append("name: ").append(name).append(" ")
-//				.append("]")
-//				.append("->").append(super.toString())
-//				.toString();
-//	}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -59,6 +44,7 @@ public class Fitting extends NeoComNode {
 		}
 
 		public Fitting build() {
+			Objects.requireNonNull( this.onConstruction.fittingDescription );
 			return this.onConstruction;
 		}
 
@@ -66,7 +52,7 @@ public class Fitting extends NeoComNode {
 			Objects.requireNonNull( fittingData );
 			this.onConstruction.fittingDescription = fittingData;
 			// Download the items that are used on this fitting.
-			this.onConstruction.downloadFittingItems(fittingData);
+			this.onConstruction.downloadFittingItems( fittingData );
 			return this;
 		}
 	}
