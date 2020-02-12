@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.auth.ESIStore;
 import org.dimensinfin.eveonline.neocom.auth.HttpAuthenticatedClientFactory;
 import org.dimensinfin.eveonline.neocom.auth.HttpUniverseClientFactory;
@@ -158,7 +159,7 @@ public class RetrofitFactory {
 		}
 		return StringUtils.removeEnd( scope.toString(), " " );
 	}
-
+@LogEnterExit
 	public Retrofit accessUniverseConnector() {
 //		NeoComLogger.enter();
 		Retrofit hitConnector = this.connectors.get( UNIVERSE_CONNECTOR_IDENTIFIER );

@@ -195,7 +195,7 @@ public class MiningRepositoryIT {
 		Assertions.assertEquals( 2, miningRecords.size() );
 	}
 
-	@Test
+//	@Test
 	public void accessMiningExtractionFindById() throws SQLException {
 		this.insertTodayMiningExtractions();
 
