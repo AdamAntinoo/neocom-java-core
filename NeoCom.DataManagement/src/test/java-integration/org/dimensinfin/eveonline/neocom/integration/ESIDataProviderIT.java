@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,10 +19,12 @@ import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
@@ -30,8 +33,10 @@ import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 public class ESIDataProviderIT {
 	private static final int ESI_UNITTESTING_PORT = 6090;
+	private static final int DEFAULT_PLANET_IDENTIFIER = 1;
 	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
 	private static final GenericContainer<?> esisimulator;
+	private static Credential credential4Test;
 
 	static {
 		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
@@ -60,14 +65,14 @@ public class ESIDataProviderIT {
 				.withFileSystemAdapter( this.fileSystemAdapter )
 				.withLocationCatalogService( locationCatalogService )
 				.withStoreCacheManager( storeCacheManager )
-				.withRetrofitFactory( retrofitFactory )
+				.withRetrofitFactory( this.retrofitFactory )
 				.build();
 
 		Assertions.assertNotNull( provider );
 	}
 
 	@Test
-	public void builderFailure() {
+	public void buildFailure() {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		Assertions.assertThrows( NullPointerException.class, () -> {
 			final ESIDataProvider provider = new ESIDataProvider.Builder()
@@ -122,6 +127,16 @@ public class ESIDataProviderIT {
 	}
 
 	@Test
+	public void getCharactersCharacterIdFittings() {
+		final Credential credential = Mockito.mock( Credential.class );
+		Mockito.when( credential.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential.getDataSource() ).thenReturn( "tranquility" );
+		final List<GetCharactersCharacterIdFittings200Ok> fittings = this.esiDataProvider.getCharactersCharacterIdFittings( credential );
+		Assertions.assertNotNull( fittings );
+		Assertions.assertEquals( 9, fittings.size() );
+	}
+
+	@Test
 	public void getCharactersCharacterIdMining() {
 		final Credential credential = Mockito.mock( Credential.class );
 		Mockito.when( credential.getAccountId() ).thenReturn( 92223647 );
@@ -138,7 +153,20 @@ public class ESIDataProviderIT {
 		Mockito.when( credential.getDataSource() ).thenReturn( "tranquility" );
 		final List<GetCharactersCharacterIdPlanets200Ok> planets = this.esiDataProvider.getCharactersCharacterIdPlanets( credential );
 		Assertions.assertNotNull( planets );
-		Assertions.assertEquals( 6, planets.size() );
+		Assertions.assertEquals( 5, planets.size() );
+	}
+
+	@Test
+	public void getCharactersCharacterIdWallet() {
+		final Double walletAmount = this.esiDataProvider.getCharactersCharacterIdWallet( credential4Test );
+		Assertions.assertNotNull( walletAmount );
+		Assertions.assertEquals( 26, walletAmount );
+	}
+
+	@Test
+	public void getUniversePlanetsPlanetId() {
+		final GetUniversePlanetsPlanetIdOk planetData = this.esiDataProvider.getUniversePlanetsPlanetId( DEFAULT_PLANET_IDENTIFIER );
+		Assertions.assertNotNull( planetData );
 	}
 
 	@Test
@@ -161,6 +189,13 @@ public class ESIDataProviderIT {
 	@Test
 	public void searchStructureById() {
 
+	}
+
+	@BeforeAll
+	static void beforeAll() {
+		credential4Test = Mockito.mock( Credential.class );
+		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
 	}
 
 	@BeforeEach

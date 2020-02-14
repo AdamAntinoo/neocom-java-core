@@ -12,7 +12,7 @@ import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
 
 import retrofit2.Retrofit;
 
-class RetrofitFactoryTest {
+public class RetrofitFactoryTest {
 	private SBConfigurationProvider configurationProvider = (SBConfigurationProvider) NeoComUnitTestComponentFactory.getSingleton()
 			.getConfigurationProvider();
 	private IFileSystem fileSystemAdapter = NeoComUnitTestComponentFactory.getSingleton().getFileSystemAdapter();

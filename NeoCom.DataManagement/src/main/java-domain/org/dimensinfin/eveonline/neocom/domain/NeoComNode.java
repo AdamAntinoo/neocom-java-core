@@ -41,10 +41,6 @@ public abstract class NeoComNode implements ICollaboration, IJsonAngular {
 		return new ArrayList<>();
 	}
 
-//	public NeoComNode setJsonClass( final String dummy ) {
-//		return this;
-//	}
-
 	@Override
 	public int compareTo( final Object target ) {
 		return this.getJsonClass().compareTo( ((NeoComNode) target).getJsonClass() );

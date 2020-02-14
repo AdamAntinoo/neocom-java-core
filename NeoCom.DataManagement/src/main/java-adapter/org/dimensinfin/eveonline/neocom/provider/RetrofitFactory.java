@@ -43,15 +43,15 @@ public class RetrofitFactory {
 							.registerTypeAdapter( LocalDate.class, new GSONLocalDateDeserializer() )
 							.create() );
 	private static final String UNIVERSE_CONNECTOR_IDENTIFIER = "-UNIVERSE-CONNECTOR-";
-
-	private Map<String, Retrofit> connectors = new HashMap<>();
-	private String SCOPESTRING;
-	private Long CACHE_SIZE = StorageUnits.GIGABYTES.toBytes( 2 );
 	// - C O M P O N E N T S
-	private IConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	private Map<String, Retrofit> connectors = new HashMap<>();
+//	private String SCOPESTRING;
+//	private Long CACHE_SIZE = StorageUnits.GIGABYTES.toBytes( 2 );
 
-	private RetrofitFactory() {}
+	// - C O N S T R U C T O R S
+	protected RetrofitFactory() {}
 
 	public Retrofit accessAuthenticatedConnector( final Credential credential ) throws IOException {
 		Retrofit hitConnector = this.connectors.get( credential.getUniqueId() );
@@ -83,6 +83,45 @@ public class RetrofitFactory {
 					.build();
 			this.connectors.put( credential.getUniqueId(), hitConnector );
 		}
+		return hitConnector;
+	}
+
+	@LogEnterExit
+	public Retrofit accessUniverseConnector() {
+//		NeoComLogger.enter();
+		Retrofit hitConnector = this.connectors.get( UNIVERSE_CONNECTOR_IDENTIFIER );
+		try {
+			if (null == hitConnector) { // Create a new connector for this credential.
+				final String esiDataServerLocation = this.configurationProvider.getResourceString(
+						"P.universe.retrofit.server.location",
+						"https://esi.evetech.net/latest/" );
+				final String agent = this.configurationProvider
+						.getResourceString( "P.universe.retrofit.server.agent", "Default agent" );
+				final Long timeout = TimeUnit.SECONDS
+						.toSeconds( this.configurationProvider.getResourceInteger( "P.universe.retrofit.server.timeout" ) );
+				final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
+						+ this.configurationProvider.getResourceString( "P.universe.retrofit.cache.directory.name" );
+				final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
+				final Integer cacheSize = this.configurationProvider.getResourceInteger(
+						"P.universe.retrofit.cache.size.gb", 1 );
+				hitConnector = new Retrofit.Builder()
+						.baseUrl( esiDataServerLocation )
+						.addConverterFactory( GSON_CONVERTER_FACTORY )
+						.client( new HttpUniverseClientFactory.Builder()
+								.withConfigurationProvider( this.configurationProvider )
+								.withAgent( agent )
+								.withTimeout( timeout.intValue() )
+								.withCacheFile( cacheDataFile )
+								.withCacheSize( cacheSize, StorageUnits.GIGABYTES )
+								.generate() )
+						.build();
+				this.connectors.put( UNIVERSE_CONNECTOR_IDENTIFIER, hitConnector );
+			}
+		} catch (final IOException ioe) {
+			NeoComLogger.error( ioe );
+			throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
+		}
+//		NeoComLogger.exit();
 		return hitConnector;
 	}
 
@@ -133,69 +172,21 @@ public class RetrofitFactory {
 	private List<String> constructScopes( final String propertyFileName ) {
 		final List<String> SCOPES = new ArrayList<>();
 		SCOPES.add( "publicData" );
-		try {
-			final InputStream istream = this.fileSystemAdapter.openAsset4Input( propertyFileName );
-			final BufferedReader input = new BufferedReader( new InputStreamReader( istream ) );
+		try (final InputStream istream = this.fileSystemAdapter.openAsset4Input( propertyFileName );
+		     final BufferedReader input = new BufferedReader( new InputStreamReader( istream ) )) {
 			String line = input.readLine();
 			while (StringUtils.isNotEmpty( line )) {
 				SCOPES.add( line );
 				line = input.readLine();
 			}
 		} catch (FileNotFoundException fnfe) {
-			NeoComLogger.info( "EX [NeoComRetrofitFactory.constructScopes]> FileNotFoundException: {}", fnfe.getMessage() );
+			NeoComLogger.error( fnfe );
 			return SCOPES;
 		} catch (IOException ioe) {
-			NeoComLogger.info( "EX [NeoComRetrofitFactory.constructScopes]> FileNotFoundException: {}", ioe.getMessage() );
+			NeoComLogger.error( ioe );
 			return SCOPES;
 		}
 		return SCOPES;
-	}
-
-	private String transformScopes( final List<String> scopeList ) {
-		StringBuilder scope = new StringBuilder();
-		for (String s : scopeList) {
-			scope.append( s );
-			scope.append( " " );
-		}
-		return StringUtils.removeEnd( scope.toString(), " " );
-	}
-@LogEnterExit
-	public Retrofit accessUniverseConnector() {
-//		NeoComLogger.enter();
-		Retrofit hitConnector = this.connectors.get( UNIVERSE_CONNECTOR_IDENTIFIER );
-		try {
-			if (null == hitConnector) { // Create a new connector for this credential.
-				final String esiDataServerLocation = this.configurationProvider.getResourceString(
-						"P.universe.retrofit.server.location",
-						"https://esi.evetech.net/latest/" );
-				final String agent = this.configurationProvider
-						.getResourceString( "P.universe.retrofit.server.agent", "Default agent" );
-				final Long timeout = TimeUnit.SECONDS
-						.toSeconds( this.configurationProvider.getResourceInteger( "P.universe.retrofit.server.timeout" ) );
-				final String cacheFilePath = this.configurationProvider.getResourceString( "P.cache.directory.path" )
-						+ this.configurationProvider.getResourceString( "P.universe.retrofit.cache.directory.name" );
-				final File cacheDataFile = new File( this.fileSystemAdapter.accessResource4Path( cacheFilePath ) );
-				final Integer cacheSize = this.configurationProvider.getResourceInteger(
-						"P.universe.retrofit.cache.size.gb" );
-				hitConnector = new Retrofit.Builder()
-						.baseUrl( esiDataServerLocation )
-						.addConverterFactory( GSON_CONVERTER_FACTORY )
-						.client( new HttpUniverseClientFactory.Builder()
-								.withConfigurationProvider( this.configurationProvider )
-								.withAgent( agent )
-								.withTimeout( timeout.intValue() )
-								.withCacheFile( cacheDataFile )
-								.withCacheSize( cacheSize, StorageUnits.GIGABYTES )
-								.generate() )
-						.build();
-				this.connectors.put( UNIVERSE_CONNECTOR_IDENTIFIER, hitConnector );
-			}
-		} catch (final IOException ioe) {
-			NeoComLogger.error( ioe );
-			throw new NeoComRuntimeException( ErrorInfoCatalog.FILESYSTEM_FAILURE_RETROFIT_CACHE_RELATED );
-		}
-//		NeoComLogger.exit();
-		return hitConnector;
 	}
 
 	// - B U I L D E R
@@ -204,6 +195,12 @@ public class RetrofitFactory {
 
 		public Builder() {
 			this.onConstruction = new RetrofitFactory();
+		}
+
+		public RetrofitFactory build() {
+			Objects.requireNonNull( this.onConstruction.configurationProvider );
+			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
+			return this.onConstruction;
 		}
 
 		public RetrofitFactory.Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
@@ -216,12 +213,6 @@ public class RetrofitFactory {
 			Objects.requireNonNull( fileSystemAdapter );
 			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
 			return this;
-		}
-
-		public RetrofitFactory build() {
-			Objects.requireNonNull( this.onConstruction.configurationProvider );
-			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			return this.onConstruction;
 		}
 	}
 }

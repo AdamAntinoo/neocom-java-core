@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 
@@ -11,7 +12,6 @@ public class Fitting extends NeoComNode {
 	private static final long serialVersionUID = 2267335283642321303L;
 
 	private GetCharactersCharacterIdFittings200Ok fittingDescription;
-	private int shipTypeId = -1;
 	private List<FittingItem> items = new ArrayList<>();
 	private transient NeoItem shipItem = null;
 
@@ -19,6 +19,26 @@ public class Fitting extends NeoComNode {
 	private Fitting() {}
 
 	// - G E T T E R S   &   S E T T E R S
+	public String getDescription() {return this.fittingDescription.getDescription();}
+
+	public Integer getFittingId() {return this.fittingDescription.getFittingId();}
+
+	public String getName() {return this.fittingDescription.getName();}
+
+	public Integer getShipTypeId() {return this.fittingDescription.getShipTypeId();}
+
+//	public String getTech() {return this.shipItem.getTech();}
+
+	@RequiresNetwork
+	public String getGroupName() {return this.shipItem.getGroupName();}
+
+	public String getHullGroup() {return this.shipItem.getHullGroup();}
+
+	public String getURLForItem() {return this.shipItem.getURLForItem();}
+
+	public List<FittingItem> getItems() {
+		return this.items;
+	}
 
 	/**
 	 * During the transformation this method will be called with the original list of items that are encoded in location and in
@@ -27,12 +47,20 @@ public class Fitting extends NeoComNode {
 	 *
 	 * @param fittingData original ESI item data.
 	 */
+	@RequiresNetwork
 	private void downloadFittingItems( final GetCharactersCharacterIdFittings200Ok fittingData ) {
 		this.items.clear();
 		for (CharacterscharacterIdfittingsItems item : fittingData.getItems()) {
 			final FittingItem newitem = new FittingItem.Builder().withFittingItem( item ).build();
 			this.items.add( newitem );
 		}
+	}
+
+	@RequiresNetwork
+	private void downloadHullData( final Integer shipTypeId ) {
+		Objects.requireNonNull( shipTypeId );
+		this.shipItem = new NeoItem( shipTypeId );
+		Objects.requireNonNull( this.shipItem );
 	}
 
 	// - B U I L D E R
@@ -51,6 +79,8 @@ public class Fitting extends NeoComNode {
 		public Fitting.Builder withFittingData( final GetCharactersCharacterIdFittings200Ok fittingData ) {
 			Objects.requireNonNull( fittingData );
 			this.onConstruction.fittingDescription = fittingData;
+			// Download the hull eve item data.
+			this.onConstruction.downloadHullData( this.onConstruction.fittingDescription.getShipTypeId() );
 			// Download the items that are used on this fitting.
 			this.onConstruction.downloadFittingItems( fittingData );
 			return this;

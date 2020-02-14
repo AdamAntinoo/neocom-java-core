@@ -8,6 +8,27 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 class NeoComNodeTest {
 
 	@Test
+	public void capitalizeFirstLetter() {
+		final String expected = "Capitalized";
+		final String obtained = NeoComNode.capitalizeFirstLetter( "capitalized" );
+		Assertions.assertEquals( expected, obtained );
+	}
+
+	@Test
+	public void capitalizeFirstLetterEmpty() {
+		final String expected = "";
+		final String obtained = NeoComNode.capitalizeFirstLetter( "" );
+		Assertions.assertEquals( expected, obtained );
+	}
+
+	@Test
+	public void capitalizeFirstLetterFailure() {
+		NullPointerException thrown = Assertions.assertThrows( NullPointerException.class,
+				() -> NeoComNode.capitalizeFirstLetter( null ),
+				"Expected NeoComNode.capitalizeFirstLetter() to throw null verification, but it didn't." );
+	}
+
+	@Test
 	public void compareContract() {
 		final NeoComNode one = new TestNeoComNode();
 		final NeoComNode two = new TestNeoComNode();
@@ -23,6 +44,13 @@ class NeoComNodeTest {
 	}
 
 	@Test
+	public void getJsonClass() {
+		final TestNeoComNode node = new TestNeoComNode();
+		Assertions.assertNotNull( node );
+		Assertions.assertEquals( "TestNeoComNode", node.getJsonClass() );
+	}
+
+	@Test
 	public void hashCodeContract() {
 		final NeoComNode one = new TestNeoComNode();
 		final NeoComNode two = new TestNeoComNode();
@@ -31,34 +59,13 @@ class NeoComNodeTest {
 		Assertions.assertEquals( oneCode, one.hashCode(), "HashCode should not change" );
 	}
 
-	private class TestNeoComNode extends NeoComNode {
-	}
-
 	@Test
-	void capitalizeFirstLetter() {
-		final String expected = "Capitalized";
-		final String obtained = NeoComNode.capitalizeFirstLetter( "capitalized" );
-		Assertions.assertEquals( expected, obtained );
-	}
-
-	@Test
-	void capitalizeFirstLetterEmpty() {
-		final String expected = "";
-		final String obtained = NeoComNode.capitalizeFirstLetter( "" );
-		Assertions.assertEquals( expected, obtained );
-	}
-
-	@Test
-	void capitalizeFirstLetterFailure() {
-		NullPointerException thrown = Assertions.assertThrows( NullPointerException.class,
-				() -> NeoComNode.capitalizeFirstLetter( null ),
-				"Expected NeoComNode.capitalizeFirstLetter() to throw null verification, but it didn't." );
-	}
-
-	@Test
-	void getJsonClass() {
+	public void collaborate2Model() {
 		final TestNeoComNode node = new TestNeoComNode();
 		Assertions.assertNotNull( node );
-		Assertions.assertEquals( "TestNeoComNode", node.getJsonClass() );
+		Assertions.assertTrue( node.collaborate2Model( "-TEST-VARIANT-" ).isEmpty() );
+	}
+
+	private class TestNeoComNode extends NeoComNode {
 	}
 }

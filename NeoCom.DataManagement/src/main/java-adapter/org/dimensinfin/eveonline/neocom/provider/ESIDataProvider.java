@@ -19,6 +19,7 @@ import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.StatusApi;
@@ -26,6 +27,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.api.UniverseApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.WalletApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdBlueprints200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdFittings200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
@@ -62,37 +64,21 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	public static final String DEFAULT_ESI_SERVER = "Tranquility".toLowerCase();
 	public static final String DEFAULT_ACCEPT_LANGUAGE = "en-us";
 	public static final String DEFAULT_CONTENT_TYPE = "application/json";
-	//	protected static final Logger logger = LoggerFactory.getLogger( ESIDataProvider.class );
-	private static final List<Long> id4Names = new ArrayList<>();
+	//	private static final List<Long> id4Names = new ArrayList<>();
 	// - C A C H E S
-//	private static final Map<Integer, GetMarketsPrices200Ok> marketDefaultPrices = new HashMap<>( 100 );
 	private static final Map<Integer, GetUniverseRaces200Ok> racesCache = new HashMap<>();
 	private static final Map<Integer, GetUniverseAncestries200Ok> ancestriesCache = new HashMap<>();
 	private static final Map<Integer, GetUniverseBloodlines200Ok> bloodLinesCache = new HashMap<>();
 	// - C O M P O N E N T S
-//	protected IConfigurationProvider configurationProvider;
-//	protected IFileSystem fileSystemAdapter;
 	protected LocationCatalogService locationCatalogService;
-//	protected StoreCacheManager storeCacheManager;
-//	protected RetrofitFactory retrofitFactory;
 
 	// - C O N S T R U C T O R S
 	protected ESIDataProvider() {}
 
-	// - D O W N L O A D   S T A R T E R S
-//	public void downloadItemPrices() {
-//		// Initialize and process the list of market process form the ESI full market data.
-//		final List<GetMarketsPrices200Ok> marketPrices = this.getUniverseMarketsPrices();
-//		logger.info( ">> [ESIDataProvider.downloadItemPrices]> Download market prices: {} items", marketPrices.size() );
-//		for (GetMarketsPrices200Ok price : marketPrices) {
-//			marketDefaultPrices.put( price.getTypeId(), price );
-//		}
-//	}
-
 	// - C H A R A C T E R   P U B L I C   I N F O R M A T I O N
 	@TimeElapsed
 	public GetCharactersCharacterIdOk getCharactersCharacterId( final int identifier ) {
-		logger.info( "-- [ESIDataProvider.getCharactersCharacterId]> Character identifier: {}", identifier );
+		NeoComLogger.enter( "Pilot Identifier:", Integer.toString( identifier ) );
 		try {
 			final Response<GetCharactersCharacterIdOk> characterResponse = this.retrofitFactory
 					.accessUniverseConnector()
@@ -101,15 +87,14 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 					.execute();
 			if (characterResponse.isSuccessful()) return characterResponse.body();
 		} catch (IOException | RuntimeException ioe) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterId]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
+			NeoComLogger.error( ioe );
 		}
 		return null;
 	}
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdAssets200Ok> getCharactersCharacterIdAssets( final Credential credential ) {
-		NeoComLogger.enter();
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
 		List<GetCharactersCharacterIdAssets200Ok> returnAssetList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -132,13 +117,13 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 				}
 			}
 		} catch (IOException | RuntimeException ioe) {
-			ioe.printStackTrace();
+			NeoComLogger.error( ioe );
 		}
 		return returnAssetList;
 	}
 
 	public List<GetCharactersCharacterIdBlueprints200Ok> getCharactersCharacterIdBlueprints( final Credential credential ) {
-		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdBlueprints]" );
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
 		List<GetCharactersCharacterIdBlueprints200Ok> returnBlueprintList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -163,10 +148,30 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 					if (Objects.requireNonNull( blueprintResponse.body() ).isEmpty()) morePages = false;
 				}
 			}
-		} catch (IOException | RuntimeException e) {
-			e.printStackTrace();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
 		}
 		return returnBlueprintList;
+	}
+
+	@TimeElapsed
+	@LogEnterExit
+	public List<GetCharactersCharacterIdFittings200Ok> getCharactersCharacterIdFittings( final Credential credential ) {
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
+		try {
+			final Response<List<GetCharactersCharacterIdFittings200Ok>> fittingsResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
+					.create( FittingsApi.class )
+					.getCharactersCharacterIdFittings( credential.getAccountId(),
+							credential.getDataSource(), null, null )
+					.execute();
+			if (fittingsResponse.isSuccessful()) return fittingsResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
+		}
+		return null;
 	}
 
 	/**
@@ -179,9 +184,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	 * @return the list of mining actions performed during the last 30 days.
 	 */
 	@TimeElapsed
-	@LogEnterExit
 	public List<GetCharactersCharacterIdMining200Ok> getCharactersCharacterIdMining( final Credential credential ) {
-		NeoComLogger.enter();
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
 		List<GetCharactersCharacterIdMining200Ok> returnMiningList = new ArrayList<>( 1000 );
 		try {
 			// This request is paged. There can be more pages than one. The size limit seems to be 1000 but test for error.
@@ -204,8 +208,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 					if (Objects.requireNonNull( industryApiResponse.body() ).isEmpty()) morePages = false;
 				}
 			}
-		} catch (IOException | RuntimeException ex) {
-			ex.printStackTrace();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
 		} finally {
 			NeoComLogger.exit();
 		}
@@ -214,7 +218,7 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	@TimeElapsed
 	public List<GetCharactersCharacterIdPlanets200Ok> getCharactersCharacterIdPlanets( final Credential credential ) {
-		NeoComLogger.enter();
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
 		try {
 			// Create the request to be returned so it can be called.
 			final Response<List<GetCharactersCharacterIdPlanets200Ok>> planetaryApiResponse = this.retrofitFactory
@@ -225,8 +229,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 							credential.getDataSource().toLowerCase(), null, null )
 					.execute();
 			if (planetaryApiResponse.isSuccessful()) return planetaryApiResponse.body();
-		} catch (IOException | RuntimeException ex) {
-			ex.printStackTrace();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
 		} finally {
 			NeoComLogger.exit();
 		}
@@ -236,18 +240,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	@TimeElapsed
 	public GetCharactersCharacterIdPlanetsPlanetIdOk getCharactersCharacterIdPlanetsPlanetId( final Integer planetId,
 	                                                                                          final Credential credential ) {
-		//		logger.info(">> [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]");
-		//		final Chrono accessFullTime = new Chrono();
-		// Store the response at the cache or if there is a network failure return the last access if available
-		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.PLANETARY_INTERACTION_STRUCTURES, identifier);
-		// Check if network is available and we have configured allowed access to download data.
-		//		if (allowDownloadPass()) {
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
 		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-//			String datasource = DEFAULT_ESI_SERVER;
-//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
 			final Response<GetCharactersCharacterIdPlanetsPlanetIdOk> planetaryApiResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
 					.create( PlanetaryInteractionApi.class )
@@ -256,37 +250,19 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 							planetId,
 							credential.getDataSource().toLowerCase(), null,
 							null ).execute();
-			if (planetaryApiResponse.isSuccessful()) {
-				// Store results on the cache.
-				//				okResponseCache.put(reference, planetaryApiResponse);
-				return planetaryApiResponse.body();
-			} else return null;
-		} catch (IOException ioe) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", ioe.getMessage() );
-			ioe.printStackTrace();
-			// Return cached response if available
-			return null;
-		} catch (RuntimeException rte) {
-			logger.error( "EX [ESIDataProvider.getCharactersCharacterIdPlanets]> [EXCEPTION]: {}", rte.getMessage() );
-			rte.printStackTrace();
-			// Return cached response if available
-			return null;
-			//		} finally {
-			//			logger.info("<< [ESINetworkManager.getCharactersCharacterIdPlanetsPlanetId]> [TIMING] Full elapsed: {}"
-			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			if (planetaryApiResponse.isSuccessful()) return planetaryApiResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
-		//		} else return (GetCharactersCharacterIdPlanetsPlanetIdOk) okResponseCache.get(reference).body();
+		return null;
 	}
 
-	// - C H A R A C T E R
+	@TimeElapsed
 	public Double getCharactersCharacterIdWallet( final Credential credential ) {
-		logger.info( ">> [ESIDataProvider.getCharactersCharacterIdWallet]" );
+		NeoComLogger.enter( "Credential:", NeoComLogger.toJSON( credential ) );
 		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken( credential.getRefreshToken() );
-//			String datasource = DEFAULT_ESI_SERVER;
-//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
 			final Response<Double> walletApiResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
 					.create( WalletApi.class )
@@ -294,18 +270,10 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 							, credential.getDataSource(), null, null )
 					.execute();
 			if (walletApiResponse.isSuccessful()) return walletApiResponse.body();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} catch (RuntimeException rtex) {
-			rtex.printStackTrace();
-//			if (rtex.getMessage().toLowerCase().contains( "connection reset" )) {
-//				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
-//				this.neocomRetrofitFactory.reset();
-//			}
-//			if (rtex.getMessage().toLowerCase().contains( "response body is incorrect" )) {
-//				logger.info( "EX [ESIDataProvider.getCharactersCharacterIdWallet]> Exception: {}", rtex.getMessage() );
-//				this.neocomRetrofitFactory.reset();
-//			}
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
 		return -1.0;
 	}
@@ -339,8 +307,9 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return null;
 	}
 
-	//	@TimeElapsed
+	@TimeElapsed
 	public GetUniversePlanetsPlanetIdOk getUniversePlanetsPlanetId( final int identifier ) {
+		NeoComLogger.enter( "Planet identifier:", Integer.toString( identifier ) );
 		try {
 			final Response<GetUniversePlanetsPlanetIdOk> universeApiResponse = this.retrofitFactory
 					.accessUniverseConnector()
@@ -350,22 +319,19 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 							DEFAULT_ESI_SERVER
 									.toLowerCase(),
 							null ).execute();
-			if (!universeApiResponse.isSuccessful()) {
-				return null;
-			} else return universeApiResponse.body();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			return null;
+			if (universeApiResponse.isSuccessful()) return universeApiResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
+		return null;
 	}
 
 	// - U N I V E R S E
-//	@TimeElapsed
+	@TimeElapsed
 	public GetStatusOk getUniverseStatus( final String server ) {
-		//		logger.info(">> [ESIDataProvider.getUniverseStatus]");
-		// Store the response at the cache or if there is a network failure return the last access if available
-		//		final String reference = constructCachePointerReference(GlobalDataManagerCache.ECacheTimes.SERVERSTATUS, 0);
-		//		final Chrono accessFullTime = new Chrono();
+		NeoComLogger.enter( "Server:",server );
 		try {
 			String datasource = DEFAULT_ESI_SERVER; // Set the server to the default or to the selected server.
 			if (null != server) datasource = server;
@@ -373,38 +339,14 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 					.accessUniverseConnector()
 					.create( StatusApi.class )
 					.getStatus( datasource.toLowerCase(), null ).execute();
-			if (statusApiResponse.isSuccessful())
-				return statusApiResponse.body();
-//			} else {
-//				// Use the cached data is available.
-//				return null;
-//			}
-		} catch (IOException ioe) {
-//			ioe.printStackTrace();
-			//		} finally {
-			//			logger.info("<< [ESIDataProvider.getUniverseStatus]> [TIMING] Full elapsed: {}"
-			//					, accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+			if (statusApiResponse.isSuccessful()) return statusApiResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
 		return null;
 	}
-
-//	public LocationCatalogService.LocationCacheAccessType lastSearchLocationAccessType() {
-//		return this.locationCatalogService.lastSearchLocationAccessType();
-//	}
-
-
-//	@Deprecated
-//	protected void prepareRaces() {
-//		if (racesCache.size() < 1) {
-//			// Download race, bloodline and other pilot data.
-//			final List<GetUniverseRaces200Ok> racesList = this.getUniverseRaces( GlobalDataManager.TRANQUILITY_DATASOURCE );
-//			logger.info( ">> [ESIDataProvider.downloadPilotFamilyData]> Download race: {} items", racesList.size() );
-//			for (GetUniverseRaces200Ok race : racesList) {
-//				racesCache.put( race.getRaceId(), race );
-//			}
-//		}
-//	}
-
 	public List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final List<Long> listItemIds,
 	                                                                                             final Credential credential ) {
 		logger.info( ">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]" );
@@ -433,70 +375,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		}
 		return null;
 	}
-
-//	/**
-//	 * Go to the ESI api to get the list of market prices. This method does not use other server than the Tranquility
-//	 * because probably there is not valid market price information at other servers.
-//	 * To access the public data it will use the current unauthorized retrofit connection.
-//	 */
-////	@TimeElapsed
-//	private List<GetMarketsPrices200Ok> getUniverseMarketsPrices() {
-//		try {
-//			// Create the request to be returned so it can be called.
-//			final Response<List<GetMarketsPrices200Ok>> marketApiResponse =
-//					this.retrofitFactory.accessNoAuthRetrofit()
-//							.create( MarketApi.class )
-//							.getMarketsPrices( DEFAULT_ESI_SERVER.toLowerCase(), null )
-//							.execute();
-//			if (!marketApiResponse.isSuccessful()) {
-//				return new ArrayList<>();
-//			} else return marketApiResponse.body();
-//		} catch (IOException ioe) {
-//			return new ArrayList<>();
-//		} catch (RuntimeException rte) {
-//			rte.printStackTrace();
-//			return new ArrayList<>();
-//		}
-//	}
-
-//	protected GetUniverseGroupsGroupIdOk getUniverseGroupById( final Integer groupId ) {
-//		try {
-//			// Create the request to be returned so it can be called.
-//			final Response<GetUniverseGroupsGroupIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(
-//					UniverseApi.class )
-//					.getUniverseGroupsGroupId( groupId
-//							, DEFAULT_ACCEPT_LANGUAGE
-//							, DEFAULT_ESI_SERVER.toLowerCase(),
-//							null, null )
-//					.execute();
-//			if (!groupResponse.isSuccessful()) {
-//				return null;
-//			} else return groupResponse.body();
-//		} catch (IOException ioe) {
-//			return null;
-//		}
-//	}
-
-//	protected GetUniverseCategoriesCategoryIdOk getUniverseCategoryById( final Integer categoryId ) {
-//		try {
-//			// Create the request to be returned so it can be called.
-//			final Response<GetUniverseCategoriesCategoryIdOk> groupResponse = retrofitFactory.accessNoAuthRetrofit().create(
-//					UniverseApi.class )
-//					.getUniverseCategoriesCategoryId(
-//							categoryId
-//							, DEFAULT_ACCEPT_LANGUAGE
-//							, DEFAULT_ESI_SERVER
-//									.toLowerCase(),
-//							null, null )
-//					.execute();
-//			if (!groupResponse.isSuccessful()) {
-//				return null;
-//			} else return groupResponse.body();
-//		} catch (IOException ioe) {
-//			return null;
-//		}
-//	}
-
 	public GetUniverseTypesTypeIdOk searchEsiItem4Id( final int itemId ) {
 		return this.storeCacheManager.accessItem( itemId ).blockingGet();
 	}
@@ -519,52 +397,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 	public EsiLocation searchLocation4Id( final Long locationId ) {
 		return null;
 	}
-
-//	// - A L L I A N C E   P U B L I C   I N F O R M A T I O N
-//	public GetAlliancesAllianceIdOk getAlliancesAllianceId( final int identifier ) {
-//		logger.info( ">> [ESIDataProvider.getCorporationsCorporationId]" );
-////		final Chrono accessFullTime = new Chrono();
-//		try {
-//			// Set the refresh to be used during the request.
-////			NeoComRetrofitHTTP.setRefeshToken(refreshToken);
-//			String datasource = DEFAULT_ESI_SERVER;
-//			// Use server parameter to override configuration server to use.
-////			if (null != server) datasource = server;
-//			// Create the request to be returned so it can be called.
-//			final Response<GetAlliancesAllianceIdOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
-//					.create( AllianceApi.class )
-//					.getAlliancesAllianceId( identifier,
-//							datasource,
-//							null )
-//					.execute();
-//			if (allianceResponse.isSuccessful())
-//				return allianceResponse.body();
-//		} catch (IOException ioe) {
-//			logger.error( "EX [ESIDataProvider.getCorporationsCorporationId]> [EXCEPTION]: {}", ioe.getMessage() );
-//			ioe.printStackTrace();
-////		} finally {
-////			logger.info("<< [ESINetworkManager.getCorporationsCorporationId]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
-//		}
-//		return null;
-//	}
-//
-//	public GetAlliancesAllianceIdIconsOk getAlliancesAllianceIdIcons( final int identifier ) {
-//		logger.info( ">> [ESIDataProvider.getAlliancesAllianceIdIcons]" );
-//		try {
-//			final Response<GetAlliancesAllianceIdIconsOk> allianceResponse = this.retrofitFactory.accessNoAuthRetrofit()
-//					.create( AllianceApi.class )
-//					.getAlliancesAllianceIdIcons(
-//							identifier,
-//							DEFAULT_ESI_SERVER, null )
-//					.execute();
-//			if (allianceResponse.isSuccessful())
-//				return allianceResponse.body();
-//		} catch (IOException ioe) {
-//			logger.error( "EX [ESIDataProvider.getAlliancesAllianceIdIcons]> [EXCEPTION]: {}", ioe.getMessage() );
-//			ioe.printStackTrace();
-//		}
-//		return null;
-//	}
 
 	@Deprecated
 	public EsiLocation searchLocation4Id( final Integer locationId ) {
@@ -788,11 +620,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 		public Builder() {
 			this.onConstruction = new ESIDataProvider();
-		}
-
-		public Builder( final ESIDataProvider preInstance ) {
-			if (null != preInstance) this.onConstruction = preInstance;
-			else this.onConstruction = new ESIDataProvider();
 		}
 
 		public ESIDataProvider build() {

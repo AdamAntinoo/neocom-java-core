@@ -154,7 +154,7 @@ public class NeoItem extends NeoComNode implements IItemFacet {
 	 * download them as assets or blueprints. Set it to a default value that by now I can consider valid.
 	 */
 	public String getTech() {
-		return tech;
+		return this.tech;
 	}
 
 	public void setTech( final String tech ) {

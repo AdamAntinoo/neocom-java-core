@@ -2,6 +2,7 @@ package org.dimensinfin.eveonline.neocom.domain;
 
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.annotation.RequiresNetwork;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.CharacterscharacterIdfittingsItems;
 
 public class FittingItem extends NeoComNode {
@@ -18,27 +19,35 @@ public class FittingItem extends NeoComNode {
 
 	public Integer getTypeId() {return this.fittingDefinition.getTypeId();}
 
+	@RequiresNetwork
+	public String getTypeName() {
+		Objects.requireNonNull( this.itemDetails );
+		return this.itemDetails.getName();
+	}
+
 	private void downloadItem() {
 		Objects.requireNonNull( this.fittingDefinition );
 		this.itemDetails = new NeoItem( this.fittingDefinition.getTypeId() );
+		Objects.requireNonNull( this.itemDetails );
 	}
 
 	// - B U I L D E R
 	public static class Builder {
 		private FittingItem onConstruction;
 
-		public Builder( ) {
+		public Builder() {
 			this.onConstruction = new FittingItem();
-		}
-		public FittingItem.Builder withFittingItem ( final  CharacterscharacterIdfittingsItems fittingItem  ){
-			Objects.requireNonNull( fittingItem );
-			this.onConstruction.fittingDefinition = fittingItem;
-			return this;
 		}
 
 		public FittingItem build() {
 			this.onConstruction.downloadItem();
 			return this.onConstruction;
+		}
+
+		public FittingItem.Builder withFittingItem( final CharacterscharacterIdfittingsItems fittingItem ) {
+			Objects.requireNonNull( fittingItem );
+			this.onConstruction.fittingDefinition = fittingItem;
+			return this;
 		}
 	}
 }

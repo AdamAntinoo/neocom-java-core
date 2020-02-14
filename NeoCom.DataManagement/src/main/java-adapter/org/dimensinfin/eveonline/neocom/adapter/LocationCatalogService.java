@@ -57,7 +57,6 @@ public class LocationCatalogService {
 	protected IFileSystem fileSystemAdapter;
 	protected ESIUniverseDataProvider esiUniverseDataProvider;
 	protected RetrofitFactory retrofitFactory;
-//	protected LocationRepository locationRepository;
 
 	protected LocationCatalogService() { }
 
