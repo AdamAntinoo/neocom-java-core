@@ -9,6 +9,6 @@ public class GetCharactersLocationFlag2EsiAssets200OkLocationFlag implements Con
 		, EsiAssets200Ok.LocationFlagEnum> {
 	@Override
 	public EsiAssets200Ok.LocationFlagEnum convert( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum flag ) {
-		return EsiAssets200Ok.LocationFlagEnum.valueOf( flag.toString() );
+		return EsiAssets200Ok.LocationFlagEnum.valueOf( flag.toString().toUpperCase() );
 	}
 }

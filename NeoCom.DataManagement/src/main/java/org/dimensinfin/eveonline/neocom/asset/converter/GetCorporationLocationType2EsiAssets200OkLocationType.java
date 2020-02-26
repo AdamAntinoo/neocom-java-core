@@ -9,6 +9,6 @@ public class GetCorporationLocationType2EsiAssets200OkLocationType implements Co
 		, EsiAssets200Ok.LocationTypeEnum> {
 	@Override
 	public EsiAssets200Ok.LocationTypeEnum convert( final GetCorporationsCorporationIdAssets200Ok.LocationTypeEnum type ) {
-		return EsiAssets200Ok.LocationTypeEnum.valueOf( type.toString() );
+		return EsiAssets200Ok.LocationTypeEnum.valueOf( type.toString().toUpperCase() );
 	}
 }

@@ -458,8 +458,8 @@ public class EsiAssets200Ok {
 		}
 
 		public EsiAssets200Ok.Builder withIsBlueprintCopy( final Boolean isBlueprintCopy ) {
-			Objects.requireNonNull( isBlueprintCopy );
-			this.onConstruction.isBlueprintCopy = isBlueprintCopy;
+			if (null == isBlueprintCopy) this.onConstruction.isBlueprintCopy = false;
+			else this.onConstruction.isBlueprintCopy = isBlueprintCopy;
 			return this;
 		}
 

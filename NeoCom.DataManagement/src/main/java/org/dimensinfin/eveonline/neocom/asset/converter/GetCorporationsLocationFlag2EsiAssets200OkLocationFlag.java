@@ -9,6 +9,6 @@ public class GetCorporationsLocationFlag2EsiAssets200OkLocationFlag implements C
 		, EsiAssets200Ok.LocationFlagEnum> {
 	@Override
 	public EsiAssets200Ok.LocationFlagEnum convert( final GetCorporationsCorporationIdAssets200Ok.LocationFlagEnum flag ) {
-		return EsiAssets200Ok.LocationFlagEnum.valueOf( flag.toString() );
+		return EsiAssets200Ok.LocationFlagEnum.valueOf( flag.toString().toUpperCase() );
 	}
 }
