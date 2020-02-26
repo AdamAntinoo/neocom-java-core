@@ -1,8 +1,7 @@
 package org.dimensinfin.eveonline.neocom.asset.converter;
 
-import java.io.IOException;
-
 import org.dimensinfin.eveonline.neocom.asset.domain.AssetTypes;
+import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
@@ -12,10 +11,10 @@ import retrofit2.Converter;
 
 public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converter<GetCharactersCharacterIdAssets200Ok, NeoAsset> {
 	@Override
-	public NeoAsset convert( final GetCharactersCharacterIdAssets200Ok esiAsset ) throws IOException {
+	public NeoAsset convert( final GetCharactersCharacterIdAssets200Ok esiAssetOk ) {
+		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset newAsset = new NeoAsset();
 		newAsset.setAssetId( esiAsset.getItemId() );
-		newAsset.setTypeId( esiAsset.getTypeId() );
 		newAsset.setAssetDelegate( esiAsset );
 		newAsset.setItemDelegate( new NeoItem( esiAsset.getTypeId() ) );
 		if (newAsset.getCategoryName().equalsIgnoreCase( AssetTypes.SHIP.getTypeName() ))
@@ -51,7 +50,7 @@ public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converte
 	 * @param asset the asset to check.
 	 * @return true if the asset is able to contain other assets, ships included.
 	 */
-	private static boolean checkIfContainer( final NeoAsset asset ) {
+	private boolean checkIfContainer( final NeoAsset asset ) {
 		if (asset.isBlueprint()) return false;
 		if (asset.isShip()) return true;
 		// Use a list of types to set what is a container

@@ -92,6 +92,11 @@ public class AssetProvider /*implements Serializable*/ {
 		return new ArrayList<>( regions.values() );
 	}
 
+	/**
+	 * Access the asset repository and searches for all the owner id assets. Then stores them into the asset map by the location id. During the
+	 * processing ite counts the number of assets found.
+	 * @return
+	 */
 	public int classifyAssetsByLocation() {
 		this.clear();
 		final List<NeoAsset> sourceAssetList = this.assetRepository.findAllByOwnerId( this.credential.getAccountId() );

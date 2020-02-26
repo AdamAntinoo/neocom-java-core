@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -42,14 +43,15 @@ class GetCharactersCharacterIdAsset2NeoAssetConverterTest {
 	@Test
 	void convert() throws IOException {
 		final int TEST_ITEM_ID = 588;
-		final GetCharactersCharacterIdAssets200Ok esiAsset = new GetCharactersCharacterIdAssets200Ok();
-		esiAsset.setItemId( 123456L );
-		esiAsset.setTypeId( TEST_ITEM_ID );
-		esiAsset.setLocationId( 54321L );
-		final NeoAsset obtained = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( esiAsset );
+		final GetCharactersCharacterIdAssets200Ok esiAssetOk = new GetCharactersCharacterIdAssets200Ok();
+		esiAssetOk.setItemId( 123456L );
+		esiAssetOk.setTypeId( TEST_ITEM_ID );
+		esiAssetOk.setLocationId( 54321L );
+		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
+		final NeoAsset obtained = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( esiAssetOk );
 		final NeoAsset expected = new NeoAsset()
 				.setAssetId( 123456L )
-				.setTypeId( TEST_ITEM_ID )
+//				.setTypeId( TEST_ITEM_ID )
 				.setAssetDelegate( esiAsset )
 				.setItemDelegate( new NeoItem( TEST_ITEM_ID ) );
 
@@ -65,14 +67,15 @@ class GetCharactersCharacterIdAsset2NeoAssetConverterTest {
 	@Test
 	void convertContainer() throws IOException {
 		final int TEST_ITEM_ID = 60;
-		final GetCharactersCharacterIdAssets200Ok esiAsset = new GetCharactersCharacterIdAssets200Ok();
-		esiAsset.setItemId( 123456L );
-		esiAsset.setTypeId( TEST_ITEM_ID );
-		esiAsset.setLocationId( 54321L );
-		final NeoAsset obtained = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( esiAsset );
+		final GetCharactersCharacterIdAssets200Ok esiAssetOk = new GetCharactersCharacterIdAssets200Ok();
+		esiAssetOk.setItemId( 123456L );
+		esiAssetOk.setTypeId( TEST_ITEM_ID );
+		esiAssetOk.setLocationId( 54321L );
+		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
+		final NeoAsset obtained = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( esiAssetOk );
 		final NeoAsset expected = new NeoAsset()
 				.setAssetId( 123456L )
-				.setTypeId( TEST_ITEM_ID )
+//				.setTypeId( TEST_ITEM_ID )
 				.setAssetDelegate( esiAsset )
 				.setItemDelegate( new NeoItem( TEST_ITEM_ID ) );
 

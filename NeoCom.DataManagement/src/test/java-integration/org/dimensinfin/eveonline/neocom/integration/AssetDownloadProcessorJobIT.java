@@ -33,30 +33,16 @@ import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironme
  */
 public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinition {
 	private static final int ESI_UNITTESTING_PORT = 6090;
+	private static final int TEST_CORPORATION_ID = 98384726;
 	private static Credential credential4Test;
-//
-//	public static void main( String[] args ) {
-//		NeoComLogger.enter();
-//		final AssetDownloadProcessorJobIT application = new AssetDownloadProcessorJobIT();
-//		try {
-////			application.setupEnvironment();
-//			application.registerJobOnScheduler();
-//			JobScheduler.getJobScheduler().runSchedule();
-//			application.waitSchedulerCompletion();
-//			application.checkAssertions();
-//		} catch (IOException ioe) {
-//			NeoComLogger.info( "Application interrupted: ", ioe );
-//		} catch (SQLException sqle) {
-//			NeoComLogger.info( "Application interrupted: ", sqle );
-//		}
-//		NeoComLogger.exit();
-//	}
 
-
-//	private AssetDownloadProcessorJob assetProcessorJob;
-
-
-//	private List<GroupCount> groupCounts;
+	@BeforeAll
+	private static void beforeAll() {
+		credential4Test = Mockito.mock( Credential.class );
+		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
+		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
+	}
 
 	private AssetDownloadProcessorJobIT() {}
 
@@ -95,64 +81,36 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		} );
 	}
 
-	private List<GroupCount> readGroupCounts() throws IOException {
-		final ObjectMapper mapper = new ObjectMapper();
-		final File groupCountsFile = new File( this.itFileSystemAdapter.accessResource4Path( "/TestData/groupsCounts.json" ) );
-		return mapper.readValue( groupCountsFile,
-				mapper.getTypeFactory().constructCollectionType( List.class, GroupCount.class ) );
+	@Test
+	public void call() throws Exception {
+		final AssetDownloadProcessorJob assetDownloadProcessorJob = new AssetDownloadProcessorJob.Builder()
+				.withAssetRepository( this.itAssetRepository )
+				.withCredential( credential4Test )
+				.withCredentialRepository( this.itCredentialRepository )
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.withEsiDataProvider( this.esiDataProvider )
+				.build();
+		Assertions.assertTrue( assetDownloadProcessorJob.call() );
 	}
-
-//	private void checkAssertions() throws IOException, SQLException {
-//		Assertions.assertNotNull( JobScheduler.getJobScheduler() );
-//		Assertions.assertNotNull( this.assetProcessorJob );
-//
-//		final List<NeoAsset> assets = this.itAssetRepository
-//				.findAllByOwnerId( SupportIntegrationCredential.itCredential.getAccountId() );
-//		Assertions.assertEquals( 36, assets.size() );
-//
-//		this.readGroupCounts();
-//		int propulsionCount = 0;
-//		int miningLasertCount = 0;
-//		for (NeoAsset asset : assets) {
-//			if (asset.getGroupName().equalsIgnoreCase( "Mining Laser" )) miningLasertCount++;
-//			if (asset.getGroupName().equalsIgnoreCase( "Propulsion Module" )) propulsionCount++;
-//		}
-//		for (GroupCount count : this.groupCounts) {
-//			if (count.getGroup().equalsIgnoreCase( "Mining Laser" ))
-//				Assertions.assertEquals( miningLasertCount, count.getCount() );
-//			if (count.getGroup().equalsIgnoreCase( "Propulsion Module" ))
-//				Assertions.assertEquals( propulsionCount, count.getCount() );
-//		}
-//		Assertions.assertTrue(
-//				this.itCredentialRepository.findCredentialById( SupportIntegrationCredential.itCredential.getUniqueId() )
-//						.getMiningResourcesEstimatedValue() > 0.0
-//		);
-//	}
-
-	@BeforeEach
-	void setUp() throws IOException, SQLException {
-		this.setupEnvironment();
-	}
-
-//	private void registerJobOnScheduler() {
-//		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
-//		this.assetProcessorJob = new AssetDownloadProcessorJob.Builder()
-//				.withCredential( SupportIntegrationCredential.itCredential )
-//				.withEsiDataProvider( this.esiDataProvider )
-//				.withLocationCatalogService( locationCatalogService )
-//				.withAssetRepository( this.itAssetRepository )
-//				.withCredentialRepository( this.itCredentialRepository )
-//				.addCronSchedule( "* - *" )
-//				.build();
-//		JobScheduler.getJobScheduler().registerJob( this.assetProcessorJob );
-//	}
-
-//	private void waitSchedulerCompletion() {
-//		JobScheduler.getJobScheduler().wait4Completion();
-//	}
 
 	@Test
-	void downloadPilotAssetsESI() throws SQLException, IOException {
+	public void downloadCorporationAssets() {
+		final AssetDownloadProcessorJob assetDownloadProcessorJob = new AssetDownloadProcessorJob.Builder()
+				.withAssetRepository( this.itAssetRepository )
+				.withCredential( credential4Test )
+				.withCredentialRepository( this.itCredentialRepository )
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.withEsiDataProvider( this.esiDataProvider )
+				.build();
+
+		Assertions.assertNotNull( assetDownloadProcessorJob );
+		final List<NeoAsset> assetList = assetDownloadProcessorJob.downloadCorporationAssets( TEST_CORPORATION_ID );
+		Assertions.assertNotNull( assetList );
+		Assertions.assertEquals( 27, assetList.size() );
+	}
+
+	@Test
+	public void downloadPilotAssetsESI() throws SQLException, IOException {
 		final AssetDownloadProcessorJob assetDownloadProcessorJob = new AssetDownloadProcessorJob.Builder()
 				.withAssetRepository( this.itAssetRepository )
 				.withCredential( credential4Test )
@@ -180,38 +138,84 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		}
 	}
 
-	@Test
-	void call() throws Exception {
-		final AssetDownloadProcessorJob assetDownloadProcessorJob = new AssetDownloadProcessorJob.Builder()
-				.withAssetRepository( this.itAssetRepository )
-				.withCredential( credential4Test )
-				.withCredentialRepository( this.itCredentialRepository )
-				.withLocationCatalogService( this.itLocationCatalogService )
-				.withEsiDataProvider( this.esiDataProvider )
-				.build();
-		Assertions.assertTrue( assetDownloadProcessorJob.call() );
+	@BeforeEach
+	public void setUp() throws IOException, SQLException {
+		this.setupEnvironment();
 	}
-//	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
-//		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",
-//				Version.unknownVersion() );
-//		testModule.addDeserializer( GetCharactersCharacterIdAssets200Ok.class,
-//				new GetCharactersCharacterIdAssets200OkDeserializer( GetCharactersCharacterIdAssets200Ok.class ) );
-//		mapper.registerModule( testModule );
+
+	private List<GroupCount> readGroupCounts() throws IOException {
+		final ObjectMapper mapper = new ObjectMapper();
+		final File groupCountsFile = new File( this.itFileSystemAdapter.accessResource4Path( "/TestData/groupsCounts.json" ) );
+		return mapper.readValue( groupCountsFile,
+				mapper.getTypeFactory().constructCollectionType( List.class, GroupCount.class ) );
+	}
+
 //
-//		final GetCharactersCharacterIdAssets200Ok[] data = this.mapper.readValue( FileUtils.readFileToString(
-//				new File( this.itFileSystemAdapter.accessResource4Path( "TestData/assetTestList.json" ) ),
-//				"utf-8" ), GetCharactersCharacterIdAssets200Ok[].class );
-//		return new ArrayList<>( Arrays.asList( data ) );
+//	public static void main( String[] args ) {
+//		NeoComLogger.enter();
+//		final AssetDownloadProcessorJobIT application = new AssetDownloadProcessorJobIT();
+//		try {
+////			application.setupEnvironment();
+//			application.registerJobOnScheduler();
+//			JobScheduler.getJobScheduler().runSchedule();
+//			application.waitSchedulerCompletion();
+//			application.checkAssertions();
+//		} catch (IOException ioe) {
+//			NeoComLogger.info( "Application interrupted: ", ioe );
+//		} catch (SQLException sqle) {
+//			NeoComLogger.info( "Application interrupted: ", sqle );
+//		}
+//		NeoComLogger.exit();
 //	}
 
-	@BeforeAll
-	static void beforeAll() {
-		credential4Test = Mockito.mock( Credential.class );
-		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
-	}
 
+//	private AssetDownloadProcessorJob assetProcessorJob;
+
+
+//	private List<GroupCount> groupCounts;
+
+//	private void checkAssertions() throws IOException, SQLException {
+//		Assertions.assertNotNull( JobScheduler.getJobScheduler() );
+//		Assertions.assertNotNull( this.assetProcessorJob );
+//
+//		final List<NeoAsset> assets = this.itAssetRepository
+//				.findAllByOwnerId( SupportIntegrationCredential.itCredential.getAccountId() );
+//		Assertions.assertEquals( 36, assets.size() );
+//
+//		this.readGroupCounts();
+//		int propulsionCount = 0;
+//		int miningLasertCount = 0;
+//		for (NeoAsset asset : assets) {
+//			if (asset.getGroupName().equalsIgnoreCase( "Mining Laser" )) miningLasertCount++;
+//			if (asset.getGroupName().equalsIgnoreCase( "Propulsion Module" )) propulsionCount++;
+//		}
+//		for (GroupCount count : this.groupCounts) {
+//			if (count.getGroup().equalsIgnoreCase( "Mining Laser" ))
+//				Assertions.assertEquals( miningLasertCount, count.getCount() );
+//			if (count.getGroup().equalsIgnoreCase( "Propulsion Module" ))
+//				Assertions.assertEquals( propulsionCount, count.getCount() );
+//		}
+//		Assertions.assertTrue(
+//				this.itCredentialRepository.findCredentialById( SupportIntegrationCredential.itCredential.getUniqueId() )
+//						.getMiningResourcesEstimatedValue() > 0.0
+//		);
+//	}
+//	private void registerJobOnScheduler() {
+//		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
+//		this.assetProcessorJob = new AssetDownloadProcessorJob.Builder()
+//				.withCredential( SupportIntegrationCredential.itCredential )
+//				.withEsiDataProvider( this.esiDataProvider )
+//				.withLocationCatalogService( locationCatalogService )
+//				.withAssetRepository( this.itAssetRepository )
+//				.withCredentialRepository( this.itCredentialRepository )
+//				.addCronSchedule( "* - *" )
+//				.build();
+//		JobScheduler.getJobScheduler().registerJob( this.assetProcessorJob );
+//	}
+
+//	private void waitSchedulerCompletion() {
+//		JobScheduler.getJobScheduler().wait4Completion();
+//	}
 //	@BeforeEach
 //	void beforeEach() throws IOException, SQLException {
 //		this.configurationProvider = new SBConfigurationProvider.Builder()
@@ -280,4 +284,17 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 //	void runAssetProcessorIT() {
 //		AssetDownloadProcessorJobIT.main( null );
 //	}
+//	private List<GetCharactersCharacterIdAssets200Ok> loadAssetTestData() throws IOException {
+//		SimpleModule testModule = new SimpleModule( "NoeComIntegrationModule",
+//				Version.unknownVersion() );
+//		testModule.addDeserializer( GetCharactersCharacterIdAssets200Ok.class,
+//				new GetCharactersCharacterIdAssets200OkDeserializer( GetCharactersCharacterIdAssets200Ok.class ) );
+//		mapper.registerModule( testModule );
+//
+//		final GetCharactersCharacterIdAssets200Ok[] data = this.mapper.readValue( FileUtils.readFileToString(
+//				new File( this.itFileSystemAdapter.accessResource4Path( "TestData/assetTestList.json" ) ),
+//				"utf-8" ), GetCharactersCharacterIdAssets200Ok[].class );
+//		return new ArrayList<>( Arrays.asList( data ) );
+//	}
+
 }
