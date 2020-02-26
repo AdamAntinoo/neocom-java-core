@@ -1,7 +1,7 @@
 [
   {
     "group": "Propulsion Module",
-    "count": 4
+    "count": 2
   },
   {
     "group": "Hybrid Charge",
@@ -81,7 +81,7 @@
   },
   {
     "group": "Mining Laser",
-    "count": 4
+    "count": 1
   },
   {
     "group": "Miscellaneous",

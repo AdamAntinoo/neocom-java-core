@@ -5,7 +5,7 @@ apply plugin: 'project-report'
 
 // - P R O J E C T   D E F I N I T I O N
 group = 'org.dimensinfin'
-version = '0.18.0'
+version = '0.19.0'
 archivesBaseName = 'NeoCom.Annotations'
 
 sourceCompatibility = 1.8
@@ -15,8 +15,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     google()
-//    jcenter()
-//    maven { url 'https://jitpack.io' }
 }
 
 publishing {
@@ -25,8 +23,6 @@ publishing {
             groupId project.group
             artifactId project.archivesBaseName
             version project.version
-//            artifact(sourcesJar)
-//            artifact(javadocJar)
             artifact("$buildDir/libs/${archivesBaseName}-${version}.jar")
         }
     }
@@ -63,5 +59,4 @@ dependencies {
 // - N E O C O M   L I B R A R I E S
 dependencies {
     implementation 'org.dimensinfin:CoreBase.core:3.2.0'
-//    implementation project(':NeoCom.DataManagement')
 }

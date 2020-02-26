@@ -28,3 +28,10 @@ Car car = objectMapper.readValue(new File("src/test/resources/json_car.json"), C
 			.withDatabaseName( "postgres" )
 			.withUsername( "neocom" )
 			.withPassword( "01.Alpha" );
+
+[MOCKITO MOCK VOID METHOD]
+doAnswer((i) -> {
+	System.out.println("Employee setName Argument = " + i.getArgument(0));
+	assertTrue("Pankaj".equals(i.getArgument(0)));
+	return null;
+}).when(emp).setName(anyString());

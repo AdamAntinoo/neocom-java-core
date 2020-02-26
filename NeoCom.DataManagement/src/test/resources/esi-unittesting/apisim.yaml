@@ -146,3 +146,110 @@ response:
   body:
     type: text
     file: "${sim.path}/esiresponses/fittings.json"
+
+---
+
+simlet: corporation-assets-page1
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/corporations/{corporationId}/assets/
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.page1.json"
+
+---
+
+simlet: corporation-assets-page2
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/corporations/{corporationId}/assets/
+  - where: uriQueryParameter
+    named: "page"
+    equals: 2
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    []
+
+---
+
+simlet: character-wallet
+
+request:
+  - method: GET
+  - uriPathPattern: "/latest/characters/{character_id}/wallet/"
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: "2765866375.96"
+
+---
+
+simlet: character-planet-data
+
+request:
+  - method: GET
+  - uriPathPattern: "/latest/characters/{character_id}/planets/{planet_id}/"
+
+response:
+  from: stub
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/character.planet.data.json"
+
+---
+
+simlet: universe-schematics
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/universe/schematics/{schematic_id}/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    {
+      "cycle_time": 1800,
+      "schematic_name": "Precious Metals"
+    }
+
+---
+
+simlet: universe-structure
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/universe/structures/{structure_id}/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/universe.structure.json"

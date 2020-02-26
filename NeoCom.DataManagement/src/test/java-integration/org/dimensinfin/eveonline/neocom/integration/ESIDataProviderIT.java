@@ -23,8 +23,11 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdMining200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
@@ -33,7 +36,9 @@ import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 public class ESIDataProviderIT {
 	private static final int ESI_UNITTESTING_PORT = 6090;
-	private static final int DEFAULT_PLANET_IDENTIFIER = 1;
+	private static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
+	private static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
+	private static final int DEFAULT_SCHEMATIC = 127;
 	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
 	private static final GenericContainer<?> esisimulator;
 	private static Credential credential4Test;
@@ -160,13 +165,16 @@ public class ESIDataProviderIT {
 	public void getCharactersCharacterIdWallet() {
 		final Double walletAmount = this.esiDataProvider.getCharactersCharacterIdWallet( credential4Test );
 		Assertions.assertNotNull( walletAmount );
-		Assertions.assertEquals( 26, walletAmount );
+		Assertions.assertEquals( 2765866375.96, walletAmount, 0.1 );
 	}
 
 	@Test
 	public void getUniversePlanetsPlanetId() {
 		final GetUniversePlanetsPlanetIdOk planetData = this.esiDataProvider.getUniversePlanetsPlanetId( DEFAULT_PLANET_IDENTIFIER );
 		Assertions.assertNotNull( planetData );
+		Assertions.assertEquals( "PVH8-0 IV", planetData.getName() );
+		Assertions.assertEquals( 30003283, planetData.getSystemId() );
+		Assertions.assertEquals( 2063, planetData.getTypeId() );
 	}
 
 	@Test
@@ -187,8 +195,32 @@ public class ESIDataProviderIT {
 	}
 
 	@Test
-	public void searchStructureById() {
+	void getCharactersCharacterIdPlanetsPlanetId() {
+		final Credential credential = Mockito.mock( Credential.class );
+		Mockito.when( credential.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential.getDataSource() ).thenReturn( "tranquility" );
+		final GetCharactersCharacterIdPlanetsPlanetIdOk planetData = this.esiDataProvider
+				.getCharactersCharacterIdPlanetsPlanetId( DEFAULT_PLANET_IDENTIFIER
+						, credential );
+		Assertions.assertNotNull( planetData );
+	}
 
+	@Test
+	void getUniversePlanetarySchematicsById() {
+		final GetUniverseSchematicsSchematicIdOk schematic = this.esiDataProvider.getUniversePlanetarySchematicsById( DEFAULT_SCHEMATIC );
+		Assertions.assertNotNull( schematic );
+	}
+
+	@Test
+	void getCorporationsCorporationIdAssets() {
+		final Credential credential = Mockito.mock( Credential.class );
+		Mockito.when( credential.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential.getDataSource() ).thenReturn( "tranquility" );
+		final Integer corporationId = 98384726;
+		final List<GetCorporationsCorporationIdAssets200Ok> assets = this.esiDataProvider.getCorporationsCorporationIdAssets( credential
+				, corporationId );
+		Assertions.assertNotNull( assets );
+		Assertions.assertEquals( 26, assets.size() );
 	}
 
 	@BeforeAll
@@ -199,7 +231,7 @@ public class ESIDataProviderIT {
 	}
 
 	@BeforeEach
-	void setUp() throws IOException {
+	void beforeEach() throws IOException {
 		this.configurationProvider = new SBConfigurationProvider.Builder()
 				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
 		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",

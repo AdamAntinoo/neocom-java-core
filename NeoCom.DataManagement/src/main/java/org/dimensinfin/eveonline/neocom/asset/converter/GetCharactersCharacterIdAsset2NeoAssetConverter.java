@@ -21,7 +21,7 @@ public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converte
 		if (newAsset.getCategoryName().equalsIgnoreCase( AssetTypes.SHIP.getTypeName() ))
 			newAsset.setShipFlag( true );
 		newAsset.setBlueprintFlag( this.checkIfBlueprint( newAsset ) );
-		newAsset.setContainerFlag( this.checkIfBlueprint( newAsset ) );
+		newAsset.setContainerFlag( this.checkIfContainer( newAsset ) );
 		if (esiAsset.getLocationId() > 61E6) // The asset is contained into another asset. Set the parent.
 			newAsset.setParentContainerId( esiAsset.getLocationId() );
 
@@ -55,7 +55,6 @@ public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converte
 		if (asset.isBlueprint()) return false;
 		if (asset.isShip()) return true;
 		// Use a list of types to set what is a container
-		if (asset.getTypeId() == 60) return true;
 		if (asset.getTypeId() == 11488) return true;
 		if (asset.getTypeId() == 11489) return true;
 		if (asset.getTypeId() == 11490) return true;

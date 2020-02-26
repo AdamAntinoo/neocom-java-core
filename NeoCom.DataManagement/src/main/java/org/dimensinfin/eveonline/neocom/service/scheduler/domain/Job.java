@@ -11,6 +11,7 @@ public abstract class Job implements Callable<Boolean> {
 	private JobStatus status = JobStatus.READY;
 
 	protected Job() {}
+
 	public String getSchedule() {
 		return this.schedule;
 	}

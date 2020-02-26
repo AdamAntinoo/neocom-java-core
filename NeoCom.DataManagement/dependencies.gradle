@@ -17,7 +17,8 @@ dependencies {
 dependencies {
     implementation 'org.dimensinfin:CoreBase.core:3.2.0'
     implementation 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
-    implementation project (':NeoCom.Annotations')
+    implementation 'org.dimensinfin:NeoCom.Annotations:0.19.0'
+//    implementation project (':NeoCom.Annotations')
     implementation 'org.apache.commons:commons-lang3:3.9'
     implementation 'com.annimon:stream:1.1.9' // Android compatible streams
 }

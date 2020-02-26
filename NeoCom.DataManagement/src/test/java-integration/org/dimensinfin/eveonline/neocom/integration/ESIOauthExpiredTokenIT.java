@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
@@ -14,7 +13,7 @@ import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironme
 public class ESIOauthExpiredTokenIT extends IntegrationEnvironmentDefinition {
 //	private ESIDataProvider esiDataProvider;
 
-	@Test
+//	@Test
 	void esiExpirationTokenTest() throws IOException, SQLException {
 		final Credential credential = new Credential.Builder( 92223647 )
 				.withAccountId( 92223647 )

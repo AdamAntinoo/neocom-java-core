@@ -261,7 +261,7 @@ public class AssetProviderIT /*extends IntegrationEnvironmentDefinition*/ {
 //				.build();
 	}
 
-	@Test
+//	@Test
 	void getRegionList() throws IOException, SQLException {
 //		this.setupEnvironment();
 		// Configure the database to use the docker test container.

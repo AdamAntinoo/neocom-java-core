@@ -137,21 +137,6 @@ public class AssetDownloadProcessorJob extends Job {
 		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
 			this.assetMap.put( assetOk.getItemId(), assetOk );
 	}
-
-//	private void calculateMiningResourceValue() {
-//
-//
-//		// Estimate the mining resources value.
-//		// TODO - Do this but form a directed query to the asset repository.
-//
-////				final Double miningResourcesValue = Stream.of( assetList )
-////						.filter( asset -> this.isMiningResource( asset ) )
-////						.map( asset -> new NeoAsset.Builder().fromEsiAsset( asset ) )
-////						.mapToDouble( asset -> asset.getPrice() * asset.getQuantity() )
-////						.sum();
-////				if (miningResourcesValue > 0.0) this.getModel().setMiningResourcesEstimatedValue( miningResourcesValue );
-//	}
-
 	private boolean isMiningResource( final NeoAsset asset2Test ) {
 		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
 		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
@@ -173,7 +158,6 @@ public class AssetDownloadProcessorJob extends Job {
 							.searchStructure4Id( targetAsset.getLocationId().getSpaceIdentifier(),
 									this.credential );
 					if (null != structure) {
-//						if (structure.isPresent()) {
 						workLocationId.setType( LocationIdentifierType.STRUCTURE );
 						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
 					}
@@ -186,7 +170,6 @@ public class AssetDownloadProcessorJob extends Job {
 
 	private Boolean processCharacterAssets() throws SQLException {
 		this.downloadPilotAssetsESI();
-//		this.calculateMiningResourceValue();
 		return true;
 	}
 

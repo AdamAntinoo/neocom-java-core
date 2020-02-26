@@ -25,9 +25,11 @@ public class Fitting extends NeoComNode {
 
 	public String getName() {return this.fittingDescription.getName();}
 
-	public Integer getShipTypeId() {return this.fittingDescription.getShipTypeId();}
+	public NeoItem getShipItem() {
+		return this.shipItem;
+	}
 
-//	public String getTech() {return this.shipItem.getTech();}
+	public Integer getShipTypeId() {return this.fittingDescription.getShipTypeId();}
 
 	@RequiresNetwork
 	public String getGroupName() {return this.shipItem.getGroupName();}

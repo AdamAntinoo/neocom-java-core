@@ -96,7 +96,7 @@ public class FittingTest {
 	}
 
 	@BeforeEach
-public	void setUp() {
+	public void setUp() {
 		final GetUniverseTypesTypeIdOk esiItem = Mockito.mock( GetUniverseTypesTypeIdOk.class );
 		final GetUniverseGroupsGroupIdOk group = Mockito.mock( GetUniverseGroupsGroupIdOk.class );
 		Mockito.when( group.getGroupId() ).thenReturn( 25 );
