@@ -11,6 +11,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly 'org.slf4j:slf4j-api:1.7.26'
     compileOnly 'joda-time:joda-time:2.10.5'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'com.annimon:stream:1.1.9' // Android compatible streams
 }
 
 // - N E O C O M   L I B R A R I E S
@@ -19,13 +21,10 @@ dependencies {
     compileOnly 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
     compileOnly 'org.dimensinfin:NeoCom.Annotations:0.19.0'
 //    implementation project (':NeoCom.Annotations')
-    implementation 'org.apache.commons:commons-lang3:3.9'
-    implementation 'com.annimon:stream:1.1.9' // Android compatible streams
 }
 
-// - C O R E
 dependencies {
-    // C A C H E
+     // C A C H E
     implementation "com.nytimes.android:store3:$cacheVersion" // Cache and store
     implementation "com.nytimes.android:cache3:$cacheVersion"
     implementation "com.nytimes.android:middleware3:$cacheVersion"
@@ -50,31 +49,19 @@ dependencies {
     compileOnly 'com.vladmihalcea:hibernate-types-52:2.3.0'
     compileOnly 'org.hibernate:hibernate-annotations:3.5.6-Final'
 }
-// - N E O C O M
-dependencies {
-}
-// - D E P R E C A T E D
-//dependencies {
-//    implementation 'org.modelmapper:modelmapper:1.1.0' // Model conversion from one model to another
-//    implementation 'com.beimin:eveapi:6.0.6'
-//    compileOnly 'org.aspectj:aspectjrt:1.9.4'
-//}
 
 // - U N I T   T E S T I N G
 dependencies {
-//    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-//    testImplementation "com.squareup.retrofit2:converter-jackson:$retrofitVersion" // HTTP encapsulation and swagger support
-//    testImplementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-//    testImplementation "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion" // JSON converter
-//    testImplementation "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-//    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-json-org:$jacksonVersion"
-//    testImplementation 'io.swagger:swagger-jersey2-jaxrs:1.5.0'
     // C O R E
     testImplementation 'org.slf4j:slf4j-simple:1.7.26'
     testImplementation 'joda-time:joda-time:2.9.9'
     testImplementation 'junit:junit:4.2'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'
     testImplementation 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
+    // N E O C O M
+    testImplementation 'org.dimensinfin:CoreBase.core:3.2.0'
+    testImplementation 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
+    testImplementation 'org.dimensinfin:NeoCom.Annotations:0.19.0'
     // T E S T   F R A M E W O R K
     testImplementation "org.testcontainers:testcontainers:1.12.3"
     testImplementation "org.testcontainers:postgresql:1.9.1"

@@ -43,8 +43,6 @@ public class IntegrationEnvironmentDefinition {
 						BindMode.READ_WRITE )
 				.withCommand( "bin/apisimulator start /esi-unittesting" );
 		esisimulator.start();
-		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer( logger );
-		esisimulator.followOutput( logConsumer );
 	}
 
 	static {
@@ -72,6 +70,7 @@ public class IntegrationEnvironmentDefinition {
 		connectionSource = connectionSource1;
 	}
 
+	protected static Credential credential4Test;
 	protected SBConfigurationProvider itConfigurationProvider;
 	protected IFileSystem itFileSystemAdapter;
 	protected IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
@@ -84,10 +83,10 @@ public class IntegrationEnvironmentDefinition {
 	protected RetrofitFactory itRetrofitFactory;
 
 	protected void setupEnvironment() throws SQLException, IOException {
-//		final IntegrationNeoComDBAdapter neocomDBAdapter = new IntegrationNeoComDBAdapter.Builder()
-//				.withDatabaseURLConnection( connectionUrl )
-//				.build();
-//		NeoComUnitTestComponentFactory.getSingleton().setNeoComDBAdapter( neocomDBAdapter );
+		credential4Test = Mockito.mock( Credential.class );
+		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
+		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
 
 		this.itConfigurationProvider = new SBConfigurationProvider.Builder()
 				.withPropertiesDirectory( "/src/test/resources/properties.it" ).build();
@@ -100,10 +99,6 @@ public class IntegrationEnvironmentDefinition {
 		final String databasePath = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepath" );
 		final String databaseUser = this.itConfigurationProvider.getResourceString( "P.database.neocom.databaseuser" );
 		final String databasePassword = this.itConfigurationProvider.getResourceString( "P.database.neocom.databasepassword" );
-//		final String neocomDatabaseURL = databaseHostName +
-//				"/" + databasePath +
-//				"?user=" + databaseUser +
-//				"&password=" + databasePassword;
 		this.itNeoComIntegrationDBAdapter = new IntegrationNeoComDBAdapter.Builder()
 				.withDatabaseURLConnection( connectionUrl )
 				.build();
@@ -137,6 +132,7 @@ public class IntegrationEnvironmentDefinition {
 		this.itLocationCatalogService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.withCredential( credential4Test )
 				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();

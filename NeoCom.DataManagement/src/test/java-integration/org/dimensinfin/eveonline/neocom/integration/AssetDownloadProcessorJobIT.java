@@ -16,6 +16,7 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.asset.processor.AssetDownloadProcessorJob;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.integration.support.GroupCount;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
 
@@ -34,7 +35,6 @@ import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironme
 public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinition {
 	private static final int ESI_UNITTESTING_PORT = 6090;
 	private static final int TEST_CORPORATION_ID = 98384726;
-	private static Credential credential4Test;
 
 	@BeforeAll
 	private static void beforeAll() {
@@ -106,7 +106,15 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		Assertions.assertNotNull( assetDownloadProcessorJob );
 		final List<NeoAsset> assetList = assetDownloadProcessorJob.downloadCorporationAssets( TEST_CORPORATION_ID );
 		Assertions.assertNotNull( assetList );
-		Assertions.assertEquals( 27, assetList.size() );
+		Assertions.assertEquals( 26, assetList.size() );
+		NeoAsset checkItem = null;
+		for (NeoAsset asset : assetList) {
+			if (asset.getAssetId() == 1030723122045L) checkItem = asset;
+		}
+		Assertions.assertNotNull( checkItem );
+		final SpaceLocation checkLocation = this.itLocationCatalogService.searchStructure4Id( checkItem.getLocationId().getSpaceIdentifier(),
+				credential4Test);
+		Assertions.assertNotNull( checkLocation );
 	}
 
 	@Test
@@ -119,7 +127,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 				.withEsiDataProvider( this.esiDataProvider )
 				.build();
 
-		Assertions.assertTrue( assetDownloadProcessorJob.downloadPilotAssetsESI() );
+		Assertions.assertTrue( assetDownloadProcessorJob.downloadPilotAssets() );
 		final List<NeoAsset> assets = this.itAssetRepository
 				.findAllByOwnerId( credential4Test.getAccountId() );
 		Assertions.assertEquals( 26, assets.size() );

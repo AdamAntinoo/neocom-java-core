@@ -13,8 +13,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComComponent;
+import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
+import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2EsiAssets200OkConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
+import org.dimensinfin.eveonline.neocom.asset.converter.GetCorporationsCorporationAsset2EsiAssets200OkConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCorporationsCorporationsIdAsset2NeoAssetConverter;
+import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
@@ -30,10 +34,9 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @NeoComComponent
 public class AssetDownloadProcessorJob extends Job {
-	// - I N T E R N A L   W O R K   F I E L D S
-	private final Map<Long, GetCharactersCharacterIdAssets200Ok> assetsPilotMap = new HashMap<>();
-	private final Map<Long, GetCorporationsCorporationIdAssets200Ok> assetsCorporationMap = new HashMap<>();
 	private final List<Long> id4Names = new ArrayList<>();
+	// - I N T E R N A L   W O R K   F I E L D S
+	private Map<Long, EsiAssets200Ok> assetsMap = new HashMap<>();
 	private double miningResourceValue = 0.0;
 	// -  C O M P O N E N T S
 	private Credential credential;
@@ -50,6 +53,7 @@ public class AssetDownloadProcessorJob extends Job {
 	 *
 	 * @return true if the process completes successfully.
 	 */
+	@TimeElapsed
 	public Boolean call() throws Exception {
 		return this.processCharacterAssets();
 	}
@@ -59,14 +63,18 @@ public class AssetDownloadProcessorJob extends Job {
 		final List<NeoAsset> results = new ArrayList<>();
 		final List<GetCorporationsCorporationIdAssets200Ok> assetOkList = this.esiDataProvider
 				.getCorporationsCorporationIdAssets( this.credential, corporationId );
-		this.createCorporationAssetMap( assetOkList ); // Map of asset for easy lookup.
+		this.assetsMap = this.transformCorporation200OkAssets( assetOkList );
 		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetOkList) {
 			// - A S S E T   P R O C E S S I N G
 			try {
 				// Convert the asset from the OK format to a MVC compatible structure.
 				final NeoAsset targetAsset = new GetCorporationsCorporationsIdAsset2NeoAssetConverter().convert( assetOk );
-				targetAsset.setOwnerId( this.credential.getAccountId() );
+				targetAsset.setOwnerId( corporationId );
+				// - L O C A T I O N   P R O C E S S I N G
 				this.locationProcessing( targetAsset );
+				targetAsset.setAssetLocation( this.locationCatalogService.searchLocation4Id( targetAsset.getLocationId() ) );
+
+				// TODO - Complete the code to read the assets userLabel after all assets are processed and persisted.
 				results.add( targetAsset );
 			} catch (final RuntimeException rtex) {
 				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
@@ -89,13 +97,112 @@ public class AssetDownloadProcessorJob extends Job {
 	 * disturbing the access to the old asset list for the same Character. After all the assets are processed
 	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
 	 */
-	public boolean downloadPilotAssetsESI() throws SQLException {
-		NeoComLogger.enter();
+	@LogEnterExit
+	public List<NeoAsset> downloadPilotAssets() throws SQLException {
+		final List<NeoAsset> results = new ArrayList<>();
+		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider
+				.getCharactersCharacterIdAssets( credential );
+		this.assetsMap = this.transformCharacter200OkAssets( assetOkList );
+		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
+			// - A S S E T   P R O C E S S I N G
+			try {
+				// Convert the asset from the OK format to a MVC compatible structure.
+				final NeoAsset targetAsset = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( assetOk );
+				targetAsset.setOwnerId( this.credential.getAccountId() );
+				// - L O C A T I O N   P R O C E S S I N G
+				this.locationProcessing( targetAsset );
+				results.add( targetAsset );
+				// TODO - Complete the code to read the assets userLabel after all assets are processed and persisted.
+			} catch (final RuntimeException rtex) {
+				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
+				rtex.printStackTrace();
+			}
+		}
+		return results;
+	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final AssetDownloadProcessorJob that = (AssetDownloadProcessorJob) o;
+		return new EqualsBuilder()
+				.appendSuper( super.equals( o ) )
+				.append( this.credential, that.credential )
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( credential )
+				.toHashCode();
+	}
+
+//	/**
+//	 * This method iterates the list of assets from the esi server and stores them into a map.
+//	 *
+//	 * @param assetList list of assets from the esi server.
+//	 */
+//	private void createPilotAssetMap( final List<GetCharactersCharacterIdAssets200Ok> assetList ) {
+//		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
+//			this.assetsMap.put( assetOk.getItemId(), assetOk );
+//	}
+
+	private boolean isMiningResource( final NeoAsset asset2Test ) {
+		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
+		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
+				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
+		return false;
+	}
+
+	private void locationProcessing( final NeoAsset targetAsset ) {
+		try {
+			// If the preliminary calculation returns UNKNOWN then search if the location is reachable.
+			if (targetAsset.getLocationId().getType() == LocationIdentifierType.UNKNOWN) {
+				final LocationIdentifier workLocationId = targetAsset.getLocationId();
+				// Check if location is a user asset.
+				if (this.assetsMap.containsKey( workLocationId.getSpaceIdentifier() )) {
+					// SIDE EFFECTS. This is modifying the asset location.
+					workLocationId.setType( LocationIdentifierType.CONTAINER );
+					// SIDE EFFECTS. This is modifying the asset location.
+				} else {
+					// Check if the location is a public reachable structure.
+					final SpaceLocation structure = this.locationCatalogService
+							.searchStructure4Id( targetAsset.getLocationId().getSpaceIdentifier(),
+									this.credential );
+					if (null != structure) {
+						// SIDE EFFECTS. This is modifying the asset location.
+						workLocationId.setType( LocationIdentifierType.STRUCTURE );
+						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
+						// SIDE EFFECTS. This is modifying the asset location.
+					}
+				}
+			}
+		} catch (final RuntimeException rtex) {
+			NeoComLogger.error( rtex );
+			rtex.printStackTrace();
+		}
+	}
+
+//	private void createCorporationAssetMap( final List<GetCorporationsCorporationIdAssets200Ok> assetList ) {
+//		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetList)
+//			this.assetsCorporationMap.put( assetOk.getItemId(), assetOk );
+//	}
+
+	private Boolean processCharacterAssets() throws SQLException {
+		this.downloadPilotAssets();
+		return true;
+	}
+
+	private boolean storeCharacterAssets() throws SQLException {
+		final List<NeoAsset> results = new ArrayList<>();
 		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider
 				.getCharactersCharacterIdAssets( credential );
 		if (null == assetOkList) return false;
 		if (assetOkList.isEmpty()) return false;
-		this.createPilotAssetMap( assetOkList ); // Map of asset for easy lookup.
+//		this.createPilotAssetMap( assetOkList ); // Map of asset for easy lookup.
 		this.assetRepository.clearInvalidRecords( this.credential.getAccountId() );
 		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
 			// - A S S E T   P R O C E S S I N G
@@ -134,74 +241,22 @@ public class AssetDownloadProcessorJob extends Job {
 		return true;
 	}
 
-	@Override
-	public boolean equals( final Object o ) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		final AssetDownloadProcessorJob that = (AssetDownloadProcessorJob) o;
-		return new EqualsBuilder()
-				.appendSuper( super.equals( o ) )
-				.append( this.credential, that.credential )
-				.isEquals();
-	}
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder( 17, 37 )
-				.appendSuper( super.hashCode() )
-				.append( credential )
-				.toHashCode();
-	}
-
-	private void createCorporationAssetMap( final List<GetCorporationsCorporationIdAssets200Ok> assetList ) {
-		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetList)
-			this.assetsCorporationMap.put( assetOk.getItemId(), assetOk );
-	}
-
-	/**
-	 * This method iterates the list of assets from the esi server and stores them into a map.
-	 *
-	 * @param assetList list of assets from the esi server.
-	 */
-	private void createPilotAssetMap( final List<GetCharactersCharacterIdAssets200Ok> assetList ) {
-		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
-			this.assetsPilotMap.put( assetOk.getItemId(), assetOk );
-	}
-
-	private boolean isMiningResource( final NeoAsset asset2Test ) {
-		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
-		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
-				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
-		return false;
-	}
-
-	private void locationProcessing( final NeoAsset targetAsset ) {
-		try {
-			// If the preliminary calculation returns UNKNOWN then search if the location is reachable.
-			if (targetAsset.getLocationId().getType() == LocationIdentifierType.UNKNOWN) {
-				final LocationIdentifier workLocationId = targetAsset.getLocationId();
-				// Check if location is a user asset.
-				if (this.assetsPilotMap.containsKey( workLocationId.getSpaceIdentifier() ))
-					workLocationId.setType( LocationIdentifierType.CONTAINER );
-				else {
-					// Check if the location is a public reachable structure.
-					final SpaceLocation structure = this.locationCatalogService
-							.searchStructure4Id( targetAsset.getLocationId().getSpaceIdentifier(),
-									this.credential );
-					if (null != structure) {
-						workLocationId.setType( LocationIdentifierType.STRUCTURE );
-						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
-					}
-				}
-			}
-		} catch (final RuntimeException rte) {
-			rte.printStackTrace();
+	private Map<Long, EsiAssets200Ok> transformCharacter200OkAssets( final List<GetCharactersCharacterIdAssets200Ok> assetOkList ) {
+		final Map<Long, EsiAssets200Ok> transformedAssets = new HashMap<>();
+		for (GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
+			final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( assetOk );
+			this.assetsMap.put( esiAsset.getItemId(), esiAsset );
 		}
+		return transformedAssets;
 	}
 
-	private Boolean processCharacterAssets() throws SQLException {
-		this.downloadPilotAssetsESI();
-		return true;
+	private Map<Long, EsiAssets200Ok> transformCorporation200OkAssets( final List<GetCorporationsCorporationIdAssets200Ok> assetOkList ) {
+		final Map<Long, EsiAssets200Ok> transformedAssets = new HashMap<>();
+		for (GetCorporationsCorporationIdAssets200Ok assetOk : assetOkList) {
+			final EsiAssets200Ok esiAsset = new GetCorporationsCorporationAsset2EsiAssets200OkConverter().convert( assetOk );
+			this.assetsMap.put( esiAsset.getItemId(), esiAsset );
+		}
+		return transformedAssets;
 	}
 
 	// - B U I L D E R
