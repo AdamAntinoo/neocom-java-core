@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 public class LocationIdentifierTest {
@@ -15,8 +15,8 @@ public class LocationIdentifierTest {
 		final Long spaceIdentifier = 43215L;
 		this.identifier4Test = new LocationIdentifier.Builder()
 				.withSpaceIdentifier( spaceIdentifier )
-				.withLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR )
-				.withLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.STATION )
+				.withLocationFlag( EsiAssets200Ok.LocationFlagEnum.HANGAR )
+				.withLocationType( EsiAssets200Ok.LocationTypeEnum.STATION )
 				.build();
 		Assert.assertNotNull( this.identifier4Test );
 	}
@@ -26,8 +26,8 @@ public class LocationIdentifierTest {
 		final Long spaceIdentifier = 43215L;
 		final LocationIdentifier identifier = new LocationIdentifier.Builder()
 				.withSpaceIdentifier( spaceIdentifier )
-				.withLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR )
-				.withLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.STATION )
+				.withLocationFlag( EsiAssets200Ok.LocationFlagEnum.HANGAR )
+				.withLocationType( EsiAssets200Ok.LocationTypeEnum.STATION )
 				.build();
 		Assert.assertNotNull( identifier );
 	}
@@ -38,7 +38,7 @@ public class LocationIdentifierTest {
 		final LocationIdentifier identifier = new LocationIdentifier.Builder()
 				.withSpaceIdentifier( spaceIdentifier )
 				.withLocationFlag( null )
-				.withLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.STATION )
+				.withLocationType( EsiAssets200Ok.LocationTypeEnum.STATION )
 				.build();
 		Assert.assertNotNull( identifier );
 	}
@@ -59,8 +59,8 @@ public class LocationIdentifierTest {
 		final Long spaceIdentifier = 43215L;
 		final LocationIdentifier identifier = new LocationIdentifier.Builder()
 				.withSpaceIdentifier( null )
-				.withLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR )
-				.withLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.STATION )
+				.withLocationFlag( EsiAssets200Ok.LocationFlagEnum.HANGAR )
+				.withLocationType( EsiAssets200Ok.LocationTypeEnum.STATION )
 				.build();
 		Assert.assertNotNull( identifier );
 	}
@@ -112,8 +112,8 @@ public class LocationIdentifierTest {
 		final Long spaceIdentifier = 60000001L;
 		final LocationIdentifier identifier = new LocationIdentifier.Builder()
 				.withSpaceIdentifier( spaceIdentifier )
-				.withLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR )
-				.withLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.STATION )
+				.withLocationFlag( EsiAssets200Ok.LocationFlagEnum.HANGAR )
+				.withLocationType( EsiAssets200Ok.LocationTypeEnum.STATION )
 				.build();
 		Assert.assertEquals( LocationIdentifierType.STATION, identifier.getType() );
 	}
@@ -123,8 +123,8 @@ public class LocationIdentifierTest {
 		final Long spaceIdentifier = 100000001L;
 		final LocationIdentifier identifier = new LocationIdentifier.Builder()
 				.withSpaceIdentifier( spaceIdentifier )
-				.withLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.HANGAR )
-				.withLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.OTHER )
+				.withLocationFlag( EsiAssets200Ok.LocationFlagEnum.HANGAR )
+				.withLocationType( EsiAssets200Ok.LocationTypeEnum.OTHER )
 				.build();
 		Assert.assertEquals( LocationIdentifierType.UNKNOWN, identifier.getType() );
 	}

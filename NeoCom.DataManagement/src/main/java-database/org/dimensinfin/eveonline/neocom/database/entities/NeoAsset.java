@@ -18,6 +18,7 @@ import org.dimensinfin.eveonline.neocom.database.persister.EsiAssets200OkPersist
 import org.dimensinfin.eveonline.neocom.database.persister.LocationIdentifierPersister;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @Entity(name = "Assets")
@@ -63,6 +64,7 @@ public class NeoAsset extends UpdatableEntity {
 	@Type(type = "jsonb")
 	@Column(name = "locationIdentifier", nullable = false)
 	private LocationIdentifier locationId;
+	private transient SpaceLocation assetLocation;
 	@DatabaseField
 	@Column(name = "userLabel")
 	private String userLabel;
@@ -185,6 +187,14 @@ public class NeoAsset extends UpdatableEntity {
 
 	public boolean isStructure() {
 		return false;
+	}
+
+	public SpaceLocation getAssetLocation() {
+		return this.assetLocation;
+	}
+
+	public void setAssetLocation( final SpaceLocation location ) {
+		this.assetLocation = assetLocation;
 	}
 
 	public NeoAsset setAssetDelegate( final EsiAssets200Ok assetDelegate ) {

@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
 
+import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2EsiAssets200OkConverter;
+import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
@@ -40,13 +42,14 @@ public class NeoAssetTest {
 
 	@Test
 	public void gettersContract() {
-		final GetCharactersCharacterIdAssets200Ok esiAsset = new GetCharactersCharacterIdAssets200Ok();
-		esiAsset.setItemId( 1234567L );
-		esiAsset.setTypeId( 34 );
-		esiAsset.setQuantity( 10 );
+		final GetCharactersCharacterIdAssets200Ok esiAssetOk = new GetCharactersCharacterIdAssets200Ok();
+		esiAssetOk.setItemId( 1234567L );
+		esiAssetOk.setTypeId( 34 );
+		esiAssetOk.setQuantity( 10 );
+		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset asset = new NeoAsset();
 		asset.setAssetDelegate( esiAsset );
-		asset.setItemDelegate( new NeoItem( esiAsset.getTypeId() ) );
+		asset.setItemDelegate( new NeoItem( esiAssetOk.getTypeId() ) );
 		Assertions.assertNotNull( asset );
 		Assertions.assertEquals( 34, asset.getTypeId() );
 		Assertions.assertEquals( 4, asset.getCategoryId() );

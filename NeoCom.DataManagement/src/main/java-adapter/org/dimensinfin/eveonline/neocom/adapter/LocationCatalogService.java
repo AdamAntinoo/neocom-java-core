@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.core.AccessStatistics;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
+import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceConstellationImplementation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceRegionImplementation;
@@ -48,29 +49,24 @@ public class LocationCatalogService {
 	private static final AccessStatistics locationsCacheStatistics = new AccessStatistics();
 	private static Logger logger = LoggerFactory.getLogger( LocationCatalogService.class );
 	private static Map<Long, SpaceLocation> locationCache = new HashMap<>();
+	// - C O M P O N E N T S
+	protected IConfigurationProvider configurationProvider;
+	protected IFileSystem fileSystemAdapter;
+	protected Credential credential;
+	protected ESIUniverseDataProvider esiUniverseDataProvider;
+	protected RetrofitFactory retrofitFactory;
 	private Map<String, Integer> locationTypeCounters = new HashMap<>();
 	private boolean dirtyCache = false;
 	private LocationCacheAccessType lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 
-	// - C O M P O N E N T S
-	protected IConfigurationProvider configurationProvider;
-	protected IFileSystem fileSystemAdapter;
-	protected ESIUniverseDataProvider esiUniverseDataProvider;
-	protected RetrofitFactory retrofitFactory;
-
 	protected LocationCatalogService() { }
 
-	// - C A C H E   M A N A G E M E N T
-	public void stopService() {
-		this.writeLocationsDataCache();
-		this.cleanLocationsCache();
+	public Map<String, Integer> getLocationTypeCounters() {
+		return this.locationTypeCounters;
 	}
 
-	private void startService() {
-		// TODO - This is not required until the citadel structures get stored on the SDE database.
-//		this.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
-		this.readLocationsDataCache(); // Load the cache from the storage.
-		this.registerOnScheduler(); // Register on scheduler to update storage every some minutes
+	private boolean getMemoryStatus() {
+		return this.dirtyCache;
 	}
 
 	// - S T O R A G E
@@ -78,66 +74,19 @@ public class LocationCatalogService {
 		locationCache.clear();
 	}
 
-	public void readLocationsDataCache() {
-		logger.info( ">> [LocationCatalogService.readLocationsDataCache]" );
-		final String directoryPath = this.configurationProvider.getResourceString( "P.cache.directory.path" );
-		final String fileName = this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
-		final String cacheFileName = directoryPath + fileName;
-		logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Opening cache file: {}", cacheFileName );
-		try (final BufferedInputStream buffer = new BufferedInputStream(
-				this.fileSystemAdapter.openResource4Input( cacheFileName ) );
-		     final ObjectInputStream input = new ObjectInputStream( buffer )
-		) {
-			synchronized (locationCache) {
-				locationCache = (Map<Long, SpaceLocation>) input.readObject();
-				logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Restored cache Locations: {} entries.",
-						locationCache.size() );
-			}
-		} catch (final ClassNotFoundException ex) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> ClassNotFoundException. {}",
-					ex.getMessage() );
-		} catch (final FileNotFoundException fnfe) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> FileNotFoundException. {}",
-					fnfe.getMessage() );
-		} catch (final IOException ioe) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IOException. {}", ioe.getMessage() );
-		} catch (final IllegalArgumentException iae) {
-			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IllegalArgumentException. {}",
-					iae.getMessage() );
-		} catch (final RuntimeException rex) {
-			rex.printStackTrace();
-		} finally {
-			logger.info( "<< [LocationCatalogService.readLocationsDataCache]" );
-		}
+	/**
+	 * Use a single place where to search for locations if we know a full location identifier. It will detect if the location is a space or
+	 * structure location and search for the right record.
+	 *
+	 * @param locationId full location identifier obtained from any asset with the full location identifier.
+	 * @return a SpaceLocation record with the complete location data identifiers and descriptions.
+	 */
+	public SpaceLocation searchLocation4Id( final LocationIdentifier locationId ) {
+		if (locationId.getSpaceIdentifier() > 64e6)
+			return this.searchStructure4Id( locationId.getSpaceIdentifier(), this.credential );
+		else return this.searchLocation4Id( locationId.getSpaceIdentifier() );
 	}
 
-	public void writeLocationsDataCache() {
-		logger.info( ">> [LocationCatalogService.writeLocationsDataCache]" );
-		if (this.dirtyCache) {
-			final String cacheFileName = this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
-					this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
-			logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Opening cache file: {}", cacheFileName );
-			try (final BufferedOutputStream buffer = new BufferedOutputStream(
-					this.fileSystemAdapter.openResource4Output( cacheFileName ) );
-			     final ObjectOutput output = new ObjectOutputStream( buffer )
-			) {
-				synchronized (locationCache) {
-					output.writeObject( locationCache );
-					dirtyCache = false;
-					logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Wrote Locations cache: {} entries.",
-							locationCache.size() );
-				}
-			} catch (final FileNotFoundException fnfe) {
-				NeoComLogger.error( "FileNotFoundException.", fnfe );
-			} catch (final IOException ioe) {
-				NeoComLogger.error( "IOException.", ioe );
-			} finally {
-				logger.info( "<< [LocationCatalogService.writeLocationsDataCache]" );
-			}
-		}
-	}
-
-	// - S E A R C H   L O C A T I O N   A P I
 	public SpaceLocation searchLocation4Id( final Long locationId ) {
 		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
 		if (locationCache.containsKey( locationId ))
@@ -153,6 +102,8 @@ public class LocationCatalogService {
 			return hit;
 		} else return null;
 	}
+
+	// - S E A R C H   L O C A T I O N   A P I
 
 	public SpaceLocation searchStructure4Id( final Long locationId, final Credential credential ) {
 		this.lastLocationAccess = LocationCacheAccessType.NOT_FOUND;
@@ -171,39 +122,10 @@ public class LocationCatalogService {
 		} else return null;
 	}
 
-	public Map<String, Integer> getLocationTypeCounters() {
-		return this.locationTypeCounters;
-	}
-
-	public SpaceLocation storeOnCacheLocation( final SpaceLocation entry ) {
-		if (null != entry) {
-			locationCache.put( entry.getLocationId(), entry );
-			this.dirtyCache = true;
-		}
-		return entry;
-	}
-
-	public boolean getMemoryStatus() {
-		return this.dirtyCache;
-	}
-
-	private SpaceLocation searchOnMemoryCache( final Long locationId ) {
-		int access = locationsCacheStatistics.accountAccess( true );
-		this.lastLocationAccess = LocationCacheAccessType.MEMORY_ACCESS;
-		int hits = locationsCacheStatistics.getHits();
-		logger.info( ">< [LocationCatalogService.searchOnMemoryCache]> [HIT-{}/{} ] Location {}  found at cache.",
-				hits, access, locationId );
-		return locationCache.get( locationId );
-	}
-
-	private void registerOnScheduler() {
-		JobScheduler.getJobScheduler().registerJob( new Job() {
-			@Override
-			public Boolean call() throws Exception {
-				writeLocationsDataCache();
-				return true;
-			}
-		} );
+	// - C A C H E   M A N A G E M E N T
+	public void stopService() {
+		this.writeLocationsDataCache();
+		this.cleanLocationsCache();
 	}
 
 	private SpaceLocation buildUpLocation( final Long locationId ) {
@@ -268,7 +190,7 @@ public class LocationCatalogService {
 	}
 
 	private SpaceLocation buildUpStructure( final Long locationId, final Credential credential ) {
-		final GetUniverseStructuresStructureIdOk structure = this.searchStructureById( locationId, credential );
+		final GetUniverseStructuresStructureIdOk structure = this.search200OkStructureById( locationId, credential );
 		Objects.requireNonNull( structure );
 		final GetUniverseSystemsSystemIdOk solarSystem = this.esiUniverseDataProvider
 				.searchSolarSystem4Id( structure.getSolarSystemId() );
@@ -288,7 +210,50 @@ public class LocationCatalogService {
 						.build() );
 	}
 
-	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
+	private void readLocationsDataCache() {
+		logger.info( ">> [LocationCatalogService.readLocationsDataCache]" );
+		final String directoryPath = this.configurationProvider.getResourceString( "P.cache.directory.path" );
+		final String fileName = this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
+		final String cacheFileName = directoryPath + fileName;
+		logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Opening cache file: {}", cacheFileName );
+		try (final BufferedInputStream buffer = new BufferedInputStream(
+				this.fileSystemAdapter.openResource4Input( cacheFileName ) );
+		     final ObjectInputStream input = new ObjectInputStream( buffer )
+		) {
+			synchronized (locationCache) {
+				locationCache = (Map<Long, SpaceLocation>) input.readObject();
+				logger.info( "-- [LocationCatalogService.readLocationsDataCache]> Restored cache Locations: {} entries.",
+						locationCache.size() );
+			}
+		} catch (final ClassNotFoundException ex) {
+			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> ClassNotFoundException. {}",
+					ex.getMessage() );
+		} catch (final FileNotFoundException fnfe) {
+			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> FileNotFoundException. {}",
+					fnfe.getMessage() );
+		} catch (final IOException ioe) {
+			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IOException. {}", ioe.getMessage() );
+		} catch (final IllegalArgumentException iae) {
+			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IllegalArgumentException. {}",
+					iae.getMessage() );
+		} catch (final RuntimeException rex) {
+			rex.printStackTrace();
+		} finally {
+			logger.info( "<< [LocationCatalogService.readLocationsDataCache]" );
+		}
+	}
+
+	private void registerOnScheduler() {
+		JobScheduler.getJobScheduler().registerJob( new Job() {
+			@Override
+			public Boolean call() throws Exception {
+				writeLocationsDataCache();
+				return true;
+			}
+		} );
+	}
+
+	private GetUniverseStructuresStructureIdOk search200OkStructureById( final Long structureId, final Credential credential ) {
 		try {
 			final Response<GetUniverseStructuresStructureIdOk> universeResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
@@ -309,6 +274,30 @@ public class LocationCatalogService {
 		return null;
 	}
 
+	private SpaceLocation searchOnMemoryCache( final Long locationId ) {
+		int access = locationsCacheStatistics.accountAccess( true );
+		this.lastLocationAccess = LocationCacheAccessType.MEMORY_ACCESS;
+		int hits = locationsCacheStatistics.getHits();
+		logger.info( ">< [LocationCatalogService.searchOnMemoryCache]> [HIT-{}/{} ] Location {}  found at cache.",
+				hits, access, locationId );
+		return locationCache.get( locationId );
+	}
+
+	private void startService() {
+		// TODO - This is not required until the citadel structures get stored on the SDE database.
+//		this.verifySDERepository(); // Check that the LocationsCache table exists and verify the contents
+		this.readLocationsDataCache(); // Load the cache from the storage.
+		this.registerOnScheduler(); // Register on scheduler to update storage every some minutes
+	}
+
+	private SpaceLocation storeOnCacheLocation( final SpaceLocation entry ) {
+		if (null != entry) {
+			locationCache.put( entry.getLocationId(), entry );
+			this.dirtyCache = true;
+		}
+		return entry;
+	}
+
 	// - B U I L D E R
 	public static class Builder {
 		private LocationCatalogService onConstruction;
@@ -322,15 +311,24 @@ public class LocationCatalogService {
 			else this.onConstruction = new LocationCatalogService();
 		}
 
+		public LocationCatalogService build() {
+			Objects.requireNonNull( this.onConstruction.configurationProvider );
+			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
+			Objects.requireNonNull( this.onConstruction.credential );
+			Objects.requireNonNull( this.onConstruction.esiUniverseDataProvider );
+			this.onConstruction.startService();
+			return this.onConstruction;
+		}
+
 		public Builder withConfigurationProvider( final IConfigurationProvider configurationProvider ) {
 			Objects.requireNonNull( configurationProvider );
 			this.onConstruction.configurationProvider = configurationProvider;
 			return this;
 		}
 
-		public Builder withFileSystemAdapter( final IFileSystem fileSystemAdapter ) {
-			Objects.requireNonNull( fileSystemAdapter );
-			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
+		public Builder withCredential( final Credential credential ) {
+			Objects.requireNonNull( credential );
+			this.onConstruction.credential = credential;
 			return this;
 		}
 
@@ -340,18 +338,42 @@ public class LocationCatalogService {
 			return this;
 		}
 
+		public Builder withFileSystemAdapter( final IFileSystem fileSystemAdapter ) {
+			Objects.requireNonNull( fileSystemAdapter );
+			this.onConstruction.fileSystemAdapter = fileSystemAdapter;
+			return this;
+		}
+
 		public Builder withRetrofitFactory( final RetrofitFactory retrofitFactory ) {
 			Objects.requireNonNull( retrofitFactory );
 			this.onConstruction.retrofitFactory = retrofitFactory;
 			return this;
 		}
+	}
 
-		public LocationCatalogService build() {
-			Objects.requireNonNull( this.onConstruction.configurationProvider );
-			Objects.requireNonNull( this.onConstruction.fileSystemAdapter );
-			Objects.requireNonNull( this.onConstruction.esiUniverseDataProvider );
-			this.onConstruction.startService();
-			return this.onConstruction;
+	void writeLocationsDataCache() {
+		logger.info( ">> [LocationCatalogService.writeLocationsDataCache]" );
+		if (this.dirtyCache) {
+			final String cacheFileName = this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
+					this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
+			logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Opening cache file: {}", cacheFileName );
+			try (final BufferedOutputStream buffer = new BufferedOutputStream(
+					this.fileSystemAdapter.openResource4Output( cacheFileName ) );
+			     final ObjectOutput output = new ObjectOutputStream( buffer )
+			) {
+				synchronized (locationCache) {
+					output.writeObject( locationCache );
+					dirtyCache = false;
+					logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Wrote Locations cache: {} entries.",
+							locationCache.size() );
+				}
+			} catch (final FileNotFoundException fnfe) {
+				NeoComLogger.error( "FileNotFoundException.", fnfe );
+			} catch (final IOException ioe) {
+				NeoComLogger.error( "IOException.", ioe );
+			} finally {
+				logger.info( "<< [LocationCatalogService.writeLocationsDataCache]" );
+			}
 		}
 	}
 }
