@@ -464,7 +464,7 @@ public class EsiAssets200Ok {
 		}
 
 		public EsiAssets200Ok.Builder withIsSingleton( final Boolean isSingleton ) {
-			Objects.requireNonNull( isSingleton );
+			if (null == isSingleton) this.onConstruction.isSingleton = false;
 			this.onConstruction.isSingleton = isSingleton;
 			return this;
 		}

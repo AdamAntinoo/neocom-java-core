@@ -43,9 +43,13 @@ public class NeoAssetTest {
 	@Test
 	public void gettersContract() {
 		final GetCharactersCharacterIdAssets200Ok esiAssetOk = new GetCharactersCharacterIdAssets200Ok();
-		esiAssetOk.setItemId( 1234567L );
+		esiAssetOk.setItemId( 123456L );
 		esiAssetOk.setTypeId( 34 );
+		esiAssetOk.setLocationId( 54321L );
 		esiAssetOk.setQuantity( 10 );
+		esiAssetOk.setLocationId( 123L );
+		esiAssetOk.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.ASSETSAFETY );
+		esiAssetOk.setLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.SOLAR_SYSTEM );
 		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset asset = new NeoAsset();
 		asset.setAssetDelegate( esiAsset );

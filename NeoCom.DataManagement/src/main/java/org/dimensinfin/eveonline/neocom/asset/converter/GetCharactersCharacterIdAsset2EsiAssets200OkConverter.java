@@ -10,9 +10,13 @@ public class GetCharactersCharacterIdAsset2EsiAssets200OkConverter implements Co
 	public EsiAssets200Ok convert( final GetCharactersCharacterIdAssets200Ok asset ) {
 		return new EsiAssets200Ok.Builder()
 				.withTypeId( asset.getTypeId() )
+				.withItemId( asset.getItemId() )
 				.withQuantity( asset.getQuantity() )
 				.withIsBlueprintCopy( asset.getIsBlueprintCopy() )
 				.withIsSingleton( asset.getIsSingleton() )
+				.withLocationId( asset.getLocationId() )
+				.withLocationFlag( asset.getLocationFlag() )
+				.withLocationType( asset.getLocationType() )
 				.build();
 	}
 }

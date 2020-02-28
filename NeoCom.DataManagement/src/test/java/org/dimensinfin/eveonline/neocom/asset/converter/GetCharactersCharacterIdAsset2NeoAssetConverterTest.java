@@ -47,11 +47,14 @@ class GetCharactersCharacterIdAsset2NeoAssetConverterTest {
 		esiAssetOk.setItemId( 123456L );
 		esiAssetOk.setTypeId( TEST_ITEM_ID );
 		esiAssetOk.setLocationId( 54321L );
+		esiAssetOk.setQuantity( 2 );
+		esiAssetOk.setLocationId( 123L );
+		esiAssetOk.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.ASSETSAFETY );
+		esiAssetOk.setLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.SOLAR_SYSTEM );
 		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset obtained = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( esiAssetOk );
 		final NeoAsset expected = new NeoAsset()
 				.setAssetId( 123456L )
-//				.setTypeId( TEST_ITEM_ID )
 				.setAssetDelegate( esiAsset )
 				.setItemDelegate( new NeoItem( TEST_ITEM_ID ) );
 
@@ -71,11 +74,14 @@ class GetCharactersCharacterIdAsset2NeoAssetConverterTest {
 		esiAssetOk.setItemId( 123456L );
 		esiAssetOk.setTypeId( TEST_ITEM_ID );
 		esiAssetOk.setLocationId( 54321L );
+		esiAssetOk.setQuantity( 2 );
+		esiAssetOk.setLocationId( 123L );
+		esiAssetOk.setLocationFlag( GetCharactersCharacterIdAssets200Ok.LocationFlagEnum.ASSETSAFETY );
+		esiAssetOk.setLocationType( GetCharactersCharacterIdAssets200Ok.LocationTypeEnum.SOLAR_SYSTEM );
 		final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset obtained = new GetCharactersCharacterIdAsset2NeoAssetConverter().convert( esiAssetOk );
 		final NeoAsset expected = new NeoAsset()
 				.setAssetId( 123456L )
-//				.setTypeId( TEST_ITEM_ID )
 				.setAssetDelegate( esiAsset )
 				.setItemDelegate( new NeoItem( TEST_ITEM_ID ) );
 
