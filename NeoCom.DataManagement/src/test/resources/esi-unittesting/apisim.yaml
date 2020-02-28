@@ -253,3 +253,21 @@ response:
   body:
     type: text
     file: "${sim.path}/esiresponses/universe.structure.json"
+
+---
+
+simlet: corporation-asset-names
+
+request:
+  - method: POST
+  - uriPathPattern: /latest/corporations/{corporation_id}/assets/names/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.names.json"
+

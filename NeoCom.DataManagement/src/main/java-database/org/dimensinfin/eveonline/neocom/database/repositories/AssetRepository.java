@@ -28,7 +28,7 @@ public class AssetRepository {
 	private static final Logger logger = LoggerFactory.getLogger( AssetRepository.class );
 	// - C O M P O N E N T S
 	protected Dao<NeoAsset, UUID> assetDao;
-	private ConnectionSource connection4Transaction;
+	protected ConnectionSource connection4Transaction;
 
 	protected AssetRepository() {}
 

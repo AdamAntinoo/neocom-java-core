@@ -43,6 +43,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSc
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseStructuresStructureIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCharactersCharacterIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCorporationsCorporationIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.updater.NeoComUpdater;
 
@@ -380,14 +381,8 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 
 	public List<PostCharactersCharacterIdAssetsNames200Ok> postCharactersCharacterIdAssetsNames( final List<Long> listItemIds,
 	                                                                                             final Credential credential ) {
-		logger.info( ">> [ESINetworkManager.postCharactersCharacterIdAssetsNames]" );
-		//		final Chrono accessFullTime = new Chrono();
+		NeoComLogger.enter();
 		try {
-			// Set the refresh to be used during the request.
-//			NeoComRetrofitHTTP.setRefeshToken( refreshToken );
-//			String datasource = DEFAULT_ESI_SERVER;
-//			if (null != server) datasource = server;
-			// Create the request to be returned so it can be called.
 			final Response<List<PostCharactersCharacterIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory
 					.accessAuthenticatedConnector( credential )
 					.create( AssetsApi.class )
@@ -395,14 +390,34 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 							credential.getAccountId(),
 							listItemIds,
 							credential.getDataSource().toLowerCase(),
-							null ).execute();
-			if (!assetsApiResponse.isSuccessful()) {
-				return null;
-			} else return assetsApiResponse.body();
-		} catch (IOException e) {
-			e.printStackTrace();
-			//		} finally {
-			//			logger.info("<< [ESINetworkManager.postCharactersCharacterIdAssetsNames]> [TIMING] Full elapsed: {}", accessFullTime.printElapsed(ChronoOptions.SHOWMILLIS));
+							null )
+					.execute();
+			if (assetsApiResponse.isSuccessful()) return assetsApiResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
+		}
+		return null;
+	}
+	public List<PostCorporationsCorporationIdAssetsNames200Ok> postCorporationsCorporationIdAssetsNames( final List<Long> listItemIds,
+	                                                                                             final Credential credential ) {
+		NeoComLogger.enter();
+		try {
+			final Response<List<PostCorporationsCorporationIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
+					.create( AssetsApi.class )
+					.postCorporationsCorporationIdAssetsNames(
+							credential.getAccountId(),
+							listItemIds,
+							credential.getDataSource().toLowerCase(),
+							null )
+					.execute();
+			if (assetsApiResponse.isSuccessful()) return assetsApiResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
 		}
 		return null;
 	}

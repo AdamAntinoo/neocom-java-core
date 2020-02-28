@@ -132,7 +132,7 @@ public class IntegrationEnvironmentDefinition {
 		this.itLocationCatalogService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
-				.withCredential( credential4Test )
+//				.withCredential( credential4Test )
 				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();

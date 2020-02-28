@@ -55,11 +55,44 @@ public class ESIDataProviderIT {
 		esisimulator.followOutput( logConsumer );
 	}
 
+	@BeforeAll
+	public static void beforeAll() {
+		credential4Test = Mockito.mock( Credential.class );
+		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
+	}
 	// -  C O M P O N E N T S
 	private SBConfigurationProvider configurationProvider;
 	private IFileSystem fileSystemAdapter;
 	private RetrofitFactory retrofitFactory;
 	private ESIDataProvider esiDataProvider;
+
+	@BeforeEach
+	public void beforeEach() throws IOException {
+		this.configurationProvider = new SBConfigurationProvider.Builder()
+				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
+		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
+				"http://" +
+						esisimulator.getContainerIpAddress() +
+						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +
+						"/latest/" );
+		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
+				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest/" )
+				.build();
+		this.retrofitFactory = new RetrofitFactory.Builder()
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
+				.build();
+		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
+		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
+		this.esiDataProvider = new ESIDataProvider.Builder()
+				.withConfigurationProvider( this.configurationProvider )
+				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withLocationCatalogService( locationCatalogService )
+				.withStoreCacheManager( storeCacheManager )
+				.withRetrofitFactory( this.retrofitFactory )
+				.build();
+	}
 
 	@Test
 	public void buildComplete() {
@@ -221,40 +254,6 @@ public class ESIDataProviderIT {
 				, corporationId );
 		Assertions.assertNotNull( assets );
 		Assertions.assertEquals( 26, assets.size() );
-	}
-
-	@BeforeAll
-	static void beforeAll() {
-		credential4Test = Mockito.mock( Credential.class );
-		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-	}
-
-	@BeforeEach
-	void beforeEach() throws IOException {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
-				"http://" +
-						esisimulator.getContainerIpAddress() +
-						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +
-						"/latest/" );
-		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest/" )
-				.build();
-		this.retrofitFactory = new RetrofitFactory.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.build();
-		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
-		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
-		this.esiDataProvider = new ESIDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withLocationCatalogService( locationCatalogService )
-				.withStoreCacheManager( storeCacheManager )
-				.withRetrofitFactory( this.retrofitFactory )
-				.build();
 	}
 //	@Test
 //	public void searchItemGroup4Id() {
