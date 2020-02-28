@@ -117,7 +117,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		Assertions.assertNotNull( checkLocation );
 	}
 
-	@Test
+//	@Test
 	public void downloadPilotAssetsESI() throws SQLException, IOException {
 		final AssetDownloadProcessorJob assetDownloadProcessorJob = new AssetDownloadProcessorJob.Builder()
 				.withAssetRepository( this.itAssetRepository )
