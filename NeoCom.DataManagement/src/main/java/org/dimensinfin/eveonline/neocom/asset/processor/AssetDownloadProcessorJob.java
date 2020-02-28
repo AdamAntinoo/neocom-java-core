@@ -27,6 +27,7 @@ import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCorporationsCorporationIdAssetsNames200Ok;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
@@ -34,7 +35,7 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @NeoComComponent
 public class AssetDownloadProcessorJob extends Job {
-	private final List<Long> id4Names = new ArrayList<>();
+	//	private final List<Long> id4Names = new ArrayList<>();
 	// - I N T E R N A L   W O R K   F I E L D S
 	private Map<Long, EsiAssets200Ok> assetsMap = new HashMap<>();
 	private double miningResourceValue = 0.0;
@@ -72,9 +73,14 @@ public class AssetDownloadProcessorJob extends Job {
 				targetAsset.setOwnerId( corporationId );
 				// - L O C A T I O N   P R O C E S S I N G
 				this.locationProcessing( targetAsset );
-				targetAsset.setAssetLocation( this.locationCatalogService.searchLocation4Id( targetAsset.getLocationId() ) );
+				// - U S E R   L A B E L
+				if (targetAsset.isShip() || targetAsset.isContainer())
+					targetAsset.setUserLabel( this.downloadCorporationAssetEveName( targetAsset.getAssetId() ) );
+//				}
+//				if (myasset.isContainer()) {
+//					downloadAssetEveName(myasset.getAssetId());
+//				}
 
-				// TODO - Complete the code to read the assets userLabel after all assets are processed and persisted.
 				results.add( targetAsset );
 			} catch (final RuntimeException rtex) {
 				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
@@ -150,6 +156,20 @@ public class AssetDownloadProcessorJob extends Job {
 //			this.assetsMap.put( assetOk.getItemId(), assetOk );
 //	}
 
+	/**
+	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
+	 */
+	private String downloadCorporationAssetEveName( final long assetId ) {
+		final List<Long> idList = new ArrayList<>();
+		idList.add( assetId );
+		final List<PostCorporationsCorporationIdAssetsNames200Ok> itemNames = this.esiDataProvider
+				.postCorporationsCorporationIdAssetsNames( idList, this.credential );
+		if (null != itemNames)
+			for (final PostCorporationsCorporationIdAssetsNames200Ok name : itemNames)
+				if (assetId == name.getItemId()) return name.getName();
+		return null;
+	}
+
 	private boolean isMiningResource( final NeoAsset asset2Test ) {
 		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
 		if ((asset2Test.getCategoryName().equalsIgnoreCase( "Material" )) &&
@@ -185,11 +205,6 @@ public class AssetDownloadProcessorJob extends Job {
 			rtex.printStackTrace();
 		}
 	}
-
-//	private void createCorporationAssetMap( final List<GetCorporationsCorporationIdAssets200Ok> assetList ) {
-//		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetList)
-//			this.assetsCorporationMap.put( assetOk.getItemId(), assetOk );
-//	}
 
 	private Boolean processCharacterAssets() throws SQLException {
 		this.downloadPilotAssets();
@@ -245,7 +260,7 @@ public class AssetDownloadProcessorJob extends Job {
 		final Map<Long, EsiAssets200Ok> transformedAssets = new HashMap<>();
 		for (GetCharactersCharacterIdAssets200Ok assetOk : assetOkList) {
 			final EsiAssets200Ok esiAsset = new GetCharactersCharacterIdAsset2EsiAssets200OkConverter().convert( assetOk );
-			this.assetsMap.put( esiAsset.getItemId(), esiAsset );
+			transformedAssets.put( esiAsset.getItemId(), esiAsset );
 		}
 		return transformedAssets;
 	}
@@ -254,7 +269,7 @@ public class AssetDownloadProcessorJob extends Job {
 		final Map<Long, EsiAssets200Ok> transformedAssets = new HashMap<>();
 		for (GetCorporationsCorporationIdAssets200Ok assetOk : assetOkList) {
 			final EsiAssets200Ok esiAsset = new GetCorporationsCorporationAsset2EsiAssets200OkConverter().convert( assetOk );
-			this.assetsMap.put( esiAsset.getItemId(), esiAsset );
+			transformedAssets.put( esiAsset.getItemId(), esiAsset );
 		}
 		return transformedAssets;
 	}

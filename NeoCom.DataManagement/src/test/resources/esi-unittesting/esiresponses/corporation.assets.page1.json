@@ -11,8 +11,8 @@
   {
     "is_singleton": false,
     "item_id": 1032555374416,
-    "location_flag": "AutoFit",
-    "location_id": 1032555372158,
+    "location_flag": "CorpSAG2",
+    "location_id": 1032555195108,
     "location_type": "other",
     "quantity": 1200,
     "type_id": 17470
@@ -38,8 +38,8 @@
   {
     "is_singleton": false,
     "item_id": 1030723122040,
-    "location_flag": "AutoFit",
-    "location_id": 1032555513198,
+    "location_flag": "CorpSAG2",
+    "location_id": 1032555195108,
     "location_type": "other",
     "quantity": 100,
     "type_id": 44265
@@ -119,8 +119,8 @@
   {
     "is_singleton": false,
     "item_id": 1032555373985,
-    "location_flag": "AutoFit",
-    "location_id": 1032555372930,
+    "location_flag": "CorpSAG2",
+    "location_id": 1032555195108,
     "location_type": "other",
     "quantity": 1200,
     "type_id": 17470
@@ -191,8 +191,8 @@
   {
     "is_singleton": false,
     "item_id": 1032555516783,
-    "location_flag": "AutoFit",
-    "location_id": 1032555338059,
+    "location_flag": "CorpSAG2",
+    "location_id": 1032555195108,
     "location_type": "other",
     "quantity": 400,
     "type_id": 17460
@@ -200,8 +200,8 @@
   {
     "is_singleton": false,
     "item_id": 1032555517648,
-    "location_flag": "AutoFit",
-    "location_id": 1032555513198,
+    "location_flag": "CorpSAG2",
+    "location_id": 1032555195108,
     "location_type": "other",
     "quantity": 353,
     "type_id": 17459

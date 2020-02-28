@@ -44,7 +44,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
 	}
 
-	private AssetDownloadProcessorJobIT() {}
+//	private AssetDownloadProcessorJobIT() {}
 
 	@Test
 	public void buildComplete() {
@@ -127,7 +127,7 @@ public class AssetDownloadProcessorJobIT extends IntegrationEnvironmentDefinitio
 				.withEsiDataProvider( this.esiDataProvider )
 				.build();
 
-		Assertions.assertTrue( assetDownloadProcessorJob.downloadPilotAssets() );
+		Assertions.assertNotNull( assetDownloadProcessorJob.downloadPilotAssets() );
 		final List<NeoAsset> assets = this.itAssetRepository
 				.findAllByOwnerId( credential4Test.getAccountId() );
 		Assertions.assertEquals( 26, assets.size() );
