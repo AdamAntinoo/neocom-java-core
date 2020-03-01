@@ -7,11 +7,10 @@ import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.NeoItem;
-import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
 
 import retrofit2.Converter;
 
-public class GetCorporationsCorporationsIdAsset2NeoAssetConverter implements Converter<GetCorporationsCorporationIdAssets200Ok, NeoAsset> {
+public class EsiAssets200Ok2NeoAssetConverter implements Converter<EsiAssets200Ok, NeoAsset> {
 	private static final HashSet<Integer> containerIds = new HashSet<>( 25 );
 
 	static {
@@ -45,8 +44,8 @@ public class GetCorporationsCorporationsIdAsset2NeoAssetConverter implements Con
 	}
 
 	@Override
-	public NeoAsset convert( final GetCorporationsCorporationIdAssets200Ok esiAssetOk ) {
-		final EsiAssets200Ok esiAsset = new GetCorporationsCorporationAsset2EsiAssets200OkConverter().convert( esiAssetOk );
+	public NeoAsset convert( final EsiAssets200Ok esiAsset ) {
+//		final EsiAssets200Ok esiAsset = new GetCorporationsCorporationAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset newAsset = new NeoAsset();
 		newAsset.setAssetId( esiAsset.getItemId() );
 		newAsset.setAssetDelegate( esiAsset );

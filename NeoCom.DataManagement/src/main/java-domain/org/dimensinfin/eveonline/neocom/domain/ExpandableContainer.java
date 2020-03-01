@@ -16,10 +16,11 @@ public class ExpandableContainer<M extends ICollaboration> extends NeoComExpanda
 	}
 
 	public List<M> getContents() {
-		return contents;
+		return this.contents;
 	}
 
 	// - I E X P A N D A B L E
+	@Override
 	public boolean isEmpty() {
 		return this.contents.isEmpty();
 	}
@@ -28,6 +29,10 @@ public class ExpandableContainer<M extends ICollaboration> extends NeoComExpanda
 	public int addContent( final M item ) {
 		this.contents.add( item );
 		return this.contents.size();
+	}
+
+	public void clear() {
+		this.contents.clear();
 	}
 
 	// - I C O L L A B O R A T I O N
