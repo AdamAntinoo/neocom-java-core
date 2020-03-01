@@ -16,14 +16,8 @@ public class AssetContainer extends ExpandableContainer<NeoAsset> {
 	private LocationIdentifier spaceLocationIdentifier;
 	private SpaceLocation spaceLocation;
 	private NeoAsset parentContainer;
-//	private List<NeoAsset> contents = new ArrayList<>();
 
 	protected AssetContainer() {super();}
-
-//	public int addContent( final NeoAsset item ) {
-//		this.contents.add( item );
-//		return this.contents.size();
-//	}
 
 	public AssetContainerType getType() {
 		return this.type;
@@ -41,11 +35,8 @@ public class AssetContainer extends ExpandableContainer<NeoAsset> {
 			this.onConstruction = new AssetContainer();
 		}
 
-		public AssetContainer.Builder withSpaceLocationIdentifier( final LocationIdentifier spaceLocationIdentifier ) {
-			Objects.requireNonNull( spaceLocationIdentifier );
-			this.onConstruction.spaceLocationIdentifier = spaceLocationIdentifier;
-			this.onConstruction.type = AssetContainerType.UNKNOWN;
-			return this;
+		public AssetContainer build() {
+			return this.onConstruction;
 		}
 
 		public AssetContainer.Builder withAsset( final NeoAsset asset ) {
@@ -63,8 +54,11 @@ public class AssetContainer extends ExpandableContainer<NeoAsset> {
 			return this;
 		}
 
-		public AssetContainer build() {
-			return this.onConstruction;
+		public AssetContainer.Builder withSpaceLocationIdentifier( final LocationIdentifier spaceLocationIdentifier ) {
+			Objects.requireNonNull( spaceLocationIdentifier );
+			this.onConstruction.spaceLocationIdentifier = spaceLocationIdentifier;
+			this.onConstruction.type = AssetContainerType.UNKNOWN;
+			return this;
 		}
 	}
 }

@@ -18,7 +18,6 @@ import org.dimensinfin.eveonline.neocom.asset.converter.EsiAssets200Ok2NeoAssetC
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2EsiAssets200OkConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCorporationsCorporationAsset2EsiAssets200OkConverter;
-import org.dimensinfin.eveonline.neocom.asset.converter.GetCorporationsCorporationsIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
@@ -122,11 +121,11 @@ public class AssetDownloadProcessorJob extends Job {
 		final List<GetCorporationsCorporationIdAssets200Ok> assetOkList = this.esiDataProvider
 				.getCorporationsCorporationIdAssets( this.credential, corporationId );
 		this.assetsMap = this.transformCorporation200OkAssets( assetOkList );
-		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetOkList) {
+		for (final EsiAssets200Ok assetOk : this.assetsMap.values()) {
 			// - A S S E T   P R O C E S S I N G
 			try {
 				// Convert the asset from the OK format to a MVC compatible structure.
-				final NeoAsset targetAsset = new GetCorporationsCorporationsIdAsset2NeoAssetConverter().convert( assetOk );
+				final NeoAsset targetAsset = new EsiAssets200Ok2NeoAssetConverter().convert( assetOk );
 				targetAsset.setOwnerId( corporationId );
 				// - P A R E N T   P R O C E S S I N G
 				this.parentProcessing( targetAsset );
