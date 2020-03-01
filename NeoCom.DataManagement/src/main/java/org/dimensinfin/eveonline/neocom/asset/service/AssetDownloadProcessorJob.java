@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.asset.processor;
+package org.dimensinfin.eveonline.neocom.asset.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComComponent;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
+import org.dimensinfin.eveonline.neocom.asset.converter.EsiAssets200Ok2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2EsiAssets200OkConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCharactersCharacterIdAsset2NeoAssetConverter;
 import org.dimensinfin.eveonline.neocom.asset.converter.GetCorporationsCorporationAsset2EsiAssets200OkConverter;
@@ -57,37 +58,6 @@ public class AssetDownloadProcessorJob extends Job {
 	@TimeElapsed
 	public Boolean call() throws Exception {
 		return this.processCharacterAssets();
-	}
-
-	@LogEnterExit
-	public List<NeoAsset> downloadCorporationAssets( final Integer corporationId ) {
-		final List<NeoAsset> results = new ArrayList<>();
-		final List<GetCorporationsCorporationIdAssets200Ok> assetOkList = this.esiDataProvider
-				.getCorporationsCorporationIdAssets( this.credential, corporationId );
-		this.assetsMap = this.transformCorporation200OkAssets( assetOkList );
-		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetOkList) {
-			// - A S S E T   P R O C E S S I N G
-			try {
-				// Convert the asset from the OK format to a MVC compatible structure.
-				final NeoAsset targetAsset = new GetCorporationsCorporationsIdAsset2NeoAssetConverter().convert( assetOk );
-				targetAsset.setOwnerId( corporationId );
-				// - L O C A T I O N   P R O C E S S I N G
-				this.locationProcessing( targetAsset );
-				// - U S E R   L A B E L
-				if (targetAsset.isShip() || targetAsset.isContainer())
-					targetAsset.setUserLabel( this.downloadCorporationAssetEveName( targetAsset.getAssetId() ) );
-//				}
-//				if (myasset.isContainer()) {
-//					downloadAssetEveName(myasset.getAssetId());
-//				}
-
-				results.add( targetAsset );
-			} catch (final RuntimeException rtex) {
-				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
-				rtex.printStackTrace();
-			}
-		}
-		return results;
 	}
 
 	/**
@@ -146,15 +116,34 @@ public class AssetDownloadProcessorJob extends Job {
 				.toHashCode();
 	}
 
-//	/**
-//	 * This method iterates the list of assets from the esi server and stores them into a map.
-//	 *
-//	 * @param assetList list of assets from the esi server.
-//	 */
-//	private void createPilotAssetMap( final List<GetCharactersCharacterIdAssets200Ok> assetList ) {
-//		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
-//			this.assetsMap.put( assetOk.getItemId(), assetOk );
-//	}
+	@LogEnterExit
+	protected List<NeoAsset> downloadCorporationAssets( final Integer corporationId ) {
+		final List<NeoAsset> results = new ArrayList<>();
+		final List<GetCorporationsCorporationIdAssets200Ok> assetOkList = this.esiDataProvider
+				.getCorporationsCorporationIdAssets( this.credential, corporationId );
+		this.assetsMap = this.transformCorporation200OkAssets( assetOkList );
+		for (final GetCorporationsCorporationIdAssets200Ok assetOk : assetOkList) {
+			// - A S S E T   P R O C E S S I N G
+			try {
+				// Convert the asset from the OK format to a MVC compatible structure.
+				final NeoAsset targetAsset = new GetCorporationsCorporationsIdAsset2NeoAssetConverter().convert( assetOk );
+				targetAsset.setOwnerId( corporationId );
+				// - P A R E N T   P R O C E S S I N G
+				this.parentProcessing( targetAsset );
+				// - L O C A T I O N   P R O C E S S I N G
+				this.locationProcessing( targetAsset );
+				// - U S E R   L A B E L
+				if (targetAsset.isShip() || targetAsset.isContainer())
+					targetAsset.setUserLabel( this.downloadCorporationAssetEveName( targetAsset.getAssetId() ) );
+
+				results.add( targetAsset );
+			} catch (final RuntimeException rtex) {
+				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
+				rtex.printStackTrace();
+			}
+		}
+		return results;
+	}
 
 	/**
 	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
@@ -169,6 +158,16 @@ public class AssetDownloadProcessorJob extends Job {
 				if (assetId == name.getItemId()) return name.getName();
 		return null;
 	}
+
+//	/**
+//	 * This method iterates the list of assets from the esi server and stores them into a map.
+//	 *
+//	 * @param assetList list of assets from the esi server.
+//	 */
+//	private void createPilotAssetMap( final List<GetCharactersCharacterIdAssets200Ok> assetList ) {
+//		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
+//			this.assetsMap.put( assetOk.getItemId(), assetOk );
+//	}
 
 	private boolean isMiningResource( final NeoAsset asset2Test ) {
 		if (asset2Test.getCategoryName().equalsIgnoreCase( "Asteroid" )) return true;
@@ -203,6 +202,15 @@ public class AssetDownloadProcessorJob extends Job {
 		} catch (final RuntimeException rtex) {
 			NeoComLogger.error( rtex );
 			rtex.printStackTrace();
+		}
+	}
+
+	private void parentProcessing( final NeoAsset targetAsset ) {
+		// If the asset has a parent identifier, search for it on the asset map.
+		if (targetAsset.hasParentContainer()) {
+			final EsiAssets200Ok hit = this.assetsMap.get( targetAsset.getParentContainerId() );
+			if (null != hit)
+				targetAsset.setParentContainer( new EsiAssets200Ok2NeoAssetConverter().convert( hit ) );
 		}
 	}
 
