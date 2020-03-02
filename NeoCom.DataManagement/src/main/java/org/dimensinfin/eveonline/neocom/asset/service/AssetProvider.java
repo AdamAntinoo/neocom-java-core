@@ -289,6 +289,7 @@ public class AssetProvider {
 				break;
 			case SHIP:
 			case CONTAINER:
+			case OFFICE:
 				if (asset.hasParentContainer()) {
 					final NeoAsset hit = asset.getParentContainer();
 					if (null == hit) this.add2UnreachableLocation( asset );

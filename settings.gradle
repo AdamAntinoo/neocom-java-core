@@ -1,5 +1,5 @@
 include ':ESI.SwaggerApi'
 include ':NeoCom.DataManagement'
 //include ':NeoCom.DataManagement.AcceptanceTests'
-include ':NeoCom.DataManagement.Support'
+//include ':NeoCom.DataManagement.Support'
 include ':NeoCom.Annotations'

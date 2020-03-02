@@ -88,6 +88,7 @@ public class EsiAssets200Ok2NeoAssetConverter implements Converter<EsiAssets200O
 		if (asset.isShip()) return true;
 		// Use a list of types to set what is a container
 		if (containerIds.contains( asset.getTypeId() )) return true;
+		if (asset.isOffice()) return true;
 		if (asset.getName().contains( "Container" )) return true;
 		return asset.getName().contains( "Wrap" );
 	}

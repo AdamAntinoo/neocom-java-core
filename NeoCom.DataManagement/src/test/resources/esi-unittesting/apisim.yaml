@@ -271,3 +271,20 @@ response:
     type: text
     file: "${sim.path}/esiresponses/corporation.assets.names.json"
 
+---
+
+simlet: corporation-divisions
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/corporations/{corporation_id}/divisions/
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.divisions.json"
+

@@ -1,5 +1,7 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,12 +15,23 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
  * the definition of the structure hangars already defined on the flags.
  */
 public class LocationIdentifier {
+	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new HashMap<>( 7 );
+
+	static {
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG1, 1 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG2, 2 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG3, 3 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG4, 4 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG5, 5 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG6, 6 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG7, 7 );
+	}
+
 	private Long spaceIdentifier;
 	@Deprecated
 	private Long structureIdentifier;
 	private EsiAssets200Ok.LocationFlagEnum locationFlag;
-	private EsiAssets200Ok.LocationTypeEnum locationType =
-			EsiAssets200Ok.LocationTypeEnum.OTHER;
+	private EsiAssets200Ok.LocationTypeEnum locationType = EsiAssets200Ok.LocationTypeEnum.OTHER;
 	private LocationIdentifierType type = LocationIdentifierType.UNKNOWN;
 
 	private LocationIdentifier() { }
@@ -27,13 +40,8 @@ public class LocationIdentifier {
 		return this.spaceIdentifier;
 	}
 
-	public Long getStructureIdentifier() {
-		return this.structureIdentifier;
-	}
-
-	public LocationIdentifier setStructureIdentifier( final Long structureIdentifier ) {
-		this.structureIdentifier = structureIdentifier;
-		return this;
+	public EsiAssets200Ok.LocationFlagEnum getLocationFlag() {
+		return this.locationFlag;
 	}
 
 	public LocationIdentifierType getType() {
@@ -42,6 +50,16 @@ public class LocationIdentifier {
 
 	public LocationIdentifier setType( final LocationIdentifierType type ) {
 		this.type = type;
+		return this;
+	}
+
+	@Deprecated
+//	public Long getStructureIdentifier() {
+//		return this.structureIdentifier;
+//	}
+
+	public LocationIdentifier setStructureIdentifier( final Long structureIdentifier ) {
+		this.structureIdentifier = structureIdentifier;
 		return this;
 	}
 
@@ -79,6 +97,8 @@ public class LocationIdentifier {
 		if (this.locationType == EsiAssets200Ok.LocationTypeEnum.STATION)
 			this.type = LocationIdentifierType.STATION;
 		// Other types of locations. Use the id to extract the range
+		if (officeContainerLocationFlags.containsKey( this.locationFlag ))
+			this.type = LocationIdentifierType.OFFICE;
 		if (this.locationType == EsiAssets200Ok.LocationTypeEnum.OTHER) {
 			if (this.detectIfShipFittingSlot()) this.type = LocationIdentifierType.SHIP;
 			if (this.locationFlag == EsiAssets200Ok.LocationFlagEnum.UNLOCKED)

@@ -4,15 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
@@ -25,85 +18,86 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdDivisionsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniversePlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSchematicsSchematicIdOk;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseTypesTypeIdOk;
+import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
-import org.dimensinfin.eveonline.neocom.provider.IFileSystem;
 import org.dimensinfin.eveonline.neocom.provider.RetrofitFactory;
-import org.dimensinfin.eveonline.neocom.support.SBConfigurationProvider;
-import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
-public class ESIDataProviderIT {
-	private static final int ESI_UNITTESTING_PORT = 6090;
-	private static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
-	private static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
-	private static final int DEFAULT_SCHEMATIC = 127;
-	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
-	private static final GenericContainer<?> esisimulator;
-	private static Credential credential4Test;
+public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
+//	private static final int ESI_UNITTESTING_PORT = 6090;
+//	private static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
+//	private static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
+//	private static final int DEFAULT_SCHEMATIC = 127;
+//	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
+//	private static final GenericContainer<?> esisimulator;
+//	private static Credential credential4Test;
+//
+//	static {
+//		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
+//				.withExposedPorts( ESI_UNITTESTING_PORT )
+//				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
+//						"/esi-unittesting",
+//						BindMode.READ_WRITE )
+//				.withCommand( "bin/apisimulator start /esi-unittesting" );
+//		esisimulator.start();
+//		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer( logger );
+//		esisimulator.followOutput( logConsumer );
+//	}
+//
+//	@BeforeAll
+//	public static void beforeAll() {
+//		credential4Test = Mockito.mock( Credential.class );
+//		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+//		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
+//	}
 
-	static {
-		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
-				.withExposedPorts( ESI_UNITTESTING_PORT )
-				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
-						"/esi-unittesting",
-						BindMode.READ_WRITE )
-				.withCommand( "bin/apisimulator start /esi-unittesting" );
-		esisimulator.start();
-		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer( logger );
-		esisimulator.followOutput( logConsumer );
-	}
-
-	@BeforeAll
-	public static void beforeAll() {
-		credential4Test = Mockito.mock( Credential.class );
-		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
-		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
-	}
 	// -  C O M P O N E N T S
-	private SBConfigurationProvider configurationProvider;
-	private IFileSystem fileSystemAdapter;
-	private RetrofitFactory retrofitFactory;
-	private ESIDataProvider esiDataProvider;
+//	private SBConfigurationProvider configurationProvider;
+//	private IFileSystem fileSystemAdapter;
+//	private RetrofitFactory retrofitFactory;
+//	private ESIDataProvider esiDataProvider;
 
-	@BeforeEach
-	public void beforeEach() throws IOException {
-		this.configurationProvider = new SBConfigurationProvider.Builder()
-				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
-		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
-				"http://" +
-						esisimulator.getContainerIpAddress() +
-						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +
-						"/latest/" );
-		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
-				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest/" )
-				.build();
-		this.retrofitFactory = new RetrofitFactory.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.build();
-		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
-		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
-		this.esiDataProvider = new ESIDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
-				.withLocationCatalogService( locationCatalogService )
-				.withStoreCacheManager( storeCacheManager )
-				.withRetrofitFactory( this.retrofitFactory )
-				.build();
-	}
+//	@BeforeEach
+//	public void beforeEach() throws IOException {
+//		this.configurationProvider = new SBConfigurationProvider.Builder()
+//				.withPropertiesDirectory( "/src/test/resources/properties.unittest" ).build();
+//		this.configurationProvider.setProperty( "P.authenticated.retrofit.server.location",
+//				"http://" +
+//						esisimulator.getContainerIpAddress() +
+//						":" + esisimulator.getMappedPort( ESI_UNITTESTING_PORT ) +
+//						"/latest/" );
+//		this.fileSystemAdapter = new SBFileSystemAdapter.Builder()
+//				.optionalApplicationDirectory( "./src/test/NeoCom.UnitTest/" )
+//				.build();
+//		this.retrofitFactory = new RetrofitFactory.Builder()
+//				.withConfigurationProvider( this.configurationProvider )
+//				.withFileSystemAdapter( this.fileSystemAdapter )
+//				.build();
+//		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
+//		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
+//		this.esiDataProvider = new ESIDataProvider.Builder()
+//				.withConfigurationProvider( this.configurationProvider )
+//				.withFileSystemAdapter( this.fileSystemAdapter )
+//				.withLocationCatalogService( locationCatalogService )
+//				.withStoreCacheManager( storeCacheManager )
+//				.withRetrofitFactory( this.retrofitFactory )
+//				.build();
+//	}
 
 	@Test
 	public void buildComplete() {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
 		final ESIDataProvider provider = new ESIDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.withLocationCatalogService( locationCatalogService )
 				.withStoreCacheManager( storeCacheManager )
-				.withRetrofitFactory( this.retrofitFactory )
+				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
 
 		Assertions.assertNotNull( provider );
@@ -114,7 +108,7 @@ public class ESIDataProviderIT {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		Assertions.assertThrows( NullPointerException.class, () -> {
 			final ESIDataProvider provider = new ESIDataProvider.Builder()
-					.withFileSystemAdapter( this.fileSystemAdapter )
+					.withFileSystemAdapter( this.itFileSystemAdapter )
 					.withLocationCatalogService( locationCatalogService )
 					.build();
 		} );
@@ -125,11 +119,11 @@ public class ESIDataProviderIT {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
 		final ESIDataProvider provider = new ESIDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.withLocationCatalogService( locationCatalogService )
 				.withStoreCacheManager( storeCacheManager )
-				.withRetrofitFactory( retrofitFactory )
+				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
 
 		Assertions.assertNotNull( provider.searchSDERace( 1 ) );
@@ -162,6 +156,20 @@ public class ESIDataProviderIT {
 		final List<GetCharactersCharacterIdBlueprints200Ok> blueprints = this.esiDataProvider.getCharactersCharacterIdBlueprints( credential );
 		Assertions.assertNotNull( blueprints );
 		Assertions.assertEquals( 5, blueprints.size() );
+	}
+
+	//	@Test
+	public void getCharactersCharacterIdFailure() {
+		final RetrofitFactory retrofitFactory = Mockito.mock( RetrofitFactory.class );
+		Mockito.when( retrofitFactory.accessUniverseConnector() ).thenThrow( new IOException() );
+		final ESIDataProvider localEsiDataProvider = new ESIDataProvider.Builder()
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.withRetrofitFactory( retrofitFactory )
+				.withStoreCacheManager( this.itStoreCacheManager )
+				.build();
+		Assertions.assertNull( localEsiDataProvider.getCharactersCharacterId( 93813310 ) );
 	}
 
 	@Test
@@ -202,6 +210,15 @@ public class ESIDataProviderIT {
 	}
 
 	@Test
+	public void getCorporationsCorporationIdDivisions() {
+		final Integer corporationId = TEST_CORPORATION_IDENTIFIER;
+		final GetCorporationsCorporationIdDivisionsOk divisions = this.esiDataProvider
+				.getCorporationsCorporationIdDivisions( corporationId, credential4Test );
+		Assertions.assertNotNull( divisions );
+		Assertions.assertEquals( "Planetary", divisions.getHangar().get( 0 ) );
+	}
+
+	@Test
 	public void getUniversePlanetsPlanetId() {
 		final GetUniversePlanetsPlanetIdOk planetData = this.esiDataProvider.getUniversePlanetsPlanetId( DEFAULT_PLANET_IDENTIFIER );
 		Assertions.assertNotNull( planetData );
@@ -215,16 +232,25 @@ public class ESIDataProviderIT {
 		final LocationCatalogService locationCatalogService = Mockito.mock( LocationCatalogService.class );
 		final StoreCacheManager storeCacheManager = Mockito.mock( StoreCacheManager.class );
 		final ESIDataProvider provider = new ESIDataProvider.Builder()
-				.withConfigurationProvider( this.configurationProvider )
-				.withFileSystemAdapter( this.fileSystemAdapter )
+				.withConfigurationProvider( this.itConfigurationProvider )
+				.withFileSystemAdapter( this.itFileSystemAdapter )
 				.withLocationCatalogService( locationCatalogService )
 				.withStoreCacheManager( storeCacheManager )
-				.withRetrofitFactory( this.retrofitFactory )
+				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();
 
 		final GetStatusOk status = provider.getUniverseStatus( "Tranquility" );
 		Assertions.assertNotNull( status );
 		Assertions.assertTrue( Math.abs( 28184 - status.getPlayers() ) < 10000 );
+	}
+
+	@Test
+	public void searchEsiItem4Id() {
+		final Integer itemId = TEST_ITEM_IDENTIFIER;
+		final GetUniverseTypesTypeIdOk item = this.esiDataProvider.searchEsiItem4Id( itemId );
+		Assertions.assertNotNull( item );
+		Assertions.assertEquals( TEST_ITEM_IDENTIFIER, item.getTypeId() );
+		Assertions.assertEquals( TEST_ITEM_NAME, item.getName() );
 	}
 
 	@Test

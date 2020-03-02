@@ -12,12 +12,14 @@ import org.joda.time.Duration;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
+import org.dimensinfin.eveonline.neocom.annotation.LogEnterExit;
 import org.dimensinfin.eveonline.neocom.annotation.NeoComAdapter;
 import org.dimensinfin.eveonline.neocom.annotation.TimeElapsed;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.domain.EsiLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.AssetsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.CharacterApi;
+import org.dimensinfin.eveonline.neocom.esiswagger.api.CorporationApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.FittingsApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.IndustryApi;
 import org.dimensinfin.eveonline.neocom.esiswagger.api.PlanetaryInteractionApi;
@@ -32,6 +34,7 @@ import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterI
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdPlanetsPlanetIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
+import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdDivisionsOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetStatusOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseAncestries200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseBloodlines200Ok;
@@ -309,7 +312,29 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return returnAssetList;
 	}
 
-	// - P L A N E T A R Y   I N T E R A C T I O N   P U B L I C   I N F O R M A T I O N
+	@TimeElapsed
+	@LogEnterExit
+	public GetCorporationsCorporationIdDivisionsOk getCorporationsCorporationIdDivisions( final Integer corporationId,
+	                                                                                      final Credential credential ) {
+		NeoComLogger.enter();
+		try {
+			final Response<GetCorporationsCorporationIdDivisionsOk> divisionsResponse = this.retrofitFactory
+					.accessAuthenticatedConnector( credential )
+					.create( CorporationApi.class )
+					.getCorporationsCorporationIdDivisions(
+							corporationId,
+							credential.getDataSource().toLowerCase(),
+							null, null )
+					.execute();
+			if (divisionsResponse.isSuccessful()) return divisionsResponse.body();
+		} catch (IOException | RuntimeException ioe) {
+			NeoComLogger.error( ioe );
+		} finally {
+			NeoComLogger.exit();
+		}
+		return null;
+	}
+
 	@TimeElapsed
 	public GetUniverseSchematicsSchematicIdOk getUniversePlanetarySchematicsById( final int schematicId ) {
 		logger.info( ">> [ESIDataProvider.getUniversePlanetarySchematicsById]" );
@@ -359,7 +384,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return null;
 	}
 
-	// - U N I V E R S E
 	@TimeElapsed
 	public GetStatusOk getUniverseStatus( final String server ) {
 		NeoComLogger.enter( "Server:", server );
@@ -400,8 +424,9 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		}
 		return null;
 	}
+
 	public List<PostCorporationsCorporationIdAssetsNames200Ok> postCorporationsCorporationIdAssetsNames( final List<Long> listItemIds,
-	                                                                                             final Credential credential ) {
+	                                                                                                     final Credential credential ) {
 		NeoComLogger.enter();
 		try {
 			final Response<List<PostCorporationsCorporationIdAssetsNames200Ok>> assetsApiResponse = this.retrofitFactory
@@ -437,9 +462,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return this.storeCacheManager.accessGroup( groupId ).blockingGet();
 	}
 
-	//	public Future<MarketDataSet> searchMarketData( final int itemId, final EMarketSide side ) {
-//		return Futures.immediateFuture( new MarketDataSet( itemId, side ) );
-//	}
 	@Deprecated
 	public EsiLocation searchLocation4Id( final Long locationId ) {
 		return null;
@@ -462,9 +484,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return racesCache.get( identifier );
 	}
 
-	// - M I N I N G
-
-	// - S D E   D A T A
 	public GetUniverseStructuresStructureIdOk searchStructureById( final Long structureId, final Credential credential ) {
 		final String refreshToken = credential.getRefreshToken();
 		final int identifier = credential.getAccountId();
@@ -556,48 +575,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		return new ArrayList<>();
 	}
 
-//	/**
-//	 * Search for the item on the current downloaded items cache. If not found then go for it to the network.
-//	 */
-//	public GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId ) {
-//		final GetUniverseTypesTypeIdOk item = this.getUniverseTypeById( typeId, "tranquility" );
-//		//		return getUniverseTypeById("tranquility", typeId);
-//		return item;
-//	}
-//
-//	@Deprecated
-//	private GetUniverseTypesTypeIdOk getUniverseTypeById( final int typeId, final String server ) {
-//		//		logger.info(">> [ESINetworkManagerMock.getUniverseTypeById]");
-//		final DateTime startTimePoint = DateTime.now();
-//		try {
-//			// Create the request to be returned so it can be called.
-//			final Response<GetUniverseTypesTypeIdOk> itemListResponse = retrofitFactory.accessNoAuthRetrofit()
-//					.create( UniverseApi.class )
-//					.getUniverseTypesTypeId( typeId
-//							, "en-us"
-//							, server
-//							, null
-//							, null )
-//					.execute();
-//			if (!itemListResponse.isSuccessful()) {
-//				return null;
-//			} else {
-//				logger.info( "-- [ESIDataProvider.getUniverseTypeById]> Downloading: {}-{}"
-//						, itemListResponse.body().getTypeId()
-//						, itemListResponse.body().getName() );
-//				return itemListResponse.body();
-//			}
-//		} catch (IOException ioe) {
-//			ioe.printStackTrace();
-//		} catch (RuntimeException runtime) {
-//			runtime.printStackTrace();
-//		} finally {
-//			//			logger.info("<< [ESINetworkManager.getUniverseTypeById]> [TIMING] Full elapsed: {}"
-//			//					, new Duration(startTimePoint, DateTime.now()).getMillis() + "ms");
-//		}
-//		return null;
-//	}
-
 	private List<GetUniverseRaces200Ok> getUniverseRaces( final String datasource ) {
 		NeoComLogger.enter();
 		try {
@@ -615,51 +592,6 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 		}
 		return new ArrayList<>();
 	}
-
-//	/**
-//	 * Aggregates ids for some of the assets until it reached 10 and then posts and update for the whole batch.
-//	 */
-//	private void downloadAssetEveName( final long assetId, final Credential credential ) {
-//		this.id4Names.add( assetId );
-//		if (this.id4Names.size() > 9) {
-//			postUserLabelNameDownload( credential );
-//			this.id4Names.clear();
-//		}
-//	}
-//
-//	private void postUserLabelNameDownload( final Credential credential ) {
-//		// Launch the download of the names block.
-//		final List<Long> idList = new ArrayList<>();
-//		idList.addAll( id4Names );
-//
-//		// TODO - Use a local executor for this tasks or even better remove executors at all.
-//		private static final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
-//		backgroundExecutor.submit(task);
-//
-//		GlobalDataManager.getSingleton().submitJob( () -> {
-//			// Copy yhe list of assets to local to allow parallel use.
-//			final List<Long> localIdList = new ArrayList<>();
-//			localIdList.addAll( idList );
-//			try {
-//				final List<PostCharactersCharacterIdAssetsNames200Ok> itemNames = this.postCharactersCharacterIdAssetsNames(
-//						credential.getAccountId(), localIdList, credential.getRefreshToken(), null );
-//				for (final PostCharactersCharacterIdAssetsNames200Ok name : itemNames) {
-//					final List<NeoComAsset> assetsMatch = GlobalDataManager.getSingleton().getNeocomDBHelper().getAssetDao()
-//							.queryForEq( "assetId",
-//									name.getItemId() );
-//					for (NeoComAsset asset : assetsMatch) {
-//						logger.info( "-- [DownloadManager.downloadAssetEveName]> Setting UserLabel name {} for asset {}.", name
-//										.getName(),
-//								name.getItemId() );
-//						asset.setUserLabel( name.getName() )
-//								.store();
-//					}
-//				}
-//			} catch (SQLException sqle) {
-//				sqle.printStackTrace();
-//			}
-//		} );
-//	}
 
 	// - B U I L D E R
 	public static class Builder {
@@ -711,6 +643,5 @@ public class ESIDataProvider extends ESIUniverseDataProvider {
 			this.onConstruction.storeCacheManager = storeCacheManager;
 			return this;
 		}
-
 	}
 }

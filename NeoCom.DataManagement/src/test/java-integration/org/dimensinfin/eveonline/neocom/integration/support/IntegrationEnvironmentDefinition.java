@@ -5,13 +5,14 @@ import java.sql.SQLException;
 
 import com.j256.ormlite.db.PostgresDatabaseType;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.containers.output.Slf4jLogConsumer;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
@@ -29,11 +30,19 @@ import org.dimensinfin.eveonline.neocom.support.SBFileSystemAdapter;
 
 public class IntegrationEnvironmentDefinition {
 	protected static final Logger logger = LoggerFactory.getLogger( IntegrationEnvironmentDefinition.class );
+	protected static final Integer TEST_CORPORATION_IDENTIFIER = 98384726;
+	protected static final Integer TEST_ITEM_IDENTIFIER = 34;
+	protected static final String TEST_ITEM_NAME="Tritanium";
+	protected static final int DEFAULT_CHARACTER_IDENTIFIER = 92223647;
+	protected static final int DEFAULT_PLANET_IDENTIFIER = 40208304;
+	protected static final int DEFAULT_SCHEMATIC = 127;
+
+	protected static final JdbcConnectionSource connectionSource;
 	private static final int ESI_UNITTESTING_PORT = 6090;
 	private static final GenericContainer<?> esisimulator;
 	private static final PostgreSQLContainer postgres;
 	private static final String connectionUrl;
-	private static final JdbcConnectionSource connectionSource;
+	protected static Credential credential4Test;
 
 	static {
 		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
@@ -52,8 +61,6 @@ public class IntegrationEnvironmentDefinition {
 				.withUsername( "neocom" )
 				.withPassword( "01.Alpha" );
 		postgres.start();
-		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer( logger );
-		esisimulator.followOutput( logConsumer );
 		connectionUrl = "jdbc:postgresql://"
 				+ postgres.getContainerIpAddress()
 				+ ":" + postgres.getMappedPort( PostgreSQLContainer.POSTGRESQL_PORT )
@@ -70,7 +77,14 @@ public class IntegrationEnvironmentDefinition {
 		connectionSource = connectionSource1;
 	}
 
-	protected static Credential credential4Test;
+	@BeforeAll
+	public static void beforeAllCredential() {
+		credential4Test = Mockito.mock( Credential.class );
+		Mockito.when( credential4Test.getAccountId() ).thenReturn( 92223647 );
+		Mockito.when( credential4Test.getDataSource() ).thenReturn( "tranquility" );
+		Mockito.when( credential4Test.setMiningResourcesEstimatedValue( Mockito.anyDouble() ) ).thenReturn( credential4Test );
+	}
+
 	protected SBConfigurationProvider itConfigurationProvider;
 	protected IFileSystem itFileSystemAdapter;
 	protected IntegrationNeoComDBAdapter itNeoComIntegrationDBAdapter;
@@ -81,6 +95,11 @@ public class IntegrationEnvironmentDefinition {
 	protected ESIDataProvider esiDataProvider;
 	protected LocationCatalogService itLocationCatalogService;
 	protected RetrofitFactory itRetrofitFactory;
+
+	@BeforeEach
+	public void beforeAllSetupEnvironment() throws IOException, SQLException {
+		this.setupEnvironment();
+	}
 
 	protected void setupEnvironment() throws SQLException, IOException {
 		credential4Test = Mockito.mock( Credential.class );
@@ -132,7 +151,6 @@ public class IntegrationEnvironmentDefinition {
 		this.itLocationCatalogService = new LocationCatalogService.Builder()
 				.withConfigurationProvider( this.itConfigurationProvider )
 				.withFileSystemAdapter( this.itFileSystemAdapter )
-//				.withCredential( credential4Test )
 				.withESIUniverseDataProvider( this.itEsiUniverseDataProvider )
 				.withRetrofitFactory( this.itRetrofitFactory )
 				.build();

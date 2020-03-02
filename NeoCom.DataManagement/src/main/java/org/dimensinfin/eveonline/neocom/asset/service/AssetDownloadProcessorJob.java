@@ -35,9 +35,22 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @NeoComComponent
 public class AssetDownloadProcessorJob extends Job {
-	//	private final List<Long> id4Names = new ArrayList<>();
+	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new HashMap<>( 7 );
+
+	static {
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG1, 1 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG2, 2 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG3, 3 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG4, 4 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG5, 5 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG6, 6 );
+		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG7, 7 );
+	}
+
+	private final Map<Long, NeoAsset> convertedAssetList = new HashMap<>();
 	// - I N T E R N A L   W O R K   F I E L D S
 	private Map<Long, EsiAssets200Ok> assetsMap = new HashMap<>();
+	//	private GetCorporationsCorporationIdDivisionsOk corporationDivisions;
 	private double miningResourceValue = 0.0;
 	// -  C O M P O N E N T S
 	private Credential credential;
@@ -117,7 +130,9 @@ public class AssetDownloadProcessorJob extends Job {
 
 	@LogEnterExit
 	protected List<NeoAsset> downloadCorporationAssets( final Integer corporationId ) {
-		final List<NeoAsset> results = new ArrayList<>();
+		this.convertedAssetList.clear();
+//		this.corporationDivisions = this.esiDataProvider.getCorporationsCorporationIdDivisions( corporationId, this.credential );
+//		Objects.requireNonNull( this.corporationDivisions );
 		final List<GetCorporationsCorporationIdAssets200Ok> assetOkList = this.esiDataProvider
 				.getCorporationsCorporationIdAssets( this.credential, corporationId );
 		this.assetsMap = this.transformCorporation200OkAssets( assetOkList );
@@ -127,21 +142,23 @@ public class AssetDownloadProcessorJob extends Job {
 				// Convert the asset from the OK format to a MVC compatible structure.
 				final NeoAsset targetAsset = new EsiAssets200Ok2NeoAssetConverter().convert( assetOk );
 				targetAsset.setOwnerId( corporationId );
-				// - P A R E N T   P R O C E S S I N G
-				this.parentProcessing( targetAsset );
 				// - L O C A T I O N   P R O C E S S I N G
 				this.locationProcessing( targetAsset );
 				// - U S E R   L A B E L
 				if (targetAsset.isShip() || targetAsset.isContainer())
 					targetAsset.setUserLabel( this.downloadCorporationAssetEveName( targetAsset.getAssetId() ) );
 
-				results.add( targetAsset );
+				convertedAssetList.put( targetAsset.getAssetId(), targetAsset );
 			} catch (final RuntimeException rtex) {
 				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
 				rtex.printStackTrace();
 			}
 		}
-		return results;
+		for (final NeoAsset asset : this.convertedAssetList.values()) {
+			// - P A R E N T   P R O C E S S I N G
+			this.parentProcessing( asset );
+		}
+		return new ArrayList<>( convertedAssetList.values() );
 	}
 
 	/**
@@ -158,14 +175,9 @@ public class AssetDownloadProcessorJob extends Job {
 		return null;
 	}
 
-//	/**
-//	 * This method iterates the list of assets from the esi server and stores them into a map.
-//	 *
-//	 * @param assetList list of assets from the esi server.
-//	 */
-//	private void createPilotAssetMap( final List<GetCharactersCharacterIdAssets200Ok> assetList ) {
-//		for (final GetCharactersCharacterIdAssets200Ok assetOk : assetList)
-//			this.assetsMap.put( assetOk.getItemId(), assetOk );
+//	private String getDivisionName( final EsiAssets200Ok.LocationFlagEnum locationFlag,
+//	                                final List<GetCorporationsCorporationIdDivisionsOkHangar> hangarNames ) {
+//		return hangarNames.get( officeContainerLocationFlags.get( locationFlag ) ).getName();
 //	}
 
 	private boolean isMiningResource( final NeoAsset asset2Test ) {
@@ -174,6 +186,10 @@ public class AssetDownloadProcessorJob extends Job {
 				(asset2Test.getGroupName().equalsIgnoreCase( "Mineral" ))) return true;
 		return false;
 	}
+
+//	private boolean isOfficeContainerLocation( final NeoAsset target ) {
+//		return officeContainerLocationFlags.contains( target.getLocationId().getLocationFlag() );
+//	}
 
 	private void locationProcessing( final NeoAsset targetAsset ) {
 		try {
@@ -207,9 +223,9 @@ public class AssetDownloadProcessorJob extends Job {
 	private void parentProcessing( final NeoAsset targetAsset ) {
 		// If the asset has a parent identifier, search for it on the asset map.
 		if (targetAsset.hasParentContainer()) {
-			final EsiAssets200Ok hit = this.assetsMap.get( targetAsset.getParentContainerId() );
+			final NeoAsset hit = this.convertedAssetList.get( targetAsset.getParentContainerId() );
 			if (null != hit)
-				targetAsset.setParentContainer( new EsiAssets200Ok2NeoAssetConverter().convert( hit ) );
+				targetAsset.setParentContainer( hit );
 		}
 	}
 

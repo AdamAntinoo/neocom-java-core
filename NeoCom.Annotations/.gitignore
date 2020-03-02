@@ -1,0 +1,4 @@
+# - Ignore compilation and generated files
+build/
+coverage/
+out/
