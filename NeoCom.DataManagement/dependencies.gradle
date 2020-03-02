@@ -17,14 +17,14 @@ dependencies {
 
 // - N E O C O M   L I B R A R I E S
 dependencies {
-    compileOnly 'org.dimensinfin:CoreBase.core:3.2.0'
-    compileOnly 'org.dimensinfin:ESI.SwaggerApi:4.16.0'
-    compileOnly 'org.dimensinfin:NeoCom.Annotations:0.19.0'
+    compileOnly files('libs/CoreBase.core-3.2.0.jar')
+    compileOnly files('libs/ESI.SwaggerApi-4.18.0.jar')
+    compileOnly files('libs/NeoCom.Annotations-0.19.0.jar')
 //    implementation project (':NeoCom.Annotations')
 }
 
 dependencies {
-     // C A C H E
+    // C A C H E
     implementation "com.nytimes.android:store3:$cacheVersion" // Cache and store
     implementation "com.nytimes.android:cache3:$cacheVersion"
     implementation "com.nytimes.android:middleware3:$cacheVersion"

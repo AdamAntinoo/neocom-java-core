@@ -56,7 +56,7 @@ dependencies {
     implementation 'com.google.auto.service:auto-service-annotations:1.0-rc6'
     implementation 'com.squareup:javapoet:1.9.0'
 }
-// - N E O C O M   L I B R A R I E S
+// - N E O C O M   L I B R A R I E SB
 dependencies {
-    implementation 'org.dimensinfin:CoreBase.core:3.2.0'
+    compileOnly files('libs/CoreBase.core-3.2.0.jar')
 }
