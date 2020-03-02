@@ -5,7 +5,7 @@ public class FacilityGeoPosition {
 	private float longitude = 0.0F;
 
 	public float getLatitude() {
-		return latitude;
+		return this.latitude;
 	}
 
 	public FacilityGeoPosition setLatitude( final float latitude ) {
@@ -14,12 +14,12 @@ public class FacilityGeoPosition {
 	}
 
 	public FacilityGeoPosition setLatitude( final double latitude ) {
-		this.latitude = Double.valueOf( latitude ).floatValue();
+		this.latitude = (float) latitude;
 		return this;
 	}
 
 	public float getLongitude() {
-		return longitude;
+		return this.longitude;
 	}
 
 	public FacilityGeoPosition setLongitude( final float longitude ) {
@@ -28,7 +28,7 @@ public class FacilityGeoPosition {
 	}
 
 	public FacilityGeoPosition setLongitude( final double longitude ) {
-		this.longitude = Double.valueOf( longitude ).floatValue();
+		this.longitude = (float) longitude;
 		return this;
 	}
 }

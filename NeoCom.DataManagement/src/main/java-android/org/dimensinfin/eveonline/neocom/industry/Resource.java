@@ -2,11 +2,16 @@ package org.dimensinfin.eveonline.neocom.industry;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.dimensinfin.eveonline.neocom.constant.ModelWideConstants;
 import org.dimensinfin.eveonline.neocom.core.IAggregableItem;
-import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.domain.IItemFacet;
 import org.dimensinfin.eveonline.neocom.domain.NeoComNode;
+import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 
 /**
  * The class defines the basic stack of some type of item. It will allow the aggregation of more of the same
@@ -32,37 +37,19 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	// - C O N S T R U C T O R S
 	public Resource( final int typeId ) {
 		super();
-		this.esiItem = new NeoItem(typeId);
-		Objects.requireNonNull(this.esiItem);
+		this.esiItem = new NeoItem( typeId );
+		Objects.requireNonNull( this.esiItem );
 		this.baseQty = 0;
 	}
 
 	public Resource( final int typeId, final int newQty ) {
-		this(typeId);
+		this( typeId );
 		this.baseQty = newQty;
 	}
 
 	public Resource( final int typeId, final int newQty, final int stackSize ) {
-		this(typeId, newQty);
+		this( typeId, newQty );
 		this.stackSize = stackSize;
-	}
-
-	public int add( final int count ) {
-		this.baseQty += count;
-		return this.baseQty;
-	}
-
-	/**
-	 * Adds the quantities of two resources of the same type. On this moment the original resource losses the
-	 * stack values and the equivalent quantity is calculated before adding the new quantity calculated exactly
-	 * on the same way. The final result is the total quantity but with a stack size of one.
-	 */
-	public int addition( final Resource newResource ) {
-		int newqty = this.getBaseQuantity() * this.getStackSize();
-		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
-		this.baseQty = newqty;
-		this.stackSize = 1;
-		return this.baseQty;
 	}
 
 	public int getBaseQuantity() {
@@ -87,7 +74,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public NeoItem getItem() {
-//		if (null == this.esiItem) this.esiItem = new NeoItem(this.typeId);
 		return this.esiItem;
 	}
 
@@ -110,25 +96,8 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	}
 
 	public int getTypeId() {
-		Objects.requireNonNull(this.esiItem);
+		Objects.requireNonNull( this.esiItem );
 		return this.esiItem.getTypeId();
-	}
-
-	public void setAdaptiveStackSize( final int size ) {
-		this.setStackSize(size);
-		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Blueprint)) {
-			if (this.getItem().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechII)) {
-				final double stack = Math.ceil(size / 10d);
-				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
-			}
-			if (this.getItem().getTech().equalsIgnoreCase(ModelWideConstants.eveglobal.TechI)) {
-				final double stack = Math.ceil(size / 300d);
-				this.setStackSize(Math.max(new Double(stack).intValue(), 1));
-			}
-		}
-		if (this.getItem().getCategoryName().equalsIgnoreCase(ModelWideConstants.eveglobal.Skill)) {
-			this.setStackSize(1);
-		}
 	}
 
 	/**
@@ -139,8 +108,6 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 	public int getQuantity() {
 		return this.getBaseQuantity() * stackSize;
 	}
-
-	// - I A G G R E G A B L E I T E M
 
 	public Resource setQuantity( final int newQuantity ) {
 		baseQty = newQuantity;
@@ -157,16 +124,87 @@ public class Resource extends NeoComNode implements IAggregableItem, IItemFacet 
 		return this.getItem().getPrice();
 	}
 
+	// - I A G G R E G A B L E I T E M
+
+	public void setAdaptiveStackSize( final int size ) {
+		this.setStackSize( size );
+		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Blueprint )) {
+			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechII )) {
+				final double stack = Math.ceil( size / 10d );
+				this.setStackSize( Math.max( (int) stack, 1 ) );
+			}
+			if (this.getItem().getTech().equalsIgnoreCase( ModelWideConstants.eveglobal.TechI )) {
+				final double stack = Math.ceil( size / 300d );
+				this.setStackSize( Math.max( (int) stack, 1 ) );
+			}
+		}
+		if (this.getItem().getCategoryName().equalsIgnoreCase( ModelWideConstants.eveglobal.Skill )) {
+			this.setStackSize( 1 );
+		}
+	}
+
+	public int add( final int count ) {
+		this.baseQty += count;
+		return this.baseQty;
+	}
+
+	/**
+	 * Adds the quantities of two resources of the same type. On this moment the original resource losses the
+	 * stack values and the equivalent quantity is calculated before adding the new quantity calculated exactly
+	 * on the same way. The final result is the total quantity but with a stack size of one.
+	 */
+	public int addition( final Resource newResource ) {
+		int newqty = this.getBaseQuantity() * this.getStackSize();
+		newqty += newResource.getBaseQuantity() * newResource.getStackSize();
+		this.baseQty = newqty;
+		this.stackSize = 1;
+		return this.baseQty;
+	}
+
 	// - C O R E
 	@Override
 	public String toString() {
-		final StringBuffer buffer = new StringBuffer("Resource [");
-		buffer.append("[").append(this.getCategory()).append("] ");
-		buffer.append(getItem().getName()).append(" x").append(baseQty).append(" ");
-		buffer.append("stack: ").append(stackSize).append(" ");
-		buffer.append("total: ").append(this.getQuantity()).append(" ");
-		buffer.append("#").append(this.getTypeId()).append(" ");
-		buffer.append("]");
-		return buffer.toString();
+		return new ToStringBuilder( this )
+				.append( "[" ).append( this.getCategory() ).append( "] " )
+				.append( getItem().getName() ).append( " x" ).append( baseQty ).append( " " )
+				.append( "stack: ", stackSize ).append( " " )
+				.append( "total: ", this.getQuantity() ).append( " " )
+				.append( "#" ).append( this.getTypeId() ).append( " " )
+				.append( "]" )
+				.toString();
+	}
+
+	public String toStringJson() {
+		return new ToStringBuilder( this, ToStringStyle.JSON_STYLE )
+				.append( "baseQty", baseQty )
+				.append( "stackSize", stackSize )
+				.append( "damage", damage )
+				.append( "esiItem", esiItem )
+				.toString();
+	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final Resource resource = (Resource) o;
+		return new EqualsBuilder()
+				.appendSuper( super.equals( o ) )
+				.append( this.baseQty, resource.baseQty )
+				.append( this.stackSize, resource.stackSize )
+				.append( this.damage, resource.damage )
+				.append( this.esiItem, resource.esiItem )
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder( 17, 37 )
+				.appendSuper( super.hashCode() )
+				.append( this.baseQty )
+				.append( this.stackSize )
+				.append( this.damage )
+				.append( this.esiItem )
+				.toHashCode();
 	}
 }

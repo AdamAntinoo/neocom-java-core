@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.service.scheduler.domain.CronScheduleGen
  * minutes - hours
  */
 public class HourlyCronScheduleGenerator implements CronScheduleGenerator {
-	public HourlyCronScheduleGenerator() {}
+	private HourlyCronScheduleGenerator() {}
 
 	/**
 	 * Checks if the cron pattern of the schedule matches to the HOUR:MINUTE combination of the current system time.
@@ -28,58 +28,43 @@ public class HourlyCronScheduleGenerator implements CronScheduleGenerator {
 	 * @return true if the current time matches on this pattern.
 	 */
 	public boolean match( final String schedule ) {
-		if (this.checkHourMatch( schedule, this.getHourlySchedule( schedule ) ))
-			if (this.checkMinuteMatch( schedule, this.getMinuteSchedule( schedule ) )) return true;
-			else return false;
+		if (this.checkHourMatch( this.getHourlySchedule( schedule ) ))
+			return (this.checkMinuteMatch( this.getMinuteSchedule( schedule ) ));
 		else return false;
 	}
 
-	private String getHourlySchedule( final String schedule ) {
-		final String[] schedules = schedule.split( "-" );
-		if (schedules.length > 1)
-			return schedules[1].trim();
-		else return "*";
-	}
-
-	private String getMinuteSchedule( final String schedule ) {
-		final String[] schedules = schedule.split( "-" );
-		if (schedules.length > 0)
-			return schedules[0].trim();
-		else return "*";
-	}
-
-	private boolean checkHourMatch( final String schedule, final String scheduleHour ) {
-		final Integer hour = LocalTime.now().getHourOfDay();
+	private boolean checkHourMatch( final String scheduleHour ) {
+		final int hour = LocalTime.now().getHourOfDay();
 		if (scheduleHour.startsWith( "*" )) return true;
 		if (scheduleHour.contains( "/" )) {
 			final String[] tickGenerator = scheduleHour.split( "/" );
 			final List<Integer> ticks = this.generateHourTicks( Integer.parseInt( tickGenerator[0] ),
 					Integer.parseInt( tickGenerator[1] ) );
 			for (Integer tick : ticks)
-				if (tick == hour) return true;
+				if (tick.equals( hour )) return true;
 			return false;
 		}
 		final String[] ticks = scheduleHour.split( "," );
-		for (int i = 0; i < ticks.length; i++) {
-			if (hour == Integer.parseInt( ticks[i].trim() )) return true;
+		for (final String tick : ticks) {
+			if (hour == Integer.parseInt( tick.trim() )) return true;
 		}
 		return false;
 	}
 
-	private boolean checkMinuteMatch( final String schedule, final String scheduleMinute ) {
-		final Integer minute = LocalTime.now().getMinuteOfHour();
+	private boolean checkMinuteMatch( final String scheduleMinute ) {
+		final int minute = LocalTime.now().getMinuteOfHour();
 		if (scheduleMinute.startsWith( "*" )) return true;
 		if (scheduleMinute.contains( "/" )) {
 			final String[] tickGenerator = scheduleMinute.split( "/" );
 			final List<Integer> ticks = this.generateMinuteTicks( Integer.parseInt( tickGenerator[0] ),
 					Integer.parseInt( tickGenerator[1] ) );
 			for (Integer tick : ticks)
-				if (tick == minute) return true;
+				if (tick.equals( minute )) return true;
 			return false;
 		}
 		final String[] ticks = scheduleMinute.split( "," );
-		for (int i = 0; i < ticks.length; i++) {
-			if (minute == Integer.parseInt( ticks[i].trim() )) return true;
+		for (final String tick : ticks) {
+			if (minute == Integer.parseInt( tick.trim() )) return true;
 		}
 		return false;
 	}
@@ -88,8 +73,8 @@ public class HourlyCronScheduleGenerator implements CronScheduleGenerator {
 		List<Integer> result = new ArrayList<>();
 		result.add( start );
 		int counter = 1;
-		while ((start + every * counter) <= (start+24)) {
-			result.add( (start + every * counter ) % 24);
+		while ((start + every * counter) <= (start + 24)) {
+			result.add( (start + every * counter) % 24 );
 			counter++;
 		}
 		return result;
@@ -104,6 +89,20 @@ public class HourlyCronScheduleGenerator implements CronScheduleGenerator {
 			counter++;
 		}
 		return result;
+	}
+
+	private String getHourlySchedule( final String schedule ) {
+		final String[] schedules = schedule.split( "-" );
+		if (schedules.length > 1)
+			return schedules[1].trim();
+		else return "*";
+	}
+
+	private String getMinuteSchedule( final String schedule ) {
+		final String[] schedules = schedule.split( "-" );
+		if (schedules.length > 0)
+			return schedules[0].trim();
+		else return "*";
 	}
 
 	// - B U I L D E R

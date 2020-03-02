@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
+
 public class SBRawStatement extends RawStatement {
     private PreparedStatement prepStmt;
     private ResultSet cursor;
@@ -17,10 +19,7 @@ public class SBRawStatement extends RawStatement {
                 this.prepStmt.setString(i + 1, parameters[i]);
             }
             this.cursor = this.prepStmt.executeQuery();
-            if (null == this.cursor)
-                throw new SQLException("Invalid statement when processing query: " + query);
-        } else
-            throw new SQLException("No valid connection to database to create statement. {}", query);
+        } else throw new SQLException("No valid connection to database to create statement. {}", query);
     }
 
     @Override
@@ -61,10 +60,11 @@ public class SBRawStatement extends RawStatement {
 
     @Override
     public boolean isLast() {
+        if ( null == this.cursor)return true;
         try {
-            return cursor.isLast();
+            return this.cursor.isLast();
         } catch (SQLException sqle) {
-            return false;
+            return true;
         }
     }
 
@@ -127,6 +127,7 @@ public class SBRawStatement extends RawStatement {
             if (null != this.cursor) this.cursor.close();
             if (null != this.prepStmt) this.prepStmt.close();
         } catch (SQLException sqle) {
+            NeoComLogger.error( sqle );
             sqle.printStackTrace();
         }
     }
