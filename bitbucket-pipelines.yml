@@ -13,7 +13,9 @@ definitions:
           - gradle
           - sonar
         script:
-          - ./gradlew build sonarqube
+          - ./gradlew build
+          - ./gradlew jacocoTestReport
+          - ./gradlew sonarqube
         artifacts:
           - build/libs/**
 
