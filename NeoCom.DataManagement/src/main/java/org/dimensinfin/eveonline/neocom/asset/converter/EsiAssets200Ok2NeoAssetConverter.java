@@ -45,7 +45,6 @@ public class EsiAssets200Ok2NeoAssetConverter implements Converter<EsiAssets200O
 
 	@Override
 	public NeoAsset convert( final EsiAssets200Ok esiAsset ) {
-//		final EsiAssets200Ok esiAsset = new GetCorporationsCorporationAsset2EsiAssets200OkConverter().convert( esiAssetOk );
 		final NeoAsset newAsset = new NeoAsset();
 		newAsset.setAssetId( esiAsset.getItemId() );
 		newAsset.setAssetDelegate( esiAsset );

@@ -155,7 +155,5 @@ public class LocationIdentifierTest {
 				.build();
 		identifier.setType( LocationIdentifierType.CONTAINER );
 		Assertions.assertEquals( LocationIdentifierType.CONTAINER, identifier.getType() );
-		identifier.setStructureIdentifier( 7654321L );
-//		Assertions.assertEquals( 7654321L, this.identifier4Test.getSpaceIdentifier() );
 	}
 }

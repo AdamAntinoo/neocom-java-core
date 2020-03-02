@@ -14,7 +14,7 @@ class HourlyCronScheduleGeneratorTest {
 
 	@BeforeEach
 	void setUp() {
-		this.generator4Test = new HourlyCronScheduleGenerator();
+		this.generator4Test = new HourlyCronScheduleGenerator.Builder().build();
 	}
 
 	@AfterEach
@@ -24,7 +24,7 @@ class HourlyCronScheduleGeneratorTest {
 
 	@Test
 	void constructor() {
-		final HourlyCronScheduleGenerator generator = new HourlyCronScheduleGenerator();
+		final HourlyCronScheduleGenerator generator = new HourlyCronScheduleGenerator.Builder().build();
 		Assertions.assertNotNull( generator );
 	}
 

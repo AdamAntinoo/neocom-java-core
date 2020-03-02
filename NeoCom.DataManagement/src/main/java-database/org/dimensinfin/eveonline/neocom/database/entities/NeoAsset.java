@@ -199,8 +199,9 @@ public class NeoAsset extends UpdatableEntity {
 
 	public boolean isOffice() {
 		if (null != this.assetDelegate)
-			return this.assetDelegate.getLocationFlag() == EsiAssets200Ok.LocationFlagEnum.OFFICEFOLDER;
-		else return false;
+			return (this.assetDelegate.getLocationFlag() == EsiAssets200Ok.LocationFlagEnum.OFFICEFOLDER) ||
+					(this.assetDelegate.getLocationFlag() == EsiAssets200Ok.LocationFlagEnum.IMPOUNDED);
+		return false;
 	}
 
 	public NeoAsset setAssetDelegate( final EsiAssets200Ok assetDelegate ) {
