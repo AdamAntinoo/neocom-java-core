@@ -53,7 +53,6 @@ public class EsiAssets200Ok2NeoAssetConverter implements Converter<EsiAssets200O
 		if (newAsset.getCategoryName().equalsIgnoreCase( AssetTypes.SHIP.getTypeName() ))
 			newAsset.setShipFlag( true );
 		newAsset.setBlueprintFlag( this.checkIfBlueprint( newAsset ) );
-		newAsset.setContainerFlag( this.checkIfContainer( newAsset ) );
 		if (esiAsset.getLocationId() > 61E6) // The asset is contained into another asset. Set the parent.
 			newAsset.setParentContainerId( esiAsset.getLocationId() );
 
@@ -63,6 +62,7 @@ public class EsiAssets200Ok2NeoAssetConverter implements Converter<EsiAssets200O
 				.withLocationFlag( esiAsset.getLocationFlag() )
 				.withLocationType( esiAsset.getLocationType() )
 				.build() );
+		newAsset.setContainerFlag( this.checkIfContainer( newAsset ) ); // Container detection requires the location identifier.
 		return newAsset;
 	}
 
@@ -90,6 +90,9 @@ public class EsiAssets200Ok2NeoAssetConverter implements Converter<EsiAssets200O
 		if (containerIds.contains( asset.getTypeId() )) return true;
 		if (asset.isOffice()) return true;
 		if (asset.getName().contains( "Container" )) return true;
-		return asset.getName().contains( "Wrap" );
+		if (asset.getName().contains( "Wrap" )) return true;
+		if (null != asset.getLocationId())
+			return asset.getLocationId().getLocationFlag().equals( EsiAssets200Ok.LocationFlagEnum.IMPOUNDED );
+		return false;
 	}
 }
