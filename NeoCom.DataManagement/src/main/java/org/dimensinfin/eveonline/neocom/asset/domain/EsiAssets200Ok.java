@@ -438,7 +438,7 @@ public class EsiAssets200Ok {
 		return this.locationFlag;
 	}
 
-	public LocationTypeEnum getLocationType() {
+	public EsiAssets200Ok.LocationTypeEnum getLocationType() {
 		return this.locationType;
 	}
 
@@ -476,13 +476,11 @@ public class EsiAssets200Ok {
 		}
 
 		public EsiAssets200Ok.Builder withLocationFlag( final GetCorporationsCorporationIdAssets200Ok.LocationFlagEnum locationFlag ) {
-			Objects.requireNonNull( locationFlag );
 			this.onConstruction.locationFlag = new GetCorporationsLocationFlag2EsiAssets200OkLocationFlag().convert( locationFlag );
 			return this;
 		}
 
 		public EsiAssets200Ok.Builder withLocationFlag( final GetCharactersCharacterIdAssets200Ok.LocationFlagEnum locationFlag ) {
-			Objects.requireNonNull( locationFlag );
 			this.onConstruction.locationFlag = new GetCharactersLocationFlag2EsiAssets200OkLocationFlag().convert( locationFlag );
 			return this;
 		}
@@ -494,13 +492,11 @@ public class EsiAssets200Ok {
 		}
 
 		public EsiAssets200Ok.Builder withLocationType( final GetCharactersCharacterIdAssets200Ok.LocationTypeEnum locationType ) {
-			Objects.requireNonNull( locationType );
 			this.onConstruction.locationType = new GetCharactersLocationType2EsiAssets200OkLocationType().convert( locationType );
 			return this;
 		}
 
 		public EsiAssets200Ok.Builder withLocationType( final GetCorporationsCorporationIdAssets200Ok.LocationTypeEnum locationType ) {
-			Objects.requireNonNull( locationType );
 			this.onConstruction.locationType = new GetCorporationLocationType2EsiAssets200OkLocationType().convert( locationType );
 			return this;
 		}

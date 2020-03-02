@@ -215,7 +215,7 @@ public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
 		final GetCorporationsCorporationIdDivisionsOk divisions = this.esiDataProvider
 				.getCorporationsCorporationIdDivisions( corporationId, credential4Test );
 		Assertions.assertNotNull( divisions );
-		Assertions.assertEquals( "Planetary", divisions.getHangar().get( 0 ) );
+		Assertions.assertEquals( "Planetary", divisions.getHangar().get( 0 ).getName() );
 	}
 
 	@Test
@@ -241,7 +241,7 @@ public class ESIDataProviderIT extends IntegrationEnvironmentDefinition {
 
 		final GetStatusOk status = provider.getUniverseStatus( "Tranquility" );
 		Assertions.assertNotNull( status );
-		Assertions.assertTrue( Math.abs( 28184 - status.getPlayers() ) < 10000 );
+		Assertions.assertTrue( status.getPlayers() > 100 );
 	}
 
 	@Test

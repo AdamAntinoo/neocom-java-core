@@ -8,7 +8,7 @@ import org.dimensinfin.eveonline.neocom.domain.NeoItem;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 
 import retrofit2.Converter;
-
+@Deprecated
 public class GetCharactersCharacterIdAsset2NeoAssetConverter implements Converter<GetCharactersCharacterIdAssets200Ok, NeoAsset> {
 	@Override
 	public NeoAsset convert( final GetCharactersCharacterIdAssets200Ok esiAssetOk ) {
