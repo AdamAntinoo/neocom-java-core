@@ -1,6 +1,6 @@
 package org.dimensinfin.eveonline.neocom.domain;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -15,7 +15,8 @@ import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
  * the definition of the structure hangars already defined on the flags.
  */
 public class LocationIdentifier {
-	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags = new HashMap<>( 7 );
+	private static final Map<EsiAssets200Ok.LocationFlagEnum, Integer> officeContainerLocationFlags =
+			new EnumMap<>( EsiAssets200Ok.LocationFlagEnum.class );
 
 	static {
 		officeContainerLocationFlags.put( EsiAssets200Ok.LocationFlagEnum.CORPSAG1, 1 );
@@ -28,8 +29,6 @@ public class LocationIdentifier {
 	}
 
 	private Long spaceIdentifier;
-	@Deprecated
-	private Long structureIdentifier;
 	private EsiAssets200Ok.LocationFlagEnum locationFlag;
 	private EsiAssets200Ok.LocationTypeEnum locationType = EsiAssets200Ok.LocationTypeEnum.OTHER;
 	private LocationIdentifierType type = LocationIdentifierType.UNKNOWN;
@@ -50,16 +49,6 @@ public class LocationIdentifier {
 
 	public LocationIdentifier setType( final LocationIdentifierType type ) {
 		this.type = type;
-		return this;
-	}
-
-	@Deprecated
-//	public Long getStructureIdentifier() {
-//		return this.structureIdentifier;
-//	}
-
-	public LocationIdentifier setStructureIdentifier( final Long structureIdentifier ) {
-		this.structureIdentifier = structureIdentifier;
 		return this;
 	}
 
@@ -90,7 +79,6 @@ public class LocationIdentifier {
 			this.type = LocationIdentifierType.STATION;
 			return;
 		}
-//		this.structureIdentifier = this.spaceIdentifier; // The location is > 61M so can be an structure.
 		if (null == this.locationType) this.locationType = EsiAssets200Ok.LocationTypeEnum.OTHER;
 		if (this.locationType == EsiAssets200Ok.LocationTypeEnum.SOLAR_SYSTEM)
 			this.type = LocationIdentifierType.SPACE;

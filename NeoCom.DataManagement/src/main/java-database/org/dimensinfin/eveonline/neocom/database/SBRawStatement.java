@@ -128,7 +128,6 @@ public class SBRawStatement extends RawStatement {
             if (null != this.prepStmt) this.prepStmt.close();
         } catch (SQLException sqle) {
             NeoComLogger.error( sqle );
-            sqle.printStackTrace();
         }
     }
 }

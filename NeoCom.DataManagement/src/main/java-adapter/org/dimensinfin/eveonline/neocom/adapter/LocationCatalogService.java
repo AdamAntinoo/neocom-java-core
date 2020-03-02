@@ -229,10 +229,8 @@ public class LocationCatalogService {
 			}
 		} catch (final IOException ioe) {
 			NeoComLogger.error( "[IOException]> locating public structure: ", ioe );
-			ioe.printStackTrace();
 		} catch (final RuntimeException rte) {
 			NeoComLogger.error( "[RuntimeException]> locating public structure: ", rte );
-			rte.printStackTrace();
 		}
 		return null;
 	}
@@ -332,32 +330,31 @@ public class LocationCatalogService {
 			logger.warn( "W> [LocationCatalogService.readLocationsDataCache]> IllegalArgumentException. {}",
 					iae.getMessage() );
 		} catch (final RuntimeException rex) {
-			rex.printStackTrace();
+			NeoComLogger.error( rex );
 		} finally {
 			logger.info( "<< [LocationCatalogService.readLocationsDataCache]" );
 		}
 	}
 
 	synchronized void writeLocationsDataCache() {
-		logger.info( ">> [LocationCatalogService.writeLocationsDataCache]" );
+		NeoComLogger.enter();
 		if (this.dirtyCache) {
 			final String cacheFileName = this.configurationProvider.getResourceString( "P.cache.directory.path" ) +
 					this.configurationProvider.getResourceString( "P.cache.locationscache.filename" );
-			logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Opening cache file: {}", cacheFileName );
+			NeoComLogger.info( "Opening cache file: {}", cacheFileName );
 			try (final BufferedOutputStream buffer = new BufferedOutputStream(
 					this.fileSystemAdapter.openResource4Output( cacheFileName ) );
 			     final ObjectOutput output = new ObjectOutputStream( buffer )
 			) {
 				output.writeObject( locationCache );
 				dirtyCache = false;
-				logger.info( "-- [LocationCatalogService.writeLocationsDataCache]> Wrote Locations cache: {} entries.",
-						locationCache.size() );
+				NeoComLogger.info( "Wrote Locations cache: {} entries.", locationCache.size() + "" );
 			} catch (final FileNotFoundException fnfe) {
 				NeoComLogger.error( "FileNotFoundException.", fnfe );
 			} catch (final IOException ioe) {
 				NeoComLogger.error( "IOException.", ioe );
 			} finally {
-				logger.info( "<< [LocationCatalogService.writeLocationsDataCache]" );
+				NeoComLogger.exit();
 			}
 		}
 	}

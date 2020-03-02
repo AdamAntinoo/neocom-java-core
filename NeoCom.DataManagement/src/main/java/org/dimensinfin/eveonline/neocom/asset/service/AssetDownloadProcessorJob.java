@@ -114,7 +114,6 @@ public class AssetDownloadProcessorJob extends Job {
 				convertedAssetList.put( targetAsset.getAssetId(), targetAsset );
 			} catch (final RuntimeException rtex) {
 				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
-				rtex.printStackTrace();
 			}
 		}
 		for (final NeoAsset asset : this.convertedAssetList.values()) {
@@ -155,7 +154,6 @@ public class AssetDownloadProcessorJob extends Job {
 				// TODO - Complete the code to read the assets userLabel after all assets are processed and persisted.
 			} catch (final RuntimeException rtex) {
 				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
-				rtex.printStackTrace();
 			}
 		}
 		return results;
@@ -209,14 +207,13 @@ public class AssetDownloadProcessorJob extends Job {
 					if (null != structure) {
 						// SIDE EFFECTS. This is modifying the asset location.
 						workLocationId.setType( LocationIdentifierType.STRUCTURE );
-						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
+//						workLocationId.setStructureIdentifier( workLocationId.getSpaceIdentifier() );
 						// SIDE EFFECTS. This is modifying the asset location.
 					}
 				}
 			}
 		} catch (final RuntimeException rtex) {
 			NeoComLogger.error( rtex );
-			rtex.printStackTrace();
 		}
 	}
 
@@ -262,7 +259,6 @@ public class AssetDownloadProcessorJob extends Job {
 				this.assetRepository.persist( targetAsset );
 			} catch (final SQLException | RuntimeException sqle) {
 				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", sqle );
-				sqle.printStackTrace();
 			}
 		}
 		// - O R P H A N   L O C A T I O N   A S S E T S
