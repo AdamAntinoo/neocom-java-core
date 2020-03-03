@@ -191,7 +191,7 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 		Assertions.assertEquals( "Domain", ((SpaceSystem) spaceLocation1).getRegionName() );
 		Assertions.assertEquals( "Liela", ((SpaceSystem) spaceLocation1).getConstellationName() );
 		Assertions.assertEquals( "Avair", ((SpaceSystem) spaceLocation1).getSolarSystemName() );
-		Assertions.assertEquals( "Avair", ((StationImplementation) spaceLocation1).getStationName() );
+		Assertions.assertEquals( "Avair VII - Moon 25 - Theology Council Tribunal", ((StationImplementation) spaceLocation1).getStationName() );
 	}
 
 	public void verifyTimeStamp() {

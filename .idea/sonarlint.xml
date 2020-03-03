@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SonarLintProjectSettings">
+    <option name="bindingEnabled" value="true" />
     <option name="fileExclusions">
       <list>
         <option value="FILE:*.html" />
         <option value="DIRECTORY:NeoCom.DataManagement/src/test" />
       </list>
     </option>
+    <option name="projectKey" value="evedimensinfin_neocom-datamanagement" />
+    <option name="serverId" value="SonarCloud-DataManagement" />
   </component>
 </project>
