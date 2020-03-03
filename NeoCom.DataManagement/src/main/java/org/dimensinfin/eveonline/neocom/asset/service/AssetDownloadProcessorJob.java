@@ -28,6 +28,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCharactersCharacterIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetCorporationsCorporationIdAssets200Ok;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.PostCorporationsCorporationIdAssetsNames200Ok;
+import org.dimensinfin.eveonline.neocom.exception.ErrorInfoCatalog;
 import org.dimensinfin.eveonline.neocom.provider.ESIDataProvider;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 import org.dimensinfin.eveonline.neocom.service.scheduler.domain.Job;
@@ -94,6 +95,7 @@ public class AssetDownloadProcessorJob extends Job {
 	@LogEnterExit
 	protected List<NeoAsset> downloadCorporationAssets( final Integer corporationId ) {
 		this.convertedAssetList.clear();
+		// TODO - Add the code to connect the office names to the office assets.
 //		this.corporationDivisions = this.esiDataProvider.getCorporationsCorporationIdDivisions( corporationId, this.credential );
 //		Objects.requireNonNull( this.corporationDivisions );
 		final List<GetCorporationsCorporationIdAssets200Ok> assetOkList = this.esiDataProvider
@@ -113,7 +115,7 @@ public class AssetDownloadProcessorJob extends Job {
 
 				convertedAssetList.put( targetAsset.getAssetId(), targetAsset );
 			} catch (final RuntimeException rtex) {
-				NeoComLogger.error( "Processing asset: " + assetOk.getItemId().toString() + " - {}", rtex );
+				NeoComLogger.error( ErrorInfoCatalog.RUNTIME_PROCESSING_ASSET.getErrorMessage( assetOk.getItemId().toString() ), rtex );
 			}
 		}
 		for (final NeoAsset asset : this.convertedAssetList.values()) {
@@ -137,7 +139,7 @@ public class AssetDownloadProcessorJob extends Job {
 	 * and stored in the database we remove the old list and replace the owner of the new list to the right one.<br>
 	 */
 	@LogEnterExit
-	protected List<NeoAsset> downloadPilotAssets() throws SQLException {
+	protected List<NeoAsset> downloadPilotAssets() {
 		final List<NeoAsset> results = new ArrayList<>();
 		final List<GetCharactersCharacterIdAssets200Ok> assetOkList = this.esiDataProvider
 				.getCharactersCharacterIdAssets( credential );

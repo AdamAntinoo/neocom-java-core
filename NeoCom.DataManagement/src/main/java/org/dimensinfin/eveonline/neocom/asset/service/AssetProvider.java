@@ -60,9 +60,6 @@ public class AssetProvider {
 				.withConstellation( constellation )
 				.withSolarSystem( solarSystem )
 				.build();
-//		UNREACHABLE_LOCATION = new LocationAssetContainer.Builder()
-//				.withSpaceLocation( UNREACHABLE_SPACE_LOCATION )
-//				.build();
 	}
 
 	/**
@@ -124,7 +121,7 @@ public class AssetProvider {
 				}
 			}
 		} catch (final RuntimeException rte) {
-			rte.printStackTrace();
+			NeoComLogger.error( rte );
 		}
 		return new ArrayList<>( regions.values() );
 	}
@@ -156,7 +153,7 @@ public class AssetProvider {
 		} catch (final NoSuchElementException nsee) {
 			NeoComLogger.info( "Classification complete: {} assets", this.assetCounter + "" );
 		} catch (final RuntimeException rte) {
-			rte.printStackTrace();
+			NeoComLogger.error( rte );
 		}
 		return this.assetCounter;
 	}
@@ -259,7 +256,6 @@ public class AssetProvider {
 			NeoComLogger.info( "Classification complete: {} assets", this.assetCounter + "" );
 		} catch (final RuntimeException rtex) {
 			NeoComLogger.error( rtex );
-			rtex.printStackTrace();
 		}
 	}
 
