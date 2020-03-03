@@ -28,6 +28,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.Structure;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseSystemsSystemIdOk;
+import org.dimensinfin.eveonline.neocom.exception.NeoComRuntimeException;
 import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 
 /**
@@ -37,7 +38,6 @@ import org.dimensinfin.eveonline.neocom.service.logger.NeoComLogger;
 public class AssetProvider {
 	private static final Long UNREACHABLE_LOCATION_IDENTIFIER = -1000000L;
 	private static SpaceLocation UNREACHABLE_SPACE_LOCATION;
-//	private static LocationAssetContainer UNREACHABLE_LOCATION;
 
 	static {
 		final GetUniverseRegionsRegionIdOk region = new GetUniverseRegionsRegionIdOk();
@@ -81,6 +81,7 @@ public class AssetProvider {
 
 	private AssetProvider() {}
 
+	@Deprecated
 	public List<FacetedExpandableContainer> getRegionList() {
 		final Map<Integer, FacetedExpandableContainer<SpaceRegion, SpaceSystem>> regions = new HashMap<>();
 		try {
@@ -182,11 +183,18 @@ public class AssetProvider {
 
 	private void add2ContainerLocation( final INeoAsset asset ) {
 		final Long spaceIdentifier = asset.getLocationId().getSpaceIdentifier();
+		final Long spaceIdentifierAlt = asset.getParentContainerId();
+		if (!spaceIdentifier.equals( spaceIdentifierAlt )) throw new NeoComRuntimeException( "Identifiers are not equal." );
 		final NeoAssetAssetContainer hit = this.containersCache.computeIfAbsent( spaceIdentifier, key -> {
 			this.add2UnreachableLocation( asset );
 			return null;
 		} );
-		if (hit != null) hit.addContent( asset );
+		if (hit != null) {
+			// Check if the asset is also a container to connect the asset container.
+			final NeoAssetAssetContainer containerHit = this.containersCache.get( asset.getAssetId() );
+			if (null != containerHit) hit.addContent( containerHit );
+			else hit.addContent( asset );
+		}
 	}
 
 	private void add2SpaceLocation( final INeoAsset asset ) {
@@ -217,21 +225,18 @@ public class AssetProvider {
 	}
 
 	private void checkIfContainer( final NeoAsset asset ) {
-		if (asset.isOffice())
-			if (!this.containersCache.containsKey( asset.getAssetId() ))
-				this.containersCache.put( asset.getAssetId(),
-						new NeoAssetAssetContainer.Builder()
-								.withFace( asset ).build() );
-		if (asset.isShip())
-			if (!this.containersCache.containsKey( asset.getAssetId() ))
-				this.containersCache.put( asset.getAssetId(),
-						new Ship.Builder()
-								.withFace( asset ).build() );
-		if (asset.isContainer())
-			if (!this.containersCache.containsKey( asset.getAssetId() ))
-				this.containersCache.put( asset.getAssetId(),
-						new NeoAssetAssetContainer.Builder()
-								.withFace( asset ).build() );
+		if ((asset.isOffice()) && (!this.containersCache.containsKey( asset.getAssetId() )))
+			this.containersCache.put( asset.getAssetId(),
+					new NeoAssetAssetContainer.Builder()
+							.withFace( asset ).build() );
+		if ((asset.isShip()) && (!this.containersCache.containsKey( asset.getAssetId() )))
+			this.containersCache.put( asset.getAssetId(),
+					new Ship.Builder()
+							.withFace( asset ).build() );
+		if ((asset.isContainer()) && (!this.containersCache.containsKey( asset.getAssetId() )))
+			this.containersCache.put( asset.getAssetId(),
+					new NeoAssetAssetContainer.Builder()
+							.withFace( asset ).build() );
 	}
 
 	private void classifyAssetsByLocationInternal( final List<NeoAsset> sourceAssetList ) {
@@ -276,28 +281,10 @@ public class AssetProvider {
 					if (null != location) { // The location is a public accessible structure and we can add it to the list
 						hit = new LocationAssetContainer.Builder().withSpaceLocation( location ).build();
 						this.spaceLocationsCache.put( spaceIdentifier, hit );
+						hit.addContent( container );
 					}
-				}
-				hit.addContent( container );
+				} else hit.addContent( container );
 			}
-//			final LocationIdentifierType locationType = container.getContainerFace().getLocationId().getType();
-//			switch (locationType) {
-//				case REGION:
-//				case CONSTELLATION:
-//				case SPACE:
-//				case STATION:
-//				case STRUCTURE:
-			this.add2SpaceLocation( container );
-//					break;
-//				case SHIP:
-//				case CONTAINER:
-//				case OFFICE:
-//					final NeoAssetAssetContainer hitContainer = this.containersCache
-//							.get( container.getContainerFace().getLocationId().getSpaceIdentifier() );
-//					if ( null != hitContainer)
-//						hitContainer.addContent( container );
-//					break;
-//			}
 		}
 		return new ArrayList<>( this.spaceLocationsCache.values() );
 	}
@@ -342,22 +329,11 @@ public class AssetProvider {
 			case STRUCTURE:
 				this.add2SpaceLocation( asset );
 				break;
-//			case SHIP:
-//			case CONTAINER:
-//			case OFFICE:
-//				if (asset.hasParentContainer()) {
-//					final NeoAsset hit = asset.getParentContainer();
-//					if (null == hit) this.add2UnreachableLocation( asset );
-//					else {
-//						this.processAsset( hit );
-//						this.add2ContainerLocation( asset );
-//					}
-//				}
-//				break;
 			case UNKNOWN: // Add the asset to the UNKNOWN space location.
 				NeoComLogger.info( "Not accessible location coordinates: {}", asset.getLocationId().toString() );
 				this.add2UnreachableLocation( asset );
 				break;
+			default:
 		}
 	}
 

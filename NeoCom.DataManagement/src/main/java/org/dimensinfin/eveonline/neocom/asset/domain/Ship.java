@@ -24,7 +24,7 @@ public class Ship extends NeoAssetAssetContainer {
 			Objects.requireNonNull( asset );
 			this.onConstruction.containerFace = asset;
 			if (asset.isShip()) this.onConstruction.type = AssetContainerType.SHIP;
-			if (asset.isContainer()) throw new NeoComRuntimeException( "The ships can only have facet assets of type SHIP." );
+			else throw new NeoComRuntimeException( "The ships can only have facet assets of type SHIP." );
 			return this;
 		}
 	}

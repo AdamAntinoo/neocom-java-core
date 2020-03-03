@@ -23,6 +23,9 @@ public class NeoAssetAssetContainer extends ExpandableContainer<INeoAsset> imple
 
 	// - D E L E G A T E S
 	@Override
+	public Long getAssetId() {return containerFace.getAssetId();}
+
+	@Override
 	public LocationIdentifier getLocationId() {return this.containerFace.getLocationId();}
 
 	@Override
@@ -33,6 +36,9 @@ public class NeoAssetAssetContainer extends ExpandableContainer<INeoAsset> imple
 
 	@Override
 	public boolean isOffice() {return this.containerFace.isOffice();}
+
+	@Override
+	public Long getParentContainerId() {return containerFace.getParentContainerId();}
 
 	@Override
 	public boolean hasParentContainer() {return this.containerFace.hasParentContainer();}

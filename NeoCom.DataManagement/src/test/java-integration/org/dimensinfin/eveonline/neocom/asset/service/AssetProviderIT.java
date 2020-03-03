@@ -15,6 +15,7 @@ import org.dimensinfin.eveonline.neocom.asset.domain.AssetContainerType;
 import org.dimensinfin.eveonline.neocom.asset.domain.INeoAsset;
 import org.dimensinfin.eveonline.neocom.asset.domain.LocationAssetContainer;
 import org.dimensinfin.eveonline.neocom.asset.domain.NeoAssetAssetContainer;
+import org.dimensinfin.eveonline.neocom.asset.domain.Ship;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
@@ -143,16 +144,19 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 		Assertions.assertEquals( 1, secondLocation.getContents().size() );
 		final SpaceLocation spaceLocation2 = secondLocation.getSpaceLocation();
 		Assertions.assertNotNull( spaceLocation2 );
-		Assertions.assertTrue( spaceLocation2 instanceof SpaceLocationImplementation );
+		Assertions.assertTrue( spaceLocation2 instanceof StationImplementation );
 		Assertions.assertEquals( "Devoid", ((SpaceSystem) spaceLocation2).getRegionName() );
 		Assertions.assertEquals( "Ryra", ((SpaceSystem) spaceLocation2).getConstellationName() );
 		Assertions.assertEquals( "Esescama", ((SpaceSystem) spaceLocation2).getSolarSystemName() );
 		Assertions.assertEquals( "Esescama VIII - Moon 3 - Imperial Armaments Warehouse",
-				((SpaceLocationImplementation) spaceLocation2).getStationName() );
+				((StationImplementation) spaceLocation2).getStationName() );
 		final INeoAsset office = secondLocation.getContents().get( 0 );
 		Assertions.assertTrue( office instanceof NeoAssetAssetContainer );
-		Assertions.assertTrue(((NeoAssetAssetContainer)office).getContainerFace().isOffice());
-//		final INeoAsset ship = office.get
+		Assertions.assertTrue( ((NeoAssetAssetContainer) office).getContainerFace().isOffice() );
+		Assertions.assertEquals( 1, ((NeoAssetAssetContainer) office).getContents().size() );
+		final INeoAsset ship = ((NeoAssetAssetContainer) office).getContents().get( 0 );
+		Assertions.assertTrue( ship instanceof Ship );
+		Assertions.assertEquals( 2, ((Ship) ship).getContents().size() );
 	}
 
 	@Test
@@ -184,9 +188,10 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 		final SpaceLocation spaceLocation1 = firstLocation.getSpaceLocation();
 		Assertions.assertNotNull( spaceLocation1 );
 		Assertions.assertTrue( spaceLocation1 instanceof StationImplementation );
-		Assertions.assertEquals( "name", ((StationImplementation) spaceLocation1).getRegionName() );
-		Assertions.assertEquals( "name", ((StationImplementation) spaceLocation1).getConstellationName() );
-		Assertions.assertEquals( "name", ((StationImplementation) spaceLocation1).getSolarSystemName() );
+		Assertions.assertEquals( "Domain", ((SpaceSystem) spaceLocation1).getRegionName() );
+		Assertions.assertEquals( "Liela", ((SpaceSystem) spaceLocation1).getConstellationName() );
+		Assertions.assertEquals( "Avair", ((SpaceSystem) spaceLocation1).getSolarSystemName() );
+		Assertions.assertEquals( "Avair", ((StationImplementation) spaceLocation1).getStationName() );
 	}
 
 	public void verifyTimeStamp() {
