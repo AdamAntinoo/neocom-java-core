@@ -11,66 +11,26 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
+import org.dimensinfin.eveonline.neocom.asset.domain.AssetContainerType;
+import org.dimensinfin.eveonline.neocom.asset.domain.INeoAsset;
+import org.dimensinfin.eveonline.neocom.asset.domain.LocationAssetContainer;
+import org.dimensinfin.eveonline.neocom.asset.domain.NeoAssetAssetContainer;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.database.repositories.AssetRepository;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.container.FacetedExpandableContainer;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocationImplementation;
+import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystem;
+import org.dimensinfin.eveonline.neocom.domain.space.StationImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
-import org.dimensinfin.eveonline.neocom.asset.domain.LocationAssetContainer;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 public class AssetProviderIT extends IntegrationEnvironmentDefinition {
-//	private static final int ESI_UNITTESTING_PORT = 6090;
-//	private static final Logger logger = LoggerFactory.getLogger( ESIDataProviderIT.class );
-//	private static final GenericContainer<?> esisimulator;
-//	private static final PostgreSQLContainer postgres;
-//	private static final String connectionUrl;
-//	private static final JdbcConnectionSource connectionSource;
-//
-//	static {
-//		esisimulator = new GenericContainer<>( "apimastery/apisimulator" )
-//				.withExposedPorts( ESI_UNITTESTING_PORT )
-//				.withFileSystemBind( "/home/adam/Development/NeoCom/neocom-datamanagement/NeoCom.DataManagement/src/test/resources/esi-unittesting",
-//						"/esi-unittesting",
-//						BindMode.READ_WRITE )
-//				.withCommand( "bin/apisimulator start /esi-unittesting" );
-//		esisimulator.start();
-//	}
-//
-//	static {
-//		JdbcConnectionSource connectionSource1;
-//		postgres = new PostgreSQLContainer( "postgres:9.6.8" )
-//				.withDatabaseName( "postgres" )
-//				.withUsername( "neocom" )
-//				.withPassword( "01.Alpha" );
-//		postgres.start();
-//		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer( logger );
-//		esisimulator.followOutput( logConsumer );
-//		connectionUrl = "jdbc:postgresql://"
-//				+ postgres.getContainerIpAddress()
-//				+ ":" + postgres.getMappedPort( PostgreSQLContainer.POSTGRESQL_PORT )
-//				+ "/" + "postgres" +
-//				"?user=" + "neocom" +
-//				"&password=" + "01.Alpha";
-//		NeoComLogger.info( "Postgres SQL URL: {}", connectionUrl );
-//		try {
-//			connectionSource1 = new JdbcConnectionSource( connectionUrl, new PostgresDatabaseType() );
-//		} catch (final SQLException sqle) {
-//			sqle.printStackTrace();
-//			connectionSource1 = null;
-//		}
-//		connectionSource = connectionSource1;
-//	}
-
-	// -  C O M P O N E N T S
-//	private SBConfigurationProvider configurationProvider = (SBConfigurationProvider) NeoComUnitTestComponentFactory.getSingleton()
-//			.getConfigurationProvider();
-//	//	private IFileSystem fileSystemAdapter=NeoComUnitTestComponentFactory.getSingleton().getFileSystemAdapter();
-//	private LocationCatalogService locationcatalogService = NeoComUnitTestComponentFactory.getSingleton().getLocationCatalogService();
-//	private AssetRepository assetRepository ;
+	private static final Integer TEST_MINIMAL_CORPORATION_IDENTIFIER = 98300000;
+	private static final Integer TEST_DEEP_CORPORATION_IDENTIFIER = 98310000;
 
 	@Test
 	public void buildComplete() {
@@ -144,8 +104,59 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 	}
 
 	@Test
+	public void classifyCorporationAssetsByLocationDeepList() {
+		final Integer corporationId = TEST_DEEP_CORPORATION_IDENTIFIER;
+		final AssetProvider assetProvider = new AssetProvider.Builder()
+				.withCredential( credential4Test )
+				.withAssetRepository( this.itAssetRepository )
+				.withLocationCatalogService( this.itLocationCatalogService )
+				.optionalAssetSource( new NetworkAssetSource.Builder()
+						.withCredential( credential4Test )
+						.withAssetRepository( this.itAssetRepository )
+						.withCredentialRepository( this.itCredentialRepository )
+						.withEsiDataProvider( this.esiDataProvider )
+						.withLocationCatalogService( this.itLocationCatalogService )
+						.build() )
+				.build();
+		Assertions.assertNotNull( assetProvider );
+
+		final List<LocationAssetContainer> locations = assetProvider.classifyCorporationAssetsByLocation( corporationId );
+		Assertions.assertNotNull( locations );
+		Assertions.assertEquals( 2, locations.size() );
+
+		final LocationAssetContainer firstLocation = locations.get( 0 );
+		Assertions.assertNotNull( firstLocation );
+		Assertions.assertEquals( AssetContainerType.SPACE, firstLocation.getType() );
+		Assertions.assertNotNull( firstLocation.getContents() );
+		Assertions.assertEquals( 1, firstLocation.getContents().size() );
+		final SpaceLocation spaceLocation1 = firstLocation.getSpaceLocation();
+		Assertions.assertNotNull( spaceLocation1 );
+		Assertions.assertTrue( spaceLocation1 instanceof SpaceSystem );
+		Assertions.assertEquals( "Domain", ((SpaceSystem) spaceLocation1).getRegionName() );
+		Assertions.assertEquals( "Liela", ((SpaceSystem) spaceLocation1).getConstellationName() );
+		Assertions.assertEquals( "Avair", ((SpaceSystem) spaceLocation1).getSolarSystemName() );
+
+		final LocationAssetContainer secondLocation = locations.get( 1 );
+		Assertions.assertNotNull( secondLocation );
+		Assertions.assertEquals( AssetContainerType.SPACE, secondLocation.getType() );
+		Assertions.assertNotNull( secondLocation.getContents() );
+		Assertions.assertEquals( 1, secondLocation.getContents().size() );
+		final SpaceLocation spaceLocation2 = secondLocation.getSpaceLocation();
+		Assertions.assertNotNull( spaceLocation2 );
+		Assertions.assertTrue( spaceLocation2 instanceof SpaceLocationImplementation );
+		Assertions.assertEquals( "Devoid", ((SpaceSystem) spaceLocation2).getRegionName() );
+		Assertions.assertEquals( "Ryra", ((SpaceSystem) spaceLocation2).getConstellationName() );
+		Assertions.assertEquals( "Esescama", ((SpaceSystem) spaceLocation2).getSolarSystemName() );
+		Assertions.assertEquals( "Esescama VIII - Moon 3 - Imperial Armaments Warehouse",
+				((SpaceLocationImplementation) spaceLocation2).getStationName() );
+		final INeoAsset office = secondLocation.getContents().get( 0 );
+		Assertions.assertTrue( office instanceof NeoAssetAssetContainer );
+		Assertions.assertTrue(((NeoAssetAssetContainer)office).getContainerFace().isOffice());
+//		final INeoAsset ship = office.get
+	}
+
+	@Test
 	public void classifyCorporationAssetsByLocationMinimalList() {
-		final Integer TEST_MINIMAL_CORPORATION_IDENTIFIER = 98300000;
 		final Integer corporationId = TEST_MINIMAL_CORPORATION_IDENTIFIER;
 		final AssetProvider assetProvider = new AssetProvider.Builder()
 				.withCredential( credential4Test )
@@ -163,7 +174,19 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 
 		final List<LocationAssetContainer> locations = assetProvider.classifyCorporationAssetsByLocation( corporationId );
 		Assertions.assertNotNull( locations );
-		Assertions.assertEquals( 3, locations.size());
+		Assertions.assertEquals( 1, locations.size() );
+
+		final LocationAssetContainer firstLocation = locations.get( 0 );
+		Assertions.assertNotNull( firstLocation );
+		Assertions.assertEquals( AssetContainerType.SPACE, firstLocation.getType() );
+		Assertions.assertNotNull( firstLocation.getContents() );
+		Assertions.assertEquals( 1, firstLocation.getContents().size() );
+		final SpaceLocation spaceLocation1 = firstLocation.getSpaceLocation();
+		Assertions.assertNotNull( spaceLocation1 );
+		Assertions.assertTrue( spaceLocation1 instanceof StationImplementation );
+		Assertions.assertEquals( "name", ((StationImplementation) spaceLocation1).getRegionName() );
+		Assertions.assertEquals( "name", ((StationImplementation) spaceLocation1).getConstellationName() );
+		Assertions.assertEquals( "name", ((StationImplementation) spaceLocation1).getSolarSystemName() );
 	}
 
 	public void verifyTimeStamp() {

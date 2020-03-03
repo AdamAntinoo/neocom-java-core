@@ -291,6 +291,26 @@ response:
 
 ---
 
+simlet: corporation-assets-page1-98310000
+
+request:
+  - method: GET
+  - uriPathPattern: "/latest/corporations/98310000/assets/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.deep.page1.json"
+
+---
+
 simlet: corporation-assets-page2
 
 request:

@@ -14,6 +14,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import org.dimensinfin.eveonline.neocom.asset.domain.EsiAssets200Ok;
+import org.dimensinfin.eveonline.neocom.asset.domain.INeoAsset;
 import org.dimensinfin.eveonline.neocom.database.persister.EsiAssets200OkPersister;
 import org.dimensinfin.eveonline.neocom.database.persister.LocationIdentifierPersister;
 import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
@@ -22,7 +23,7 @@ import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 @Entity(name = "Assets")
-public class NeoAsset extends UpdatableEntity {
+public class NeoAsset extends UpdatableEntity implements INeoAsset {
 	@Id
 	@GeneratedValue(generator = "UUID_generator")
 	@GenericGenerator(
