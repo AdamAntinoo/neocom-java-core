@@ -19,7 +19,7 @@ import org.dimensinfin.eveonline.neocom.domain.container.FacetedExpandableContai
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocationImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
 import org.dimensinfin.eveonline.neocom.integration.support.IntegrationEnvironmentDefinition;
-import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
+import org.dimensinfin.eveonline.neocom.asset.domain.LocationAssetContainer;
 import org.dimensinfin.eveonline.neocom.utility.LocationIdentifierType;
 
 public class AssetProviderIT extends IntegrationEnvironmentDefinition {
@@ -161,7 +161,7 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 				.build();
 		Assertions.assertNotNull( assetProvider );
 
-		final List<AssetContainer> locations = assetProvider.classifyCorporationAssetsByLocation( corporationId );
+		final List<LocationAssetContainer> locations = assetProvider.classifyCorporationAssetsByLocation( corporationId );
 		Assertions.assertNotNull( locations );
 		Assertions.assertEquals( 3, locations.size());
 	}

@@ -2,11 +2,11 @@ package org.dimensinfin.eveonline.neocom.domain.space;
 
 import java.util.Objects;
 
+import org.dimensinfin.eveonline.neocom.asset.domain.LocationAssetContainer;
 import org.dimensinfin.eveonline.neocom.domain.ExpandableContainer;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseRegionsRegionIdOk;
-import org.dimensinfin.eveonline.neocom.utility.AssetContainer;
 
-public class Region extends ExpandableContainer<AssetContainer> implements SpaceRegion {
+public class Region extends ExpandableContainer<LocationAssetContainer> implements SpaceRegion {
 	private static final long serialVersionUID = 6515264332647090482L;
 	private Integer regionId;
 	private GetUniverseRegionsRegionIdOk region;

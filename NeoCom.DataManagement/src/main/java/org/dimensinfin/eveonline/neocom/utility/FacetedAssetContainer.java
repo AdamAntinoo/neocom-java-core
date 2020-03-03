@@ -2,7 +2,9 @@ package org.dimensinfin.eveonline.neocom.utility;
 
 import java.util.Objects;
 
-public class FacetedAssetContainer<F> extends AssetContainer {
+import org.dimensinfin.eveonline.neocom.asset.domain.LocationAssetContainer;
+
+public class FacetedAssetContainer<F> extends LocationAssetContainer {
 	private F facet;
 
 	private FacetedAssetContainer() {

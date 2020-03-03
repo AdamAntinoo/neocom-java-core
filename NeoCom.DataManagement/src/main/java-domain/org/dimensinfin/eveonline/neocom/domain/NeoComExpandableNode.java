@@ -14,54 +14,51 @@ public abstract class NeoComExpandableNode extends NeoComNode implements IExpand
 	protected boolean expanded = false;
 
 	// - C O N S T R U C T O R S
-	public NeoComExpandableNode () {
+	public NeoComExpandableNode() {
 		super();
 	}
 
 	// - I E X P A N D A B L E   I N T E R F A C E
 	@Override
-	public boolean collapse () {
-		return this.expanded = false;
-//		return this.expanded;
+	public boolean collapse() {
+		this.expanded = false;
+		return false;
 	}
 
 	@Override
-	public boolean expand () {
-		return this.expanded = true;
-//		return expanded;
+	public boolean expand() {
+		this.expanded = true;
+		return true;
+	}
+
+	@Override
+	public boolean isExpanded() {
+		return this.expanded;
 	}
 
 	@Override
 	public boolean toggleExpand() {
-		return this.expanded = !this.expanded;
-//		return this.isExpanded();
-	}
-
-	@Override
-	public boolean isExpanded () {
+		this.expanded = !this.expanded;
 		return this.expanded;
 	}
 
 	// - C O R E
 	@Override
-	public boolean equals( final Object o ) {
-		if (this == o) return true;
-
-		if (o == null || getClass() != o.getClass()) return false;
-
-		final NeoComExpandableNode that = (NeoComExpandableNode) o;
-
-		return new EqualsBuilder()
-				.appendSuper( super.equals( o ) )
-				.append( expanded, that.expanded )
-				.isEquals();
-	}
-
-	@Override
 	public int hashCode() {
 		return new HashCodeBuilder( 17, 37 )
 				.appendSuper( super.hashCode() )
-				.append( expanded )
+				.append( this.expanded )
 				.toHashCode();
+	}
+
+	@Override
+	public boolean equals( final Object o ) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		final NeoComExpandableNode that = (NeoComExpandableNode) o;
+		return new EqualsBuilder()
+				.appendSuper( super.equals( o ) )
+				.append( this.expanded, that.expanded )
+				.isEquals();
 	}
 }
