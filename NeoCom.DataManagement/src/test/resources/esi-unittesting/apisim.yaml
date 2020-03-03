@@ -149,45 +149,6 @@ response:
 
 ---
 
-simlet: corporation-assets-page1
-
-request:
-  - method: GET
-  - uriPathPattern: /latest/corporations/{corporationId}/assets/
-  - where: uriQueryParameter
-    named: "page"
-    equals: 1
-
-response:
-  from: template
-  status: 200
-  headers:
-    - "Content-Type: application/json"
-  body:
-    type: text
-    file: "${sim.path}/esiresponses/corporation.assets.page1.json"
-
----
-
-simlet: corporation-assets-page2
-
-request:
-  - method: GET
-  - uriPathPattern: /latest/corporations/{corporationId}/assets/
-  - where: uriQueryParameter
-    named: "page"
-    equals: 2
-
-response:
-  from: template
-  status: 200
-  headers:
-    - "Content-Type: application/json"
-  body: |+
-    []
-
----
-
 simlet: character-wallet
 
 request:
@@ -288,3 +249,61 @@ response:
     type: text
     file: "${sim.path}/esiresponses/corporation.divisions.json"
 
+---
+
+simlet: corporation-assets-page1-98384726
+
+request:
+  - method: GET
+  - uriPathPattern: "/latest/corporations/98384726/assets/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.page1.json"
+
+---
+
+simlet: corporation-assets-page1-98300000
+
+request:
+  - method: GET
+  - uriPathPattern: "/latest/corporations/98300000/assets/"
+  - where: uriQueryParameter
+    named: "page"
+    equals: 1
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body:
+    type: text
+    file: "${sim.path}/esiresponses/corporation.assets.minimal.page1.json"
+
+---
+
+simlet: corporation-assets-page2
+
+request:
+  - method: GET
+  - uriPathPattern: /latest/corporations/{corporationId}/assets/
+  - where: uriQueryParameter
+    named: "page"
+    equals: 2
+
+response:
+  from: template
+  status: 200
+  headers:
+    - "Content-Type: application/json"
+  body: |+
+    []

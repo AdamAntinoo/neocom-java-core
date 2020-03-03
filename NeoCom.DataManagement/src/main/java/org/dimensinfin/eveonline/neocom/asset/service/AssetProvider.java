@@ -253,7 +253,6 @@ public class AssetProvider {
 		this.containersCache.clear();
 		this.assetCounter = 0;
 		UNREACHABLE_LOCATION.clear();
-		this.spaceLocationsCache.put( UNREACHABLE_LOCATION_IDENTIFIER, UNREACHABLE_LOCATION );
 	}
 
 	/**

@@ -10,11 +10,8 @@ public class Region extends ExpandableContainer<AssetContainer> implements Space
 	private static final long serialVersionUID = 6515264332647090482L;
 	private Integer regionId;
 	private GetUniverseRegionsRegionIdOk region;
-//	private List<AssetContainer> contents = new ArrayList<>();
-//	private AssetAggregator aggregator = new AssetAggregator();
 
 	private Region() {}
-
 
 	// - S P A C E R E G I O N
 	@Override

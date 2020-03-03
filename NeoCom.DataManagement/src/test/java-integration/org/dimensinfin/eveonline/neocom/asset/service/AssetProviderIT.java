@@ -144,8 +144,9 @@ public class AssetProviderIT extends IntegrationEnvironmentDefinition {
 	}
 
 	@Test
-	public void classifyCorporationAssetsByLocation() {
-		final Integer corporationId = TEST_CORPORATION_IDENTIFIER;
+	public void classifyCorporationAssetsByLocationMinimalList() {
+		final Integer TEST_MINIMAL_CORPORATION_IDENTIFIER = 98300000;
+		final Integer corporationId = TEST_MINIMAL_CORPORATION_IDENTIFIER;
 		final AssetProvider assetProvider = new AssetProvider.Builder()
 				.withCredential( credential4Test )
 				.withAssetRepository( this.itAssetRepository )

@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import org.dimensinfin.eveonline.neocom.database.entities.NeoAsset;
 import org.dimensinfin.eveonline.neocom.domain.ExpandableContainer;
-import org.dimensinfin.eveonline.neocom.domain.LocationIdentifier;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceLocation;
 
 public class AssetContainer extends ExpandableContainer<NeoAsset> {
@@ -13,7 +12,7 @@ public class AssetContainer extends ExpandableContainer<NeoAsset> {
 	}
 
 	private AssetContainerType type = AssetContainerType.UNDEFINED;
-	private LocationIdentifier spaceLocationIdentifier;
+//	private LocationIdentifier spaceLocationIdentifier;
 	private SpaceLocation spaceLocation;
 	private NeoAsset parentContainer;
 
@@ -54,11 +53,11 @@ public class AssetContainer extends ExpandableContainer<NeoAsset> {
 			return this;
 		}
 
-		public AssetContainer.Builder withSpaceLocationIdentifier( final LocationIdentifier spaceLocationIdentifier ) {
-			Objects.requireNonNull( spaceLocationIdentifier );
-			this.onConstruction.spaceLocationIdentifier = spaceLocationIdentifier;
-			this.onConstruction.type = AssetContainerType.UNKNOWN;
-			return this;
-		}
+//		public AssetContainer.Builder withSpaceLocationIdentifier( final LocationIdentifier spaceLocationIdentifier ) {
+//			Objects.requireNonNull( spaceLocationIdentifier );
+//			this.onConstruction.spaceLocationIdentifier = spaceLocationIdentifier;
+//			this.onConstruction.type = AssetContainerType.UNKNOWN;
+//			return this;
+//		}
 	}
 }
