@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.integration;
+package org.dimensinfin.eveonline.neocom.adapter;
 
 import java.io.IOException;
 import java.sql.SQLException;

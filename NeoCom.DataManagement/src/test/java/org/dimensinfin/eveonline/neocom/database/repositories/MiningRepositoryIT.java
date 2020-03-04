@@ -1,4 +1,4 @@
-package org.dimensinfin.eveonline.neocom.integration;
+package org.dimensinfin.eveonline.neocom.database.repositories;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,7 +20,6 @@ import org.dimensinfin.eveonline.neocom.adapter.LocationCatalogService;
 import org.dimensinfin.eveonline.neocom.adapter.StoreCacheManager;
 import org.dimensinfin.eveonline.neocom.database.entities.Credential;
 import org.dimensinfin.eveonline.neocom.database.entities.MiningExtraction;
-import org.dimensinfin.eveonline.neocom.database.repositories.MiningRepository;
 import org.dimensinfin.eveonline.neocom.domain.space.SpaceSystemImplementation;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseCategoriesCategoryIdOk;
 import org.dimensinfin.eveonline.neocom.esiswagger.model.GetUniverseConstellationsConstellationIdOk;
