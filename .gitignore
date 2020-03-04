@@ -16,3 +16,6 @@
 # - Build ignorable files
 .gradle
 build/
+NeoCom.DataManagement.Support/out/
+
+.idea/sonarlint-state.xml

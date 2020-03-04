@@ -10,7 +10,7 @@ import java.util.Properties;
 
 import com.annimon.stream.Stream;
 
-import org.dimensinfin.eveonline.neocom.adapter.AConfigurationProvider;
+import org.dimensinfin.eveonline.neocom.provider.AConfigurationProvider;
 
 public class SBConfigurationProvider extends AConfigurationProvider {
 	public void setProperty( final String propertyName, final String value ) {
